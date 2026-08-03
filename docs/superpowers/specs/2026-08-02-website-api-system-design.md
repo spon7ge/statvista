@@ -77,7 +77,7 @@ main.tsx
       /wnba/player/:id     LeaguePlayerPage
       /nba/matchups        LeagueMatchupsPage (placeholder)
       /mlb/matchups        LeagueMatchupsPage (league="mlb", live slate)
-      /mlb/games/:gamePk   MlbGameDetailPage (live center; thin not-live)
+      /mlb/games/:gamePk   MlbGameDetailPage (live center when live; final archive when final; thin not-live yet when scheduled)
     * → NotFoundPage
 ```
 
@@ -110,7 +110,7 @@ main.tsx
 | `/games/:espnEventId` | Full game center | `useGameDetail` | `GET /api/wnba/games/{id}` | ESPN summary; RotoWire / ESPN roster for scheduled starters |
 | `/nba/matchups` | Placeholder | — | none | “NBA matchups coming soon” |
 | `/mlb/matchups?date=` | Daily slate; odds when date is in odds window | `useMlbScoreboard(date)`, `useMlbOdds` | scoreboard (`/today` or `?date=`), `GET /api/mlb/odds/today` | Stats API schedule; Sharp MLB run line/total (DK prefer FD); cards → `/mlb/games/:gamePk` |
-| `/mlb/games/:gamePk` | Live game center (thin not-live) | `useMlbGameDetail` | `GET /api/mlb/games/{game_pk}` | Stats live feed + ESPN win probability (soft-fail); live-only full UI |
+| `/mlb/games/:gamePk` | Live center when live; final archive when final; thin not-live yet when scheduled | `useMlbGameDetail` | `GET /api/mlb/games/{game_pk}` | Stats live feed + ESPN win probability (soft-fail); live or final archive center |
 
 ### Cross-cutting API behavior
 
