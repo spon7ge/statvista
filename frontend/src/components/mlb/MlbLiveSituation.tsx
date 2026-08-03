@@ -4,15 +4,15 @@ import type { MlbGameDetailView, MlbPlayerCard, MlbSituation } from "./types";
 
 function BaseDiamond({ runners }: { runners: MlbSituation["runners"] }) {
   const bases = [
-    { key: "second", occupied: runners.second, x: 40, y: 12 },
-    { key: "third", occupied: runners.third, x: 16, y: 36 },
-    { key: "first", occupied: runners.first, x: 64, y: 36 },
+    { key: "second", occupied: runners.second, x: 34, y: 8 },
+    { key: "third", occupied: runners.third, x: 12, y: 30 },
+    { key: "first", occupied: runners.first, x: 56, y: 30 },
   ] as const;
 
   return (
     <svg
-      viewBox="0 0 80 64"
-      className="h-16 w-20"
+      viewBox="0 0 80 56"
+      className="h-14 w-[4.5rem] shrink-0"
       role="img"
       aria-label={`Runners: first ${runners.first ? "on" : "empty"}, second ${
         runners.second ? "on" : "empty"
@@ -23,11 +23,11 @@ function BaseDiamond({ runners }: { runners: MlbSituation["runners"] }) {
           key={base.key}
           x={base.x}
           y={base.y}
-          width={12}
-          height={12}
+          width={11}
+          height={11}
           rx={1}
-          transform={`rotate(45 ${base.x + 6} ${base.y + 6})`}
-          fill={base.occupied ? "rgba(248, 113, 113, 0.85)" : "transparent"}
+          transform={`rotate(45 ${base.x + 5.5} ${base.y + 5.5})`}
+          fill={base.occupied ? "rgba(248, 113, 113, 0.9)" : "transparent"}
           stroke={
             base.occupied ? "rgb(248, 113, 113)" : "rgba(255,255,255,0.35)"
           }
@@ -42,22 +42,25 @@ function CountDots({
   label,
   filled,
   total,
+  filledClassName,
 }: {
   label: string;
   filled: number;
   total: number;
+  filledClassName: string;
 }) {
+  const capped = Math.min(Math.max(filled, 0), total);
   return (
     <div className="flex items-center gap-1.5">
-      <span className="w-10 text-[10px] font-medium uppercase tracking-wide text-white/40">
-        {label}
-      </span>
-      <span className="flex gap-1" aria-label={`${filled} ${label}`}>
+      <span className="w-9 text-[10px] font-medium text-white/45">{label}</span>
+      <span className="flex gap-1" aria-label={`${capped} ${label}`}>
         {Array.from({ length: total }, (_, index) => (
           <span
             key={index}
             className={`size-2 rounded-full ${
-              index < filled ? "bg-red-400" : "bg-white/15"
+              index < capped
+                ? filledClassName
+                : "border border-white/30 bg-transparent"
             }`}
           />
         ))}
@@ -66,29 +69,95 @@ function CountDots({
   );
 }
 
-function PlayerSlot({
-  label,
-  player,
+/** Map win-% delta to display points (fraction ≤1 → ×100; else already points). */
+function stakesPoints(delta: number): number {
+  return Math.abs(delta) <= 1 ? Math.abs(delta) * 100 : Math.abs(delta);
+}
+
+function formatStakesBadge(delta: number): string {
+  const pts = stakesPoints(delta);
+  const text = Number.isInteger(pts) ? String(pts) : pts.toFixed(1);
+  return `${text} pts`;
+}
+
+function formatHomeDeltaLine(delta: number): string {
+  const pts = Math.abs(delta) <= 1 ? delta * 100 : delta;
+  const sign = pts >= 0 ? "+" : "";
+  return `home ${sign}${pts.toFixed(1)} pts`;
+}
+
+function CallValueCard({
+  stakes,
 }: {
-  label: string;
-  player: MlbPlayerCard | null;
+  stakes: { label: string; homeWinDelta: number };
 }) {
-  if (!player) return null;
+  return (
+    <div className="rounded-lg border border-white/10 px-3 py-2.5">
+      <div className="flex items-start justify-between gap-2">
+        <p className="text-[10px] font-medium uppercase tracking-wide text-white/40">
+          CALL VALUE
+        </p>
+        <span className="rounded-md bg-red-500/20 px-1.5 py-0.5 text-[10px] font-semibold text-red-300">
+          {formatStakesBadge(stakes.homeWinDelta)}
+        </span>
+      </div>
+      <p className="mt-2 text-base font-semibold text-white">{stakes.label}</p>
+      <p className="mt-0.5 text-xs text-white/45">
+        {formatHomeDeltaLine(stakes.homeWinDelta)}
+      </p>
+      <p className="mt-2 text-[10px] text-white/30">
+        Data: ESPN win probability
+      </p>
+    </div>
+  );
+}
+
+function playerStatsLine(player: MlbPlayerCard): string | null {
+  const parts = [player.hand, player.summary].filter(Boolean);
+  return parts.length > 0 ? parts.join(" · ") : null;
+}
+
+function AtBatBlock({ player }: { player: MlbPlayerCard }) {
+  const stats = playerStatsLine(player);
   return (
     <div>
       <p className="text-[10px] font-medium uppercase tracking-wide text-white/40">
-        {label}
+        AT BAT
       </p>
-      <p className="text-sm font-medium text-white">
-        {player.name}
-        {player.hand ? (
-          <span className="ml-1.5 text-xs font-normal text-white/40">
-            {player.hand}
-          </span>
-        ) : null}
+      <p className="text-sm font-semibold text-white">{player.name}</p>
+      {stats ? (
+        <p className="font-mono text-xs text-white/45 tabular-nums">{stats}</p>
+      ) : null}
+    </div>
+  );
+}
+
+function OnDeckLine({ player }: { player: MlbPlayerCard }) {
+  const stats = playerStatsLine(player);
+  return (
+    <p className="text-xs text-white/55">
+      <span className="font-semibold text-white">ON DECK</span>{" "}
+      <span className="font-medium text-white">{player.name}</span>
+      {stats ? (
+        <span className="font-mono text-white/45 tabular-nums">
+          {" "}
+          · {stats}
+        </span>
+      ) : null}
+    </p>
+  );
+}
+
+function PitchingBlock({ player }: { player: MlbPlayerCard }) {
+  const stats = playerStatsLine(player);
+  return (
+    <div>
+      <p className="text-[10px] font-medium uppercase tracking-wide text-white/40">
+        PITCHING
       </p>
-      {player.summary ? (
-        <p className="text-xs text-white/45">{player.summary}</p>
+      <p className="text-sm font-semibold text-white">{player.name}</p>
+      {stats ? (
+        <p className="font-mono text-xs text-white/45 tabular-nums">{stats}</p>
       ) : null}
     </div>
   );
@@ -98,7 +167,7 @@ function SituationPanel({ detail }: { detail: MlbGameDetailView }) {
   const situation = detail.situation;
   if (!situation) {
     return (
-      <GameSection className="!p-3">
+      <GameSection className="!p-2.5">
         <p className="text-xs text-white/40">Situation unavailable</p>
       </GameSection>
     );
@@ -107,28 +176,39 @@ function SituationPanel({ detail }: { detail: MlbGameDetailView }) {
   const stakes = detail.winProbability?.stakes;
 
   return (
-    <GameSection className="!p-3 space-y-4">
-      <div className="flex items-start justify-between gap-3">
+    <GameSection className="!p-2.5 space-y-3">
+      <div className="flex items-start gap-4">
         <BaseDiamond runners={situation.runners} />
-        <div className="space-y-1.5">
-          <CountDots label="Balls" filled={situation.balls} total={4} />
-          <CountDots label="Strikes" filled={situation.strikes} total={3} />
-          <CountDots label="Outs" filled={situation.outs} total={3} />
+        <div className="space-y-1">
+          <CountDots
+            label="Balls"
+            filled={situation.balls}
+            total={3}
+            filledClassName="bg-white"
+          />
+          <CountDots
+            label="Strk"
+            filled={situation.strikes}
+            total={2}
+            filledClassName="bg-white"
+          />
+          <CountDots
+            label="Out"
+            filled={situation.outs}
+            total={2}
+            filledClassName="bg-red-400"
+          />
         </div>
       </div>
 
-      {stakes?.label ? (
-        <p className="text-xs text-white/55">{stakes.label}</p>
-      ) : null}
+      {stakes ? <CallValueCard stakes={stakes} /> : null}
 
-      {situation.latestPlayText ? (
-        <p className="text-xs text-white/45">{situation.latestPlayText}</p>
-      ) : null}
-
-      <div className="space-y-3 border-t border-white/10 pt-3">
-        <PlayerSlot label="At bat" player={situation.atBat} />
-        <PlayerSlot label="On deck" player={situation.onDeck} />
-        <PlayerSlot label="Pitching" player={situation.pitching} />
+      <div className="space-y-2.5">
+        {situation.atBat ? <AtBatBlock player={situation.atBat} /> : null}
+        {situation.onDeck ? <OnDeckLine player={situation.onDeck} /> : null}
+        {situation.pitching ? (
+          <PitchingBlock player={situation.pitching} />
+        ) : null}
       </div>
     </GameSection>
   );
@@ -143,7 +223,7 @@ export function MlbLiveSituation({ detail }: { detail: MlbGameDetailView }) {
       {detail.situation ? (
         <MlbPitchZone situation={detail.situation} />
       ) : (
-        <GameSection className="!p-3">
+        <GameSection className="!p-2.5">
           <p className="text-xs text-white/40">Pitch zone unavailable</p>
         </GameSection>
       )}

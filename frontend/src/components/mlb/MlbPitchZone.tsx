@@ -1,13 +1,15 @@
 import { GameSection } from "@/components/game/GameSection";
 import type { MlbPitch, MlbSituation } from "./types";
 
+// Normalized zone coords are [-1, 1]. Scale fills most of a tight 100×100 viewBox
+// so the strike box reads large and empty margin stays minimal.
 const ZONE_CENTER_X = 50;
-const ZONE_CENTER_Y = 58;
-const ZONE_SCALE = 28;
-const STRIKE_LEFT = 35;
-const STRIKE_TOP = 28;
-const STRIKE_WIDTH = 30;
-const STRIKE_HEIGHT = 52;
+const ZONE_CENTER_Y = 50;
+const ZONE_SCALE = 40;
+const STRIKE_WIDTH = 44;
+const STRIKE_HEIGHT = 72;
+const STRIKE_LEFT = ZONE_CENTER_X - STRIKE_WIDTH / 2;
+const STRIKE_TOP = ZONE_CENTER_Y - STRIKE_HEIGHT / 2;
 
 function plotPitch(pitch: MlbPitch): { cx: number; cy: number } | null {
   if (pitch.zoneX === null || pitch.zoneY === null) return null;
@@ -25,12 +27,12 @@ export function MlbPitchZone({ situation }: { situation: MlbSituation }) {
   const pitches = situation.pitches;
 
   return (
-    <GameSection className="!p-3">
-      <h2 className="mb-2 text-sm font-semibold text-white">Pitch zone</h2>
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
+    <GameSection className="!p-2.5">
+      <h2 className="mb-1.5 text-sm font-semibold text-white">Pitch zone</h2>
+      <div className="flex flex-col gap-2">
         <svg
-          viewBox="0 0 100 120"
-          className="mx-auto h-44 w-36 shrink-0 sm:mx-0"
+          viewBox="0 0 100 100"
+          className="mx-auto aspect-square w-full max-w-[13rem]"
           role="img"
           aria-label="Pitch strike zone"
         >
@@ -40,15 +42,15 @@ export function MlbPitchZone({ situation }: { situation: MlbSituation }) {
             width={STRIKE_WIDTH}
             height={STRIKE_HEIGHT}
             fill="none"
-            stroke="rgba(255,255,255,0.35)"
-            strokeWidth="1.25"
+            stroke="rgba(255,255,255,0.4)"
+            strokeWidth="1.5"
           />
           <line
             x1={STRIKE_LEFT + STRIKE_WIDTH / 3}
             y1={STRIKE_TOP}
             x2={STRIKE_LEFT + STRIKE_WIDTH / 3}
             y2={STRIKE_TOP + STRIKE_HEIGHT}
-            stroke="rgba(255,255,255,0.12)"
+            stroke="rgba(255,255,255,0.14)"
             strokeWidth="0.75"
           />
           <line
@@ -56,7 +58,7 @@ export function MlbPitchZone({ situation }: { situation: MlbSituation }) {
             y1={STRIKE_TOP}
             x2={STRIKE_LEFT + (2 * STRIKE_WIDTH) / 3}
             y2={STRIKE_TOP + STRIKE_HEIGHT}
-            stroke="rgba(255,255,255,0.12)"
+            stroke="rgba(255,255,255,0.14)"
             strokeWidth="0.75"
           />
           <line
@@ -64,7 +66,7 @@ export function MlbPitchZone({ situation }: { situation: MlbSituation }) {
             y1={STRIKE_TOP + STRIKE_HEIGHT / 3}
             x2={STRIKE_LEFT + STRIKE_WIDTH}
             y2={STRIKE_TOP + STRIKE_HEIGHT / 3}
-            stroke="rgba(255,255,255,0.12)"
+            stroke="rgba(255,255,255,0.14)"
             strokeWidth="0.75"
           />
           <line
@@ -72,7 +74,7 @@ export function MlbPitchZone({ situation }: { situation: MlbSituation }) {
             y1={STRIKE_TOP + (2 * STRIKE_HEIGHT) / 3}
             x2={STRIKE_LEFT + STRIKE_WIDTH}
             y2={STRIKE_TOP + (2 * STRIKE_HEIGHT) / 3}
-            stroke="rgba(255,255,255,0.12)"
+            stroke="rgba(255,255,255,0.14)"
             strokeWidth="0.75"
           />
           {pitches.map((pitch) => {
@@ -83,15 +85,15 @@ export function MlbPitchZone({ situation }: { situation: MlbSituation }) {
                 <circle
                   cx={point.cx}
                   cy={point.cy}
-                  r={5.5}
+                  r={4.5}
                   fill={pitchFill(pitch.isStrike)}
                 />
                 <text
                   x={point.cx}
-                  y={point.cy + 0.5}
+                  y={point.cy + 0.4}
                   textAnchor="middle"
                   dominantBaseline="middle"
-                  className="fill-black text-[7px] font-semibold"
+                  className="fill-black text-[6.5px] font-semibold"
                 >
                   {pitch.number}
                 </text>
@@ -100,7 +102,7 @@ export function MlbPitchZone({ situation }: { situation: MlbSituation }) {
           })}
         </svg>
 
-        <ul className="min-w-0 flex-1 space-y-1 text-xs">
+        <ul className="min-w-0 space-y-0.5 text-xs">
           {pitches.length === 0 ? (
             <li className="text-white/40">No pitches yet</li>
           ) : (
