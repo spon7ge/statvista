@@ -39,8 +39,8 @@ def test_normalize_parlay_props_main_line_and_sides():
     assert over.fanduel.odds_american == -114
     assert over.draftkings is not None
     assert over.draftkings.odds_american == -120
-    assert over.pinnacle is not None
-    assert over.pinnacle.odds_american == -108
+    # Pinnacle is Selenium/Supabase-owned; normalize skips Parlay pinnacle rows.
+    assert over.pinnacle is None
     assert over.caesars is None
     assert over.betmgm is None
     assert over.bet365 is None
