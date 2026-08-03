@@ -26,9 +26,23 @@ def test_pinnacle_sql_targets_wnba_pinnacle_table():
 
 
 def test_pinnacle_team_sql_excludes_alternates_and_non_full_game():
-    assert "odds.wnba_pinnacle_team" in svc._PINNACLE_TEAM_SQL
-    assert "period = 0" in svc._PINNACLE_TEAM_SQL
-    assert "is_alternate = false" in svc._PINNACLE_TEAM_SQL
+    engine, conn = _mock_engine([])
+    with patch("src.utils.db.get_engine", return_value=engine):
+        svc.fetch_latest_pinnacle_team("wnba")
+    sql = str(conn.execute.call_args[0][0])
+    assert "odds.wnba_pinnacle_team" in sql
+    assert "period = 0" in sql
+    assert "is_alternate = false" in sql
+
+
+def test_fetch_latest_pinnacle_team_mlb_uses_mlb_table():
+    engine, conn = _mock_engine([])
+    with patch("src.utils.db.get_engine", return_value=engine):
+        svc.fetch_latest_pinnacle_team("mlb")
+    sql = str(conn.execute.call_args[0][0])
+    assert "mlb_pinnacle_team" in sql
+    params = conn.execute.call_args[0][1]
+    assert params["league"] == "mlb"
 
 
 def test_fetch_latest_pinnacle_returns_rows():

@@ -36,17 +36,11 @@ WHERE league = :league
   )
 """
 
-_PINNACLE_TEAM_SQL = """
-SELECT away_team, home_team, start_time, market_type, period, is_alternate,
-       side, team, points, american_price, matchup_id
-FROM odds.wnba_pinnacle_team
-WHERE league = :league
-  AND scraped_at = (
-    SELECT MAX(scraped_at) FROM odds.wnba_pinnacle_team WHERE league = :league
-  )
-  AND period = 0
-  AND is_alternate = false
-"""
+_PINNACLE_TEAM_TABLE = {
+    "mlb": "mlb_pinnacle_team",
+    "wnba": "wnba_pinnacle_team",
+    "nba": "wnba_pinnacle_team",
+}
 
 
 def _fetch_rows(sql: str, league: str) -> list[dict[str, Any]]:
@@ -88,4 +82,17 @@ def fetch_latest_pinnacle(league: str = "wnba") -> list[dict]:
 
 def fetch_latest_pinnacle_team(league: str = "wnba") -> list[dict]:
     """Return full-game (period=0, non-alternate) team rows from latest snapshot."""
-    return _fetch_rows(_PINNACLE_TEAM_SQL, league)
+    lg = (league or "wnba").strip().lower()
+    table = _PINNACLE_TEAM_TABLE.get(lg, "wnba_pinnacle_team")
+    sql = f"""
+SELECT away_team, home_team, start_time, market_type, period, is_alternate,
+       side, team, points, american_price, matchup_id
+FROM odds.{table}
+WHERE league = :league
+  AND scraped_at = (
+    SELECT MAX(scraped_at) FROM odds.{table} WHERE league = :league
+  )
+  AND period = 0
+  AND is_alternate = false
+"""
+    return _fetch_rows(sql, lg)
