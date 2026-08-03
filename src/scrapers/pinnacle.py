@@ -42,7 +42,8 @@ PINNACLE_ARCADIA_TIMEOUT — seconds to poll for Arcadia /matchups responses (de
 PINNACLE_ARCADIA_POLL — poll interval seconds (default 0.22).
 PINNACLE_POST_ARCADIA_BUFFER — brief sleep after both payloads decode (default 0.08).
 PINNACLE_DISCOVER_SCROLL_ROUNDS / PINNACLE_DISCOVER_SCROLL_PAUSE — list-page lazy load (8 / 0.32).
-PINNACLE_DISCOVER_SETTLE — seconds to wait after #root before scrolling (default 0.65).
+PINNACLE_DISCOVER_SETTLE — seconds to wait after #root before first poll (default 0.65).
+PINNACLE_DISCOVER_WAIT — seconds to poll for matchup links after #root (default 20).
 PINNACLE_DISCOVER_RETRIES / PINNACLE_DISCOVER_RETRY_PAUSE — empty list reloads (3 / 2.5s).
 PINNACLE_GAMES_PER_WORKER — target games per browser when parallel (default 2); fewer
 Chrome cold-starts on small slates (e.g. 4 games → 2 workers × 2 pages each).
@@ -90,6 +91,11 @@ PINNACLE_ORIGIN = "https://www.pinnacle.com"
 LEAGUE_MATCHUPS_URL: dict[str, str] = {
     "nba": "https://www.pinnacle.com/en/basketball/nba/matchups/#all",
     "wnba": "https://www.pinnacle.com/en/basketball/wnba/matchups/#all",
+}
+# Arcadia league ids (from /sports/4/leagues) — used for list-page discovery.
+LEAGUE_ARCADIA_IDS: dict[str, int] = {
+    "nba": 487,
+    "wnba": 578,
 }
 SUPPORTED_LEAGUES = tuple(LEAGUE_MATCHUPS_URL.keys())
 
@@ -235,6 +241,94 @@ def _normalize_game_url(abs_url: str, expected_league: str) -> str | None:
     return urljoin(PINNACLE_ORIGIN, f"/en/basketball/{league}/{slug}/{mid}/#all")
 
 
+def collect_game_urls(
+    hrefs: list[str],
+    page_source: str,
+    expected_league: str,
+) -> list[str]:
+    """
+    Deduped, sorted canonical game URLs for ``expected_league``.
+
+    Prefer ``<a href>`` values; fall back to path matches in HTML when the SPA
+    has written routes into the document but anchors are not yet queryable.
+    """
+    cand: set[str] = set()
+    for raw in hrefs:
+        raw = (raw or "").strip()
+        if not raw or "basketball/" not in raw.lower():
+            continue
+        canon = _normalize_game_url(raw, expected_league)
+        if canon:
+            cand.add(canon)
+
+    if not cand:
+        for m in _GAME_PATH_RE.finditer(page_source or ""):
+            if m.group("league").lower() != expected_league:
+                continue
+            frag = m.group(0)
+            canon = _normalize_game_url(urljoin(PINNACLE_ORIGIN, frag), expected_league)
+            if canon:
+                cand.add(canon)
+
+    return sorted(cand)
+
+
+def _slugify_team_name(name: str) -> str:
+    s = re.sub(r"[^a-z0-9]+", "-", (name or "").lower().strip())
+    return s.strip("-")
+
+
+def _slug_from_matchup_participants(participants: list[Any]) -> str | None:
+    by_align: dict[str, str] = {}
+    for part in participants or []:
+        if not isinstance(part, dict):
+            continue
+        align = part.get("alignment")
+        name = part.get("name")
+        if align in ("home", "away") and name:
+            by_align[str(align)] = str(name)
+    if "away" not in by_align or "home" not in by_align:
+        return None
+    return (
+        f"{_slugify_team_name(by_align['away'])}-vs-"
+        f"{_slugify_team_name(by_align['home'])}"
+    )
+
+
+def game_urls_from_league_matchups(
+    rows: list[Any],
+    expected_league: str,
+) -> list[str]:
+    """
+    Build canonical game URLs from Arcadia ``/leagues/{id}/matchups`` rows.
+
+    Only top-level ``type=matchup`` rows (no parentId). Specials are ignored.
+    Slug order matches the site: away-vs-home.
+    """
+    league = expected_league.strip().lower()
+    cand: set[str] = set()
+    for row in rows or []:
+        if not isinstance(row, dict):
+            continue
+        if row.get("type") != "matchup":
+            continue
+        if row.get("parentId") is not None:
+            continue
+        mid = row.get("id")
+        if mid is None:
+            continue
+        slug = _slug_from_matchup_participants(row.get("participants") or [])
+        if not slug:
+            continue
+        canon = _normalize_game_url(
+            urljoin(PINNACLE_ORIGIN, f"/en/basketball/{league}/{slug}/{mid}/"),
+            league,
+        )
+        if canon:
+            cand.add(canon)
+    return sorted(cand)
+
+
 def _worker_scrape_game_batch(
     worker_id: int,
     batch: list[tuple[int, str]],
@@ -372,6 +466,7 @@ class PinnacleScraper:
             os.environ.get("PINNACLE_DISCOVER_RETRY_PAUSE", "2.5"),
         )
         self.discover_settle = float(os.environ.get("PINNACLE_DISCOVER_SETTLE", "0.65"))
+        self.discover_wait = float(os.environ.get("PINNACLE_DISCOVER_WAIT", "20"))
         try:
             self.games_per_worker = max(
                 1, int(os.environ.get("PINNACLE_GAMES_PER_WORKER", "2")),
@@ -410,6 +505,7 @@ class PinnacleScraper:
                 opts.page_load_strategy = "eager"
         opts.add_argument("--window-size=1400,1000")
         opts.add_argument("--disable-extensions")
+        opts.add_argument("--disable-blink-features=AutomationControlled")
         if not self._chrome_visible():
             opts.add_argument("--headless=new")
         opts.add_argument("--disable-gpu")
@@ -458,11 +554,105 @@ class PinnacleScraper:
             )
             time.sleep(self.discover_scroll_pause)
 
+    def _dismiss_cookie_banner(self, driver) -> None:
+        """Accept cookies when the consent modal blocks or delays list hydration."""
+        if By is None:
+            return
+        for text in ("ACCEPT", "Accept", "Accept all", "I Accept"):
+            try:
+                for el in driver.find_elements(
+                    By.XPATH,
+                    f"//*[self::button or self::a or @role='button']"
+                    f"[contains(normalize-space(.), '{text}')]",
+                ):
+                    if el.is_displayed():
+                        el.click()
+                        time.sleep(0.35)
+                        return
+            except Exception:
+                continue
+
+    def _read_game_urls_from_driver(self, driver) -> list[str]:
+        hrefs: list[str] = []
+        try:
+            for a in driver.find_elements(By.TAG_NAME, "a"):
+                hrefs.append((a.get_attribute("href") or "").strip())
+        except Exception:
+            hrefs = []
+        try:
+            src = driver.page_source or ""
+        except Exception:
+            src = ""
+        return collect_game_urls(hrefs, src, self.league)
+
+    def _drain_arcadia_network_log(
+        self,
+        driver,
+        urls_by_rid: dict[str, str],
+        finished: dict[str, str],
+    ) -> None:
+        """Append new performance-log Arcadia entries (log is cleared on read)."""
+        try:
+            for entry in driver.get_log("performance"):
+                try:
+                    msg = json.loads(entry["message"]).get("message") or {}
+                except json.JSONDecodeError:
+                    continue
+                meth = msg.get("method")
+                pd = msg.get("params") or {}
+                rid = pd.get("requestId")
+                if meth == "Network.requestWillBeSent":
+                    u = (pd.get("request") or {}).get("url") or ""
+                    if rid and "guest.api.arcadia.pinnacle.com" in u:
+                        urls_by_rid[rid] = u
+                elif meth == "Network.responseReceived":
+                    u = (pd.get("response") or {}).get("url") or ""
+                    if rid and "guest.api.arcadia.pinnacle.com" in u:
+                        urls_by_rid[rid] = u
+                elif meth == "Network.loadingFinished" and rid:
+                    u = urls_by_rid.get(rid)
+                    if u and "guest.api.arcadia.pinnacle.com" in u:
+                        finished[rid] = u
+        except Exception:
+            pass
+
+    def _league_matchups_from_arcadia(
+        self,
+        driver,
+        urls_by_rid: dict[str, str],
+        finished: dict[str, str],
+    ) -> list[str]:
+        """
+        Prefer Arcadia ``/leagues/{id}/matchups`` over DOM anchors — the SPA often
+        leaves #root empty of game links while the API payload already has them.
+        """
+        league_id = LEAGUE_ARCADIA_IDS.get(self.league)
+        if league_id is None:
+            return []
+
+        self._drain_arcadia_network_log(driver, urls_by_rid, finished)
+        needle = f"/leagues/{league_id}/matchups"
+        best: list[Any] = []
+        for rid, u in finished.items():
+            if needle not in urlparse(u).path:
+                continue
+            # Skip /leagues/{id}/matchups/foo nested paths if any.
+            path = urlparse(u).path.rstrip("/")
+            if not path.endswith(f"/leagues/{league_id}/matchups"):
+                continue
+            data = self._response_body_json(driver, rid)
+            if isinstance(data, list) and data:
+                best = data
+        if not best:
+            return []
+        return game_urls_from_league_matchups(best, self.league)
+
     def discover_game_urls(self, driver) -> list[str]:
         if WebDriverWait is None:
             raise RuntimeError("Install selenium: pip install selenium")
 
-        cand: set[str] = set()
+        # Prefer Arcadia league matchups (stable); fall back to DOM anchors which
+        # hydrate after #root and sometimes never appear under headless.
         for attempt in range(self.discover_retries):
             if attempt > 0:
                 print(
@@ -477,31 +667,24 @@ class PinnacleScraper:
             WebDriverWait(driver, 60).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, "#root")),
             )
+            self._dismiss_cookie_banner(driver)
             if self.discover_settle > 0:
                 time.sleep(self.discover_settle)
             self._scroll_lazy(driver)
 
-            cand = set()
-            anchors = driver.find_elements(By.TAG_NAME, "a")
-            for a in anchors:
-                raw = (a.get_attribute("href") or "").strip()
-                if not raw or "basketball/" not in raw.lower():
-                    continue
-                canon = _normalize_game_url(raw, self.league)
-                if canon:
-                    cand.add(canon)
-
-            if not cand:
-                for m in _GAME_PATH_RE.finditer(driver.page_source or ""):
-                    if m.group("league").lower() != self.league:
-                        continue
-                    frag = m.group(0)
-                    canon = _normalize_game_url(urljoin(PINNACLE_ORIGIN, frag), self.league)
-                    if canon:
-                        cand.add(canon)
-
-            if cand:
-                return sorted(cand)[: self.max_games]
+            urls_by_rid: dict[str, str] = {}
+            finished: dict[str, str] = {}
+            deadline = time.time() + max(1.0, self.discover_wait)
+            while True:
+                urls = self._league_matchups_from_arcadia(driver, urls_by_rid, finished)
+                if not urls:
+                    urls = self._read_game_urls_from_driver(driver)
+                if urls:
+                    return urls[: self.max_games]
+                if time.time() >= deadline:
+                    break
+                self._scroll_lazy(driver, rounds=1)
+                time.sleep(0.45)
 
         return []
 
@@ -719,30 +902,80 @@ class PinnacleScraper:
         matchup_id: str,
         participants: list[str],
     ) -> dict[str, list[dict[str, Any]]]:
-        """Moneyline / spread / total (game-level, not player props), grouped by type
-        then by period (0 = full game, 1/2 = halves, etc. depending on what Pinnacle
-        offers for the league)."""
-        out: dict[str, list[dict[str, Any]]] = {t: [] for t in TEAM_MARKET_TYPES}
+        """Moneyline / spread / total (game-level, not player props).
 
+        Arcadia puts team-line *odds* in the straight payload with
+        ``matchupId == game id``. The related payload is mostly player-prop
+        ``special`` markets (plus one ``matchup`` row for participants) — it does
+        not define moneyline/spread/total markets, so we read straight directly.
+        """
+        out: dict[str, list[dict[str, Any]]] = {t: [] for t in TEAM_MARKET_TYPES}
+        try:
+            mid_int = int(matchup_id)
+        except (TypeError, ValueError):
+            return out
+
+        # Prefer Arcadia home/away names; slug order is often reversed.
+        alignment_names: dict[str, str] = {}
         for market in markets_raw:
-            mtype = market.get("type")
+            if market.get("type") != "matchup":
+                continue
+            try:
+                if int(market.get("id")) != mid_int:
+                    continue
+            except (TypeError, ValueError):
+                continue
+            for part in market.get("participants") or []:
+                if not isinstance(part, dict):
+                    continue
+                align = part.get("alignment")
+                name = part.get("name")
+                if align and name:
+                    alignment_names[str(align)] = str(name)
+            break
+
+        if not alignment_names and len(participants) >= 2:
+            # Last resort: treat slug order as away @ home is unreliable; keep
+            # designation-only lines without inventing wrong team names.
+            pass
+
+        for row in straight:
+            try:
+                if int(row.get("matchupId")) != mid_int:
+                    continue
+            except (TypeError, ValueError):
+                continue
+            mtype = row.get("type")
             if mtype not in TEAM_MARKET_TYPES:
                 continue
-            prices = self._prices_for_market(market, straight, matchup_id)
+            prices = row.get("prices") or []
             if not prices:
                 continue
 
-            period = market.get("period", 0)
+            period = row.get("period", 0)
             lines: list[dict[str, Any]] = []
-            for p in sorted(prices, key=lambda x: (x.get("participantId") or 0)):
+            for p in prices:
+                if not isinstance(p, dict):
+                    continue
                 entry: dict[str, Any] = {}
+                designation = p.get("designation")
+                if designation:
+                    entry["side"] = designation
+                    team = alignment_names.get(str(designation))
+                    if team:
+                        entry["team"] = team
                 pid = p.get("participantId")
-                if pid is not None and participants and 0 <= pid < len(participants):
-                    entry["team"] = participants[pid]
-                elif pid is not None:
+                if "team" not in entry and pid is not None and participants:
+                    try:
+                        ipid = int(pid)
+                    except (TypeError, ValueError):
+                        ipid = -1
+                    if 0 <= ipid < len(participants):
+                        entry["team"] = participants[ipid]
+                    else:
+                        entry["participant_id"] = pid
+                elif "team" not in entry and pid is not None:
                     entry["participant_id"] = pid
-                if p.get("designation"):
-                    entry["side"] = p["designation"]
                 if p.get("points") is not None:
                     entry["points"] = p["points"]
                 price = p.get("price")
@@ -752,7 +985,10 @@ class PinnacleScraper:
                 lines.append(entry)
 
             if lines:
-                out[mtype].append({"period": period, "lines": lines})
+                block: dict[str, Any] = {"period": period, "lines": lines}
+                if row.get("isAlternate"):
+                    block["is_alternate"] = True
+                out[mtype].append(block)
 
         return out
 
@@ -791,6 +1027,39 @@ class PinnacleScraper:
         label = slug.replace("-", " ").title().replace(" Vs ", " vs ") if slug else ""
         parsed = urlparse(driver.current_url)
         parts = _participants_from_slug(slug)
+        start_time: str | None = None
+        try:
+            mid_int = int(mid)
+        except (TypeError, ValueError):
+            mid_int = None
+        if mid_int is not None:
+            for market in raw_markets:
+                if market.get("type") != "matchup":
+                    continue
+                try:
+                    if int(market.get("id")) != mid_int:
+                        continue
+                except (TypeError, ValueError):
+                    continue
+                ordered = sorted(
+                    [
+                        p
+                        for p in (market.get("participants") or [])
+                        if isinstance(p, dict) and p.get("name")
+                    ],
+                    key=lambda p: (
+                        0 if p.get("alignment") == "away" else 1,
+                        p.get("order") if p.get("order") is not None else 99,
+                    ),
+                )
+                names = [str(p["name"]) for p in ordered]
+                if len(names) >= 2:
+                    parts = names
+                    label = f"{names[0]} vs {names[1]}"
+                st = market.get("startTime")
+                if isinstance(st, str) and st:
+                    start_time = st
+                break
 
         team_markets = self.team_markets_from_arcadia_arrays(straight, raw_markets, mid, parts)
 
@@ -799,7 +1068,7 @@ class PinnacleScraper:
             "source_url": driver.current_url,
             "path": parsed.path,
             "league": self.league.upper(),
-            "start_time": None,
+            "start_time": start_time,
             "label": label,
             "participants": parts,
             "props": props,

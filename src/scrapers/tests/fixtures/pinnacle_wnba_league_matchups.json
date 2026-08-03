@@ -1,0 +1,368 @@
+[
+  {
+    "ageLimit": 0,
+    "altTeaser": false,
+    "featureOrder": 0,
+    "hasAltSpread": true,
+    "hasAltTotal": true,
+    "hasBetshare": false,
+    "hasLive": true,
+    "hasMarkets": true,
+    "id": 1633005317,
+    "isBetshareEnabled": false,
+    "isFeatured": true,
+    "isHighlighted": true,
+    "isLive": false,
+    "isPromoted": false,
+    "league": {
+      "ageLimit": 0,
+      "featureOrder": 1,
+      "group": "USA",
+      "id": 578,
+      "isFeatured": true,
+      "isHidden": false,
+      "isPromoted": false,
+      "isSticky": false,
+      "matchupCount": 3,
+      "matchupCountSE": 3,
+      "name": "WNBA",
+      "sequence": 23,
+      "sport": {
+        "featureOrder": 3,
+        "id": 4,
+        "isFeatured": true,
+        "isHidden": false,
+        "isSticky": false,
+        "matchupCount": 50,
+        "matchupCountSE": 47,
+        "name": "Basketball",
+        "primaryMarketType": "spread"
+      }
+    },
+    "liveMode": null,
+    "parent": null,
+    "parentId": null,
+    "parlayRestriction": "unique_matchups",
+    "participants": [
+      {
+        "alignment": "home",
+        "name": "Atlanta Dream",
+        "order": 1,
+        "stats": [
+          {
+            "period": 0
+          }
+        ]
+      },
+      {
+        "alignment": "away",
+        "name": "Las Vegas Aces",
+        "order": 0,
+        "stats": [
+          {
+            "period": 0
+          }
+        ]
+      }
+    ],
+    "periods": [
+      {
+        "cutoffAt": "2026-08-03T23:00:00Z",
+        "hasMoneyline": true,
+        "hasSpread": true,
+        "hasTeamTotal": true,
+        "hasTotal": true,
+        "period": 0,
+        "status": "open"
+      }
+    ],
+    "rotation": 653,
+    "startTime": "2026-08-03T23:00:00Z",
+    "state": {},
+    "status": "pending",
+    "totalMarketCount": 28,
+    "type": "matchup",
+    "units": "Regular",
+    "version": 693752337
+  },
+  {
+    "ageLimit": 0,
+    "altTeaser": false,
+    "featureOrder": 1,
+    "hasAltSpread": true,
+    "hasAltTotal": true,
+    "hasBetshare": false,
+    "hasLive": true,
+    "hasMarkets": true,
+    "id": 1633006053,
+    "isBetshareEnabled": false,
+    "isFeatured": true,
+    "isHighlighted": true,
+    "isLive": false,
+    "isPromoted": false,
+    "league": {
+      "ageLimit": 0,
+      "featureOrder": 1,
+      "group": "USA",
+      "id": 578,
+      "isFeatured": true,
+      "isHidden": false,
+      "isPromoted": false,
+      "isSticky": false,
+      "matchupCount": 3,
+      "matchupCountSE": 3,
+      "name": "WNBA",
+      "sequence": 23,
+      "sport": {
+        "featureOrder": 3,
+        "id": 4,
+        "isFeatured": true,
+        "isHidden": false,
+        "isSticky": false,
+        "matchupCount": 50,
+        "matchupCountSE": 47,
+        "name": "Basketball",
+        "primaryMarketType": "spread"
+      }
+    },
+    "liveMode": null,
+    "parent": null,
+    "parentId": null,
+    "parlayRestriction": "unique_matchups",
+    "participants": [
+      {
+        "alignment": "home",
+        "name": "New York Liberty",
+        "order": 1,
+        "stats": [
+          {
+            "period": 0
+          }
+        ]
+      },
+      {
+        "alignment": "away",
+        "name": "Seattle Storm",
+        "order": 0,
+        "stats": [
+          {
+            "period": 0
+          }
+        ]
+      }
+    ],
+    "periods": [
+      {
+        "cutoffAt": "2026-08-03T23:00:00Z",
+        "hasMoneyline": true,
+        "hasSpread": true,
+        "hasTeamTotal": true,
+        "hasTotal": true,
+        "period": 0,
+        "status": "open"
+      }
+    ],
+    "rotation": 651,
+    "startTime": "2026-08-03T23:00:00Z",
+    "state": {},
+    "status": "pending",
+    "totalMarketCount": 29,
+    "type": "matchup",
+    "units": "Regular",
+    "version": 693752337
+  },
+  {
+    "ageLimit": 0,
+    "altTeaser": false,
+    "featureOrder": 2,
+    "hasAltSpread": true,
+    "hasAltTotal": true,
+    "hasBetshare": false,
+    "hasLive": true,
+    "hasMarkets": true,
+    "id": 1633005969,
+    "isBetshareEnabled": false,
+    "isFeatured": true,
+    "isHighlighted": true,
+    "isLive": false,
+    "isPromoted": false,
+    "league": {
+      "ageLimit": 0,
+      "featureOrder": 1,
+      "group": "USA",
+      "id": 578,
+      "isFeatured": true,
+      "isHidden": false,
+      "isPromoted": false,
+      "isSticky": false,
+      "matchupCount": 3,
+      "matchupCountSE": 3,
+      "name": "WNBA",
+      "sequence": 23,
+      "sport": {
+        "featureOrder": 3,
+        "id": 4,
+        "isFeatured": true,
+        "isHidden": false,
+        "isSticky": false,
+        "matchupCount": 50,
+        "matchupCountSE": 47,
+        "name": "Basketball",
+        "primaryMarketType": "spread"
+      }
+    },
+    "liveMode": null,
+    "parent": null,
+    "parentId": null,
+    "parlayRestriction": "unique_matchups",
+    "participants": [
+      {
+        "alignment": "home",
+        "name": "Chicago Sky",
+        "order": 1,
+        "stats": [
+          {
+            "period": 0
+          }
+        ]
+      },
+      {
+        "alignment": "away",
+        "name": "Phoenix Mercury",
+        "order": 0,
+        "stats": [
+          {
+            "period": 0
+          }
+        ]
+      }
+    ],
+    "periods": [
+      {
+        "cutoffAt": "2026-08-04T01:00:00Z",
+        "hasMoneyline": true,
+        "hasSpread": true,
+        "hasTeamTotal": true,
+        "hasTotal": true,
+        "period": 0,
+        "status": "open"
+      }
+    ],
+    "rotation": 655,
+    "startTime": "2026-08-04T01:00:00Z",
+    "state": {},
+    "status": "pending",
+    "totalMarketCount": 20,
+    "type": "matchup",
+    "units": "Regular",
+    "version": 693752337
+  },
+  {
+    "ageLimit": 0,
+    "altTeaser": false,
+    "featureOrder": -1,
+    "hasAltSpread": false,
+    "hasAltTotal": false,
+    "hasBetshare": false,
+    "hasLive": true,
+    "hasMarkets": true,
+    "id": 1633317458,
+    "isBetshareEnabled": false,
+    "isFeatured": false,
+    "isHighlighted": false,
+    "isLive": false,
+    "isPromoted": false,
+    "league": {
+      "ageLimit": 0,
+      "featureOrder": 1,
+      "group": "USA",
+      "id": 578,
+      "isFeatured": true,
+      "isHidden": false,
+      "isPromoted": false,
+      "isSticky": false,
+      "matchupCount": 3,
+      "matchupCountSE": 3,
+      "name": "WNBA",
+      "sequence": 23,
+      "sport": {
+        "featureOrder": 3,
+        "id": 4,
+        "isFeatured": true,
+        "isHidden": false,
+        "isSticky": false,
+        "matchupCount": 50,
+        "matchupCountSE": 47,
+        "name": "Basketball",
+        "primaryMarketType": "spread"
+      }
+    },
+    "liveMode": null,
+    "parent": {
+      "hasMarkets": true,
+      "id": 1633006053,
+      "isLive": false,
+      "participants": [
+        {
+          "alignment": "home",
+          "name": "New York Liberty",
+          "order": 1,
+          "stats": [
+            {
+              "period": 0
+            }
+          ]
+        },
+        {
+          "alignment": "away",
+          "name": "Seattle Storm",
+          "order": 0,
+          "stats": [
+            {
+              "period": 0
+            }
+          ]
+        }
+      ],
+      "startTime": "2026-08-03T23:00:00Z",
+      "state": {}
+    },
+    "parentId": 1633006053,
+    "parlayRestriction": null,
+    "participants": [
+      {
+        "alignment": "neutral",
+        "id": 1633317459,
+        "name": "Over",
+        "order": 0,
+        "rotation": 651
+      },
+      {
+        "alignment": "neutral",
+        "id": 1633317460,
+        "name": "Under",
+        "order": 0,
+        "rotation": 652
+      }
+    ],
+    "periods": [
+      {
+        "cutoffAt": "2026-08-03T23:00:00Z",
+        "period": 0,
+        "status": "open"
+      }
+    ],
+    "rotation": 651,
+    "special": {
+      "category": "Player Props",
+      "description": "Jonquel Jones Total Pts & Rebs & Asts"
+    },
+    "startTime": "2026-08-03T23:00:00Z",
+    "state": {},
+    "status": "pending",
+    "totalMarketCount": 1,
+    "type": "special",
+    "units": "Pts & Rebs & Asts",
+    "version": 623603090
+  }
+]
