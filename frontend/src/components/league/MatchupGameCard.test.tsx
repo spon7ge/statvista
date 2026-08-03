@@ -159,6 +159,26 @@ describe("MatchupGameCard", () => {
     );
   });
 
+  it("shows Pinnacle caption when sportsbook is pinnacle", () => {
+    renderCard({
+      ...liveGame,
+      odds: {
+        spreadTeamAbbrev: "ATL",
+        spreadLine: -1.5,
+        total: 186,
+        sportsbook: "pinnacle",
+      },
+    });
+    expect(screen.getByText(/pinnacle/i)).toBeInTheDocument();
+    expect(
+      screen.queryByRole("img", { name: "DraftKings" }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByTestId("matchup-odds")).toHaveAttribute(
+      "data-sportsbook",
+      "pinnacle",
+    );
+  });
+
   it("shows FanDuel caption when sportsbook is fanduel", () => {
     renderCard({
       ...liveGame,

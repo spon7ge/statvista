@@ -42,6 +42,13 @@ function TeamRow({
 
 function OddsByCaption({ sportsbook }: { sportsbook?: string | null }) {
   const book = (sportsbook || "draftkings").toLowerCase();
+  if (book === "pinnacle") {
+    return (
+      <p className="mt-1 text-right text-[10px] tracking-wide text-white/35">
+        Odds by Pinnacle
+      </p>
+    );
+  }
   const isFanDuel = book === "fanduel";
   return (
     <p className="mt-1 flex items-center justify-end gap-1 text-[10px] tracking-wide text-white/35">
