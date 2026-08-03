@@ -13,8 +13,12 @@ from app.schemas.wnba_props import (
     WnbaPropLine,
     WnbaPropsResponse,
 )
-from app.services.dfs_attach import attach_dfs_snapshots
-from app.services.odds_snapshots import fetch_latest_prizepicks, fetch_latest_underdog
+from app.services.dfs_attach import attach_dfs_snapshots, attach_pinnacle_snapshot
+from app.services.odds_snapshots import (
+    fetch_latest_pinnacle,
+    fetch_latest_prizepicks,
+    fetch_latest_underdog,
+)
 from app.services.parlay_client import parlay_get
 from app.services.wnba_espn_roster import get_roster_index, norm_player_name
 from app.services.wnba_scoreboard import canonical_abbrev
@@ -206,7 +210,7 @@ async def fetch_parlay_prop_rows() -> list[dict[str, Any]]:
     )
     if not isinstance(payload, list):
         raise RuntimeError("Parlay props response was not a list")
-    allowed_books = frozenset(PROP_SPORTSBOOKS)
+    allowed_books = frozenset(b for b in PROP_SPORTSBOOKS if b != "pinnacle")
     return [
         row
         for row in payload
@@ -350,6 +354,8 @@ async def get_today_props() -> WnbaPropsResponse:
     props = attach_dfs_snapshots(
         sportsbook_props, pp_rows, ud_rows, player_teams=player_teams
     )
+    pin_rows = fetch_latest_pinnacle("wnba")
+    props = attach_pinnacle_snapshot(props, pin_rows)
 
     if not props:
         if parlay_error:

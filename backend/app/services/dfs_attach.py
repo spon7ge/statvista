@@ -95,6 +95,23 @@ def _player_side_key(
     return (norm_player_name(player_name), stat_key, side)
 
 
+def _prop_stat_key(prop: WnbaPropLine) -> str | None:
+    market_type = prop.market_type
+    if market_type.startswith("prizepicks:"):
+        return _pp_stat_key(market_type[len("prizepicks:") :])
+    if market_type.startswith("underdog:"):
+        return _ud_stat_key(market_type[len("underdog:") :])
+    return canonical_stat_key_from_parlay_market(market_type)
+
+
+def _dfs_slot_line(prop: WnbaPropLine) -> float | None:
+    if prop.prizepicks is not None:
+        return float(prop.prizepicks.line)
+    if prop.underdog is not None:
+        return float(prop.underdog.line)
+    return None
+
+
 def _slot_key(
     player_name: str, stat_key: str, side: str, line: float
 ) -> tuple[str, str, str, float]:
@@ -337,3 +354,49 @@ def attach_dfs_snapshots(
         )
     )
     return props
+
+
+def attach_pinnacle_snapshot(
+    props: list[WnbaPropLine],
+    pin_rows: list[dict[str, Any]],
+) -> list[WnbaPropLine]:
+    """Attach latest Selenium Pinnacle quotes from Supabase snapshot rows."""
+    index: dict[tuple[str, str, str], list[WnbaPropBookQuote]] = {}
+    for row in pin_rows:
+        player = str(row.get("player_name") or "").strip()
+        market_type = str(row.get("market_type") or "").strip()
+        side = str(row.get("side") or "").lower()
+        line_raw = row.get("line_score")
+        if not player or not market_type or side not in _VALID_SIDES or line_raw is None:
+            continue
+        stat_key = canonical_stat_key_from_parlay_market(market_type)
+        if stat_key is None:
+            continue
+        try:
+            line_f = float(line_raw)
+            odds_i = _parse_american_price(row.get("american_price"))
+        except (TypeError, ValueError):
+            continue
+        key = _player_side_key(player, stat_key, side)
+        index.setdefault(key, []).append(
+            WnbaPropBookQuote(line=line_f, odds_american=odds_i)
+        )
+
+    out: list[WnbaPropLine] = []
+    for prop in props:
+        stat_key = _prop_stat_key(prop)
+        if stat_key is None:
+            out.append(prop)
+            continue
+        key = _player_side_key(prop.player_name, stat_key, prop.side)
+        candidates = index.get(key, [])
+        slot_line = _dfs_slot_line(prop)
+        if slot_line is None:
+            out.append(prop)
+            continue
+        pinnacle = pick_closest_quote(candidates, [slot_line])
+        if pinnacle is None:
+            out.append(prop)
+            continue
+        out.append(prop.model_copy(update={"pinnacle": pinnacle}))
+    return out
