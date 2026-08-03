@@ -101,8 +101,8 @@ main.tsx
 | `/` | Brand, LIVE NOW, explainer, league CTAs | `useWnbaScoreboard`, `useMlbScoreboard` | WNBA + MLB scoreboard today | Client merge via `mergeLeagueScoreboards` |
 | `/about` | Product / tech / data story | — | none | Static components under `components/about/` |
 | Chrome ticker | All chrome routes | same scoreboard queries | WNBA + MLB today | Client merge; isolated per-league error handling |
-| `/wnba/matchups?date=` | Daily slate; odds when date is in odds window | `useWnbaScoreboard(date)`, `useWnbaOdds` | scoreboard (`/today` or `?date=`), `GET /api/wnba/odds/today` | Odds via ParlayAPI; client merges onto cards (`mergeMatchupOdds`) |
-| `/wnba/prop_picks` | Filterable DFS + US book prop table | `useWnbaProps`, scoreboard | `GET /api/wnba/props/today` | DFS-first board from Supabase PrizePicks/Underdog snapshots + Parlay US books; hide past tip-offs via scoreboard |
+| `/wnba/matchups?date=` | Daily slate; odds when date is in odds window | `useWnbaScoreboard(date)`, `useWnbaOdds` | scoreboard (`/today` or `?date=`), `GET /api/wnba/odds/today` | Matchup odds from Supabase `odds.wnba_pinnacle_team` (Selenium); Sharp DK/FD fallback per game when Pinnacle lacks spread/total; client merges onto cards (`mergeMatchupOdds`) |
+| `/wnba/prop_picks` | Filterable DFS + US book prop table | `useWnbaProps`, scoreboard | `GET /api/wnba/props/today` | DFS-first board from Supabase PrizePicks/Underdog snapshots + Parlay US books (Parlay does **not** supply Pinnacle); Pinnacle column from Supabase `odds.wnba_pinnacle` (Selenium); hide past tip-offs via scoreboard |
 | `/wnba/leaders` | Season leaderboards | `useWnbaLeaders` | `GET /api/wnba/leaders` | stats.wnba.com |
 | `/wnba/standings` | East / West standings | `useWnbaStandings` | `GET /api/wnba/standings` | ESPN |
 | `/wnba/futures` | Championship / award futures | `useWnbaFutures` | `GET /api/wnba/futures` | ESPN core futures API |
@@ -117,7 +117,8 @@ main.tsx
 - Most WNBA handlers use short in-process caches; responses that must stay fresh often send `Cache-Control: no-store`.
 - MLB scoreboard today always returns `Cache-Control: no-store`; upstream failures surface as HTTP 502 (also no-store).
 - OpenAPI is the contract. Backend export → `frontend/openapi.json` → regenerate `api.schema.d.ts`. Verify with `npm run check:api`.
-- Prop picks: server builds DFS-anchored rows (`parlay_props` + `dfs_attach` + `odds_snapshots`); the UI filters by book / stat / team / side client-side (`filterPropLines`).
+- Prop picks: server builds DFS-anchored rows (`parlay_props` + `dfs_attach` + `odds_snapshots`); Pinnacle attaches from `odds.wnba_pinnacle` (Selenium), not ParlayAPI; the UI filters by book / stat / team / side client-side (`filterPropLines`).
+- WNBA matchup odds: `pinnacle_team_odds` reads `odds.wnba_pinnacle_team` (Selenium) and falls back to Sharp per game when Pinnacle has no spread/total.
 
 ### Prop picks data flow (detail)
 
@@ -125,9 +126,10 @@ main.tsx
 LeaguePropPicksPage
   → GET /api/wnba/props/today
   → parlay_props.get_today_props()
-       ├─ ParlayAPI player props (US sportsbooks; main lines)
+       ├─ ParlayAPI player props (US sportsbooks; main lines; Pinnacle excluded)
        ├─ odds_snapshots (latest Supabase odds.wnba_prizepicks / odds.wnba_underdogs)
-       └─ attach_dfs_snapshots()  # DFS-first rows; match US books to DFS lines
+       ├─ attach_dfs_snapshots()  # DFS-first rows; match US books to DFS lines
+       └─ attach_pinnacle_snapshot()  # odds.wnba_pinnacle (Selenium scraper → Supabase)
   → client excludePastGameProps(scoreboard) + PropPicksFilters
 ```
 
@@ -181,7 +183,7 @@ Feature-level history lives under `docs/superpowers/specs/` and `docs/superpower
 |--------|------|------------------------|
 | GET | `/api/wnba/scoreboard/today` | `wnba_scoreboard` |
 | GET | `/api/wnba/scoreboard?date=` | `wnba_scoreboard` |
-| GET | `/api/wnba/odds/today` | `parlay_odds` |
+| GET | `/api/wnba/odds/today` | `pinnacle_team_odds` (Supabase `odds.wnba_pinnacle_team` + Sharp fallback) |
 | GET | `/api/wnba/props/today` | `parlay_props` (+ `dfs_attach`, `odds_snapshots`) |
 | GET | `/api/wnba/leaders` | `wnba_leaders` |
 | GET | `/api/wnba/standings` | `wnba_standings` |
