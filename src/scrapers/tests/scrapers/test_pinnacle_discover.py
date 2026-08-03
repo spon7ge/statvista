@@ -5,7 +5,9 @@ from __future__ import annotations
 import importlib.util
 import json
 import sys
+from datetime import datetime
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 _SCRAPER_PATH = Path(__file__).resolve().parents[2] / "pinnacle.py"
 _LEAGUE_FIXTURE = (
@@ -25,6 +27,20 @@ def _load_scraper():
 
 
 pin = _load_scraper()
+
+
+def test_props_and_team_filenames() -> None:
+    now = datetime(2026, 8, 3, 12, 0, 0, tzinfo=ZoneInfo("America/Los_Angeles"))
+    assert pin._pinnacle_output_filename("wnba", now, kind="props").endswith("_props.json")
+    assert pin._pinnacle_output_filename("wnba", now, kind="team").endswith("_team.json")
+    assert (
+        pin._pinnacle_output_filename("wnba", now, kind="props")
+        == "pinnacle_wnba_2026-08-03_120000_props.json"
+    )
+    assert (
+        pin._pinnacle_output_filename("wnba", now, kind="team")
+        == "pinnacle_wnba_2026-08-03_120000_team.json"
+    )
 
 
 class TestGameUrlsFromLeagueMatchups:

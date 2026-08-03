@@ -21,8 +21,8 @@ is derived. The site odds-format switch does not change the API (no need to auto
 PINNACLE_LEAGUES — comma-separated list of leagues to scrape, chosen from "nba", "wnba".
 Default is "nba,wnba" (both). Example: PINNACLE_LEAGUES=wnba to scrape only WNBA.
 
-Output: data/props/pinnacle/{league}/pinnacle_{league}_{YYYY-MM-DD}_{HHMMSS}.json
-(America/Los_Angeles, PST/PDT). Override with:
+Output: data/props/pinnacle/{league}/pinnacle_{league}_{YYYY-MM-DD}_{HHMMSS}_props.json
+and pinnacle_{league}_{YYYY-MM-DD}_{HHMMSS}_team.json (America/Los_Angeles, PST/PDT). Override with:
   PINNACLE_OUTPUT     — full path to a .json file. If both leagues run in the same
                          invocation, the league is inserted before the extension
                          (e.g. "out.json" -> "out_nba.json", "out_wnba.json") so the
@@ -54,6 +54,7 @@ from __future__ import annotations
 import base64
 import datetime as dt
 import json
+import logging
 import os
 import re
 import sys
@@ -118,15 +119,43 @@ _GAME_PATH_RE = re.compile(
 )
 
 
-def _pinnacle_output_filename(league: str, now: dt.datetime | None = None) -> str:
-    """Filesystem-safe name: pinnacle_nba_2026-05-06_213045.json in Pacific time."""
+logger = logging.getLogger(__name__)
+
+
+def _pinnacle_output_filename(
+    league: str,
+    now: dt.datetime | None = None,
+    *,
+    kind: str = "props",
+) -> str:
+    """Filesystem-safe name: pinnacle_nba_2026-05-06_213045_props.json in Pacific time."""
+    if kind not in ("props", "team"):
+        raise ValueError(f"kind must be 'props' or 'team', got {kind!r}")
     if now is None:
         d = dt.datetime.now(_PINNACLE_OUTPUT_TZ)
     elif now.tzinfo is None:
         d = now.replace(tzinfo=dt.timezone.utc).astimezone(_PINNACLE_OUTPUT_TZ)
     else:
         d = now.astimezone(_PINNACLE_OUTPUT_TZ)
-    return d.strftime(f"pinnacle_{league}_%Y-%m-%d_%H%M%S.json")
+    return d.strftime(f"pinnacle_{league}_%Y-%m-%d_%H%M%S_{kind}.json")
+
+
+def _pinnacle_team_output_path(props_path: str) -> str:
+    """Derive team JSON path from the props output path."""
+    if props_path.endswith("_props.json"):
+        return props_path[: -len("_props.json")] + "_team.json"
+    base, ext = os.path.splitext(props_path)
+    return f"{base}_team{ext or '.json'}"
+
+
+def _pinnacle_props_payload(base: dict[str, Any], games: list[dict[str, Any]]) -> dict[str, Any]:
+    props_games = [{k: v for k, v in g.items() if k != "team_markets"} for g in games]
+    return {**base, "snapshot_kind": "props", "games": props_games}
+
+
+def _pinnacle_team_payload(base: dict[str, Any], games: list[dict[str, Any]]) -> dict[str, Any]:
+    team_games = [{k: v for k, v in g.items() if k != "props"} for g in games]
+    return {**base, "snapshot_kind": "team", "games": team_games}
 
 
 def _insert_league_suffix(path: str, league: str) -> str:
@@ -402,7 +431,7 @@ class PinnacleScraper:
             if out_file.endswith(("/", "\\")) or os.path.isdir(expanded):
                 self.output_path = os.path.join(
                     expanded.rstrip("/\\"),
-                    _pinnacle_output_filename(league),
+                    _pinnacle_output_filename(league, kind="props"),
                 )
             elif expanded.lower().endswith(".json"):
                 self.output_path = (
@@ -411,10 +440,10 @@ class PinnacleScraper:
                     else expanded
                 )
             else:
-                self.output_path = os.path.join(expanded, _pinnacle_output_filename(league))
+                self.output_path = os.path.join(expanded, _pinnacle_output_filename(league, kind="props"))
         elif out_dir:
             directory = out_dir
-            name = _pinnacle_output_filename(league)
+            name = _pinnacle_output_filename(league, kind="props")
             if directory.endswith(("/", "\\")) or (
                 os.path.exists(directory) and os.path.isdir(directory)
             ):
@@ -424,7 +453,7 @@ class PinnacleScraper:
             else:
                 self.output_path = directory
         else:
-            self.output_path = os.path.join(default_dir, _pinnacle_output_filename(league))
+            self.output_path = os.path.join(default_dir, _pinnacle_output_filename(league, kind="props"))
 
         fmt = os.environ.get("PINNACLE_ODDS_FORMAT", "both").strip().lower()
         self.odds_format = fmt if fmt in ("both", "decimal", "american") else "both"
@@ -1182,7 +1211,7 @@ class PinnacleScraper:
             )
             games_out = self._scrape_games_parallel(urls)
 
-        payload: dict[str, Any] = {
+        payload_base: dict[str, Any] = {
             "fetched_at": dt.datetime.now(_PINNACLE_OUTPUT_TZ).isoformat(timespec="seconds"),
             "source": "pinnacle_selenium",
             "sport": "basketball",
@@ -1194,22 +1223,62 @@ class PinnacleScraper:
             "games_per_worker_target": self.games_per_worker,
             "arcadia_timeout_s": self.arcadia_timeout,
             "arcadia_poll_s": self.arcadia_poll,
-            "games": games_out,
         }
+        props_payload = _pinnacle_props_payload(payload_base, games_out)
+        team_payload = _pinnacle_team_payload(payload_base, games_out)
 
-        out_dir = os.path.dirname(self.output_path)
+        props_path = self.output_path
+        team_path = _pinnacle_team_output_path(props_path)
+        out_dir = os.path.dirname(props_path)
         if out_dir and not os.path.exists(out_dir):
             os.makedirs(out_dir, exist_ok=True)
 
-        with open(self.output_path, "w", encoding="utf-8") as f:
-            json.dump(payload, f, indent=2, ensure_ascii=False)
+        with open(props_path, "w", encoding="utf-8") as f:
+            json.dump(props_payload, f, indent=2, ensure_ascii=False)
+        with open(team_path, "w", encoding="utf-8") as f:
+            json.dump(team_payload, f, indent=2, ensure_ascii=False)
+
+        scraped_at = dt.datetime.now(dt.timezone.utc)
+        db_ok = True
+        try:
+            from src.odds.load_snapshots import (
+                load_pinnacle_props_snapshot,
+                load_pinnacle_team_snapshot,
+            )
+
+            n_props_db = load_pinnacle_props_snapshot(
+                games_out,
+                league=self.league,
+                scraped_at=scraped_at,
+            )
+            logger.info(
+                "Supabase odds.wnba_pinnacle upserted %s rows (%s)",
+                n_props_db,
+                self.league,
+            )
+            n_team_db = load_pinnacle_team_snapshot(
+                games_out,
+                league=self.league,
+                scraped_at=scraped_at,
+            )
+            logger.info(
+                "Supabase odds.wnba_pinnacle_team upserted %s rows (%s)",
+                n_team_db,
+                self.league,
+            )
+        except Exception as exc:
+            db_ok = False
+            logger.warning("Supabase pinnacle load failed (JSON kept): %s", exc)
 
         n_props = sum(len(g.get("props") or []) for g in games_out)
         print(
             f"✓ [{self.league}] Saved {len(games_out)} games, {n_props} player prop rows "
-            f"→ {self.output_path}",
+            f"→ {props_path} + {team_path}",
         )
-        return payload
+        if not db_ok:
+            print(f"⚠ [{self.league}] Supabase upsert failed; see logs", file=sys.stderr)
+
+        return props_payload
 
 
 def _requested_leagues() -> list[str]:
