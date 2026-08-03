@@ -1,6 +1,11 @@
 import { Link, useParams } from "react-router-dom";
 import { useMlbGameDetail } from "@/hooks/useMlbGameDetail";
 import { mapMlbGameDetail } from "@/components/mlb/mapMlbGameDetail";
+import { MlbBoxScore } from "@/components/mlb/MlbBoxScore";
+import { MlbGameHeader } from "@/components/mlb/MlbGameHeader";
+import { MlbLinescore } from "@/components/mlb/MlbLinescore";
+import { MlbLiveSituation } from "@/components/mlb/MlbLiveSituation";
+import { MlbPlayByPlay } from "@/components/mlb/MlbPlayByPlay";
 import type { MlbGameDetailView } from "@/components/mlb/types";
 import { GAME_SECTION_SURFACE } from "@/components/game/GameSection";
 
@@ -117,11 +122,32 @@ export function MlbGameDetailPage() {
 
   return (
     <div className="mx-auto max-w-6xl space-y-4 px-4 py-6 sm:px-6">
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <BackLink />
-        <p className="text-xs text-white/40">{attributionLabel(detail.sources)}</p>
+        <p className="text-xs text-white/45">
+          <span className="text-red-400">{detail.statusLabel}</span>
+          {detail.venue ? (
+            <>
+              <span className="mx-1.5 text-white/30" aria-hidden>
+                ·
+              </span>
+              <span>{detail.venue}</span>
+            </>
+          ) : null}
+          <span className="mx-1.5 text-white/30" aria-hidden>
+            ·
+          </span>
+          <span className="text-white/40">{attributionLabel(detail.sources)}</span>
+        </p>
       </div>
-      <div data-testid="mlb-live-center" />
+
+      <div data-testid="mlb-live-center" className="space-y-4">
+        <MlbGameHeader detail={detail} />
+        <MlbLinescore detail={detail} />
+        <MlbLiveSituation detail={detail} />
+        <MlbPlayByPlay detail={detail} />
+        <MlbBoxScore detail={detail} />
+      </div>
     </div>
   );
 }

@@ -67,7 +67,7 @@ describe("MlbGameDetailPage", () => {
     vi.unstubAllGlobals();
   });
 
-  it("shows live center placeholder and attribution for live MLB games", async () => {
+  it("shows live center sections and attribution for live MLB games", async () => {
     fetchMock.mockResolvedValue({
       ok: true,
       json: async () => mlbDetail("live", ["statsapi", "espn"]),
@@ -75,6 +75,8 @@ describe("MlbGameDetailPage", () => {
     renderPage();
     expect(await screen.findByTestId("mlb-live-center")).toBeInTheDocument();
     expect(screen.getByText(/Data: MLB Stats API · ESPN/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Top 3rd/i).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/Fenway Park/i).length).toBeGreaterThanOrEqual(1);
     expect(screen.getByRole("link", { name: /back/i })).toHaveAttribute(
       "href",
       "/",
