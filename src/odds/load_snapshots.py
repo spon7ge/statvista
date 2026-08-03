@@ -172,6 +172,13 @@ def load_prizepicks_snapshot(
     return len(df)
 
 
+def _underdog_table(league: str) -> str:
+    lg = (league or "").strip().lower()
+    if lg == "mlb":
+        return "mlb_underdogs"
+    return "wnba_underdogs"
+
+
 def load_underdog_snapshot(
     picks: list[dict],
     *,
@@ -191,7 +198,7 @@ def load_underdog_snapshot(
     if df.empty:
         return 0
     upsert_df(
-        "wnba_underdogs",
+        _underdog_table(league),
         df,
         schema="odds",
         conflict_cols=_UNDERDOG_CONFLICT_COLS,

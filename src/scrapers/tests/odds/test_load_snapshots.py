@@ -123,6 +123,17 @@ def test_load_underdog_snapshot_calls_upsert(mock_upsert):
     ]
 
 
+def test_load_underdog_snapshot_mlb_uses_mlb_table(mock_upsert):
+    count = load_snapshots.load_underdog_snapshot(
+        UNDERDOG_PICKS, league="mlb", scraped_at=SCRAPED
+    )
+
+    assert count == 1
+    table, df = mock_upsert.call_args[0]
+    assert table == "mlb_underdogs"
+    assert df.iloc[0]["league"] == "mlb"
+
+
 def test_load_underdog_snapshot_dedupes_conflict_keys(mock_upsert):
     """Duplicate PK rows in one INSERT trigger Postgres CardinalityViolation."""
     picks = [
