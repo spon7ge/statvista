@@ -69,6 +69,17 @@ def test_load_prizepicks_snapshot_calls_upsert(mock_upsert):
     ]
 
 
+def test_load_prizepicks_snapshot_mlb_uses_mlb_table(mock_upsert):
+    count = load_snapshots.load_prizepicks_snapshot(
+        PRIZEPICKS_PROJECTIONS, league="mlb", scraped_at=SCRAPED
+    )
+
+    assert count == 1
+    table, df = mock_upsert.call_args[0]
+    assert table == "mlb_prizepicks"
+    assert df.iloc[0]["league"] == "mlb"
+
+
 def test_load_prizepicks_snapshot_empty_returns_zero(mock_upsert):
     count = load_snapshots.load_prizepicks_snapshot([], league="wnba", scraped_at=SCRAPED)
     assert count == 0

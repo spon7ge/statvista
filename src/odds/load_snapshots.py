@@ -144,6 +144,13 @@ def snapshot_interval_minutes() -> int:
     return max(value, 0)
 
 
+def _prizepicks_table(league: str) -> str:
+    lg = (league or "").strip().lower()
+    if lg == "mlb":
+        return "mlb_prizepicks"
+    return "wnba_prizepicks"
+
+
 def load_prizepicks_snapshot(
     projections: list[dict],
     *,
@@ -163,7 +170,7 @@ def load_prizepicks_snapshot(
     if df.empty:
         return 0
     upsert_df(
-        "wnba_prizepicks",
+        _prizepicks_table(league),
         df,
         schema="odds",
         conflict_cols=_PRIZEPICKS_CONFLICT_COLS,
