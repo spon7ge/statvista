@@ -2,6 +2,7 @@ import { Link, useParams } from "react-router-dom";
 import { useMlbGameDetail } from "@/hooks/useMlbGameDetail";
 import { mapMlbGameDetail } from "@/components/mlb/mapMlbGameDetail";
 import { MlbBoxScore } from "@/components/mlb/MlbBoxScore";
+import { MlbFinalCenter } from "@/components/mlb/MlbFinalCenter";
 import { MlbGameHeader } from "@/components/mlb/MlbGameHeader";
 import { MlbHitChart } from "@/components/mlb/MlbHitChart";
 import { MlbLinescore } from "@/components/mlb/MlbLinescore";
@@ -87,13 +88,6 @@ function CompactMlbHeader({ detail }: { detail: MlbGameDetailView }) {
   );
 }
 
-function notLiveMessage(status: MlbGameDetailView["status"]): string {
-  if (status === "final") {
-    return "Final — live center for completed games coming soon";
-  }
-  return "Not live yet";
-}
-
 export function MlbGameDetailPage() {
   const { gamePk } = useParams<{ gamePk: string }>();
   const { data, isLoading, hasNeverLoaded } = useMlbGameDetail(gamePk);
@@ -112,37 +106,57 @@ export function MlbGameDetailPage() {
 
   const detail = mapMlbGameDetail(data);
 
-  if (detail.status !== "live") {
+  if (detail.status === "scheduled" || detail.status === "halftime") {
     return (
       <div className="mx-auto max-w-6xl space-y-4 px-4 py-6 sm:px-6">
         <BackLink />
         <CompactMlbHeader detail={detail} />
-        <p className="text-sm text-white/60">{notLiveMessage(detail.status)}</p>
+        <p className="text-sm text-white/60">Not live yet</p>
+      </div>
+    );
+  }
+
+  const chrome = (
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <BackLink />
+      <p className="text-xs text-white/45">
+        <span
+          className={
+            detail.status === "live" ? "text-red-400" : "text-white/80"
+          }
+        >
+          {detail.statusLabel}
+        </span>
+        {detail.venue ? (
+          <>
+            <span className="mx-1.5 text-white/30" aria-hidden>
+              ·
+            </span>
+            <span>{detail.venue}</span>
+          </>
+        ) : null}
+        <span className="mx-1.5 text-white/30" aria-hidden>
+          ·
+        </span>
+        <span className="text-white/40">
+          {attributionLabel(detail.sources)}
+        </span>
+      </p>
+    </div>
+  );
+
+  if (detail.status === "final") {
+    return (
+      <div className="mx-auto max-w-6xl space-y-4 px-4 py-6 sm:px-6">
+        {chrome}
+        <MlbFinalCenter detail={detail} />
       </div>
     );
   }
 
   return (
     <div className="mx-auto max-w-6xl space-y-4 px-4 py-6 sm:px-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <BackLink />
-        <p className="text-xs text-white/45">
-          <span className="text-red-400">{detail.statusLabel}</span>
-          {detail.venue ? (
-            <>
-              <span className="mx-1.5 text-white/30" aria-hidden>
-                ·
-              </span>
-              <span>{detail.venue}</span>
-            </>
-          ) : null}
-          <span className="mx-1.5 text-white/30" aria-hidden>
-            ·
-          </span>
-          <span className="text-white/40">{attributionLabel(detail.sources)}</span>
-        </p>
-      </div>
-
+      {chrome}
       <div data-testid="mlb-live-center" className="space-y-4">
         <MlbGameHeader detail={detail} />
         <MlbLinescore detail={detail} />

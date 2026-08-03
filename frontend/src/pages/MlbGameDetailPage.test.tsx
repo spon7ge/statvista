@@ -99,18 +99,18 @@ describe("MlbGameDetailPage", () => {
     );
   });
 
-  it("shows Final message for final MLB games", async () => {
+  it("shows final center for final MLB games", async () => {
     fetchMock.mockResolvedValue({
       ok: true,
-      json: async () => mlbDetail("final"),
+      json: async () => mlbDetail("final", ["statsapi", "espn"]),
     });
     renderPage();
+    expect(await screen.findByTestId("mlb-final-center")).toBeInTheDocument();
     expect(
-      await screen.findByText(
-        "Final — live center for completed games coming soon",
-      ),
-    ).toBeInTheDocument();
+      screen.queryByText("Final — live center for completed games coming soon"),
+    ).not.toBeInTheDocument();
     expect(screen.queryByTestId("mlb-live-center")).not.toBeInTheDocument();
+    expect(screen.getByText(/Data: MLB Stats API · ESPN/i)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /back/i })).toHaveAttribute(
       "href",
       "/",
