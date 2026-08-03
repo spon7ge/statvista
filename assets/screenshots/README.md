@@ -5,7 +5,6 @@ Add PNG captures here, then reference them from the root `README.md`. SVG placeh
 | File | What to capture |
 |------|-----------------|
 | `architecture-pipeline.svg` | Static pipeline diagram (already in repo; optional redraw in Excalidraw/draw.io) |
-| `airflow-dag-success.png` | Airflow UI → `hoopvista_live_odds` → Graph with live props + slates green |
 | `dbt-lineage.png` | dbt docs → lineage for `ml.features` or `gold_prop_history` |
 | `dashboard-all-players.png` | Frontend → All Players (league filter + model/form columns) |
 | `dashboard-top-legs.png` | Frontend → Top Legs (Book / League / Legs dropdowns + parlay cards) |
@@ -20,13 +19,6 @@ cd dbt && dbt docs serve --port 8081
 # Open http://localhost:8081 → select a model → View Lineage
 ```
 
-**Airflow**
-```bash
-cd airflow && docker compose up -d
-# http://localhost:8080 (airflow / airflow)
-# Unpause hoopvista_live_odds → Trigger → wait for success
-```
-
 **Dashboard**
 ```bash
 docker compose --profile local-db up -d postgres api
@@ -37,3 +29,5 @@ cd frontend && npm run dev
 ```
 
 Export at ~1400px wide for readable README rendering. Prefer PNG over SVG for real UI screenshots.
+
+Primary product demo for the root README lives in [`assets/demo/`](../demo/).
