@@ -9,6 +9,7 @@ from app.api.routes import (
     live_props,
     live_slates,
     matchups,
+    mlb_game_detail,
     mlb_odds,
     mlb_scoreboard,
     performance,
@@ -36,9 +37,9 @@ app = FastAPI(
         "The exceptions are /api/wnba/scoreboard/today, /api/mlb/scoreboard/today, "
         "/api/mlb/scoreboard, /api/mlb/odds/today, /api/wnba/leaders, "
         "/api/wnba/player/{player_id}, /api/wnba/standings, /api/wnba/futures, "
-        "/api/wnba/odds/today, /api/wnba/props/today, and WNBA game detail routes, "
-        "which call ESPN, stats.wnba.com, MLB Stats API, or SharpAPI for live "
-        "league data."
+        "/api/wnba/odds/today, /api/wnba/props/today, WNBA game detail routes, "
+        "and /api/mlb/games/{game_pk}, which call ESPN, stats.wnba.com, MLB Stats "
+        "API, or SharpAPI for live league data."
     ),
 )
 
@@ -70,6 +71,7 @@ app.include_router(slates.router, prefix="/api")
 app.include_router(wnba_scoreboard.router, prefix="/api")
 app.include_router(mlb_scoreboard.router, prefix="/api")
 app.include_router(mlb_odds.router, prefix="/api")
+app.include_router(mlb_game_detail.router, prefix="/api")
 app.include_router(wnba_leaders.router, prefix="/api")
 app.include_router(wnba_player.router, prefix="/api")
 app.include_router(wnba_standings.router, prefix="/api")

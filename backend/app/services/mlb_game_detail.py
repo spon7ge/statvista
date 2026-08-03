@@ -1,6 +1,12 @@
 from __future__ import annotations
 
+import logging
+import re
+import time
+from datetime import datetime, timezone
 from typing import Any, Literal
+
+import httpx
 
 from app.schemas.mlb_game_detail import (
     MlbBatterRow,
@@ -20,10 +26,28 @@ from app.schemas.mlb_game_detail import (
     MlbWinProbability,
 )
 from app.schemas.mlb_scoreboard import GameStatus
+from app.services.mlb_espn_bridge import (
+    ESPN_TIMEOUT_SECONDS,
+    normalize_espn_mlb_win_probability,
+    resolve_espn_event_id,
+)
+
+logger = logging.getLogger(__name__)
 
 TEAM_LOGO = "https://www.mlbstatic.com/team-logos/{id}.svg"
 FALLBACK_AWAY_COLOR = "#BD3039"
 FALLBACK_HOME_COLOR = "#1D4ED8"
+
+LIVE_FEED_URL = "https://statsapi.mlb.com/api/v1.1/game/{game_pk}/feed/live"
+ESPN_SUMMARY_URL = (
+    "https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/summary"
+)
+STATS_TIMEOUT_SECONDS = 12.0
+LIVE_TTL_SECONDS = 15
+NOT_LIVE_TTL_SECONDS = 60
+
+_GAME_PK_PATTERN = re.compile(r"^\d{4,10}$")
+_cache: dict[str, dict] = {}
 
 # Stats Gameday pitch plot coords are roughly 0–250 px. Map to a stable
 # center-origin space in [-1, 1] (x right, y up) for the strike-zone UI.
@@ -578,4 +602,166 @@ def attach_win_probability(
     if "espn" not in sources:
         sources.append("espn")
     return detail.model_copy(update={"win_probability": wp, "sources": sources})
+
+
+def clear_mlb_game_detail_cache() -> None:
+    _cache.clear()
+
+
+def cache_ttl_seconds(detail: MlbGameDetail) -> int:
+    if detail.status == "live":
+        return LIVE_TTL_SECONDS
+    return NOT_LIVE_TTL_SECONDS
+
+
+def is_valid_mlb_game_pk(game_pk: str) -> bool:
+    return bool(_GAME_PK_PATTERN.fullmatch(game_pk))
+
+
+def _is_missing_live_feed(payload: dict) -> bool:
+    game_data = _as_dict(payload.get("gameData"))
+    if not game_data:
+        return True
+    teams = _as_dict(game_data.get("teams"))
+    away = _as_dict(teams.get("away"))
+    home = _as_dict(teams.get("home"))
+    if not away or not home:
+        return True
+    for side in (away, home):
+        if not any(side.get(field) for field in ("id", "abbreviation", "name")):
+            return True
+    return False
+
+
+def _game_date_et(payload: dict) -> str | None:
+    datetime_block = _as_dict(_as_dict(payload.get("gameData")).get("datetime"))
+    for key in ("officialDate", "originalDate"):
+        raw = datetime_block.get(key)
+        if isinstance(raw, str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", raw):
+            return raw
+    return None
+
+
+async def fetch_mlb_live_feed(game_pk: str) -> dict:
+    url = LIVE_FEED_URL.format(game_pk=game_pk)
+    async with httpx.AsyncClient(timeout=STATS_TIMEOUT_SECONDS) as client:
+        response = await client.get(url)
+        response.raise_for_status()
+        return response.json()
+
+
+async def fetch_espn_mlb_summary(
+    espn_event_id: str,
+    *,
+    client: httpx.AsyncClient | None = None,
+) -> dict:
+    owns_client = client is None
+    http_client = client or httpx.AsyncClient(timeout=ESPN_TIMEOUT_SECONDS)
+    try:
+        response = await http_client.get(
+            ESPN_SUMMARY_URL, params={"event": espn_event_id}
+        )
+        response.raise_for_status()
+        return response.json()
+    finally:
+        if owns_client:
+            await http_client.aclose()
+
+
+async def _attach_espn_win_probability(
+    detail: MlbGameDetail,
+    payload: dict,
+    *,
+    cached_espn_event_id: str | None,
+) -> tuple[MlbGameDetail, str | None]:
+    """Soft-merge ESPN win probability; never fail the Stats-backed detail."""
+    espn_event_id = cached_espn_event_id
+    try:
+        if not espn_event_id:
+            date_et = _game_date_et(payload)
+            if not date_et:
+                return detail, None
+            espn_event_id = await resolve_espn_event_id(
+                date_et=date_et,
+                away_abbrev=detail.away.abbrev,
+                home_abbrev=detail.home.abbrev,
+            )
+        if not espn_event_id:
+            return detail, None
+
+        summary = await fetch_espn_mlb_summary(espn_event_id)
+        wp = normalize_espn_mlb_win_probability(
+            summary,
+            home_abbrev=detail.home.abbrev,
+            away_abbrev=detail.away.abbrev,
+        )
+        return attach_win_probability(detail, wp), espn_event_id
+    except Exception as exc:
+        logger.warning(
+            "ESPN win probability unavailable for MLB game %s: %s",
+            detail.mlb_game_pk,
+            exc,
+        )
+        return detail, espn_event_id
+
+
+async def get_mlb_game_detail(game_pk: str) -> MlbGameDetail:
+    now = time.time()
+    cached = _cache.get(game_pk)
+    if cached and cached["expires_at"] > now:
+        return cached["detail"]
+
+    # Stale positive cache is usable as stale-while-error if Stats fails later.
+    stale_fallback = cached if cached and cached.get("detail") is not None else None
+
+    if not is_valid_mlb_game_pk(game_pk):
+        raise LookupError(game_pk)
+
+    try:
+        payload = await fetch_mlb_live_feed(game_pk)
+    except httpx.HTTPStatusError as exc:
+        if exc.response.status_code in (400, 404):
+            raise LookupError(game_pk) from exc
+        if stale_fallback:
+            return stale_fallback["detail"]
+        raise
+    except Exception:
+        if stale_fallback:
+            return stale_fallback["detail"]
+        raise
+
+    if _is_missing_live_feed(payload):
+        raise LookupError(game_pk)
+
+    try:
+        detail = normalize_mlb_live_feed(
+            payload,
+            game_pk=game_pk,
+            fetched_at=datetime.now(timezone.utc).isoformat(),
+        )
+    except Exception:
+        if stale_fallback:
+            return stale_fallback["detail"]
+        raise
+
+    cached_espn_event_id = None
+    if cached and isinstance(cached.get("espn_event_id"), str):
+        cached_espn_event_id = cached["espn_event_id"]
+    elif stale_fallback and isinstance(stale_fallback.get("espn_event_id"), str):
+        cached_espn_event_id = stale_fallback["espn_event_id"]
+
+    detail, espn_event_id = await _attach_espn_win_probability(
+        detail,
+        payload,
+        cached_espn_event_id=cached_espn_event_id,
+    )
+
+    entry: dict[str, Any] = {
+        "detail": detail,
+        "expires_at": now + cache_ttl_seconds(detail),
+    }
+    if espn_event_id:
+        entry["espn_event_id"] = espn_event_id
+    _cache[game_pk] = entry
+    return detail
 
