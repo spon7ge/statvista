@@ -1,0 +1,214 @@
+from __future__ import annotations
+
+from typing import Literal
+
+from pydantic import BaseModel, ConfigDict
+
+from app.schemas.mlb_scoreboard import GameStatus
+
+_RESPONSE_CONFIG = ConfigDict(json_schema_serialization_defaults_required=True)
+
+__all__ = [
+    "GameStatus",
+    "MlbBatterRow",
+    "MlbBoxScore",
+    "MlbGameDetail",
+    "MlbGameDetailTeam",
+    "MlbHitPoint",
+    "MlbLinescore",
+    "MlbLinescoreInning",
+    "MlbLinescoreTotals",
+    "MlbPitch",
+    "MlbPitcherRow",
+    "MlbPlay",
+    "MlbPlayerCard",
+    "MlbRunners",
+    "MlbSituation",
+    "MlbWinProbability",
+    "MlbWinProbabilityPoint",
+    "MlbWinProbabilityStakes",
+]
+
+
+class MlbGameDetailTeam(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    id: str
+    abbrev: str
+    name: str
+    score: int | None
+    color: str
+    logo_url: str | None = None
+
+
+class MlbLinescoreInning(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    num: int
+    away_runs: int | None
+    home_runs: int | None
+
+
+class MlbLinescoreTotals(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    runs: int
+    hits: int
+    errors: int
+
+
+class MlbLinescore(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    innings: list[MlbLinescoreInning]
+    away: MlbLinescoreTotals
+    home: MlbLinescoreTotals
+    current_inning: int | None
+    inning_half: Literal["top", "bottom"] | None
+
+
+class MlbPlayerCard(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    name: str
+    hand: str | None = None
+    summary: str | None = None
+
+
+class MlbPitch(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    number: int
+    type: str | None
+    mph: float | None
+    result: str | None
+    is_strike: bool
+    zone_x: float | None
+    zone_y: float | None
+
+
+class MlbRunners(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    first: bool
+    second: bool
+    third: bool
+
+
+class MlbSituation(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    balls: int
+    strikes: int
+    outs: int
+    runners: MlbRunners
+    at_bat: MlbPlayerCard | None
+    on_deck: MlbPlayerCard | None
+    pitching: MlbPlayerCard | None
+    pitches: list[MlbPitch]
+    latest_play_text: str | None = None
+
+
+class MlbPlay(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    id: str
+    inning: int
+    half: Literal["top", "bottom"]
+    text: str
+    scoring: bool
+    away_score: int
+    home_score: int
+    event: str | None = None
+
+
+class MlbBatterRow(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    order: int | None
+    name: str
+    position: str | None
+    ab: int | None
+    r: int | None
+    h: int | None
+    rbi: int | None
+    bb: int | None
+    so: int | None
+
+
+class MlbPitcherRow(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    name: str
+    ip: str | None
+    h: int | None
+    r: int | None
+    er: int | None
+    bb: int | None
+    k: int | None
+    pitches: int | None
+
+
+class MlbBoxScore(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    away_batters: list[MlbBatterRow]
+    home_batters: list[MlbBatterRow]
+    away_pitchers: list[MlbPitcherRow]
+    home_pitchers: list[MlbPitcherRow]
+
+
+class MlbHitPoint(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    id: str
+    team: Literal["away", "home"]
+    result: Literal["hr", "hit", "out"]
+    x: float
+    y: float
+    player_name: str | None = None
+
+
+class MlbWinProbabilityPoint(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    play_id: str
+    label: str
+    home_win_pct: float
+
+
+class MlbWinProbabilityStakes(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    home_win_delta: float
+    label: str
+
+
+class MlbWinProbability(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    home_abbrev: str
+    away_abbrev: str
+    points: list[MlbWinProbabilityPoint]
+    stakes: MlbWinProbabilityStakes | None = None
+
+
+class MlbGameDetail(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    mlb_game_pk: str
+    league: Literal["mlb"] = "mlb"
+    status: GameStatus
+    status_label: str
+    venue: str | None
+    away: MlbGameDetailTeam
+    home: MlbGameDetailTeam
+    linescore: MlbLinescore | None = None
+    situation: MlbSituation | None = None
+    plays: list[MlbPlay] = []
+    scoring_plays: list[MlbPlay] = []
+    box_score: MlbBoxScore | None = None
+    hit_chart: list[MlbHitPoint] = []
+    win_probability: MlbWinProbability | None = None
+    sources: list[str]
+    fetched_at: str
