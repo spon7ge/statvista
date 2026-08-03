@@ -1235,13 +1235,33 @@ class PinnacleScraper:
         with open(team_path, "w", encoding="utf-8") as f:
             json.dump(team_payload, f, indent=2, ensure_ascii=False)
 
+        scraped_at = dt.datetime.now(dt.timezone.utc)
+        db_ok = True
+        try:
+            from src.odds.load_snapshots import load_pinnacle_team_snapshot
+
+            n_team_db = load_pinnacle_team_snapshot(
+                games_out,
+                league=self.league,
+                scraped_at=scraped_at,
+            )
+            logger.info(
+                "Supabase odds.mlb_pinnacle_team upserted %s rows (%s)",
+                n_team_db,
+                self.league,
+            )
+        except Exception as exc:
+            db_ok = False
+            logger.warning("Supabase mlb pinnacle team load failed (JSON kept): %s", exc)
+
         n_props = sum(len(g.get("props") or []) for g in games_out)
         print(
             f"✓ [{self.league}] Saved {len(games_out)} games, {n_props} player prop rows "
             f"→ {props_path} + {team_path}",
         )
-
-        return props_payload, True
+        if not db_ok:
+            print(f"⚠ [{self.league}] Supabase upsert failed; see logs", file=sys.stderr)
+        return props_payload, db_ok
 
 
 def _requested_leagues() -> list[str]:

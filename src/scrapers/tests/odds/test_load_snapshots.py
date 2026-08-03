@@ -1,3 +1,4 @@
+import json
 import os
 from datetime import datetime, timezone
 from unittest.mock import MagicMock
@@ -354,14 +355,13 @@ def test_maybe_persist_parlay_props_writes_books(monkeypatch, mock_upsert):
     assert counts["caesars"] == 0
     assert counts["betr"] == 0
     tables = {call.args[0] for call in mock_upsert.call_args_list}
-    assert tables == {
-        "wnba_fanduel",
-        "wnba_draftkings",
-        "wnba_prizepicks_parlay",
-        "wnba_novig",
-    }
+    assert tables == {"wnba_parlay_api_odds"}
+    assert mock_upsert.call_count == 1
     assert set(counts) == set(load_snapshots.PARLAY_PROP_SPORTSBOOKS)
     assert len(load_snapshots.PARLAY_PROP_SPORTSBOOKS) == 11
+    df = mock_upsert.call_args.args[1]
+    assert "sportsbook" in df.columns
+    assert "pinnacle" not in set(df["sportsbook"])
 
 
 def test_maybe_persist_parlay_props_skips_when_throttled(monkeypatch, mock_upsert):
@@ -385,9 +385,22 @@ def test_should_persist_parlay_false_when_recent(monkeypatch):
     )
 
 
-def test_parlay_persist_tables_exclude_pinnacle():
-    assert "pinnacle" not in load_snapshots._PARLAY_BOOK_TABLES
+def test_parlay_persist_exclude_pinnacle_and_use_unified_table():
     assert "pinnacle" not in load_snapshots.PARLAY_PROP_SPORTSBOOKS
+    assert load_snapshots._PARLAY_API_ODDS_TABLE == "wnba_parlay_api_odds"
+    assert "sportsbook" in load_snapshots._PARLAY_API_ODDS_CONFLICT_COLS
+
+
+def test_latest_parlay_props_scraped_at_uses_unified_table(monkeypatch):
+    seen: list[tuple[str, str]] = []
+
+    def fake_latest(table: str, league: str):
+        seen.append((table, league))
+        return datetime(2026, 8, 1, tzinfo=timezone.utc)
+
+    monkeypatch.setattr(load_snapshots, "_latest_scraped_at", fake_latest)
+    assert load_snapshots.latest_parlay_props_scraped_at("wnba") is not None
+    assert seen == [("wnba_parlay_api_odds", "wnba")]
 
 
 PINNACLE_GAMES = [
@@ -453,6 +466,33 @@ def test_load_pinnacle_props_snapshot_calls_upsert(mock_upsert):
         "line_score",
         "scraped_at",
     ]
+
+
+def test_load_pinnacle_team_snapshot_mlb_uses_mlb_table(mock_upsert):
+    count = load_snapshots.load_pinnacle_team_snapshot(
+        PINNACLE_TEAM_GAMES, league="mlb", scraped_at=SCRAPED
+    )
+    assert count >= 1
+    table, df = mock_upsert.call_args[0]
+    assert table == "mlb_pinnacle_team"
+    assert df.iloc[0]["league"] == "mlb"
+
+
+def test_load_pinnacle_team_json_file(mock_upsert, tmp_path):
+    path = tmp_path / "pinnacle_mlb_team.json"
+    path.write_text(
+        json.dumps(
+            {
+                "league": "mlb",
+                "games": PINNACLE_TEAM_GAMES,
+            }
+        ),
+        encoding="utf-8",
+    )
+    count = load_snapshots.load_pinnacle_team_json_file(str(path))
+    assert count >= 1
+    table, _df = mock_upsert.call_args[0]
+    assert table == "mlb_pinnacle_team"
 
 
 def test_load_pinnacle_team_snapshot_calls_upsert(mock_upsert):

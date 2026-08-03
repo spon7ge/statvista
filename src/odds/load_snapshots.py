@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import logging
 import os
 from datetime import datetime, timedelta, timezone
@@ -11,7 +12,7 @@ import pandas as pd
 from sqlalchemy import text
 
 from src.odds.snapshot_rows import (
-    parlay_props_to_book_rows,
+    parlay_props_to_api_odds_rows,
     prizepicks_projections_to_rows,
     selenium_pinnacle_props_to_rows,
     selenium_pinnacle_team_to_rows,
@@ -49,7 +50,20 @@ _SHARP_BOOK_CONFLICT_COLS = [
     "scraped_at",
 ]
 
+_PARLAY_API_ODDS_CONFLICT_COLS = [
+    "sportsbook",
+    "league",
+    "player_name",
+    "market_type",
+    "side",
+    "line_score",
+    "scraped_at",
+]
+
+# Same shape as Sharp / Selenium Pinnacle prop tables (no sportsbook column).
 _PARLAY_BOOK_CONFLICT_COLS = _SHARP_BOOK_CONFLICT_COLS
+
+_PARLAY_API_ODDS_TABLE = "wnba_parlay_api_odds"
 
 _PINNACLE_TEAM_CONFLICT_COLS = [
     "league",
@@ -68,22 +82,20 @@ _SHARP_BOOK_TABLES = {
     "draftkings": "wnba_draftkings",
 }
 
-_PARLAY_BOOK_TABLES = {
-    "fanduel": "wnba_fanduel",
-    "draftkings": "wnba_draftkings",
-    "caesars": "wnba_caesars",
-    "betmgm": "wnba_betmgm",
-    "bet365": "wnba_bet365",
-    # Scraper tables wnba_prizepicks / wnba_underdogs use a different shape.
-    "prizepicks": "wnba_prizepicks_parlay",
-    "underdog": "wnba_underdog_parlay",
-    "betr": "wnba_betr",
-    "novig": "wnba_novig",
-    "sleeper": "wnba_sleeper",
-    "betrivers": "wnba_betrivers",
-}
-
-PARLAY_PROP_SPORTSBOOKS = tuple(_PARLAY_BOOK_TABLES.keys())
+# Books persisted from Parlay into odds.wnba_parlay_api_odds (no Pinnacle).
+PARLAY_PROP_SPORTSBOOKS = (
+    "fanduel",
+    "draftkings",
+    "caesars",
+    "betmgm",
+    "bet365",
+    "prizepicks",
+    "underdog",
+    "betr",
+    "novig",
+    "sleeper",
+    "betrivers",
+)
 
 DEFAULT_SNAPSHOT_MINUTES = 30
 
@@ -218,6 +230,13 @@ def load_pinnacle_props_snapshot(
     return len(df)
 
 
+def _pinnacle_team_table(league: str) -> str:
+    lg = (league or "").strip().lower()
+    if lg == "mlb":
+        return "mlb_pinnacle_team"
+    return "wnba_pinnacle_team"
+
+
 def load_pinnacle_team_snapshot(
     games: list[dict],
     *,
@@ -239,13 +258,26 @@ def load_pinnacle_team_snapshot(
     if df.empty:
         return 0
     upsert_df(
-        "wnba_pinnacle_team",
+        _pinnacle_team_table(league),
         df,
         schema="odds",
         conflict_cols=_PINNACLE_TEAM_CONFLICT_COLS,
         lineage_col="fetched_at",
     )
     return len(df)
+
+
+def load_pinnacle_team_json_file(path: str, *, scraped_at: datetime | None = None) -> int:
+    """Load a Selenium *_team.json snapshot into the league-appropriate table."""
+    with open(path, encoding="utf-8") as f:
+        payload = json.load(f)
+    league = str(payload.get("league") or "mlb").strip().lower()
+    games = payload.get("games") or []
+    if not isinstance(games, list):
+        raise ValueError(f"invalid team snapshot games in {path}")
+    return load_pinnacle_team_snapshot(
+        games, league=league, scraped_at=scraped_at
+    )
 
 
 def _latest_scraped_at(table: str, league: str) -> datetime | None:
@@ -294,14 +326,8 @@ def latest_sharp_props_scraped_at(league: str = "wnba") -> datetime | None:
 
 
 def latest_parlay_props_scraped_at(league: str = "wnba") -> datetime | None:
-    """Return the newest scraped_at across all Parlay book snapshot tables."""
-    times = [
-        _latest_scraped_at(table, league) for table in _PARLAY_BOOK_TABLES.values()
-    ]
-    present = [t for t in times if t is not None]
-    if not present:
-        return None
-    return max(present)
+    """Return the newest scraped_at on the unified Parlay API odds table."""
+    return _latest_scraped_at(_PARLAY_API_ODDS_TABLE, league)
 
 
 def should_persist_sharp_props(
@@ -383,37 +409,42 @@ def load_sharp_book_snapshot(
     return len(rows)
 
 
-def load_parlay_book_snapshot(
+def load_parlay_api_odds_snapshot(
     parlay_rows: list[dict],
     *,
-    sportsbook: str,
     league: str,
     scraped_at: datetime | None = None,
-) -> int:
+    books: tuple[str, ...] = PARLAY_PROP_SPORTSBOOKS,
+) -> dict[str, int]:
+    """Upsert Parlay main lines for all books into odds.wnba_parlay_api_odds."""
+    empty = {book: 0 for book in books}
     if _skip_db("PARLAY_PROPS_SKIP_DB") or _skip_db("SHARP_PROPS_SKIP_DB"):
-        return 0
-
-    book = sportsbook.lower().strip()
-    table = _PARLAY_BOOK_TABLES.get(book)
-    if not table:
-        raise ValueError(f"unsupported sportsbook: {sportsbook}")
+        return empty
 
     scraped_at = scraped_at or datetime.now(timezone.utc)
-    rows = parlay_props_to_book_rows(
-        parlay_rows, sportsbook=book, league=league, scraped_at=scraped_at
+    rows = parlay_props_to_api_odds_rows(
+        parlay_rows, league=league, scraped_at=scraped_at, books=books
     )
     if not rows:
-        return 0
+        return empty
 
     df = _coerce_float_columns(pd.DataFrame(rows), ["line_score"])
+    df = _dedupe_conflict_rows(df, _PARLAY_API_ODDS_CONFLICT_COLS)
+    if df.empty:
+        return empty
     upsert_df(
-        table,
+        _PARLAY_API_ODDS_TABLE,
         df,
         schema="odds",
-        conflict_cols=_PARLAY_BOOK_CONFLICT_COLS,
+        conflict_cols=_PARLAY_API_ODDS_CONFLICT_COLS,
         lineage_col="fetched_at",
     )
-    return len(rows)
+    counts = dict(empty)
+    for book, n in df["sportsbook"].value_counts().items():
+        key = str(book)
+        if key in counts:
+            counts[key] = int(n)
+    return counts
 
 
 def maybe_persist_sharp_props(
@@ -474,7 +505,7 @@ def maybe_persist_parlay_props(
     scraped_at: datetime | None = None,
 ) -> dict[str, int]:
     """
-    Persist all Parlay display books when the throttle allows.
+    Persist Parlay display books into odds.wnba_parlay_api_odds when the throttle allows.
 
     Best-effort: never raises. Returns counts written per book (0 if skipped).
     """
@@ -492,15 +523,13 @@ def maybe_persist_parlay_props(
         return empty
 
     scraped_at = scraped_at or datetime.now(timezone.utc)
-    counts = dict(empty)
     try:
-        for book in PARLAY_PROP_SPORTSBOOKS:
-            counts[book] = load_parlay_book_snapshot(
-                parlay_rows,
-                sportsbook=book,
-                league=league,
-                scraped_at=scraped_at,
-            )
+        counts = load_parlay_api_odds_snapshot(
+            parlay_rows,
+            league=league,
+            scraped_at=scraped_at,
+            books=PARLAY_PROP_SPORTSBOOKS,
+        )
         if any(counts.values()):
             logger.info(
                 "Parlay props snapshot written league=%s scraped_at=%s counts=%s",
@@ -508,8 +537,7 @@ def maybe_persist_parlay_props(
                 scraped_at.isoformat(),
                 counts,
             )
+        return counts
     except Exception as exc:
         logger.warning("Parlay props snapshot write failed: %s", exc)
         return empty
-
-    return counts
