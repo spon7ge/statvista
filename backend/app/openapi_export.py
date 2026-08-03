@@ -26,6 +26,7 @@ REQUIRED_MLB_PATHS = (
     "/api/mlb/scoreboard/today",
     "/api/mlb/scoreboard",
     "/api/mlb/odds/today",
+    "/api/mlb/games/{game_pk}",
 )
 
 REQUIRED_FRONTEND_PATHS = REQUIRED_WNBA_PATHS + REQUIRED_MLB_PATHS

@@ -2203,6 +2203,155 @@
         "title": "MatchupFeatures",
         "type": "object"
       },
+      "MlbBatterRow": {
+        "properties": {
+          "ab": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ab"
+          },
+          "bb": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bb"
+          },
+          "h": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "H"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "order": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Order"
+          },
+          "position": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Position"
+          },
+          "r": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "R"
+          },
+          "rbi": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rbi"
+          },
+          "so": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "So"
+          }
+        },
+        "required": [
+          "order",
+          "name",
+          "position",
+          "ab",
+          "r",
+          "h",
+          "rbi",
+          "bb",
+          "so"
+        ],
+        "title": "MlbBatterRow",
+        "type": "object"
+      },
+      "MlbBoxScore": {
+        "properties": {
+          "away_batters": {
+            "items": {
+              "$ref": "#/components/schemas/MlbBatterRow"
+            },
+            "title": "Away Batters",
+            "type": "array"
+          },
+          "away_pitchers": {
+            "items": {
+              "$ref": "#/components/schemas/MlbPitcherRow"
+            },
+            "title": "Away Pitchers",
+            "type": "array"
+          },
+          "home_batters": {
+            "items": {
+              "$ref": "#/components/schemas/MlbBatterRow"
+            },
+            "title": "Home Batters",
+            "type": "array"
+          },
+          "home_pitchers": {
+            "items": {
+              "$ref": "#/components/schemas/MlbPitcherRow"
+            },
+            "title": "Home Pitchers",
+            "type": "array"
+          }
+        },
+        "required": [
+          "away_batters",
+          "home_batters",
+          "away_pitchers",
+          "home_pitchers"
+        ],
+        "title": "MlbBoxScore",
+        "type": "object"
+      },
       "MlbGame": {
         "properties": {
           "away": {
@@ -2279,6 +2428,364 @@
           "venue_city"
         ],
         "title": "MlbGame",
+        "type": "object"
+      },
+      "MlbGameDetail": {
+        "properties": {
+          "away": {
+            "$ref": "#/components/schemas/MlbGameDetailTeam"
+          },
+          "box_score": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbBoxScore"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "fetched_at": {
+            "title": "Fetched At",
+            "type": "string"
+          },
+          "hit_chart": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/MlbHitPoint"
+            },
+            "title": "Hit Chart",
+            "type": "array"
+          },
+          "home": {
+            "$ref": "#/components/schemas/MlbGameDetailTeam"
+          },
+          "league": {
+            "const": "mlb",
+            "default": "mlb",
+            "title": "League",
+            "type": "string"
+          },
+          "linescore": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbLinescore"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "mlb_game_pk": {
+            "title": "Mlb Game Pk",
+            "type": "string"
+          },
+          "plays": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/MlbPlay"
+            },
+            "title": "Plays",
+            "type": "array"
+          },
+          "scoring_plays": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/MlbPlay"
+            },
+            "title": "Scoring Plays",
+            "type": "array"
+          },
+          "situation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbSituation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sources": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Sources",
+            "type": "array"
+          },
+          "status": {
+            "enum": [
+              "scheduled",
+              "live",
+              "halftime",
+              "final"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "status_label": {
+            "title": "Status Label",
+            "type": "string"
+          },
+          "venue": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Venue"
+          },
+          "win_probability": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbWinProbability"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "mlb_game_pk",
+          "league",
+          "status",
+          "status_label",
+          "venue",
+          "away",
+          "home",
+          "linescore",
+          "situation",
+          "plays",
+          "scoring_plays",
+          "box_score",
+          "hit_chart",
+          "win_probability",
+          "sources",
+          "fetched_at"
+        ],
+        "title": "MlbGameDetail",
+        "type": "object"
+      },
+      "MlbGameDetailTeam": {
+        "properties": {
+          "abbrev": {
+            "title": "Abbrev",
+            "type": "string"
+          },
+          "color": {
+            "title": "Color",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "logo_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Logo Url"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          }
+        },
+        "required": [
+          "id",
+          "abbrev",
+          "name",
+          "score",
+          "color",
+          "logo_url"
+        ],
+        "title": "MlbGameDetailTeam",
+        "type": "object"
+      },
+      "MlbHitPoint": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "player_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Player Name"
+          },
+          "result": {
+            "enum": [
+              "hr",
+              "hit",
+              "out"
+            ],
+            "title": "Result",
+            "type": "string"
+          },
+          "team": {
+            "enum": [
+              "away",
+              "home"
+            ],
+            "title": "Team",
+            "type": "string"
+          },
+          "x": {
+            "title": "X",
+            "type": "number"
+          },
+          "y": {
+            "title": "Y",
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "team",
+          "result",
+          "x",
+          "y",
+          "player_name"
+        ],
+        "title": "MlbHitPoint",
+        "type": "object"
+      },
+      "MlbLinescore": {
+        "properties": {
+          "away": {
+            "$ref": "#/components/schemas/MlbLinescoreTotals"
+          },
+          "current_inning": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Inning"
+          },
+          "home": {
+            "$ref": "#/components/schemas/MlbLinescoreTotals"
+          },
+          "inning_half": {
+            "anyOf": [
+              {
+                "enum": [
+                  "top",
+                  "bottom"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inning Half"
+          },
+          "innings": {
+            "items": {
+              "$ref": "#/components/schemas/MlbLinescoreInning"
+            },
+            "title": "Innings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "innings",
+          "away",
+          "home",
+          "current_inning",
+          "inning_half"
+        ],
+        "title": "MlbLinescore",
+        "type": "object"
+      },
+      "MlbLinescoreInning": {
+        "properties": {
+          "away_runs": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Away Runs"
+          },
+          "home_runs": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Home Runs"
+          },
+          "num": {
+            "title": "Num",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "num",
+          "away_runs",
+          "home_runs"
+        ],
+        "title": "MlbLinescoreInning",
+        "type": "object"
+      },
+      "MlbLinescoreTotals": {
+        "properties": {
+          "errors": {
+            "title": "Errors",
+            "type": "integer"
+          },
+          "hits": {
+            "title": "Hits",
+            "type": "integer"
+          },
+          "runs": {
+            "title": "Runs",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "runs",
+          "hits",
+          "errors"
+        ],
+        "title": "MlbLinescoreTotals",
         "type": "object"
       },
       "MlbOddsGame": {
@@ -2398,6 +2905,300 @@
         "title": "MlbOddsResponse",
         "type": "object"
       },
+      "MlbPitch": {
+        "properties": {
+          "is_strike": {
+            "title": "Is Strike",
+            "type": "boolean"
+          },
+          "mph": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mph"
+          },
+          "number": {
+            "title": "Number",
+            "type": "integer"
+          },
+          "result": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Result"
+          },
+          "type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Type"
+          },
+          "zone_x": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Zone X"
+          },
+          "zone_y": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Zone Y"
+          }
+        },
+        "required": [
+          "number",
+          "type",
+          "mph",
+          "result",
+          "is_strike",
+          "zone_x",
+          "zone_y"
+        ],
+        "title": "MlbPitch",
+        "type": "object"
+      },
+      "MlbPitcherRow": {
+        "properties": {
+          "bb": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bb"
+          },
+          "er": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Er"
+          },
+          "h": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "H"
+          },
+          "ip": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ip"
+          },
+          "k": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "K"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "pitches": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pitches"
+          },
+          "r": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "R"
+          }
+        },
+        "required": [
+          "name",
+          "ip",
+          "h",
+          "r",
+          "er",
+          "bb",
+          "k",
+          "pitches"
+        ],
+        "title": "MlbPitcherRow",
+        "type": "object"
+      },
+      "MlbPlay": {
+        "properties": {
+          "away_score": {
+            "title": "Away Score",
+            "type": "integer"
+          },
+          "event": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Event"
+          },
+          "half": {
+            "enum": [
+              "top",
+              "bottom"
+            ],
+            "title": "Half",
+            "type": "string"
+          },
+          "home_score": {
+            "title": "Home Score",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "inning": {
+            "title": "Inning",
+            "type": "integer"
+          },
+          "scoring": {
+            "title": "Scoring",
+            "type": "boolean"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "inning",
+          "half",
+          "text",
+          "scoring",
+          "away_score",
+          "home_score",
+          "event"
+        ],
+        "title": "MlbPlay",
+        "type": "object"
+      },
+      "MlbPlayerCard": {
+        "properties": {
+          "hand": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hand"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary"
+          }
+        },
+        "required": [
+          "name",
+          "hand",
+          "summary"
+        ],
+        "title": "MlbPlayerCard",
+        "type": "object"
+      },
+      "MlbRunners": {
+        "properties": {
+          "first": {
+            "title": "First",
+            "type": "boolean"
+          },
+          "second": {
+            "title": "Second",
+            "type": "boolean"
+          },
+          "third": {
+            "title": "Third",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "first",
+          "second",
+          "third"
+        ],
+        "title": "MlbRunners",
+        "type": "object"
+      },
       "MlbScoreboardResponse": {
         "properties": {
           "date": {
@@ -2423,6 +3224,86 @@
           "fetched_at"
         ],
         "title": "MlbScoreboardResponse",
+        "type": "object"
+      },
+      "MlbSituation": {
+        "properties": {
+          "at_bat": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbPlayerCard"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "balls": {
+            "title": "Balls",
+            "type": "integer"
+          },
+          "latest_play_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latest Play Text"
+          },
+          "on_deck": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbPlayerCard"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "outs": {
+            "title": "Outs",
+            "type": "integer"
+          },
+          "pitches": {
+            "items": {
+              "$ref": "#/components/schemas/MlbPitch"
+            },
+            "title": "Pitches",
+            "type": "array"
+          },
+          "pitching": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbPlayerCard"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "runners": {
+            "$ref": "#/components/schemas/MlbRunners"
+          },
+          "strikes": {
+            "title": "Strikes",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "balls",
+          "strikes",
+          "outs",
+          "runners",
+          "at_bat",
+          "on_deck",
+          "pitching",
+          "pitches",
+          "latest_play_text"
+        ],
+        "title": "MlbSituation",
         "type": "object"
       },
       "MlbTeam": {
@@ -2477,6 +3358,84 @@
           "logo_url"
         ],
         "title": "MlbTeam",
+        "type": "object"
+      },
+      "MlbWinProbability": {
+        "properties": {
+          "away_abbrev": {
+            "title": "Away Abbrev",
+            "type": "string"
+          },
+          "home_abbrev": {
+            "title": "Home Abbrev",
+            "type": "string"
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/MlbWinProbabilityPoint"
+            },
+            "title": "Points",
+            "type": "array"
+          },
+          "stakes": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbWinProbabilityStakes"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "home_abbrev",
+          "away_abbrev",
+          "points",
+          "stakes"
+        ],
+        "title": "MlbWinProbability",
+        "type": "object"
+      },
+      "MlbWinProbabilityPoint": {
+        "properties": {
+          "home_win_pct": {
+            "title": "Home Win Pct",
+            "type": "number"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "play_id": {
+            "title": "Play Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "play_id",
+          "label",
+          "home_win_pct"
+        ],
+        "title": "MlbWinProbabilityPoint",
+        "type": "object"
+      },
+      "MlbWinProbabilityStakes": {
+        "properties": {
+          "home_win_delta": {
+            "title": "Home Win Delta",
+            "type": "number"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          }
+        },
+        "required": [
+          "home_win_delta",
+          "label"
+        ],
+        "title": "MlbWinProbabilityStakes",
         "type": "object"
       },
       "ModelAccuracy": {
@@ -5300,7 +6259,7 @@
     }
   },
   "info": {
-    "description": "NBA prop prediction backend. Most endpoints read from Supabase (silver / gold / ml schemas) and make no NBA or Odds API calls. The exceptions are /api/wnba/scoreboard/today, /api/mlb/scoreboard/today, /api/mlb/scoreboard, /api/mlb/odds/today, /api/wnba/leaders, /api/wnba/player/{player_id}, /api/wnba/standings, /api/wnba/futures, /api/wnba/odds/today, /api/wnba/props/today, and WNBA game detail routes, which call ESPN, stats.wnba.com, MLB Stats API, or SharpAPI for live league data.",
+    "description": "NBA prop prediction backend. Most endpoints read from Supabase (silver / gold / ml schemas) and make no NBA or Odds API calls. The exceptions are /api/wnba/scoreboard/today, /api/mlb/scoreboard/today, /api/mlb/scoreboard, /api/mlb/odds/today, /api/wnba/leaders, /api/wnba/player/{player_id}, /api/wnba/standings, /api/wnba/futures, /api/wnba/odds/today, /api/wnba/props/today, WNBA game detail routes, and /api/mlb/games/{game_pk}, which call ESPN, stats.wnba.com, MLB Stats API, or SharpAPI for live league data.",
     "title": "HoopVista API",
     "version": "0.3.0"
   },
@@ -6160,6 +7119,48 @@
         "summary": "List Matchups",
         "tags": [
           "matchups"
+        ]
+      }
+    },
+    "/api/mlb/games/{game_pk}": {
+      "get": {
+        "operationId": "mlb_game_detail_api_mlb_games__game_pk__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "game_pk",
+            "required": true,
+            "schema": {
+              "title": "Game Pk",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MlbGameDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Mlb Game Detail",
+        "tags": [
+          "mlb"
         ]
       }
     },

@@ -55,6 +55,7 @@ export type ApiMlbGame = Schemas["MlbGame"];
 export type MlbScoreboardResponse = Schemas["MlbScoreboardResponse"];
 export type ApiMlbOddsGame = Schemas["MlbOddsGame"];
 export type ApiMlbOddsResponse = Schemas["MlbOddsResponse"];
+export type ApiMlbGameDetail = Schemas["MlbGameDetail"];
 
 /** Shared shape for matchup odds merge (WNBA + MLB). */
 export type ApiMatchupOddsGame = ApiWnbaOddsGame | ApiMlbOddsGame;
@@ -204,6 +205,19 @@ export async function fetchMlbOdds(): Promise<ApiMlbOddsResponse> {
   });
   if (!res.ok) {
     throw new Error(`MLB odds request failed: ${res.status}`);
+  }
+  return res.json();
+}
+
+export async function fetchMlbGameDetail(
+  gamePk: string,
+): Promise<ApiMlbGameDetail> {
+  const res = await fetch(`${API_BASE}/api/mlb/games/${gamePk}`, {
+    headers: { Accept: "application/json" },
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    throw new Error(`MLB game detail request failed: ${res.status}`);
   }
   return res.json();
 }
