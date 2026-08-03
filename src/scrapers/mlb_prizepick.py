@@ -11,11 +11,22 @@ Install for better success rate:
 Optional environment variables:
     PRIZEPICKS_OUTPUT: Override default output path (must end in .json)
     PRIZEPICKS_COOKIE: Browser session cookie (from DevTools)
-    PRIZEPICKS_COOKIE_FILE: Path to file containing cookie
+    PRIZEPICKS_COOKIE_FILE: Path to file containing cookie (default: an auto-managed
+                             file under data/props/prizepicks/ — see below)
     PRIZEPICKS_IMPERSONATE: Comma-separated curl_cffi profiles (default: safari17_2_ios,...)
     PRIZEPICKS_HEADLESS: Set to 1/true/yes for headless Playwright (default: headed)
     PRIZEPICKS_MLB_LEAGUE_ID: Override the MLB league_id if you already know it
     LOG_LEVEL: Set logging level (DEBUG, INFO, WARNING, ERROR)
+
+Cookie persistence:
+    Whenever the Playwright fallback successfully clears a DataDome challenge,
+    the resulting session cookies are automatically saved to a local file
+    (PRIZEPICKS_COOKIE_FILE if set, otherwise data/props/prizepicks/.session_cookie.txt).
+    On every run, that file is checked automatically (no env var needed) before
+    falling back to curl_cffi/requests without a cookie. This means the first
+    run that needs a browser solve "primes" the session so later runs — even
+    for other scripts pointed at the same file — can skip Playwright entirely
+    until the cookie eventually expires and a fresh solve is needed again.
 
 league_id note:
     PrizePicks doesn't publish stable numeric league_id values, and they can
@@ -60,6 +71,11 @@ if _ROOT not in sys.path:
     sys.path.insert(0, _ROOT)
 _DEFAULT_OUTPUT_DIR = os.path.join(_ROOT, "data", "props", "prizepicks")
 _OUTPUT_TZ = ZoneInfo("America/Los_Angeles")
+
+# Auto-managed cookie file. A successful Playwright DataDome solve writes the
+# resulting session cookie here; later runs read it automatically (no env
+# var required) so they can often skip the browser fallback entirely.
+_DEFAULT_COOKIE_FILE = os.path.join(_DEFAULT_OUTPUT_DIR, ".session_cookie.txt")
 
 # Only the league name is fixed; the numeric league_id is resolved at
 # runtime (see resolve_leagues()). This tuple is the "requested" set.
@@ -245,13 +261,28 @@ def resolve_output_path(
     return path
 
 
+def cookie_file_path() -> str:
+    """
+    Resolve which file to read/write for the persisted session cookie.
+
+    Uses PRIZEPICKS_COOKIE_FILE if explicitly set, otherwise the
+    auto-managed default under data/props/prizepicks/.
+    """
+    explicit = os.environ.get("PRIZEPICKS_COOKIE_FILE", "").strip()
+    if explicit:
+        return os.path.expanduser(explicit)
+    return _DEFAULT_COOKIE_FILE
+
+
 def get_cookie_for_request() -> str:
     """
     Load optional browser cookie.
 
     Checks (in order):
     1. PRIZEPICKS_COOKIE env var
-    2. PRIZEPICKS_COOKIE_FILE env var
+    2. Cookie file — PRIZEPICKS_COOKIE_FILE if set, else the auto-managed
+       default file (data/props/prizepicks/.session_cookie.txt), which is
+       written automatically after a successful Playwright DataDome solve.
 
     Returns:
         Cookie string, or empty string if none found
@@ -262,21 +293,55 @@ def get_cookie_for_request() -> str:
         logger.debug("Using PRIZEPICKS_COOKIE from environment")
         return c
 
-    # Try file
-    path = os.environ.get("PRIZEPICKS_COOKIE_FILE", "").strip()
-    if path:
-        expanded = os.path.expanduser(path)
-        if os.path.isfile(expanded):
-            logger.debug(f"Loading cookie from: {expanded}")
-            try:
-                with open(expanded, encoding="utf-8") as f:
-                    return f.read().strip()
-            except IOError as e:
-                logger.warning(f"Failed to read cookie file: {e}")
-                return ""
+    # Try file (explicit or auto-managed default)
+    path = cookie_file_path()
+    if os.path.isfile(path):
+        logger.debug(f"Loading cookie from: {path}")
+        try:
+            with open(path, encoding="utf-8") as f:
+                cookie = f.read().strip()
+                if cookie:
+                    return cookie
+        except IOError as e:
+            logger.warning(f"Failed to read cookie file: {e}")
 
-    logger.debug("No cookie found (PRIZEPICKS_COOKIE* not set)")
+    logger.debug("No cookie found (PRIZEPICKS_COOKIE not set, no cookie file yet)")
     return ""
+
+
+def save_session_cookie(cookie_header: str, path: str | None = None) -> None:
+    """
+    Persist a session cookie string to disk for reuse by future runs.
+
+    Args:
+        cookie_header: A "name=value; name2=value2" cookie header string
+        path: Override target path (default: cookie_file_path())
+    """
+    target = path or cookie_file_path()
+    parent = os.path.dirname(os.path.abspath(target))
+    if parent:
+        os.makedirs(parent, exist_ok=True)
+
+    try:
+        with open(target, "w", encoding="utf-8") as f:
+            f.write(cookie_header.strip() + "\n")
+        logger.info(f"✓ Saved session cookie to {target} (reused automatically by future runs)")
+    except IOError as e:
+        logger.warning(f"Failed to save session cookie: {e}")
+
+
+def _build_cookie_header_from_playwright(cookies: list[dict[str, Any]]) -> str:
+    """Build a 'name=value; ...' header string from Playwright context cookies."""
+    parts = []
+    for c in cookies:
+        domain = c.get("domain") or ""
+        name = c.get("name")
+        value = c.get("value")
+        if "prizepicks.com" not in domain or not name or value is None:
+            continue
+        parts.append(f"{name}={value}")
+    parts.sort()
+    return "; ".join(parts)
 
 
 def add_headers_to_dict(base: dict[str, str], overrides: dict[str, str] | None = None) -> dict[str, str]:
@@ -763,6 +828,17 @@ def try_fetch_with_playwright(
                     )
                     return None
 
+                # Persist the session cookie so future runs (this script or others
+                # pointed at the same cookie file) can skip the browser fallback.
+                try:
+                    cookie_header = _build_cookie_header_from_playwright(context.cookies())
+                    if cookie_header:
+                        save_session_cookie(cookie_header)
+                    else:
+                        logger.debug("No prizepicks.com cookies found to persist")
+                except Exception as e:
+                    logger.debug(f"Could not read/persist session cookie: {e}")
+
                 out: dict[str, dict[str, Any]] = {}
                 for league_name, url in league_urls:
                     try:
@@ -1205,7 +1281,8 @@ Examples:
 Environment variables:
   LOG_LEVEL                          DEBUG, INFO, WARNING, or ERROR
   PRIZEPICKS_COOKIE                  Browser session cookie
-  PRIZEPICKS_COOKIE_FILE             Path to cookie file
+  PRIZEPICKS_COOKIE_FILE             Path to cookie file (default: auto-managed,
+                                      written automatically after a Playwright solve)
   PRIZEPICKS_IMPERSONATE             Comma-separated curl_cffi profiles
   PRIZEPICKS_HEADLESS                1/true/yes for headless Playwright (default headed)
   PRIZEPICKS_MLB_LEAGUE_ID           Override the resolved MLB league_id
