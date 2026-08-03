@@ -1,4 +1,4 @@
-"""Read latest PrizePicks / Underdog odds snapshots from Supabase."""
+"""Read latest PrizePicks / Underdog / Pinnacle odds snapshots from Supabase."""
 
 from __future__ import annotations
 
@@ -25,6 +25,27 @@ WHERE league = :league
   AND scraped_at = (
     SELECT MAX(scraped_at) FROM odds.wnba_underdogs WHERE league = :league
   )
+"""
+
+_PINNACLE_SQL = """
+SELECT player_name, market_type, side, line_score, american_price
+FROM odds.wnba_pinnacle
+WHERE league = :league
+  AND scraped_at = (
+    SELECT MAX(scraped_at) FROM odds.wnba_pinnacle WHERE league = :league
+  )
+"""
+
+_PINNACLE_TEAM_SQL = """
+SELECT away_team, home_team, start_time, market_type, period, is_alternate,
+       side, team, points, american_price, matchup_id
+FROM odds.wnba_pinnacle_team
+WHERE league = :league
+  AND scraped_at = (
+    SELECT MAX(scraped_at) FROM odds.wnba_pinnacle_team WHERE league = :league
+  )
+  AND period = 0
+  AND is_alternate = false
 """
 
 
@@ -58,3 +79,13 @@ def fetch_latest_prizepicks(league: str = "wnba") -> list[dict]:
 def fetch_latest_underdog(league: str = "wnba") -> list[dict]:
     """Return rows from the latest Underdog snapshot for *league*."""
     return _fetch_rows(_UNDERDOG_SQL, league)
+
+
+def fetch_latest_pinnacle(league: str = "wnba") -> list[dict]:
+    """Return rows from the latest Selenium Pinnacle player snapshot for *league*."""
+    return _fetch_rows(_PINNACLE_SQL, league)
+
+
+def fetch_latest_pinnacle_team(league: str = "wnba") -> list[dict]:
+    """Return full-game (period=0, non-alternate) team rows from latest snapshot."""
+    return _fetch_rows(_PINNACLE_TEAM_SQL, league)
