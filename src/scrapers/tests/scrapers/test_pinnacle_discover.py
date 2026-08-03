@@ -108,3 +108,45 @@ class TestCollectGameUrls:
             "https://www.pinnacle.com/en/basketball/nba/lakers-vs-celtics/99/",
         ]
         assert pin.collect_game_urls(hrefs, "", "wnba") == []
+
+
+class TestRunDbExit:
+    def test_run_returns_db_ok_false_when_supabase_fails(self, monkeypatch, tmp_path) -> None:
+        scraper = pin.PinnacleScraper("wnba")
+        scraper.output_path = str(tmp_path / "out_props.json")
+
+        class _FakeDriver:
+            def quit(self) -> None:
+                return None
+
+        monkeypatch.setattr(scraper, "_build_driver", lambda discovery=False: _FakeDriver())
+        monkeypatch.setattr(scraper, "discover_game_urls", lambda driver: [])
+
+        def _fail_props(*_args, **_kwargs):
+            raise RuntimeError("supabase down")
+
+        monkeypatch.setattr(
+            "src.odds.load_snapshots.load_pinnacle_props_snapshot",
+            _fail_props,
+        )
+
+        payload, db_ok = scraper.run()
+        assert isinstance(payload, dict)
+        assert payload.get("league") == "wnba"
+        assert db_ok is False
+        assert (tmp_path / "out_props.json").is_file()
+
+    def test_run_all_propagates_db_ok(self, monkeypatch, tmp_path) -> None:
+        monkeypatch.setenv("PINNACLE_LEAGUES", "wnba")
+
+        class _FakeScraper:
+            def __init__(self, league: str, multi_league_run: bool = False) -> None:
+                self.league = league
+
+            def run(self) -> tuple[dict, bool]:
+                return {"league": self.league}, False
+
+        monkeypatch.setattr(pin, "PinnacleScraper", _FakeScraper)
+        results, db_ok = pin.run_all()
+        assert results["wnba"]["league"] == "wnba"
+        assert db_ok is False

@@ -162,6 +162,13 @@ def _odds_merge_key(game: WnbaOddsGame) -> tuple[str, str, str]:
     )
 
 
+def _team_merge_key(game: WnbaOddsGame) -> tuple[str, str]:
+    return (
+        canonical_abbrev(game.away_abbrev),
+        canonical_abbrev(game.home_abbrev),
+    )
+
+
 def _has_markets(game: WnbaOddsGame) -> bool:
     return game.spread_line is not None or game.total is not None
 
@@ -171,20 +178,32 @@ def merge_pinnacle_prefer_sharp(
     sharp: list[WnbaOddsGame],
 ) -> list[WnbaOddsGame]:
     """Prefer Pinnacle per game when it has spread or total; else Sharp."""
-    by_key: dict[tuple[str, str, str], WnbaOddsGame] = {}
+    pin_by_team: dict[tuple[str, str], WnbaOddsGame] = {}
 
     for game in pinnacle:
-        by_key[_odds_merge_key(game)] = game
+        team_key = _team_merge_key(game)
+        prev = pin_by_team.get(team_key)
+        if prev is None or (not _has_markets(prev) and _has_markets(game)):
+            pin_by_team[team_key] = game
+
+    merged_by_team: dict[tuple[str, str], WnbaOddsGame] = {}
 
     for game in sharp:
-        key = _odds_merge_key(game)
-        existing = by_key.get(key)
-        if existing is None:
-            by_key[key] = game
-        elif not _has_markets(existing) and _has_markets(game):
-            by_key[key] = game
+        team_key = _team_merge_key(game)
+        pin = pin_by_team.get(team_key)
+        if pin is not None and _has_markets(pin):
+            merged_by_team[team_key] = pin
+        elif pin is not None and _has_markets(game):
+            merged_by_team[team_key] = game
+        elif _has_markets(game):
+            merged_by_team[team_key] = game
 
-    games = [g for g in by_key.values() if _has_markets(g)]
+    for game in pinnacle:
+        team_key = _team_merge_key(game)
+        if team_key not in merged_by_team and _has_markets(game):
+            merged_by_team[team_key] = game
+
+    games = [g for g in merged_by_team.values() if _has_markets(g)]
     games.sort(key=lambda g: (g.game_date or "", g.home_abbrev, g.away_abbrev))
     return games
 

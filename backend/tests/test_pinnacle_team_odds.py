@@ -106,6 +106,33 @@ def test_merge_keeps_pinnacle_when_markets_present():
     assert merged[0].spread_line == -1.5
 
 
+def test_merge_falls_back_to_sharp_on_mismatched_game_date():
+    pin = [
+        WnbaOddsGame(
+            home_abbrev="ATL",
+            away_abbrev="LVA",
+            sportsbook="pinnacle",
+            game_date="2026-08-04",
+        )
+    ]
+    sharp = [
+        WnbaOddsGame(
+            home_abbrev="ATL",
+            away_abbrev="LVA",
+            spread_team_abbrev="ATL",
+            spread_line=-2.0,
+            total=180.0,
+            sportsbook="draftkings",
+            game_date="2026-08-03",
+        )
+    ]
+    merged = svc.merge_pinnacle_prefer_sharp(pin, sharp)
+    assert len(merged) == 1
+    assert merged[0].sportsbook == "draftkings"
+    assert merged[0].spread_line == -2.0
+    assert merged[0].total == 180.0
+
+
 @pytest.fixture(autouse=True)
 def clear_cache():
     svc._cache.clear()

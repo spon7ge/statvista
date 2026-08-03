@@ -51,7 +51,9 @@ _PROP_MARKET_KEYS = (
 PROP_MARKETS = ",".join(_PROP_MARKET_KEYS)
 # Parlay still returns milestone/alt keys even when markets= is set; drop them.
 ALLOWED_PROP_MARKET_KEYS = frozenset(_PROP_MARKET_KEYS)
-_DFS_OR_SKIP_BOOKS = frozenset({"prizepicks", "underdog", "betr", "sleeper", "pick6"})
+_DFS_OR_SKIP_BOOKS = frozenset(
+    {"prizepicks", "underdog", "betr", "sleeper", "pick6", "pinnacle"}
+)
 
 CACHE_TTL_SECONDS = 45.0
 FETCH_TIMEOUT_SECONDS = 12.0

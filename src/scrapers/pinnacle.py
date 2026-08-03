@@ -1180,7 +1180,7 @@ class PinnacleScraper:
 
         return list(merged)
 
-    def run(self) -> dict[str, Any]:
+    def run(self) -> tuple[dict[str, Any], bool]:
         print(
             f"[{self.league}] Using output path: {self.output_path} | "
             f"max_workers={self.parallel_workers} target {self.games_per_worker} games/browser",
@@ -1278,7 +1278,7 @@ class PinnacleScraper:
         if not db_ok:
             print(f"⚠ [{self.league}] Supabase upsert failed; see logs", file=sys.stderr)
 
-        return props_payload
+        return props_payload, db_ok
 
 
 def _requested_leagues() -> list[str]:
@@ -1300,22 +1300,27 @@ def _requested_leagues() -> list[str]:
     return ordered or list(SUPPORTED_LEAGUES)
 
 
-def run_all() -> dict[str, dict[str, Any]]:
-    """Scrape every requested league (default: nba + wnba) and return {league: payload}."""
+def run_all() -> tuple[dict[str, dict[str, Any]], bool]:
+    """Scrape every requested league (default: nba + wnba) and return payloads + db_ok."""
     leagues = _requested_leagues()
     multi = len(leagues) > 1
     results: dict[str, dict[str, Any]] = {}
+    db_ok = True
     for lg in leagues:
         print(f"=== Starting Pinnacle {lg.upper()} scraper (Selenium)... ===")
         try:
-            results[lg] = PinnacleScraper(lg, multi_league_run=multi).run()
+            payload, league_db_ok = PinnacleScraper(lg, multi_league_run=multi).run()
+            results[lg] = payload
+            db_ok = db_ok and league_db_ok
         except Exception as e:
             print(f"✗ [{lg}] Error: {e}")
             import traceback
 
             traceback.print_exc()
-    return results
+    return results, db_ok
 
 
 if __name__ == "__main__":
-    run_all()
+    _, db_ok = run_all()
+    if not db_ok:
+        sys.exit(1)
