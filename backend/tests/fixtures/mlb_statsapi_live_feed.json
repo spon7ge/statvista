@@ -1,0 +1,2678 @@
+{
+  "gamePk": 823919,
+  "gameData": {
+    "game": {
+      "pk": 823919,
+      "type": "R",
+      "doubleHeader": "N",
+      "id": "2026/08/02/bosmlb-lanmlb-1",
+      "gamedayType": "P",
+      "tiebreaker": "N",
+      "gameNumber": 1,
+      "calendarEventID": "14-823919-2026-08-02",
+      "season": "2026",
+      "seasonDisplay": "2026"
+    },
+    "datetime": {
+      "dateTime": "2026-08-02T23:20:00Z",
+      "originalDate": "2026-08-02",
+      "officialDate": "2026-08-02",
+      "dayNight": "day",
+      "time": "4:20",
+      "ampm": "PM"
+    },
+    "status": {
+      "abstractGameState": "Live",
+      "codedGameState": "I",
+      "detailedState": "In Progress",
+      "statusCode": "I",
+      "startTimeTBD": false,
+      "abstractGameCode": "L"
+    },
+    "teams": {
+      "away": {
+        "id": 111,
+        "abbreviation": "BOS",
+        "name": "Boston Red Sox",
+        "teamName": "Red Sox",
+        "shortName": "Boston"
+      },
+      "home": {
+        "id": 119,
+        "abbreviation": "LAD",
+        "name": "Los Angeles Dodgers",
+        "teamName": "Dodgers",
+        "shortName": "LA Dodgers"
+      }
+    },
+    "venue": {
+      "name": "UNIQLO Field at Dodger Stadium",
+      "id": 22
+    }
+  },
+  "liveData": {
+    "linescore": {
+      "currentInning": 6,
+      "currentInningOrdinal": "6th",
+      "inningState": "End",
+      "inningHalf": "Bottom",
+      "isTopInning": false,
+      "innings": [
+        {
+          "num": 1,
+          "home": {
+            "runs": 0,
+            "hits": 1,
+            "errors": 0
+          },
+          "away": {
+            "runs": 2,
+            "hits": 3,
+            "errors": 0
+          }
+        },
+        {
+          "num": 2,
+          "home": {
+            "runs": 3,
+            "hits": 4,
+            "errors": 0
+          },
+          "away": {
+            "runs": 0,
+            "hits": 0,
+            "errors": 0
+          }
+        },
+        {
+          "num": 3,
+          "home": {
+            "runs": 0,
+            "hits": 0,
+            "errors": 0
+          },
+          "away": {
+            "runs": 3,
+            "hits": 3,
+            "errors": 0
+          }
+        },
+        {
+          "num": 4,
+          "home": {
+            "runs": 0,
+            "hits": 0,
+            "errors": 0
+          },
+          "away": {
+            "runs": 0,
+            "hits": 0,
+            "errors": 0
+          }
+        },
+        {
+          "num": 5,
+          "home": {
+            "runs": 0,
+            "hits": 0,
+            "errors": 0
+          },
+          "away": {
+            "runs": 0,
+            "hits": 0,
+            "errors": 0
+          }
+        },
+        {
+          "num": 6,
+          "home": {
+            "runs": 0,
+            "hits": 1,
+            "errors": 0
+          },
+          "away": {
+            "runs": 1,
+            "hits": 1,
+            "errors": 0
+          }
+        }
+      ],
+      "teams": {
+        "home": {
+          "runs": 3,
+          "hits": 6,
+          "errors": 0,
+          "leftOnBase": 4
+        },
+        "away": {
+          "runs": 6,
+          "hits": 7,
+          "errors": 0,
+          "leftOnBase": 4
+        }
+      },
+      "offense": {
+        "batter": {
+          "id": 678882,
+          "fullName": "Ceddanne Rafaela",
+          "link": "/api/v1/people/678882"
+        },
+        "onDeck": {
+          "id": 677800,
+          "fullName": "Wilyer Abreu",
+          "link": "/api/v1/people/677800"
+        },
+        "pitcher": {
+          "id": 686580,
+          "fullName": "Justin Slaten",
+          "link": "/api/v1/people/686580"
+        },
+        "first": null,
+        "second": null,
+        "third": null,
+        "team": {
+          "id": 111,
+          "name": "Boston Red Sox",
+          "link": "/api/v1/teams/111"
+        }
+      },
+      "balls": 2,
+      "strikes": 2,
+      "outs": 3
+    },
+    "plays": {
+      "currentPlay": {
+        "result": {
+          "event": "Groundout",
+          "eventType": "field_out",
+          "description": "Teoscar Hern\u00e1ndez grounds out, second baseman Nick Sogard to first baseman Willson Contreras.",
+          "awayScore": 6,
+          "homeScore": 3
+        },
+        "about": {
+          "atBatIndex": 52,
+          "inning": 6,
+          "halfInning": "bottom",
+          "isTopInning": false,
+          "isScoringPlay": false
+        },
+        "count": {
+          "balls": 2,
+          "strikes": 2,
+          "outs": 3
+        },
+        "matchup": {
+          "batter": {
+            "id": 606192,
+            "fullName": "Teoscar Hern\u00e1ndez",
+            "link": "/api/v1/people/606192"
+          },
+          "batSide": {
+            "code": "R",
+            "description": "Right"
+          },
+          "pitcher": {
+            "id": 686580,
+            "fullName": "Justin Slaten",
+            "link": "/api/v1/people/686580"
+          },
+          "pitchHand": {
+            "code": "R",
+            "description": "Right"
+          }
+        },
+        "playEvents": [
+          {
+            "isPitch": false,
+            "pitchNumber": null,
+            "details": {
+              "call": null,
+              "description": "Mound Visit.",
+              "code": null,
+              "isStrike": null,
+              "isBall": null,
+              "isInPlay": null,
+              "type": null
+            },
+            "pitchData": {
+              "startSpeed": null,
+              "coordinates": {
+                "x": null,
+                "y": null,
+                "pX": null,
+                "pZ": null
+              },
+              "strikeZoneTop": null,
+              "strikeZoneBottom": null
+            }
+          },
+          {
+            "isPitch": false,
+            "pitchNumber": null,
+            "details": {
+              "call": null,
+              "description": "Pitching Change: Justin Slaten replaces Jake Bennett.",
+              "code": null,
+              "isStrike": null,
+              "isBall": null,
+              "isInPlay": null,
+              "type": null
+            },
+            "pitchData": {
+              "startSpeed": null,
+              "coordinates": {
+                "x": null,
+                "y": null,
+                "pX": null,
+                "pZ": null
+              },
+              "strikeZoneTop": null,
+              "strikeZoneBottom": null
+            }
+          },
+          {
+            "isPitch": true,
+            "pitchNumber": 1,
+            "details": {
+              "call": {
+                "code": "B",
+                "description": "Ball"
+              },
+              "description": "Ball",
+              "code": "B",
+              "isStrike": false,
+              "isBall": true,
+              "isInPlay": false,
+              "type": {
+                "code": "SI",
+                "description": "Sinker"
+              }
+            },
+            "pitchData": {
+              "startSpeed": 97.0,
+              "coordinates": {
+                "x": 148.46,
+                "y": 91.83,
+                "pX": -1.267962822858507,
+                "pZ": 3.4749046724926558
+              },
+              "strikeZoneTop": 3.2,
+              "strikeZoneBottom": 1.615
+            }
+          },
+          {
+            "isPitch": true,
+            "pitchNumber": 2,
+            "details": {
+              "call": {
+                "code": "B",
+                "description": "Ball"
+              },
+              "description": "Ball",
+              "code": "B",
+              "isStrike": false,
+              "isBall": true,
+              "isInPlay": false,
+              "type": {
+                "code": "FC",
+                "description": "Cutter"
+              }
+            },
+            "pitchData": {
+              "startSpeed": 95.2,
+              "coordinates": {
+                "x": 112.16,
+                "y": 142.17,
+                "pX": 0.12689394254888428,
+                "pZ": 3.577993888506463
+              },
+              "strikeZoneTop": 3.2,
+              "strikeZoneBottom": 1.615
+            }
+          },
+          {
+            "isPitch": true,
+            "pitchNumber": 3,
+            "details": {
+              "call": {
+                "code": "F",
+                "description": "Foul"
+              },
+              "description": "Foul",
+              "code": "F",
+              "isStrike": true,
+              "isBall": false,
+              "isInPlay": false,
+              "type": {
+                "code": "FC",
+                "description": "Cutter"
+              }
+            },
+            "pitchData": {
+              "startSpeed": 95.6,
+              "coordinates": {
+                "x": 90.19,
+                "y": 170.36,
+                "pX": 0.7034639618767086,
+                "pZ": 2.5341371230669427
+              },
+              "strikeZoneTop": 3.2,
+              "strikeZoneBottom": 1.615
+            }
+          },
+          {
+            "isPitch": true,
+            "pitchNumber": 4,
+            "details": {
+              "call": {
+                "code": "C",
+                "description": "Called Strike"
+              },
+              "description": "Called Strike",
+              "code": "C",
+              "isStrike": true,
+              "isBall": false,
+              "isInPlay": false,
+              "type": {
+                "code": "SI",
+                "description": "Sinker"
+              }
+            },
+            "pitchData": {
+              "startSpeed": 97.8,
+              "coordinates": {
+                "x": 94.14,
+                "y": 169.84,
+                "pX": 0.5998243102898643,
+                "pZ": 2.553180176411104
+              },
+              "strikeZoneTop": 3.2,
+              "strikeZoneBottom": 1.615
+            }
+          },
+          {
+            "isPitch": true,
+            "pitchNumber": 5,
+            "details": {
+              "call": {
+                "code": "X",
+                "description": "In play, out(s)"
+              },
+              "description": "In play, out(s)",
+              "code": "X",
+              "isStrike": false,
+              "isBall": false,
+              "isInPlay": true,
+              "type": {
+                "code": "FC",
+                "description": "Cutter"
+              }
+            },
+            "pitchData": {
+              "startSpeed": 94.8,
+              "coordinates": {
+                "x": 130.26,
+                "y": 144.93,
+                "pX": -0.34785360429204304,
+                "pZ": 3.475911812049401
+              },
+              "strikeZoneTop": 3.2,
+              "strikeZoneBottom": 1.615
+            },
+            "hitData": {
+              "trajectory": "ground_ball",
+              "hardness": "medium",
+              "coordinates": {
+                "coordX": 128.73,
+                "coordY": 143.55
+              }
+            }
+          }
+        ],
+        "atBatIndex": 52
+      },
+      "allPlays": [
+        {
+          "result": {
+            "event": "Walk",
+            "eventType": "walk",
+            "description": "Nick Sogard walks.",
+            "awayScore": 0,
+            "homeScore": 0
+          },
+          "about": {
+            "atBatIndex": 0,
+            "inning": 1,
+            "halfInning": "top",
+            "isTopInning": true,
+            "isScoringPlay": false
+          },
+          "count": {
+            "balls": 4,
+            "strikes": 2,
+            "outs": 0
+          },
+          "matchup": {
+            "batter": {
+              "id": 686765,
+              "fullName": "Nick Sogard",
+              "link": "/api/v1/people/686765"
+            },
+            "batSide": {
+              "code": "L",
+              "description": "Left"
+            },
+            "pitcher": {
+              "id": 686218,
+              "fullName": "Emmet Sheehan",
+              "link": "/api/v1/people/686218"
+            },
+            "pitchHand": {
+              "code": "R",
+              "description": "Right"
+            }
+          },
+          "playEvents": [
+            {
+              "isPitch": true,
+              "pitchNumber": 1,
+              "details": {
+                "call": {
+                  "code": "F",
+                  "description": "Foul"
+                },
+                "description": "Foul",
+                "code": "F",
+                "isStrike": true,
+                "isBall": false,
+                "isInPlay": false,
+                "type": {
+                  "code": "FF",
+                  "description": "Four-Seam Fastball"
+                }
+              },
+              "pitchData": {
+                "startSpeed": 94.4,
+                "coordinates": {
+                  "x": 108.3,
+                  "y": 179.01,
+                  "pX": 0.22833748544627788,
+                  "pZ": 2.2135400337526714
+                },
+                "strikeZoneTop": 3.245,
+                "strikeZoneBottom": 1.638
+              }
+            },
+            {
+              "isPitch": true,
+              "pitchNumber": 2,
+              "details": {
+                "call": {
+                  "code": "B",
+                  "description": "Ball"
+                },
+                "description": "Ball",
+                "code": "B",
+                "isStrike": false,
+                "isBall": true,
+                "isInPlay": false,
+                "type": {
+                  "code": "FF",
+                  "description": "Four-Seam Fastball"
+                }
+              },
+              "pitchData": {
+                "startSpeed": 94.4,
+                "coordinates": {
+                  "x": 153.39,
+                  "y": 78.0,
+                  "pX": -0.9547994699667376,
+                  "pZ": 5.954667835623266
+                },
+                "strikeZoneTop": 3.245,
+                "strikeZoneBottom": 1.638
+              }
+            },
+            {
+              "isPitch": true,
+              "pitchNumber": 3,
+              "details": {
+                "call": {
+                  "code": "B",
+                  "description": "Ball"
+                },
+                "description": "Ball",
+                "code": "B",
+                "isStrike": false,
+                "isBall": true,
+                "isInPlay": false,
+                "type": {
+                  "code": "CU",
+                  "description": "Curveball"
+                }
+              },
+              "pitchData": {
+                "startSpeed": 79.8,
+                "coordinates": {
+                  "x": 161.55,
+                  "y": 140.59,
+                  "pX": -1.1688169148199485,
+                  "pZ": 3.6365455779077274
+                },
+                "strikeZoneTop": 3.245,
+                "strikeZoneBottom": 1.638
+              }
+            },
+            {
+              "isPitch": true,
+              "pitchNumber": 4,
+              "details": {
+                "call": {
+                  "code": "B",
+                  "description": "Ball"
+                },
+                "description": "Ball",
+                "code": "B",
+                "isStrike": false,
+                "isBall": true,
+                "isInPlay": false,
+                "type": {
+                  "code": "FF",
+                  "description": "Four-Seam Fastball"
+                }
+              },
+              "pitchData": {
+                "startSpeed": 93.1,
+                "coordinates": {
+                  "x": 174.88,
+                  "y": 107.78,
+                  "pX": -1.5185250019130663,
+                  "pZ": 4.851797306722731
+                },
+                "strikeZoneTop": 3.245,
+                "strikeZoneBottom": 1.638
+              }
+            },
+            {
+              "isPitch": true,
+              "pitchNumber": 5,
+              "details": {
+                "call": {
+                  "code": "S",
+                  "description": "Swinging Strike"
+                },
+                "description": "Swinging Strike",
+                "code": "S",
+                "isStrike": true,
+                "isBall": false,
+                "isInPlay": false,
+                "type": {
+                  "code": "SL",
+                  "description": "Slider"
+                }
+              },
+              "pitchData": {
+                "startSpeed": 85.9,
+                "coordinates": {
+                  "x": 90.36,
+                  "y": 188.63,
+                  "pX": 0.6988218223182311,
+                  "pZ": 1.857539771198533
+                },
+                "strikeZoneTop": 3.245,
+                "strikeZoneBottom": 1.638
+              }
+            },
+            {
+              "isPitch": true,
+              "pitchNumber": 6,
+              "details": {
+                "call": {
+                  "code": "F",
+                  "description": "Foul"
+                },
+                "description": "Foul",
+                "code": "F",
+                "isStrike": true,
+                "isBall": false,
+                "isInPlay": false,
+                "type": {
+                  "code": "FF",
+                  "description": "Four-Seam Fastball"
+                }
+              },
+              "pitchData": {
+                "startSpeed": 95.4,
+                "coordinates": {
+                  "x": 139.52,
+                  "y": 171.73,
+                  "pX": -0.5907337698571051,
+                  "pZ": 2.483494768534609
+                },
+                "strikeZoneTop": 3.245,
+                "strikeZoneBottom": 1.638
+              }
+            },
+            {
+              "isPitch": true,
+              "pitchNumber": 7,
+              "details": {
+                "call": {
+                  "code": "B",
+                  "description": "Ball"
+                },
+                "description": "Ball",
+                "code": "B",
+                "isStrike": false,
+                "isBall": true,
+                "isInPlay": false,
+                "type": {
+                  "code": "CU",
+                  "description": "Curveball"
+                }
+              },
+              "pitchData": {
+                "startSpeed": 78.9,
+                "coordinates": {
+                  "x": 128.06,
+                  "y": 149.58,
+                  "pX": -0.29005612811062087,
+                  "pZ": 3.303687804436666
+                },
+                "strikeZoneTop": 3.245,
+                "strikeZoneBottom": 1.638
+              }
+            }
+          ],
+          "atBatIndex": 0
+        },
+        {
+          "result": {
+            "event": "Forceout",
+            "eventType": "force_out",
+            "description": "Ceddanne Rafaela grounds into a force out, shortstop Mookie Betts to second baseman Tommy Edman. Nick Sogard out at 2nd. Ceddanne Rafaela to 1st.",
+            "awayScore": 0,
+            "homeScore": 0
+          },
+          "about": {
+            "atBatIndex": 1,
+            "inning": 1,
+            "halfInning": "top",
+            "isTopInning": true,
+            "isScoringPlay": false
+          },
+          "count": {
+            "balls": 1,
+            "strikes": 2,
+            "outs": 1
+          },
+          "matchup": {
+            "batter": {
+              "id": 678882,
+              "fullName": "Ceddanne Rafaela",
+              "link": "/api/v1/people/678882"
+            },
+            "batSide": {
+              "code": "R",
+              "description": "Right"
+            },
+            "pitcher": {
+              "id": 686218,
+              "fullName": "Emmet Sheehan",
+              "link": "/api/v1/people/686218"
+            },
+            "pitchHand": {
+              "code": "R",
+              "description": "Right"
+            }
+          },
+          "playEvents": [
+            {
+              "isPitch": true,
+              "pitchNumber": 1,
+              "details": {
+                "call": {
+                  "code": "C",
+                  "description": "Called Strike"
+                },
+                "description": "Called Strike",
+                "code": "C",
+                "isStrike": true,
+                "isBall": false,
+                "isInPlay": false,
+                "type": {
+                  "code": "SL",
+                  "description": "Slider"
+                }
+              },
+              "pitchData": {
+                "startSpeed": 85.4,
+                "coordinates": {
+                  "x": 83.92,
+                  "y": 186.6,
+                  "pX": 0.8678231180135303,
+                  "pZ": 1.9327232527104035
+                },
+                "strikeZoneTop": 3.11,
+                "strikeZoneBottom": 1.57
+              }
+            },
+            {
+              "isPitch": true,
+              "pitchNumber": 2,
+              "details": {
+                "call": {
+                  "code": "B",
+                  "description": "Ball"
+                },
+                "description": "Ball",
+                "code": "B",
+                "isStrike": false,
+                "isBall": true,
+                "isInPlay": false,
+                "type": {
+                  "code": "SL",
+                  "description": "Slider"
+                }
+              },
+              "pitchData": {
+                "startSpeed": 84.7,
+                "coordinates": {
+                  "x": 119.93,
+                  "y": 121.44,
+                  "pX": -0.07680763425488997,
+                  "pZ": 4.345794005642038
+                },
+                "strikeZoneTop": 3.11,
+                "strikeZoneBottom": 1.57
+              }
+            },
+            {
+              "isPitch": true,
+              "pitchNumber": 3,
+              "details": {
+                "call": {
+                  "code": "T",
+                  "description": "Foul Tip"
+                },
+                "description": "Foul Tip",
+                "code": "T",
+                "isStrike": true,
+                "isBall": false,
+                "isInPlay": false,
+                "type": {
+                  "code": "FF",
+                  "description": "Four-Seam Fastball"
+                }
+              },
+              "pitchData": {
+                "startSpeed": 94.6,
+                "coordinates": {
+                  "x": 157.64,
+                  "y": 156.42,
+                  "pX": -1.0660793274764941,
+                  "pZ": 3.0502770074538743
+                },
+                "strikeZoneTop": 3.11,
+                "strikeZoneBottom": 1.57
+              }
+            },
+            {
+              "isPitch": true,
+              "pitchNumber": 4,
+              "details": {
+                "call": {
+                  "code": "F",
+                  "description": "Foul"
+                },
+                "description": "Foul",
+                "code": "F",
+                "isStrike": true,
+                "isBall": false,
+                "isInPlay": false,
+                "type": {
+                  "code": "FF",
+                  "description": "Four-Seam Fastball"
+                }
+              },
+              "pitchData": {
+                "startSpeed": 91.7,
+                "coordinates": {
+                  "x": 107.82,
+                  "y": 141.41,
+                  "pX": 0.2407511270950553,
+                  "pZ": 3.60624634566938
+                },
+                "strikeZoneTop": 3.11,
+                "strikeZoneBottom": 1.57
+              }
+            },
+            {
+              "isPitch": true,
+              "pitchNumber": 5,
+              "details": {
+                "call": {
+                  "code": "X",
+                  "description": "In play, out(s)"
+                },
+                "description": "In play, out(s)",
+                "code": "X",
+                "isStrike": false,
+                "isBall": false,
+                "isInPlay": true,
+                "type": {
+                  "code": "CU",
+                  "description": "Curveball"
+                }
+              },
+              "pitchData": {
+                "startSpeed": 79.7,
+                "coordinates": {
+                  "x": 92.65,
+                  "y": 190.52,
+                  "pX": 0.6388799168497342,
+                  "pZ": 1.7872386313221176
+                },
+                "strikeZoneTop": 3.11,
+                "strikeZoneBottom": 1.57
+              },
+              "hitData": {
+                "trajectory": "ground_ball",
+                "hardness": "medium",
+                "coordinates": {
+                  "coordX": 107.53,
+                  "coordY": 152.03
+                }
+              }
+            }
+          ],
+          "atBatIndex": 1
+        },
+        {
+          "result": {
+            "event": "Single",
+            "eventType": "single",
+            "description": "Wilyer Abreu singles on a sharp ground ball to center fielder Andy Pages. Ceddanne Rafaela to 2nd.",
+            "awayScore": 0,
+            "homeScore": 0
+          },
+          "about": {
+            "atBatIndex": 2,
+            "inning": 1,
+            "halfInning": "top",
+            "isTopInning": true,
+            "isScoringPlay": false
+          },
+          "count": {
+            "balls": 1,
+            "strikes": 2,
+            "outs": 1
+          },
+          "matchup": {
+            "batter": {
+              "id": 677800,
+              "fullName": "Wilyer Abreu",
+              "link": "/api/v1/people/677800"
+            },
+            "batSide": {
+              "code": "L",
+              "description": "Left"
+            },
+            "pitcher": {
+              "id": 686218,
+              "fullName": "Emmet Sheehan",
+              "link": "/api/v1/people/686218"
+            },
+            "pitchHand": {
+              "code": "R",
+              "description": "Right"
+            }
+          },
+          "playEvents": [
+            {
+              "isPitch": true,
+              "pitchNumber": 1,
+              "details": {
+                "call": {
+                  "code": "B",
+                  "description": "Ball"
+                },
+                "description": "Ball",
+                "code": "B",
+                "isStrike": false,
+                "isBall": true,
+                "isInPlay": false,
+                "type": {
+                  "code": "FF",
+                  "description": "Four-Seam Fastball"
+                }
+              },
+              "pitchData": {
+                "startSpeed": 92.4,
+                "coordinates": {
+                  "x": 166.28,
+                  "y": 92.77,
+                  "pX": -1.2928130568626641,
+                  "pZ": 5.407638973262795
+                },
+                "strikeZoneTop": 3.117,
+                "strikeZoneBottom": 1.573
+              }
+            },
+            {
+              "isPitch": true,
+              "pitchNumber": 2,
+              "details": {
+                "call": {
+                  "code": "C",
+                  "description": "Called Strike"
+                },
+                "description": "Called Strike",
+                "code": "C",
+                "isStrike": true,
+                "isBall": false,
+                "isInPlay": false,
+                "type": {
+                  "code": "CU",
+                  "description": "Curveball"
+                }
+              },
+              "pitchData": {
+                "startSpeed": 77.4,
+                "coordinates": {
+                  "x": 135.44,
+                  "y": 164.23,
+                  "pX": -0.48388667832521187,
+                  "pZ": 2.761096678705631
+                },
+                "strikeZoneTop": 3.117,
+                "strikeZoneBottom": 1.573
+              }
+            },
+            {
+              "isPitch": true,
+              "pitchNumber": 3,
+              "details": {
+                "call": {
+                  "code": "S",
+                  "description": "Swinging Strike"
+                },
+                "description": "Swinging Strike",
+                "code": "S",
+                "isStrike": true,
+                "isBall": false,
+                "isInPlay": false,
+                "type": {
+                  "code": "FF",
+                  "description": "Four-Seam Fastball"
+                }
+              },
+              "pitchData": {
+                "startSpeed": 93.3,
+                "coordinates": {
+                  "x": 118.5,
+                  "y": 147.91,
+                  "pX": -0.03935730764117545,
+                  "pZ": 3.365411586685933
+                },
+                "strikeZoneTop": 3.117,
+                "strikeZoneBottom": 1.573
+              }
+            },
+            {
+              "isPitch": true,
+              "pitchNumber": 4,
+              "details": {
+                "call": {
+                  "code": "D",
+                  "description": "In play, no out"
+                },
+                "description": "In play, no out",
+                "code": "D",
+                "isStrike": false,
+                "isBall": false,
+                "isInPlay": true,
+                "type": {
+                  "code": "CH",
+                  "description": "Changeup"
+                }
+              },
+              "pitchData": {
+                "startSpeed": 85.3,
+                "coordinates": {
+                  "x": 143.49,
+                  "y": 168.13,
+                  "pX": -0.6950212469040881,
+                  "pZ": 2.616606264953324
+                },
+                "strikeZoneTop": 3.117,
+                "strikeZoneBottom": 1.573
+              },
+              "hitData": {
+                "trajectory": "ground_ball",
+                "hardness": "hard",
+                "coordinates": {
+                  "coordX": 143.27,
+                  "coordY": 100.55
+                }
+              }
+            }
+          ],
+          "atBatIndex": 2
+        },
+        {
+          "result": {
+            "event": "Lineout",
+            "eventType": "field_out",
+            "description": "Willson Contreras lines out to left fielder Teoscar Hern\u00e1ndez.",
+            "awayScore": 0,
+            "homeScore": 0
+          },
+          "about": {
+            "atBatIndex": 3,
+            "inning": 1,
+            "halfInning": "top",
+            "isTopInning": true,
+            "isScoringPlay": false
+          },
+          "count": {
+            "balls": 0,
+            "strikes": 0,
+            "outs": 2
+          },
+          "matchup": {
+            "batter": {
+              "id": 575929,
+              "fullName": "Willson Contreras",
+              "link": "/api/v1/people/575929"
+            },
+            "batSide": {
+              "code": "R",
+              "description": "Right"
+            },
+            "pitcher": {
+              "id": 686218,
+              "fullName": "Emmet Sheehan",
+              "link": "/api/v1/people/686218"
+            },
+            "pitchHand": {
+              "code": "R",
+              "description": "Right"
+            }
+          },
+          "playEvents": [
+            {
+              "isPitch": true,
+              "pitchNumber": 1,
+              "details": {
+                "call": {
+                  "code": "X",
+                  "description": "In play, out(s)"
+                },
+                "description": "In play, out(s)",
+                "code": "X",
+                "isStrike": false,
+                "isBall": false,
+                "isInPlay": true,
+                "type": {
+                  "code": "SL",
+                  "description": "Slider"
+                }
+              },
+              "pitchData": {
+                "startSpeed": 84.4,
+                "coordinates": {
+                  "x": 91.2,
+                  "y": 184.59,
+                  "pX": 0.6768255298682021,
+                  "pZ": 2.0069196669609277
+                },
+                "strikeZoneTop": 3.23,
+                "strikeZoneBottom": 1.63
+              },
+              "hitData": {
+                "trajectory": "line_drive",
+                "hardness": "medium",
+                "coordinates": {
+                  "coordX": 78.05,
+                  "coordY": 83.77
+                }
+              }
+            }
+          ],
+          "atBatIndex": 3
+        },
+        {
+          "result": {
+            "event": "Single",
+            "eventType": "single",
+            "description": "Masataka Yoshida singles on a ground ball to left fielder Teoscar Hern\u00e1ndez. Ceddanne Rafaela scores. Wilyer Abreu to 2nd.",
+            "awayScore": 1,
+            "homeScore": 0
+          },
+          "about": {
+            "atBatIndex": 4,
+            "inning": 1,
+            "halfInning": "top",
+            "isTopInning": true,
+            "isScoringPlay": true
+          },
+          "count": {
+            "balls": 2,
+            "strikes": 2,
+            "outs": 2
+          },
+          "matchup": {
+            "batter": {
+              "id": 807799,
+              "fullName": "Masataka Yoshida",
+              "link": "/api/v1/people/807799"
+            },
+            "batSide": {
+              "code": "L",
+              "description": "Left"
+            },
+            "pitcher": {
+              "id": 686218,
+              "fullName": "Emmet Sheehan",
+              "link": "/api/v1/people/686218"
+            },
+            "pitchHand": {
+              "code": "R",
+              "description": "Right"
+            }
+          },
+          "playEvents": [
+            {
+              "isPitch": true,
+              "pitchNumber": 1,
+              "details": {
+                "call": {
+                  "code": "B",
+                  "description": "Ball"
+                },
+                "description": "Ball",
+                "code": "B",
+                "isStrike": false,
+                "isBall": true,
+                "isInPlay": false,
+                "type": {
+                  "code": "CU",
+                  "description": "Curveball"
+                }
+              },
+              "pitchData": {
+                "startSpeed": 78.2,
+                "coordinates": {
+                  "x": 107.99,
+                  "y": 212.09,
+                  "pX": 0.23634984681405535,
+                  "pZ": 0.9885758998454851
+                },
+                "strikeZoneTop": 3.022,
+                "strikeZoneBottom": 1.525
+              }
+            },
+            {
+              "isPitch": true,
+              "pitchNumber": 2,
+              "details": {
+                "call": {
+                  "code": "S",
+                  "description": "Swinging Strike"
+                },
+                "description": "Swinging Strike",
+                "code": "S",
+                "isStrike": true,
+                "isBall": false,
+                "isInPlay": false,
+                "type": {
+                  "code": "CH",
+                  "description": "Changeup"
+                }
+              },
+              "pitchData": {
+                "startSpeed": 84.3,
+                "coordinates": {
+                  "x": 128.13,
+                  "y": 199.0,
+                  "pX": -0.29199880315818755,
+                  "pZ": 1.4731867850499247
+                },
+                "strikeZoneTop": 3.022,
+                "strikeZoneBottom": 1.525
+              }
+            },
+            {
+              "isPitch": true,
+              "pitchNumber": 3,
+              "details": {
+                "call": {
+                  "code": "B",
+                  "description": "Ball"
+                },
+                "description": "Ball",
+                "code": "B",
+                "isStrike": false,
+                "isBall": true,
+                "isInPlay": false,
+                "type": {
+                  "code": "FF",
+                  "description": "Four-Seam Fastball"
+                }
+              },
+              "pitchData": {
+                "startSpeed": 93.8,
+                "coordinates": {
+                  "x": 66.51,
+                  "y": 179.81,
+                  "pX": 1.3246276922715179,
+                  "pZ": 2.183891468069166
+                },
+                "strikeZoneTop": 3.022,
+                "strikeZoneBottom": 1.525
+              }
+            },
+            {
+              "isPitch": true,
+              "pitchNumber": 4,
+              "details": {
+                "call": {
+                  "code": "C",
+                  "description": "Called Strike"
+                },
+                "description": "Called Strike",
+                "code": "C",
+                "isStrike": true,
+                "isBall": false,
+                "isInPlay": false,
+                "type": {
+                  "code": "FF",
+                  "description": "Four-Seam Fastball"
+                }
+              },
+              "pitchData": {
+                "startSpeed": 93.9,
+                "coordinates": {
+                  "x": 91.52,
+                  "y": 192.43,
+                  "pX": 0.6683593758534268,
+                  "pZ": 1.7167504153946913
+                },
+                "strikeZoneTop": 3.022,
+                "strikeZoneBottom": 1.525
+              }
+            },
+            {
+              "isPitch": true,
+              "pitchNumber": 5,
+              "details": {
+                "call": {
+                  "code": "E",
+                  "description": "In play, run(s)"
+                },
+                "description": "In play, run(s)",
+                "code": "E",
+                "isStrike": false,
+                "isBall": false,
+                "isInPlay": true,
+                "type": {
+                  "code": "SL",
+                  "description": "Slider"
+                }
+              },
+              "pitchData": {
+                "startSpeed": 85.8,
+                "coordinates": {
+                  "x": 111.48,
+                  "y": 166.96,
+                  "pX": 0.14472947701351008,
+                  "pZ": 2.6600376295784365
+                },
+                "strikeZoneTop": 3.022,
+                "strikeZoneBottom": 1.525
+              },
+              "hitData": {
+                "trajectory": "ground_ball",
+                "hardness": "medium",
+                "coordinates": {
+                  "coordX": 92.91,
+                  "coordY": 122.76
+                }
+              }
+            }
+          ],
+          "atBatIndex": 4
+        },
+        {
+          "result": {
+            "event": "Single",
+            "eventType": "single",
+            "description": "Caleb Durbin singles on a line drive to center fielder Andy Pages. Wilyer Abreu scores. Masataka Yoshida to 3rd.",
+            "awayScore": 2,
+            "homeScore": 0
+          },
+          "about": {
+            "atBatIndex": 5,
+            "inning": 1,
+            "halfInning": "top",
+            "isTopInning": true,
+            "isScoringPlay": true
+          },
+          "count": {
+            "balls": 0,
+            "strikes": 1,
+            "outs": 2
+          },
+          "matchup": {
+            "batter": {
+              "id": 702332,
+              "fullName": "Caleb Durbin",
+              "link": "/api/v1/people/702332"
+            },
+            "batSide": {
+              "code": "R",
+              "description": "Right"
+            },
+            "pitcher": {
+              "id": 686218,
+              "fullName": "Emmet Sheehan",
+              "link": "/api/v1/people/686218"
+            },
+            "pitchHand": {
+              "code": "R",
+              "description": "Right"
+            }
+          },
+          "playEvents": [
+            {
+              "isPitch": true,
+              "pitchNumber": 1,
+              "details": {
+                "call": {
+                  "code": "C",
+                  "description": "Called Strike"
+                },
+                "description": "Called Strike",
+                "code": "C",
+                "isStrike": true,
+                "isBall": false,
+                "isInPlay": false,
+                "type": {
+                  "code": "SL",
+                  "description": "Slider"
+                }
+              },
+              "pitchData": {
+                "startSpeed": 85.6,
+                "coordinates": {
+                  "x": 107.52,
+                  "y": 183.6,
+                  "pX": 0.2486973295409587,
+                  "pZ": 2.043818335223203
+                },
+                "strikeZoneTop": 2.947,
+                "strikeZoneBottom": 1.487
+              }
+            },
+            {
+              "isPitch": true,
+              "pitchNumber": 2,
+              "details": {
+                "call": {
+                  "code": "E",
+                  "description": "In play, run(s)"
+                },
+                "description": "In play, run(s)",
+                "code": "E",
+                "isStrike": false,
+                "isBall": false,
+                "isInPlay": true,
+                "type": {
+                  "code": "FF",
+                  "description": "Four-Seam Fastball"
+                }
+              },
+              "pitchData": {
+                "startSpeed": 93.0,
+                "coordinates": {
+                  "x": 90.96,
+                  "y": 148.41,
+                  "pX": 0.6831144843148709,
+                  "pZ": 3.3471572507860157
+                },
+                "strikeZoneTop": 2.947,
+                "strikeZoneBottom": 1.487
+              },
+              "hitData": {
+                "trajectory": "line_drive",
+                "hardness": "medium",
+                "coordinates": {
+                  "coordX": 154.94,
+                  "coordY": 67.49
+                }
+              }
+            }
+          ],
+          "atBatIndex": 5
+        },
+        {
+          "result": {
+            "event": "Groundout",
+            "eventType": "field_out",
+            "description": "Eliezer Alfonzo grounds out, shortstop Andruw Monasterio to first baseman Willson Contreras. Kyle Tucker scores. Teoscar Hern\u00e1ndez to 3rd. Max Muncy to 2nd.",
+            "awayScore": 2,
+            "homeScore": 1
+          },
+          "about": {
+            "atBatIndex": 18,
+            "inning": 2,
+            "halfInning": "bottom",
+            "isTopInning": false,
+            "isScoringPlay": true
+          },
+          "count": {
+            "balls": 2,
+            "strikes": 0,
+            "outs": 2
+          },
+          "matchup": {
+            "batter": {
+              "id": 672613,
+              "fullName": "Eliezer Alfonzo",
+              "link": "/api/v1/people/672613"
+            },
+            "batSide": {
+              "code": "R",
+              "description": "Right"
+            },
+            "pitcher": {
+              "id": 687562,
+              "fullName": "Jake Bennett",
+              "link": "/api/v1/people/687562"
+            },
+            "pitchHand": {
+              "code": "L",
+              "description": "Left"
+            }
+          },
+          "playEvents": [
+            {
+              "isPitch": true,
+              "pitchNumber": 1,
+              "details": {
+                "call": {
+                  "code": "B",
+                  "description": "Ball"
+                },
+                "description": "Ball",
+                "code": "B",
+                "isStrike": false,
+                "isBall": true,
+                "isInPlay": false,
+                "type": {
+                  "code": "CH",
+                  "description": "Changeup"
+                }
+              },
+              "pitchData": {
+                "startSpeed": 83.0,
+                "coordinates": {
+                  "x": 113.51,
+                  "y": 202.6,
+                  "pX": 0.09160077027751642,
+                  "pZ": 1.3398478842441381
+                },
+                "strikeZoneTop": 3.103,
+                "strikeZoneBottom": 1.566
+              }
+            },
+            {
+              "isPitch": true,
+              "pitchNumber": 2,
+              "details": {
+                "call": {
+                  "code": "B",
+                  "description": "Ball"
+                },
+                "description": "Ball",
+                "code": "B",
+                "isStrike": false,
+                "isBall": true,
+                "isInPlay": false,
+                "type": {
+                  "code": "CH",
+                  "description": "Changeup"
+                }
+              },
+              "pitchData": {
+                "startSpeed": 83.0,
+                "coordinates": {
+                  "x": 62.67,
+                  "y": 169.69,
+                  "pX": 1.4253936926456032,
+                  "pZ": 2.5588967079552702
+                },
+                "strikeZoneTop": 3.103,
+                "strikeZoneBottom": 1.566
+              }
+            },
+            {
+              "isPitch": true,
+              "pitchNumber": 3,
+              "details": {
+                "call": {
+                  "code": "E",
+                  "description": "In play, run(s)"
+                },
+                "description": "In play, run(s)",
+                "code": "E",
+                "isStrike": false,
+                "isBall": false,
+                "isInPlay": true,
+                "type": {
+                  "code": "SI",
+                  "description": "Sinker"
+                }
+              },
+              "pitchData": {
+                "startSpeed": 90.5,
+                "coordinates": {
+                  "x": 133.71,
+                  "y": 180.22,
+                  "pX": -0.4382541955620373,
+                  "pZ": 2.168897715018786
+                },
+                "strikeZoneTop": 3.103,
+                "strikeZoneBottom": 1.566
+              },
+              "hitData": {
+                "trajectory": "ground_ball",
+                "hardness": "medium",
+                "coordinates": {
+                  "coordX": 116.62,
+                  "coordY": 165.96
+                }
+              }
+            }
+          ],
+          "atBatIndex": 18
+        },
+        {
+          "result": {
+            "event": "Groundout",
+            "eventType": "field_out",
+            "description": "Teoscar Hern\u00e1ndez grounds out, second baseman Nick Sogard to first baseman Willson Contreras.",
+            "awayScore": 6,
+            "homeScore": 3
+          },
+          "about": {
+            "atBatIndex": 52,
+            "inning": 6,
+            "halfInning": "bottom",
+            "isTopInning": false,
+            "isScoringPlay": false
+          },
+          "count": {
+            "balls": 2,
+            "strikes": 2,
+            "outs": 3
+          },
+          "matchup": {
+            "batter": {
+              "id": 606192,
+              "fullName": "Teoscar Hern\u00e1ndez",
+              "link": "/api/v1/people/606192"
+            },
+            "batSide": {
+              "code": "R",
+              "description": "Right"
+            },
+            "pitcher": {
+              "id": 686580,
+              "fullName": "Justin Slaten",
+              "link": "/api/v1/people/686580"
+            },
+            "pitchHand": {
+              "code": "R",
+              "description": "Right"
+            }
+          },
+          "playEvents": [
+            {
+              "isPitch": true,
+              "pitchNumber": 1,
+              "details": {
+                "call": {
+                  "code": "B",
+                  "description": "Ball"
+                },
+                "description": "Ball",
+                "code": "B",
+                "isStrike": false,
+                "isBall": true,
+                "isInPlay": false,
+                "type": {
+                  "code": "SI",
+                  "description": "Sinker"
+                }
+              },
+              "pitchData": {
+                "startSpeed": 97.0,
+                "coordinates": {
+                  "x": 148.46,
+                  "y": 91.83,
+                  "pX": -1.267962822858507,
+                  "pZ": 3.4749046724926558
+                },
+                "strikeZoneTop": 3.2,
+                "strikeZoneBottom": 1.615
+              }
+            },
+            {
+              "isPitch": true,
+              "pitchNumber": 2,
+              "details": {
+                "call": {
+                  "code": "B",
+                  "description": "Ball"
+                },
+                "description": "Ball",
+                "code": "B",
+                "isStrike": false,
+                "isBall": true,
+                "isInPlay": false,
+                "type": {
+                  "code": "FC",
+                  "description": "Cutter"
+                }
+              },
+              "pitchData": {
+                "startSpeed": 95.2,
+                "coordinates": {
+                  "x": 112.16,
+                  "y": 142.17,
+                  "pX": 0.12689394254888428,
+                  "pZ": 3.577993888506463
+                },
+                "strikeZoneTop": 3.2,
+                "strikeZoneBottom": 1.615
+              }
+            },
+            {
+              "isPitch": true,
+              "pitchNumber": 3,
+              "details": {
+                "call": {
+                  "code": "F",
+                  "description": "Foul"
+                },
+                "description": "Foul",
+                "code": "F",
+                "isStrike": true,
+                "isBall": false,
+                "isInPlay": false,
+                "type": {
+                  "code": "FC",
+                  "description": "Cutter"
+                }
+              },
+              "pitchData": {
+                "startSpeed": 95.6,
+                "coordinates": {
+                  "x": 90.19,
+                  "y": 170.36,
+                  "pX": 0.7034639618767086,
+                  "pZ": 2.5341371230669427
+                },
+                "strikeZoneTop": 3.2,
+                "strikeZoneBottom": 1.615
+              }
+            },
+            {
+              "isPitch": true,
+              "pitchNumber": 4,
+              "details": {
+                "call": {
+                  "code": "C",
+                  "description": "Called Strike"
+                },
+                "description": "Called Strike",
+                "code": "C",
+                "isStrike": true,
+                "isBall": false,
+                "isInPlay": false,
+                "type": {
+                  "code": "SI",
+                  "description": "Sinker"
+                }
+              },
+              "pitchData": {
+                "startSpeed": 97.8,
+                "coordinates": {
+                  "x": 94.14,
+                  "y": 169.84,
+                  "pX": 0.5998243102898643,
+                  "pZ": 2.553180176411104
+                },
+                "strikeZoneTop": 3.2,
+                "strikeZoneBottom": 1.615
+              }
+            },
+            {
+              "isPitch": true,
+              "pitchNumber": 5,
+              "details": {
+                "call": {
+                  "code": "X",
+                  "description": "In play, out(s)"
+                },
+                "description": "In play, out(s)",
+                "code": "X",
+                "isStrike": false,
+                "isBall": false,
+                "isInPlay": true,
+                "type": {
+                  "code": "FC",
+                  "description": "Cutter"
+                }
+              },
+              "pitchData": {
+                "startSpeed": 94.8,
+                "coordinates": {
+                  "x": 130.26,
+                  "y": 144.93,
+                  "pX": -0.34785360429204304,
+                  "pZ": 3.475911812049401
+                },
+                "strikeZoneTop": 3.2,
+                "strikeZoneBottom": 1.615
+              },
+              "hitData": {
+                "trajectory": "ground_ball",
+                "hardness": "medium",
+                "coordinates": {
+                  "coordX": 128.73,
+                  "coordY": 143.55
+                }
+              }
+            }
+          ],
+          "atBatIndex": 52
+        }
+      ]
+    },
+    "boxscore": {
+      "teams": {
+        "away": {
+          "team": {
+            "id": 111,
+            "abbreviation": null,
+            "name": "Boston Red Sox",
+            "teamName": null,
+            "shortName": null
+          },
+          "batters": [
+            686765,
+            678882,
+            677800,
+            575929,
+            807799,
+            702332,
+            655316,
+            680776,
+            665966
+          ],
+          "pitchers": [
+            687562,
+            686580
+          ],
+          "players": {
+            "ID678882": {
+              "person": {
+                "id": 678882,
+                "fullName": "Ceddanne Rafaela"
+              },
+              "jerseyNumber": "3",
+              "position": {
+                "abbreviation": "CF"
+              },
+              "battingOrder": "200",
+              "stats": {
+                "batting": {
+                  "atBats": 3,
+                  "runs": 2,
+                  "hits": 1,
+                  "rbi": 1,
+                  "baseOnBalls": 0,
+                  "strikeOuts": 1,
+                  "summary": "1-3 | HR, K, RBI"
+                },
+                "pitching": {
+                  "inningsPitched": null,
+                  "hits": null,
+                  "runs": null,
+                  "earnedRuns": null,
+                  "baseOnBalls": null,
+                  "strikeOuts": null,
+                  "numberOfPitches": null,
+                  "pitchesThrown": null,
+                  "summary": null
+                }
+              }
+            },
+            "ID677800": {
+              "person": {
+                "id": 677800,
+                "fullName": "Wilyer Abreu"
+              },
+              "jerseyNumber": "52",
+              "position": {
+                "abbreviation": "RF"
+              },
+              "battingOrder": "300",
+              "stats": {
+                "batting": {
+                  "atBats": 3,
+                  "runs": 2,
+                  "hits": 2,
+                  "rbi": 1,
+                  "baseOnBalls": 0,
+                  "strikeOuts": 0,
+                  "summary": "2-3 | HR, RBI, 2 R"
+                },
+                "pitching": {
+                  "inningsPitched": null,
+                  "hits": null,
+                  "runs": null,
+                  "earnedRuns": null,
+                  "baseOnBalls": null,
+                  "strikeOuts": null,
+                  "numberOfPitches": null,
+                  "pitchesThrown": null,
+                  "summary": null
+                }
+              }
+            },
+            "ID680776": {
+              "person": {
+                "id": 680776,
+                "fullName": "Jarren Duran"
+              },
+              "jerseyNumber": "16",
+              "position": {
+                "abbreviation": "LF"
+              },
+              "battingOrder": "800",
+              "stats": {
+                "batting": {
+                  "atBats": 3,
+                  "runs": 1,
+                  "hits": 1,
+                  "rbi": 1,
+                  "baseOnBalls": 0,
+                  "strikeOuts": 1,
+                  "summary": "1-3 | HR, K, RBI"
+                },
+                "pitching": {
+                  "inningsPitched": null,
+                  "hits": null,
+                  "runs": null,
+                  "earnedRuns": null,
+                  "baseOnBalls": null,
+                  "strikeOuts": null,
+                  "numberOfPitches": null,
+                  "pitchesThrown": null,
+                  "summary": null
+                }
+              }
+            },
+            "ID687562": {
+              "person": {
+                "id": 687562,
+                "fullName": "Jake Bennett"
+              },
+              "jerseyNumber": "64",
+              "position": {
+                "abbreviation": "P"
+              },
+              "battingOrder": null,
+              "stats": {
+                "batting": {
+                  "atBats": null,
+                  "runs": null,
+                  "hits": null,
+                  "rbi": null,
+                  "baseOnBalls": null,
+                  "strikeOuts": null,
+                  "summary": null
+                },
+                "pitching": {
+                  "inningsPitched": "5.2",
+                  "hits": 6,
+                  "runs": 3,
+                  "earnedRuns": 3,
+                  "baseOnBalls": 2,
+                  "strikeOuts": 4,
+                  "numberOfPitches": 88,
+                  "pitchesThrown": 88,
+                  "summary": "5.2 IP, 3 ER, 4 K, 2 BB"
+                }
+              }
+            },
+            "ID686765": {
+              "person": {
+                "id": 686765,
+                "fullName": "Nick Sogard"
+              },
+              "jerseyNumber": "20",
+              "position": {
+                "abbreviation": "2B"
+              },
+              "battingOrder": "100",
+              "stats": {
+                "batting": {
+                  "atBats": 3,
+                  "runs": 0,
+                  "hits": 0,
+                  "rbi": 0,
+                  "baseOnBalls": 1,
+                  "strikeOuts": 2,
+                  "summary": "0-3 | BB, 2 K"
+                },
+                "pitching": {
+                  "inningsPitched": null,
+                  "hits": null,
+                  "runs": null,
+                  "earnedRuns": null,
+                  "baseOnBalls": null,
+                  "strikeOuts": null,
+                  "numberOfPitches": null,
+                  "pitchesThrown": null,
+                  "summary": null
+                }
+              }
+            },
+            "ID665966": {
+              "person": {
+                "id": 665966,
+                "fullName": "Carlos Narv\u00e1ez"
+              },
+              "jerseyNumber": "75",
+              "position": {
+                "abbreviation": "C"
+              },
+              "battingOrder": "900",
+              "stats": {
+                "batting": {
+                  "atBats": 2,
+                  "runs": 0,
+                  "hits": 0,
+                  "rbi": 0,
+                  "baseOnBalls": 1,
+                  "strikeOuts": 2,
+                  "summary": "0-2 | BB, 2 K"
+                },
+                "pitching": {
+                  "inningsPitched": null,
+                  "hits": null,
+                  "runs": null,
+                  "earnedRuns": null,
+                  "baseOnBalls": null,
+                  "strikeOuts": null,
+                  "numberOfPitches": null,
+                  "pitchesThrown": null,
+                  "summary": null
+                }
+              }
+            },
+            "ID655316": {
+              "person": {
+                "id": 655316,
+                "fullName": "Andruw Monasterio"
+              },
+              "jerseyNumber": "32",
+              "position": {
+                "abbreviation": "SS"
+              },
+              "battingOrder": "700",
+              "stats": {
+                "batting": {
+                  "atBats": 2,
+                  "runs": 0,
+                  "hits": 0,
+                  "rbi": 0,
+                  "baseOnBalls": 0,
+                  "strikeOuts": 2,
+                  "summary": "0-2 | HBP, 2 K"
+                },
+                "pitching": {
+                  "inningsPitched": null,
+                  "hits": null,
+                  "runs": null,
+                  "earnedRuns": null,
+                  "baseOnBalls": null,
+                  "strikeOuts": null,
+                  "numberOfPitches": null,
+                  "pitchesThrown": null,
+                  "summary": null
+                }
+              }
+            },
+            "ID686580": {
+              "person": {
+                "id": 686580,
+                "fullName": "Justin Slaten"
+              },
+              "jerseyNumber": "63",
+              "position": {
+                "abbreviation": "P"
+              },
+              "battingOrder": null,
+              "stats": {
+                "batting": {
+                  "atBats": null,
+                  "runs": null,
+                  "hits": null,
+                  "rbi": null,
+                  "baseOnBalls": null,
+                  "strikeOuts": null,
+                  "summary": null
+                },
+                "pitching": {
+                  "inningsPitched": "0.1",
+                  "hits": 0,
+                  "runs": 0,
+                  "earnedRuns": 0,
+                  "baseOnBalls": 0,
+                  "strikeOuts": 0,
+                  "numberOfPitches": 5,
+                  "pitchesThrown": 5,
+                  "summary": "0.1 IP, 0 ER, 0 K, 0 BB"
+                }
+              }
+            },
+            "ID807799": {
+              "person": {
+                "id": 807799,
+                "fullName": "Masataka Yoshida"
+              },
+              "jerseyNumber": "7",
+              "position": {
+                "abbreviation": "DH"
+              },
+              "battingOrder": "500",
+              "stats": {
+                "batting": {
+                  "atBats": 3,
+                  "runs": 1,
+                  "hits": 2,
+                  "rbi": 2,
+                  "baseOnBalls": 0,
+                  "strikeOuts": 0,
+                  "summary": "2-3 | HR, 2 RBI, R"
+                },
+                "pitching": {
+                  "inningsPitched": null,
+                  "hits": null,
+                  "runs": null,
+                  "earnedRuns": null,
+                  "baseOnBalls": null,
+                  "strikeOuts": null,
+                  "numberOfPitches": null,
+                  "pitchesThrown": null,
+                  "summary": null
+                }
+              }
+            },
+            "ID575929": {
+              "person": {
+                "id": 575929,
+                "fullName": "Willson Contreras"
+              },
+              "jerseyNumber": "40",
+              "position": {
+                "abbreviation": "1B"
+              },
+              "battingOrder": "400",
+              "stats": {
+                "batting": {
+                  "atBats": 3,
+                  "runs": 0,
+                  "hits": 0,
+                  "rbi": 0,
+                  "baseOnBalls": 0,
+                  "strikeOuts": 0,
+                  "summary": "0-3"
+                },
+                "pitching": {
+                  "inningsPitched": null,
+                  "hits": null,
+                  "runs": null,
+                  "earnedRuns": null,
+                  "baseOnBalls": null,
+                  "strikeOuts": null,
+                  "numberOfPitches": null,
+                  "pitchesThrown": null,
+                  "summary": null
+                }
+              }
+            },
+            "ID702332": {
+              "person": {
+                "id": 702332,
+                "fullName": "Caleb Durbin"
+              },
+              "jerseyNumber": "5",
+              "position": {
+                "abbreviation": "3B"
+              },
+              "battingOrder": "600",
+              "stats": {
+                "batting": {
+                  "atBats": 3,
+                  "runs": 0,
+                  "hits": 1,
+                  "rbi": 1,
+                  "baseOnBalls": 0,
+                  "strikeOuts": 0,
+                  "summary": "1-3 | RBI"
+                },
+                "pitching": {
+                  "inningsPitched": null,
+                  "hits": null,
+                  "runs": null,
+                  "earnedRuns": null,
+                  "baseOnBalls": null,
+                  "strikeOuts": null,
+                  "numberOfPitches": null,
+                  "pitchesThrown": null,
+                  "summary": null
+                }
+              }
+            }
+          },
+          "battingOrder": [
+            686765,
+            678882,
+            677800,
+            575929,
+            807799,
+            702332,
+            655316,
+            680776,
+            665966
+          ]
+        },
+        "home": {
+          "team": {
+            "id": 119,
+            "abbreviation": null,
+            "name": "Los Angeles Dodgers",
+            "teamName": null,
+            "shortName": null
+          },
+          "batters": [
+            660271,
+            681624,
+            669242,
+            518692,
+            605141,
+            663656,
+            606192,
+            571970,
+            672613
+          ],
+          "pitchers": [
+            686218,
+            676263,
+            623465,
+            669165
+          ],
+          "players": {
+            "ID571970": {
+              "person": {
+                "id": 571970,
+                "fullName": "Max Muncy"
+              },
+              "jerseyNumber": "13",
+              "position": {
+                "abbreviation": "3B"
+              },
+              "battingOrder": "800",
+              "stats": {
+                "batting": {
+                  "atBats": 2,
+                  "runs": 1,
+                  "hits": 1,
+                  "rbi": 0,
+                  "baseOnBalls": 0,
+                  "strikeOuts": 0,
+                  "summary": "1-2 | R"
+                },
+                "pitching": {
+                  "inningsPitched": null,
+                  "hits": null,
+                  "runs": null,
+                  "earnedRuns": null,
+                  "baseOnBalls": null,
+                  "strikeOuts": null,
+                  "numberOfPitches": null,
+                  "pitchesThrown": null,
+                  "summary": null
+                }
+              }
+            },
+            "ID518692": {
+              "person": {
+                "id": 518692,
+                "fullName": "Freddie Freeman"
+              },
+              "jerseyNumber": "5",
+              "position": {
+                "abbreviation": "1B"
+              },
+              "battingOrder": "400",
+              "stats": {
+                "batting": {
+                  "atBats": 3,
+                  "runs": 0,
+                  "hits": 1,
+                  "rbi": 0,
+                  "baseOnBalls": 0,
+                  "strikeOuts": 0,
+                  "summary": "1-3"
+                },
+                "pitching": {
+                  "inningsPitched": null,
+                  "hits": null,
+                  "runs": null,
+                  "earnedRuns": null,
+                  "baseOnBalls": null,
+                  "strikeOuts": null,
+                  "numberOfPitches": null,
+                  "pitchesThrown": null,
+                  "summary": null
+                }
+              }
+            },
+            "ID672613": {
+              "person": {
+                "id": 672613,
+                "fullName": "Eliezer Alfonzo"
+              },
+              "jerseyNumber": "64",
+              "position": {
+                "abbreviation": "C"
+              },
+              "battingOrder": "900",
+              "stats": {
+                "batting": {
+                  "atBats": 2,
+                  "runs": 0,
+                  "hits": 0,
+                  "rbi": 1,
+                  "baseOnBalls": 0,
+                  "strikeOuts": 0,
+                  "summary": "0-2 | RBI"
+                },
+                "pitching": {
+                  "inningsPitched": null,
+                  "hits": null,
+                  "runs": null,
+                  "earnedRuns": null,
+                  "baseOnBalls": null,
+                  "strikeOuts": null,
+                  "numberOfPitches": null,
+                  "pitchesThrown": null,
+                  "summary": null
+                }
+              }
+            },
+            "ID676263": {
+              "person": {
+                "id": 676263,
+                "fullName": "Jack Dreyer"
+              },
+              "jerseyNumber": "86",
+              "position": {
+                "abbreviation": "P"
+              },
+              "battingOrder": null,
+              "stats": {
+                "batting": {
+                  "atBats": null,
+                  "runs": null,
+                  "hits": null,
+                  "rbi": null,
+                  "baseOnBalls": null,
+                  "strikeOuts": null,
+                  "summary": null
+                },
+                "pitching": {
+                  "inningsPitched": "1.1",
+                  "hits": 0,
+                  "runs": 0,
+                  "earnedRuns": 0,
+                  "baseOnBalls": 1,
+                  "strikeOuts": 2,
+                  "numberOfPitches": 27,
+                  "pitchesThrown": 27,
+                  "summary": "1.1 IP, 0 ER, 2 K, BB"
+                }
+              }
+            },
+            "ID663656": {
+              "person": {
+                "id": 663656,
+                "fullName": "Kyle Tucker"
+              },
+              "jerseyNumber": "23",
+              "position": {
+                "abbreviation": "RF"
+              },
+              "battingOrder": "600",
+              "stats": {
+                "batting": {
+                  "atBats": 2,
+                  "runs": 1,
+                  "hits": 1,
+                  "rbi": 0,
+                  "baseOnBalls": 1,
+                  "strikeOuts": 1,
+                  "summary": "1-2 | BB, K, R"
+                },
+                "pitching": {
+                  "inningsPitched": null,
+                  "hits": null,
+                  "runs": null,
+                  "earnedRuns": null,
+                  "baseOnBalls": null,
+                  "strikeOuts": null,
+                  "numberOfPitches": null,
+                  "pitchesThrown": null,
+                  "summary": null
+                }
+              }
+            },
+            "ID623465": {
+              "person": {
+                "id": 623465,
+                "fullName": "Evan Phillips"
+              },
+              "jerseyNumber": "59",
+              "position": {
+                "abbreviation": "P"
+              },
+              "battingOrder": null,
+              "stats": {
+                "batting": {
+                  "atBats": null,
+                  "runs": null,
+                  "hits": null,
+                  "rbi": null,
+                  "baseOnBalls": null,
+                  "strikeOuts": null,
+                  "summary": null
+                },
+                "pitching": {
+                  "inningsPitched": "1.0",
+                  "hits": 0,
+                  "runs": 0,
+                  "earnedRuns": 0,
+                  "baseOnBalls": 0,
+                  "strikeOuts": 0,
+                  "numberOfPitches": 11,
+                  "pitchesThrown": 11,
+                  "summary": "1.0 IP, 0 ER, 0 K, 0 BB"
+                }
+              }
+            },
+            "ID686218": {
+              "person": {
+                "id": 686218,
+                "fullName": "Emmet Sheehan"
+              },
+              "jerseyNumber": "80",
+              "position": {
+                "abbreviation": "P"
+              },
+              "battingOrder": null,
+              "stats": {
+                "batting": {
+                  "atBats": null,
+                  "runs": null,
+                  "hits": null,
+                  "rbi": null,
+                  "baseOnBalls": null,
+                  "strikeOuts": null,
+                  "summary": null
+                },
+                "pitching": {
+                  "inningsPitched": "2.2",
+                  "hits": 6,
+                  "runs": 5,
+                  "earnedRuns": 5,
+                  "baseOnBalls": 1,
+                  "strikeOuts": 4,
+                  "numberOfPitches": 58,
+                  "pitchesThrown": 58,
+                  "summary": "2.2 IP, 5 ER, 4 K, BB"
+                }
+              }
+            },
+            "ID669165": {
+              "person": {
+                "id": 669165,
+                "fullName": "Kyle Hurt"
+              },
+              "jerseyNumber": "63",
+              "position": {
+                "abbreviation": "P"
+              },
+              "battingOrder": null,
+              "stats": {
+                "batting": {
+                  "atBats": null,
+                  "runs": null,
+                  "hits": null,
+                  "rbi": null,
+                  "baseOnBalls": null,
+                  "strikeOuts": null,
+                  "summary": null
+                },
+                "pitching": {
+                  "inningsPitched": "1.0",
+                  "hits": 1,
+                  "runs": 1,
+                  "earnedRuns": 1,
+                  "baseOnBalls": 0,
+                  "strikeOuts": 2,
+                  "numberOfPitches": 20,
+                  "pitchesThrown": 20,
+                  "summary": "1.0 IP, ER, 2 K, 0 BB"
+                }
+              }
+            },
+            "ID660271": {
+              "person": {
+                "id": 660271,
+                "fullName": "Shohei Ohtani"
+              },
+              "jerseyNumber": "17",
+              "position": {
+                "abbreviation": "DH"
+              },
+              "battingOrder": "100",
+              "stats": {
+                "batting": {
+                  "atBats": 2,
+                  "runs": 0,
+                  "hits": 1,
+                  "rbi": 0,
+                  "baseOnBalls": 1,
+                  "strikeOuts": 1,
+                  "summary": "1-2 | BB, K"
+                },
+                "pitching": {
+                  "inningsPitched": null,
+                  "hits": null,
+                  "runs": null,
+                  "earnedRuns": null,
+                  "baseOnBalls": null,
+                  "strikeOuts": null,
+                  "numberOfPitches": null,
+                  "pitchesThrown": null,
+                  "summary": null
+                }
+              }
+            },
+            "ID606192": {
+              "person": {
+                "id": 606192,
+                "fullName": "Teoscar Hern\u00e1ndez"
+              },
+              "jerseyNumber": "37",
+              "position": {
+                "abbreviation": "LF"
+              },
+              "battingOrder": "700",
+              "stats": {
+                "batting": {
+                  "atBats": 3,
+                  "runs": 1,
+                  "hits": 1,
+                  "rbi": 0,
+                  "baseOnBalls": 0,
+                  "strikeOuts": 0,
+                  "summary": "1-3 | R"
+                },
+                "pitching": {
+                  "inningsPitched": null,
+                  "hits": null,
+                  "runs": null,
+                  "earnedRuns": null,
+                  "baseOnBalls": null,
+                  "strikeOuts": null,
+                  "numberOfPitches": null,
+                  "pitchesThrown": null,
+                  "summary": null
+                }
+              }
+            },
+            "ID605141": {
+              "person": {
+                "id": 605141,
+                "fullName": "Mookie Betts"
+              },
+              "jerseyNumber": "50",
+              "position": {
+                "abbreviation": "SS"
+              },
+              "battingOrder": "500",
+              "stats": {
+                "batting": {
+                  "atBats": 3,
+                  "runs": 0,
+                  "hits": 0,
+                  "rbi": 0,
+                  "baseOnBalls": 0,
+                  "strikeOuts": 0,
+                  "summary": "0-3"
+                },
+                "pitching": {
+                  "inningsPitched": null,
+                  "hits": null,
+                  "runs": null,
+                  "earnedRuns": null,
+                  "baseOnBalls": null,
+                  "strikeOuts": null,
+                  "numberOfPitches": null,
+                  "pitchesThrown": null,
+                  "summary": null
+                }
+              }
+            },
+            "ID681624": {
+              "person": {
+                "id": 681624,
+                "fullName": "Andy Pages"
+              },
+              "jerseyNumber": "44",
+              "position": {
+                "abbreviation": "CF"
+              },
+              "battingOrder": "200",
+              "stats": {
+                "batting": {
+                  "atBats": 3,
+                  "runs": 0,
+                  "hits": 1,
+                  "rbi": 2,
+                  "baseOnBalls": 0,
+                  "strikeOuts": 1,
+                  "summary": "1-3 | K, 2 RBI"
+                },
+                "pitching": {
+                  "inningsPitched": null,
+                  "hits": null,
+                  "runs": null,
+                  "earnedRuns": null,
+                  "baseOnBalls": null,
+                  "strikeOuts": null,
+                  "numberOfPitches": null,
+                  "pitchesThrown": null,
+                  "summary": null
+                }
+              }
+            },
+            "ID669242": {
+              "person": {
+                "id": 669242,
+                "fullName": "Tommy Edman"
+              },
+              "jerseyNumber": "25",
+              "position": {
+                "abbreviation": "2B"
+              },
+              "battingOrder": "300",
+              "stats": {
+                "batting": {
+                  "atBats": 3,
+                  "runs": 0,
+                  "hits": 0,
+                  "rbi": 0,
+                  "baseOnBalls": 0,
+                  "strikeOuts": 1,
+                  "summary": "0-3 | K"
+                },
+                "pitching": {
+                  "inningsPitched": null,
+                  "hits": null,
+                  "runs": null,
+                  "earnedRuns": null,
+                  "baseOnBalls": null,
+                  "strikeOuts": null,
+                  "numberOfPitches": null,
+                  "pitchesThrown": null,
+                  "summary": null
+                }
+              }
+            }
+          },
+          "battingOrder": [
+            660271,
+            681624,
+            669242,
+            518692,
+            605141,
+            663656,
+            606192,
+            571970,
+            672613
+          ]
+        }
+      }
+    }
+  }
+}
