@@ -6,8 +6,15 @@ import re
 
 _TRICODE_RE = re.compile(r"^[A-Z]{2,3}$")
 
+# Prefer Stats API / scoreboard tricodes so matchups merge with Sharp + ESPN.
+_ABBREV_ALIASES = {
+    "AZ": "ARI",
+    "WSH": "WSH",
+    "WAS": "WSH",
+}
+
 NAME_TO_ABBREV = {
-    "arizona diamondbacks": "AZ",
+    "arizona diamondbacks": "ARI",
     "atlanta braves": "ATL",
     "baltimore orioles": "BAL",
     "boston red sox": "BOS",
@@ -42,6 +49,16 @@ NAME_TO_ABBREV = {
 }
 
 
+def canonical_mlb_abbrev(abbrev: str | None) -> str | None:
+    """Normalize known MLB tricode aliases (e.g. AZ → ARI)."""
+    if abbrev is None:
+        return None
+    upper = str(abbrev).strip().upper()
+    if not upper:
+        return None
+    return _ABBREV_ALIASES.get(upper, upper)
+
+
 def abbrev_from_team_name(label: str | None) -> str | None:
     """Map a full team name or leading tricode to an MLB abbrev."""
     text = str(label or "").strip()
@@ -50,10 +67,10 @@ def abbrev_from_team_name(label: str | None) -> str | None:
 
     mapped = NAME_TO_ABBREV.get(text.lower())
     if mapped:
-        return mapped
+        return canonical_mlb_abbrev(mapped)
 
     first = text.split()[0].upper()
     if _TRICODE_RE.match(first):
-        return first
+        return canonical_mlb_abbrev(first)
 
     return None

@@ -75,6 +75,62 @@ def test_skips_junk_away_runs_events():
     assert svc.normalize_pinnacle_team_rows(rows) == []
 
 
+def test_arizona_maps_to_ari_not_az():
+    rows = [
+        {
+            "away_team": "San Diego Padres",
+            "home_team": "Arizona Diamondbacks",
+            "start_time": "2026-08-03T23:00:00Z",
+            "market_type": "spread",
+            "side": "away",
+            "team": "San Diego Padres",
+            "points": -1.5,
+            "american_price": -110,
+        },
+        {
+            "away_team": "San Diego Padres",
+            "home_team": "Arizona Diamondbacks",
+            "start_time": "2026-08-03T23:00:00Z",
+            "market_type": "total",
+            "side": "over",
+            "points": 9.0,
+            "american_price": -110,
+        },
+    ]
+    games = svc.normalize_pinnacle_team_rows(rows)
+    assert len(games) == 1
+    assert games[0].home_abbrev == "ARI"
+    assert games[0].away_abbrev == "SD"
+
+
+def test_merge_collapses_az_and_ari_aliases():
+    pin = [
+        MlbOddsGame(
+            home_abbrev="AZ",
+            away_abbrev="SD",
+            spread_team_abbrev="SD",
+            spread_line=-1.5,
+            total=9.0,
+            sportsbook="pinnacle",
+        )
+    ]
+    sharp = [
+        MlbOddsGame(
+            home_abbrev="ARI",
+            away_abbrev="SD",
+            spread_team_abbrev="SD",
+            spread_line=-1.5,
+            total=8.5,
+            sportsbook="draftkings",
+        )
+    ]
+    merged = svc.merge_pinnacle_prefer_sharp(pin, sharp)
+    assert len(merged) == 1
+    assert merged[0].home_abbrev == "ARI"
+    assert merged[0].sportsbook == "pinnacle"
+    assert merged[0].total == 9.0
+
+
 def test_merge_falls_back_to_sharp_when_pinnacle_empty_markets():
     pin = [MlbOddsGame(home_abbrev="CHC", away_abbrev="LAD", sportsbook="pinnacle")]
     sharp = [

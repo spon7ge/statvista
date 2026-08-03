@@ -11,7 +11,7 @@ from zoneinfo import ZoneInfo
 
 from app.schemas.mlb_odds import MlbOddsGame, MlbOddsResponse
 from app.schemas.wnba_odds import WnbaOddsGame
-from app.services.mlb_team_names import abbrev_from_team_name
+from app.services.mlb_team_names import abbrev_from_team_name, canonical_mlb_abbrev
 from app.services.odds_snapshots import fetch_latest_pinnacle_team
 from app.services.sharp_odds import (
     fetch_sharp_odds_rows,
@@ -160,7 +160,21 @@ def _to_mlb_games(games: list[WnbaOddsGame]) -> list[MlbOddsGame]:
 
 
 def _team_merge_key(game: MlbOddsGame) -> tuple[str, str]:
-    return (game.away_abbrev, game.home_abbrev)
+    away = canonical_mlb_abbrev(game.away_abbrev) or game.away_abbrev
+    home = canonical_mlb_abbrev(game.home_abbrev) or game.home_abbrev
+    return (away, home)
+
+
+def _canonicalize_game(game: MlbOddsGame) -> MlbOddsGame:
+    """Normalize tricode aliases so Pinnacle/Sharp/scoreboard keys align."""
+    data = game.model_dump()
+    data["away_abbrev"] = canonical_mlb_abbrev(game.away_abbrev) or game.away_abbrev
+    data["home_abbrev"] = canonical_mlb_abbrev(game.home_abbrev) or game.home_abbrev
+    if game.spread_team_abbrev:
+        data["spread_team_abbrev"] = (
+            canonical_mlb_abbrev(game.spread_team_abbrev) or game.spread_team_abbrev
+        )
+    return MlbOddsGame.model_validate(data)
 
 
 def _has_markets(game: MlbOddsGame) -> bool:
@@ -175,6 +189,7 @@ def merge_pinnacle_prefer_sharp(
     pin_by_team: dict[tuple[str, str], MlbOddsGame] = {}
 
     for game in pinnacle:
+        game = _canonicalize_game(game)
         team_key = _team_merge_key(game)
         prev = pin_by_team.get(team_key)
         if prev is None or (not _has_markets(prev) and _has_markets(game)):
@@ -183,6 +198,7 @@ def merge_pinnacle_prefer_sharp(
     merged_by_team: dict[tuple[str, str], MlbOddsGame] = {}
 
     for game in sharp:
+        game = _canonicalize_game(game)
         team_key = _team_merge_key(game)
         pin = pin_by_team.get(team_key)
         if pin is not None and _has_markets(pin):
@@ -193,6 +209,7 @@ def merge_pinnacle_prefer_sharp(
             merged_by_team[team_key] = game
 
     for game in pinnacle:
+        game = _canonicalize_game(game)
         team_key = _team_merge_key(game)
         if team_key not in merged_by_team and _has_markets(game):
             merged_by_team[team_key] = game
