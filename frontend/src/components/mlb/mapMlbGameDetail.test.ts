@@ -100,7 +100,7 @@ function buildApiDetail(
     win_probability: {
       away_abbrev: "BOS",
       home_abbrev: "LAD",
-      points: [{ play_id: "p1", label: "Top 3", home_win_pct: 48 }],
+      points: [{ play_id: "p1", label: "Top 3", home_win_pct: 0.48 }],
       stakes: { label: "On this pitch", home_win_delta: -2.1 },
     },
     hit_chart: [

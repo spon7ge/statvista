@@ -15,7 +15,7 @@ const RESULT_STYLE: Record<
   { fill: string; label: string }
 > = {
   hr: { fill: "#f87171", label: "HR" },
-  hit: { fill: "#fbbf24", label: "Hit" },
+  hit: { fill: "rgba(74, 222, 128, 0.85)", label: "Hit" },
   out: { fill: "rgba(255,255,255,0.45)", label: "Out" },
 };
 

@@ -161,7 +161,7 @@ export const mlbLiveDetail: MlbGameDetailView = {
   winProbability: {
     awayAbbrev: "BOS",
     homeAbbrev: "LAD",
-    points: [{ playId: "p2", label: "Top 3", homeWinPct: 48 }],
+    points: [{ playId: "p2", label: "Top 3", homeWinPct: 0.48 }],
     stakes: { label: "On this pitch", homeWinDelta: -2.1 },
   },
   hitChart: [],
