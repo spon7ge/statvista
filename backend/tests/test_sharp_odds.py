@@ -10,6 +10,7 @@ from fastapi.testclient import TestClient
 
 from app.main import app
 from app.services import sharp_odds as svc
+from app.services import pinnacle_team_odds as pin_svc
 
 FIXTURE = Path(__file__).parent / "fixtures" / "sharp_wnba_odds.json"
 
@@ -17,8 +18,10 @@ FIXTURE = Path(__file__).parent / "fixtures" / "sharp_wnba_odds.json"
 @pytest.fixture(autouse=True)
 def clear_cache():
     svc._cache.clear()
+    pin_svc._cache.clear()
     yield
     svc._cache.clear()
+    pin_svc._cache.clear()
 
 
 def test_normalize_picks_favorite_spread_and_total():
@@ -197,8 +200,9 @@ def test_odds_route_returns_games_when_fetch_ok():
         return payload["data"]
 
     with (
+        patch("app.services.pinnacle_team_odds.fetch_latest_pinnacle_team", return_value=[]),
         patch.object(svc, "SHARP_API_KEY", "sk_test"),
-        patch.object(svc, "fetch_sharp_odds_rows", side_effect=fake_fetch),
+        patch("app.services.pinnacle_team_odds.fetch_sharp_odds_rows", side_effect=fake_fetch),
     ):
         client = TestClient(app)
         res = client.get("/api/wnba/odds/today")
@@ -216,7 +220,10 @@ def test_odds_route_returns_games_when_fetch_ok():
 
 
 def test_odds_route_empty_when_no_key():
-    with patch.object(svc, "SHARP_API_KEY", None):
+    with (
+        patch("app.services.pinnacle_team_odds.fetch_latest_pinnacle_team", return_value=[]),
+        patch.object(svc, "SHARP_API_KEY", None),
+    ):
         client = TestClient(app)
         res = client.get("/api/wnba/odds/today")
 
@@ -236,17 +243,22 @@ def test_odds_route_stale_cache_on_error():
         raise RuntimeError("sharp down")
 
     with (
+        patch("app.services.pinnacle_team_odds.fetch_latest_pinnacle_team", return_value=[]),
         patch.object(svc, "SHARP_API_KEY", "sk_test"),
-        patch.object(svc, "fetch_sharp_odds_rows", side_effect=ok),
+        patch("app.services.pinnacle_team_odds.fetch_sharp_odds_rows", side_effect=ok),
     ):
         client = TestClient(app)
         assert client.get("/api/wnba/odds/today").status_code == 200
 
-    svc._cache["expires_at"] = 0
+    pin_svc._cache["expires_at"] = 0
 
     with (
+        patch(
+            "app.services.pinnacle_team_odds.fetch_latest_pinnacle_team",
+            side_effect=RuntimeError("db down"),
+        ),
         patch.object(svc, "SHARP_API_KEY", "sk_test"),
-        patch.object(svc, "fetch_sharp_odds_rows", side_effect=boom),
+        patch("app.services.pinnacle_team_odds.fetch_sharp_odds_rows", side_effect=boom),
     ):
         res = client.get("/api/wnba/odds/today")
 
