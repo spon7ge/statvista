@@ -17,6 +17,7 @@ from app.schemas.mlb_game_detail import (
     MlbPlayerCard,
     MlbRunners,
     MlbSituation,
+    MlbWinProbability,
 )
 from app.schemas.mlb_scoreboard import GameStatus
 
@@ -564,3 +565,17 @@ def normalize_mlb_live_feed(
         sources=["mlb_stats_api"],
         fetched_at=fetched_at,
     )
+
+
+def attach_win_probability(
+    detail: MlbGameDetail,
+    wp: MlbWinProbability | None,
+) -> MlbGameDetail:
+    """Attach ESPN win probability onto a Stats-normalized detail payload."""
+    if wp is None:
+        return detail
+    sources = list(detail.sources)
+    if "espn" not in sources:
+        sources.append("espn")
+    return detail.model_copy(update={"win_probability": wp, "sources": sources})
+

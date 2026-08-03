@@ -1,0 +1,116 @@
+{
+  "header": {
+    "competitions": [
+      {
+        "competitors": [
+          {
+            "homeAway": "home",
+            "team": {
+              "abbreviation": "LAD",
+              "displayName": "Los Angeles Dodgers"
+            }
+          },
+          {
+            "homeAway": "away",
+            "team": {
+              "abbreviation": "BOS",
+              "displayName": "Boston Red Sox"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "winprobability": [
+    {
+      "homeWinPercentage": 0.52,
+      "tiePercentage": 0.0,
+      "playId": "4016961230001000057"
+    },
+    {
+      "homeWinPercentage": 0.48,
+      "tiePercentage": 0.0,
+      "playId": "4016961230002000057"
+    },
+    {
+      "homeWinPercentage": 0.41,
+      "tiePercentage": 0.0,
+      "playId": "4016961230006000057"
+    },
+    {
+      "homeWinPercentage": 0.37,
+      "tiePercentage": 0.0,
+      "playId": "4016961230006010057"
+    }
+  ],
+  "plays": [
+    {
+      "id": "4016961230001000057",
+      "text": "Devers singled to right.",
+      "awayScore": 0,
+      "homeScore": 0,
+      "period": {
+        "type": "Top",
+        "number": 1,
+        "displayValue": "1st Inning"
+      },
+      "clock": null,
+      "type": {
+        "id": "57",
+        "text": "Play Result",
+        "type": "play-result"
+      }
+    },
+    {
+      "id": "4016961230002000057",
+      "text": "Ohtani homered to right center.",
+      "awayScore": 0,
+      "homeScore": 1,
+      "period": {
+        "type": "Bottom",
+        "number": 1,
+        "displayValue": "1st Inning"
+      },
+      "clock": null,
+      "type": {
+        "id": "57",
+        "text": "Play Result",
+        "type": "play-result"
+      }
+    },
+    {
+      "id": "4016961230006000057",
+      "text": "Bregman doubled to left.",
+      "awayScore": 6,
+      "homeScore": 3,
+      "period": {
+        "type": "Top",
+        "number": 6,
+        "displayValue": "6th Inning"
+      },
+      "clock": null,
+      "type": {
+        "id": "57",
+        "text": "Play Result",
+        "type": "play-result"
+      }
+    },
+    {
+      "id": "4016961230006010057",
+      "text": "Yoshida grounded out to second.",
+      "awayScore": 6,
+      "homeScore": 3,
+      "period": {
+        "type": "Top",
+        "number": 6,
+        "displayValue": "6th Inning"
+      },
+      "clock": null,
+      "type": {
+        "id": "57",
+        "text": "Play Result",
+        "type": "play-result"
+      }
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "events": [
+    {
+      "id": "401696100",
+      "competitions": [
+        {
+          "competitors": [
+            {
+              "homeAway": "home",
+              "team": {
+                "abbreviation": "NYY",
+                "displayName": "New York Yankees"
+              }
+            },
+            {
+              "homeAway": "away",
+              "team": {
+                "abbreviation": "TB",
+                "displayName": "Tampa Bay Rays"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "401696123",
+      "competitions": [
+        {
+          "competitors": [
+            {
+              "homeAway": "home",
+              "team": {
+                "abbreviation": "LAD",
+                "displayName": "Los Angeles Dodgers"
+              }
+            },
+            {
+              "homeAway": "away",
+              "team": {
+                "abbreviation": "BOS",
+                "displayName": "Boston Red Sox"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
