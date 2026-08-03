@@ -156,9 +156,56 @@ describe("AppRouter", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("renders MLB game stub at /mlb/games/:gamePk", async () => {
+  it("renders MLB game detail shell at /mlb/games/:gamePk", async () => {
+    fetchMock.mockImplementation(async (input: RequestInfo) => {
+      const url = String(input);
+      if (url.includes("/api/mlb/games/824971")) {
+        return {
+          ok: true,
+          json: async () => ({
+            mlb_game_pk: "824971",
+            league: "mlb",
+            status: "scheduled",
+            status_label: "7:10 PM ET",
+            venue: "Fenway Park",
+            away: {
+              id: "111",
+              abbrev: "BOS",
+              name: "Boston Red Sox",
+              score: null,
+              color: "#BD3039",
+              logo_url: null,
+            },
+            home: {
+              id: "119",
+              abbrev: "LAD",
+              name: "Los Angeles Dodgers",
+              score: null,
+              color: "#005A9C",
+              logo_url: null,
+            },
+            linescore: null,
+            situation: null,
+            plays: [],
+            scoring_plays: [],
+            box_score: null,
+            win_probability: null,
+            hit_chart: [],
+            sources: ["statsapi"],
+            fetched_at: "",
+          }),
+        };
+      }
+      return {
+        ok: true,
+        json: async () => ({ date: "2026-07-29", fetched_at: "", games: [] }),
+      };
+    });
     renderWithProviders(["/mlb/games/824971"]);
-    expect(await screen.findByText(/coming soon/i)).toBeInTheDocument();
+    expect(await screen.findByText("Not live yet")).toBeInTheDocument();
+    expect(
+      screen.queryByText(/MLB game detail coming soon/i),
+    ).not.toBeInTheDocument();
   });
 
   it("renders game detail at /games/:espnEventId", async () => {
