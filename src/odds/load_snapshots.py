@@ -13,6 +13,8 @@ from sqlalchemy import text
 from src.odds.snapshot_rows import (
     parlay_props_to_book_rows,
     prizepicks_projections_to_rows,
+    selenium_pinnacle_props_to_rows,
+    selenium_pinnacle_team_to_rows,
     sharp_props_to_book_rows,
     underdog_picks_to_rows,
 )
@@ -49,6 +51,18 @@ _SHARP_BOOK_CONFLICT_COLS = [
 
 _PARLAY_BOOK_CONFLICT_COLS = _SHARP_BOOK_CONFLICT_COLS
 
+_PINNACLE_TEAM_CONFLICT_COLS = [
+    "league",
+    "away_team",
+    "home_team",
+    "market_type",
+    "period",
+    "is_alternate",
+    "side",
+    "points",
+    "scraped_at",
+]
+
 _SHARP_BOOK_TABLES = {
     "fanduel": "wnba_fanduel",
     "draftkings": "wnba_draftkings",
@@ -59,7 +73,6 @@ _PARLAY_BOOK_TABLES = {
     "draftkings": "wnba_draftkings",
     "caesars": "wnba_caesars",
     "betmgm": "wnba_betmgm",
-    "pinnacle": "wnba_pinnacle",
     "bet365": "wnba_bet365",
     # Scraper tables wnba_prizepicks / wnba_underdogs use a different shape.
     "prizepicks": "wnba_prizepicks_parlay",
@@ -170,6 +183,66 @@ def load_underdog_snapshot(
         df,
         schema="odds",
         conflict_cols=_UNDERDOG_CONFLICT_COLS,
+        lineage_col="fetched_at",
+    )
+    return len(df)
+
+
+def load_pinnacle_props_snapshot(
+    games: list[dict],
+    *,
+    league: str,
+    scraped_at: datetime | None = None,
+) -> int:
+    if _skip_db("PINNACLE_SKIP_DB"):
+        return 0
+
+    scraped_at = scraped_at or datetime.now(timezone.utc)
+    rows = selenium_pinnacle_props_to_rows(
+        games, league=league, scraped_at=scraped_at
+    )
+    if not rows:
+        return 0
+
+    df = _coerce_float_columns(pd.DataFrame(rows), ["line_score"])
+    df = _dedupe_conflict_rows(df, _PARLAY_BOOK_CONFLICT_COLS)
+    if df.empty:
+        return 0
+    upsert_df(
+        "wnba_pinnacle",
+        df,
+        schema="odds",
+        conflict_cols=_PARLAY_BOOK_CONFLICT_COLS,
+        lineage_col="fetched_at",
+    )
+    return len(df)
+
+
+def load_pinnacle_team_snapshot(
+    games: list[dict],
+    *,
+    league: str,
+    scraped_at: datetime | None = None,
+) -> int:
+    if _skip_db("PINNACLE_SKIP_DB"):
+        return 0
+
+    scraped_at = scraped_at or datetime.now(timezone.utc)
+    rows = selenium_pinnacle_team_to_rows(
+        games, league=league, scraped_at=scraped_at
+    )
+    if not rows:
+        return 0
+
+    df = _coerce_float_columns(pd.DataFrame(rows), ["decimal_price"])
+    df = _dedupe_conflict_rows(df, _PINNACLE_TEAM_CONFLICT_COLS)
+    if df.empty:
+        return 0
+    upsert_df(
+        "wnba_pinnacle_team",
+        df,
+        schema="odds",
+        conflict_cols=_PINNACLE_TEAM_CONFLICT_COLS,
         lineage_col="fetched_at",
     )
     return len(df)

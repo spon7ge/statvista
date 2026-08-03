@@ -348,7 +348,7 @@ def test_maybe_persist_parlay_props_writes_books(monkeypatch, mock_upsert):
     )
     assert counts["fanduel"] == 2
     assert counts["draftkings"] == 2
-    assert counts["pinnacle"] == 2
+    assert "pinnacle" not in counts
     assert counts["prizepicks"] == 2
     assert counts["novig"] == 2
     assert counts["caesars"] == 0
@@ -357,12 +357,11 @@ def test_maybe_persist_parlay_props_writes_books(monkeypatch, mock_upsert):
     assert tables == {
         "wnba_fanduel",
         "wnba_draftkings",
-        "wnba_pinnacle",
         "wnba_prizepicks_parlay",
         "wnba_novig",
     }
     assert set(counts) == set(load_snapshots.PARLAY_PROP_SPORTSBOOKS)
-    assert len(load_snapshots.PARLAY_PROP_SPORTSBOOKS) == 12
+    assert len(load_snapshots.PARLAY_PROP_SPORTSBOOKS) == 11
 
 
 def test_maybe_persist_parlay_props_skips_when_throttled(monkeypatch, mock_upsert):
@@ -384,3 +383,119 @@ def test_should_persist_parlay_false_when_recent(monkeypatch):
         )
         is False
     )
+
+
+def test_parlay_persist_tables_exclude_pinnacle():
+    assert "pinnacle" not in load_snapshots._PARLAY_BOOK_TABLES
+    assert "pinnacle" not in load_snapshots.PARLAY_PROP_SPORTSBOOKS
+
+
+PINNACLE_GAMES = [
+    {
+        "participants": ["Las Vegas Aces", "Atlanta Dream"],
+        "props": [
+            {
+                "stat": "points",
+                "player": "A'ja Wilson",
+                "line": 26.5,
+                "american_over": -102,
+                "american_under": -130,
+            }
+        ],
+    }
+]
+
+PINNACLE_TEAM_GAMES = [
+    {
+        "matchup_id": 1,
+        "participants": ["Las Vegas Aces", "Atlanta Dream"],
+        "start_time": "2026-08-03T23:00:00Z",
+        "team_markets": {
+            "moneyline": [
+                {
+                    "period": 0,
+                    "lines": [
+                        {
+                            "side": "home",
+                            "team": "Atlanta Dream",
+                            "american": -134,
+                            "decimal": 1.746,
+                        },
+                    ],
+                }
+            ],
+        },
+    }
+]
+
+
+def test_load_pinnacle_props_snapshot_calls_upsert(mock_upsert):
+    count = load_snapshots.load_pinnacle_props_snapshot(
+        PINNACLE_GAMES, league="wnba", scraped_at=SCRAPED
+    )
+
+    assert count == 2
+    mock_upsert.assert_called_once()
+    table, df = mock_upsert.call_args[0]
+    assert table == "wnba_pinnacle"
+    assert len(df) == 2
+    assert df.iloc[0]["player_name"] == "A'ja Wilson"
+    assert df.iloc[0]["market_type"] == "player_points"
+
+    kwargs = mock_upsert.call_args[1]
+    assert kwargs["schema"] == "odds"
+    assert kwargs["lineage_col"] == "fetched_at"
+    assert kwargs["conflict_cols"] == [
+        "league",
+        "player_name",
+        "market_type",
+        "side",
+        "line_score",
+        "scraped_at",
+    ]
+
+
+def test_load_pinnacle_team_snapshot_calls_upsert(mock_upsert):
+    count = load_snapshots.load_pinnacle_team_snapshot(
+        PINNACLE_TEAM_GAMES, league="wnba", scraped_at=SCRAPED
+    )
+
+    assert count == 1
+    mock_upsert.assert_called_once()
+    table, df = mock_upsert.call_args[0]
+    assert table == "wnba_pinnacle_team"
+    assert len(df) == 1
+    assert df.iloc[0]["market_type"] == "moneyline"
+    assert df.iloc[0]["points"] is None
+
+    kwargs = mock_upsert.call_args[1]
+    assert kwargs["schema"] == "odds"
+    assert kwargs["lineage_col"] == "fetched_at"
+    assert kwargs["conflict_cols"] == [
+        "league",
+        "away_team",
+        "home_team",
+        "market_type",
+        "period",
+        "is_alternate",
+        "side",
+        "points",
+        "scraped_at",
+    ]
+
+
+def test_load_pinnacle_props_snapshot_skip_db(monkeypatch, mock_upsert):
+    monkeypatch.setenv("PINNACLE_SKIP_DB", "1")
+    count = load_snapshots.load_pinnacle_props_snapshot(
+        PINNACLE_GAMES, league="wnba", scraped_at=SCRAPED
+    )
+    assert count == 0
+    mock_upsert.assert_not_called()
+
+
+def test_load_pinnacle_props_snapshot_empty_returns_zero(mock_upsert):
+    count = load_snapshots.load_pinnacle_props_snapshot(
+        [], league="wnba", scraped_at=SCRAPED
+    )
+    assert count == 0
+    mock_upsert.assert_not_called()
