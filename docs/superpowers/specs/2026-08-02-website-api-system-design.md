@@ -20,14 +20,14 @@ Document how the live HoopVista website is structured today: routes, shared chro
 
 ## 1. Overview & boundaries
 
-HoopVista’s public site is a React + Vite app talking to a FastAPI service over `/api`. The product surface today is primarily **WNBA** (home, league hubs, game detail, prop picks, player pages). **MLB** adds live scoreboard on the home chrome plus a live matchups hub (dated slate + Sharp odds); game detail remains a stub. NBA is scaffolded (`/nba/matchups` placeholder).
+HoopVista’s public site is a React + Vite app talking to a FastAPI service over `/api`. The product surface today is primarily **WNBA** (home, league hubs, game detail, prop picks, player pages). **MLB** adds live scoreboard on the home chrome, a live matchups hub (dated slate + Sharp odds), and a live-only game detail center. NBA is scaffolded (`/nba/matchups` placeholder).
 
 ### Read-path model
 
 ```text
 Browser
   → React (TanStack Query hooks → lib/api.ts)
-  → FastAPI (/api/wnba/*, /api/mlb/scoreboard/today for the live site)
+  → FastAPI (/api/wnba/*, /api/mlb/scoreboard/*, /api/mlb/games/{game_pk}, …)
   → Upstream adapters
       (ESPN, stats.wnba.com, MLB Stats API, ParlayAPI, Supabase odds snapshots, RotoWire)
 ```
@@ -37,7 +37,7 @@ Two backend families exist. The **live website mainly uses the WNBA and MLB upst
 | Family | Examples | Used by current React pages? |
 |--------|----------|------------------------------|
 | WNBA upstream | `/api/wnba/scoreboard/*`, `props/today`, `games/{id}`, … | Yes |
-| MLB upstream | `/api/mlb/scoreboard/*`, `/api/mlb/odds/today` | Yes (home + matchups) |
+| MLB upstream | `/api/mlb/scoreboard/*`, `/api/mlb/odds/today`, `/api/mlb/games/{game_pk}` | Yes (home + matchups + live game detail) |
 | DB-backed (silver / gold / ml) | `/api/live-props`, `/api/predictions`, `/api/games/{date}/slate`, … | No |
 
 Shared chrome (`HomeChromeLayout`) wraps most routes with nav, live ticker, and footer. `/about` is static (no API).
@@ -77,7 +77,7 @@ main.tsx
       /wnba/player/:id     LeaguePlayerPage
       /nba/matchups        LeagueMatchupsPage (placeholder)
       /mlb/matchups        LeagueMatchupsPage (league="mlb", live slate)
-      /mlb/games/:gamePk   MlbGameStubPage (coming soon)
+      /mlb/games/:gamePk   MlbGameDetailPage (live center; thin not-live)
     * → NotFoundPage
 ```
 
@@ -86,8 +86,8 @@ main.tsx
 | Layer | Role |
 |-------|------|
 | `pages/` | Route composition |
-| `components/{home,league,game,about}/` | UI by domain |
-| `hooks/useWnba*.ts`, `useMlbScoreboard.ts`, `useGameDetail.ts` | TanStack Query wrappers |
+| `components/{home,league,game,mlb,about}/` | UI by domain |
+| `hooks/useWnba*.ts`, `useMlbScoreboard.ts`, `useMlbGameDetail.ts`, `useGameDetail.ts` | TanStack Query wrappers |
 | `lib/api.ts` | Typed `fetch` helpers + `VITE_API_BASE_URL` |
 
 **Chrome data:** Layout and home merge WNBA + MLB scoreboards via `mergeLeagueScoreboards`. Each league has its own query key; failures in one league do not clear the other. While any game is live in either league, the relevant scoreboard refetches about every 18 seconds.
@@ -110,7 +110,7 @@ main.tsx
 | `/games/:espnEventId` | Full game center | `useGameDetail` | `GET /api/wnba/games/{id}` | ESPN summary; RotoWire / ESPN roster for scheduled starters |
 | `/nba/matchups` | Placeholder | — | none | “NBA matchups coming soon” |
 | `/mlb/matchups?date=` | Daily slate; odds when date is in odds window | `useMlbScoreboard(date)`, `useMlbOdds` | scoreboard (`/today` or `?date=`), `GET /api/mlb/odds/today` | Stats API schedule; Sharp MLB run line/total (DK prefer FD); cards → `/mlb/games/:gamePk` |
-| `/mlb/games/:gamePk` | Placeholder | — | none | “MLB game detail coming soon” |
+| `/mlb/games/:gamePk` | Live game center (thin not-live) | `useMlbGameDetail` | `GET /api/mlb/games/{game_pk}` | Stats live feed + ESPN win probability (soft-fail); live-only full UI |
 
 ### Cross-cutting API behavior
 
@@ -140,7 +140,7 @@ LeaguePropPicksPage
 ```text
 backend/app/
   main.py           # CORS + router mount (API v0.3.0)
-  api/routes/       # thin HTTP handlers (esp. wnba_*, mlb_scoreboard)
+  api/routes/       # thin HTTP handlers (esp. wnba_*, mlb_scoreboard, mlb_game_detail)
   services/         # fetch, merge, cache, map to schemas
   schemas/          # Pydantic response models
   core/             # config; DB helpers for older DB-backed routes
@@ -191,5 +191,6 @@ Feature-level history lives under `docs/superpowers/specs/` and `docs/superpower
 | GET | `/api/mlb/scoreboard/today` | `mlb_scoreboard` (MLB Stats API) |
 | GET | `/api/mlb/scoreboard?date=` | `mlb_scoreboard` |
 | GET | `/api/mlb/odds/today` | `mlb_odds` (Sharp `league=mlb`) |
+| GET | `/api/mlb/games/{game_pk}` | `mlb_game_detail` + `mlb_espn_bridge` (Stats live feed + ESPN WP) |
 
 Health (ops, not UI): `GET /api/health`.

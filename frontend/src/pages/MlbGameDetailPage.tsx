@@ -3,9 +3,11 @@ import { useMlbGameDetail } from "@/hooks/useMlbGameDetail";
 import { mapMlbGameDetail } from "@/components/mlb/mapMlbGameDetail";
 import { MlbBoxScore } from "@/components/mlb/MlbBoxScore";
 import { MlbGameHeader } from "@/components/mlb/MlbGameHeader";
+import { MlbHitChart } from "@/components/mlb/MlbHitChart";
 import { MlbLinescore } from "@/components/mlb/MlbLinescore";
 import { MlbLiveSituation } from "@/components/mlb/MlbLiveSituation";
 import { MlbPlayByPlay } from "@/components/mlb/MlbPlayByPlay";
+import { MlbWinProbability } from "@/components/mlb/MlbWinProbability";
 import type { MlbGameDetailView } from "@/components/mlb/types";
 import { GAME_SECTION_SURFACE } from "@/components/game/GameSection";
 
@@ -147,6 +149,8 @@ export function MlbGameDetailPage() {
         <MlbLiveSituation detail={detail} />
         <MlbPlayByPlay detail={detail} />
         <MlbBoxScore detail={detail} />
+        <MlbWinProbability detail={detail} />
+        <MlbHitChart detail={detail} />
       </div>
     </div>
   );
