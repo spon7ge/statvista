@@ -1,0 +1,210 @@
+from __future__ import annotations
+
+import asyncio
+from unittest.mock import patch
+
+import pytest
+
+from app.schemas.mlb_odds import MlbOddsGame
+from app.services import mlb_odds as svc
+
+
+def test_normalize_mlb_pinnacle_spread_and_total():
+    rows = [
+        {
+            "away_team": "Los Angeles Dodgers",
+            "home_team": "Chicago Cubs",
+            "start_time": "2026-08-03T23:00:00Z",
+            "market_type": "spread",
+            "side": "away",
+            "team": "Los Angeles Dodgers",
+            "points": -1.5,
+            "american_price": -115,
+        },
+        {
+            "away_team": "Los Angeles Dodgers",
+            "home_team": "Chicago Cubs",
+            "start_time": "2026-08-03T23:00:00Z",
+            "market_type": "spread",
+            "side": "home",
+            "team": "Chicago Cubs",
+            "points": 1.5,
+            "american_price": -105,
+        },
+        {
+            "away_team": "Los Angeles Dodgers",
+            "home_team": "Chicago Cubs",
+            "start_time": "2026-08-03T23:00:00Z",
+            "market_type": "total",
+            "side": "over",
+            "points": 8.5,
+            "american_price": -110,
+        },
+        {
+            "away_team": "Los Angeles Dodgers",
+            "home_team": "Chicago Cubs",
+            "start_time": "2026-08-03T23:00:00Z",
+            "market_type": "total",
+            "side": "under",
+            "points": 8.5,
+            "american_price": -110,
+        },
+    ]
+    games = svc.normalize_pinnacle_team_rows(rows)
+    assert len(games) == 1
+    g = games[0]
+    assert g.away_abbrev == "LAD" and g.home_abbrev == "CHC"
+    assert g.spread_team_abbrev == "LAD" and g.spread_line == -1.5
+    assert g.total == 8.5
+    assert g.sportsbook == "pinnacle"
+    assert g.game_date == "2026-08-03"
+
+
+def test_skips_junk_away_runs_events():
+    rows = [
+        {
+            "away_team": "Away Runs (8 Games)",
+            "home_team": "Home Runs (8 Games)",
+            "start_time": "2026-08-03T22:39:00Z",
+            "market_type": "total",
+            "side": "over",
+            "points": 7.5,
+            "american_price": -110,
+        }
+    ]
+    assert svc.normalize_pinnacle_team_rows(rows) == []
+
+
+def test_merge_falls_back_to_sharp_when_pinnacle_empty_markets():
+    pin = [MlbOddsGame(home_abbrev="CHC", away_abbrev="LAD", sportsbook="pinnacle")]
+    sharp = [
+        MlbOddsGame(
+            home_abbrev="CHC",
+            away_abbrev="LAD",
+            spread_team_abbrev="LAD",
+            spread_line=-1.5,
+            total=8.5,
+            sportsbook="draftkings",
+        )
+    ]
+    merged = svc.merge_pinnacle_prefer_sharp(pin, sharp)
+    assert merged[0].sportsbook == "draftkings"
+    assert merged[0].spread_line == -1.5
+
+
+def test_merge_keeps_pinnacle_when_markets_present():
+    pin = [
+        MlbOddsGame(
+            home_abbrev="CHC",
+            away_abbrev="LAD",
+            spread_team_abbrev="LAD",
+            spread_line=-1.5,
+            total=8.5,
+            sportsbook="pinnacle",
+            game_date="2026-08-03",
+        )
+    ]
+    sharp = [
+        MlbOddsGame(
+            home_abbrev="CHC",
+            away_abbrev="LAD",
+            spread_team_abbrev="LAD",
+            spread_line=-2.0,
+            total=9.0,
+            sportsbook="draftkings",
+            game_date="2026-08-03",
+        )
+    ]
+    merged = svc.merge_pinnacle_prefer_sharp(pin, sharp)
+    assert merged[0].sportsbook == "pinnacle"
+    assert merged[0].spread_line == -1.5
+
+
+@pytest.fixture(autouse=True)
+def clear_cache():
+    svc._cache.clear()
+    yield
+    svc._cache.clear()
+
+
+def test_get_today_odds_prefers_pinnacle(monkeypatch):
+    pin_rows = [
+        {
+            "away_team": "Los Angeles Dodgers",
+            "home_team": "Chicago Cubs",
+            "start_time": "2026-08-03T23:00:00Z",
+            "market_type": "spread",
+            "side": "away",
+            "team": "Los Angeles Dodgers",
+            "points": -1.5,
+            "american_price": -115,
+        },
+        {
+            "away_team": "Los Angeles Dodgers",
+            "home_team": "Chicago Cubs",
+            "start_time": "2026-08-03T23:00:00Z",
+            "market_type": "total",
+            "side": "over",
+            "points": 8.5,
+            "american_price": -110,
+        },
+    ]
+    sharp_games = [
+        MlbOddsGame(
+            home_abbrev="BOS",
+            away_abbrev="NYY",
+            spread_team_abbrev="NYY",
+            spread_line=-1.5,
+            total=8.5,
+            game_date="2026-08-03",
+            sportsbook="draftkings",
+        )
+    ]
+
+    with (
+        patch(
+            "app.services.mlb_odds.fetch_latest_pinnacle_team",
+            return_value=pin_rows,
+        ),
+        patch.object(
+            svc, "_fetch_sharp_games", return_value=(sharp_games, [])
+        ),
+    ):
+        body = asyncio.run(svc.get_today_odds())
+
+    assert body.sportsbook == "pinnacle"
+    assert len(body.games) == 2
+    chc = next(g for g in body.games if g.home_abbrev == "CHC")
+    assert chc.sportsbook == "pinnacle"
+    assert chc.spread_line == -1.5
+    bos = next(g for g in body.games if g.home_abbrev == "BOS")
+    assert bos.sportsbook == "draftkings"
+
+
+def test_get_today_odds_sharp_only_when_pinnacle_empty(monkeypatch):
+    sharp_games = [
+        MlbOddsGame(
+            home_abbrev="BOS",
+            away_abbrev="NYY",
+            spread_team_abbrev="NYY",
+            spread_line=-1.5,
+            total=8.5,
+            game_date="2026-08-03",
+            sportsbook="draftkings",
+        )
+    ]
+
+    with (
+        patch(
+            "app.services.mlb_odds.fetch_latest_pinnacle_team",
+            return_value=[],
+        ),
+        patch.object(
+            svc, "_fetch_sharp_games", return_value=(sharp_games, [])
+        ),
+    ):
+        body = asyncio.run(svc.get_today_odds())
+
+    assert body.sportsbook == "draftkings"
+    assert len(body.games) == 1
+    assert body.games[0].away_abbrev == "NYY"
