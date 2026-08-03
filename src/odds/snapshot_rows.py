@@ -186,7 +186,7 @@ def parlay_props_to_book_rows(
     league: str,
     scraped_at: datetime,
 ) -> list[dict]:
-    """Map Parlay prop API rows to odds.wnba_{book} row dicts (main lines only)."""
+    """Map Parlay prop API rows for one book (main lines only), with sportsbook set."""
     from src.odds.parlay_main_lines import select_parlay_main_lines
 
     book = sportsbook.lower().strip()
@@ -224,6 +224,7 @@ def parlay_props_to_book_rows(
         for side, price in sides:
             out.append(
                 {
+                    "sportsbook": book,
                     "league": league_key,
                     "player_name": player,
                     "market_type": market,
@@ -235,6 +236,24 @@ def parlay_props_to_book_rows(
                 }
             )
 
+    return out
+
+
+def parlay_props_to_api_odds_rows(
+    rows: list[dict],
+    *,
+    league: str,
+    scraped_at: datetime,
+    books: tuple[str, ...] | list[str] | frozenset[str],
+) -> list[dict]:
+    """Map Parlay props for many books into odds.wnba_parlay_api_odds row dicts."""
+    out: list[dict] = []
+    for book in books:
+        out.extend(
+            parlay_props_to_book_rows(
+                rows, sportsbook=book, league=league, scraped_at=scraped_at
+            )
+        )
     return out
 
 

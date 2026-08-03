@@ -9,7 +9,7 @@ describe("AboutContent", () => {
     expect(screen.queryByRole("main")).not.toBeInTheDocument();
     expect(screen.getByText(/sports analytics/i)).toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { name: /about hoopvista/i }),
+      screen.getByRole("heading", { name: /about statvista/i }),
     ).toBeInTheDocument();
     const leaguePills = screen.getByRole("list", { name: "Leagues" });
     expect(leaguePills).toHaveTextContent("NBA");

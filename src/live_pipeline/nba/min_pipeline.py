@@ -4,7 +4,7 @@ Matches ``min_nba_model_*.joblib`` ``feature_names``.
 
 ``starting`` prefers RotoWire projected starters in ``team_info``
 (``projectedStartingFive``), updated by
-``src.scrapers.rotowire_starters_scraper`` (Airflow ``scrape_starters``).
+``src.scrapers.rotowire_starters_scraper``.
 Falls back to the last completed-game start flag when no projected lineup applies.
 """
 

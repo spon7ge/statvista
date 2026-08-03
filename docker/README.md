@@ -1,6 +1,6 @@
 # Docker
 
-Containerized HoopVista stack: **Postgres**, **FastAPI API**, and **ETL pipeline** (ingest → silver). Live props/slates are run via CLI or Airflow after silver.
+Containerized statvista stack: **Postgres**, **FastAPI API**, and **ETL pipeline** (ingest → silver). Live props/slates are run via CLI after silver.
 
 ## Architecture
 
@@ -15,7 +15,7 @@ Containerized HoopVista stack: **Postgres**, **FastAPI API**, and **ETL pipeline
                     SUPABASE_DB_URL
               (local Postgres or Supabase)
 
-After silver (CLI or Airflow live_ml):
+After silver (CLI live ML):
   run_live_props.py  → ml.*_live_prop_predictions  → GET /api/live-props
   run_live_slates.py → ml.*_live_slates            → GET /api/live-slates
 ```
@@ -106,7 +106,6 @@ docker build -f docker/Dockerfile.etl -t hoopvista-etl .
 
 ## Related
 
-- **Airflow scheduling**: `airflow/` (optional orchestration on top of ETL image commands)
 - **Frontend dev**: `cd frontend && npm run dev` (proxies `/api` → `localhost:8000`)
 
 ## Troubleshooting

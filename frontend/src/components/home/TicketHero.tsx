@@ -42,7 +42,7 @@ export function TicketHero() {
             </p>
             <div className="flex flex-wrap items-center gap-3">
               <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
-                hoopvista
+                statvista
               </h1>
               <span className="rounded-full border border-white/20 px-2.5 py-0.5 text-[10px] font-semibold tracking-wider text-white/70 uppercase">
                 Beta

@@ -29,7 +29,7 @@ from app.api.routes import (
 from app.core.config import CORS_ORIGINS
 
 app = FastAPI(
-    title="HoopVista API",
+    title="statvista API",
     version="0.3.0",
     description=(
         "NBA prop prediction backend. Most endpoints read from Supabase "

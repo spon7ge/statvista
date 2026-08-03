@@ -6260,7 +6260,7 @@
   },
   "info": {
     "description": "NBA prop prediction backend. Most endpoints read from Supabase (silver / gold / ml schemas) and make no NBA or Odds API calls. The exceptions are /api/wnba/scoreboard/today, /api/mlb/scoreboard/today, /api/mlb/scoreboard, /api/mlb/odds/today, /api/wnba/leaders, /api/wnba/player/{player_id}, /api/wnba/standings, /api/wnba/futures, /api/wnba/odds/today, /api/wnba/props/today, WNBA game detail routes, and /api/mlb/games/{game_pk}, which call ESPN, stats.wnba.com, MLB Stats API, or SharpAPI for live league data.",
-    "title": "HoopVista API",
+    "title": "statvista API",
     "version": "0.3.0"
   },
   "openapi": "3.1.0",
@@ -7251,7 +7251,7 @@
     },
     "/api/models/{model_id}/accuracy": {
       "get": {
-        "description": "Returns hit rate, Q50 calibration, MAE, and signed bias for a specific model version, broken down by prop type. Aggregated from **gold.gold_prediction_accuracy** (populated daily by the Airflow pipeline). Games whose actuals have not yet landed are excluded automatically.",
+        "description": "Returns hit rate, Q50 calibration, MAE, and signed bias for a specific model version, broken down by prop type. Aggregated from **gold.gold_prediction_accuracy** (populated by the grading pipeline). Games whose actuals have not yet landed are excluded automatically.",
         "operationId": "model_accuracy_api_models__model_id__accuracy_get",
         "parameters": [
           {

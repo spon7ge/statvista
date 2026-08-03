@@ -31,8 +31,8 @@ export function MlbWinProbability({ detail }: { detail: MlbGameDetailView }) {
   if (!data) {
     return (
       <GameSection className="!p-3" data-testid="mlb-game-flow">
-        <h2 className="text-sm font-semibold text-white">Game flow</h2>
-        <p className="mt-1.5 text-xs text-white/50">
+        <h2 className="text-base font-semibold text-white">Game flow</h2>
+        <p className="mt-1.5 text-sm text-white/50">
           Win probability unavailable
         </p>
       </GameSection>
@@ -78,15 +78,15 @@ export function MlbWinProbability({ detail }: { detail: MlbGameDetailView }) {
   const homeY = activePoint ? yForPct(activePoint.homeWinPct) : 0;
   const awayY = activePoint ? yForPct(activePoint.awayWinPct) : 0;
   const topSeriesY = Math.min(homeY, awayY);
-  const clockDefaultY = CHART_GEOMETRY.padTop + 10;
-  const clockOverlapsPct = Boolean(activePoint) && topSeriesY < clockDefaultY + 18;
-  const clockY = clockOverlapsPct ? CHART_GEOMETRY.padTop - 16 : clockDefaultY;
+  const clockDefaultY = CHART_GEOMETRY.padTop + 12;
+  const clockOverlapsPct = Boolean(activePoint) && topSeriesY < clockDefaultY + 22;
+  const clockY = clockOverlapsPct ? CHART_GEOMETRY.padTop - 18 : clockDefaultY;
   const trackerTop = clockOverlapsPct ? clockY + 6 : CHART_GEOMETRY.padTop;
   const showTracker = Boolean(activePoint) && !atEnd;
 
   return (
     <GameSection className="!p-3" data-testid="mlb-game-flow">
-      <h2 className="text-sm font-semibold text-white">Game flow</h2>
+      <h2 className="text-base font-semibold text-white">Game flow</h2>
 
       {points.length > 0 ? (
         <div className="relative mt-2">
@@ -142,7 +142,7 @@ export function MlbWinProbability({ detail }: { detail: MlbGameDetailView }) {
                 <circle
                   cx={scrubX}
                   cy={awayY}
-                  r={3.5}
+                  r={4}
                   fill={detail.away.color}
                   stroke="#FFFFFF"
                   strokeWidth={1.5}
@@ -151,7 +151,7 @@ export function MlbWinProbability({ detail }: { detail: MlbGameDetailView }) {
                 <circle
                   cx={scrubX}
                   cy={homeY}
-                  r={3.5}
+                  r={4}
                   fill={detail.home.color}
                   stroke="#FFFFFF"
                   strokeWidth={1.5}
@@ -163,7 +163,7 @@ export function MlbWinProbability({ detail }: { detail: MlbGameDetailView }) {
                   fill={detail.home.color}
                   textAnchor={labelAnchor}
                   dominantBaseline="middle"
-                  style={{ fontSize: "11px", fontWeight: 600 }}
+                  style={{ fontSize: "14px", fontWeight: 600 }}
                 >
                   {detail.home.abbrev} {Math.round(activePoint.homeWinPct)}%
                 </text>
@@ -173,7 +173,7 @@ export function MlbWinProbability({ detail }: { detail: MlbGameDetailView }) {
                   fill={detail.away.color}
                   textAnchor={labelAnchor}
                   dominantBaseline="middle"
-                  style={{ fontSize: "11px", fontWeight: 600 }}
+                  style={{ fontSize: "14px", fontWeight: 600 }}
                 >
                   {detail.away.abbrev} {Math.round(activePoint.awayWinPct)}%
                 </text>
@@ -183,7 +183,7 @@ export function MlbWinProbability({ detail }: { detail: MlbGameDetailView }) {
                   fill="rgba(255,255,255,0.7)"
                   textAnchor="middle"
                   data-wp-clock
-                  style={{ fontSize: "10px" }}
+                  style={{ fontSize: "12px" }}
                 >
                   {activePoint.label}
                 </text>
@@ -206,7 +206,7 @@ export function MlbWinProbability({ detail }: { detail: MlbGameDetailView }) {
           />
         </div>
       ) : (
-        <p className="mt-1.5 text-xs text-white/50">
+        <p className="mt-1.5 text-sm text-white/50">
           Win probability unavailable
         </p>
       )}

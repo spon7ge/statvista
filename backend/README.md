@@ -1,6 +1,6 @@
-# HoopVista API
+# statvista API
 
-FastAPI backend for the HoopVista dashboard. **All endpoints read from Supabase only** — no NBA API or Odds API calls are made in this service.
+FastAPI backend for the statvista dashboard. **All endpoints read from Supabase only** — no NBA API or Odds API calls are made in this service.
 
 ## Setup
 

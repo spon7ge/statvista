@@ -58,9 +58,21 @@ export const mlbLiveDetail: MlbGameDetailView = {
         zoneY: 0.1,
       },
     ],
-    atBat: { name: "Mookie Betts", hand: "R", summary: ".280 AVG" },
-    onDeck: { name: "Freddie Freeman", hand: "L", summary: null },
-    pitching: { name: "Chris Sale", hand: "L", summary: "6 K" },
+    atBat: {
+      name: "Mookie Betts",
+      hand: "RHB",
+      summary: ".280 · 0-0 today",
+    },
+    onDeck: {
+      name: "Freddie Freeman",
+      hand: "LHB",
+      summary: ".264",
+    },
+    pitching: {
+      name: "Chris Sale",
+      hand: "LHP",
+      summary: "6 P · 0.1 IP, 0 ER, 6 K, 0 BB",
+    },
     latestPlayText: "Ball",
   },
   plays: [

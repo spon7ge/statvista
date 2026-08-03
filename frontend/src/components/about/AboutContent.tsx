@@ -22,7 +22,7 @@ export function AboutContent() {
       </p>
 
       <h1 className="mt-6 text-4xl font-semibold tracking-tight text-white sm:text-5xl">
-        About HoopVista.
+        About statvista.
       </h1>
 
       <ul className="mt-6 flex flex-wrap gap-2" aria-label="Leagues">
@@ -38,7 +38,7 @@ export function AboutContent() {
 
       <div className="mt-8 space-y-5 text-base leading-relaxed text-white/55">
         <p>
-          HoopVista is an interactive basketball analytics site for the NBA and
+          statvista is an interactive basketball analytics site for the NBA and
           WNBA — live trackers, props context, and visualizations that help you
           see the game from a better seat.
         </p>

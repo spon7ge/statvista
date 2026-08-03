@@ -17,10 +17,6 @@ data/props/
 frontend/node_modules
 frontend/dist
 
-# Airflow runtime
-airflow/logs
-airflow/runtime
-
 # dbt build output
 dbt/target
 dbt/dbt_packages

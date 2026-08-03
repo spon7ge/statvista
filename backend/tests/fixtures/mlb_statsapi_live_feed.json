@@ -1864,7 +1864,11 @@
             "ID677800": {
               "person": {
                 "id": 677800,
-                "fullName": "Wilyer Abreu"
+                "fullName": "Wilyer Abreu",
+                "batSide": {
+                  "code": "L",
+                  "description": "Left"
+                }
               },
               "jerseyNumber": "52",
               "position": {
@@ -1892,6 +1896,12 @@
                   "pitchesThrown": null,
                   "summary": null
                 }
+              },
+              "seasonStats": {
+                "batting": {
+                  "avg": ".264"
+                },
+                "pitching": {}
               }
             },
             "ID680776": {
@@ -2558,6 +2568,12 @@
                   "pitchesThrown": null,
                   "summary": null
                 }
+              },
+              "seasonStats": {
+                "batting": {
+                  "avg": ".250"
+                },
+                "pitching": {}
               }
             },
             "ID605141": {

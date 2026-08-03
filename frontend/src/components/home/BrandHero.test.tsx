@@ -22,7 +22,7 @@ describe("BrandHero", () => {
   it("renders brand copy and CTA to live now", () => {
     render(<BrandHero />);
     expect(
-      screen.getByRole("heading", { name: /hoopvista/i }),
+      screen.getByRole("heading", { name: /statvista/i }),
     ).toBeInTheDocument();
     expect(screen.getByText(/from first tip to smarter bets/i)).toBeInTheDocument();
     expect(screen.getByText(/basketball intelligence/i)).toBeInTheDocument();

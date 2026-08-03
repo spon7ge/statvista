@@ -4,6 +4,7 @@ import pytest
 
 from src.odds.snapshot_rows import (
     parse_american_price,
+    parlay_props_to_api_odds_rows,
     parlay_props_to_book_rows,
     prizepicks_projections_to_rows,
     sharp_props_to_book_rows,
@@ -155,6 +156,49 @@ def test_parlay_props_to_book_rows_main_line_over_under():
     assert sides["over"]["american_price"] == -108
     assert sides["under"]["american_price"] == -112
     assert sides["over"]["stat_category"] == "Assists"
+    assert sides["over"]["sportsbook"] == "pinnacle"
+
+
+def test_parlay_props_to_api_odds_rows_multi_book_skips_pinnacle_when_excluded():
+    scraped = datetime(2026, 8, 1, tzinfo=timezone.utc)
+    rows = parlay_props_to_api_odds_rows(
+        [
+            {
+                "bookmaker": "fanduel",
+                "player": "Rhyne Howard",
+                "market_key": "player_assists",
+                "market": "Assists",
+                "line": 3.5,
+                "over_price": -114,
+                "under_price": -110,
+            },
+            {
+                "bookmaker": "pinnacle",
+                "player": "Rhyne Howard",
+                "market_key": "player_assists",
+                "market": "Assists",
+                "line": 3.5,
+                "over_price": -108,
+                "under_price": -112,
+            },
+            {
+                "bookmaker": "novig",
+                "player": "Rhyne Howard",
+                "market_key": "player_assists",
+                "market": "Assists",
+                "line": 3.5,
+                "over_price": -110,
+                "under_price": -110,
+            },
+        ],
+        league="wnba",
+        scraped_at=scraped,
+        books=("fanduel", "novig"),
+    )
+    books = {r["sportsbook"] for r in rows}
+    assert books == {"fanduel", "novig"}
+    assert "pinnacle" not in books
+    assert len(rows) == 4
 
 
 def test_parlay_props_to_book_rows_allows_one_sided_dfs():

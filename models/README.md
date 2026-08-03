@@ -98,7 +98,7 @@ Details: [docs/leakage_and_splits.md](docs/leakage_and_splits.md).
 
 Pre-registered: after naive tests + feature prune, a heavier model (e.g. small
 MLP on GPU) ships **only if** holdout MAE improves by ≥ 2% **and** line Brier
-does not worsen. Otherwise keep XGB quantile — latency and ops win for Airflow.
+does not worsen. Otherwise keep XGB quantile — latency and ops win for live inference.
 
 Log the rejection as an experiment row; do not delete the failed run.
 

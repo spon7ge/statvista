@@ -329,7 +329,7 @@ export interface paths {
         };
         /**
          * Backtesting accuracy for a model version
-         * @description Returns hit rate, Q50 calibration, MAE, and signed bias for a specific model version, broken down by prop type. Aggregated from **gold.gold_prediction_accuracy** (populated daily by the Airflow pipeline). Games whose actuals have not yet landed are excluded automatically.
+         * @description Returns hit rate, Q50 calibration, MAE, and signed bias for a specific model version, broken down by prop type. Aggregated from **gold.gold_prediction_accuracy** (populated by the grading pipeline). Games whose actuals have not yet landed are excluded automatically.
          */
         get: operations["model_accuracy_api_models__model_id__accuracy_get"];
         put?: never;

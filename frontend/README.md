@@ -1,6 +1,6 @@
-# HoopVista Frontend
+# statvista Frontend
 
-React + TypeScript home landing for HoopVista, built with [Vite](https://vite.dev/).
+React + TypeScript home landing for statvista, built with [Vite](https://vite.dev/).
 
 ## Stack
 

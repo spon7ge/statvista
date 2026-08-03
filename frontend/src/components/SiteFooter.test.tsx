@@ -9,7 +9,7 @@ describe("SiteFooter", () => {
       screen.getByText(/informational and entertainment purposes only/i),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("© Copyright 2026 HoopVista. All Rights Reserved."),
+      screen.getByText("© Copyright 2026 statvista. All Rights Reserved."),
     ).toBeInTheDocument();
   });
 });

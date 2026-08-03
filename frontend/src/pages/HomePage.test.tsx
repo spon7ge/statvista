@@ -45,7 +45,7 @@ describe("HomePage", () => {
   it("renders the Apple-style section stack", () => {
     renderHome();
     expect(
-      screen.getByRole("heading", { name: /hoopvista/i }),
+      screen.getByRole("heading", { name: /statvista/i }),
     ).toBeInTheDocument();
     expect(
       screen.getByRole("link", { name: /see what.?s live/i }),

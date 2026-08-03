@@ -199,8 +199,17 @@ def _hand_code(side: Any) -> str | None:
     data = _as_dict(side)
     code = data.get("code")
     if isinstance(code, str) and code.strip():
-        return code.strip()
+        return code.strip().upper()
     return None
+
+
+def _hand_label(code: str | None, *, role: Literal["batter", "pitcher"]) -> str | None:
+    if not code:
+        return None
+    suffix = "HB" if role == "batter" else "HP"
+    if code in {"R", "L", "S"}:
+        return f"{code}{suffix}"
+    return code
 
 
 def _player_card(
@@ -215,6 +224,80 @@ def _player_card(
     if not name:
         return None
     return MlbPlayerCard(name=str(name), hand=hand, summary=summary)
+
+
+def _boxscore_players(boxscore: dict) -> dict[int, dict]:
+    teams = _as_dict(boxscore.get("teams"))
+    out: dict[int, dict] = {}
+    for side_key in ("away", "home"):
+        out.update(_player_map(_as_dict(teams.get(side_key))))
+    return out
+
+
+def _person_id(person: dict | None) -> int | None:
+    if not isinstance(person, dict):
+        return None
+    return _int_or_none(person.get("id"))
+
+
+def _season_avg(player: dict | None) -> str | None:
+    if not player:
+        return None
+    batting = _as_dict(_as_dict(player.get("seasonStats")).get("batting"))
+    avg = batting.get("avg")
+    if isinstance(avg, str) and avg.strip():
+        return avg.strip()
+    if isinstance(avg, (int, float)):
+        return f"{avg:.3f}".lstrip("0") if avg < 1 else f"{avg:.3f}"
+    return None
+
+
+def _batter_card_summary(player: dict | None) -> str | None:
+    if not player:
+        return None
+    batting = _as_dict(_as_dict(player.get("stats")).get("batting"))
+    today = batting.get("summary")
+    today_text = None
+    if isinstance(today, str) and today.strip():
+        today_text = today.strip()
+        if not today_text.lower().endswith("today"):
+            today_text = f"{today_text} today"
+    avg = _season_avg(player)
+    parts = [p for p in (avg, today_text) if p]
+    return " · ".join(parts) if parts else None
+
+
+def _pitcher_card_summary(player: dict | None) -> str | None:
+    if not player:
+        return None
+    pitching = _as_dict(_as_dict(player.get("stats")).get("pitching"))
+    pitches = pitching.get("numberOfPitches")
+    if pitches is None:
+        pitches = pitching.get("pitchesThrown")
+    pitch_count = _int_or_none(pitches)
+    line = pitching.get("summary")
+    line_text = str(line).strip() if isinstance(line, str) and line.strip() else None
+    if line_text is None:
+        fragments: list[str] = []
+        ip = pitching.get("inningsPitched")
+        if ip is not None and str(ip).strip():
+            fragments.append(f"{ip} IP")
+        er = _int_or_none(pitching.get("earnedRuns"))
+        if er is not None:
+            fragments.append("ER" if er == 1 else f"{er} ER")
+        k = _int_or_none(pitching.get("strikeOuts"))
+        if k is not None:
+            fragments.append(f"{k} K")
+        bb = _int_or_none(pitching.get("baseOnBalls"))
+        if bb is not None:
+            fragments.append(f"{bb} BB")
+        line_text = ", ".join(fragments) if fragments else None
+    parts: list[str] = []
+    if pitch_count is not None:
+        parts.append(f"{pitch_count} P")
+    if line_text:
+        parts.append(line_text)
+    return " · ".join(parts) if parts else None
 
 
 def _is_strike_pitch(details: dict) -> bool:
@@ -266,7 +349,11 @@ def _runners_from_offense(offense: dict) -> MlbRunners:
     )
 
 
-def _situation(live_linescore: dict, plays: dict) -> MlbSituation | None:
+def _situation(
+    live_linescore: dict,
+    plays: dict,
+    boxscore: dict | None = None,
+) -> MlbSituation | None:
     if not live_linescore and not plays:
         return None
     current = _as_dict(plays.get("currentPlay"))
@@ -294,19 +381,44 @@ def _situation(live_linescore: dict, plays: dict) -> MlbSituation | None:
     if outs is None:
         outs = _int_or_none(count.get("outs")) or 0
 
+    box_players = _boxscore_players(boxscore or {})
+    batter_person = _as_dict(matchup.get("batter")) or _as_dict(offense.get("batter"))
+    on_deck_person = _as_dict(offense.get("onDeck"))
+    pitcher_person = _as_dict(matchup.get("pitcher")) or _as_dict(
+        _as_dict(live_linescore.get("defense")).get("pitcher")
+    ) or _as_dict(offense.get("pitcher"))
+
+    batter_id = _person_id(batter_person)
+    on_deck_id = _person_id(on_deck_person)
+    pitcher_id = _person_id(pitcher_person)
+    batter_box = box_players.get(batter_id) if batter_id is not None else None
+    on_deck_box = box_players.get(on_deck_id) if on_deck_id is not None else None
+    pitcher_box = box_players.get(pitcher_id) if pitcher_id is not None else None
+
+    on_deck_hand = _hand_code(
+        on_deck_person.get("batSide")
+        or _as_dict(_as_dict(on_deck_box).get("person")).get("batSide")
+    )
+
     return MlbSituation(
         balls=balls,
         strikes=strikes,
         outs=outs,
         runners=_runners_from_offense(offense),
         at_bat=_player_card(
-            _as_dict(matchup.get("batter")) or _as_dict(offense.get("batter")),
-            hand=_hand_code(matchup.get("batSide")),
+            batter_person,
+            hand=_hand_label(_hand_code(matchup.get("batSide")), role="batter"),
+            summary=_batter_card_summary(batter_box),
         ),
-        on_deck=_player_card(_as_dict(offense.get("onDeck"))),
+        on_deck=_player_card(
+            on_deck_person,
+            hand=_hand_label(on_deck_hand, role="batter"),
+            summary=_batter_card_summary(on_deck_box),
+        ),
         pitching=_player_card(
-            _as_dict(matchup.get("pitcher")) or _as_dict(offense.get("pitcher")),
-            hand=_hand_code(matchup.get("pitchHand")),
+            pitcher_person,
+            hand=_hand_label(_hand_code(matchup.get("pitchHand")), role="pitcher"),
+            summary=_pitcher_card_summary(pitcher_box),
         ),
         pitches=pitches,
         latest_play_text=latest,
@@ -570,6 +682,7 @@ def normalize_mlb_live_feed(
 
     venue = _as_dict(game_data.get("venue")).get("name")
     plays, scoring_plays = _plays(all_plays)
+    boxscore = _as_dict(live_data.get("boxscore"))
 
     return MlbGameDetail(
         mlb_game_pk=str(game_pk),
@@ -580,10 +693,10 @@ def normalize_mlb_live_feed(
         away=_detail_team(away_team, side="away", score=away_score),
         home=_detail_team(home_team, side="home", score=home_score),
         linescore=linescore,
-        situation=_situation(live_linescore, plays_raw),
+        situation=_situation(live_linescore, plays_raw, boxscore),
         plays=plays,
         scoring_plays=scoring_plays,
-        box_score=_box(_as_dict(live_data.get("boxscore"))),
+        box_score=_box(boxscore),
         hit_chart=_hits(all_plays),
         win_probability=None,
         sources=["mlb_stats_api"],

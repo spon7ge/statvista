@@ -1,6 +1,6 @@
 -- Migration 018: ml.nba_live_prop_grades + ml.wnba_live_prop_grades
 -- Graded live props: latest prediction run per slate joined to silver box scores.
--- Populated by scripts/grade_live_props.py (Airflow after silver).
+-- Populated by scripts/grade_live_props.py (after silver).
 -- Served by GET /api/performance?league=nba|wnba.
 
 -- ── NBA ───────────────────────────────────────────────────────────────────────

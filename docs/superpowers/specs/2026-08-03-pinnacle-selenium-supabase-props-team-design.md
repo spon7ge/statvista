@@ -127,7 +127,7 @@ Strip `pinnacle` from every path that would fetch or write it:
 
 - `PROP_SPORTSBOOKS` / display list: **keep** `pinnacle` as a response column (filled from Supabase).
 - Parlay **fetch** allowlist: exclude `pinnacle` so live Parlay rows never attach as Pinnacle.
-- `PARLAY_PROP_SPORTSBOOKS` / `_PARLAY_BOOK_TABLES` / `maybe_persist_parlay_props`: do not persist `odds.wnba_pinnacle`.
+- `PARLAY_PROP_SPORTSBOOKS` / `maybe_persist_parlay_props`: do not persist `odds.wnba_pinnacle`; Parlay snapshots go to `odds.wnba_parlay_api_odds`.
 - `select_parlay_main_lines` / sharpness order: do not treat Parlay’s pinnacle bookmaker as the sharp source for the Pinnacle column (Selenium snapshot wins).
 - `parlay_odds` (if still unused by the WNBA route): exclude pinnacle from any future wiring that would compete with Selenium team lines; WNBA matchups use the new Supabase+Sharp path instead.
 

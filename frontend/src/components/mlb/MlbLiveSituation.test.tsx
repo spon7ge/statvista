@@ -22,5 +22,7 @@ describe("MlbLiveSituation", () => {
     expect(screen.getByText("Out")).toBeInTheDocument();
     expect(screen.getByText(/ON DECK/i)).toBeInTheDocument();
     expect(screen.getByText(/Freddie Freeman/i)).toBeInTheDocument();
+    expect(screen.getByText(/RHB · \.280 · 0-0 today/i)).toBeInTheDocument();
+    expect(screen.getByText(/LHP · 6 P/i)).toBeInTheDocument();
   });
 });

@@ -22,7 +22,7 @@ export function HomeNav() {
         <Link to="/" className="flex items-center gap-2 text-white no-underline">
           <BarChart3 className="size-4 shrink-0" aria-hidden strokeWidth={1.75} />
           <span className="text-[17px] font-semibold tracking-tight">
-            HoopVista
+            statvista
           </span>
         </Link>
 

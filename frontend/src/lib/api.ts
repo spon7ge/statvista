@@ -61,7 +61,7 @@ export type ApiMlbGameDetail = Schemas["MlbGameDetail"];
 export type ApiMatchupOddsGame = ApiWnbaOddsGame | ApiMlbOddsGame;
 
 /**
- * Origin of the HoopVista API, without a trailing slash.
+ * Origin of the statvista API, without a trailing slash.
  *
  * Empty in local dev, where Vite's `/api` proxy forwards to the backend. Static
  * hosts (GitHub Pages and friends) have no proxy, so their builds must set

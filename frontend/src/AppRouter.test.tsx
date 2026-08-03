@@ -46,14 +46,14 @@ describe("AppRouter", () => {
   it("renders home at /", () => {
     renderWithProviders(["/"]);
     expect(
-      screen.getByRole("heading", { name: /hoopvista/i }),
+      screen.getByRole("heading", { name: /statvista/i }),
     ).toBeInTheDocument();
   });
 
   it("renders about at /about", () => {
     renderWithProviders(["/about"]);
     expect(
-      screen.getByRole("heading", { name: /about hoopvista/i }),
+      screen.getByRole("heading", { name: /about statvista/i }),
     ).toBeInTheDocument();
     expect(screen.getAllByRole("main")).toHaveLength(1);
     expect(screen.getByText("No live games")).toBeInTheDocument();

@@ -10,7 +10,7 @@ export function BrandHero() {
             Basketball intelligence · Beta
           </p>
           <h1 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl">
-            HoopVista
+            statvista
           </h1>
           <p className="text-xl tracking-tight text-white/85 sm:text-2xl">
             The only research tool you need to make smarter bets.

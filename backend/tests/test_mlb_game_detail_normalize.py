@@ -31,6 +31,36 @@ def test_normalize_situation_and_pitches():
     assert len(detail.situation.pitches) >= 1
 
 
+def test_normalize_situation_player_card_summaries():
+    detail = normalize_mlb_live_feed(
+        _payload(), game_pk="776543", fetched_at="2026-08-02T18:00:00+00:00"
+    )
+    situation = detail.situation
+    assert situation is not None
+
+    assert situation.at_bat is not None
+    assert situation.at_bat.name == "Teoscar Hernández"
+    assert situation.at_bat.hand == "RHB"
+    assert situation.at_bat.summary is not None
+    assert ".250" in situation.at_bat.summary
+    assert "1-3 | R" in situation.at_bat.summary
+    assert situation.at_bat.summary.endswith("today")
+
+    assert situation.on_deck is not None
+    assert situation.on_deck.name == "Wilyer Abreu"
+    assert situation.on_deck.hand == "LHB"
+    assert situation.on_deck.summary is not None
+    assert ".264" in situation.on_deck.summary
+    assert "2-3" in situation.on_deck.summary
+
+    assert situation.pitching is not None
+    assert situation.pitching.name == "Justin Slaten"
+    assert situation.pitching.hand == "RHP"
+    assert situation.pitching.summary is not None
+    assert "5 P" in situation.pitching.summary
+    assert "0.1 IP" in situation.pitching.summary
+
+
 def test_normalize_plays_box_and_hits():
     detail = normalize_mlb_live_feed(
         _payload(), game_pk="776543", fetched_at="2026-08-02T18:00:00+00:00"

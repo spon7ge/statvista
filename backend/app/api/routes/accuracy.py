@@ -56,7 +56,7 @@ def _validate_prop(prop: str | None) -> str | None:
     description=(
         "Returns hit rate, Q50 calibration, MAE, and signed bias for a specific "
         "model version, broken down by prop type. Aggregated from "
-        "**gold.gold_prediction_accuracy** (populated daily by the Airflow pipeline). "
+        "**gold.gold_prediction_accuracy** (populated by the grading pipeline). "
         "Games whose actuals have not yet landed are excluded automatically."
     ),
 )

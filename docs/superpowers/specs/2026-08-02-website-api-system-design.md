@@ -127,6 +127,7 @@ LeaguePropPicksPage
   → GET /api/wnba/props/today
   → parlay_props.get_today_props()
        ├─ ParlayAPI player props (US sportsbooks; main lines; Pinnacle excluded)
+       ├─ side-effect: maybe_persist_parlay_props → odds.wnba_parlay_api_odds
        ├─ odds_snapshots (latest Supabase odds.wnba_prizepicks / odds.wnba_underdogs)
        ├─ attach_dfs_snapshots()  # DFS-first rows; match US books to DFS lines
        └─ attach_pinnacle_snapshot()  # odds.wnba_pinnacle (Selenium scraper → Supabase)
