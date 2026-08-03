@@ -236,3 +236,146 @@ def parlay_props_to_book_rows(
             )
 
     return out
+
+
+_SELENIUM_STAT_TO_MARKET = {
+    "points": "player_points",
+    "assists": "player_assists",
+    "rebounds": "player_rebounds",
+    "points_rebounds_assists": "player_pts_rebs_asts",
+}
+
+
+def selenium_pinnacle_props_to_rows(
+    games: list[dict],
+    *,
+    league: str,
+    scraped_at: datetime,
+) -> list[dict]:
+    """Map Selenium Pinnacle game dicts to odds.wnba_pinnacle row dicts."""
+    rows: list[dict] = []
+    league_key = league.lower()
+
+    for game in games:
+        for prop in game.get("props") or []:
+            player = str(prop.get("player") or "").strip()
+            stat = str(prop.get("stat") or "").strip()
+            market_type = _SELENIUM_STAT_TO_MARKET.get(stat)
+            line_raw = prop.get("line")
+            if not player or not market_type or line_raw is None:
+                continue
+            try:
+                line_score = float(line_raw)
+            except (TypeError, ValueError):
+                continue
+
+            stat_category = stat or None
+            for side, price_key in (
+                ("over", "american_over"),
+                ("under", "american_under"),
+            ):
+                price_raw = prop.get(price_key)
+                if price_raw is None:
+                    continue
+                try:
+                    american_price = int(price_raw)
+                except (TypeError, ValueError):
+                    continue
+                rows.append(
+                    {
+                        "league": league_key,
+                        "player_name": player,
+                        "market_type": market_type,
+                        "stat_category": stat_category,
+                        "side": side,
+                        "line_score": line_score,
+                        "american_price": american_price,
+                        "scraped_at": scraped_at,
+                    }
+                )
+
+    return rows
+
+
+def selenium_pinnacle_team_to_rows(
+    games: list[dict],
+    *,
+    league: str,
+    scraped_at: datetime,
+) -> list[dict]:
+    """Map Selenium Pinnacle game dicts to odds.wnba_pinnacle_team row dicts."""
+    rows: list[dict] = []
+    league_key = league.lower()
+
+    for game in games:
+        participants = game.get("participants") or []
+        if len(participants) < 2:
+            continue
+        away_team = str(participants[0]).strip()
+        home_team = str(participants[1]).strip()
+        if not away_team or not home_team:
+            continue
+
+        matchup_id = game.get("matchup_id")
+        start_time = _parse_line_updated_at(game.get("start_time"))
+        team_markets = game.get("team_markets") or {}
+
+        for market_type, blocks in team_markets.items():
+            if not isinstance(blocks, list):
+                continue
+            for block in blocks:
+                period = block.get("period", 0)
+                is_alternate = bool(block.get("is_alternate", False))
+                for line in block.get("lines") or []:
+                    side = str(line.get("side") or "").strip()
+                    american_raw = line.get("american")
+                    if not side or american_raw is None:
+                        continue
+                    try:
+                        american_price = int(american_raw)
+                    except (TypeError, ValueError):
+                        continue
+
+                    points_raw = line.get("points")
+                    points: float | None
+                    if points_raw is None:
+                        points = None
+                    else:
+                        try:
+                            points = float(points_raw)
+                        except (TypeError, ValueError):
+                            continue
+
+                    team = line.get("team")
+                    team_name = str(team).strip() if team else None
+
+                    decimal_raw = line.get("decimal")
+                    decimal_price: float | None
+                    if decimal_raw is None:
+                        decimal_price = None
+                    else:
+                        try:
+                            decimal_price = float(decimal_raw)
+                        except (TypeError, ValueError):
+                            decimal_price = None
+
+                    rows.append(
+                        {
+                            "league": league_key,
+                            "matchup_id": matchup_id,
+                            "away_team": away_team,
+                            "home_team": home_team,
+                            "start_time": start_time,
+                            "market_type": market_type,
+                            "period": period,
+                            "is_alternate": is_alternate,
+                            "side": side,
+                            "team": team_name,
+                            "points": points,
+                            "american_price": american_price,
+                            "decimal_price": decimal_price,
+                            "scraped_at": scraped_at,
+                        }
+                    )
+
+    return rows
