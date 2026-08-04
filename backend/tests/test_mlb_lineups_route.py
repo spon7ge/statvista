@@ -63,6 +63,27 @@ def test_lineups_invalid_date_format_is_422(client):
     assert client.get("/api/mlb/lineups?date=not-a-date").status_code == 422
 
 
+def test_lineups_invalid_calendar_date_is_422(client):
+    assert client.get("/api/mlb/lineups?date=2026-99-99").status_code == 422
+
+
+def test_lineups_cache_hit_skips_scrape(client):
+    games = parse_mlb_lineups_html(FIXTURE.read_text())
+    today_et = _today_et()
+
+    with patch(
+        "app.services.mlb_lineups.scrape_mlb_lineups",
+        return_value=games,
+    ) as mock_scrape:
+        first = client.get(f"/api/mlb/lineups?date={today_et}")
+        second = client.get(f"/api/mlb/lineups?date={today_et}")
+
+    assert first.status_code == 200
+    assert second.status_code == 200
+    assert second.json() == first.json()
+    mock_scrape.assert_called_once()
+
+
 def test_lineups_scrape_failure_returns_empty(monkeypatch, client):
     today_et = _today_et()
 
