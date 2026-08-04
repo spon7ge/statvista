@@ -80,10 +80,10 @@ export function MlbPregameBroadcastHeader({
   activeTab: PregameTab;
   onTabChange: (tab: PregameTab) => void;
 }) {
-  const tabs: { id: PregameTab; label: string; a11yLabel: string }[] = [
-    { id: "preview", label: "Preview", a11yLabel: "Preview" },
-    { id: "away", label: detail.away.abbrev, a11yLabel: detail.away.name },
-    { id: "home", label: detail.home.abbrev, a11yLabel: detail.home.name },
+  const tabs: { id: PregameTab; label: string }[] = [
+    { id: "preview", label: "Preview" },
+    { id: "away", label: detail.away.name },
+    { id: "home", label: detail.home.name },
   ];
 
   return (
@@ -118,7 +118,6 @@ export function MlbPregameBroadcastHeader({
             role="tab"
             aria-selected={activeTab === tab.id}
             aria-controls={`mlb-pregame-${tab.id}-panel`}
-            aria-label={tab.a11yLabel}
             className={`border-b-2 px-5 py-2 text-sm font-medium transition-colors ${
               activeTab === tab.id
                 ? "border-white text-white"

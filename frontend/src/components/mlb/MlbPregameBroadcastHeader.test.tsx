@@ -18,8 +18,21 @@ describe("MlbPregameBroadcastHeader", () => {
     ).toBeInTheDocument();
     expect(screen.getByText("Today")).toBeInTheDocument();
     expect(screen.getByText(/3:40 PM/i)).toBeInTheDocument();
-    expect(screen.getByText("Washington Nationals")).toBeInTheDocument();
-    expect(screen.getByText("Philadelphia Phillies")).toBeInTheDocument();
+    const tablist = screen.getByRole("tablist");
+    expect(
+      screen.getByTestId("mlb-pregame-slab-away"),
+    ).toHaveTextContent("Washington Nationals");
+    expect(
+      screen.getByTestId("mlb-pregame-slab-home"),
+    ).toHaveTextContent("Philadelphia Phillies");
+    expect(
+      screen.getByRole("tab", { name: "Washington Nationals" }),
+    ).toHaveTextContent("Washington Nationals");
+    expect(
+      screen.getByRole("tab", { name: "Philadelphia Phillies" }),
+    ).toHaveTextContent("Philadelphia Phillies");
+    expect(tablist).toHaveTextContent("Washington Nationals");
+    expect(tablist).toHaveTextContent("Philadelphia Phillies");
     expect(screen.getByText("55-59")).toBeInTheDocument();
     expect(screen.getByText("60-53")).toBeInTheDocument();
     expect(screen.getByText("0-5 in Last 10")).toBeInTheDocument();
@@ -37,12 +50,21 @@ describe("MlbPregameBroadcastHeader", () => {
         onTabChange={onTabChange}
       />,
     );
-    expect(
-      screen.getByRole("tab", { name: /preview/i }),
-    ).toHaveAttribute("aria-selected", "true");
-    await user.click(
-      screen.getByRole("tab", { name: /philadelphia phillies/i }),
-    );
+    const tablist = screen.getByRole("tablist");
+    const previewTab = screen.getByRole("tab", { name: "Preview" });
+    expect(previewTab).toHaveAttribute("aria-selected", "true");
+    expect(previewTab).toHaveTextContent("Preview");
+
+    const awayTab = screen.getByRole("tab", { name: "Washington Nationals" });
+    const homeTab = screen.getByRole("tab", {
+      name: "Philadelphia Phillies",
+    });
+    expect(awayTab).toHaveTextContent("Washington Nationals");
+    expect(homeTab).toHaveTextContent("Philadelphia Phillies");
+    expect(tablist).toHaveTextContent("Washington Nationals");
+    expect(tablist).toHaveTextContent("Philadelphia Phillies");
+
+    await user.click(homeTab);
     expect(onTabChange).toHaveBeenCalledWith("home");
   });
 
