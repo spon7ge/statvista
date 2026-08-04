@@ -1,7 +1,13 @@
+import asyncio
 import json
 from pathlib import Path
 
-from app.services.mlb_game_detail import normalize_mlb_live_feed
+from app.services import mlb_game_detail as svc
+from app.services.mlb_game_detail import (
+    attach_last10,
+    normalize_mlb_live_feed,
+    parse_standings_last10,
+)
 
 FIXTURES = Path(__file__).parent / "fixtures"
 
@@ -243,3 +249,124 @@ def test_normalize_box_notes_and_enriched_pitchers():
     assert box.away_pitching_totals is not None
     assert box.away_pitching_totals.ip == "9.0"
     assert box.away_pitching_totals.k == 9
+
+
+def test_normalize_scheduled_status_label_uses_et_first_pitch():
+    payload = _payload()
+    payload["gameData"]["status"] = {
+        "abstractGameState": "Preview",
+        "detailedState": "Scheduled",
+    }
+    payload["gameData"].setdefault("datetime", {})
+    payload["gameData"]["datetime"]["dateTime"] = "2026-08-02T23:20:00Z"
+    payload["liveData"]["linescore"] = {}
+
+    detail = normalize_mlb_live_feed(
+        payload, game_pk="776543", fetched_at="2026-08-02T18:00:00+00:00"
+    )
+    assert detail.status == "scheduled"
+    assert detail.status_label.endswith("ET")
+
+
+def test_normalize_scheduled_status_label_falls_back_without_datetime():
+    payload = _payload()
+    payload["gameData"]["status"] = {
+        "abstractGameState": "Preview",
+        "detailedState": "Scheduled",
+    }
+    payload["gameData"]["datetime"] = {}
+    payload["liveData"]["linescore"] = {}
+
+    detail = normalize_mlb_live_feed(
+        payload, game_pk="776543", fetched_at="2026-08-02T18:00:00+00:00"
+    )
+    assert detail.status == "scheduled"
+    assert detail.status_label == "Scheduled"
+
+
+def test_parse_standings_last10_from_split_records():
+    payload = json.loads((FIXTURES / "mlb_standings_sample.json").read_text())
+    mapping = parse_standings_last10(payload)
+    assert mapping["120"] == "0-5"
+    assert mapping["143"] == "3-2"
+
+
+def test_attach_last10_sets_both_teams():
+    payload = _payload()
+    detail = normalize_mlb_live_feed(
+        payload, game_pk="776543", fetched_at="2026-08-02T18:00:00+00:00"
+    )
+    # Force known ids if fixture ids differ — use detail.away.id / home.id
+    mapping = {
+        detail.away.id: "0-5",
+        detail.home.id: "3-2",
+    }
+    enriched = attach_last10(detail, mapping)
+    assert enriched.away.last_10 == "0-5"
+    assert enriched.home.last_10 == "3-2"
+
+
+def test_attach_last10_leaves_null_when_missing():
+    payload = _payload()
+    detail = normalize_mlb_live_feed(
+        payload, game_pk="776543", fetched_at="2026-08-02T18:00:00+00:00"
+    )
+    enriched = attach_last10(detail, {})
+    assert enriched.away.last_10 is None
+    assert enriched.home.last_10 is None
+
+
+def test_get_mlb_game_detail_soft_fails_standings(monkeypatch):
+    svc.clear_mlb_game_detail_cache()
+    svc._standings_cache["payload"] = None
+    svc._standings_cache["expires_at"] = 0.0
+    payload = _payload()
+
+    async def fake_live_feed(game_pk: str) -> dict:
+        return payload
+
+    async def fake_resolve_espn(**kwargs):
+        return None
+
+    async def fake_standings() -> dict:
+        raise RuntimeError("standings unavailable")
+
+    monkeypatch.setattr(svc, "fetch_mlb_live_feed", fake_live_feed)
+    monkeypatch.setattr(svc, "resolve_espn_event_id", fake_resolve_espn)
+    monkeypatch.setattr(svc, "fetch_mlb_standings", fake_standings)
+
+    detail = asyncio.run(svc.get_mlb_game_detail("776543"))
+
+    assert detail.status == "live"
+    assert detail.away.last_10 is None
+    assert detail.home.last_10 is None
+
+
+def test_get_mlb_game_detail_attaches_standings_last10(monkeypatch):
+    svc.clear_mlb_game_detail_cache()
+    svc._standings_cache["payload"] = None
+    svc._standings_cache["expires_at"] = 0.0
+    payload = _payload()
+    standings = json.loads((FIXTURES / "mlb_standings_sample.json").read_text())
+    away_id = payload["gameData"]["teams"]["away"]["id"]
+    home_id = payload["gameData"]["teams"]["home"]["id"]
+    standings["records"][0]["teamRecords"][0]["team"]["id"] = away_id
+    standings["records"][0]["teamRecords"][1]["team"]["id"] = home_id
+
+    async def fake_live_feed(game_pk: str) -> dict:
+        return payload
+
+    async def fake_resolve_espn(**kwargs):
+        return None
+
+    async def fake_standings() -> dict:
+        return standings
+
+    monkeypatch.setattr(svc, "fetch_mlb_live_feed", fake_live_feed)
+    monkeypatch.setattr(svc, "resolve_espn_event_id", fake_resolve_espn)
+    monkeypatch.setattr(svc, "fetch_mlb_standings", fake_standings)
+
+    detail = asyncio.run(svc.get_mlb_game_detail("776543"))
+
+    assert detail.away.last_10 == "0-5"
+    assert detail.home.last_10 == "3-2"

@@ -37,6 +37,7 @@ from app.services.mlb_espn_bridge import (
     normalize_espn_mlb_win_probability,
     resolve_espn_event_id,
 )
+from app.services.mlb_scoreboard import format_tip_label
 
 logger = logging.getLogger(__name__)
 
@@ -48,12 +49,15 @@ LIVE_FEED_URL = "https://statsapi.mlb.com/api/v1.1/game/{game_pk}/feed/live"
 ESPN_SUMMARY_URL = (
     "https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/summary"
 )
+STANDINGS_URL = "https://statsapi.mlb.com/api/v1/standings"
 STATS_TIMEOUT_SECONDS = 12.0
 LIVE_TTL_SECONDS = 15
 NOT_LIVE_TTL_SECONDS = 60
+STANDINGS_TTL_SECONDS = 600
 
 _GAME_PK_PATTERN = re.compile(r"^\d{4,10}$")
 _cache: dict[str, dict] = {}
+_standings_cache: dict[str, Any] = {"expires_at": 0.0, "payload": None}
 
 # Stats Gameday pitch plot coords are roughly 0–250 px. Map to a stable
 # center-origin space in [-1, 1] (x right, y up) for the strike-zone UI.
@@ -851,6 +855,15 @@ def normalize_mlb_live_feed(
     all_plays = _as_list(plays_raw.get("allPlays"))
 
     status, status_label = _map_status(status_raw, live_linescore)
+    if status == "scheduled":
+        datetime_block = _as_dict(game_data.get("datetime"))
+        date_time = datetime_block.get("dateTime") or datetime_block.get(
+            "dateTimeUTC"
+        )
+        if isinstance(date_time, str):
+            tip = format_tip_label(date_time)
+            if tip:
+                status_label = tip
     linescore = _linescore(live_linescore)
     teams = _as_dict(game_data.get("teams"))
     away_team = _as_dict(teams.get("away"))
@@ -902,6 +915,47 @@ def attach_win_probability(
     return detail.model_copy(update={"win_probability": wp, "sources": sources})
 
 
+def parse_standings_last10(payload: dict) -> dict[str, str]:
+    """Parse a Stats API ``standings`` payload into ``team_id -> "W-L"`` for the last-10 split."""
+    mapping: dict[str, str] = {}
+    for block in _as_list(payload.get("records")):
+        for team_record in _as_list(_as_dict(block).get("teamRecords")):
+            team = _as_dict(_as_dict(team_record).get("team"))
+            team_id = team.get("id")
+            if team_id is None:
+                continue
+            splits = _as_list(
+                _as_dict(_as_dict(team_record).get("records")).get("splitRecords")
+            )
+            for split in splits:
+                split_dict = _as_dict(split)
+                if str(split_dict.get("type") or "") != "lastTen":
+                    continue
+                wins = _int_or_none(split_dict.get("wins"))
+                losses = _int_or_none(split_dict.get("losses"))
+                if wins is None or losses is None:
+                    break
+                mapping[str(team_id)] = f"{wins}-{losses}"
+                break
+    return mapping
+
+
+def attach_last10(
+    detail: MlbGameDetail, last10_by_team_id: dict[str, str]
+) -> MlbGameDetail:
+    """Soft-merge last-10 standings splits onto a Stats-normalized game detail."""
+    away_l10 = last10_by_team_id.get(detail.away.id)
+    home_l10 = last10_by_team_id.get(detail.home.id)
+    if away_l10 is None and home_l10 is None:
+        return detail
+    return detail.model_copy(
+        update={
+            "away": detail.away.model_copy(update={"last_10": away_l10}),
+            "home": detail.home.model_copy(update={"last_10": home_l10}),
+        }
+    )
+
+
 def clear_mlb_game_detail_cache() -> None:
     _cache.clear()
 
@@ -946,6 +1000,27 @@ async def fetch_mlb_live_feed(game_pk: str) -> dict:
         response = await client.get(url)
         response.raise_for_status()
         return response.json()
+
+
+async def fetch_mlb_standings() -> dict:
+    async with httpx.AsyncClient(timeout=STATS_TIMEOUT_SECONDS) as client:
+        response = await client.get(
+            STANDINGS_URL,
+            params={"leagueId": "103,104"},
+        )
+        response.raise_for_status()
+        return response.json()
+
+
+async def _standings_last10_map() -> dict[str, str]:
+    now = time.time()
+    cached = _standings_cache.get("payload")
+    if cached is not None and float(_standings_cache.get("expires_at") or 0) > now:
+        return parse_standings_last10(cached)
+    payload = await fetch_mlb_standings()
+    _standings_cache["payload"] = payload
+    _standings_cache["expires_at"] = now + STANDINGS_TTL_SECONDS
+    return parse_standings_last10(payload)
 
 
 async def fetch_espn_mlb_summary(
@@ -1041,6 +1116,15 @@ async def get_mlb_game_detail(game_pk: str) -> MlbGameDetail:
         if stale_fallback:
             return stale_fallback["detail"]
         raise
+
+    try:
+        detail = attach_last10(detail, await _standings_last10_map())
+    except Exception as exc:
+        logger.warning(
+            "MLB standings last10 unavailable for game %s: %s",
+            detail.mlb_game_pk,
+            exc,
+        )
 
     cached_espn_event_id = None
     if cached and isinstance(cached.get("espn_event_id"), str):
