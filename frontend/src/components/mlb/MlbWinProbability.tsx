@@ -3,14 +3,21 @@ import { GameSection } from "@/components/game/GameSection";
 import type { MlbGameDetailView } from "./types";
 import {
   buildSplitSeriesPaths,
-  CHART_GEOMETRY,
+  getChartGeometry,
   nearestIndexForClientX,
   toDisplayPct,
   xForIndex,
   yForPct,
 } from "./mlbWinProbabilityPaths";
 
-export function MlbWinProbability({ detail }: { detail: MlbGameDetailView }) {
+export function MlbWinProbability({
+  detail,
+  compact = false,
+}: {
+  detail: MlbGameDetailView;
+  compact?: boolean;
+}) {
+  const geometry = getChartGeometry(compact);
   const data = detail.winProbability;
   const points = (data?.points ?? []).map((point) => {
     const homeWinPct = toDisplayPct(point.homeWinPct);
@@ -43,10 +50,10 @@ export function MlbWinProbability({ detail }: { detail: MlbGameDetailView }) {
     Math.max(activeIndex, 0),
     Math.max(points.length - 1, 0),
   );
-  const paths = buildSplitSeriesPaths(points, scrub);
+  const paths = buildSplitSeriesPaths(points, scrub, geometry);
   const activePoint =
     points.length > 0 ? (points[scrub] ?? points[points.length - 1]) : null;
-  const midY = yForPct(50);
+  const midY = yForPct(50, geometry);
 
   const vividProps = {
     fill: "none" as const,
@@ -67,21 +74,23 @@ export function MlbWinProbability({ detail }: { detail: MlbGameDetailView }) {
 
   function handleChartPointerMove(event: MouseEvent<SVGSVGElement>) {
     const rect = event.currentTarget.getBoundingClientRect();
-    setActiveIndex(nearestIndexForClientX(event.clientX, rect, points.length));
+    setActiveIndex(
+      nearestIndexForClientX(event.clientX, rect, points.length, geometry),
+    );
   }
 
-  const scrubX = xForIndex(scrub, points.length);
+  const scrubX = xForIndex(scrub, points.length, geometry);
   const atEnd = points.length === 0 || scrub >= points.length - 1;
   const labelX = scrubX + 8;
   const labelAnchor = "start" as const;
 
-  const homeY = activePoint ? yForPct(activePoint.homeWinPct) : 0;
-  const awayY = activePoint ? yForPct(activePoint.awayWinPct) : 0;
+  const homeY = activePoint ? yForPct(activePoint.homeWinPct, geometry) : 0;
+  const awayY = activePoint ? yForPct(activePoint.awayWinPct, geometry) : 0;
   const topSeriesY = Math.min(homeY, awayY);
-  const clockDefaultY = CHART_GEOMETRY.padTop + 12;
+  const clockDefaultY = geometry.padTop + 12;
   const clockOverlapsPct = Boolean(activePoint) && topSeriesY < clockDefaultY + 22;
-  const clockY = clockOverlapsPct ? CHART_GEOMETRY.padTop - 18 : clockDefaultY;
-  const trackerTop = clockOverlapsPct ? clockY + 6 : CHART_GEOMETRY.padTop;
+  const clockY = clockOverlapsPct ? geometry.padTop - 18 : clockDefaultY;
+  const trackerTop = clockOverlapsPct ? clockY + 6 : geometry.padTop;
   const showTracker = Boolean(activePoint) && !atEnd;
 
   return (
@@ -92,13 +101,13 @@ export function MlbWinProbability({ detail }: { detail: MlbGameDetailView }) {
         <div className="relative mt-2">
           <svg
             aria-label="Win probability chart"
-            viewBox={`0 0 ${CHART_GEOMETRY.width} ${CHART_GEOMETRY.height}`}
+            viewBox={`0 0 ${geometry.width} ${geometry.height}`}
             className="w-full overflow-visible"
             onMouseMove={handleChartPointerMove}
           >
             <line
-              x1={CHART_GEOMETRY.padLeft}
-              x2={CHART_GEOMETRY.padLeft + CHART_GEOMETRY.plotWidth}
+              x1={geometry.padLeft}
+              x2={geometry.padLeft + geometry.plotWidth}
               y1={midY}
               y2={midY}
               stroke="rgba(255,255,255,0.22)"
@@ -133,7 +142,7 @@ export function MlbWinProbability({ detail }: { detail: MlbGameDetailView }) {
                     x1={scrubX}
                     x2={scrubX}
                     y1={trackerTop}
-                    y2={CHART_GEOMETRY.padTop + CHART_GEOMETRY.plotHeight}
+                    y2={geometry.padTop + geometry.plotHeight}
                     stroke="rgba(255,255,255,0.45)"
                     strokeDasharray="3 3"
                     pointerEvents="none"

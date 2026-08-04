@@ -26,4 +26,20 @@ describe("MlbWinProbability", () => {
       screen.queryByText("Win probability unavailable"),
     ).not.toBeInTheDocument();
   });
+
+  it("uses compact viewBox height when compact is set", () => {
+    render(<MlbWinProbability detail={mlbLiveDetail} compact />);
+    expect(screen.getByLabelText("Win probability chart")).toHaveAttribute(
+      "viewBox",
+      "0 0 640 280",
+    );
+  });
+
+  it("uses default viewBox height without compact", () => {
+    render(<MlbWinProbability detail={mlbLiveDetail} />);
+    expect(screen.getByLabelText("Win probability chart")).toHaveAttribute(
+      "viewBox",
+      "0 0 640 520",
+    );
+  });
 });
