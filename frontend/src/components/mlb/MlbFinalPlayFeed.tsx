@@ -148,7 +148,7 @@ export function MlbFinalPlayFeed({
   const playGroups = groupPlaysByHalfInning(plays);
 
   return (
-    <GameSection className="!p-3" data-testid="mlb-final-play-feed">
+    <GameSection className="!p-3 h-fit self-start" data-testid="mlb-final-play-feed">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-sm font-semibold text-white">Play feed</h2>
         <div className="flex rounded-full bg-white/5 p-0.5">

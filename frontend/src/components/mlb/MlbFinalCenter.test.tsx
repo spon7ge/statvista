@@ -5,7 +5,7 @@ import { MlbFinalCenter } from "./MlbFinalCenter";
 import { mlbFinalDetail } from "./testFixtures";
 
 describe("MlbFinalCenter", () => {
-  it("renders Summary by default and keeps charts below tab content", async () => {
+  it("renders Summary with charts under team stats; hides charts on Box", async () => {
     const user = userEvent.setup();
     render(<MlbFinalCenter detail={mlbFinalDetail} />);
     const root = screen.getByTestId("mlb-final-center");
@@ -25,6 +25,21 @@ describe("MlbFinalCenter", () => {
     expect(screen.getByTestId("mlb-hit-chart")).toBeInTheDocument();
     expect(screen.queryByTestId("mlb-box-score")).not.toBeInTheDocument();
 
+    const summary = screen.getByRole("tabpanel", {
+      name: /summary/i,
+    });
+    const teamStats = within(summary).getByTestId("mlb-final-team-stats");
+    const gameFlow = within(summary).getByTestId("mlb-game-flow");
+    const hitChart = within(summary).getByTestId("mlb-hit-chart");
+    expect(
+      teamStats.compareDocumentPosition(gameFlow) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      gameFlow.compareDocumentPosition(hitChart) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+
     await user.click(screen.getByRole("tab", { name: /box/i }));
 
     expect(screen.getByTestId("mlb-box-score")).toBeInTheDocument();
@@ -32,5 +47,7 @@ describe("MlbFinalCenter", () => {
       "grid-cols-2",
     );
     expect(screen.queryByTestId("mlb-final-play-feed")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("mlb-game-flow")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("mlb-hit-chart")).not.toBeInTheDocument();
   });
 });

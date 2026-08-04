@@ -33,7 +33,8 @@ function buildGeometry(height: number): ChartGeometry {
 }
 
 export const CHART_GEOMETRY = buildGeometry(520);
-export const COMPACT_CHART_GEOMETRY = buildGeometry(280);
+/** Dense rail height — keeps home/away WP lines visually close. */
+export const COMPACT_CHART_GEOMETRY = buildGeometry(168);
 
 export function getChartGeometry(compact = false): ChartGeometry {
   return compact ? COMPACT_CHART_GEOMETRY : CHART_GEOMETRY;

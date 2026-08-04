@@ -10,9 +10,13 @@ describe("MlbFinalLinescoreCard", () => {
     expect(
       screen.getByTestId("mlb-final-linescore-card"),
     ).toBeInTheDocument();
-    expect(screen.getByText(/W:\s*Brandon Pfaadt/)).toBeInTheDocument();
-    expect(screen.getByText(/L:\s*Walker Buehler/)).toBeInTheDocument();
-    expect(screen.getByText(/S:\s*Kevin Ginkel/)).toBeInTheDocument();
+    expect(screen.getByText("ARI")).toBeInTheDocument();
+    expect(screen.getByText(/W:/)).toBeInTheDocument();
+    expect(screen.getByText("Brandon Pfaadt")).toBeInTheDocument();
+    expect(screen.getByText(/L:/)).toBeInTheDocument();
+    expect(screen.getByText("Walker Buehler")).toBeInTheDocument();
+    expect(screen.getByText(/S:/)).toBeInTheDocument();
+    expect(screen.getByText("Kevin Ginkel")).toBeInTheDocument();
   });
 
   it("omits the save when the final game has no save decision", () => {

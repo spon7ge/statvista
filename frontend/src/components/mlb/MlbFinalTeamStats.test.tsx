@@ -8,6 +8,8 @@ describe("MlbFinalTeamStats", () => {
     render(<MlbFinalTeamStats detail={mlbFinalDetail} />);
 
     expect(screen.getByTestId("mlb-final-team-stats")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Team Stats" })).toBeInTheDocument();
+    expect(screen.queryByText("STAT")).not.toBeInTheDocument();
     expect(screen.getByText("AVG")).toBeInTheDocument();
     expect(screen.getByTestId("mlb-team-stat-avg-home")).toBeInTheDocument();
     expect(screen.getByTestId("mlb-team-stat-k-away")).toBeInTheDocument();

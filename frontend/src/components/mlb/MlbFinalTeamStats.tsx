@@ -52,28 +52,27 @@ function leader(
   return awayWins ? "away" : "home";
 }
 
-function TeamHeading({
-  team,
-  align,
-}: {
-  team: MlbGameDetailTeam;
-  align: "left" | "right";
-}) {
-  return (
-    <div
-      className={`flex items-center gap-2 ${
-        align === "right" ? "justify-end" : ""
-      }`}
-    >
-      {align === "left" && team.logoUrl ? (
-        <img src={team.logoUrl} alt="" className="size-5 object-contain" />
-      ) : null}
-      <span className="text-xs font-semibold" style={{ color: team.color }}>
+function TeamLogo({ team, align }: { team: MlbGameDetailTeam; align: "left" | "right" }) {
+  if (!team.logoUrl) {
+    return (
+      <span
+        className={`text-xs font-semibold ${
+          align === "right" ? "text-right" : ""
+        }`}
+        style={{ color: team.color }}
+      >
         {team.abbrev}
       </span>
-      {align === "right" && team.logoUrl ? (
-        <img src={team.logoUrl} alt="" className="size-5 object-contain" />
-      ) : null}
+    );
+  }
+
+  return (
+    <div className={align === "right" ? "flex justify-end" : undefined}>
+      <img
+        src={team.logoUrl}
+        alt={team.abbrev}
+        className="size-6 object-contain"
+      />
     </div>
   );
 }
@@ -131,13 +130,10 @@ export function MlbFinalTeamStats({
       data-testid="mlb-final-team-stats"
       className="!p-3"
     >
-      <h2 className="mb-3 text-sm font-semibold text-white">Team stats</h2>
-      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-x-3 border-b border-white/[0.08] pb-2">
-        <TeamHeading team={detail.away} align="left" />
-        <span className="text-[10px] font-medium tracking-wide text-white/35">
-          STAT
-        </span>
-        <TeamHeading team={detail.home} align="right" />
+      <div className="mb-3 grid grid-cols-[1fr_auto_1fr] items-center gap-x-3">
+        <TeamLogo team={detail.away} align="left" />
+        <h2 className="text-sm font-semibold text-white">Team Stats</h2>
+        <TeamLogo team={detail.home} align="right" />
       </div>
       <div>
         {STAT_DEFINITIONS.map((stat) => {
@@ -161,7 +157,7 @@ export function MlbFinalTeamStats({
                 isLeader={winningSide === "away"}
                 color={detail.away.color}
               />
-              <span className="text-[10px] font-medium tracking-wide text-white/45">
+              <span className="min-w-[2.5rem] text-center text-[10px] font-medium tracking-wide text-white/45">
                 {stat.label}
               </span>
               <StatValue

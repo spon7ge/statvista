@@ -10,9 +10,9 @@ describe("mlbWinProbabilityPaths", () => {
     expect(toDisplayPct(0.48)).toBe(48);
   });
 
-  it("exposes compact geometry with height 280", () => {
+  it("exposes compact geometry with height 168", () => {
     const compact = getChartGeometry(true);
-    expect(compact.height).toBe(280);
+    expect(compact.height).toBe(168);
     expect(compact.width).toBe(640);
     expect(getChartGeometry(false).height).toBe(520);
   });

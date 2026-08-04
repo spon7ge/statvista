@@ -26,12 +26,14 @@ export function MlbFinalCenter({ detail }: { detail: MlbGameDetailView }) {
           id="mlb-final-summary-panel"
           role="tabpanel"
           aria-labelledby="mlb-final-summary-tab"
-          className="grid gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]"
+          className="grid items-start gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]"
         >
           <MlbFinalPlayFeed detail={detail} />
           <div className="space-y-4">
             <MlbFinalLinescoreCard detail={detail} />
             <MlbFinalTeamStats detail={detail} />
+            <MlbWinProbability detail={detail} compact />
+            <MlbHitChart detail={detail} />
           </div>
         </div>
       ) : (
@@ -43,10 +45,6 @@ export function MlbFinalCenter({ detail }: { detail: MlbGameDetailView }) {
           <MlbBoxScore detail={detail} sideBySide />
         </div>
       )}
-      <div className="grid items-start gap-4 lg:grid-cols-2">
-        <MlbWinProbability detail={detail} />
-        <MlbHitChart detail={detail} />
-      </div>
     </div>
   );
 }

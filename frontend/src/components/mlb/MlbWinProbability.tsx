@@ -57,14 +57,14 @@ export function MlbWinProbability({
 
   const vividProps = {
     fill: "none" as const,
-    strokeWidth: 1.5,
+    strokeWidth: compact ? 2 : 1.5,
     strokeLinejoin: "round" as const,
     strokeLinecap: "round" as const,
     "data-wp-segment": "vivid",
   };
   const mutedProps = {
     fill: "none" as const,
-    strokeWidth: 1.5,
+    strokeWidth: compact ? 2 : 1.5,
     strokeLinejoin: "round" as const,
     strokeLinecap: "round" as const,
     stroke: "rgba(255,255,255,0.28)",

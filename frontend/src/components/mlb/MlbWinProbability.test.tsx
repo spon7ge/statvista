@@ -31,7 +31,7 @@ describe("MlbWinProbability", () => {
     render(<MlbWinProbability detail={mlbLiveDetail} compact />);
     expect(screen.getByLabelText("Win probability chart")).toHaveAttribute(
       "viewBox",
-      "0 0 640 280",
+      "0 0 640 168",
     );
   });
 
