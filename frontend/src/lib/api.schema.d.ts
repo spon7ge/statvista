@@ -269,6 +269,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/mlb/lineups": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Mlb Lineups By Date */
+        get: operations["mlb_lineups_by_date_api_mlb_lineups_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/mlb/odds/today": {
         parameters: {
             query?: never;
@@ -1599,6 +1616,62 @@ export interface components {
             hits: number;
             /** Runs */
             runs: number;
+        };
+        /** MlbLineupBatter */
+        MlbLineupBatter: {
+            /** Hand */
+            hand: string | null;
+            /** Name */
+            name: string | null;
+            /** Order */
+            order: number;
+            /** Position */
+            position: string | null;
+        };
+        /** MlbLineupGame */
+        MlbLineupGame: {
+            away: components["schemas"]["MlbLineupSide"];
+            /** Away Abbrev */
+            away_abbrev: string;
+            home: components["schemas"]["MlbLineupSide"];
+            /** Home Abbrev */
+            home_abbrev: string;
+            /** Status */
+            status: string | null;
+        };
+        /** MlbLineupPitcher */
+        MlbLineupPitcher: {
+            /** Era */
+            era: string | null;
+            /** Hand */
+            hand: string | null;
+            /** Name */
+            name: string | null;
+            /** Record */
+            record: string | null;
+        };
+        /** MlbLineupSide */
+        MlbLineupSide: {
+            /** Batters */
+            batters: components["schemas"]["MlbLineupBatter"][];
+            pitcher: components["schemas"]["MlbLineupPitcher"];
+        };
+        /** MlbLineupsResponse */
+        MlbLineupsResponse: {
+            /**
+             * Date
+             * @description YYYY-MM-DD in America/New_York
+             */
+            date: string;
+            /** Fetched At */
+            fetched_at: string;
+            /** Games */
+            games: components["schemas"]["MlbLineupGame"][];
+            /**
+             * Source
+             * @default rotowire
+             */
+            source: string;
         };
         /** MlbOddsGame */
         MlbOddsGame: {
@@ -3082,6 +3155,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MlbGameDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    mlb_lineups_by_date_api_mlb_lineups_get: {
+        parameters: {
+            query: {
+                date: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MlbLineupsResponse"];
                 };
             };
             /** @description Validation Error */
