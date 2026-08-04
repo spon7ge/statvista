@@ -22,7 +22,13 @@ export function MlbPregameCenter({ detail }: { detail: MlbGameDetailView }) {
         activeTab={activeTab}
         onTabChange={setActiveTab}
       />
-      <p className="text-sm text-white/60">{stub}</p>
+      <div
+        id={`mlb-pregame-${activeTab}-panel`}
+        role="tabpanel"
+        aria-labelledby={`mlb-pregame-${activeTab}-tab`}
+      >
+        <p className="text-sm text-white/60">{stub}</p>
+      </div>
     </div>
   );
 }

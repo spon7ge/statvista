@@ -483,7 +483,7 @@ export const mlbScheduledDetail: MlbGameDetailView = {
   status: "scheduled",
   statusLabel: "3:40 PM ET",
   gameDateLabel: "Today",
-  venue: "Fenway Park",
+  venue: "Citizens Bank Park",
   away: {
     id: "120",
     abbrev: "WSH",

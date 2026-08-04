@@ -958,6 +958,8 @@ def attach_last10(
 
 def clear_mlb_game_detail_cache() -> None:
     _cache.clear()
+    _standings_cache["payload"] = None
+    _standings_cache["expires_at"] = 0.0
 
 
 def cache_ttl_seconds(detail: MlbGameDetail) -> int:
@@ -1014,10 +1016,17 @@ async def fetch_mlb_standings() -> dict:
 
 async def _standings_last10_map() -> dict[str, str]:
     now = time.time()
-    cached = _standings_cache.get("payload")
-    if cached is not None and float(_standings_cache.get("expires_at") or 0) > now:
-        return parse_standings_last10(cached)
-    payload = await fetch_mlb_standings()
+    if float(_standings_cache.get("expires_at") or 0) > now:
+        cached = _standings_cache.get("payload")
+        return parse_standings_last10(cached) if cached else {}
+    try:
+        payload = await fetch_mlb_standings()
+    except Exception:
+        # Negative-cache the failure (keep any prior payload) so a hang or
+        # error upstream isn't retried on every scheduled-detail request
+        # within the TTL window.
+        _standings_cache["expires_at"] = now + STANDINGS_TTL_SECONDS
+        raise
     _standings_cache["payload"] = payload
     _standings_cache["expires_at"] = now + STANDINGS_TTL_SECONDS
     return parse_standings_last10(payload)
@@ -1117,14 +1126,17 @@ async def get_mlb_game_detail(game_pk: str) -> MlbGameDetail:
             return stale_fallback["detail"]
         raise
 
-    try:
-        detail = attach_last10(detail, await _standings_last10_map())
-    except Exception as exc:
-        logger.warning(
-            "MLB standings last10 unavailable for game %s: %s",
-            detail.mlb_game_pk,
-            exc,
-        )
+    if detail.status == "scheduled":
+        # Only the pregame header surfaces last-10 splits; skip the extra
+        # standings round-trip (and its cache churn) for live/final games.
+        try:
+            detail = attach_last10(detail, await _standings_last10_map())
+        except Exception as exc:
+            logger.warning(
+                "MLB standings last10 unavailable for game %s: %s",
+                detail.mlb_game_pk,
+                exc,
+            )
 
     cached_espn_event_id = None
     if cached and isinstance(cached.get("espn_event_id"), str):

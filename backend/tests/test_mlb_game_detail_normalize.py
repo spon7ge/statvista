@@ -1,6 +1,9 @@
 import asyncio
 import json
+import time
 from pathlib import Path
+
+import pytest
 
 from app.services import mlb_game_detail as svc
 from app.services.mlb_game_detail import (
@@ -265,7 +268,7 @@ def test_normalize_scheduled_status_label_uses_et_first_pitch():
         payload, game_pk="776543", fetched_at="2026-08-02T18:00:00+00:00"
     )
     assert detail.status == "scheduled"
-    assert detail.status_label.endswith("ET")
+    assert detail.status_label == "7:20 PM ET"
 
 
 def test_normalize_scheduled_status_label_falls_back_without_datetime():
@@ -316,11 +319,19 @@ def test_attach_last10_leaves_null_when_missing():
     assert enriched.home.last_10 is None
 
 
+def _scheduled_payload() -> dict:
+    payload = _payload()
+    payload["gameData"]["status"] = {
+        "abstractGameState": "Preview",
+        "detailedState": "Scheduled",
+    }
+    payload["liveData"]["linescore"] = {}
+    return payload
+
+
 def test_get_mlb_game_detail_soft_fails_standings(monkeypatch):
     svc.clear_mlb_game_detail_cache()
-    svc._standings_cache["payload"] = None
-    svc._standings_cache["expires_at"] = 0.0
-    payload = _payload()
+    payload = _scheduled_payload()
 
     async def fake_live_feed(game_pk: str) -> dict:
         return payload
@@ -337,16 +348,17 @@ def test_get_mlb_game_detail_soft_fails_standings(monkeypatch):
 
     detail = asyncio.run(svc.get_mlb_game_detail("776543"))
 
-    assert detail.status == "live"
+    assert detail.status == "scheduled"
     assert detail.away.last_10 is None
     assert detail.home.last_10 is None
+    # Failure still stamps the negative cache so a hang isn't retried on
+    # every scheduled-detail request within the TTL window.
+    assert svc._standings_cache["expires_at"] > 0.0
 
 
 def test_get_mlb_game_detail_attaches_standings_last10(monkeypatch):
     svc.clear_mlb_game_detail_cache()
-    svc._standings_cache["payload"] = None
-    svc._standings_cache["expires_at"] = 0.0
-    payload = _payload()
+    payload = _scheduled_payload()
     standings = json.loads((FIXTURES / "mlb_standings_sample.json").read_text())
     away_id = payload["gameData"]["teams"]["away"]["id"]
     home_id = payload["gameData"]["teams"]["home"]["id"]
@@ -370,3 +382,58 @@ def test_get_mlb_game_detail_attaches_standings_last10(monkeypatch):
 
     assert detail.away.last_10 == "0-5"
     assert detail.home.last_10 == "3-2"
+
+
+def test_get_mlb_game_detail_skips_standings_for_live_game(monkeypatch):
+    """Only the scheduled/pregame UI shows last_10, so live/final games
+    should never trigger the standings round-trip."""
+    svc.clear_mlb_game_detail_cache()
+    payload = _payload()
+    assert payload["gameData"]["status"]["abstractGameState"] == "Live"
+
+    standings_calls = 0
+
+    async def fake_live_feed(game_pk: str) -> dict:
+        return payload
+
+    async def fake_resolve_espn(**kwargs):
+        return None
+
+    async def fake_standings() -> dict:
+        nonlocal standings_calls
+        standings_calls += 1
+        return {"records": []}
+
+    monkeypatch.setattr(svc, "fetch_mlb_live_feed", fake_live_feed)
+    monkeypatch.setattr(svc, "resolve_espn_event_id", fake_resolve_espn)
+    monkeypatch.setattr(svc, "fetch_mlb_standings", fake_standings)
+
+    detail = asyncio.run(svc.get_mlb_game_detail("776543"))
+
+    assert detail.status == "live"
+    assert standings_calls == 0
+    assert detail.away.last_10 is None
+    assert detail.home.last_10 is None
+
+
+def test_standings_last10_map_negative_caches_on_failure(monkeypatch):
+    svc.clear_mlb_game_detail_cache()
+    calls = 0
+
+    async def fake_standings() -> dict:
+        nonlocal calls
+        calls += 1
+        raise RuntimeError("standings down")
+
+    monkeypatch.setattr(svc, "fetch_mlb_standings", fake_standings)
+
+    with pytest.raises(RuntimeError):
+        asyncio.run(svc._standings_last10_map())
+    assert calls == 1
+    assert svc._standings_cache["expires_at"] > time.time()
+
+    # A second call within the TTL window should not retry the failing
+    # upstream call — it should reuse the negative cache.
+    mapping = asyncio.run(svc._standings_last10_map())
+    assert mapping == {}
+    assert calls == 1
