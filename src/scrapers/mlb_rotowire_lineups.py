@@ -73,6 +73,9 @@ def parse_mlb_lineups_html(html: str) -> list[dict[str, Any]]:
 
         away_list = _find_side_list(card, "is-visit")
         home_list = _find_side_list(card, "is-home")
+        away_highlight, home_highlight = _resolve_pitcher_highlights(
+            card, away_list, home_list
+        )
 
         games.append(
             {
@@ -80,11 +83,11 @@ def parse_mlb_lineups_html(html: str) -> list[dict[str, Any]]:
                 "home_abbrev": home_abbrev,
                 "status": _extract_status(card),
                 "away": {
-                    "pitcher": _extract_pitcher(away_list),
+                    "pitcher": _extract_pitcher_from_highlight(away_highlight),
                     "batters": _extract_batters(away_list),
                 },
                 "home": {
-                    "pitcher": _extract_pitcher(home_list),
+                    "pitcher": _extract_pitcher_from_highlight(home_highlight),
                     "batters": _extract_batters(home_list),
                 },
             }
@@ -139,13 +142,35 @@ def _extract_status(card: Tag) -> str | None:
     return text or None
 
 
-def _extract_pitcher(side_list: Tag | None) -> dict[str, Any]:
-    """Extract SP name/hand/record/era from the highlight `li` in `side_list`."""
-    empty = {"name": None, "hand": None, "record": None, "era": None}
-    if side_list is None:
-        return empty
+def _resolve_pitcher_highlights(
+    card: Tag,
+    away_list: Tag | None,
+    home_list: Tag | None,
+) -> tuple[Tag | None, Tag | None]:
+    """Return away/home pitcher highlight elements for a game card.
 
-    highlight = side_list.find("li", class_="lineup__player-highlight")
+    Prefer each side's highlight nested inside its own `ul.lineup__list`.
+    When a side's list has no nested highlight, fall back to document order
+    among all card highlights (1st → away, 2nd → home).
+    """
+    away_nested = (
+        away_list.find("li", class_="lineup__player-highlight") if away_list else None
+    )
+    home_nested = (
+        home_list.find("li", class_="lineup__player-highlight") if home_list else None
+    )
+    if away_nested and home_nested:
+        return away_nested, home_nested
+
+    ordered = card.find_all("li", class_="lineup__player-highlight")
+    away = away_nested or (ordered[0] if len(ordered) > 0 else None)
+    home = home_nested or (ordered[1] if len(ordered) > 1 else None)
+    return away, home
+
+
+def _extract_pitcher_from_highlight(highlight: Tag | None) -> dict[str, Any]:
+    """Extract SP name/hand/record/era from a `lineup__player-highlight` element."""
+    empty = {"name": None, "hand": None, "record": None, "era": None}
     if highlight is None:
         return empty
 
