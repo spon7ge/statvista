@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MlbFinalCenter } from "./MlbFinalCenter";
 import { mlbFinalDetail } from "./testFixtures";
@@ -14,6 +14,11 @@ describe("MlbFinalCenter", () => {
     expect(
       screen.getByTestId("mlb-final-broadcast-header"),
     ).toBeInTheDocument();
+    const header = screen.getByTestId("mlb-final-broadcast-header");
+    expect(
+      within(header).getByRole("tablist", { name: /final game details/i }),
+    ).toBeInTheDocument();
+    expect(screen.getAllByRole("tablist")).toHaveLength(1);
     expect(screen.getByTestId("mlb-final-play-feed")).toBeInTheDocument();
     expect(screen.getByTestId("mlb-final-team-stats")).toBeInTheDocument();
     expect(screen.getByTestId("mlb-game-flow")).toBeInTheDocument();
