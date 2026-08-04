@@ -23,6 +23,9 @@ describe("MlbFinalCenter", () => {
     await user.click(screen.getByRole("tab", { name: /box/i }));
 
     expect(screen.getByTestId("mlb-box-score")).toBeInTheDocument();
+    expect(screen.getByTestId("mlb-box-score-layout")).toHaveClass(
+      "grid-cols-2",
+    );
     expect(screen.queryByTestId("mlb-final-play-feed")).not.toBeInTheDocument();
   });
 });

@@ -92,7 +92,12 @@ def _team_color(team: dict, *, side: Literal["away", "home"]) -> str:
 
 
 def _team_record(team: dict) -> str | None:
-    record = _as_dict(team.get("leagueRecord"))
+    record_container = _as_dict(team.get("record"))
+    record = (
+        _as_dict(record_container.get("leagueRecord"))
+        or record_container
+        or _as_dict(team.get("leagueRecord"))
+    )
     wins = _int_or_none(record.get("wins"))
     losses = _int_or_none(record.get("losses"))
     if wins is None or losses is None:

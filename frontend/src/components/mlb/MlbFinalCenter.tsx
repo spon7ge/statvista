@@ -59,7 +59,7 @@ export function MlbFinalCenter({ detail }: { detail: MlbGameDetailView }) {
           role="tabpanel"
           aria-labelledby="mlb-final-box-tab"
         >
-          <MlbBoxScore detail={detail} />
+          <MlbBoxScore detail={detail} sideBySide />
         </div>
       )}
       <div className="grid items-start gap-4 lg:grid-cols-2">

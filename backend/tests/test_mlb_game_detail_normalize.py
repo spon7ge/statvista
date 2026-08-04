@@ -91,7 +91,9 @@ def test_normalize_final_additions_from_mutated_payload():
     payload = _payload()
     payload["gameData"].setdefault("datetime", {})
     payload["gameData"]["datetime"]["officialDate"] = "2026-08-02"
-    payload["gameData"]["teams"]["away"]["leagueRecord"] = {"wins": 58, "losses": 55}
+    payload["gameData"]["teams"]["away"]["record"] = {
+        "leagueRecord": {"wins": 58, "losses": 55}
+    }
     payload["gameData"]["teams"]["home"]["leagueRecord"] = {"wins": 60, "losses": 53}
     payload["liveData"]["decisions"] = {
         "winner": {"fullName": "Brandon Pfaadt", "id": 1},
