@@ -2,7 +2,7 @@ import { MlbBoxScore } from "./MlbBoxScore";
 import { MlbGameHeader } from "./MlbGameHeader";
 import { MlbHitChart } from "./MlbHitChart";
 import { MlbLinescore } from "./MlbLinescore";
-import { MlbScoringPlays } from "./MlbScoringPlays";
+import { MlbFinalPlayFeed } from "./MlbFinalPlayFeed";
 import { MlbWinProbability } from "./MlbWinProbability";
 import type { MlbGameDetailView } from "./types";
 
@@ -15,7 +15,7 @@ export function MlbFinalCenter({ detail }: { detail: MlbGameDetailView }) {
       <div className="grid items-start gap-4 lg:grid-cols-3">
         <MlbWinProbability detail={detail} />
         <MlbHitChart detail={detail} />
-        <MlbScoringPlays detail={detail} />
+        <MlbFinalPlayFeed detail={detail} />
       </div>
     </div>
   );
