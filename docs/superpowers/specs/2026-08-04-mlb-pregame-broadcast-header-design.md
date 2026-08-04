@@ -63,15 +63,15 @@ No new endpoints. Extend schema + normalize/attach in `backend/app/services/mlb_
 | Field | Source (Stats API) | UI use |
 | --- | --- | --- |
 | `away` / `home.record` | Existing team `leagueRecord` on live feed | `55-59` |
-| `away` / `home.last_10` | Standings `teamRecords[].lastTen` for matching team id | `0-5 in Last 10` |
+| `away` / `home.last_10` | Standings `teamRecords[].records.splitRecords[]` where `type == "lastTen"` | `0-5 in Last 10` |
 | `game_date_label` | Existing | `Today` / `Yesterday` / short date |
 | `status_label` | Existing scheduled start label | Paired with date in top row |
 
 ### Standings attach
 
-1. After live-feed normalize, soft-fetch `https://statsapi.mlb.com/api/v1/standings?sportId=1` (league ids as needed for full MLB coverage).
-2. Build team-id → `lastTen` map from `records[].teamRecords[]`.
-3. Set `away.last_10` / `home.last_10` when present (string as returned, e.g. `"3-7"`).
+1. After live-feed normalize, soft-fetch `https://statsapi.mlb.com/api/v1/standings?leagueId=103,104` (AL+NL; season defaults to current).
+2. For each `records[].teamRecords[]` entry, find `records.splitRecords[]` with `type == "lastTen"` and map team id → `"{wins}-{losses}"`.
+3. Set `away.last_10` / `home.last_10` when present (e.g. `"3-7"`).
 4. Cache standings ~10 minutes process-wide; standings failure must not fail game detail (`last_10` stays null).
 5. Frontend formats display as `{last10} in Last 10` when non-null.
 
