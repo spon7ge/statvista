@@ -25,6 +25,7 @@ function mapTeam(team: ApiMlbGameDetail["away"]) {
     name: team.name,
     score: team.score,
     record: team.record,
+    last10: team.last_10 ?? null,
     color: team.color,
     logoUrl: team.logo_url,
   };

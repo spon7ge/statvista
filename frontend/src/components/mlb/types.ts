@@ -6,6 +6,7 @@ export type MlbGameDetailTeam = {
   name: string;
   score: number | null;
   record: string | null;
+  last10: string | null;
   color: string;
   logoUrl: string | null;
 };

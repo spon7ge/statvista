@@ -19,6 +19,7 @@ function buildApiDetail(
       color: "#BD3039",
       logo_url: "https://example.com/bos.png",
       record: null,
+      last_10: null,
     },
     home: {
       id: "119",
@@ -28,6 +29,7 @@ function buildApiDetail(
       color: "#005A9C",
       logo_url: null,
       record: null,
+      last_10: null,
     },
     game_date_label: null,
     decisions: null,
@@ -197,6 +199,7 @@ describe("mapMlbGameDetail", () => {
         color: "#A71930",
         logo_url: null,
         record: "58-55",
+        last_10: "0-5",
       },
       home: {
         id: "119",
@@ -206,6 +209,7 @@ describe("mapMlbGameDetail", () => {
         color: "#005A9C",
         logo_url: null,
         record: "62-51",
+        last_10: "3-2",
       },
       decisions: {
         winner: "Brandon Pfaadt",
@@ -257,6 +261,8 @@ describe("mapMlbGameDetail", () => {
     });
 
     expect(view.away.record).toBe("58-55");
+    expect(view.away.last10).toBe("0-5");
+    expect(view.home.last10).toBe("3-2");
     expect(view.gameDateLabel).toBe("Today");
     expect(view.decisions?.winner).toBe("Brandon Pfaadt");
     expect(view.plays[0].exitVelo).toBe(104.1);
