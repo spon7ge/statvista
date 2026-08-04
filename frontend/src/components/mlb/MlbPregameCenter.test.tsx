@@ -94,6 +94,22 @@ describe("MlbPregameCenter", () => {
     expect(fetchMlbLineups).toHaveBeenCalledWith(mlbScheduledDetail.gameDate);
   });
 
+  it("prefers a later complete match when an earlier same-abbrev entry is incomplete", async () => {
+    const incompleteGame: ApiMlbLineupGame = {
+      ...completeLineupGame,
+      home: { ...completeLineupGame.home, batters: [] },
+    };
+    fetchMlbLineups.mockResolvedValue({
+      date: mlbScheduledDetail.gameDate,
+      fetched_at: "2026-08-04T10:00:00-04:00",
+      source: "rotowire",
+      games: [incompleteGame, completeLineupGame],
+    });
+    renderWithClient(<MlbPregameCenter detail={mlbScheduledDetail} />);
+    expect(await screen.findByText("MacKenzie Gore")).toBeInTheDocument();
+    expect(screen.getByText("Away Batter 1")).toBeInTheDocument();
+  });
+
   it("treats an incomplete lineup (missing batters) as unavailable", async () => {
     const incompleteGame: ApiMlbLineupGame = {
       ...completeLineupGame,

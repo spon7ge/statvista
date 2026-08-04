@@ -26,13 +26,15 @@ function findCompleteMatch(
   if (!games) return null;
   const away = awayAbbrev.toUpperCase();
   const home = homeAbbrev.toUpperCase();
-  const match = games.find(
-    (game) =>
-      game.away_abbrev.toUpperCase() === away &&
-      game.home_abbrev.toUpperCase() === home,
+  return (
+    games.find(
+      (game) =>
+        game.away_abbrev.toUpperCase() === away &&
+        game.home_abbrev.toUpperCase() === home &&
+        sideComplete(game.away) &&
+        sideComplete(game.home),
+    ) ?? null
   );
-  if (!match) return null;
-  return sideComplete(match.away) && sideComplete(match.home) ? match : null;
 }
 
 export function MlbPregameCenter({ detail }: { detail: MlbGameDetailView }) {
