@@ -1506,6 +1506,8 @@ export interface components {
             decisions: components["schemas"]["MlbDecisions"] | null;
             /** Fetched At */
             fetched_at: string;
+            /** Game Date */
+            game_date: string | null;
             /** Game Date Label */
             game_date_label: string | null;
             /**

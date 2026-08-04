@@ -24,6 +24,7 @@ def test_normalize_live_status_and_linescore():
         _payload(), game_pk="776543", fetched_at="2026-08-02T18:00:00+00:00"
     )
     assert detail.mlb_game_pk == "776543"
+    assert detail.game_date == "2026-08-02"
     assert detail.status == "live"
     assert detail.linescore is not None
     assert detail.linescore.away.runs >= 0
@@ -151,6 +152,7 @@ def test_normalize_final_additions_from_mutated_payload():
 
     assert detail.away.record == "58-55"
     assert detail.home.record == "60-53"
+    assert detail.game_date == "2026-08-02"
     assert detail.game_date_label
     assert detail.decisions is not None
     assert detail.decisions.winner == "Brandon Pfaadt"
@@ -285,6 +287,18 @@ def test_normalize_scheduled_status_label_falls_back_without_datetime():
     )
     assert detail.status == "scheduled"
     assert detail.status_label == "Scheduled"
+    assert detail.game_date is None
+
+
+def test_normalize_game_date_null_when_official_date_invalid():
+    payload = _payload()
+    payload["gameData"].setdefault("datetime", {})
+    payload["gameData"]["datetime"]["officialDate"] = "not-a-date"
+
+    detail = normalize_mlb_live_feed(
+        payload, game_pk="776543", fetched_at="2026-08-02T18:00:00+00:00"
+    )
+    assert detail.game_date is None
 
 
 def test_parse_standings_last10_from_split_records():

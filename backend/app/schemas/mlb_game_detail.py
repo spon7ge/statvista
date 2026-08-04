@@ -288,6 +288,7 @@ class MlbGameDetail(BaseModel):
     box_score: MlbBoxScore | None = None
     hit_chart: list[MlbHitPoint] = []
     win_probability: MlbWinProbability | None = None
+    game_date: str | None = None
     game_date_label: str | None = None
     decisions: MlbDecisions | None = None
     team_stats: MlbTeamStatsPair | None = None

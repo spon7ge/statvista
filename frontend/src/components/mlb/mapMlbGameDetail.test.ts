@@ -31,6 +31,7 @@ function buildApiDetail(
       record: null,
       last_10: null,
     },
+    game_date: "2026-08-02",
     game_date_label: null,
     decisions: null,
     team_stats: null,
@@ -165,6 +166,7 @@ describe("mapMlbGameDetail", () => {
     expect(mapped.status).toBe("live");
     expect(mapped.sources).toEqual(["statsapi", "espn"]);
     expect(mapped.statusLabel).toBe("Top 3rd");
+    expect(mapped.gameDate).toBe("2026-08-02");
     expect(mapped.away.name).toBe("Boston Red Sox");
     expect(mapped.away.logoUrl).toBe("https://example.com/bos.png");
     expect(mapped.home.logoUrl).toBeNull();
@@ -190,6 +192,7 @@ describe("mapMlbGameDetail", () => {
     const view = mapMlbGameDetail({
       ...buildApiDetail(),
       status: "final",
+      game_date: "2026-08-04",
       game_date_label: "Today",
       away: {
         id: "109",
@@ -263,6 +266,7 @@ describe("mapMlbGameDetail", () => {
     expect(view.away.record).toBe("58-55");
     expect(view.away.last10).toBe("0-5");
     expect(view.home.last10).toBe("3-2");
+    expect(view.gameDate).toBe("2026-08-04");
     expect(view.gameDateLabel).toBe("Today");
     expect(view.decisions?.winner).toBe("Brandon Pfaadt");
     expect(view.plays[0].exitVelo).toBe(104.1);

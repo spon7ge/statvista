@@ -111,15 +111,23 @@ def _team_record(team: dict) -> str | None:
     return f"{wins}-{losses}"
 
 
-def _game_date_label(game_data: dict, *, now: date | None = None) -> str | None:
+def _official_game_date(game_data: dict) -> str | None:
     datetime_block = _as_dict(game_data.get("datetime"))
     official_date = datetime_block.get("officialDate")
     if not isinstance(official_date, str):
         return None
     try:
-        game_date = date.fromisoformat(official_date)
+        date.fromisoformat(official_date)
     except ValueError:
         return None
+    return official_date
+
+
+def _game_date_label(game_data: dict, *, now: date | None = None) -> str | None:
+    official_date = _official_game_date(game_data)
+    if official_date is None:
+        return None
+    game_date = date.fromisoformat(official_date)
 
     today = now or datetime.now(ZoneInfo("America/New_York")).date()
     if game_date == today:
@@ -894,6 +902,7 @@ def normalize_mlb_live_feed(
         box_score=_box(boxscore),
         hit_chart=_hits(all_plays),
         win_probability=None,
+        game_date=_official_game_date(game_data),
         game_date_label=_game_date_label(game_data),
         decisions=_decisions(live_data),
         team_stats=_team_stats(boxscore),

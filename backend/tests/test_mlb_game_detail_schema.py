@@ -17,6 +17,33 @@ def test_mlb_game_detail_minimal_construct():
     )
     assert detail.league == "mlb"
     assert detail.win_probability is None
+    assert detail.game_date is None
+
+
+def test_mlb_game_detail_accepts_game_date():
+    team = MlbGameDetailTeam(
+        id="111", abbrev="BOS", name="Boston Red Sox", score=1, color="#BD3039"
+    )
+    detail = MlbGameDetail(
+        mlb_game_pk="776543",
+        status="final",
+        status_label="Final",
+        venue="Fenway Park",
+        game_date="2026-08-02",
+        away=team,
+        home=team.model_copy(
+            update={
+                "id": "119",
+                "abbrev": "LAD",
+                "name": "Los Angeles Dodgers",
+                "color": "#005A9C",
+            }
+        ),
+        sources=["mlb_stats_api"],
+        fetched_at="2026-08-02T18:00:00+00:00",
+    )
+    assert detail.game_date == "2026-08-02"
+    assert detail.model_dump()["game_date"] == "2026-08-02"
 
 
 def test_mlb_game_detail_team_accepts_last_10():

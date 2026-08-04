@@ -185,6 +185,7 @@ export type MlbGameDetailView = {
   league: "mlb";
   status: MlbGameStatus;
   statusLabel: string;
+  gameDate: string | null;
   gameDateLabel: string | null;
   venue: string | null;
   away: MlbGameDetailTeam;

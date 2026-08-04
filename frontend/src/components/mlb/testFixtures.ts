@@ -5,6 +5,7 @@ export const mlbLiveDetail: MlbGameDetailView = {
   league: "mlb",
   status: "live",
   statusLabel: "Top 3rd",
+  gameDate: "2026-08-02",
   gameDateLabel: null,
   venue: "Fenway Park",
   away: {
@@ -234,6 +235,7 @@ export const mlbFinalDetail: MlbGameDetailView = {
   league: "mlb",
   status: "final",
   statusLabel: "Final",
+  gameDate: "2026-08-02",
   gameDateLabel: "Today",
   venue: "Chase Field",
   away: {
@@ -482,6 +484,7 @@ export const mlbScheduledDetail: MlbGameDetailView = {
   league: "mlb",
   status: "scheduled",
   statusLabel: "3:40 PM ET",
+  gameDate: "2026-08-04",
   gameDateLabel: "Today",
   venue: "Citizens Bank Park",
   away: {

@@ -2621,6 +2621,17 @@
             "title": "Fetched At",
             "type": "string"
           },
+          "game_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Game Date"
+          },
           "game_date_label": {
             "anyOf": [
               {
@@ -2757,6 +2768,7 @@
           "box_score",
           "hit_chart",
           "win_probability",
+          "game_date",
           "game_date_label",
           "decisions",
           "team_stats",

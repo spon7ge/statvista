@@ -101,6 +101,7 @@ export function mapMlbGameDetail(detail: ApiMlbGameDetail): MlbGameDetailView {
     league: detail.league,
     status: detail.status,
     statusLabel: detail.status_label,
+    gameDate: detail.game_date ?? null,
     gameDateLabel: detail.game_date_label,
     venue: detail.venue,
     away: mapTeam(detail.away),
