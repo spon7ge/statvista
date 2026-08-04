@@ -1,0 +1,30 @@
+---
+description: Always follow md/claude.md and project docs when generating code
+alwaysApply: true
+---
+
+# Follow project docs before generating code
+
+Before writing or changing code, treat project markdown as source of truth — not memory.
+
+## Required every coding task
+
+1. **Read `md/claude.md`** — coding style, small focused changes, typing, validation, errors, tests, DRY, organization. Follow it for every implementation.
+2. **Read area docs that match the work:**
+   - Website / API wiring → `md/system-design.md` (+ update its page ↔ API table when routes change)
+   - Frontend → `frontend/README.md`
+   - Backend → `backend/README.md`
+   - Feature history / plans → matching files under `docs/superpowers/specs/` and `docs/superpowers/plans/`
+   - Root product overview → `README.md`
+3. Prefer existing patterns in those docs and the nearby codebase over inventing new structure.
+
+## Non-negotiables from `md/claude.md`
+
+- Small, single-concern changes; match project naming and lint/style configs
+- Strong typing; validate inputs early; focused functions; DRY shared logic
+- Comment the *why*; handle errors appropriately; include tests with code changes
+- Keep APIs narrow; update docs when behavior or page ↔ API wiring changes
+
+## Branding
+
+Product name is **statvista** (not HoopVista / hoopvista) in user-facing copy and new docs.
