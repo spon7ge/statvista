@@ -1,25 +1,28 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { MlbFinalCenter } from "./MlbFinalCenter";
-import { mlbLiveDetail } from "./testFixtures";
-
-const finalDetail = {
-  ...mlbLiveDetail,
-  status: "final" as const,
-  statusLabel: "Final",
-};
+import { mlbFinalDetail } from "./testFixtures";
 
 describe("MlbFinalCenter", () => {
-  it("renders header, linescore, box score, then the final archive trio", () => {
-    render(<MlbFinalCenter detail={finalDetail} />);
+  it("renders Summary by default and keeps charts below tab content", async () => {
+    const user = userEvent.setup();
+    render(<MlbFinalCenter detail={mlbFinalDetail} />);
     const root = screen.getByTestId("mlb-final-center");
     expect(root).toBeInTheDocument();
 
-    expect(screen.getByTestId("mlb-box-score")).toBeInTheDocument();
+    expect(
+      screen.getByTestId("mlb-final-broadcast-header"),
+    ).toBeInTheDocument();
+    expect(screen.getByTestId("mlb-final-play-feed")).toBeInTheDocument();
+    expect(screen.getByTestId("mlb-final-team-stats")).toBeInTheDocument();
     expect(screen.getByTestId("mlb-game-flow")).toBeInTheDocument();
     expect(screen.getByTestId("mlb-hit-chart")).toBeInTheDocument();
-    expect(screen.getByTestId("mlb-final-play-feed")).toBeInTheDocument();
+    expect(screen.queryByTestId("mlb-box-score")).not.toBeInTheDocument();
 
-    expect(screen.queryByTestId("mlb-play-by-play")).not.toBeInTheDocument();
+    await user.click(screen.getByRole("tab", { name: /box/i }));
+
+    expect(screen.getByTestId("mlb-box-score")).toBeInTheDocument();
+    expect(screen.queryByTestId("mlb-final-play-feed")).not.toBeInTheDocument();
   });
 });

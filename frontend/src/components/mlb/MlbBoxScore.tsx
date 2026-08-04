@@ -142,14 +142,16 @@ export function MlbBoxScore({ detail }: { detail: MlbGameDetailView }) {
   return (
     <GameSection className="!p-3 space-y-5" data-testid="mlb-box-score">
       <h2 className="text-sm font-semibold text-white">Box score</h2>
-      <div className="grid gap-5 lg:grid-cols-2">
-        <div className="space-y-4">
-          <BatterTable team={detail.away} batters={box.awayBatters} />
-          <PitcherTable team={detail.away} pitchers={box.awayPitchers} />
-        </div>
-        <div className="space-y-4">
-          <BatterTable team={detail.home} batters={box.homeBatters} />
-          <PitcherTable team={detail.home} pitchers={box.homePitchers} />
+      <div className="overflow-x-auto">
+        <div className="grid min-w-[42rem] grid-cols-2 gap-5">
+          <div className="space-y-4">
+            <BatterTable team={detail.away} batters={box.awayBatters} />
+            <PitcherTable team={detail.away} pitchers={box.awayPitchers} />
+          </div>
+          <div className="space-y-4">
+            <BatterTable team={detail.home} batters={box.homeBatters} />
+            <PitcherTable team={detail.home} pitchers={box.homePitchers} />
+          </div>
         </div>
       </div>
     </GameSection>
