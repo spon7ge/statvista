@@ -17,3 +17,17 @@ def test_mlb_game_detail_minimal_construct():
     )
     assert detail.league == "mlb"
     assert detail.win_probability is None
+
+
+def test_mlb_game_detail_team_accepts_last_10():
+    team = MlbGameDetailTeam(
+        id="120",
+        abbrev="WSH",
+        name="Washington Nationals",
+        score=None,
+        color="#AB0003",
+        record="55-59",
+        last_10="0-5",
+    )
+    assert team.last_10 == "0-5"
+    assert team.model_dump()["last_10"] == "0-5"

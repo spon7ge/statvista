@@ -43,6 +43,7 @@ class MlbGameDetailTeam(BaseModel):
     color: str
     logo_url: str | None = None
     record: str | None = None
+    last_10: str | None = None
 
 
 class MlbDecisions(BaseModel):

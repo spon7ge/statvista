@@ -2780,6 +2780,17 @@
             "title": "Id",
             "type": "string"
           },
+          "last_10": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last 10"
+          },
           "logo_url": {
             "anyOf": [
               {
@@ -2825,7 +2836,8 @@
           "score",
           "color",
           "logo_url",
-          "record"
+          "record",
+          "last_10"
         ],
         "title": "MlbGameDetailTeam",
         "type": "object"

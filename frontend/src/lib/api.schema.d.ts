@@ -1539,6 +1539,8 @@ export interface components {
             color: string;
             /** Id */
             id: string;
+            /** Last 10 */
+            last_10: string | null;
             /** Logo Url */
             logo_url: string | null;
             /** Name */
