@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { HomeNav } from "./HomeNav";
 
@@ -12,7 +13,7 @@ function renderNav(path: string) {
 }
 
 describe("HomeNav", () => {
-  it("labels the primary nav and hides only league links on mobile", () => {
+  it("labels the primary nav and hides desktop league links on mobile", () => {
     renderNav("/");
 
     expect(
@@ -22,8 +23,12 @@ describe("HomeNav", () => {
       "hidden",
       "sm:flex",
     );
-    expect(screen.getByRole("link", { name: "About" }).parentElement).not.toHaveClass(
+    expect(
+      screen.getByRole("button", { name: /^leagues$/i }).parentElement,
+    ).toHaveClass("sm:hidden");
+    expect(screen.getByRole("link", { name: "About" })).toHaveClass(
       "hidden",
+      "sm:inline",
     );
   });
 
@@ -94,5 +99,86 @@ describe("HomeNav", () => {
     expect(images[2]?.getAttribute("src")).toBe(
       "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png",
     );
+  });
+
+  it("shows Leagues trigger on home and opens league plus About links", async () => {
+    const user = userEvent.setup();
+    renderNav("/");
+
+    const trigger = screen.getByRole("button", { name: /^leagues$/i });
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+
+    await user.click(trigger);
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+
+    const menu = screen.getByRole("menu", { name: "Leagues" });
+    expect(menu).toBeInTheDocument();
+    expect(
+      screen.getByRole("menuitem", { name: "NBA" }),
+    ).toHaveAttribute("href", "/nba/matchups");
+    expect(
+      screen.getByRole("menuitem", { name: "WNBA" }),
+    ).toHaveAttribute("href", "/wnba/matchups");
+    expect(
+      screen.getByRole("menuitem", { name: "MLB" }),
+    ).toHaveAttribute("href", "/mlb/matchups");
+    expect(
+      screen.getByRole("menuitem", { name: "About" }),
+    ).toHaveAttribute("href", "/about");
+  });
+
+  it("shows current league on the mobile trigger and marks it in the menu", async () => {
+    const user = userEvent.setup();
+    renderNav("/wnba/matchups");
+
+    const trigger = screen.getByRole("button", { name: /wnba/i });
+    await user.click(trigger);
+
+    expect(screen.getByRole("menuitem", { name: "WNBA" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+    expect(screen.getByRole("menuitem", { name: "NBA" })).not.toHaveAttribute(
+      "aria-current",
+    );
+  });
+
+  it("shows About on the mobile trigger and marks it in the menu", async () => {
+    const user = userEvent.setup();
+    renderNav("/about");
+
+    const trigger = screen.getByRole("button", { name: /^about$/i });
+    await user.click(trigger);
+
+    expect(screen.getByRole("menuitem", { name: "About" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+  });
+
+  it("closes the menu on Escape", async () => {
+    const user = userEvent.setup();
+    renderNav("/");
+
+    await user.click(screen.getByRole("button", { name: /^leagues$/i }));
+    expect(screen.getByRole("menu", { name: "Leagues" })).toBeInTheDocument();
+
+    await user.keyboard("{Escape}");
+    expect(
+      screen.queryByRole("menu", { name: "Leagues" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("closes the menu when clicking outside", async () => {
+    const user = userEvent.setup();
+    renderNav("/");
+
+    await user.click(screen.getByRole("button", { name: /^leagues$/i }));
+    expect(screen.getByRole("menu", { name: "Leagues" })).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Settings" }));
+    expect(
+      screen.queryByRole("menu", { name: "Leagues" }),
+    ).not.toBeInTheDocument();
   });
 });

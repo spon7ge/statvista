@@ -1,5 +1,6 @@
+import { useEffect, useId, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { BarChart3, Settings } from "lucide-react";
+import { BarChart3, ChevronDown, Settings } from "lucide-react";
 import nbaLogo from "@/assets/nba_logo.png";
 import wnbaLogo from "@/assets/wnba_logo.png";
 
@@ -15,6 +16,30 @@ const leagues = [
 export function HomeNav() {
   const { pathname } = useLocation();
   const aboutActive = pathname === "/about";
+  const activeLeague =
+    leagues.find((league) => pathname.startsWith(`/${league.id}`)) ?? null;
+
+  const [leagueOpen, setLeagueOpen] = useState(false);
+  const leagueMenuId = useId();
+  const leagueRootRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!leagueOpen) return;
+    function onPointerDown(event: PointerEvent) {
+      if (!leagueRootRef.current?.contains(event.target as Node)) {
+        setLeagueOpen(false);
+      }
+    }
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setLeagueOpen(false);
+    }
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [leagueOpen]);
 
   return (
     <header className="border-b border-white/10 bg-black">
@@ -31,7 +56,6 @@ export function HomeNav() {
             <div className="hidden items-center gap-1 sm:flex">
               {leagues.map((league) => {
                 const active = pathname.startsWith(`/${league.id}`);
-
                 return (
                   <Link
                     key={league.id}
@@ -54,13 +78,100 @@ export function HomeNav() {
                 );
               })}
             </div>
+
+            <div ref={leagueRootRef} className="relative sm:hidden">
+              <button
+                type="button"
+                aria-haspopup="menu"
+                aria-expanded={leagueOpen}
+                aria-controls={leagueMenuId}
+                onClick={() => setLeagueOpen((open) => !open)}
+                className={
+                  activeLeague || aboutActive
+                    ? "inline-flex items-center gap-1.5 rounded-md bg-white/10 px-2.5 py-1 text-[14px] font-medium text-white"
+                    : "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[14px] font-medium text-white/55 transition-colors hover:bg-white/5 hover:text-white"
+                }
+              >
+                {activeLeague ? (
+                  <>
+                    <img
+                      src={activeLeague.icon}
+                      alt=""
+                      aria-hidden
+                      className="size-5 shrink-0 object-contain"
+                    />
+                    {activeLeague.label}
+                  </>
+                ) : aboutActive ? (
+                  "About"
+                ) : (
+                  "Leagues"
+                )}
+                <ChevronDown
+                  className="size-3.5 opacity-70"
+                  aria-hidden
+                  strokeWidth={1.75}
+                />
+              </button>
+              {leagueOpen ? (
+                <ul
+                  id={leagueMenuId}
+                  role="menu"
+                  aria-label="Leagues"
+                  className="absolute top-full right-0 z-20 mt-1.5 min-w-[9rem] rounded-lg border border-white/10 bg-black py-0.5"
+                >
+                  {leagues.map((league) => {
+                    const active = pathname.startsWith(`/${league.id}`);
+                    return (
+                      <li key={league.id} role="none">
+                        <Link
+                          role="menuitem"
+                          to={`/${league.id}/matchups`}
+                          aria-current={active ? "page" : undefined}
+                          onClick={() => setLeagueOpen(false)}
+                          className={
+                            active
+                              ? "flex items-center gap-2 px-2.5 py-1.5 text-[14px] font-medium text-white no-underline bg-white/10"
+                              : "flex items-center gap-2 px-2.5 py-1.5 text-[14px] font-medium text-white/70 no-underline hover:bg-white/5 hover:text-white"
+                          }
+                        >
+                          <img
+                            src={league.icon}
+                            alt=""
+                            aria-hidden
+                            className="size-5 shrink-0 object-contain"
+                          />
+                          {league.label}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                  <li role="none" className="mt-0.5 border-t border-white/10">
+                    <Link
+                      role="menuitem"
+                      to="/about"
+                      aria-current={aboutActive ? "page" : undefined}
+                      onClick={() => setLeagueOpen(false)}
+                      className={
+                        aboutActive
+                          ? "flex items-center gap-2 px-2.5 py-1.5 text-[14px] font-medium text-white no-underline bg-white/10"
+                          : "flex items-center gap-2 px-2.5 py-1.5 text-[14px] font-medium text-white/70 no-underline hover:bg-white/5 hover:text-white"
+                      }
+                    >
+                      About
+                    </Link>
+                  </li>
+                </ul>
+              ) : null}
+            </div>
+
             <Link
               to="/about"
               aria-current={aboutActive ? "page" : undefined}
               className={
                 aboutActive
-                  ? "rounded-md bg-white/10 px-2.5 py-1 text-[14px] font-medium text-white no-underline"
-                  : "rounded-md px-2.5 py-1 text-[14px] font-medium text-white/55 no-underline transition-colors hover:bg-white/5 hover:text-white"
+                  ? "hidden rounded-md bg-white/10 px-2.5 py-1 text-[14px] font-medium text-white no-underline sm:inline"
+                  : "hidden rounded-md px-2.5 py-1 text-[14px] font-medium text-white/55 no-underline transition-colors hover:bg-white/5 hover:text-white sm:inline"
               }
             >
               About
