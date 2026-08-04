@@ -87,15 +87,19 @@ describe("MlbGameDetailPage", () => {
     );
   });
 
-  it("shows Not live yet for scheduled MLB games", async () => {
+  it("shows pregame center for scheduled MLB games", async () => {
     fetchMock.mockResolvedValue({
       ok: true,
-      json: async () => mlbDetail("scheduled"),
+      json: async () => ({
+        ...mlbDetail("scheduled"),
+        game_date_label: "Today",
+        away: { ...mlbDetail("scheduled").away, record: "55-59", last_10: "0-5" },
+        home: { ...mlbDetail("scheduled").home, record: "60-53", last_10: "3-2" },
+      }),
     });
     renderPage();
-    expect(await screen.findByText("Not live yet")).toBeInTheDocument();
-    expect(screen.getByText(/Boston Red Sox/i)).toBeInTheDocument();
-    expect(screen.getByText(/Los Angeles Dodgers/i)).toBeInTheDocument();
+    expect(await screen.findByTestId("mlb-pregame-center")).toBeInTheDocument();
+    expect(screen.queryByText("Not live yet")).not.toBeInTheDocument();
     expect(screen.queryByTestId("mlb-live-center")).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: /back/i })).toHaveAttribute(
       "href",

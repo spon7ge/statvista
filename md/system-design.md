@@ -110,7 +110,7 @@ main.tsx
 | `/games/:espnEventId` | Full game center | `useGameDetail` | `GET /api/wnba/games/{id}` | ESPN summary; RotoWire / ESPN roster for scheduled starters |
 | `/nba/matchups` | Placeholder | — | none | “NBA matchups coming soon” |
 | `/mlb/matchups?date=` | Daily slate; odds when date is in odds window | `useMlbScoreboard(date)`, `useMlbOdds` | scoreboard (`/today` or `?date=`), `GET /api/mlb/odds/today` | Stats API schedule; Sharp MLB run line/total (DK prefer FD); cards → `/mlb/games/:gamePk` |
-| `/mlb/games/:gamePk` | Placeholder | — | none | “MLB game detail coming soon” |
+| `/mlb/games/:gamePk` | Game detail: pregame broadcast header (preview/team stub tabs), live center, or final center | `useMlbGameDetail(gamePk)` | `GET /api/mlb/games/{gamePk}` | MLB Stats API (+ ESPN when available); halftime falls back to compact header |
 
 ### Cross-cutting API behavior
 

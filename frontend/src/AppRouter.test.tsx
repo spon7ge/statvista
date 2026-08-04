@@ -202,7 +202,9 @@ describe("AppRouter", () => {
       };
     });
     renderWithProviders(["/mlb/games/824971"]);
-    expect(await screen.findByText("Not live yet")).toBeInTheDocument();
+    expect(
+      await screen.findByTestId("mlb-pregame-center"),
+    ).toBeInTheDocument();
     expect(
       screen.queryByText(/MLB game detail coming soon/i),
     ).not.toBeInTheDocument();

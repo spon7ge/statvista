@@ -9,6 +9,7 @@ import { MlbLiveBroadcastHeader } from "@/components/mlb/MlbLiveBroadcastHeader"
 import { MlbLiveMatchupPanel } from "@/components/mlb/MlbLiveMatchupPanel";
 import { MlbLiveSituation } from "@/components/mlb/MlbLiveSituation";
 import { MlbPlayByPlay } from "@/components/mlb/MlbPlayByPlay";
+import { MlbPregameCenter } from "@/components/mlb/MlbPregameCenter";
 import { MlbTeamToggleBatters } from "@/components/mlb/MlbTeamToggleBatters";
 import { MlbWinProbability } from "@/components/mlb/MlbWinProbability";
 import type { MlbGameDetailView } from "@/components/mlb/types";
@@ -108,7 +109,16 @@ export function MlbGameDetailPage() {
 
   const detail = mapMlbGameDetail(data);
 
-  if (detail.status === "scheduled" || detail.status === "halftime") {
+  if (detail.status === "scheduled") {
+    return (
+      <div className="mx-auto max-w-6xl space-y-4 px-4 py-6 sm:px-6">
+        <BackLink />
+        <MlbPregameCenter detail={detail} />
+      </div>
+    );
+  }
+
+  if (detail.status === "halftime") {
     return (
       <div className="mx-auto max-w-6xl space-y-4 px-4 py-6 sm:px-6">
         <BackLink />
