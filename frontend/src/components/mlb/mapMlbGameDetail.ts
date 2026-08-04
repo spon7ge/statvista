@@ -11,6 +11,10 @@ function mapPlay(play: ApiMlbGameDetail["plays"][number]): MlbPlay {
     scoring: play.scoring,
     awayScore: play.away_score,
     homeScore: play.home_score,
+    exitVelo: play.exit_velo,
+    launchAngle: play.launch_angle,
+    totalDistance: play.total_distance,
+    scoringTeam: play.scoring_team,
   };
 }
 
@@ -20,8 +24,26 @@ function mapTeam(team: ApiMlbGameDetail["away"]) {
     abbrev: team.abbrev,
     name: team.name,
     score: team.score,
+    record: team.record,
     color: team.color,
     logoUrl: team.logo_url,
+  };
+}
+
+function mapTeamStatLine(
+  line: NonNullable<ApiMlbGameDetail["team_stats"]>["away"],
+) {
+  return {
+    avg: line.avg,
+    obp: line.obp,
+    slg: line.slg,
+    hr: line.hr,
+    r: line.r,
+    h: line.h,
+    k: line.k,
+    sb: line.sb,
+    lob: line.lob,
+    era: line.era,
   };
 }
 
@@ -31,9 +53,17 @@ export function mapMlbGameDetail(detail: ApiMlbGameDetail): MlbGameDetailView {
     league: detail.league,
     status: detail.status,
     statusLabel: detail.status_label,
+    gameDateLabel: detail.game_date_label,
     venue: detail.venue,
     away: mapTeam(detail.away),
     home: mapTeam(detail.home),
+    decisions: detail.decisions
+      ? {
+          winner: detail.decisions.winner,
+          loser: detail.decisions.loser,
+          save: detail.decisions.save,
+        }
+      : null,
     linescore: detail.linescore
       ? {
           currentInning: detail.linescore.current_inning,
@@ -148,6 +178,12 @@ export function mapMlbGameDetail(detail: ApiMlbGameDetail): MlbGameDetailView {
             k: row.k,
             pitches: row.pitches,
           })),
+        }
+      : null,
+    teamStats: detail.team_stats
+      ? {
+          away: mapTeamStatLine(detail.team_stats.away),
+          home: mapTeamStatLine(detail.team_stats.home),
         }
       : null,
     winProbability: detail.win_probability

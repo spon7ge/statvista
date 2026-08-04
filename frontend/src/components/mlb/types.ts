@@ -5,8 +5,28 @@ export type MlbGameDetailTeam = {
   abbrev: string;
   name: string;
   score: number | null;
+  record: string | null;
   color: string;
   logoUrl: string | null;
+};
+
+export type MlbTeamStatLine = {
+  avg: string | null;
+  obp: string | null;
+  slg: string | null;
+  hr: number | null;
+  r: number | null;
+  h: number | null;
+  k: number | null;
+  sb: number | null;
+  lob: number | null;
+  era: string | null;
+};
+
+export type MlbDecisions = {
+  winner: string | null;
+  loser: string | null;
+  save: string | null;
 };
 
 export type MlbLinescoreInning = {
@@ -66,6 +86,10 @@ export type MlbPlay = {
   scoring: boolean;
   awayScore: number;
   homeScore: number;
+  exitVelo: number | null;
+  launchAngle: number | null;
+  totalDistance: number | null;
+  scoringTeam: "away" | "home" | null;
 };
 
 export type MlbBatterRow = {
@@ -127,14 +151,17 @@ export type MlbGameDetailView = {
   league: "mlb";
   status: MlbGameStatus;
   statusLabel: string;
+  gameDateLabel: string | null;
   venue: string | null;
   away: MlbGameDetailTeam;
   home: MlbGameDetailTeam;
+  decisions: MlbDecisions | null;
   linescore: MlbLinescore | null;
   situation: MlbSituation | null;
   plays: MlbPlay[];
   scoringPlays: MlbPlay[];
   boxScore: MlbBoxScore | null;
+  teamStats: { away: MlbTeamStatLine; home: MlbTeamStatLine } | null;
   winProbability: MlbWinProbability | null;
   hitChart: MlbHitPoint[];
   sources: string[];

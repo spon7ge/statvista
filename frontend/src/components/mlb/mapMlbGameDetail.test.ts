@@ -18,6 +18,7 @@ function buildApiDetail(
       score: 2,
       color: "#BD3039",
       logo_url: "https://example.com/bos.png",
+      record: null,
     },
     home: {
       id: "119",
@@ -26,7 +27,11 @@ function buildApiDetail(
       score: 1,
       color: "#005A9C",
       logo_url: null,
+      record: null,
     },
+    game_date_label: null,
+    decisions: null,
+    team_stats: null,
     linescore: {
       current_inning: 3,
       inning_half: "top",
@@ -65,6 +70,10 @@ function buildApiDetail(
         scoring: false,
         away_score: 2,
         home_score: 1,
+        exit_velo: null,
+        launch_angle: null,
+        total_distance: null,
+        scoring_team: null,
       },
     ],
     scoring_plays: [],
@@ -139,5 +148,85 @@ describe("mapMlbGameDetail", () => {
     expect(mapped.boxScore?.awayBatters[0]?.hr).toBe(1);
     expect(mapped.boxScore?.awayBatters[0]?.sb).toBe(0);
     expect(mapped.hitChart[0]?.playerName).toBe("Betts");
+  });
+
+  it("maps final additive fields", () => {
+    const view = mapMlbGameDetail({
+      ...buildApiDetail(),
+      status: "final",
+      game_date_label: "Today",
+      away: {
+        id: "109",
+        abbrev: "ARI",
+        name: "Arizona Diamondbacks",
+        score: 4,
+        color: "#A71930",
+        logo_url: null,
+        record: "58-55",
+      },
+      home: {
+        id: "119",
+        abbrev: "LAD",
+        name: "Los Angeles Dodgers",
+        score: 5,
+        color: "#005A9C",
+        logo_url: null,
+        record: "62-51",
+      },
+      decisions: {
+        winner: "Brandon Pfaadt",
+        loser: "Walker Buehler",
+        save: "Kevin Ginkel",
+      },
+      team_stats: {
+        away: {
+          avg: ".245",
+          obp: ".320",
+          slg: ".410",
+          hr: 0,
+          r: 4,
+          h: 8,
+          k: 10,
+          sb: 1,
+          lob: 6,
+          era: "4.50",
+        },
+        home: {
+          avg: ".268",
+          obp: ".335",
+          slg: ".445",
+          hr: 1,
+          r: 5,
+          h: 9,
+          k: 8,
+          sb: 0,
+          lob: 4,
+          era: "3.20",
+        },
+      },
+      plays: [
+        {
+          id: "p1",
+          inning: 9,
+          half: "bottom",
+          text: "Freeman homers (2)",
+          event: "Home Run",
+          scoring: true,
+          away_score: 4,
+          home_score: 5,
+          exit_velo: 104.1,
+          launch_angle: 28.5,
+          total_distance: 412,
+          scoring_team: "home",
+        },
+      ],
+    });
+
+    expect(view.away.record).toBe("58-55");
+    expect(view.gameDateLabel).toBe("Today");
+    expect(view.decisions?.winner).toBe("Brandon Pfaadt");
+    expect(view.plays[0].exitVelo).toBe(104.1);
+    expect(view.plays[0].scoringTeam).toBe("home");
+    expect(view.teamStats?.home.hr).toBe(1);
   });
 });
