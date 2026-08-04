@@ -72,4 +72,15 @@ describe("MlbTeamToggleBatters", () => {
     );
     expect(container.firstChild).toBeNull();
   });
+
+  it("survives boxScore null then populated without crashing", () => {
+    const { rerender } = render(
+      <MlbTeamToggleBatters detail={{ ...mlbLiveDetail, boxScore: null }} />,
+    );
+    expect(screen.queryByTestId("mlb-team-toggle-batters")).not.toBeInTheDocument();
+
+    rerender(<MlbTeamToggleBatters detail={mlbLiveDetail} />);
+    expect(screen.getByTestId("mlb-team-toggle-batters")).toBeInTheDocument();
+    expect(screen.getByText("Betts")).toBeInTheDocument();
+  });
 });

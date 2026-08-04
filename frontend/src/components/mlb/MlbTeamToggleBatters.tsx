@@ -83,14 +83,15 @@ function BattersTable({
 }
 
 export function MlbTeamToggleBatters({ detail }: { detail: MlbGameDetailView }) {
+  // Must run before early returns so poll null→boxScore transitions stay hook-stable.
+  const [side, setSide] = useState<TeamSide>(() => defaultSide(detail));
+
   const box = detail.boxScore;
   if (!box) return null;
 
   const hasBatters =
     box.awayBatters.length > 0 || box.homeBatters.length > 0;
   if (!hasBatters) return null;
-
-  const [side, setSide] = useState<TeamSide>(() => defaultSide(detail));
 
   const awayLabel = shortTeamName(detail.away.name);
   const homeLabel = shortTeamName(detail.home.name);
