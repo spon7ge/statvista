@@ -42,6 +42,39 @@ describe("MlbFinalPlayFeed", () => {
     expect(screen.getByText("Smith strikes out swinging")).toBeInTheDocument();
   });
 
+  it("groups all plays from one half inning in an away-colored card", async () => {
+    const user = userEvent.setup();
+    const firstTopInningPlay = {
+      ...mlbFinalDetail.plays[0],
+      id: "p-top-4-1",
+      inning: 4,
+      half: "top" as const,
+      text: "Marte singles",
+      scoring: false,
+      scoringTeam: null,
+    };
+    const secondTopInningPlay = {
+      ...firstTopInningPlay,
+      id: "p-top-4-2",
+      text: "Carroll walks",
+    };
+    const detail = {
+      ...mlbFinalDetail,
+      plays: [firstTopInningPlay, secondTopInningPlay],
+    };
+
+    render(<MlbFinalPlayFeed detail={detail} />);
+    await user.click(screen.getByRole("button", { name: /all plays/i }));
+
+    const halfInningCard = screen.getByTestId("mlb-play-half-top-4");
+    expect(halfInningCard).toHaveStyle({
+      backgroundColor: mlbFinalDetail.away.color,
+    });
+    expect(screen.getAllByText("Top 4th")).toHaveLength(1);
+    expect(halfInningCard).toHaveTextContent("Marte singles");
+    expect(halfInningCard).toHaveTextContent("Carroll walks");
+  });
+
   it("hides the metrics row when a play has no Statcast data", () => {
     const detail = {
       ...mlbFinalDetail,

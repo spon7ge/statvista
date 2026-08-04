@@ -27,13 +27,40 @@ function eventLabel(event: string | null): string | null {
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
-function teamColor(
+type HalfInningGroup = {
+  key: string;
+  half: MlbPlay["half"];
+  inning: number;
+  plays: MlbPlay[];
+};
+
+function groupPlaysByHalfInning(plays: MlbPlay[]): HalfInningGroup[] {
+  const groups = new Map<string, HalfInningGroup>();
+
+  for (const play of plays) {
+    const key = `${play.inning}-${play.half}`;
+    const group = groups.get(key);
+
+    if (group) {
+      group.plays.push(play);
+    } else {
+      groups.set(key, {
+        key,
+        half: play.half,
+        inning: play.inning,
+        plays: [play],
+      });
+    }
+  }
+
+  return [...groups.values()];
+}
+
+function battingTeamColor(
   detail: MlbGameDetailView,
-  scoringTeam: MlbPlay["scoringTeam"],
-): string | null {
-  if (scoringTeam === "away") return detail.away.color;
-  if (scoringTeam === "home") return detail.home.color;
-  return null;
+  half: MlbPlay["half"],
+): string {
+  return half === "top" ? detail.away.color : detail.home.color;
 }
 
 function StatcastMetrics({ play }: { play: MlbPlay }) {
@@ -56,31 +83,20 @@ function StatcastMetrics({ play }: { play: MlbPlay }) {
   );
 }
 
-function PlayCard({
-  detail,
+function PlayRow({
   play,
+  isFirst,
 }: {
-  detail: MlbGameDetailView;
   play: MlbPlay;
+  isFirst: boolean;
 }) {
-  const color = teamColor(detail, play.scoringTeam);
   const event = eventLabel(play.event);
 
   return (
-    <li
-      className="rounded-lg border border-white/10 p-3"
-      style={{
-        backgroundColor: color
-          ? `color-mix(in srgb, ${color} 35%, transparent)`
-          : "rgb(255 255 255 / 0.03)",
-      }}
-    >
+    <li className={isFirst ? "" : "border-t border-white/10 pt-3"}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-xs font-medium uppercase tracking-wide text-white/55">
-            {play.half === "top" ? "Top" : "Bottom"} {ordinal(play.inning)}
-          </p>
-          <p className="mt-1 text-sm text-white/90">{play.text}</p>
+          <p className="text-sm text-white/90">{play.text}</p>
         </div>
         {event ? (
           <span className="shrink-0 rounded-full bg-black/20 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-white/80">
@@ -93,6 +109,35 @@ function PlayCard({
   );
 }
 
+function HalfInningCard({
+  detail,
+  group,
+}: {
+  detail: MlbGameDetailView;
+  group: HalfInningGroup;
+}) {
+  const title = `${group.half === "top" ? "Top" : "Bottom"} ${ordinal(group.inning)}`;
+
+  return (
+    <li
+      className="overflow-hidden rounded-lg"
+      data-testid={`mlb-play-half-${group.half}-${group.inning}`}
+      style={{ backgroundColor: battingTeamColor(detail, group.half) }}
+    >
+      <div className="bg-black/55 p-3">
+        <h3 className="text-xs font-medium uppercase tracking-wide text-white/60">
+          {title}
+        </h3>
+        <ul className="mt-3 space-y-3">
+          {group.plays.map((play, index) => (
+            <PlayRow key={play.id} play={play} isFirst={index === 0} />
+          ))}
+        </ul>
+      </div>
+    </li>
+  );
+}
+
 export function MlbFinalPlayFeed({
   detail,
 }: {
@@ -100,6 +145,7 @@ export function MlbFinalPlayFeed({
 }) {
   const [filter, setFilter] = useState<PlayFilter>("scoring");
   const plays = filter === "scoring" ? detail.scoringPlays : detail.plays;
+  const playGroups = groupPlaysByHalfInning(plays);
 
   return (
     <GameSection className="!p-3" data-testid="mlb-final-play-feed">
@@ -137,8 +183,8 @@ export function MlbFinalPlayFeed({
         <p className="text-xs text-white/40">No plays available</p>
       ) : (
         <ul className="space-y-2">
-          {plays.map((play) => (
-            <PlayCard key={play.id} detail={detail} play={play} />
+          {playGroups.map((group) => (
+            <HalfInningCard key={group.key} detail={detail} group={group} />
           ))}
         </ul>
       )}
