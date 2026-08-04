@@ -2238,6 +2238,17 @@
             ],
             "title": "H"
           },
+          "hr": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hr"
+          },
           "name": {
             "title": "Name",
             "type": "string"
@@ -2286,6 +2297,17 @@
             ],
             "title": "Rbi"
           },
+          "sb": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sb"
+          },
           "so": {
             "anyOf": [
               {
@@ -2307,7 +2329,9 @@
           "h",
           "rbi",
           "bb",
-          "so"
+          "so",
+          "hr",
+          "sb"
         ],
         "title": "MlbBatterRow",
         "type": "object"

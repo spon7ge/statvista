@@ -514,6 +514,8 @@ def _batter_row(order_hint: int | None, player: dict) -> MlbBatterRow | None:
         rbi=_int_or_none(batting.get("rbi")),
         bb=_int_or_none(batting.get("baseOnBalls")),
         so=_int_or_none(batting.get("strikeOuts")),
+        hr=_int_or_none(batting.get("homeRuns")),
+        sb=_int_or_none(batting.get("stolenBases")),
     )
 
 

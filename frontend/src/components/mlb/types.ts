@@ -78,6 +78,8 @@ export type MlbBatterRow = {
   rbi: number | null;
   bb: number | null;
   so: number | null;
+  hr: number | null;
+  sb: number | null;
 };
 
 export type MlbPitcherRow = {

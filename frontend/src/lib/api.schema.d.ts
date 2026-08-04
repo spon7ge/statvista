@@ -1378,6 +1378,8 @@ export interface components {
             bb: number | null;
             /** H */
             h: number | null;
+            /** Hr */
+            hr: number | null;
             /** Name */
             name: string;
             /** Order */
@@ -1388,6 +1390,8 @@ export interface components {
             r: number | null;
             /** Rbi */
             rbi: number | null;
+            /** Sb */
+            sb: number | null;
             /** So */
             so: number | null;
         };

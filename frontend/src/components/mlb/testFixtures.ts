@@ -141,6 +141,8 @@ export const mlbLiveDetail: MlbGameDetailView = {
         rbi: 0,
         bb: 0,
         so: 0,
+        hr: 1,
+        sb: 0,
       },
     ],
     homeBatters: [
@@ -154,6 +156,8 @@ export const mlbLiveDetail: MlbGameDetailView = {
         rbi: 1,
         bb: 0,
         so: 0,
+        hr: 1,
+        sb: 0,
       },
     ],
     awayPitchers: [],

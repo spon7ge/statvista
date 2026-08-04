@@ -69,3 +69,19 @@ def test_normalize_plays_box_and_hits():
     assert any(p.scoring for p in detail.scoring_plays) or len(detail.scoring_plays) >= 0
     assert detail.box_score is not None
     assert len(detail.box_score.away_batters) + len(detail.box_score.home_batters) >= 1
+
+    rafaela = next(
+        (b for b in detail.box_score.away_batters if b.name == "Ceddanne Rafaela"),
+        None,
+    )
+    assert rafaela is not None
+    assert rafaela.hr == 1
+    assert rafaela.sb == 0
+
+    teoscar = next(
+        (b for b in detail.box_score.home_batters if "Teoscar" in b.name),
+        None,
+    )
+    assert teoscar is not None
+    assert teoscar.hr == 0
+    assert teoscar.sb == 1

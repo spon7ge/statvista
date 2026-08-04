@@ -134,6 +134,8 @@ class MlbBatterRow(BaseModel):
     rbi: int | None
     bb: int | None
     so: int | None
+    hr: int | None = None
+    sb: int | None = None
 
 
 class MlbPitcherRow(BaseModel):

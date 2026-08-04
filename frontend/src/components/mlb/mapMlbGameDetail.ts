@@ -112,6 +112,8 @@ export function mapMlbGameDetail(detail: ApiMlbGameDetail): MlbGameDetailView {
             rbi: row.rbi,
             bb: row.bb,
             so: row.so,
+            hr: row.hr,
+            sb: row.sb,
           })),
           homeBatters: detail.box_score.home_batters.map((row) => ({
             name: row.name,
@@ -123,6 +125,8 @@ export function mapMlbGameDetail(detail: ApiMlbGameDetail): MlbGameDetailView {
             rbi: row.rbi,
             bb: row.bb,
             so: row.so,
+            hr: row.hr,
+            sb: row.sb,
           })),
           awayPitchers: detail.box_score.away_pitchers.map((row) => ({
             name: row.name,

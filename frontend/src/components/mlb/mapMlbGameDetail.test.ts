@@ -80,6 +80,8 @@ function buildApiDetail(
           rbi: 0,
           bb: 0,
           so: 0,
+          hr: 1,
+          sb: 0,
         },
       ],
       home_batters: [],
@@ -134,6 +136,8 @@ describe("mapMlbGameDetail", () => {
     expect(mapped.situation?.atBat?.name).toBe("Mookie Betts");
     expect(mapped.winProbability?.homeAbbrev).toBe("LAD");
     expect(mapped.boxScore?.awayBatters[0]?.name).toBe("Betts");
+    expect(mapped.boxScore?.awayBatters[0]?.hr).toBe(1);
+    expect(mapped.boxScore?.awayBatters[0]?.sb).toBe(0);
     expect(mapped.hitChart[0]?.playerName).toBe("Betts");
   });
 });
