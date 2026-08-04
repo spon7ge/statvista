@@ -163,8 +163,15 @@ export function MlbGameDetailPage() {
         <MlbLiveSituation detail={detail} />
         <MlbPlayByPlay detail={detail} />
         <MlbBoxScore detail={detail} />
-        <MlbWinProbability detail={detail} />
-        <MlbHitChart detail={detail} />
+        <div
+          data-testid="mlb-live-viz-row"
+          className="grid items-start gap-4 lg:grid-cols-3"
+        >
+          <div className="lg:col-span-2">
+            <MlbWinProbability detail={detail} compact />
+          </div>
+          <MlbHitChart detail={detail} />
+        </div>
       </div>
     </div>
   );
