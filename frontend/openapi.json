@@ -2376,6 +2376,50 @@
         "title": "MlbBoxScore",
         "type": "object"
       },
+      "MlbDecisions": {
+        "properties": {
+          "loser": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Loser"
+          },
+          "save": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Save"
+          },
+          "winner": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Winner"
+          }
+        },
+        "required": [
+          "winner",
+          "loser",
+          "save"
+        ],
+        "title": "MlbDecisions",
+        "type": "object"
+      },
       "MlbGame": {
         "properties": {
           "away": {
@@ -2469,9 +2513,30 @@
               }
             ]
           },
+          "decisions": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbDecisions"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "fetched_at": {
             "title": "Fetched At",
             "type": "string"
+          },
+          "game_date_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Game Date Label"
           },
           "hit_chart": {
             "default": [],
@@ -2551,6 +2616,16 @@
             "title": "Status Label",
             "type": "string"
           },
+          "team_stats": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbTeamStatsPair"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "venue": {
             "anyOf": [
               {
@@ -2588,6 +2663,9 @@
           "box_score",
           "hit_chart",
           "win_probability",
+          "game_date_label",
+          "decisions",
+          "team_stats",
           "sources",
           "fetched_at"
         ],
@@ -2623,6 +2701,17 @@
             "title": "Name",
             "type": "string"
           },
+          "record": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Record"
+          },
           "score": {
             "anyOf": [
               {
@@ -2641,7 +2730,8 @@
           "name",
           "score",
           "color",
-          "logo_url"
+          "logo_url",
+          "record"
         ],
         "title": "MlbGameDetailTeam",
         "type": "object"
@@ -3121,6 +3211,17 @@
             ],
             "title": "Event"
           },
+          "exit_velo": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exit Velo"
+          },
           "half": {
             "enum": [
               "top",
@@ -3141,13 +3242,50 @@
             "title": "Inning",
             "type": "integer"
           },
+          "launch_angle": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Launch Angle"
+          },
           "scoring": {
             "title": "Scoring",
             "type": "boolean"
           },
+          "scoring_team": {
+            "anyOf": [
+              {
+                "enum": [
+                  "away",
+                  "home"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scoring Team"
+          },
           "text": {
             "title": "Text",
             "type": "string"
+          },
+          "total_distance": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total Distance"
           }
         },
         "required": [
@@ -3158,7 +3296,11 @@
           "scoring",
           "away_score",
           "home_score",
-          "event"
+          "event",
+          "exit_velo",
+          "launch_angle",
+          "total_distance",
+          "scoring_team"
         ],
         "title": "MlbPlay",
         "type": "object"
@@ -3382,6 +3524,150 @@
           "logo_url"
         ],
         "title": "MlbTeam",
+        "type": "object"
+      },
+      "MlbTeamStatLine": {
+        "properties": {
+          "avg": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avg"
+          },
+          "era": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Era"
+          },
+          "h": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "H"
+          },
+          "hr": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hr"
+          },
+          "k": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "K"
+          },
+          "lob": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lob"
+          },
+          "obp": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Obp"
+          },
+          "r": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "R"
+          },
+          "sb": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sb"
+          },
+          "slg": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Slg"
+          }
+        },
+        "required": [
+          "hr",
+          "r",
+          "h",
+          "sb",
+          "lob",
+          "avg",
+          "obp",
+          "slg",
+          "era",
+          "k"
+        ],
+        "title": "MlbTeamStatLine",
+        "type": "object"
+      },
+      "MlbTeamStatsPair": {
+        "properties": {
+          "away": {
+            "$ref": "#/components/schemas/MlbTeamStatLine"
+          },
+          "home": {
+            "$ref": "#/components/schemas/MlbTeamStatLine"
+          }
+        },
+        "required": [
+          "away",
+          "home"
+        ],
+        "title": "MlbTeamStatsPair",
         "type": "object"
       },
       "MlbWinProbability": {

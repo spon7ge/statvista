@@ -12,6 +12,7 @@ __all__ = [
     "GameStatus",
     "MlbBatterRow",
     "MlbBoxScore",
+    "MlbDecisions",
     "MlbGameDetail",
     "MlbGameDetailTeam",
     "MlbHitPoint",
@@ -24,6 +25,8 @@ __all__ = [
     "MlbPlayerCard",
     "MlbRunners",
     "MlbSituation",
+    "MlbTeamStatLine",
+    "MlbTeamStatsPair",
     "MlbWinProbability",
     "MlbWinProbabilityPoint",
     "MlbWinProbabilityStakes",
@@ -39,6 +42,37 @@ class MlbGameDetailTeam(BaseModel):
     score: int | None
     color: str
     logo_url: str | None = None
+    record: str | None = None
+
+
+class MlbDecisions(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    winner: str | None = None
+    loser: str | None = None
+    save: str | None = None
+
+
+class MlbTeamStatLine(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    hr: int | None = None
+    r: int | None = None
+    h: int | None = None
+    sb: int | None = None
+    lob: int | None = None
+    avg: str | None = None
+    obp: str | None = None
+    slg: str | None = None
+    era: str | None = None
+    k: int | None = None
+
+
+class MlbTeamStatsPair(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    away: MlbTeamStatLine
+    home: MlbTeamStatLine
 
 
 class MlbLinescoreInning(BaseModel):
@@ -120,6 +154,10 @@ class MlbPlay(BaseModel):
     away_score: int
     home_score: int
     event: str | None = None
+    exit_velo: float | None = None
+    launch_angle: float | None = None
+    total_distance: float | None = None
+    scoring_team: Literal["away", "home"] | None = None
 
 
 class MlbBatterRow(BaseModel):
@@ -212,5 +250,8 @@ class MlbGameDetail(BaseModel):
     box_score: MlbBoxScore | None = None
     hit_chart: list[MlbHitPoint] = []
     win_probability: MlbWinProbability | None = None
+    game_date_label: str | None = None
+    decisions: MlbDecisions | None = None
+    team_stats: MlbTeamStatsPair | None = None
     sources: list[str]
     fetched_at: str

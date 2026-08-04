@@ -85,3 +85,76 @@ def test_normalize_plays_box_and_hits():
     assert teoscar is not None
     assert teoscar.hr == 0
     assert teoscar.sb == 1
+
+
+def test_normalize_final_additions_from_mutated_payload():
+    payload = _payload()
+    payload["gameData"].setdefault("datetime", {})
+    payload["gameData"]["datetime"]["officialDate"] = "2026-08-02"
+    payload["gameData"]["teams"]["away"]["leagueRecord"] = {"wins": 58, "losses": 55}
+    payload["gameData"]["teams"]["home"]["leagueRecord"] = {"wins": 60, "losses": 53}
+    payload["liveData"]["decisions"] = {
+        "winner": {"fullName": "Brandon Pfaadt", "id": 1},
+        "loser": {"fullName": "Michael King", "id": 2},
+    }
+    for play in payload["liveData"]["plays"]["allPlays"]:
+        for event in play.get("playEvents") or []:
+            if isinstance(event, dict) and "hitData" in event:
+                event["hitData"]["launchSpeed"] = 104.1
+                event["hitData"]["launchAngle"] = 28.0
+                event["hitData"]["totalDistance"] = 404
+                break
+        else:
+            continue
+        break
+    payload["liveData"]["boxscore"]["teams"]["away"]["teamStats"] = {
+        "batting": {
+            "homeRuns": 0,
+            "runs": 1,
+            "hits": 6,
+            "stolenBases": 0,
+            "leftOnBase": 7,
+            "avg": ".188",
+            "obp": ".250",
+            "slg": ".300",
+        },
+        "pitching": {"era": "5.00", "strikeOuts": 8},
+    }
+    payload["liveData"]["boxscore"]["teams"]["home"]["teamStats"] = {
+        "batting": {
+            "homeRuns": 1,
+            "runs": 5,
+            "hits": 9,
+            "stolenBases": 1,
+            "leftOnBase": 6,
+            "avg": ".300",
+            "obp": ".360",
+            "slg": ".500",
+        },
+        "pitching": {"era": "1.00", "strikeOuts": 10},
+    }
+
+    detail = normalize_mlb_live_feed(
+        payload, game_pk="776543", fetched_at="2026-08-02T18:00:00+00:00"
+    )
+
+    assert detail.away.record == "58-55"
+    assert detail.home.record == "60-53"
+    assert detail.game_date_label
+    assert detail.decisions is not None
+    assert detail.decisions.winner == "Brandon Pfaadt"
+    assert detail.decisions.loser == "Michael King"
+    asserted = False
+    for play in detail.plays:
+        if play.exit_velo is not None:
+            assert play.exit_velo == 104.1
+            assert play.launch_angle == 28.0
+            assert play.total_distance == 404
+            asserted = True
+            break
+    assert asserted
+    scoring = [play for play in detail.plays if play.scoring]
+    assert all(play.scoring_team in ("away", "home") for play in scoring)
+    assert detail.team_stats is not None
+    assert detail.team_stats.home.hr == 1
+    assert detail.team_stats.away.avg == ".188"

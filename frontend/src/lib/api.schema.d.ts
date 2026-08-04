@@ -1406,6 +1406,15 @@ export interface components {
             /** Home Pitchers */
             home_pitchers: components["schemas"]["MlbPitcherRow"][];
         };
+        /** MlbDecisions */
+        MlbDecisions: {
+            /** Loser */
+            loser: string | null;
+            /** Save */
+            save: string | null;
+            /** Winner */
+            winner: string | null;
+        };
         /** MlbGame */
         MlbGame: {
             away: components["schemas"]["MlbTeam"];
@@ -1438,8 +1447,11 @@ export interface components {
         MlbGameDetail: {
             away: components["schemas"]["MlbGameDetailTeam"];
             box_score: components["schemas"]["MlbBoxScore"] | null;
+            decisions: components["schemas"]["MlbDecisions"] | null;
             /** Fetched At */
             fetched_at: string;
+            /** Game Date Label */
+            game_date_label: string | null;
             /**
              * Hit Chart
              * @default []
@@ -1475,6 +1487,7 @@ export interface components {
             status: "scheduled" | "live" | "halftime" | "final";
             /** Status Label */
             status_label: string;
+            team_stats: components["schemas"]["MlbTeamStatsPair"] | null;
             /** Venue */
             venue: string | null;
             win_probability: components["schemas"]["MlbWinProbability"] | null;
@@ -1491,6 +1504,8 @@ export interface components {
             logo_url: string | null;
             /** Name */
             name: string;
+            /** Record */
+            record: string | null;
             /** Score */
             score: number | null;
         };
@@ -1617,6 +1632,8 @@ export interface components {
             away_score: number;
             /** Event */
             event: string | null;
+            /** Exit Velo */
+            exit_velo: number | null;
             /**
              * Half
              * @enum {string}
@@ -1628,10 +1645,16 @@ export interface components {
             id: string;
             /** Inning */
             inning: number;
+            /** Launch Angle */
+            launch_angle: number | null;
             /** Scoring */
             scoring: boolean;
+            /** Scoring Team */
+            scoring_team: ("away" | "home") | null;
             /** Text */
             text: string;
+            /** Total Distance */
+            total_distance: number | null;
         };
         /** MlbPlayerCard */
         MlbPlayerCard: {
@@ -1692,6 +1715,34 @@ export interface components {
             record: string | null;
             /** Score */
             score: number | null;
+        };
+        /** MlbTeamStatLine */
+        MlbTeamStatLine: {
+            /** Avg */
+            avg: string | null;
+            /** Era */
+            era: string | null;
+            /** H */
+            h: number | null;
+            /** Hr */
+            hr: number | null;
+            /** K */
+            k: number | null;
+            /** Lob */
+            lob: number | null;
+            /** Obp */
+            obp: string | null;
+            /** R */
+            r: number | null;
+            /** Sb */
+            sb: number | null;
+            /** Slg */
+            slg: string | null;
+        };
+        /** MlbTeamStatsPair */
+        MlbTeamStatsPair: {
+            away: components["schemas"]["MlbTeamStatLine"];
+            home: components["schemas"]["MlbTeamStatLine"];
         };
         /** MlbWinProbability */
         MlbWinProbability: {

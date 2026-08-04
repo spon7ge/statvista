@@ -3,14 +3,16 @@ from __future__ import annotations
 import logging
 import re
 import time
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from typing import Any, Literal
+from zoneinfo import ZoneInfo
 
 import httpx
 
 from app.schemas.mlb_game_detail import (
     MlbBatterRow,
     MlbBoxScore,
+    MlbDecisions,
     MlbGameDetail,
     MlbGameDetailTeam,
     MlbHitPoint,
@@ -23,6 +25,8 @@ from app.schemas.mlb_game_detail import (
     MlbPlayerCard,
     MlbRunners,
     MlbSituation,
+    MlbTeamStatLine,
+    MlbTeamStatsPair,
     MlbWinProbability,
 )
 from app.schemas.mlb_scoreboard import GameStatus
@@ -87,6 +91,33 @@ def _team_color(team: dict, *, side: Literal["away", "home"]) -> str:
     return FALLBACK_AWAY_COLOR if side == "away" else FALLBACK_HOME_COLOR
 
 
+def _team_record(team: dict) -> str | None:
+    record = _as_dict(team.get("leagueRecord"))
+    wins = _int_or_none(record.get("wins"))
+    losses = _int_or_none(record.get("losses"))
+    if wins is None or losses is None:
+        return None
+    return f"{wins}-{losses}"
+
+
+def _game_date_label(game_data: dict, *, now: date | None = None) -> str | None:
+    datetime_block = _as_dict(game_data.get("datetime"))
+    official_date = datetime_block.get("officialDate")
+    if not isinstance(official_date, str):
+        return None
+    try:
+        game_date = date.fromisoformat(official_date)
+    except ValueError:
+        return None
+
+    today = now or datetime.now(ZoneInfo("America/New_York")).date()
+    if game_date == today:
+        return "Today"
+    if game_date == today.fromordinal(today.toordinal() - 1):
+        return "Yesterday"
+    return f"{game_date.strftime('%b')} {game_date.day}"
+
+
 _NON_LIVE_KEYWORDS = (
     "warmup",
     "delayed",
@@ -144,6 +175,37 @@ def _float_or_none(value: Any) -> float | None:
         return float(value)
     except (TypeError, ValueError):
         return None
+
+
+def _decisions(live_data: dict) -> MlbDecisions | None:
+    raw = _as_dict(live_data.get("decisions"))
+    if not raw:
+        return None
+
+    def name(key: str) -> str | None:
+        full_name = _as_dict(raw.get(key)).get("fullName")
+        return str(full_name) if full_name else None
+
+    winner, loser, save = name("winner"), name("loser"), name("save")
+    if not any((winner, loser, save)):
+        return None
+    return MlbDecisions(winner=winner, loser=loser, save=save)
+
+
+def _hit_metrics(play: dict) -> tuple[float | None, float | None, float | None]:
+    for event in reversed(_as_list(play.get("playEvents"))):
+        if not isinstance(event, dict):
+            continue
+        hit_data = _as_dict(event.get("hitData"))
+        if not hit_data:
+            continue
+        exit_velo = hit_data.get("launchSpeed", hit_data.get("exitVelocity"))
+        return (
+            _float_or_none(exit_velo),
+            _float_or_none(hit_data.get("launchAngle")),
+            _float_or_none(hit_data.get("totalDistance")),
+        )
+    return None, None, None
 
 
 def _zone_coords(pitch_data: dict) -> tuple[float | None, float | None]:
@@ -448,6 +510,7 @@ def _plays(all_plays: list) -> tuple[list[MlbPlay], list[MlbPlay]]:
             continue
         is_scoring = bool(about.get("isScoringPlay"))
         event = result.get("eventType") or result.get("event")
+        exit_velo, launch_angle, total_distance = _hit_metrics(raw)
         play = MlbPlay(
             id=_play_id(raw, index),
             inning=inning,
@@ -457,6 +520,10 @@ def _plays(all_plays: list) -> tuple[list[MlbPlay], list[MlbPlay]]:
             away_score=int(result.get("awayScore") or 0),
             home_score=int(result.get("homeScore") or 0),
             event=str(event) if event else None,
+            exit_velo=exit_velo,
+            launch_angle=launch_angle,
+            total_distance=total_distance,
+            scoring_team=("away" if half == "top" else "home") if is_scoring else None,
         )
         plays.append(play)
         if is_scoring:
@@ -587,6 +654,42 @@ def _box(boxscore: dict) -> MlbBoxScore | None:
     )
 
 
+def _team_stat_line(team: dict) -> MlbTeamStatLine:
+    stats = _as_dict(team.get("teamStats"))
+    batting = _as_dict(stats.get("batting"))
+    pitching = _as_dict(stats.get("pitching"))
+
+    def text(value: Any) -> str | None:
+        if isinstance(value, str):
+            return value.strip() or None
+        return str(value) if value is not None else None
+
+    return MlbTeamStatLine(
+        hr=_int_or_none(batting.get("homeRuns")),
+        r=_int_or_none(batting.get("runs")),
+        h=_int_or_none(batting.get("hits")),
+        sb=_int_or_none(batting.get("stolenBases")),
+        lob=_int_or_none(batting.get("leftOnBase")),
+        avg=text(batting.get("avg")),
+        obp=text(batting.get("obp")),
+        slg=text(batting.get("slg")),
+        era=text(pitching.get("era")),
+        k=_int_or_none(pitching.get("strikeOuts")),
+    )
+
+
+def _team_stats(boxscore: dict) -> MlbTeamStatsPair | None:
+    teams = _as_dict(boxscore.get("teams"))
+    away = _as_dict(teams.get("away"))
+    home = _as_dict(teams.get("home"))
+    if not _as_dict(away.get("teamStats")) and not _as_dict(home.get("teamStats")):
+        return None
+    return MlbTeamStatsPair(
+        away=_team_stat_line(away),
+        home=_team_stat_line(home),
+    )
+
+
 def _hit_result(event_type: str | None) -> Literal["hr", "hit", "out"]:
     if event_type == "home_run":
         return "hr"
@@ -653,6 +756,7 @@ def _detail_team(
         score=score,
         color=_team_color(team, side=side),
         logo_url=_team_logo_url(team_id),
+        record=_team_record(team),
     )
 
 
@@ -701,6 +805,9 @@ def normalize_mlb_live_feed(
         box_score=_box(boxscore),
         hit_chart=_hits(all_plays),
         win_probability=None,
+        game_date_label=_game_date_label(game_data),
+        decisions=_decisions(live_data),
+        team_stats=_team_stats(boxscore),
         sources=["mlb_stats_api"],
         fetched_at=fetched_at,
     )
