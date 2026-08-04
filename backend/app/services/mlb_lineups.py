@@ -31,6 +31,17 @@ ROTOWIRE_TTL_SECONDS = 180
 
 DateToken = Literal["tomorrow"] | None
 
+# RotoWire abbreviates Arizona as "ARI"; the MLB Stats API (which backs game
+# detail) uses "AZ". Alias here so `findCompleteMatch` on the frontend can
+# join a RotoWire card to its Stats API game by abbrev.
+_ABBREV_ALIASES: dict[str, str] = {
+    "ARI": "AZ",
+}
+
+
+def _normalize_abbrev(abbrev: str) -> str:
+    return _ABBREV_ALIASES.get(abbrev, abbrev)
+
 _cache: dict[str, dict] = {}  # keyed by date_et: {"response": ..., "expires_at": ...}
 
 
@@ -89,8 +100,8 @@ def normalize_mlb_lineups(raw_games: list[dict]) -> list[MlbLineupGame]:
     for raw in raw_games:
         games.append(
             MlbLineupGame(
-                away_abbrev=raw["away_abbrev"],
-                home_abbrev=raw["home_abbrev"],
+                away_abbrev=_normalize_abbrev(raw["away_abbrev"]),
+                home_abbrev=_normalize_abbrev(raw["home_abbrev"]),
                 status=raw.get("status"),
                 away=_to_side(raw.get("away") or {}),
                 home=_to_side(raw.get("home") or {}),

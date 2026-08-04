@@ -17,6 +17,9 @@ function sideComplete(side: ApiMlbLineupSide | undefined | null): boolean {
  * exact (case-insensitive) abbrev match on both sides, plus both sides
  * having a confirmed starter and full 9-batter order, so we never show a
  * partially-projected lineup as if it were final.
+ *
+ * Note: returns the first complete match, so a doubleheader (same two
+ * abbrevs twice in one slate) can't be disambiguated by abbrev alone.
  */
 function findCompleteMatch(
   games: ApiMlbLineupGame[] | undefined,
@@ -40,7 +43,7 @@ function findCompleteMatch(
 export function MlbPregameCenter({ detail }: { detail: MlbGameDetailView }) {
   const [activeTab, setActiveTab] = useState<PregameTab>("preview");
 
-  const { data } = useMlbLineups(
+  const { data, isPending } = useMlbLineups(
     activeTab === "preview" ? detail.gameDate : undefined,
   );
   const matchedGame = findCompleteMatch(
@@ -67,7 +70,11 @@ export function MlbPregameCenter({ detail }: { detail: MlbGameDetailView }) {
         aria-labelledby={`mlb-pregame-${activeTab}-tab`}
       >
         {activeTab === "preview" ? (
-          <MlbProjectedLineups detail={detail} game={matchedGame} />
+          <MlbProjectedLineups
+            detail={detail}
+            game={matchedGame}
+            isPending={isPending}
+          />
         ) : (
           <p className="text-sm text-white/60">{stub}</p>
         )}

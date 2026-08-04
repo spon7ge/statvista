@@ -12,6 +12,8 @@ type TeamSide = "away" | "home";
 type Props = {
   detail: MlbGameDetailView;
   game: ApiMlbLineupGame | null;
+  /** True while the lineups fetch is in flight and has no data yet. */
+  isPending?: boolean;
 };
 
 function LogoToggleButton({
@@ -68,6 +70,7 @@ function LineupSideList({ side }: { side: ApiMlbLineupSide }) {
         </span>
         <span className="text-white/50">
           {side.pitcher.hand ?? "–"}
+          {side.pitcher.record ? ` · ${side.pitcher.record}` : ""}
           {side.pitcher.era ? ` · ${side.pitcher.era} ERA` : ""}
         </span>
       </div>
@@ -97,7 +100,7 @@ function LineupSideList({ side }: { side: ApiMlbLineupSide }) {
   );
 }
 
-export function MlbProjectedLineups({ detail, game }: Props) {
+export function MlbProjectedLineups({ detail, game, isPending }: Props) {
   const [side, setSide] = useState<TeamSide>("away");
 
   return (
@@ -121,7 +124,9 @@ export function MlbProjectedLineups({ detail, game }: Props) {
           />
         </div>
       </div>
-      {!game ? (
+      {isPending ? (
+        <p className="text-xs text-white/50">Loading lineups…</p>
+      ) : !game ? (
         <p className="text-xs text-white/50">Lineups unavailable</p>
       ) : (
         <LineupSideList side={side === "away" ? game.away : game.home} />

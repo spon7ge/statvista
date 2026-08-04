@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from pathlib import Path
 from unittest.mock import patch
 from zoneinfo import ZoneInfo
@@ -25,8 +25,14 @@ def client():
     clear_mlb_lineups_cache()
 
 
+def _today_et_date() -> date:
+    # The route resolves "today" against ET, not the test runner's local
+    # timezone, so tests near midnight local time must anchor to ET too.
+    return datetime.now(ET).date()
+
+
 def _today_et() -> str:
-    return date.today().isoformat()
+    return _today_et_date().isoformat()
 
 
 def test_lineups_requires_date(client):
@@ -100,8 +106,38 @@ def test_lineups_scrape_failure_returns_empty(monkeypatch, client):
     assert body["source"] == "rotowire"
 
 
+def test_lineups_normalizes_ari_to_az_for_diamondbacks(client):
+    # RotoWire abbreviates Arizona as ARI; the Stats API (which backs game
+    # detail) uses AZ, so the service must alias it for findCompleteMatch.
+    today_et = _today_et()
+    dbacks_game = [
+        {
+            "away_abbrev": "ARI",
+            "home_abbrev": "LAD",
+            "status": "expected",
+            "away": {
+                "pitcher": {"name": "Brandon Pfaadt", "hand": "R", "record": "12-6", "era": "3.20"},
+                "batters": [],
+            },
+            "home": {
+                "pitcher": {"name": "Walker Buehler", "hand": "R", "record": "8-5", "era": "4.50"},
+                "batters": [],
+            },
+        }
+    ]
+
+    with patch(
+        "app.services.mlb_lineups.scrape_mlb_lineups",
+        return_value=dbacks_game,
+    ):
+        res = client.get(f"/api/mlb/lineups?date={today_et}")
+
+    assert res.status_code == 200
+    assert res.json()["games"][0]["away_abbrev"] == "AZ"
+
+
 def test_lineups_tomorrow_uses_tomorrow_token(client):
-    tomorrow_et = (date.today() + timedelta(days=1)).isoformat()
+    tomorrow_et = (_today_et_date() + timedelta(days=1)).isoformat()
     games = parse_mlb_lineups_html(FIXTURE.read_text())
 
     with patch(

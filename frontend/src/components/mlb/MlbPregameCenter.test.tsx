@@ -53,7 +53,7 @@ describe("MlbPregameCenter", () => {
     vi.clearAllMocks();
   });
 
-  it("renders header and preview stub by default", () => {
+  it("renders header and projected lineups panel by default", () => {
     fetchMlbLineups.mockResolvedValue({
       date: mlbScheduledDetail.gameDate,
       fetched_at: "2026-08-04T10:00:00-04:00",
@@ -66,6 +66,13 @@ describe("MlbPregameCenter", () => {
       screen.getByTestId("mlb-pregame-broadcast-header"),
     ).toBeInTheDocument();
     expect(screen.getByTestId("mlb-projected-lineups")).toBeInTheDocument();
+  });
+
+  it("shows a loading line instead of unavailable while the fetch is pending", () => {
+    fetchMlbLineups.mockImplementation(() => new Promise(() => {}));
+    renderWithClient(<MlbPregameCenter detail={mlbScheduledDetail} />);
+    expect(screen.getByText("Loading lineups…")).toBeInTheDocument();
+    expect(screen.queryByText("Lineups unavailable")).not.toBeInTheDocument();
   });
 
   it("shows unavailable when no complete matching lineup exists for the game", async () => {

@@ -52,6 +52,20 @@ describe("MlbProjectedLineups", () => {
     expect(screen.queryByText("CJ Abrams")).not.toBeInTheDocument();
   });
 
+  it("shows a loading line instead of 'Lineups unavailable' while pending", () => {
+    render(
+      <MlbProjectedLineups detail={mlbScheduledDetail} game={null} isPending />,
+    );
+    expect(screen.getByText("Loading lineups…")).toBeInTheDocument();
+    expect(screen.queryByText("Lineups unavailable")).not.toBeInTheDocument();
+  });
+
+  it("renders the starting pitcher's record alongside hand and ERA", () => {
+    render(<MlbProjectedLineups detail={mlbScheduledDetail} game={lineupGame} />);
+    expect(screen.getByText(/8-6/)).toBeInTheDocument();
+    expect(screen.getByText(/3\.40 ERA/)).toBeInTheDocument();
+  });
+
   it("defaults to the away side and renders the starter plus 9 batters", () => {
     render(<MlbProjectedLineups detail={mlbScheduledDetail} game={lineupGame} />);
 
