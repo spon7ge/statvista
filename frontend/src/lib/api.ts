@@ -57,6 +57,10 @@ export type ApiMlbOddsGame = Schemas["MlbOddsGame"];
 export type ApiMlbOddsResponse = Schemas["MlbOddsResponse"];
 export type ApiMlbGameDetail = Schemas["MlbGameDetail"];
 export type ApiMlbLineupsResponse = Schemas["MlbLineupsResponse"];
+export type ApiMlbLineupGame = Schemas["MlbLineupGame"];
+export type ApiMlbLineupSide = Schemas["MlbLineupSide"];
+export type ApiMlbLineupBatter = Schemas["MlbLineupBatter"];
+export type ApiMlbLineupPitcher = Schemas["MlbLineupPitcher"];
 
 /** Shared shape for matchup odds merge (WNBA + MLB). */
 export type ApiMatchupOddsGame = ApiWnbaOddsGame | ApiMlbOddsGame;
