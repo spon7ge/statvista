@@ -105,8 +105,34 @@ function buildApiDetail(
           bb: 1,
           k: 3,
           pitches: 42,
+          hr: 1,
+          era: "3.10",
+          decision: "(L, 1-1)",
+          strikes: 28,
+          ground_outs: 2,
+          fly_outs: 1,
+          batters_faced: 12,
+          inherited_runners: 0,
+          inherited_runners_scored: 0,
         },
       ],
+      away_batting_notes: [{ label: "2B", value: "Betts." }],
+      home_batting_notes: [],
+      away_baserunning_notes: [],
+      home_baserunning_notes: [],
+      away_fielding_notes: [],
+      home_fielding_notes: [],
+      away_pitching_totals: null,
+      home_pitching_totals: {
+        ip: "9.0",
+        h: 8,
+        r: 4,
+        er: 4,
+        bb: 2,
+        k: 9,
+        hr: 1,
+        era: "4.00",
+      },
     },
     win_probability: {
       away_abbrev: "BOS",
@@ -147,6 +173,14 @@ describe("mapMlbGameDetail", () => {
     expect(mapped.boxScore?.awayBatters[0]?.name).toBe("Betts");
     expect(mapped.boxScore?.awayBatters[0]?.hr).toBe(1);
     expect(mapped.boxScore?.awayBatters[0]?.sb).toBe(0);
+    expect(mapped.boxScore?.awayBattingNotes[0]).toEqual({
+      label: "2B",
+      value: "Betts.",
+    });
+    expect(mapped.boxScore?.homePitchers[0]?.decision).toBe("(L, 1-1)");
+    expect(mapped.boxScore?.homePitchers[0]?.era).toBe("3.10");
+    expect(mapped.boxScore?.homePitchers[0]?.strikes).toBe(28);
+    expect(mapped.boxScore?.homePitchingTotals?.ip).toBe("9.0");
     expect(mapped.hitChart[0]?.playerName).toBe("Betts");
   });
 

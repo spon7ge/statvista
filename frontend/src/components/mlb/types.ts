@@ -115,6 +115,31 @@ export type MlbPitcherRow = {
   bb: number | null;
   k: number | null;
   pitches: number | null;
+  hr: number | null;
+  era: string | null;
+  decision: string | null;
+  strikes: number | null;
+  groundOuts: number | null;
+  flyOuts: number | null;
+  battersFaced: number | null;
+  inheritedRunners: number | null;
+  inheritedRunnersScored: number | null;
+};
+
+export type MlbBoxNoteLine = {
+  label: string;
+  value: string;
+};
+
+export type MlbPitchingTotals = {
+  ip: string | null;
+  h: number | null;
+  r: number | null;
+  er: number | null;
+  bb: number | null;
+  k: number | null;
+  hr: number | null;
+  era: string | null;
 };
 
 export type MlbBoxScore = {
@@ -122,6 +147,14 @@ export type MlbBoxScore = {
   homeBatters: MlbBatterRow[];
   awayPitchers: MlbPitcherRow[];
   homePitchers: MlbPitcherRow[];
+  awayBattingNotes: MlbBoxNoteLine[];
+  homeBattingNotes: MlbBoxNoteLine[];
+  awayBaserunningNotes: MlbBoxNoteLine[];
+  homeBaserunningNotes: MlbBoxNoteLine[];
+  awayFieldingNotes: MlbBoxNoteLine[];
+  homeFieldingNotes: MlbBoxNoteLine[];
+  awayPitchingTotals: MlbPitchingTotals | null;
+  homePitchingTotals: MlbPitchingTotals | null;
 };
 
 export type MlbWinProbabilityPoint = {

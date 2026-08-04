@@ -1395,16 +1395,55 @@ export interface components {
             /** So */
             so: number | null;
         };
+        /** MlbBoxNoteLine */
+        MlbBoxNoteLine: {
+            /** Label */
+            label: string;
+            /** Value */
+            value: string;
+        };
         /** MlbBoxScore */
         MlbBoxScore: {
+            /**
+             * Away Baserunning Notes
+             * @default []
+             */
+            away_baserunning_notes: components["schemas"]["MlbBoxNoteLine"][];
             /** Away Batters */
             away_batters: components["schemas"]["MlbBatterRow"][];
+            /**
+             * Away Batting Notes
+             * @default []
+             */
+            away_batting_notes: components["schemas"]["MlbBoxNoteLine"][];
+            /**
+             * Away Fielding Notes
+             * @default []
+             */
+            away_fielding_notes: components["schemas"]["MlbBoxNoteLine"][];
             /** Away Pitchers */
             away_pitchers: components["schemas"]["MlbPitcherRow"][];
+            away_pitching_totals: components["schemas"]["MlbPitchingTotals"] | null;
+            /**
+             * Home Baserunning Notes
+             * @default []
+             */
+            home_baserunning_notes: components["schemas"]["MlbBoxNoteLine"][];
             /** Home Batters */
             home_batters: components["schemas"]["MlbBatterRow"][];
+            /**
+             * Home Batting Notes
+             * @default []
+             */
+            home_batting_notes: components["schemas"]["MlbBoxNoteLine"][];
+            /**
+             * Home Fielding Notes
+             * @default []
+             */
+            home_fielding_notes: components["schemas"]["MlbBoxNoteLine"][];
             /** Home Pitchers */
             home_pitchers: components["schemas"]["MlbPitcherRow"][];
+            home_pitching_totals: components["schemas"]["MlbPitchingTotals"] | null;
         };
         /** MlbDecisions */
         MlbDecisions: {
@@ -1609,12 +1648,28 @@ export interface components {
         };
         /** MlbPitcherRow */
         MlbPitcherRow: {
+            /** Batters Faced */
+            batters_faced: number | null;
             /** Bb */
             bb: number | null;
+            /** Decision */
+            decision: string | null;
             /** Er */
             er: number | null;
+            /** Era */
+            era: string | null;
+            /** Fly Outs */
+            fly_outs: number | null;
+            /** Ground Outs */
+            ground_outs: number | null;
             /** H */
             h: number | null;
+            /** Hr */
+            hr: number | null;
+            /** Inherited Runners */
+            inherited_runners: number | null;
+            /** Inherited Runners Scored */
+            inherited_runners_scored: number | null;
             /** Ip */
             ip: string | null;
             /** K */
@@ -1623,6 +1678,27 @@ export interface components {
             name: string;
             /** Pitches */
             pitches: number | null;
+            /** R */
+            r: number | null;
+            /** Strikes */
+            strikes: number | null;
+        };
+        /** MlbPitchingTotals */
+        MlbPitchingTotals: {
+            /** Bb */
+            bb: number | null;
+            /** Er */
+            er: number | null;
+            /** Era */
+            era: string | null;
+            /** H */
+            h: number | null;
+            /** Hr */
+            hr: number | null;
+            /** Ip */
+            ip: string | null;
+            /** K */
+            k: number | null;
             /** R */
             r: number | null;
         };

@@ -47,6 +47,53 @@ function mapTeamStatLine(
   };
 }
 
+function mapNoteLine(line: { label: string; value: string }) {
+  return { label: line.label, value: line.value };
+}
+
+function mapPitchingTotals(
+  totals:
+    | NonNullable<ApiMlbGameDetail["box_score"]>["away_pitching_totals"]
+    | null
+    | undefined,
+) {
+  if (!totals) return null;
+  return {
+    ip: totals.ip ?? null,
+    h: totals.h ?? null,
+    r: totals.r ?? null,
+    er: totals.er ?? null,
+    bb: totals.bb ?? null,
+    k: totals.k ?? null,
+    hr: totals.hr ?? null,
+    era: totals.era ?? null,
+  };
+}
+
+function mapPitcherRow(
+  row: NonNullable<ApiMlbGameDetail["box_score"]>["away_pitchers"][number],
+) {
+  return {
+    name: row.name,
+    ip: row.ip,
+    h: row.h,
+    r: row.r,
+    er: row.er,
+    bb: row.bb,
+    k: row.k,
+    pitches: row.pitches,
+    hr: row.hr ?? null,
+    era: row.era ?? null,
+    decision: row.decision ?? null,
+    strikes: row.strikes ?? null,
+    groundOuts: row.ground_outs ?? null,
+    flyOuts: row.fly_outs ?? null,
+    battersFaced: row.batters_faced ?? null,
+    inheritedRunners: row.inherited_runners ?? null,
+    inheritedRunnersScored: row.inherited_runners_scored ?? null,
+  };
+}
+
 export function mapMlbGameDetail(detail: ApiMlbGameDetail): MlbGameDetailView {
   return {
     mlbGamePk: detail.mlb_game_pk,
@@ -158,26 +205,32 @@ export function mapMlbGameDetail(detail: ApiMlbGameDetail): MlbGameDetailView {
             hr: row.hr,
             sb: row.sb,
           })),
-          awayPitchers: detail.box_score.away_pitchers.map((row) => ({
-            name: row.name,
-            ip: row.ip,
-            h: row.h,
-            r: row.r,
-            er: row.er,
-            bb: row.bb,
-            k: row.k,
-            pitches: row.pitches,
-          })),
-          homePitchers: detail.box_score.home_pitchers.map((row) => ({
-            name: row.name,
-            ip: row.ip,
-            h: row.h,
-            r: row.r,
-            er: row.er,
-            bb: row.bb,
-            k: row.k,
-            pitches: row.pitches,
-          })),
+          awayPitchers: detail.box_score.away_pitchers.map(mapPitcherRow),
+          homePitchers: detail.box_score.home_pitchers.map(mapPitcherRow),
+          awayBattingNotes: (detail.box_score.away_batting_notes ?? []).map(
+            mapNoteLine,
+          ),
+          homeBattingNotes: (detail.box_score.home_batting_notes ?? []).map(
+            mapNoteLine,
+          ),
+          awayBaserunningNotes: (
+            detail.box_score.away_baserunning_notes ?? []
+          ).map(mapNoteLine),
+          homeBaserunningNotes: (
+            detail.box_score.home_baserunning_notes ?? []
+          ).map(mapNoteLine),
+          awayFieldingNotes: (detail.box_score.away_fielding_notes ?? []).map(
+            mapNoteLine,
+          ),
+          homeFieldingNotes: (detail.box_score.home_fielding_notes ?? []).map(
+            mapNoteLine,
+          ),
+          awayPitchingTotals: mapPitchingTotals(
+            detail.box_score.away_pitching_totals,
+          ),
+          homePitchingTotals: mapPitchingTotals(
+            detail.box_score.home_pitching_totals,
+          ),
         }
       : null,
     teamStats: detail.team_stats

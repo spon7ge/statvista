@@ -160,3 +160,86 @@ def test_normalize_final_additions_from_mutated_payload():
     assert detail.team_stats is not None
     assert detail.team_stats.home.hr == 1
     assert detail.team_stats.away.avg == ".188"
+
+
+def test_normalize_box_notes_and_enriched_pitchers():
+    payload = _payload()
+    away = payload["liveData"]["boxscore"]["teams"]["away"]
+    home = payload["liveData"]["boxscore"]["teams"]["home"]
+    away["info"] = [
+        {
+            "title": "BATTING",
+            "fieldList": [
+                {"label": "2B", "value": "Rafaela."},
+                {"label": "Team LOB", "value": "5."},
+            ],
+        },
+        {
+            "title": "BASERUNNING",
+            "fieldList": [{"label": "SB", "value": "Rafaela."}],
+        },
+    ]
+    home["info"] = [
+        {
+            "title": "BATTING",
+            "fieldList": [{"label": "HR", "value": "Hernández."}],
+        },
+        {
+            "title": "FIELDING",
+            "fieldList": [{"label": "E", "value": "Betts."}],
+        },
+    ]
+    pitchers = away.get("pitchers") or []
+    assert pitchers, "fixture needs pitchers"
+    pid = f"ID{pitchers[0]}"
+    player = away["players"][pid]
+    player.setdefault("stats", {}).setdefault("pitching", {})
+    player["stats"]["pitching"].update(
+        {
+            "homeRuns": 1,
+            "strikes": 57,
+            "groundOuts": 4,
+            "flyOuts": 3,
+            "battersFaced": 22,
+            "inheritedRunners": 0,
+            "inheritedRunnersScored": 0,
+            "note": "(L, 1-1)",
+            "numberOfPitches": 90,
+        }
+    )
+    player.setdefault("seasonStats", {}).setdefault("pitching", {})["era"] = "3.21"
+    away.setdefault("teamStats", {}).setdefault("pitching", {}).update(
+        {
+            "inningsPitched": "9.0",
+            "hits": 8,
+            "runs": 4,
+            "earnedRuns": 4,
+            "baseOnBalls": 2,
+            "strikeOuts": 9,
+            "homeRuns": 1,
+            "era": "4.50",
+        }
+    )
+
+    detail = normalize_mlb_live_feed(
+        payload, game_pk="776543", fetched_at="2026-08-02T18:00:00+00:00"
+    )
+    box = detail.box_score
+    assert box is not None
+    assert box.away_batting_notes[0].label == "2B"
+    assert box.away_batting_notes[0].value == "Rafaela."
+    assert box.away_baserunning_notes[0].label == "SB"
+    assert box.home_fielding_notes[0].label == "E"
+    assert box.home_batting_notes[0].label == "HR"
+
+    starter = box.away_pitchers[0]
+    assert starter.decision == "(L, 1-1)"
+    assert starter.hr == 1
+    assert starter.era == "3.21"
+    assert starter.strikes == 57
+    assert starter.ground_outs == 4
+    assert starter.fly_outs == 3
+    assert starter.batters_faced == 22
+    assert box.away_pitching_totals is not None
+    assert box.away_pitching_totals.ip == "9.0"
+    assert box.away_pitching_totals.k == 9

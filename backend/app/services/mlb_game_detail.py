@@ -11,6 +11,7 @@ import httpx
 
 from app.schemas.mlb_game_detail import (
     MlbBatterRow,
+    MlbBoxNoteLine,
     MlbBoxScore,
     MlbDecisions,
     MlbGameDetail,
@@ -21,6 +22,7 @@ from app.schemas.mlb_game_detail import (
     MlbLinescoreTotals,
     MlbPitch,
     MlbPitcherRow,
+    MlbPitchingTotals,
     MlbPlay,
     MlbPlayerCard,
     MlbRunners,
@@ -591,6 +593,17 @@ def _batter_row(order_hint: int | None, player: dict) -> MlbBatterRow | None:
     )
 
 
+def _pitcher_era(player: dict, pitching: dict) -> str | None:
+    season = _as_dict(_as_dict(player.get("seasonStats")).get("pitching"))
+    raw = season.get("era")
+    if raw is None:
+        raw = pitching.get("era")
+    if raw is None:
+        return None
+    text = str(raw).strip()
+    return text or None
+
+
 def _pitcher_row(player: dict) -> MlbPitcherRow | None:
     person = _as_dict(player.get("person"))
     name = person.get("fullName")
@@ -601,6 +614,8 @@ def _pitcher_row(player: dict) -> MlbPitcherRow | None:
     pitches = pitching.get("numberOfPitches")
     if pitches is None:
         pitches = pitching.get("pitchesThrown")
+    note = pitching.get("note")
+    decision = str(note).strip() if note is not None and str(note).strip() else None
     return MlbPitcherRow(
         name=str(name),
         ip=str(ip) if ip is not None else None,
@@ -610,6 +625,54 @@ def _pitcher_row(player: dict) -> MlbPitcherRow | None:
         bb=_int_or_none(pitching.get("baseOnBalls")),
         k=_int_or_none(pitching.get("strikeOuts")),
         pitches=_int_or_none(pitches),
+        hr=_int_or_none(pitching.get("homeRuns")),
+        era=_pitcher_era(player, pitching),
+        decision=decision,
+        strikes=_int_or_none(pitching.get("strikes")),
+        ground_outs=_int_or_none(pitching.get("groundOuts")),
+        fly_outs=_int_or_none(pitching.get("flyOuts")),
+        batters_faced=_int_or_none(pitching.get("battersFaced")),
+        inherited_runners=_int_or_none(pitching.get("inheritedRunners")),
+        inherited_runners_scored=_int_or_none(
+            pitching.get("inheritedRunnersScored")
+        ),
+    )
+
+
+def _info_notes(side: dict, title: str) -> list[MlbBoxNoteLine]:
+    notes: list[MlbBoxNoteLine] = []
+    wanted = title.upper()
+    for block in _as_list(side.get("info")):
+        if not isinstance(block, dict):
+            continue
+        if str(block.get("title") or "").upper() != wanted:
+            continue
+        for field in _as_list(block.get("fieldList")):
+            if not isinstance(field, dict):
+                continue
+            label = str(field.get("label") or "").strip()
+            value = str(field.get("value") or "").strip()
+            if label and value:
+                notes.append(MlbBoxNoteLine(label=label, value=value))
+    return notes
+
+
+def _pitching_totals(side: dict) -> MlbPitchingTotals | None:
+    pitching = _as_dict(_as_dict(side.get("teamStats")).get("pitching"))
+    if not pitching:
+        return None
+    ip = pitching.get("inningsPitched")
+    era = pitching.get("era")
+    era_text = str(era).strip() if era is not None else ""
+    return MlbPitchingTotals(
+        ip=str(ip) if ip is not None else None,
+        h=_int_or_none(pitching.get("hits")),
+        r=_int_or_none(pitching.get("runs")),
+        er=_int_or_none(pitching.get("earnedRuns")),
+        bb=_int_or_none(pitching.get("baseOnBalls")),
+        k=_int_or_none(pitching.get("strikeOuts")),
+        hr=_int_or_none(pitching.get("homeRuns")),
+        era=era_text or None,
     )
 
 
@@ -656,6 +719,14 @@ def _box(boxscore: dict) -> MlbBoxScore | None:
         home_batters=_box_side_batters(home),
         away_pitchers=_box_side_pitchers(away),
         home_pitchers=_box_side_pitchers(home),
+        away_batting_notes=_info_notes(away, "BATTING"),
+        home_batting_notes=_info_notes(home, "BATTING"),
+        away_baserunning_notes=_info_notes(away, "BASERUNNING"),
+        home_baserunning_notes=_info_notes(home, "BASERUNNING"),
+        away_fielding_notes=_info_notes(away, "FIELDING"),
+        home_fielding_notes=_info_notes(home, "FIELDING"),
+        away_pitching_totals=_pitching_totals(away),
+        home_pitching_totals=_pitching_totals(home),
     )
 
 

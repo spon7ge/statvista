@@ -187,6 +187,35 @@ class MlbPitcherRow(BaseModel):
     bb: int | None
     k: int | None
     pitches: int | None
+    hr: int | None = None
+    era: str | None = None
+    decision: str | None = None
+    strikes: int | None = None
+    ground_outs: int | None = None
+    fly_outs: int | None = None
+    batters_faced: int | None = None
+    inherited_runners: int | None = None
+    inherited_runners_scored: int | None = None
+
+
+class MlbBoxNoteLine(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    label: str
+    value: str
+
+
+class MlbPitchingTotals(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    ip: str | None = None
+    h: int | None = None
+    r: int | None = None
+    er: int | None = None
+    bb: int | None = None
+    k: int | None = None
+    hr: int | None = None
+    era: str | None = None
 
 
 class MlbBoxScore(BaseModel):
@@ -196,6 +225,14 @@ class MlbBoxScore(BaseModel):
     home_batters: list[MlbBatterRow]
     away_pitchers: list[MlbPitcherRow]
     home_pitchers: list[MlbPitcherRow]
+    away_batting_notes: list[MlbBoxNoteLine] = []
+    home_batting_notes: list[MlbBoxNoteLine] = []
+    away_baserunning_notes: list[MlbBoxNoteLine] = []
+    home_baserunning_notes: list[MlbBoxNoteLine] = []
+    away_fielding_notes: list[MlbBoxNoteLine] = []
+    home_fielding_notes: list[MlbBoxNoteLine] = []
+    away_pitching_totals: MlbPitchingTotals | None = None
+    home_pitching_totals: MlbPitchingTotals | None = None
 
 
 class MlbHitPoint(BaseModel):

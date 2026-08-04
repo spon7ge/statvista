@@ -2336,13 +2336,55 @@
         "title": "MlbBatterRow",
         "type": "object"
       },
+      "MlbBoxNoteLine": {
+        "properties": {
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "label",
+          "value"
+        ],
+        "title": "MlbBoxNoteLine",
+        "type": "object"
+      },
       "MlbBoxScore": {
         "properties": {
+          "away_baserunning_notes": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/MlbBoxNoteLine"
+            },
+            "title": "Away Baserunning Notes",
+            "type": "array"
+          },
           "away_batters": {
             "items": {
               "$ref": "#/components/schemas/MlbBatterRow"
             },
             "title": "Away Batters",
+            "type": "array"
+          },
+          "away_batting_notes": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/MlbBoxNoteLine"
+            },
+            "title": "Away Batting Notes",
+            "type": "array"
+          },
+          "away_fielding_notes": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/MlbBoxNoteLine"
+            },
+            "title": "Away Fielding Notes",
             "type": "array"
           },
           "away_pitchers": {
@@ -2352,11 +2394,45 @@
             "title": "Away Pitchers",
             "type": "array"
           },
+          "away_pitching_totals": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbPitchingTotals"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "home_baserunning_notes": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/MlbBoxNoteLine"
+            },
+            "title": "Home Baserunning Notes",
+            "type": "array"
+          },
           "home_batters": {
             "items": {
               "$ref": "#/components/schemas/MlbBatterRow"
             },
             "title": "Home Batters",
+            "type": "array"
+          },
+          "home_batting_notes": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/MlbBoxNoteLine"
+            },
+            "title": "Home Batting Notes",
+            "type": "array"
+          },
+          "home_fielding_notes": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/MlbBoxNoteLine"
+            },
+            "title": "Home Fielding Notes",
             "type": "array"
           },
           "home_pitchers": {
@@ -2365,13 +2441,31 @@
             },
             "title": "Home Pitchers",
             "type": "array"
+          },
+          "home_pitching_totals": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbPitchingTotals"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
           "away_batters",
           "home_batters",
           "away_pitchers",
-          "home_pitchers"
+          "home_pitchers",
+          "away_batting_notes",
+          "home_batting_notes",
+          "away_baserunning_notes",
+          "home_baserunning_notes",
+          "away_fielding_notes",
+          "home_fielding_notes",
+          "away_pitching_totals",
+          "home_pitching_totals"
         ],
         "title": "MlbBoxScore",
         "type": "object"
@@ -3099,6 +3193,17 @@
       },
       "MlbPitcherRow": {
         "properties": {
+          "batters_faced": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Batters Faced"
+          },
           "bb": {
             "anyOf": [
               {
@@ -3109,6 +3214,17 @@
               }
             ],
             "title": "Bb"
+          },
+          "decision": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decision"
           },
           "er": {
             "anyOf": [
@@ -3121,6 +3237,39 @@
             ],
             "title": "Er"
           },
+          "era": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Era"
+          },
+          "fly_outs": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fly Outs"
+          },
+          "ground_outs": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ground Outs"
+          },
           "h": {
             "anyOf": [
               {
@@ -3131,6 +3280,39 @@
               }
             ],
             "title": "H"
+          },
+          "hr": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hr"
+          },
+          "inherited_runners": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inherited Runners"
+          },
+          "inherited_runners_scored": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inherited Runners Scored"
           },
           "ip": {
             "anyOf": [
@@ -3179,6 +3361,17 @@
               }
             ],
             "title": "R"
+          },
+          "strikes": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Strikes"
           }
         },
         "required": [
@@ -3189,9 +3382,122 @@
           "er",
           "bb",
           "k",
-          "pitches"
+          "pitches",
+          "hr",
+          "era",
+          "decision",
+          "strikes",
+          "ground_outs",
+          "fly_outs",
+          "batters_faced",
+          "inherited_runners",
+          "inherited_runners_scored"
         ],
         "title": "MlbPitcherRow",
+        "type": "object"
+      },
+      "MlbPitchingTotals": {
+        "properties": {
+          "bb": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bb"
+          },
+          "er": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Er"
+          },
+          "era": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Era"
+          },
+          "h": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "H"
+          },
+          "hr": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hr"
+          },
+          "ip": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ip"
+          },
+          "k": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "K"
+          },
+          "r": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "R"
+          }
+        },
+        "required": [
+          "ip",
+          "h",
+          "r",
+          "er",
+          "bb",
+          "k",
+          "hr",
+          "era"
+        ],
+        "title": "MlbPitchingTotals",
         "type": "object"
       },
       "MlbPlay": {
