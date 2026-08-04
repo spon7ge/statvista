@@ -1,0 +1,3 @@
+statvista - todo list
+1. develop loading screen transition 
+2. remove thin border
