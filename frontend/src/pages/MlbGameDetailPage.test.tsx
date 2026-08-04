@@ -74,11 +74,12 @@ describe("MlbGameDetailPage", () => {
     });
     renderPage();
     expect(await screen.findByTestId("mlb-live-center")).toBeInTheDocument();
+    expect(screen.getByTestId("mlb-broadcast-header")).toBeInTheDocument();
     expect(await screen.findByTestId("mlb-live-viz-row")).toBeInTheDocument();
     expect(screen.getByTestId("mlb-game-flow")).toBeInTheDocument();
     expect(screen.getByTestId("mlb-hit-chart")).toBeInTheDocument();
     expect(screen.getByText(/Data: MLB Stats API · ESPN/i)).toBeInTheDocument();
-    expect(screen.getAllByText(/Top 3rd/i).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/Top 3rd/i)).toHaveLength(1);
     expect(screen.getAllByText(/Fenway Park/i).length).toBeGreaterThanOrEqual(1);
     expect(screen.getByRole("link", { name: /back/i })).toHaveAttribute(
       "href",

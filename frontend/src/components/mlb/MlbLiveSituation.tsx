@@ -179,19 +179,31 @@ function SituationPanel({ detail }: { detail: MlbGameDetailView }) {
   );
 }
 
-export function MlbLiveSituation({ detail }: { detail: MlbGameDetailView }) {
+export function MlbLiveSituation({
+  detail,
+  variant = "full",
+}: {
+  detail: MlbGameDetailView;
+  variant?: "full" | "pitchZone";
+}) {
+  const pitchZone = detail.situation ? (
+    <MlbPitchZone situation={detail.situation} />
+  ) : (
+    <GameSection className="!p-2.5">
+      <p className="text-xs text-white/40">Pitch zone unavailable</p>
+    </GameSection>
+  );
+
+  if (variant === "pitchZone") {
+    return <div data-testid="mlb-live-situation">{pitchZone}</div>;
+  }
+
   return (
     <div
       className="grid gap-4 lg:grid-cols-2"
       data-testid="mlb-live-situation"
     >
-      {detail.situation ? (
-        <MlbPitchZone situation={detail.situation} />
-      ) : (
-        <GameSection className="!p-2.5">
-          <p className="text-xs text-white/40">Pitch zone unavailable</p>
-        </GameSection>
-      )}
+      {pitchZone}
       <SituationPanel detail={detail} />
     </div>
   );
