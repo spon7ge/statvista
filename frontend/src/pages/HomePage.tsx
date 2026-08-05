@@ -1,10 +1,10 @@
-import { BrandHero } from "@/components/home/BrandHero";
-import { LiveNowSection } from "@/components/home/LiveNowSection";
-import { StoriesSection } from "@/components/home/StoriesSection";
-import { FeatureStrip } from "@/components/home/FeatureStrip";
-import { PropExplainerSection } from "@/components/home/PropExplainerSection";
-import { LeagueCtaSection } from "@/components/home/LeagueCtaSection";
-import { mergeLeagueScoreboards } from "@/components/home/mergeLeagueScoreboards";
+import { BrandHero } from "@/features/home/BrandHero";
+import { LiveNowSection } from "@/features/home/LiveNowSection";
+import { StoriesSection } from "@/features/home/StoriesSection";
+import { FeatureStrip } from "@/features/home/FeatureStrip";
+import { PropExplainerSection } from "@/features/home/PropExplainerSection";
+import { LeagueCtaSection } from "@/features/home/LeagueCtaSection";
+import { mergeLeagueScoreboards } from "@/features/home/lib/mergeLeagueScoreboards";
 import { useMlbScoreboard } from "@/features/mlb/hooks/useMlbScoreboard";
 import { useWnbaScoreboard } from "@/features/basketball/hooks/useWnbaScoreboard";
 

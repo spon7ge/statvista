@@ -1,5 +1,5 @@
 import { TeamAbbrevAvatar } from "@/shared/ui/TeamAbbrevAvatar";
-import { DEMO_PROP, formatEvPercent } from "./propExplainerDemo";
+import { DEMO_PROP, formatEvPercent } from "./lib/propExplainerDemo";
 
 function formatAmericanOdds(odds: number): string {
   return String(odds).replace("-", "−");

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { mergeLeagueScoreboards } from "./mergeLeagueScoreboards";
-import type { LiveGame, TickerGame } from "./types";
+import type { LiveGame, TickerGame } from "../types";
 
 const wnbaTicker: TickerGame = {
   id: "wnba-1",

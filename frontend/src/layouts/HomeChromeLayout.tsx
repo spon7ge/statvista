@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
-import { HomeNav } from "@/components/home/HomeNav";
-import { LiveTicker } from "@/components/home/LiveTicker";
-import { mergeLeagueScoreboards } from "@/components/home/mergeLeagueScoreboards";
+import { HomeNav } from "@/features/home/HomeNav";
+import { LiveTicker } from "@/features/home/LiveTicker";
+import { mergeLeagueScoreboards } from "@/features/home/lib/mergeLeagueScoreboards";
 import { SiteFooter } from "@/shared/ui/SiteFooter";
 import { useMlbScoreboard } from "@/features/mlb/hooks/useMlbScoreboard";
 import { useWnbaScoreboard } from "@/features/basketball/hooks/useWnbaScoreboard";

@@ -1,4 +1,4 @@
-import type { LiveGame, TickerGame } from "./types";
+import type { LiveGame, TickerGame } from "../types";
 
 export type LeagueScoreboardPart = {
   tickerGames: TickerGame[];

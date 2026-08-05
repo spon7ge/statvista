@@ -1,4 +1,4 @@
-import { CALLOUTS, type CalloutId } from "./propExplainerDemo";
+import { CALLOUTS, type CalloutId } from "./lib/propExplainerDemo";
 
 export type PropExplainerCalloutsProps = {
   layout: "desktop" | "mobile";
