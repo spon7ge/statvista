@@ -26,6 +26,21 @@ describe("MlbBoxScore", () => {
     expect(screen.getByTestId("mlb-box-score-layout")).toHaveClass(
       "grid-cols-2",
     );
+    expect(screen.getByTestId("mlb-box-score-layout")).toHaveClass(
+      "items-start",
+    );
+  });
+
+  it("renders team abbrev headers and Batters/Pitchers column labels", () => {
+    render(<MlbBoxScore detail={mlbFinalDetail} sideBySide />);
+
+    expect(screen.getByText("ARI")).toBeInTheDocument();
+    expect(screen.getByText("LAD")).toBeInTheDocument();
+    expect(screen.getAllByText("Batters").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Pitchers").length).toBeGreaterThan(0);
+    expect(screen.queryByText("Box score")).not.toBeInTheDocument();
+    expect(screen.queryByText("Player")).not.toBeInTheDocument();
+    expect(screen.queryByText("Pitcher")).not.toBeInTheDocument();
   });
 
   it("renders per-team boxes with batting notes and pitcher footnotes", () => {
@@ -35,6 +50,10 @@ describe("MlbBoxScore", () => {
     expect(screen.getByTestId("mlb-box-team-home")).toBeInTheDocument();
     expect(screen.getByText("2B:")).toBeInTheDocument();
     expect(screen.getAllByText("Pitches-strikes:").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Batters faced:").length).toBeGreaterThan(0);
+    expect(
+      screen.queryByText("Inherited runners-scored:"),
+    ).not.toBeInTheDocument();
     expect(screen.getAllByText("ERA").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Totals").length).toBeGreaterThan(0);
   });

@@ -1,4 +1,3 @@
-import { GameSection } from "@/components/game/GameSection";
 import type {
   MlbBatterRow,
   MlbBoxNoteLine,
@@ -46,6 +45,26 @@ function totalsValues(totals: MlbPitchingTotals): Array<string | number> {
     totals.hr ?? "–",
     totals.era ?? "–",
   ];
+}
+
+function TeamHeader({ team }: { team: MlbGameDetailTeam }) {
+  return (
+    <div className="flex items-center gap-2">
+      {team.logoUrl ? (
+        <img
+          src={team.logoUrl}
+          alt=""
+          className="size-6 object-contain"
+        />
+      ) : null}
+      <span
+        className="text-sm font-semibold"
+        style={{ color: team.color }}
+      >
+        {team.abbrev}
+      </span>
+    </div>
+  );
 }
 
 function NoteLines({ notes }: { notes: MlbBoxNoteLine[] }) {
@@ -104,17 +123,6 @@ function PitchingFootnotes({ pitchers }: { pitchers: MlbPitcherRow[] }) {
     lines.push({ label: "Batters faced", value: battersFaced });
   }
 
-  const inherited = footnoteSegments(pitchers, (row) => {
-    const ir = row.inheritedRunners;
-    const scored = row.inheritedRunnersScored;
-    if (ir === null || scored === null) return null;
-    if (ir <= 0 && scored <= 0) return null;
-    return `${ir}-${scored}`;
-  });
-  if (inherited) {
-    lines.push({ label: "Inherited runners-scored", value: inherited });
-  }
-
   if (lines.length === 0) return null;
 
   return (
@@ -139,14 +147,8 @@ function BatterTable({
   if (batters.length === 0) return null;
   return (
     <div className="overflow-x-auto">
-      <div className="mb-1.5 flex items-baseline gap-1.5 text-xs">
-        <span className="font-semibold" style={{ color: team.color }}>
-          {team.abbrev}
-        </span>
-        <span className="font-medium text-white/90">Batters</span>
-      </div>
       <div className="grid grid-cols-[minmax(6.5rem,1.4fr)_repeat(6,minmax(1.6rem,1fr))] gap-x-1.5 border-b border-white/[0.08] pb-1.5 text-[9px] tracking-wide text-white/40">
-        <span>Player</span>
+        <span>Batters</span>
         {BATTER_COLS.map((col) => (
           <span key={col} className="text-right uppercase">
             {col}
@@ -192,14 +194,8 @@ function PitcherTable({
   if (pitchers.length === 0) return null;
   return (
     <div className="overflow-x-auto">
-      <div className="mb-1.5 flex items-baseline gap-1.5 text-xs">
-        <span className="font-semibold" style={{ color: team.color }}>
-          {team.abbrev}
-        </span>
-        <span className="font-medium text-white/90">Pitchers</span>
-      </div>
       <div className="grid grid-cols-[minmax(6.5rem,1.4fr)_repeat(8,minmax(1.5rem,1fr))] gap-x-1.5 border-b border-white/[0.08] pb-1.5 text-[9px] tracking-wide text-white/40">
-        <span>Pitcher</span>
+        <span>Pitchers</span>
         {PITCHER_COLS.map((col) => (
           <span key={col} className="text-right uppercase">
             {col}
@@ -280,6 +276,7 @@ function TeamBox({
       data-testid={testId}
       className="space-y-4 rounded-xl border border-white/10 bg-white/[0.03] p-3"
     >
+      <TeamHeader team={team} />
       <BatterTable team={team} batters={batters} />
       <NoteLines notes={battingNotes} />
       <NoteLines notes={baserunningNotes} />
@@ -314,15 +311,14 @@ export function MlbBoxScore({
   if (!hasBatters && !hasPitchers && !hasNotes) return null;
 
   return (
-    <GameSection className="!p-3 space-y-5" data-testid="mlb-box-score">
-      <h2 className="text-sm font-semibold text-white">Box score</h2>
+    <section data-testid="mlb-box-score">
       <div className={sideBySide ? "overflow-x-auto" : undefined}>
         <div
           data-testid="mlb-box-score-layout"
           className={
             sideBySide
-              ? "grid min-w-[42rem] grid-cols-2 gap-5"
-              : "grid gap-5 lg:grid-cols-2"
+              ? "grid min-w-[42rem] grid-cols-2 items-start gap-5"
+              : "grid items-start gap-5 lg:grid-cols-2"
           }
         >
           <TeamBox
@@ -347,6 +343,6 @@ export function MlbBoxScore({
           />
         </div>
       </div>
-    </GameSection>
+    </section>
   );
 }
