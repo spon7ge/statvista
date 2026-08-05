@@ -50,7 +50,41 @@ describe("MlbGameOddsBoard", () => {
     expect(screen.getByText("-1.5")).toBeInTheDocument();
     expect(screen.getByText("WSH")).toBeInTheDocument();
     expect(screen.getByText("PHI")).toBeInTheDocument();
-    expect(screen.getByText(/pinnacle/i)).toBeInTheDocument();
+    expect(screen.getByText(/Pinnacle/)).toBeInTheDocument();
+  });
+
+  it("shows the line and dashes only the price when the price is missing", () => {
+    render(
+      <MlbGameOddsBoard
+        detail={mlbScheduledDetail}
+        view={{
+          sportsbook: "draftkings",
+          asOf: null,
+          rows: [
+            {
+              side: "away",
+              money: { kind: "money", price: null },
+              total: { kind: "total", side: "over", line: 8.5, price: null },
+              spread: { kind: "spread", line: -1.5, price: null },
+            },
+            {
+              side: "home",
+              money: { kind: "money", price: null },
+              total: { kind: "total", side: "under", line: 8.5, price: null },
+              spread: { kind: "spread", line: 1.5, price: null },
+            },
+          ],
+        }}
+      />,
+    );
+
+    expect(screen.getByText("o8.5")).toBeInTheDocument();
+    expect(screen.getByText("u8.5")).toBeInTheDocument();
+    expect(screen.getByText("-1.5")).toBeInTheDocument();
+    expect(screen.getByText("+1.5")).toBeInTheDocument();
+    // Two moneylines plus one dash beside each of the four priced-less lines.
+    expect(screen.getAllByText("–")).toHaveLength(6);
+    expect(screen.getByText(/DraftKings/)).toBeInTheDocument();
   });
 
   it("renders a dash for missing odds", () => {

@@ -50,11 +50,17 @@ export function findMlbOddsGame(
   for (const game of games) {
     if (matchupKey(game.away_abbrev, game.home_abbrev) !== key) continue;
     if (gameDate && game.game_date === gameDate) return game;
-    if (!game.game_date && !undated) undated = game;
-    if (game.game_date && !dated) dated = game;
+    if (!game.game_date) {
+      undated ??= game;
+    } else {
+      dated ??= game;
+    }
   }
 
-  return undated ?? dated;
+  // A row dated to another day is a different game in the same series, so it
+  // is only safe to use when the caller has no date to match against. This
+  // mirrors mergeMatchupOdds.
+  return undated ?? (gameDate ? null : dated);
 }
 
 function moneyTile(price: number | null): MlbOddsBoardTile {

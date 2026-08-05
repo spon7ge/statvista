@@ -21,16 +21,27 @@ function formatAsOf(asOf: string | null): string | null {
   });
 }
 
+/** Known sportsbook slugs keep their house casing; anything else is title-cased. */
+const SPORTSBOOK_LABELS: Record<string, string> = {
+  draftkings: "DraftKings",
+  fanduel: "FanDuel",
+  pinnacle: "Pinnacle",
+};
+
+function formatSportsbook(sportsbook: string | null | undefined): string | null {
+  const raw = sportsbook?.trim();
+  if (!raw) return null;
+  return SPORTSBOOK_LABELS[raw.toLowerCase()] ?? raw[0].toUpperCase() + raw.slice(1);
+}
+
+function formatTileLine(tile: MlbOddsBoardTile): string | null {
+  if (tile.kind === "money" || tile.line == null) return null;
+  if (tile.kind === "total") return `${tile.side === "over" ? "o" : "u"}${tile.line}`;
+  return tile.line > 0 ? `+${tile.line}` : String(tile.line);
+}
+
 function OddsTile({ label, tile }: { label: string; tile: MlbOddsBoardTile }) {
-  const hasLineAndPrice = tile.kind !== "money" && tile.line != null && tile.price != null;
-  const line =
-    tile.kind === "total"
-      ? `${tile.side === "over" ? "o" : "u"}${tile.line}`
-      : tile.kind === "spread" && tile.line != null
-        ? tile.line > 0
-          ? `+${tile.line}`
-          : String(tile.line)
-        : null;
+  const line = formatTileLine(tile);
   const price = tile.price == null ? null : formatAmericanOdds(tile.price);
 
   return (
@@ -39,10 +50,10 @@ function OddsTile({ label, tile }: { label: string; tile: MlbOddsBoardTile }) {
       <p className="mt-0.5 truncate text-sm font-semibold text-white">
         {tile.kind === "money" ? (
           price ?? "–"
-        ) : hasLineAndPrice ? (
+        ) : line ? (
           <>
             <span>{line}</span>
-            <span className="ml-1">{price}</span>
+            <span className="ml-1">{price ?? "–"}</span>
           </>
         ) : (
           "–"
@@ -78,6 +89,7 @@ function TeamOddsRow({
 
 export function MlbGameOddsBoard({ detail, view, isPending }: Props) {
   const asOf = formatAsOf(view?.asOf ?? null);
+  const sportsbook = formatSportsbook(view?.sportsbook);
   const awayRow = view?.rows.find((row) => row.side === "away");
   const homeRow = view?.rows.find((row) => row.side === "home");
 
@@ -85,9 +97,9 @@ export function MlbGameOddsBoard({ detail, view, isPending }: Props) {
     <GameSection data-testid="mlb-game-odds-board">
       <div className="mb-3 flex items-baseline justify-between gap-3">
         <h2 className="text-[18px] font-semibold text-white">Odds</h2>
-        {view?.sportsbook || asOf ? (
+        {sportsbook || asOf ? (
           <p className="text-right text-xs text-white/50">
-            {[view?.sportsbook, asOf].filter(Boolean).join(" · ")}
+            {[sportsbook, asOf].filter(Boolean).join(" · ")}
           </p>
         ) : null}
       </div>

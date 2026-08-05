@@ -141,6 +141,38 @@ def test_normalize_builds_team_perspective_board():
     assert g.total == 7.5
 
 
+def test_normalize_keeps_board_lines_without_prices():
+    rows = [
+        {
+            "away_team": "Los Angeles Angels",
+            "home_team": "Baltimore Orioles",
+            "start_time": "2026-08-05T23:05:00Z",
+            "market_type": "spread",
+            "side": "away",
+            "team": "Los Angeles Angels",
+            "points": 1.5,
+            "american_price": None,
+        },
+        {
+            "away_team": "Los Angeles Angels",
+            "home_team": "Baltimore Orioles",
+            "start_time": "2026-08-05T23:05:00Z",
+            "market_type": "total",
+            "side": "over",
+            "points": 7.5,
+            "american_price": None,
+        },
+    ]
+    games = svc.normalize_pinnacle_team_rows(rows)
+    assert len(games) == 1
+    board = games[0].board
+    assert board is not None
+    assert board.away.spread is not None
+    assert board.away.spread.line == 1.5 and board.away.spread.price is None
+    assert board.away.total is not None
+    assert board.away.total.line == 7.5 and board.away.total.price is None
+
+
 def test_merge_prefers_pinnacle_board():
     from app.domains.mlb.schemas import (
         MlbOddsBoard,

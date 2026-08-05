@@ -144,16 +144,17 @@ def normalize_pinnacle_team_rows(rows: list[dict[str, Any]]) -> list[MlbOddsGame
         except (TypeError, ValueError):
             continue
 
+        # Pinnacle occasionally publishes a line before (or without) a price;
+        # the line alone is still worth showing, so keep it with a null price.
         if market == "spread":
             team = _spread_side_abbrev(row, home, away)
             if team:
                 bucket["spreads"].append((team, points_f))
-                if price is not None:
-                    bucket["board_spreads"].append((team, points_f, price))
+                bucket["board_spreads"].append((team, points_f, price))
         elif market == "total":
             bucket["totals"].append(points_f)
             side = str(row.get("side") or "").lower()
-            if side in {"over", "under"} and price is not None:
+            if side in {"over", "under"}:
                 bucket["board_totals"].append((side, points_f, price))
 
     games: list[MlbOddsGame] = []
@@ -174,8 +175,8 @@ def normalize_pinnacle_team_rows(rows: list[dict[str, Any]]) -> list[MlbOddsGame
             continue
 
         moneylines: list[tuple[str, int]] = bucket["moneylines"]
-        board_spreads: list[tuple[str, float, int]] = bucket["board_spreads"]
-        board_totals: list[tuple[str, float, int]] = bucket["board_totals"]
+        board_spreads: list[tuple[str, float, int | None]] = bucket["board_spreads"]
+        board_totals: list[tuple[str, float, int | None]] = bucket["board_totals"]
         away_moneyline = next(
             (price for team, price in moneylines if team == bucket["away_abbrev"]),
             None,

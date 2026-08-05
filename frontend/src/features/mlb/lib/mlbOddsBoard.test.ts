@@ -1,9 +1,21 @@
 import { describe, expect, it } from "vitest";
+import type { ApiMlbOddsGame } from "@/shared/lib/api";
 import {
   findMlbOddsGame,
   formatAmericanOdds,
   toMlbOddsBoardView,
 } from "./mlbOddsBoard";
+
+const flatGame: ApiMlbOddsGame = {
+  away_abbrev: "LAA",
+  home_abbrev: "BAL",
+  game_date: "2026-08-05",
+  spread_line: -1.5,
+  spread_team_abbrev: "BAL",
+  total: 7.5,
+  sportsbook: "pinnacle",
+  board: null,
+};
 
 describe("mlbOddsBoard", () => {
   it("formats american odds with plus prefix", () => {
@@ -12,24 +24,36 @@ describe("mlbOddsBoard", () => {
   });
 
   it("finds game by abbrev and date", () => {
+    const hit = findMlbOddsGame([flatGame], "laa", "bal", "2026-08-05");
+    expect(hit?.home_abbrev).toBe("BAL");
+  });
+
+  it("falls back to an undated row when the date does not match", () => {
     const hit = findMlbOddsGame(
       [
-        {
-          away_abbrev: "LAA",
-          home_abbrev: "BAL",
-          game_date: "2026-08-05",
-          spread_line: -1.5,
-          spread_team_abbrev: "BAL",
-          total: 7.5,
-          sportsbook: "pinnacle",
-          board: null,
-        },
+        { ...flatGame, game_date: "2026-08-04" },
+        { ...flatGame, game_date: null },
       ],
-      "laa",
-      "bal",
+      "LAA",
+      "BAL",
       "2026-08-05",
     );
-    expect(hit?.home_abbrev).toBe("BAL");
+    expect(hit?.game_date).toBeNull();
+  });
+
+  it("does not fall back to a differently dated row for the same matchup", () => {
+    const hit = findMlbOddsGame(
+      [{ ...flatGame, game_date: "2026-08-04" }],
+      "LAA",
+      "BAL",
+      "2026-08-05",
+    );
+    expect(hit).toBeNull();
+  });
+
+  it("accepts any dated row when no date is requested", () => {
+    const hit = findMlbOddsGame([{ ...flatGame, game_date: "2026-08-04" }], "LAA", "BAL");
+    expect(hit?.game_date).toBe("2026-08-04");
   });
 
   it("maps pinnacle board to view rows", () => {
