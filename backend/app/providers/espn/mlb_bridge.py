@@ -45,6 +45,23 @@ class EspnWinProbability:
     stakes: EspnWinProbabilityStakes | None = None
 
 
+@dataclass(frozen=True)
+class EspnInjury:
+    """Lean provider-local shape; mapped to the domain schema at the MLB
+    game-detail boundary (``app.domains.mlb.game_detail``)."""
+
+    name: str
+    position: str | None
+    status: str
+    detail: str | None
+
+
+@dataclass(frozen=True)
+class EspnInjuries:
+    away: list[EspnInjury] = field(default_factory=list)
+    home: list[EspnInjury] = field(default_factory=list)
+
+
 def _as_dict(value: Any) -> dict:
     return value if isinstance(value, dict) else {}
 
@@ -199,6 +216,50 @@ def normalize_espn_mlb_win_probability(
         points=points,
         stakes=stakes,
     )
+
+
+def _injuries_for_team(blocks: list, team_id: str) -> list[EspnInjury]:
+    rows: list[EspnInjury] = []
+    for block in blocks:
+        if not isinstance(block, dict):
+            continue
+        if str(_as_dict(block.get("team")).get("id") or "") != team_id:
+            continue
+        for item in _as_list(block.get("injuries")):
+            if not isinstance(item, dict):
+                continue
+            athlete = _as_dict(item.get("athlete"))
+            name = str(athlete.get("displayName") or "").strip()
+            if not name:
+                continue
+            pos = _as_dict(athlete.get("position"))
+            position = str(pos.get("abbreviation") or "").strip() or None
+            details = _as_dict(item.get("details"))
+            detail = str(details.get("type") or "").strip() or None
+            status = str(item.get("status") or "").strip() or "Unknown"
+            rows.append(
+                EspnInjury(
+                    name=name, position=position, status=status, detail=detail
+                )
+            )
+    return rows
+
+
+def normalize_espn_mlb_injuries(
+    summary: dict,
+    *,
+    away_espn_team_id: str,
+    home_espn_team_id: str,
+) -> EspnInjuries | None:
+    """Map ESPN summary ``injuries`` into ``EspnInjuries``."""
+    blocks = summary.get("injuries")
+    if not isinstance(blocks, list):
+        return None
+    away = _injuries_for_team(blocks, away_espn_team_id)
+    home = _injuries_for_team(blocks, home_espn_team_id)
+    if not away and not home:
+        return None
+    return EspnInjuries(away=away, home=home)
 
 
 async def resolve_espn_event_id(
