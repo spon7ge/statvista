@@ -5,7 +5,7 @@ import { FeatureStrip } from "@/components/home/FeatureStrip";
 import { PropExplainerSection } from "@/components/home/PropExplainerSection";
 import { LeagueCtaSection } from "@/components/home/LeagueCtaSection";
 import { mergeLeagueScoreboards } from "@/components/home/mergeLeagueScoreboards";
-import { useMlbScoreboard } from "@/hooks/useMlbScoreboard";
+import { useMlbScoreboard } from "@/features/mlb/hooks/useMlbScoreboard";
 import { useWnbaScoreboard } from "@/hooks/useWnbaScoreboard";
 
 export function HomePage() {

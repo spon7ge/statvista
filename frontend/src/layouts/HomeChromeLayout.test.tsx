@@ -23,7 +23,7 @@ vi.mock("@/hooks/useWnbaScoreboard", () => ({
   }),
 }));
 
-vi.mock("@/hooks/useMlbScoreboard", () => ({
+vi.mock("@/features/mlb/hooks/useMlbScoreboard", () => ({
   useMlbScoreboard: () => ({
     isLoading: false,
     hasNeverLoaded: false,

@@ -3,7 +3,7 @@ import { HomeNav } from "@/components/home/HomeNav";
 import { LiveTicker } from "@/components/home/LiveTicker";
 import { mergeLeagueScoreboards } from "@/components/home/mergeLeagueScoreboards";
 import { SiteFooter } from "@/shared/ui/SiteFooter";
-import { useMlbScoreboard } from "@/hooks/useMlbScoreboard";
+import { useMlbScoreboard } from "@/features/mlb/hooks/useMlbScoreboard";
 import { useWnbaScoreboard } from "@/hooks/useWnbaScoreboard";
 
 export function HomeChromeLayout() {

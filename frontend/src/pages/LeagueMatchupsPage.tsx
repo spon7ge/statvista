@@ -13,8 +13,8 @@ import {
 import { mergeMatchupOdds } from "@/shared/lib/mergeMatchupOdds";
 import type { LeagueSlug } from "@/components/league/types";
 import { mapToMatchupGames } from "@/shared/lib/mapScoreboard";
-import { useMlbOdds } from "@/hooks/useMlbOdds";
-import { useMlbScoreboard } from "@/hooks/useMlbScoreboard";
+import { useMlbOdds } from "@/features/mlb/hooks/useMlbOdds";
+import { useMlbScoreboard } from "@/features/mlb/hooks/useMlbScoreboard";
 import { useWnbaOdds } from "@/hooks/useWnbaOdds";
 import { useWnbaScoreboard } from "@/hooks/useWnbaScoreboard";
 
