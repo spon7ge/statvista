@@ -40,3 +40,16 @@ async def test_fetch_season_team_stats_pair_returns_none_when_empty():
         async def get(self, url, params): return FakeResponse({"stats": [{"splits": []}]})
     clear_team_season_cache()
     assert await fetch_season_team_stats_pair(Client(), away_team_id=119, home_team_id=147, season=2026) is None
+
+@pytest.mark.asyncio
+async def test_fetch_team_season_stat_line_does_not_cache_total_failure():
+    class Client:
+        def __init__(self): self.calls = []
+        async def get(self, url, params):
+            self.calls.append((url, params))
+            raise RuntimeError("stats unavailable")
+    clear_team_season_cache()
+    client = Client()
+    assert await fetch_team_season_stat_line(client, 119, 2026) == {}
+    assert await fetch_team_season_stat_line(client, 119, 2026) == {}
+    assert len(client.calls) == 4

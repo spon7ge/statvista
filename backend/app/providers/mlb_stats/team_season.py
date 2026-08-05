@@ -95,7 +95,8 @@ async def fetch_team_season_stat_line(
         for key, value in parsed_group.items()
         if value is not None
     }
-    _team_season_cache[cache_key] = (time.monotonic(), line)
+    if line:
+        _team_season_cache[cache_key] = (time.monotonic(), line)
     return line
 
 
