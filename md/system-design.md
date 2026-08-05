@@ -139,11 +139,19 @@ LeaguePropPicksPage
 
 ```text
 backend/app/
-  main.py           # CORS + router mount (API v0.3.0)
-  api/routes/       # thin HTTP handlers (esp. wnba_*, mlb_scoreboard)
-  services/         # fetch, merge, cache, map to schemas
-  schemas/          # Pydantic response models
-  core/             # config; DB helpers for older DB-backed routes
+  main.py           # FastAPI configuration + /api router mount
+  api/
+    router.py       # assembles health and domain routers
+    routes/health.py
+    deps.py         # shared request dependencies
+  domains/
+    betting/        # DFS and sportsbook prop/odds endpoints
+    mlb/            # live MLB endpoints
+    research/       # DB-backed research endpoints
+    wnba/           # live WNBA endpoints
+  providers/        # upstream API clients and adapters
+  schemas/          # shared Pydantic models used by multiple domains
+  core/             # configuration, errors, and database helpers
 ```
 
 Site-facing WNBA and MLB routes are adapters over external APIs and Supabase odds tables. The unused

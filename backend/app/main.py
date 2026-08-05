@@ -1,15 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import (
-    health,
-)
+from app.api.router import api_router
 from app.core.config import CORS_ORIGINS
 from app.core.errors import register_exception_handlers
-from app.domains.betting.routes import router as betting_router
-from app.domains.mlb.routes import router as mlb_router
-from app.domains.research.routes import router as research_router
-from app.domains.wnba.routes import router as wnba_router
 
 app = FastAPI(
     title="statvista API",
@@ -36,11 +30,4 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ── Core Phase 9 routes ────────────────────────────────────────────────────
-app.include_router(health.router, prefix="/api")
-app.include_router(research_router, prefix="/api")
-
-# ── Direct upstream (non-DB) routes ────────────────────────────────────────
-app.include_router(betting_router, prefix="/api")
-app.include_router(mlb_router, prefix="/api")
-app.include_router(wnba_router, prefix="/api")
+app.include_router(api_router, prefix="/api")

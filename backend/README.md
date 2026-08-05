@@ -23,6 +23,28 @@ WNBA game detail may call ESPN + RotoWire for scheduled projected starters.
 - API docs: http://localhost:8000/docs
 - Health: http://localhost:8000/api/health
 
+## Architecture
+
+`app.main` owns application configuration (CORS and exception handlers) and mounts
+`app.api.router.api_router` at `/api`. The central router assembles health and the
+domain routers in a single place:
+
+```text
+app/
+├── api/
+│   ├── router.py        # combines health and domain routers
+│   ├── deps.py          # shared request dependencies
+│   └── routes/health.py # health endpoint
+├── domains/
+│   ├── betting/
+│   ├── mlb/
+│   ├── research/
+│   └── wnba/
+├── providers/           # upstream API clients and adapters
+├── schemas/             # shared Pydantic models used by multiple domains
+└── core/                # configuration, errors, and database helpers
+```
+
 ## Dashboard read path
 
 FastAPI serves the React app from Postgres only (no live NBA/odds calls at request time):
