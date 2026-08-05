@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { gameDetailHref } from "./gameDetailHref";
+import { gameDetailHref } from "@/shared/lib/gameDetailHref";
 
 describe("gameDetailHref", () => {
   it("returns WNBA espn path", () => {

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import type { ApiWnbaLeaderCategory } from "@/lib/api";
+import type { ApiWnbaLeaderCategory } from "@/shared/lib/api";
 import { teamColor } from "./wnbaTeamColors";
 
 type LeaderCategoryCardProps = {

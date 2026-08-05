@@ -1,4 +1,4 @@
-import { GameSection } from "@/components/game/GameSection";
+import { GameSection } from "@/shared/ui/GameSection";
 import { MlbBaseDiamond } from "./MlbBaseDiamond";
 import { MlbPitchZone } from "./MlbPitchZone";
 import type { MlbGameDetailView, MlbPlayerCard } from "./types";

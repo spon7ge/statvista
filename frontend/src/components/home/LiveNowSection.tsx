@@ -1,13 +1,13 @@
 import { Link } from "react-router-dom";
-import { TeamAbbrevAvatar } from "@/components/TeamAbbrevAvatar";
+import { TeamAbbrevAvatar } from "@/shared/ui/TeamAbbrevAvatar";
 import type { LiveGame } from "./types";
 import {
   LIVE_NOW_SKELETON_COUNT,
   formatGamesInProgress,
   normalizeLiveGames,
 } from "./format";
-import { gameDetailHref } from "./gameDetailHref";
-import { isInProgressStatus } from "./mapScoreboard";
+import { gameDetailHref } from "@/shared/lib/gameDetailHref";
+import { isInProgressStatus } from "@/shared/lib/mapScoreboard";
 import { SectionHeading } from "./SectionHeading";
 
 type LiveNowSectionProps = {

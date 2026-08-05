@@ -1,4 +1,4 @@
-import type { ApiMlbGameDetail } from "@/lib/api";
+import type { ApiMlbGameDetail } from "@/shared/lib/api";
 import type { MlbGameDetailView, MlbPlay } from "./types";
 
 function mapPlay(play: ApiMlbGameDetail["plays"][number]): MlbPlay {

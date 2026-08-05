@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
-import type { ApiWnbaPropBookQuote, ApiWnbaPropLine } from "@/lib/api";
-import { TeamAbbrevAvatar } from "@/components/TeamAbbrevAvatar";
+import type { ApiWnbaPropBookQuote, ApiWnbaPropLine } from "@/shared/lib/api";
+import { TeamAbbrevAvatar } from "@/shared/ui/TeamAbbrevAvatar";
 import {
   PROP_BOOK_OPTIONS,
   type PropBookKey,

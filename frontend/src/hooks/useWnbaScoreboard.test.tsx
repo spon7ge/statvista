@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 import { useWnbaScoreboard } from "./useWnbaScoreboard";
 
-vi.mock("@/components/league/matchupSlateDate", () => ({
+vi.mock("@/shared/lib/matchupSlateDate", () => ({
   slateEtDate: () => "2026-07-29",
 }));
 

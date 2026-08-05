@@ -1,5 +1,5 @@
-import type { ApiWnbaStandingsConference } from "@/lib/api";
-import { TeamAbbrevAvatar } from "@/components/TeamAbbrevAvatar";
+import type { ApiWnbaStandingsConference } from "@/shared/lib/api";
+import { TeamAbbrevAvatar } from "@/shared/ui/TeamAbbrevAvatar";
 import { teamColor } from "./wnbaTeamColors";
 
 type StandingsConferenceCardProps = {

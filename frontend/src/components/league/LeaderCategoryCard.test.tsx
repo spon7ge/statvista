@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import type { ApiWnbaLeaderCategory } from "@/lib/api";
+import type { ApiWnbaLeaderCategory } from "@/shared/lib/api";
 import { LeaderCategoryCard } from "./LeaderCategoryCard";
 
 const category: ApiWnbaLeaderCategory = {

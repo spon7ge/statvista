@@ -1,7 +1,7 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
-import type { ApiWnbaPlayerGame } from "@/lib/api";
+import type { ApiWnbaPlayerGame } from "@/shared/lib/api";
 import { PlayerRecentGames } from "./PlayerRecentGames";
 
 function makeGame(index: number): ApiWnbaPlayerGame {

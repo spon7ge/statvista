@@ -7,14 +7,14 @@ import { mlbScheduledDetail } from "./testFixtures";
 import type {
   ApiMlbLineupGame,
   ApiMlbLineupMatchupResponse,
-} from "@/lib/api";
+} from "@/shared/lib/api";
 
 const fetchMlbLineups = vi.fn();
 const useMlbLineupMatchup = vi.fn(() => ({
   data: null as ApiMlbLineupMatchupResponse | null,
 }));
 
-vi.mock("@/lib/api", () => ({
+vi.mock("@/shared/lib/api", () => ({
   fetchMlbLineups: (...args: unknown[]) => fetchMlbLineups(...args),
 }));
 

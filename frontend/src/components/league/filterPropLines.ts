@@ -1,4 +1,4 @@
-import type { ApiWnbaGame, ApiWnbaPropLine } from "@/lib/api";
+import type { ApiWnbaGame, ApiWnbaPropLine } from "@/shared/lib/api";
 
 export const PROP_BOOK_OPTIONS = [
   { key: "prizepicks", label: "PrizePicks" },

@@ -1,4 +1,4 @@
-import type { ApiWnbaLeaderCategory } from "@/lib/api";
+import type { ApiWnbaLeaderCategory } from "@/shared/lib/api";
 import { LeaderCategoryCard } from "./LeaderCategoryCard";
 
 type LeadersGridProps = {

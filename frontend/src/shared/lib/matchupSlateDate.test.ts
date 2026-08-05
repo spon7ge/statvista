@@ -6,7 +6,7 @@ import {
   parseMatchupDateParam,
   shiftEtDate,
   slateEtDate,
-} from "./matchupSlateDate";
+} from "@/shared/lib/matchupSlateDate";
 
 describe("matchupSlateDate", () => {
   it("uses ET calendar date and lags before 3:00 AM ET", () => {

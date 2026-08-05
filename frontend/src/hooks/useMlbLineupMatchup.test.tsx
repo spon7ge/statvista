@@ -3,7 +3,7 @@ import { renderHook, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { useMlbLineupMatchup } from "./useMlbLineupMatchup";
 
-vi.mock("@/lib/api", () => ({
+vi.mock("@/shared/lib/api", () => ({
   fetchMlbLineupMatchup: vi.fn(async () => ({
     date: "2026-08-04",
     away_abbrev: "WSH",

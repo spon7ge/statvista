@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { GAME_SECTION_SURFACE } from "./GameSection";
+import { GAME_SECTION_SURFACE } from "@/shared/ui/GameSection";
 import type { GameDetail, GameDetailTeam } from "./types";
 
 const statusAccent: Record<GameDetail["status"], string> = {

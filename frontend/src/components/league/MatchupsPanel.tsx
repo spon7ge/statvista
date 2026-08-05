@@ -1,6 +1,6 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { isInProgressStatus } from "@/components/home/mapScoreboard";
-import { formatMatchupNavLabel } from "./matchupSlateDate";
+import { isInProgressStatus } from "@/shared/lib/mapScoreboard";
+import { formatMatchupNavLabel } from "@/shared/lib/matchupSlateDate";
 import { MatchupGameCard } from "./MatchupGameCard";
 import type { MatchupGame } from "./types";
 

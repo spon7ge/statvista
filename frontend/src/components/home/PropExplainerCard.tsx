@@ -1,4 +1,4 @@
-import { TeamAbbrevAvatar } from "@/components/TeamAbbrevAvatar";
+import { TeamAbbrevAvatar } from "@/shared/ui/TeamAbbrevAvatar";
 import { DEMO_PROP, formatEvPercent } from "./propExplainerDemo";
 
 function formatAmericanOdds(odds: number): string {

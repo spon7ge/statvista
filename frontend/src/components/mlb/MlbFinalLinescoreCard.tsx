@@ -1,4 +1,4 @@
-import { GameSection } from "@/components/game/GameSection";
+import { GameSection } from "@/shared/ui/GameSection";
 import { MlbLinescore } from "./MlbLinescore";
 import type { MlbGameDetailView } from "./types";
 

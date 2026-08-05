@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import type { ApiWnbaPlayerResponse } from "@/lib/api";
+import type { ApiWnbaPlayerResponse } from "@/shared/lib/api";
 import { PlayerHeader } from "./PlayerHeader";
 
 const player: ApiWnbaPlayerResponse = {

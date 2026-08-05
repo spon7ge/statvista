@@ -1,4 +1,4 @@
-import type { ApiMatchupOddsGame } from "@/lib/api";
+import type { ApiMatchupOddsGame } from "./api";
 import type { MatchupGame, MatchupOdds } from "./types";
 
 /** Align ESPN tricodes with odds / stats.wnba.com spellings (WNBA only). */

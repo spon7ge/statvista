@@ -9,10 +9,10 @@ import {
   parseMatchupDateParam,
   shiftEtDate,
   slateEtDate,
-} from "@/components/league/matchupSlateDate";
-import { mergeMatchupOdds } from "@/components/league/mergeMatchupOdds";
+} from "@/shared/lib/matchupSlateDate";
+import { mergeMatchupOdds } from "@/shared/lib/mergeMatchupOdds";
 import type { LeagueSlug } from "@/components/league/types";
-import { mapToMatchupGames } from "@/components/home/mapScoreboard";
+import { mapToMatchupGames } from "@/shared/lib/mapScoreboard";
 import { useMlbOdds } from "@/hooks/useMlbOdds";
 import { useMlbScoreboard } from "@/hooks/useMlbScoreboard";
 import { useWnbaOdds } from "@/hooks/useWnbaOdds";

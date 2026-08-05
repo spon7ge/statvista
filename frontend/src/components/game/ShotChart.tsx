@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { GameSection } from "./GameSection";
+import { GameSection } from "@/shared/ui/GameSection";
 import type { GameDetail } from "./types";
 
 /** Half-court in feet × 10 (ESPN: x 0–50, y 0–47 with y≈0 at the basket). */

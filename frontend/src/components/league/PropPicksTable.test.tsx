@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
-import type { ApiWnbaPropLine } from "@/lib/api";
+import type { ApiWnbaPropLine } from "@/shared/lib/api";
 import { PROP_PICKS_PAGE_SIZE, PropPicksTable } from "./PropPicksTable";
 
 const emptyBooks = {

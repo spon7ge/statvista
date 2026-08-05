@@ -10,7 +10,7 @@ import { ShotChart } from "@/components/game/ShotChart";
 import { PlayByPlay } from "@/components/game/PlayByPlay";
 import { WinProbabilityPanel } from "@/components/game/WinProbabilityPanel";
 import { BoxScore } from "@/components/game/BoxScore";
-import { GAME_SECTION_SURFACE } from "@/components/game/GameSection";
+import { GAME_SECTION_SURFACE } from "@/shared/ui/GameSection";
 
 function GameDetailSkeleton() {
   return (

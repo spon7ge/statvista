@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { GAME_SECTION_SURFACE, GameSection } from "./GameSection";
+import { GAME_SECTION_SURFACE, GameSection } from "@/shared/ui/GameSection";
 
 describe("GameSection", () => {
   it("applies the quiet Live-now surface classes", () => {

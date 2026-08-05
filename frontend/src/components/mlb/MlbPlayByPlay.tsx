@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { GameSection } from "@/components/game/GameSection";
+import { GameSection } from "@/shared/ui/GameSection";
 import { MlbPlayList, MlbScoringPlays } from "./MlbScoringPlays";
 import type { MlbGameDetailView } from "./types";
 

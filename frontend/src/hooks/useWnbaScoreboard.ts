@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { slateEtDate } from "@/components/league/matchupSlateDate";
-import { fetchWnbaScoreboard, fetchWnbaScoreboardByDate } from "@/lib/api";
+import { slateEtDate } from "@/shared/lib/matchupSlateDate";
+import { fetchWnbaScoreboard, fetchWnbaScoreboardByDate } from "@/shared/lib/api";
 import {
   mapToLiveGames,
   mapToTickerGames,
   shouldPollScoreboard,
-} from "@/components/home/mapScoreboard";
+} from "@/shared/lib/mapScoreboard";
 
 const REFETCH_MS = 18_000;
 

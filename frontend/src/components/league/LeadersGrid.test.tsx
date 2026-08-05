@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it } from "vitest";
 import { LeadersGrid } from "./LeadersGrid";
-import type { ApiWnbaLeaderCategory } from "@/lib/api";
+import type { ApiWnbaLeaderCategory } from "@/shared/lib/api";
 
 function renderGrid(ui: ReactElement) {
   return render(<MemoryRouter>{ui}</MemoryRouter>);

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchGameDetail } from "@/lib/api";
+import { fetchGameDetail } from "@/shared/lib/api";
 
 export function useGameDetail(espnEventId: string | undefined) {
   const query = useQuery({

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { GameSection } from "@/components/game/GameSection";
+import { GameSection } from "@/shared/ui/GameSection";
 import type {
   MlbBatterRow,
   MlbGameDetailTeam,

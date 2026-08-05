@@ -5,7 +5,7 @@ import { mlbScheduledDetail } from "./testFixtures";
 import type {
   ApiMlbLineupGame,
   ApiMlbLineupMatchupResponse,
-} from "@/lib/api";
+} from "@/shared/lib/api";
 
 const lineupGame: ApiMlbLineupGame = {
   away_abbrev: "WSH",

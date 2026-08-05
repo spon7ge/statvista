@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { ApiWnbaGame, ApiWnbaPropLine } from "@/lib/api";
+import type { ApiWnbaGame, ApiWnbaPropLine } from "@/shared/lib/api";
 import {
   collectStatOptions,
   collectTeamOptions,

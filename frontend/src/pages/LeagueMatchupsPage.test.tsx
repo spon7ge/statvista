@@ -18,9 +18,9 @@ vi.mock("@/hooks/useWnbaOdds", () => ({
   useWnbaOdds: () => ({ data: undefined }),
 }));
 
-vi.mock("@/components/league/matchupSlateDate", async (importOriginal) => {
+vi.mock("@/shared/lib/matchupSlateDate", async (importOriginal) => {
   const actual =
-    await importOriginal<typeof import("@/components/league/matchupSlateDate")>();
+    await importOriginal<typeof import("@/shared/lib/matchupSlateDate")>();
   return { ...actual, slateEtDate: () => "2026-08-01" };
 });
 

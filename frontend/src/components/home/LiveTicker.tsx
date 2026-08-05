@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import { gameDetailHref } from "./gameDetailHref";
-import { isInProgressStatus } from "./mapScoreboard";
+import { gameDetailHref } from "@/shared/lib/gameDetailHref";
+import { isInProgressStatus } from "@/shared/lib/mapScoreboard";
 import type { TickerGame } from "./types";
 
 type LiveTickerProps = {

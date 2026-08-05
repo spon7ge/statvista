@@ -2,7 +2,7 @@ import { Outlet } from "react-router-dom";
 import { HomeNav } from "@/components/home/HomeNav";
 import { LiveTicker } from "@/components/home/LiveTicker";
 import { mergeLeagueScoreboards } from "@/components/home/mergeLeagueScoreboards";
-import { SiteFooter } from "@/components/SiteFooter";
+import { SiteFooter } from "@/shared/ui/SiteFooter";
 import { useMlbScoreboard } from "@/hooks/useMlbScoreboard";
 import { useWnbaScoreboard } from "@/hooks/useWnbaScoreboard";
 

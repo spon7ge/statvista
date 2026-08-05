@@ -5,7 +5,7 @@ import { MlbFinalCenter } from "@/components/mlb/MlbFinalCenter";
 import { MlbLiveCenter } from "@/components/mlb/MlbLiveCenter";
 import { MlbPregameCenter } from "@/components/mlb/MlbPregameCenter";
 import type { MlbGameDetailView } from "@/components/mlb/types";
-import { GAME_SECTION_SURFACE } from "@/components/game/GameSection";
+import { GAME_SECTION_SURFACE } from "@/shared/ui/GameSection";
 
 function attributionLabel(sources: string[]): string {
   return sources.includes("espn")

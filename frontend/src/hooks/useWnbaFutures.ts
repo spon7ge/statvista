@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchWnbaFutures } from "@/lib/api";
+import { fetchWnbaFutures } from "@/shared/lib/api";
 
 export function useWnbaFutures() {
   const query = useQuery({

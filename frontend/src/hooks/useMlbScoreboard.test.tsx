@@ -7,7 +7,7 @@ import { useMlbScoreboard } from "./useMlbScoreboard";
 const fetchMlbScoreboard = vi.fn();
 const fetchMlbScoreboardByDate = vi.fn();
 
-vi.mock("@/lib/api", () => ({
+vi.mock("@/shared/lib/api", () => ({
   fetchMlbScoreboard: (...args: unknown[]) => fetchMlbScoreboard(...args),
   fetchMlbScoreboardByDate: (...args: unknown[]) =>
     fetchMlbScoreboardByDate(...args),

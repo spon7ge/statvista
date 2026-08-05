@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { TeamAbbrevAvatar } from "@/components/TeamAbbrevAvatar";
+import { TeamAbbrevAvatar } from "@/shared/ui/TeamAbbrevAvatar";
 import {
   PROP_BOOK_OPTIONS,
   type TeamFilterOption,

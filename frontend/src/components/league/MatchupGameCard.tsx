@@ -2,10 +2,10 @@ import { ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import draftKingsLogo from "@/assets/draftkings.png";
 import fanDuelLogo from "@/assets/fanduel.png";
-import { gameDetailHref } from "@/components/home/gameDetailHref";
-import { isInProgressStatus } from "@/components/home/mapScoreboard";
-import { TeamAbbrevAvatar } from "@/components/TeamAbbrevAvatar";
-import { formatOddsPill } from "./mergeMatchupOdds";
+import { gameDetailHref } from "@/shared/lib/gameDetailHref";
+import { isInProgressStatus } from "@/shared/lib/mapScoreboard";
+import { TeamAbbrevAvatar } from "@/shared/ui/TeamAbbrevAvatar";
+import { formatOddsPill } from "@/shared/lib/mergeMatchupOdds";
 import type { MatchupGame, MatchupOdds, MatchupTeam } from "./types";
 
 function TeamRow({

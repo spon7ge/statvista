@@ -1,5 +1,5 @@
-import type { ApiWnbaFuturesMarket } from "@/lib/api";
-import { TeamAbbrevAvatar } from "@/components/TeamAbbrevAvatar";
+import type { ApiWnbaFuturesMarket } from "@/shared/lib/api";
+import { TeamAbbrevAvatar } from "@/shared/ui/TeamAbbrevAvatar";
 
 type FuturesBoardProps = {
   season: number;

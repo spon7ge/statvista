@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchWnbaOdds } from "@/lib/api";
+import { fetchWnbaOdds } from "@/shared/lib/api";
 
 const REFETCH_MS = 60_000;
 

@@ -6,7 +6,7 @@ import { useMlbLineups } from "./useMlbLineups";
 
 const fetchMlbLineups = vi.fn();
 
-vi.mock("@/lib/api", () => ({
+vi.mock("@/shared/lib/api", () => ({
   fetchMlbLineups: (...args: unknown[]) => fetchMlbLineups(...args),
 }));
 

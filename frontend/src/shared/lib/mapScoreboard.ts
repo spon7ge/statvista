@@ -1,5 +1,10 @@
-import type { MatchupGame } from "@/components/league/types";
-import type { GameStatus, HomeLeague, LiveGame, TickerGame } from "./types";
+import type {
+  GameStatus,
+  HomeLeague,
+  LiveGame,
+  MatchupGame,
+  TickerGame,
+} from "./types";
 
 type ScoreboardGame = {
   id: string;

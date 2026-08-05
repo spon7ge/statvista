@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { GameSection } from "./GameSection";
+import { GameSection } from "@/shared/ui/GameSection";
 import type { GameDetail } from "./types";
 
 function periodLabel(period: number): string {

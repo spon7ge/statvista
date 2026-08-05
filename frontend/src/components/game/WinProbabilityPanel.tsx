@@ -1,5 +1,5 @@
 import { useEffect, useState, type MouseEvent } from "react";
-import { GameSection } from "./GameSection";
+import { GameSection } from "@/shared/ui/GameSection";
 import type { GameDetail } from "./types";
 import {
   buildSplitSeriesPaths,

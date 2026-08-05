@@ -1,5 +1,5 @@
 import type { GameDetail, GameDetailBoxScorePlayer, GameDetailTeam } from "./types";
-import { GameSection } from "./GameSection";
+import { GameSection } from "@/shared/ui/GameSection";
 
 const STAT_COLS =
   "grid-cols-[minmax(7rem,1.3fr)_repeat(14,minmax(1.85rem,1fr))]";

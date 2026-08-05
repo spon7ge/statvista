@@ -1,4 +1,4 @@
-import { GameSection } from "@/components/game/GameSection";
+import { GameSection } from "@/shared/ui/GameSection";
 import type { MlbPitch, MlbSituation } from "./types";
 
 // Normalized zone coords are [-1, 1]. Scale fills most of a tight 124×120 viewBox

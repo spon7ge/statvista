@@ -1,4 +1,4 @@
-import { GameSection } from "./GameSection";
+import { GameSection } from "@/shared/ui/GameSection";
 import type { GameDetail, GameDetailInjury } from "./types";
 
 type InjuryReportProps = {

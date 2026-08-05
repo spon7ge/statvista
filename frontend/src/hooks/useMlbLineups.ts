@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchMlbLineups } from "@/lib/api";
+import { fetchMlbLineups } from "@/shared/lib/api";
 
 export function useMlbLineups(dateEt: string | null | undefined) {
   const query = useQuery({

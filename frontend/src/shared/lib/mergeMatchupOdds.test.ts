@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatOddsPill, mergeMatchupOdds } from "./mergeMatchupOdds";
+import { formatOddsPill, mergeMatchupOdds } from "@/shared/lib/mergeMatchupOdds";
 import type { MatchupGame } from "./types";
 
 const baseGame: MatchupGame = {

@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
-import type { ApiMlbGame, ApiWnbaGame } from "@/lib/api";
+import type { ApiMlbGame, ApiWnbaGame } from "@/shared/lib/api";
 import {
   mapToLiveGames,
   mapToMatchupGames,
   mapToTickerGames,
   shouldPollScoreboard,
-} from "./mapScoreboard";
+} from "@/shared/lib/mapScoreboard";
 
 function apiGame(overrides: Partial<ApiWnbaGame> = {}): ApiWnbaGame {
   return {

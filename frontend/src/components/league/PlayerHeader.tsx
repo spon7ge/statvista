@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { ApiWnbaPlayerResponse } from "@/lib/api";
+import type { ApiWnbaPlayerResponse } from "@/shared/lib/api";
 
 type PlayerHeaderProps = {
   player: ApiWnbaPlayerResponse;

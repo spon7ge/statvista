@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { ApiMlbGameDetail } from "@/lib/api";
+import type { ApiMlbGameDetail } from "@/shared/lib/api";
 import { mapMlbGameDetail } from "./mapMlbGameDetail";
 
 function buildApiDetail(

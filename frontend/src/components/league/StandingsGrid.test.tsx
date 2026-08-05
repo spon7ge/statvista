@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { StandingsGrid } from "./StandingsGrid";
-import type { ApiWnbaStandingsConference } from "@/lib/api";
+import type { ApiWnbaStandingsConference } from "@/shared/lib/api";
 
 const sample: ApiWnbaStandingsConference[] = [
   {

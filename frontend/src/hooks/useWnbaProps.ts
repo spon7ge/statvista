@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchWnbaProps } from "@/lib/api";
+import { fetchWnbaProps } from "@/shared/lib/api";
 
 const REFETCH_MS = 60_000;
 

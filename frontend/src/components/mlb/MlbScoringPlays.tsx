@@ -1,4 +1,4 @@
-import { GameSection } from "@/components/game/GameSection";
+import { GameSection } from "@/shared/ui/GameSection";
 import type { MlbGameDetailView, MlbPlay } from "./types";
 
 function EventBadge({ event }: { event: string | null }) {

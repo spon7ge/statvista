@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { FuturesBoard } from "./FuturesBoard";
-import type { ApiWnbaFuturesMarket } from "@/lib/api";
+import type { ApiWnbaFuturesMarket } from "@/shared/lib/api";
 
 const sampleMarkets: ApiWnbaFuturesMarket[] = [
   {

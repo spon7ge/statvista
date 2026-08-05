@@ -1,4 +1,4 @@
-import type { ApiWnbaStandingsConference } from "@/lib/api";
+import type { ApiWnbaStandingsConference } from "@/shared/lib/api";
 import { StandingsConferenceCard } from "./StandingsConferenceCard";
 
 type StandingsGridProps = {

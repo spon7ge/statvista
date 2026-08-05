@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchMlbGameDetail } from "@/lib/api";
+import { fetchMlbGameDetail } from "@/shared/lib/api";
 
 export function useMlbGameDetail(gamePk: string | undefined) {
   const query = useQuery({

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useMlbLineupMatchup } from "@/hooks/useMlbLineupMatchup";
 import { useMlbLineups } from "@/hooks/useMlbLineups";
-import type { ApiMlbLineupGame, ApiMlbLineupSide } from "@/lib/api";
+import type { ApiMlbLineupGame, ApiMlbLineupSide } from "@/shared/lib/api";
 import {
   MlbPregameBroadcastHeader,
   type PregameTab,

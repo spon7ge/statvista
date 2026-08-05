@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { GameSection } from "@/components/game/GameSection";
+import { GameSection } from "@/shared/ui/GameSection";
 import type {
   ApiMlbLineupBatter,
   ApiMlbLineupGame,
   ApiMlbLineupMatchupResponse,
   ApiMlbLineupSide,
-} from "@/lib/api";
+} from "@/shared/lib/api";
 import type { MlbGameDetailTeam, MlbGameDetailView } from "./types";
 
 type TeamSide = "away" | "home";

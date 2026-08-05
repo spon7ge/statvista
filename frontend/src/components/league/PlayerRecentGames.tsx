@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { ApiWnbaPlayerGame } from "@/lib/api";
+import type { ApiWnbaPlayerGame } from "@/shared/lib/api";
 
 type PlayerRecentGamesProps = {
   games: ApiWnbaPlayerGame[];

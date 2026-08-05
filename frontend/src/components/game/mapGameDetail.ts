@@ -1,4 +1,4 @@
-import type { ApiWnbaGameDetail } from "@/lib/api";
+import type { ApiWnbaGameDetail } from "@/shared/lib/api";
 import type { GameDetail } from "./types";
 
 export function mapGameDetail(detail: ApiWnbaGameDetail): GameDetail {
