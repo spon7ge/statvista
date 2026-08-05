@@ -17,6 +17,8 @@ from app.domains.mlb.schemas import (
     MlbGameDetail,
     MlbGameDetailTeam,
     MlbHitPoint,
+    MlbInjuries,
+    MlbInjury,
     MlbLinescore,
     MlbLinescoreInning,
     MlbLinescoreTotals,
@@ -26,6 +28,7 @@ from app.domains.mlb.schemas import (
     MlbPlay,
     MlbPlayerCard,
     MlbRunners,
+    MlbSeasonTeamStatsPair,
     MlbSituation,
     MlbTeamStatLine,
     MlbTeamStatsPair,
@@ -36,10 +39,13 @@ from app.domains.mlb.schemas import (
 from app.domains.mlb.schemas import GameStatus
 from app.providers.espn.mlb_bridge import (
     ESPN_TIMEOUT_SECONDS,
+    EspnInjuries,
     EspnWinProbability,
+    normalize_espn_mlb_injuries,
     normalize_espn_mlb_win_probability,
     resolve_espn_event_id,
 )
+from app.providers.mlb_stats.team_season import fetch_season_team_stats_pair
 from app.domains.mlb.scoreboard import format_tip_label
 
 logger = logging.getLogger(__name__)
@@ -973,6 +979,82 @@ def attach_win_probability(
     return detail.model_copy(update={"win_probability": wp, "sources": sources})
 
 
+def attach_season_team_stats(
+    detail: MlbGameDetail,
+    pair: MlbSeasonTeamStatsPair | None,
+) -> MlbGameDetail:
+    """Attach season-to-date team stats onto a Stats-normalized detail payload."""
+    if pair is None:
+        return detail
+    return detail.model_copy(update={"season_team_stats": pair})
+
+
+def attach_injuries(
+    detail: MlbGameDetail,
+    injuries: MlbInjuries | None,
+) -> MlbGameDetail:
+    """Attach ESPN injuries onto a Stats-normalized detail payload."""
+    if injuries is None:
+        return detail
+    sources = list(detail.sources)
+    if "espn" not in sources:
+        sources.append("espn")
+    return detail.model_copy(update={"injuries": injuries, "sources": sources})
+
+
+def _to_mlb_injuries(injuries: EspnInjuries | None) -> MlbInjuries | None:
+    """Map the ESPN provider's lean injuries shape onto the domain schema."""
+    if injuries is None:
+        return None
+    return MlbInjuries(
+        away=[
+            MlbInjury(
+                name=row.name,
+                position=row.position,
+                status=row.status,
+                detail=row.detail,
+            )
+            for row in injuries.away
+        ],
+        home=[
+            MlbInjury(
+                name=row.name,
+                position=row.position,
+                status=row.status,
+                detail=row.detail,
+            )
+            for row in injuries.home
+        ],
+    )
+
+
+def _espn_competitor_team_ids(summary: dict) -> tuple[str, str]:
+    """Extract ESPN away/home team ids from a summary header."""
+    competitions = _as_list(_as_dict(summary.get("header")).get("competitions"))
+    competition = _as_dict(competitions[0]) if competitions else {}
+    by_side: dict[str, dict] = {}
+    for competitor in _as_list(competition.get("competitors")):
+        row = _as_dict(competitor)
+        side = str(row.get("homeAway") or "")
+        if side:
+            by_side[side] = row
+    away = _as_dict(by_side.get("away"))
+    home = _as_dict(by_side.get("home"))
+    away_id = str(_as_dict(away.get("team")).get("id") or "")
+    home_id = str(_as_dict(home.get("team")).get("id") or "")
+    return away_id, home_id
+
+
+def _season_year(detail: MlbGameDetail, payload: dict) -> int | None:
+    raw = detail.game_date or _game_date_et(payload)
+    if not raw or len(raw) < 4:
+        return None
+    try:
+        return int(raw[:4])
+    except ValueError:
+        return None
+
+
 def parse_standings_last10(payload: dict) -> dict[str, str]:
     """Parse a Stats API ``standings`` payload into ``team_id -> "W-L"`` for the last-10 split."""
     mapping: dict[str, str] = {}
@@ -1108,13 +1190,34 @@ async def fetch_espn_mlb_summary(
             await http_client.aclose()
 
 
-async def _attach_espn_win_probability(
+async def _attach_season_team_stats(detail: MlbGameDetail, payload: dict) -> MlbGameDetail:
+    """Soft-fetch season YTD hitting/pitching for scheduled games only."""
+    season = _season_year(detail, payload)
+    if season is None:
+        return detail
+    try:
+        away_id = int(detail.away.id)
+        home_id = int(detail.home.id)
+    except (TypeError, ValueError):
+        return detail
+
+    async with httpx.AsyncClient(timeout=STATS_TIMEOUT_SECONDS) as client:
+        pair = await fetch_season_team_stats_pair(
+            client,
+            away_team_id=away_id,
+            home_team_id=home_id,
+            season=season,
+        )
+    return attach_season_team_stats(detail, pair)
+
+
+async def _attach_espn_summary_enrichment(
     detail: MlbGameDetail,
     payload: dict,
     *,
     cached_espn_event_id: str | None,
 ) -> tuple[MlbGameDetail, str | None]:
-    """Soft-merge ESPN win probability; never fail the Stats-backed detail."""
+    """Soft-merge ESPN win probability + injuries from one summary fetch."""
     espn_event_id = cached_espn_event_id
     try:
         if not espn_event_id:
@@ -1137,10 +1240,24 @@ async def _attach_espn_win_probability(
                 away_abbrev=detail.away.abbrev,
             )
         )
-        return attach_win_probability(detail, wp), espn_event_id
+        detail = attach_win_probability(detail, wp)
+
+        away_espn_id, home_espn_id = _espn_competitor_team_ids(summary)
+        if away_espn_id and home_espn_id:
+            detail = attach_injuries(
+                detail,
+                _to_mlb_injuries(
+                    normalize_espn_mlb_injuries(
+                        summary,
+                        away_espn_team_id=away_espn_id,
+                        home_espn_team_id=home_espn_id,
+                    )
+                ),
+            )
+        return detail, espn_event_id
     except Exception as exc:
         logger.warning(
-            "ESPN win probability unavailable for MLB game %s: %s",
+            "ESPN summary enrichment unavailable for MLB game %s: %s",
             detail.mlb_game_pk,
             exc,
         )
@@ -1197,6 +1314,14 @@ async def get_mlb_game_detail(game_pk: str) -> MlbGameDetail:
                 detail.mlb_game_pk,
                 exc,
             )
+        try:
+            detail = await _attach_season_team_stats(detail, payload)
+        except Exception as exc:
+            logger.warning(
+                "season team stats unavailable for %s: %s",
+                detail.mlb_game_pk,
+                exc,
+            )
 
     cached_espn_event_id = None
     if cached and isinstance(cached.get("espn_event_id"), str):
@@ -1204,7 +1329,7 @@ async def get_mlb_game_detail(game_pk: str) -> MlbGameDetail:
     elif stale_fallback and isinstance(stale_fallback.get("espn_event_id"), str):
         cached_espn_event_id = stale_fallback["espn_event_id"]
 
-    detail, espn_event_id = await _attach_espn_win_probability(
+    detail, espn_event_id = await _attach_espn_summary_enrichment(
         detail,
         payload,
         cached_espn_event_id=cached_espn_event_id,
