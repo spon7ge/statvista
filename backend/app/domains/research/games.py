@@ -1,16 +1,11 @@
-"""GET /api/games/* — schedule and slate endpoints (DB-only)."""
+"""Database queries for research game and slate data."""
 from __future__ import annotations
 
-import datetime
 import re
-
-from fastapi import APIRouter, HTTPException, Query
 
 from app.core import db
 from app.domains.research.schemas_game import Game, GameSlate, GameWithProps
 from app.schemas.prop import PropLine
-
-router = APIRouter(tags=["games"])
 
 _DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
@@ -99,39 +94,26 @@ WHERE game_date = %(game_date)s
 ORDER BY player_name, market_category, side
 """
 
-def _validate_date(date_str: str) -> str:
+def validate_date(date_str: str) -> str:
     if not _DATE_RE.match(date_str):
-        raise HTTPException(
-            status_code=422,
-            detail=f"Invalid date format '{date_str}'. Use YYYY-MM-DD.",
-        )
+        raise ValueError(f"Invalid date format '{date_str}'. Use YYYY-MM-DD.")
     return date_str
 
 
-@router.get("/games/today", response_model=list[Game])
-def get_todays_games() -> list[Game]:
-    """Shortcut — returns today's games without specifying a date."""
-    today = str(datetime.date.today())
-    rows = db.query(_GAMES_SQL, {"game_date": today})
-    return [Game(**r) for r in rows]
-
-
-@router.get("/games/{date}", response_model=list[Game])
 def get_games(date: str) -> list[Game]:
-    """Return all games on *date* (YYYY-MM-DD) from **silver.silver_games**."""
-    _validate_date(date)
+    """Return all games on a date from silver.silver_games."""
+    validate_date(date)
     rows = db.query(_GAMES_SQL, {"game_date": date})
     return [Game(**r) for r in rows]
 
 
-@router.get("/games/{date}/props", response_model=list[PropLine])
 def get_game_props(
     date: str,
-    bookmaker: str | None = Query(default=None),
-    market: str | None = Query(default=None),
+    bookmaker: str | None = None,
+    market: str | None = None,
 ) -> list[PropLine]:
-    """All prop lines for a slate date from **gold.gold_prop_history**."""
-    _validate_date(date)
+    """Return prop lines for a slate date from gold.gold_prop_history."""
+    validate_date(date)
     sql = _PROPS_ALL_SQL
     params: dict = {"game_date": date}
     if bookmaker:
@@ -144,27 +126,13 @@ def get_game_props(
     return [PropLine(**row) for row in rows]
 
 
-@router.get("/games/{date}/slate", response_model=GameSlate)
-def get_game_slate(date: str) -> GameSlate:
-    """Combined games + props for a full slate view."""
-    _validate_date(date)
-    games = get_games(date)
-    props = get_game_props(date)
-    return GameSlate(
-        game_date=datetime.date.fromisoformat(date),
-        games=games,
-        props=props,
-    )
-
-
-@router.get("/games/{date}/with-props", response_model=list[GameWithProps])
 def get_games_with_props(
     date: str,
-    bookmaker: str | None = Query(default=None),
-    market: str | None = Query(default=None),
+    bookmaker: str | None = None,
+    market: str | None = None,
 ) -> list[GameWithProps]:
-    """Games on *date* with prop lines grouped per matchup."""
-    _validate_date(date)
+    """Return games with their prop lines grouped by matchup."""
+    validate_date(date)
     game_rows = db.query(_GAMES_SQL, {"game_date": date})
     if not game_rows:
         return []

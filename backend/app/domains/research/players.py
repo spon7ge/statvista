@@ -1,7 +1,5 @@
-"""GET /api/player/{player_id} and /api/players — DB-only player endpoints."""
+"""Database queries for research player data."""
 from __future__ import annotations
-
-from fastapi import APIRouter, HTTPException, Query
 
 from app.core import db
 from app.domains.research.schemas_feature import PlayerListResponse, PlayerSummary
@@ -11,8 +9,6 @@ from app.domains.research.schemas_player import (
     RollingAvg5,
     RollingAvg10,
 )
-
-router = APIRouter(tags=["players"])
 
 _PROFILE_SQL = """
 SELECT
@@ -118,13 +114,12 @@ LIMIT %(limit)s
 """
 
 
-@router.get("/players", response_model=PlayerListResponse)
 def search_players(
-    q: str | None = Query(default=None, description="Name search (case-insensitive)."),
-    team: str | None = Query(default=None, description="Team tricode, e.g. LAL"),
-    limit: int = Query(default=25, ge=1, le=100),
+    q: str | None = None,
+    team: str | None = None,
+    limit: int = 25,
 ) -> PlayerListResponse:
-    """Search the player directory from **silver.silver_players**."""
+    """Search the player directory from silver.silver_players."""
     pattern = f"%{q}%" if q else None
     rows = db.query(
         _SEARCH_SQL,
@@ -134,17 +129,16 @@ def search_players(
     return PlayerListResponse(count=len(players), players=players)
 
 
-@router.get("/player/{player_id}", response_model=PlayerProfile)
-def get_player(
+def get_player_profile(
     player_id: int,
-    recent_n: int = Query(default=10, ge=1, le=82),
-) -> PlayerProfile:
-    """Player profile, recent games, and rolling context."""
+    recent_n: int = 10,
+) -> PlayerProfile | None:
+    """Return a player profile, recent games, and rolling context."""
     params = {"player_id": player_id}
 
     profile_row = db.query_one(_PROFILE_SQL, params)
     if profile_row is None:
-        raise HTTPException(status_code=404, detail=f"Player {player_id} not found.")
+        return None
 
     game_rows = db.query(_GAMES_SQL, {"player_id": player_id, "n": recent_n})
     roll5_row = db.query_one(_ROLL5_SQL, params)

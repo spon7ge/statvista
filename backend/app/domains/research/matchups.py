@@ -1,12 +1,8 @@
-"""GET /api/matchups/{date} — pre-game context from gold.gold_matchup_features."""
+"""Database queries for research matchup data."""
 from __future__ import annotations
-
-from fastapi import APIRouter, Query
 
 from app.core import db
 from app.domains.research.schemas_matchup import MatchupFeatures
-
-router = APIRouter(tags=["matchups"])
 
 _SQL = """
 SELECT
@@ -38,14 +34,13 @@ LIMIT %(limit)s
 """
 
 
-@router.get("/matchups/{date}", response_model=list[MatchupFeatures])
 def list_matchups(
     date: str,
-    player_id: int | None = Query(default=None),
-    team: str | None = Query(default=None, description="Team tricode filter."),
-    limit: int = Query(default=500, ge=1, le=5000),
+    player_id: int | None = None,
+    team: str | None = None,
+    limit: int = 500,
 ) -> list[MatchupFeatures]:
-    """Return opponent/schedule context for every player-game on a date."""
+    """Return opponent and schedule context for every player-game on a date."""
     rows = db.query(
         _SQL,
         {
