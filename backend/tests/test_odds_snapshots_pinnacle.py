@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 
-from app.providers import odds_snapshots as svc
+from app.core import odds_snapshots as svc
 
 
 def _mock_engine(rows: list[dict]):

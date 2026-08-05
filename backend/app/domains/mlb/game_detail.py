@@ -30,10 +30,13 @@ from app.domains.mlb.schemas import (
     MlbTeamStatLine,
     MlbTeamStatsPair,
     MlbWinProbability,
+    MlbWinProbabilityPoint,
+    MlbWinProbabilityStakes,
 )
 from app.domains.mlb.schemas import GameStatus
 from app.providers.espn.mlb_bridge import (
     ESPN_TIMEOUT_SECONDS,
+    EspnWinProbability,
     normalize_espn_mlb_win_probability,
     resolve_espn_event_id,
 )
@@ -932,6 +935,31 @@ def normalize_mlb_live_feed(
     )
 
 
+def _to_mlb_win_probability(
+    wp: EspnWinProbability | None,
+) -> MlbWinProbability | None:
+    """Map the ESPN provider's lean win-probability shape onto the domain schema."""
+    if wp is None:
+        return None
+    return MlbWinProbability(
+        home_abbrev=wp.home_abbrev,
+        away_abbrev=wp.away_abbrev,
+        points=[
+            MlbWinProbabilityPoint(
+                play_id=p.play_id, label=p.label, home_win_pct=p.home_win_pct
+            )
+            for p in wp.points
+        ],
+        stakes=(
+            MlbWinProbabilityStakes(
+                home_win_delta=wp.stakes.home_win_delta, label=wp.stakes.label
+            )
+            if wp.stakes is not None
+            else None
+        ),
+    )
+
+
 def attach_win_probability(
     detail: MlbGameDetail,
     wp: MlbWinProbability | None,
@@ -1102,10 +1130,12 @@ async def _attach_espn_win_probability(
             return detail, None
 
         summary = await fetch_espn_mlb_summary(espn_event_id)
-        wp = normalize_espn_mlb_win_probability(
-            summary,
-            home_abbrev=detail.home.abbrev,
-            away_abbrev=detail.away.abbrev,
+        wp = _to_mlb_win_probability(
+            normalize_espn_mlb_win_probability(
+                summary,
+                home_abbrev=detail.home.abbrev,
+                away_abbrev=detail.away.abbrev,
+            )
         )
         return attach_win_probability(detail, wp), espn_event_id
     except Exception as exc:

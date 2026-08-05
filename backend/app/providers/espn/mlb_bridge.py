@@ -1,14 +1,9 @@
 from __future__ import annotations
 
+from dataclasses import dataclass, field
 from typing import Any
 
 import httpx
-
-from app.domains.mlb.schemas import (
-    MlbWinProbability,
-    MlbWinProbabilityPoint,
-    MlbWinProbabilityStakes,
-)
 
 ESPN_SCOREBOARD_URL = (
     "https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard"
@@ -24,6 +19,30 @@ _ABBREV_ALIASES: dict[str, str] = {
     "WAS": "WSH",
     "WSH": "WAS",
 }
+
+
+@dataclass(frozen=True)
+class EspnWinProbabilityPoint:
+    """Lean provider-local shape; mapped to the domain schema at the MLB
+    game-detail boundary (``app.domains.mlb.game_detail``)."""
+
+    play_id: str
+    label: str
+    home_win_pct: float
+
+
+@dataclass(frozen=True)
+class EspnWinProbabilityStakes:
+    home_win_delta: float
+    label: str
+
+
+@dataclass(frozen=True)
+class EspnWinProbability:
+    home_abbrev: str
+    away_abbrev: str
+    points: list[EspnWinProbabilityPoint] = field(default_factory=list)
+    stakes: EspnWinProbabilityStakes | None = None
 
 
 def _as_dict(value: Any) -> dict:
@@ -138,15 +157,15 @@ def normalize_espn_mlb_win_probability(
     *,
     home_abbrev: str,
     away_abbrev: str,
-) -> MlbWinProbability | None:
-    """Map ESPN summary ``winprobability`` into ``MlbWinProbability``."""
+) -> EspnWinProbability | None:
+    """Map ESPN summary ``winprobability`` into ``EspnWinProbability``."""
     plays_by_id = {
         str(play.get("id")): play
         for play in _as_list(summary.get("plays"))
         if isinstance(play, dict) and play.get("id") is not None
     }
 
-    points: list[MlbWinProbabilityPoint] = []
+    points: list[EspnWinProbabilityPoint] = []
     for index, raw in enumerate(_as_list(summary.get("winprobability"))):
         if not isinstance(raw, dict):
             continue
@@ -156,7 +175,7 @@ def normalize_espn_mlb_win_probability(
         play_id = str(raw.get("playId") or f"wp-{index}")
         play = plays_by_id.get(play_id)
         points.append(
-            MlbWinProbabilityPoint(
+            EspnWinProbabilityPoint(
                 play_id=play_id,
                 label=_point_label(play, play_id),
                 home_win_pct=pct,
@@ -166,15 +185,15 @@ def normalize_espn_mlb_win_probability(
     if not points:
         return None
 
-    stakes: MlbWinProbabilityStakes | None = None
+    stakes: EspnWinProbabilityStakes | None = None
     if len(points) >= 2:
         delta = points[-1].home_win_pct - points[-2].home_win_pct
-        stakes = MlbWinProbabilityStakes(
+        stakes = EspnWinProbabilityStakes(
             home_win_delta=delta,
             label=_stakes_label(delta),
         )
 
-    return MlbWinProbability(
+    return EspnWinProbability(
         home_abbrev=_norm_abbrev(home_abbrev),
         away_abbrev=_norm_abbrev(away_abbrev),
         points=points,

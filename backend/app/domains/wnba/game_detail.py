@@ -29,7 +29,11 @@ from app.domains.wnba.schemas_game_detail import (
     WnbaGameDetail,
 )
 from app.domains.wnba.schemas_scoreboard import GameStatus
-from app.providers.espn.wnba_roster import enrich_starters, get_roster_index
+from app.providers.espn.wnba_roster import (
+    RosterStarter,
+    enrich_starters,
+    get_roster_index,
+)
 from app.providers.rotowire.wnba_lineups import get_rotowire_starters_for_matchup
 
 logger = logging.getLogger(__name__)
@@ -595,9 +599,19 @@ async def _projected_starters_from_rotowire(
     )
     return GameDetailProjectedStarters(
         note="RotoWire expected lineup",
-        away=enrich_starters(rw["away"], away_idx),
-        home=enrich_starters(rw["home"], home_idx),
+        away=_to_game_detail_starters(enrich_starters(rw["away"], away_idx)),
+        home=_to_game_detail_starters(enrich_starters(rw["home"], home_idx)),
     )
+
+
+def _to_game_detail_starters(starters: list[RosterStarter]) -> list[GameDetailStarter]:
+    """Map the provider's lean starter shape onto the domain response schema."""
+    return [
+        GameDetailStarter(
+            jersey=s.jersey, name=s.name, position=s.position, gtd=s.gtd
+        )
+        for s in starters
+    ]
 
 
 def _starters_from_summary(summary: dict, *, team_id: str) -> list[GameDetailStarter] | None:

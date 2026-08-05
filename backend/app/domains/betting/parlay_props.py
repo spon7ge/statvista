@@ -14,7 +14,7 @@ from app.domains.betting.schemas_props import (
     WnbaPropsResponse,
 )
 from app.domains.betting.dfs_attach import attach_dfs_snapshots, attach_pinnacle_snapshot
-from app.providers.odds_snapshots import (
+from app.core.odds_snapshots import (
     fetch_latest_pinnacle,
     fetch_latest_prizepicks,
     fetch_latest_underdog,

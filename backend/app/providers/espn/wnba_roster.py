@@ -2,10 +2,9 @@ from __future__ import annotations
 
 import time
 import unicodedata
+from dataclasses import dataclass
 
 import httpx
-
-from app.domains.wnba.schemas_game_detail import GameDetailStarter
 
 ESPN_ROSTER_URL = (
     "https://site.api.espn.com/apis/site/v2/sports/basketball/wnba/teams/{team_id}/roster"
@@ -14,6 +13,17 @@ ESPN_TIMEOUT_SECONDS = 8.0
 ROSTER_CACHE_TTL_SECONDS = 600
 
 _roster_cache: dict[str, dict] = {}
+
+
+@dataclass(frozen=True)
+class RosterStarter:
+    """Lean provider-local starter shape; mapped to the domain schema at the
+    WNBA game-detail boundary (``app.domains.wnba.game_detail``)."""
+
+    jersey: str | None
+    name: str
+    position: str | None
+    gtd: bool = False
 
 
 def clear_roster_cache() -> None:
@@ -51,8 +61,8 @@ def roster_player_index(payload: dict) -> dict[str, dict[str, str | None]]:
 def enrich_starters(
     starters: list[dict],
     index: dict[str, dict[str, str | None]],
-) -> list[GameDetailStarter]:
-    enriched: list[GameDetailStarter] = []
+) -> list[RosterStarter]:
+    enriched: list[RosterStarter] = []
     for starter in starters:
         name = str(starter.get("name") or "").strip()
         rw_position = str(starter.get("position") or "").strip()
@@ -61,7 +71,7 @@ def enrich_starters(
         position = rw_position or roster_entry.get("position")
         gtd = bool(starter.get("gtd"))
         enriched.append(
-            GameDetailStarter(
+            RosterStarter(
                 jersey=jersey,
                 name=name,
                 position=position or None,
