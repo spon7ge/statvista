@@ -241,3 +241,68 @@ def test_normalize_event() -> None:
     assert norm["event_id"] == 10079004
     assert norm["status"] == "not_started"
     assert len(norm["competitors"]) == 2
+
+
+class _FakeResp:
+    def __init__(self, payload, status=200):
+        self._payload = payload
+        self.status_code = status
+
+    def raise_for_status(self):
+        if self.status_code >= 400:
+            raise RuntimeError(f"http {self.status_code}")
+
+    def json(self):
+        return self._payload
+
+
+class _FakeSession:
+    def __init__(self, routes: dict[str, list]):
+        self.routes = routes
+        self.calls: list[tuple[str, dict | None]] = []
+
+    def get(self, url, params=None, timeout=60, headers=None):
+        self.calls.append((url, params))
+        key = url
+        queue = self.routes.get(key) or self.routes.get(url.split("?")[0])
+        assert queue, f"unexpected url {url}"
+        return _FakeResp(queue.pop(0))
+
+
+def test_fetch_mlb_events_paginates() -> None:
+    px = _load_scraper()
+    base = f"{px.BASE_URL}/trade/public/api/v1/tournaments/109/events"
+    session = _FakeSession(
+        {
+            base: [
+                {"next": "cursor1", "data": [{"id": 1, "name": "A"}]},
+                {"next": None, "data": [{"id": 2, "name": "B"}]},
+            ]
+        }
+    )
+    events = px.fetch_mlb_events(session)
+    assert [e["id"] for e in events] == [1, 2]
+    assert len(session.calls) == 2
+
+
+def test_fetch_markets_batches() -> None:
+    px = _load_scraper()
+    url = f"{px.BASE_URL}/partner/v3/public/get_multiple_markets"
+    session = _FakeSession(
+        {
+            url: [
+                {"data": [{"eventId": 1, "markets": [{"id": 1}]}]},
+                {"data": [{"eventId": 2, "markets": [{"id": 2}]}]},
+            ]
+        }
+    )
+    monkey_size = 1
+    out = px.fetch_markets_for_events(
+        session,
+        [1, 2],
+        market_types="moneyline,spread,total",
+        batch_size=monkey_size,
+    )
+    by_event = {row["eventId"]: row["markets"] for row in out}
+    assert by_event[1][0]["id"] == 1
+    assert by_event[2][0]["id"] == 2

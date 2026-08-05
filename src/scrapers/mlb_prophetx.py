@@ -2,10 +2,30 @@
 
 from __future__ import annotations
 
+import logging
 import os
+import time
 from datetime import datetime
-from typing import Any
+from typing import Any, TypeVar
 from zoneinfo import ZoneInfo
+
+import requests
+
+logger = logging.getLogger(__name__)
+
+BASE_URL = "https://www.prophetx.co"
+MLB_TOURNAMENT_ID = 109
+MARKET_BATCH_SIZE = 20
+DEFAULT_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    ),
+    "Accept": "application/json",
+    "X-Currency": "cash",
+}
+
+T = TypeVar("T")
 
 _ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 _DEFAULT_OUTPUT_DIR = os.path.join(_ROOT, "data", "props", "prophetx", "mlb")
@@ -236,3 +256,77 @@ def extract_props(markets: list[dict[str, Any]]) -> list[dict[str, Any]]:
             }
         )
     return rows
+
+
+def chunked(items: list[T], size: int) -> list[list[T]]:
+    if size <= 0:
+        raise ValueError("size must be positive")
+    return [items[i : i + size] for i in range(0, len(items), size)]
+
+
+def fetch_json(
+    session: requests.Session,
+    path: str,
+    *,
+    params: dict[str, Any] | None = None,
+    retries: int = 3,
+) -> Any:
+    url = path if path.startswith("http") else f"{BASE_URL}{path}"
+    last_err: Exception | None = None
+    for attempt in range(retries):
+        try:
+            resp = session.get(url, params=params, timeout=60, headers=DEFAULT_HEADERS)
+            if resp.status_code in (429, 500, 502, 503, 504) and attempt + 1 < retries:
+                time.sleep(0.5 * (attempt + 1))
+                continue
+            resp.raise_for_status()
+            return resp.json()
+        except (requests.RequestException, ValueError) as exc:
+            last_err = exc
+            if attempt + 1 >= retries:
+                break
+            time.sleep(0.5 * (attempt + 1))
+    assert last_err is not None
+    raise last_err
+
+
+def fetch_mlb_events(session: requests.Session) -> list[dict[str, Any]]:
+    path = f"/trade/public/api/v1/tournaments/{MLB_TOURNAMENT_ID}/events"
+    events: list[dict[str, Any]] = []
+    nxt: str | int | None = None
+    while True:
+        params = {"next": nxt} if nxt is not None else None
+        payload = fetch_json(session, path, params=params)
+        chunk = payload.get("data") or []
+        if isinstance(chunk, list):
+            events.extend([e for e in chunk if isinstance(e, dict)])
+        nxt = payload.get("next")
+        if not nxt or not chunk:
+            break
+    max_events = os.environ.get("PROPHETX_MAX_EVENTS", "").strip()
+    if max_events.isdigit():
+        events = events[: int(max_events)]
+    return events
+
+
+def fetch_markets_for_events(
+    session: requests.Session,
+    event_ids: list[int],
+    *,
+    market_types: str | None = None,
+    market_sub_types: str | None = None,
+    batch_size: int = MARKET_BATCH_SIZE,
+) -> list[dict[str, Any]]:
+    path = "/partner/v3/public/get_multiple_markets"
+    out: list[dict[str, Any]] = []
+    for batch in chunked(event_ids, batch_size):
+        params: dict[str, Any] = {"event_ids": ",".join(str(i) for i in batch)}
+        if market_types:
+            params["market_types"] = market_types
+        if market_sub_types:
+            params["market_sub_types"] = market_sub_types
+        payload = fetch_json(session, path, params=params)
+        data = payload.get("data") or []
+        if isinstance(data, list):
+            out.extend([row for row in data if isinstance(row, dict)])
+    return out
