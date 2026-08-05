@@ -4,7 +4,7 @@ from typing import Any
 
 import httpx
 
-from app.schemas.mlb_game_detail import (
+from app.domains.mlb.schemas import (
     MlbWinProbability,
     MlbWinProbabilityPoint,
     MlbWinProbabilityStakes,

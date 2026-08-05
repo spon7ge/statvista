@@ -8,7 +8,7 @@ from zoneinfo import ZoneInfo
 
 import httpx
 
-from app.schemas.mlb_scoreboard import (
+from app.domains.mlb.schemas import (
     GameStatus,
     MlbGame,
     MlbScoreboardResponse,

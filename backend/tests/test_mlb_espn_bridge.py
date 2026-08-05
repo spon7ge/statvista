@@ -5,7 +5,7 @@ from app.providers.espn.mlb_bridge import (
     match_espn_event_id,
     normalize_espn_mlb_win_probability,
 )
-from app.services.mlb_game_detail import attach_win_probability, normalize_mlb_live_feed
+from app.domains.mlb.game_detail import attach_win_probability, normalize_mlb_live_feed
 
 FIXTURES = Path(__file__).parent / "fixtures"
 

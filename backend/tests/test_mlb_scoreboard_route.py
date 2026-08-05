@@ -6,7 +6,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app
-from app.schemas.mlb_scoreboard import MlbGame, MlbScoreboardResponse, MlbTeam
+from app.domains.mlb.schemas import MlbGame, MlbScoreboardResponse, MlbTeam
 
 
 @pytest.fixture
@@ -35,7 +35,7 @@ def _sample_response() -> MlbScoreboardResponse:
 
 def test_mlb_scoreboard_today_ok(client):
     with patch(
-        "app.api.routes.mlb_scoreboard.get_today_scoreboard",
+        "app.domains.mlb.routes.get_today_scoreboard",
         new=AsyncMock(return_value=_sample_response()),
     ):
         res = client.get("/api/mlb/scoreboard/today")
@@ -48,7 +48,7 @@ def test_mlb_scoreboard_today_ok(client):
 
 def test_mlb_scoreboard_today_upstream_failure_is_502(client):
     with patch(
-        "app.api.routes.mlb_scoreboard.get_today_scoreboard",
+        "app.domains.mlb.routes.get_today_scoreboard",
         new=AsyncMock(side_effect=RuntimeError("upstream down")),
     ):
         res = client.get("/api/mlb/scoreboard/today")
@@ -58,7 +58,7 @@ def test_mlb_scoreboard_today_upstream_failure_is_502(client):
 
 def test_mlb_scoreboard_by_date_ok(client):
     with patch(
-        "app.api.routes.mlb_scoreboard.get_scoreboard_for_date",
+        "app.domains.mlb.routes.get_scoreboard_for_date",
         new=AsyncMock(return_value=_sample_response()),
     ):
         res = client.get("/api/mlb/scoreboard?date=2026-08-02")
@@ -69,7 +69,7 @@ def test_mlb_scoreboard_by_date_ok(client):
 
 def test_mlb_scoreboard_by_date_upstream_failure_is_502(client):
     with patch(
-        "app.api.routes.mlb_scoreboard.get_scoreboard_for_date",
+        "app.domains.mlb.routes.get_scoreboard_for_date",
         new=AsyncMock(side_effect=RuntimeError("upstream down")),
     ):
         res = client.get("/api/mlb/scoreboard?date=2026-08-01")

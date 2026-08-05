@@ -9,7 +9,7 @@ from zoneinfo import ZoneInfo
 
 import httpx
 
-from app.schemas.mlb_game_detail import (
+from app.domains.mlb.schemas import (
     MlbBatterRow,
     MlbBoxNoteLine,
     MlbBoxScore,
@@ -31,13 +31,13 @@ from app.schemas.mlb_game_detail import (
     MlbTeamStatsPair,
     MlbWinProbability,
 )
-from app.schemas.mlb_scoreboard import GameStatus
+from app.domains.mlb.schemas import GameStatus
 from app.providers.espn.mlb_bridge import (
     ESPN_TIMEOUT_SECONDS,
     normalize_espn_mlb_win_probability,
     resolve_espn_event_id,
 )
-from app.services.mlb_scoreboard import format_tip_label
+from app.domains.mlb.scoreboard import format_tip_label
 
 logger = logging.getLogger(__name__)
 

@@ -5,8 +5,8 @@ from pathlib import Path
 
 import pytest
 
-from app.services import mlb_game_detail as svc
-from app.services.mlb_game_detail import (
+from app.domains.mlb import game_detail as svc
+from app.domains.mlb.game_detail import (
     attach_last10,
     normalize_mlb_live_feed,
     parse_standings_last10,

@@ -1,4 +1,4 @@
-from app.schemas.mlb_lineups import (
+from app.domains.mlb.schemas import (
     MlbLineupMatchupBatter,
     MlbLineupMatchupPitcher,
     MlbLineupMatchupResponse,

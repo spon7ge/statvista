@@ -15,7 +15,7 @@ from datetime import date, datetime, timedelta, timezone
 from typing import Literal
 from zoneinfo import ZoneInfo
 
-from app.schemas.mlb_lineups import (
+from app.domains.mlb.schemas import (
     MlbLineupBatter,
     MlbLineupGame,
     MlbLineupPitcher,

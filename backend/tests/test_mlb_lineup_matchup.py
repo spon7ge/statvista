@@ -1,14 +1,14 @@
 import pytest
 from unittest.mock import AsyncMock, patch
 
-from app.schemas.mlb_lineups import (
+from app.domains.mlb.schemas import (
     MlbLineupBatter,
     MlbLineupGame,
     MlbLineupPitcher,
     MlbLineupSide,
     MlbLineupsResponse,
 )
-from app.services.mlb_lineup_matchup import (
+from app.domains.mlb.lineup_matchup import (
     _find_game,
     clear_mlb_lineup_matchup_cache,
     get_mlb_lineup_matchup,
@@ -82,22 +82,22 @@ async def test_matchup_enriches_pitcher_and_bvp():
 
     with (
         patch(
-            "app.services.mlb_lineup_matchup.get_mlb_lineups",
+            "app.domains.mlb.lineup_matchup.get_mlb_lineups",
             AsyncMock(return_value=slate),
         ),
         patch(
-            "app.services.mlb_lineup_matchup.search_person_id",
+            "app.domains.mlb.lineup_matchup.search_person_id",
             side_effect=fake_search,
         ),
         patch(
-            "app.services.mlb_lineup_matchup.fetch_season_pitching",
+            "app.domains.mlb.lineup_matchup.fetch_season_pitching",
             side_effect=fake_season,
         ),
         patch(
-            "app.services.mlb_lineup_matchup.fetch_vs_pitcher_total",
+            "app.domains.mlb.lineup_matchup.fetch_vs_pitcher_total",
             side_effect=fake_vs,
         ),
-        patch("app.services.mlb_lineup_matchup.httpx.AsyncClient") as client_cls,
+        patch("app.domains.mlb.lineup_matchup.httpx.AsyncClient") as client_cls,
     ):
         client_cls.return_value.__aenter__.return_value = object()
         result = await get_mlb_lineup_matchup("2026-08-04", "wsh", "sf")
@@ -134,22 +134,22 @@ async def test_matchup_zero_at_bats_keeps_vs_pitcher_null():
 
     with (
         patch(
-            "app.services.mlb_lineup_matchup.get_mlb_lineups",
+            "app.domains.mlb.lineup_matchup.get_mlb_lineups",
             AsyncMock(return_value=slate),
         ),
         patch(
-            "app.services.mlb_lineup_matchup.search_person_id",
+            "app.domains.mlb.lineup_matchup.search_person_id",
             side_effect=fake_search,
         ),
         patch(
-            "app.services.mlb_lineup_matchup.fetch_season_pitching",
+            "app.domains.mlb.lineup_matchup.fetch_season_pitching",
             side_effect=fake_season,
         ),
         patch(
-            "app.services.mlb_lineup_matchup.fetch_vs_pitcher_total",
+            "app.domains.mlb.lineup_matchup.fetch_vs_pitcher_total",
             side_effect=fake_vs,
         ),
-        patch("app.services.mlb_lineup_matchup.httpx.AsyncClient") as client_cls,
+        patch("app.domains.mlb.lineup_matchup.httpx.AsyncClient") as client_cls,
     ):
         client_cls.return_value.__aenter__.return_value = object()
         result = await get_mlb_lineup_matchup("2026-08-04", "WSH", "SF")
@@ -169,22 +169,22 @@ async def test_matchup_cache_is_case_insensitive_and_skips_stats_helpers():
 
     with (
         patch(
-            "app.services.mlb_lineup_matchup.get_mlb_lineups",
+            "app.domains.mlb.lineup_matchup.get_mlb_lineups",
             AsyncMock(return_value=slate),
         ) as mock_lineups,
         patch(
-            "app.services.mlb_lineup_matchup.search_person_id",
+            "app.domains.mlb.lineup_matchup.search_person_id",
             AsyncMock(return_value=1),
         ) as mock_search,
         patch(
-            "app.services.mlb_lineup_matchup.fetch_season_pitching",
+            "app.domains.mlb.lineup_matchup.fetch_season_pitching",
             AsyncMock(return_value={}),
         ) as mock_season,
         patch(
-            "app.services.mlb_lineup_matchup.fetch_vs_pitcher_total",
+            "app.domains.mlb.lineup_matchup.fetch_vs_pitcher_total",
             AsyncMock(return_value=None),
         ) as mock_vs,
-        patch("app.services.mlb_lineup_matchup.httpx.AsyncClient") as client_cls,
+        patch("app.domains.mlb.lineup_matchup.httpx.AsyncClient") as client_cls,
     ):
         client_cls.return_value.__aenter__.return_value = object()
         first = await get_mlb_lineup_matchup("2026-08-04", "wsh", "sf")
@@ -213,7 +213,7 @@ async def test_matchup_no_game_returns_null_sides():
         fetched_at="2026-08-04T17:00:00+00:00",
     )
     with patch(
-        "app.services.mlb_lineup_matchup.get_mlb_lineups",
+        "app.domains.mlb.lineup_matchup.get_mlb_lineups",
         AsyncMock(return_value=empty),
     ):
         result = await get_mlb_lineup_matchup("2026-08-04", "WSH", "SF")

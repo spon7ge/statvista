@@ -4,7 +4,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict
 
-from app.schemas.mlb_scoreboard import GameStatus
+from app.domains.mlb.schemas_scoreboard import GameStatus
 
 _RESPONSE_CONFIG = ConfigDict(json_schema_serialization_defaults_required=True)
 

@@ -5,10 +5,6 @@ from app.api.routes import (
     games,
     health,
     matchups,
-    mlb_game_detail,
-    mlb_lineups,
-    mlb_odds,
-    mlb_scoreboard,
     players,
     props,
     slates,
@@ -23,6 +19,7 @@ from app.api.routes import (
 )
 from app.core.config import CORS_ORIGINS
 from app.core.errors import register_exception_handlers
+from app.domains.mlb.routes import router as mlb_router
 
 app = FastAPI(
     title="statvista API",
@@ -61,10 +58,7 @@ app.include_router(slates.router, prefix="/api")
 
 # ── Direct upstream (non-DB) routes ────────────────────────────────────────
 app.include_router(wnba_scoreboard.router, prefix="/api")
-app.include_router(mlb_scoreboard.router, prefix="/api")
-app.include_router(mlb_odds.router, prefix="/api")
-app.include_router(mlb_game_detail.router, prefix="/api")
-app.include_router(mlb_lineups.router, prefix="/api")
+app.include_router(mlb_router, prefix="/api")
 app.include_router(wnba_leaders.router, prefix="/api")
 app.include_router(wnba_player.router, prefix="/api")
 app.include_router(wnba_standings.router, prefix="/api")

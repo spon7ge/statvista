@@ -5,8 +5,8 @@ from unittest.mock import patch
 
 import pytest
 
-from app.schemas.mlb_odds import MlbOddsGame
-from app.services import mlb_odds as svc
+from app.domains.mlb import odds as svc
+from app.domains.mlb.schemas import MlbOddsGame
 
 
 def test_normalize_mlb_pinnacle_spread_and_total():
@@ -219,7 +219,7 @@ def test_get_today_odds_prefers_pinnacle(monkeypatch):
 
     with (
         patch(
-            "app.services.mlb_odds.fetch_latest_pinnacle_team",
+            "app.domains.mlb.odds.fetch_latest_pinnacle_team",
             return_value=pin_rows,
         ),
         patch.object(
@@ -252,7 +252,7 @@ def test_get_today_odds_sharp_only_when_pinnacle_empty(monkeypatch):
 
     with (
         patch(
-            "app.services.mlb_odds.fetch_latest_pinnacle_team",
+            "app.domains.mlb.odds.fetch_latest_pinnacle_team",
             return_value=[],
         ),
         patch.object(

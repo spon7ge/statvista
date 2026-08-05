@@ -1,4 +1,4 @@
-from app.schemas.mlb_game_detail import MlbGameDetail, MlbGameDetailTeam
+from app.domains.mlb.schemas import MlbGameDetail, MlbGameDetailTeam
 
 
 def test_mlb_game_detail_minimal_construct():

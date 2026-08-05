@@ -7,8 +7,8 @@ from fastapi.testclient import TestClient
 
 from app.main import app
 from app.providers.sharp import odds as sharp_svc
-from app.schemas.mlb_odds import MlbOddsGame, MlbOddsResponse
-from app.services import mlb_odds as mlb_svc
+from app.domains.mlb import odds as mlb_svc
+from app.domains.mlb.schemas import MlbOddsGame, MlbOddsResponse
 
 
 @pytest.fixture(autouse=True)
@@ -96,7 +96,7 @@ def test_mlb_odds_today_ok(client):
         ],
     )
     with patch(
-        "app.api.routes.mlb_odds.get_today_odds",
+        "app.domains.mlb.routes.get_today_odds",
         new=AsyncMock(return_value=sample),
     ):
         res = client.get("/api/mlb/odds/today")

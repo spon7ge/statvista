@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 
 import httpx
 
-from app.schemas.mlb_lineups import (
+from app.domains.mlb.schemas import (
     MlbLineupBatter,
     MlbLineupGame,
     MlbLineupMatchupBatter,
@@ -25,7 +25,7 @@ from app.providers.mlb_stats.people import (
     fetch_vs_pitcher_total,
     search_person_id,
 )
-from app.services.mlb_lineups import get_mlb_lineups
+from app.domains.mlb.lineups import get_mlb_lineups
 
 logger = logging.getLogger(__name__)
 

@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from app.services.mlb_scoreboard import normalize_mlb_schedule
+from app.domains.mlb.scoreboard import normalize_mlb_schedule
 
 FIXTURES = Path(__file__).parent / "fixtures"
 

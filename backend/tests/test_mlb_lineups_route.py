@@ -9,8 +9,8 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app
-from app.services.mlb_lineup_matchup import clear_mlb_lineup_matchup_cache
-from app.services.mlb_lineups import clear_mlb_lineups_cache
+from app.domains.mlb.lineup_matchup import clear_mlb_lineup_matchup_cache
+from app.domains.mlb.lineups import clear_mlb_lineups_cache
 from src.scrapers.mlb_rotowire_lineups import parse_mlb_lineups_html
 
 ET = ZoneInfo("America/New_York")
@@ -47,7 +47,7 @@ def test_matchup_requires_params(client):
 
 
 def test_matchup_returns_enriched_payload(client):
-    from app.schemas.mlb_lineups import MlbLineupMatchupResponse
+    from app.domains.mlb.schemas import MlbLineupMatchupResponse
 
     async def fake_matchup(date_et, away, home):
         return MlbLineupMatchupResponse(
@@ -61,7 +61,7 @@ def test_matchup_returns_enriched_payload(client):
         )
 
     with patch(
-        "app.api.routes.mlb_lineups.get_mlb_lineup_matchup",
+        "app.domains.mlb.routes.get_mlb_lineup_matchup",
         side_effect=fake_matchup,
     ):
         res = client.get(
@@ -78,7 +78,7 @@ def test_lineups_today_returns_games(monkeypatch, client):
     today_et = _today_et()
 
     with patch(
-        "app.services.mlb_lineups.scrape_mlb_lineups",
+        "app.domains.mlb.lineups.scrape_mlb_lineups",
         return_value=games,
     ):
         res = client.get(f"/api/mlb/lineups?date={today_et}")
@@ -112,7 +112,7 @@ def test_lineups_cache_hit_skips_scrape(client):
     today_et = _today_et()
 
     with patch(
-        "app.services.mlb_lineups.scrape_mlb_lineups",
+        "app.domains.mlb.lineups.scrape_mlb_lineups",
         return_value=games,
     ) as mock_scrape:
         first = client.get(f"/api/mlb/lineups?date={today_et}")
@@ -128,7 +128,7 @@ def test_lineups_scrape_failure_returns_empty(monkeypatch, client):
     today_et = _today_et()
 
     with patch(
-        "app.services.mlb_lineups.scrape_mlb_lineups",
+        "app.domains.mlb.lineups.scrape_mlb_lineups",
         side_effect=RuntimeError("upstream down"),
     ):
         res = client.get(f"/api/mlb/lineups?date={today_et}")
@@ -161,7 +161,7 @@ def test_lineups_normalizes_ari_to_az_for_diamondbacks(client):
     ]
 
     with patch(
-        "app.services.mlb_lineups.scrape_mlb_lineups",
+        "app.domains.mlb.lineups.scrape_mlb_lineups",
         return_value=dbacks_game,
     ):
         res = client.get(f"/api/mlb/lineups?date={today_et}")
@@ -175,7 +175,7 @@ def test_lineups_tomorrow_uses_tomorrow_token(client):
     games = parse_mlb_lineups_html(FIXTURE.read_text())
 
     with patch(
-        "app.services.mlb_lineups.scrape_mlb_lineups",
+        "app.domains.mlb.lineups.scrape_mlb_lineups",
         return_value=games,
     ) as mock_scrape:
         res = client.get(f"/api/mlb/lineups?date={tomorrow_et}")
