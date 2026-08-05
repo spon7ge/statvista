@@ -48,6 +48,12 @@ describe("MlbGameOddsBoard", () => {
     expect(screen.getByText("u7.5")).toBeInTheDocument();
     expect(screen.getByText("+1.5")).toBeInTheDocument();
     expect(screen.getByText("-1.5")).toBeInTheDocument();
+    // Odds sit under the line number; column headers label each market.
+    expect(screen.getByText("Money")).toBeInTheDocument();
+    expect(screen.getByText("Total")).toBeInTheDocument();
+    expect(screen.getByText("Spread")).toBeInTheDocument();
+    expect(screen.getByText("-113")).toBeInTheDocument();
+    expect(screen.getByText("-182")).toBeInTheDocument();
     expect(screen.getByText("WSH")).toBeInTheDocument();
     expect(screen.getByText("PHI")).toBeInTheDocument();
     expect(screen.getByText(/Pinnacle/)).toBeInTheDocument();
@@ -112,6 +118,7 @@ describe("MlbGameOddsBoard", () => {
       />,
     );
 
-    expect(screen.getAllByText("–")).toHaveLength(6);
+    // Each of 6 tiles shows a primary dash; total/spread also dash the secondary price (4 more).
+    expect(screen.getAllByText("–")).toHaveLength(10);
   });
 });

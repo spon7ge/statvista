@@ -40,25 +40,46 @@ function formatTileLine(tile: MlbOddsBoardTile): string | null {
   return tile.line > 0 ? `+${tile.line}` : String(tile.line);
 }
 
-function OddsTile({ label, tile }: { label: string; tile: MlbOddsBoardTile }) {
+function OddsTile({ tile }: { tile: MlbOddsBoardTile }) {
   const line = formatTileLine(tile);
   const price = tile.price == null ? null : formatAmericanOdds(tile.price);
+  // Number on top; American odds underneath (Money has only the price — spacer keeps height).
+  const primary =
+    tile.kind === "money" ? (price ?? "–") : (line ?? "–");
+  const secondary =
+    tile.kind === "money" ? "\u00a0" : (price ?? "–");
 
   return (
-    <div className="min-w-0 rounded-lg bg-white/10 px-2 py-1.5 text-center">
-      <p className="text-[11px] font-medium text-white/45">{label}</p>
-      <p className="mt-0.5 truncate text-sm font-semibold text-white">
-        {tile.kind === "money" ? (
-          price ?? "–"
-        ) : line ? (
-          <>
-            <span>{line}</span>
-            <span className="ml-1">{price ?? "–"}</span>
-          </>
-        ) : (
-          "–"
-        )}
+    <div className="flex min-h-[3.25rem] min-w-0 flex-col items-center justify-center rounded-lg bg-white/10 px-2 py-1.5 text-center">
+      <p className="truncate text-sm font-semibold leading-tight text-white">
+        {primary}
       </p>
+      <p className="mt-0.5 truncate text-[11px] font-medium leading-tight text-white/45">
+        {secondary}
+      </p>
+    </div>
+  );
+}
+
+const COLUMN_LABELS = ["Money", "Total", "Spread"] as const;
+
+function OddsColumnHeaders() {
+  return (
+    <div
+      className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3"
+      aria-hidden="true"
+    >
+      <div className="min-w-12" />
+      <div className="grid grid-cols-3 gap-1.5">
+        {COLUMN_LABELS.map((label) => (
+          <p
+            key={label}
+            className="text-center text-[11px] font-medium uppercase tracking-wide text-white/45"
+          >
+            {label}
+          </p>
+        ))}
+      </div>
     </div>
   );
 }
@@ -78,10 +99,10 @@ function TeamOddsRow({
         ) : null}
         <span className="text-sm font-semibold text-white">{team.abbrev}</span>
       </div>
-      <div className="grid grid-cols-3 gap-1.5">
-        <OddsTile label="Money" tile={row.money} />
-        <OddsTile label="Total" tile={row.total} />
-        <OddsTile label="Spread" tile={row.spread} />
+      <div className="grid grid-cols-3 items-stretch gap-1.5">
+        <OddsTile tile={row.money} />
+        <OddsTile tile={row.total} />
+        <OddsTile tile={row.spread} />
       </div>
     </div>
   );
@@ -109,6 +130,7 @@ export function MlbGameOddsBoard({ detail, view, isPending }: Props) {
         <p className="text-[18px] text-white/50">Odds unavailable</p>
       ) : (
         <div className="space-y-2">
+          <OddsColumnHeaders />
           <TeamOddsRow team={detail.away} row={awayRow} />
           <TeamOddsRow team={detail.home} row={homeRow} />
         </div>
