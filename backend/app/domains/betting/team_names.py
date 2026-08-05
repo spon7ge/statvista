@@ -1,75 +1,17 @@
-"""Shared WNBA team name → abbreviation helpers for odds providers."""
+"""WNBA team name -> abbreviation helpers used by the betting domain.
+
+The canonical alias table is shared with ``domains.wnba`` and several
+providers, so it lives in ``app.core.wnba_abbrevs``. This module re-exports
+it under the historical name so existing betting-domain callers are
+unaffected.
+"""
 
 from __future__ import annotations
 
-import re
+from app.core.wnba_abbrevs import (
+    NAME_TO_ABBREV,
+    abbrev_from_team_name,
+    canonical_abbrev,
+)
 
-_TRICODE_RE = re.compile(r"^[A-Z]{2,3}$")
-_ABBREV_ALIASES = {
-    "GS": "GSV",
-    "LA": "LAS",
-    "LV": "LVA",
-    "NY": "NYL",
-    "PHX": "PHO",
-    "POR": "PDX",
-    "CONN": "CON",
-    "WSH": "WAS",
-}
-
-NAME_TO_ABBREV = {
-    "atlanta dream": "ATL",
-    "atl dream": "ATL",
-    "chicago sky": "CHI",
-    "chi sky": "CHI",
-    "connecticut sun": "CON",
-    "con sun": "CON",
-    "dallas wings": "DAL",
-    "dal wings": "DAL",
-    "golden state valkyries": "GSV",
-    "gs valkyries": "GSV",
-    "indiana fever": "IND",
-    "ind fever": "IND",
-    "las vegas aces": "LVA",
-    "lv aces": "LVA",
-    "los angeles sparks": "LAS",
-    "la sparks": "LAS",
-    "minnesota lynx": "MIN",
-    "min lynx": "MIN",
-    "new york liberty": "NYL",
-    "ny liberty": "NYL",
-    "toronto tempo": "TOR",
-    "tor tempo": "TOR",
-    "phoenix mercury": "PHO",
-    "phx mercury": "PHO",
-    "portland fire": "PDX",
-    "por fire": "PDX",
-    "pdx fire": "PDX",
-    "seattle storm": "SEA",
-    "sea storm": "SEA",
-    "washington mystics": "WAS",
-    "was mystics": "WAS",
-    "wsh mystics": "WAS",
-}
-
-
-def canonical_abbrev(abbrev: str) -> str:
-    """Map a WNBA tricode to the shared stats.wnba.com spelling."""
-    upper = str(abbrev or "").strip().upper()
-    return _ABBREV_ALIASES.get(upper, upper)
-
-
-def abbrev_from_team_name(label: str | None) -> str | None:
-    """Map a full team name or leading tricode to a canonical WNBA abbrev."""
-    text = str(label or "").strip()
-    if not text:
-        return None
-
-    mapped = NAME_TO_ABBREV.get(text.lower())
-    if mapped:
-        return canonical_abbrev(mapped)
-
-    first = text.split()[0].upper()
-    if _TRICODE_RE.match(first):
-        return canonical_abbrev(first)
-
-    return None
+__all__ = ["NAME_TO_ABBREV", "abbrev_from_team_name", "canonical_abbrev"]

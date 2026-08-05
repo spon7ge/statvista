@@ -15,8 +15,8 @@ from app.providers.sharp.odds import (
     merge_odds_prefer_primary,
     normalize_sharp_odds,
 )
-from app.providers.odds_snapshots import fetch_latest_pinnacle_team
-from app.domains.betting.team_names import abbrev_from_team_name, canonical_abbrev
+from app.core.odds_snapshots import fetch_latest_pinnacle_team
+from app.core.wnba_abbrevs import abbrev_from_team_name, canonical_abbrev
 
 logger = logging.getLogger(__name__)
 

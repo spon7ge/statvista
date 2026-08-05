@@ -10,7 +10,7 @@ from typing import Any
 import httpx
 
 from app.core.config import SHARP_API_KEY
-from app.domains.betting.team_names import canonical_abbrev
+from app.core.wnba_abbrevs import canonical_abbrev
 from app.schemas.odds import WnbaOddsGame, WnbaOddsResponse
 
 logger = logging.getLogger(__name__)

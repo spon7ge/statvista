@@ -10,6 +10,7 @@ from zoneinfo import ZoneInfo
 
 import httpx
 
+from app.core.wnba_abbrevs import canonical_abbrev
 from app.domains.wnba.schemas_scoreboard import (
     GameStatus,
     WnbaGame,
@@ -37,19 +38,6 @@ _date_cache: dict[str, dict] = {}
 _refresh_lock: asyncio.Lock | None = None
 _refresh_lock_loop: asyncio.AbstractEventLoop | None = None
 
-# ESPN uses shorter tricodes than stats.wnba.com for several teams. Canonical
-# form is the stats.wnba.com spelling so both sources key identically in merges.
-_ABBREV_ALIASES = {
-    "GS": "GSV",
-    "LA": "LAS",
-    "LV": "LVA",
-    "NY": "NYL",
-    "PHX": "PHO",
-    "POR": "PDX",  # Sharp/ESPN POR vs stats.wnba.com PDX (Portland Fire)
-    "CONN": "CON",  # Sharp CONN vs ESPN/stats CON (Connecticut Sun)
-    "WSH": "WAS",
-}
-
 # States that look "post" to ESPN's generic state field but are not results.
 _ESPN_NON_RESULT_LABELS = {
     "STATUS_POSTPONED": "Postponed",
@@ -62,12 +50,6 @@ _ESPN_NON_RESULT_LABELS = {
 # Tip times this close on the same ET day are treated as the same game when
 # tricodes alone fail to match.
 TIP_MATCH_WINDOW_SECONDS = 15 * 60
-
-
-def canonical_abbrev(abbrev: str) -> str:
-    """Map a team tricode to its canonical (stats.wnba.com) spelling."""
-    upper = str(abbrev or "").strip().upper()
-    return _ABBREV_ALIASES.get(upper, upper)
 
 
 def _parse_start(start: str) -> datetime | None:

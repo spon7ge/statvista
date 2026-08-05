@@ -7,19 +7,80 @@ from datetime import datetime, timezone
 from typing import Any
 
 import httpx
+from pydantic import BaseModel, ConfigDict, Field
 
 from app.core.config import SHARP_API_KEY
-from app.domains.betting.schemas_props import (
-    PROP_SPORTSBOOKS,
-    WnbaPropBookQuote,
-    WnbaPropLine,
-    WnbaPropsResponse,
-)
+from app.core.odds_snapshots import fetch_latest_prizepicks, fetch_latest_underdog
+from app.core.wnba_abbrevs import canonical_abbrev
 from app.providers.espn.wnba_roster import get_roster_index, norm_player_name
-from app.providers.odds_snapshots import fetch_latest_prizepicks, fetch_latest_underdog
-from app.domains.betting.team_names import canonical_abbrev
 
 logger = logging.getLogger(__name__)
+
+# NOTE: this provider is not currently wired into any domain route (WNBA
+# props are served via the Parlay provider + betting domain assembly in
+# ``app.domains.betting.parlay_props``). It keeps its own lean response
+# models rather than importing ``app.domains.betting.schemas_props`` so it
+# never has to depend on domain code (providers must not import domains).
+PROP_SPORTSBOOKS = (
+    "prizepicks",
+    "underdog",
+    "fanduel",
+    "draftkings",
+    "caesars",
+    "betmgm",
+    "pinnacle",
+    "bet365",
+    "betr",
+    "novig",
+    "sleeper",
+    "betrivers",
+)
+
+_RESPONSE_CONFIG = ConfigDict(json_schema_serialization_defaults_required=True)
+
+
+class WnbaPropBookQuote(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    line: float
+    odds_american: int | None = None
+
+
+class WnbaPropLine(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    player_name: str
+    team_abbrev: str | None = None
+    logo_url: str | None = None
+    stat: str
+    market_type: str
+    side: str
+    game_date: str | None = None
+    commence_time: str | None = None
+    model_prediction: float | None = None
+    over_under_pct: float | None = None
+    ev: float | None = None
+    fanduel: WnbaPropBookQuote | None = None
+    draftkings: WnbaPropBookQuote | None = None
+    caesars: WnbaPropBookQuote | None = None
+    betmgm: WnbaPropBookQuote | None = None
+    pinnacle: WnbaPropBookQuote | None = None
+    bet365: WnbaPropBookQuote | None = None
+    prizepicks: WnbaPropBookQuote | None = None
+    underdog: WnbaPropBookQuote | None = None
+    betr: WnbaPropBookQuote | None = None
+    novig: WnbaPropBookQuote | None = None
+    sleeper: WnbaPropBookQuote | None = None
+    betrivers: WnbaPropBookQuote | None = None
+
+
+class WnbaPropsResponse(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    as_of: str
+    sportsbooks: list[str] = Field(default_factory=lambda: list(PROP_SPORTSBOOKS))
+    props: list[WnbaPropLine] = Field(default_factory=list)
+    error: str | None = None
 
 SHARP_ODDS_URL = "https://api.sharpapi.io/api/v1/odds"
 ESPN_TEAMS_URL = (
