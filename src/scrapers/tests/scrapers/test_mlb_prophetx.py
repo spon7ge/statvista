@@ -92,3 +92,99 @@ def test_best_selection_takes_first() -> None:
     assert best is not None
     assert best["odds"] == -110
     assert px.american_and_stake(best) == (-110, 50.0)
+
+
+_MONEYLINE_MARKET = {
+    "id": 251,
+    "name": "Moneyline",
+    "type": "moneyline",
+    "subType": "moneyline",
+    "status": "active",
+    "selections": [
+        [
+            {
+                "name": "Baltimore Orioles",
+                "competitorId": 1,
+                "odds": -134,
+                "displayOdds": "-134",
+                "line": 0,
+                "stake": 100.0,
+            }
+        ],
+        [
+            {
+                "name": "Los Angeles Angels",
+                "competitorId": 2,
+                "odds": 130,
+                "displayOdds": "+130",
+                "line": 0,
+                "stake": 50.0,
+            }
+        ],
+    ],
+}
+
+_RUN_LINE_MARKET = {
+    "id": 252,
+    "name": "Run Line",
+    "type": "spread",
+    "subType": "spread",
+    "marketLines": [
+        {
+            "name": "Fixed home -1.5",
+            "favourite": True,
+            "selections": [
+                [
+                    {
+                        "name": "Baltimore Orioles",
+                        "odds": -110,
+                        "line": -1.5,
+                        "stake": 80.0,
+                    }
+                ],
+                [
+                    {
+                        "name": "Los Angeles Angels",
+                        "odds": -110,
+                        "line": 1.5,
+                        "stake": 80.0,
+                    }
+                ],
+            ],
+        },
+        {
+            "name": "Fixed home -2.5",
+            "selections": [[], []],
+        },
+    ],
+}
+
+
+def test_extract_team_markets_moneyline_and_main_run_line() -> None:
+    px = _load_scraper()
+    out = px.extract_team_markets([_MONEYLINE_MARKET, _RUN_LINE_MARKET])
+    assert "moneyline" in out
+    assert out["moneyline"][0]["american"] == -134
+    assert out["moneyline"][0]["stake"] == 100.0
+    assert out["moneyline"][1]["american"] == 130
+    assert "run_line" in out
+    assert out["run_line"][0]["line"] == -1.5
+    assert out["run_line"][0]["american"] == -110
+
+
+def test_normalize_event() -> None:
+    px = _load_scraper()
+    event = {
+        "id": 10079004,
+        "name": "Los Angeles Angels at Baltimore Orioles",
+        "scheduled": "2026-08-05T22:35:00Z",
+        "status": "not_started",
+        "competitors": [
+            {"id": 1, "name": "Baltimore Orioles", "abbreviation": "BAL", "seq": 0},
+            {"id": 2, "name": "Los Angeles Angels", "abbreviation": "LAA", "seq": 1},
+        ],
+    }
+    norm = px.normalize_event(event)
+    assert norm["event_id"] == 10079004
+    assert norm["status"] == "not_started"
+    assert len(norm["competitors"]) == 2
