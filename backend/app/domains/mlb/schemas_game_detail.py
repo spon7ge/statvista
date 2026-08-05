@@ -25,6 +25,10 @@ __all__ = [
     "MlbPlayerCard",
     "MlbRunners",
     "MlbSituation",
+    "MlbInjuries",
+    "MlbInjury",
+    "MlbSeasonTeamStatLine",
+    "MlbSeasonTeamStatsPair",
     "MlbTeamStatLine",
     "MlbTeamStatsPair",
     "MlbWinProbability",
@@ -74,6 +78,43 @@ class MlbTeamStatsPair(BaseModel):
 
     away: MlbTeamStatLine
     home: MlbTeamStatLine
+
+
+class MlbSeasonTeamStatLine(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    hr: int | None = None
+    r: int | None = None
+    h: int | None = None
+    avg: str | None = None
+    obp: str | None = None
+    slg: str | None = None
+    era: str | None = None
+    so: int | None = None
+    bb: int | None = None
+
+
+class MlbSeasonTeamStatsPair(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    away: MlbSeasonTeamStatLine
+    home: MlbSeasonTeamStatLine
+
+
+class MlbInjury(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    name: str
+    position: str | None = None
+    status: str
+    detail: str | None = None
+
+
+class MlbInjuries(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    away: list[MlbInjury]
+    home: list[MlbInjury]
 
 
 class MlbLinescoreInning(BaseModel):
@@ -296,5 +337,7 @@ class MlbGameDetail(BaseModel):
     game_date_label: str | None = None
     decisions: MlbDecisions | None = None
     team_stats: MlbTeamStatsPair | None = None
+    season_team_stats: MlbSeasonTeamStatsPair | None = None
+    injuries: MlbInjuries | None = None
     sources: list[str]
     fetched_at: str
