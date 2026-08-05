@@ -1,10 +1,10 @@
 import { GameSection } from "@/components/game/GameSection";
 import type { MlbPitch, MlbSituation } from "./types";
 
-// Normalized zone coords are [-1, 1]. Scale fills most of a tight 100×130 viewBox
+// Normalized zone coords are [-1, 1]. Scale fills most of a tight 124×120 viewBox
 // so the strike box reads large while leaving room for the plate below it.
-const ZONE_CENTER_X = 62;
-const ZONE_CENTER_Y = 46;
+export const ZONE_CENTER_X = 62;
+export const ZONE_CENTER_Y = 46;
 const ZONE_SCALE = 26;
 const STRIKE_WIDTH = 44;
 const STRIKE_HEIGHT = 58;
@@ -17,7 +17,7 @@ function plotPitch(pitch: MlbPitch): { cx: number; cy: number } | null {
   if (pitch.zoneX === null || pitch.zoneY === null) return null;
   return {
     cx: ZONE_CENTER_X + pitch.zoneX * ZONE_SCALE,
-    cy: ZONE_CENTER_Y - pitch.zoneY * ZONE_SCALE + STRIKE_HEIGHT / 2 + 12,
+    cy: ZONE_CENTER_Y - pitch.zoneY * ZONE_SCALE,
   };
 }
 
@@ -48,7 +48,7 @@ function PitchNumberDot({ pitch }: { pitch: MlbPitch }) {
 
 function PitchFooterCard({ pitch }: { pitch: MlbPitch }) {
   return (
-    <li className="min-w-0 space-y-0.5 px-2 py-1.5 text-xs first:pl-0 last:pr-0">
+    <li className="min-w-0 space-y-0.5 px-2 py-1.5 text-xs even:border-l even:border-white/10">
       <p className="flex items-center gap-1.5 font-semibold text-white">
         <PitchNumberDot pitch={pitch} />
         <span className="truncate">{pitch.result ?? "Pitch"}</span>
@@ -98,10 +98,11 @@ export function MlbPitchZone({ situation }: { situation: MlbSituation }) {
       <div className="flex items-center justify-center gap-2">
         <BatterSilhouette />
         <svg
-          viewBox="0 0 124 100"
-          className="aspect-[124/100] w-full max-w-[16rem]"
+          viewBox="0 0 124 120"
+          className="aspect-[124/120] w-full max-w-[16rem]"
           role="img"
           aria-label="Pitch strike zone"
+          data-testid="mlb-pitch-zone-svg"
         >
           <rect
             x={STRIKE_LEFT}
@@ -165,6 +166,7 @@ export function MlbPitchZone({ situation }: { situation: MlbSituation }) {
                   cy={point.cy}
                   r={6}
                   fill={pitchFill(pitch.isStrike)}
+                  data-testid="mlb-pitch-marker"
                 />
                 <text
                   x={point.cx}
@@ -181,7 +183,7 @@ export function MlbPitchZone({ situation }: { situation: MlbSituation }) {
         </svg>
       </div>
 
-      <ul className="mt-2 grid grid-cols-2 divide-x divide-white/10 border-t border-white/10 pt-1.5">
+      <ul className="mt-2 grid grid-cols-2 border-t border-white/10 pt-1.5">
         {pitches.length === 0 ? (
           <li className="col-span-2 py-1.5 text-center text-xs text-white/40">
             No pitches yet

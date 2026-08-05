@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { MlbPitchZone } from "./MlbPitchZone";
+import { MlbPitchZone, ZONE_CENTER_X, ZONE_CENTER_Y } from "./MlbPitchZone";
 import { mlbLiveDetail } from "./testFixtures";
 
 describe("MlbPitchZone", () => {
@@ -36,5 +36,29 @@ describe("MlbPitchZone", () => {
     const situation = { ...mlbLiveDetail.situation!, pitches: [] };
     render(<MlbPitchZone situation={situation} />);
     expect(screen.getByText(/No pitches yet/i)).toBeInTheDocument();
+  });
+
+  it("plots a pitch at the exact center of the zone (zoneX: 0, zoneY: 0) near the strike-box center", () => {
+    const situation = {
+      ...mlbLiveDetail.situation!,
+      pitches: [
+        {
+          ...mlbLiveDetail.situation!.pitches[0]!,
+          zoneX: 0,
+          zoneY: 0,
+        },
+      ],
+    };
+    render(<MlbPitchZone situation={situation} />);
+
+    const marker = screen
+      .getByTestId("mlb-pitch-zone-svg")
+      .querySelector('[data-testid="mlb-pitch-marker"]');
+    expect(marker).not.toBeNull();
+
+    const cx = Number(marker!.getAttribute("cx"));
+    const cy = Number(marker!.getAttribute("cy"));
+    expect(cx).toBeCloseTo(ZONE_CENTER_X, 0);
+    expect(cy).toBeCloseTo(ZONE_CENTER_Y, 0);
   });
 });
