@@ -1,0 +1,221 @@
+import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { MlbPregameCenter } from "./MlbPregameCenter";
+import { mlbScheduledDetail } from "../lib/testFixtures";
+import type {
+  ApiMlbLineupGame,
+  ApiMlbLineupMatchupResponse,
+} from "@/shared/lib/api";
+
+const fetchMlbLineups = vi.fn();
+const useMlbLineupMatchup = vi.fn(() => ({
+  data: null as ApiMlbLineupMatchupResponse | null,
+}));
+
+vi.mock("@/shared/lib/api", () => ({
+  fetchMlbLineups: (...args: unknown[]) => fetchMlbLineups(...args),
+}));
+
+vi.mock("@/features/mlb/hooks/useMlbLineupMatchup", () => ({
+  useMlbLineupMatchup: (...args: unknown[]) => useMlbLineupMatchup(...args),
+}));
+
+const completeLineupGame: ApiMlbLineupGame = {
+  away_abbrev: "wsh",
+  home_abbrev: "phi",
+  status: null,
+  away: {
+    pitcher: { name: "MacKenzie Gore", hand: "L", era: "3.40", record: "8-6" },
+    batters: Array.from({ length: 9 }, (_, i) => ({
+      order: i + 1,
+      name: `Away Batter ${i + 1}`,
+      position: "OF",
+      hand: "L",
+    })),
+  },
+  home: {
+    pitcher: { name: "Zack Wheeler", hand: "R", era: "2.80", record: "10-4" },
+    batters: Array.from({ length: 9 }, (_, i) => ({
+      order: i + 1,
+      name: `Home Batter ${i + 1}`,
+      position: "OF",
+      hand: "R",
+    })),
+  },
+};
+
+function renderWithClient(ui: React.ReactElement) {
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  return render(
+    <QueryClientProvider client={client}>{ui}</QueryClientProvider>,
+  );
+}
+
+describe("MlbPregameCenter", () => {
+  beforeEach(() => {
+    fetchMlbLineups.mockReset();
+    useMlbLineupMatchup.mockClear();
+    useMlbLineupMatchup.mockReturnValue({ data: null });
+  });
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("renders header and projected lineups panel by default", () => {
+    fetchMlbLineups.mockResolvedValue({
+      date: mlbScheduledDetail.gameDate,
+      fetched_at: "2026-08-04T10:00:00-04:00",
+      source: "rotowire",
+      games: [],
+    });
+    renderWithClient(<MlbPregameCenter detail={mlbScheduledDetail} />);
+    expect(screen.getByTestId("mlb-pregame-center")).toBeInTheDocument();
+    expect(
+      screen.getByTestId("mlb-pregame-broadcast-header"),
+    ).toBeInTheDocument();
+    expect(screen.getByTestId("mlb-projected-lineups")).toBeInTheDocument();
+  });
+
+  it("shows a loading line instead of unavailable while the fetch is pending", () => {
+    fetchMlbLineups.mockImplementation(() => new Promise(() => {}));
+    renderWithClient(<MlbPregameCenter detail={mlbScheduledDetail} />);
+    expect(screen.getByText("Loading lineups…")).toBeInTheDocument();
+    expect(screen.queryByText("Lineups unavailable")).not.toBeInTheDocument();
+  });
+
+  it("shows unavailable when no complete matching lineup exists for the game", async () => {
+    fetchMlbLineups.mockResolvedValue({
+      date: mlbScheduledDetail.gameDate,
+      fetched_at: "2026-08-04T10:00:00-04:00",
+      source: "rotowire",
+      games: [],
+    });
+    renderWithClient(<MlbPregameCenter detail={mlbScheduledDetail} />);
+    expect(
+      await screen.findByText("Lineups unavailable"),
+    ).toBeInTheDocument();
+  });
+
+  it("shows projected lineups when a case-insensitive abbrev match with both complete sides exists", async () => {
+    fetchMlbLineups.mockResolvedValue({
+      date: mlbScheduledDetail.gameDate,
+      fetched_at: "2026-08-04T10:00:00-04:00",
+      source: "rotowire",
+      games: [completeLineupGame],
+    });
+    renderWithClient(<MlbPregameCenter detail={mlbScheduledDetail} />);
+    expect(await screen.findByText("MacKenzie Gore")).toBeInTheDocument();
+    expect(screen.getByText("Away Batter 1")).toBeInTheDocument();
+    expect(fetchMlbLineups).toHaveBeenCalledWith(mlbScheduledDetail.gameDate);
+  });
+
+  it("loads matchup enrichment for a complete Preview lineup", async () => {
+    const matchup: ApiMlbLineupMatchupResponse = {
+      date: mlbScheduledDetail.gameDate,
+      away_abbrev: "WSH",
+      home_abbrev: "PHI",
+      status: "expected",
+      source: "rotowire+statsapi",
+      fetched_at: "2026-08-04T17:00:00Z",
+      away: {
+        pitcher: {
+          name: "MacKenzie Gore",
+          hand: "L",
+          mlbam_id: 669022,
+          wins: 8,
+          losses: 6,
+          era: "3.40",
+          innings_pitched: "121.2",
+          strikeouts: 142,
+          whip: "1.21",
+        },
+        batters: [],
+      },
+      home: {
+        pitcher: {
+          name: "Zack Wheeler",
+          hand: "R",
+          mlbam_id: 554430,
+          wins: 10,
+          losses: 4,
+          era: "2.80",
+          innings_pitched: "132.0",
+          strikeouts: 151,
+          whip: "0.98",
+        },
+        batters: [],
+      },
+    };
+    fetchMlbLineups.mockResolvedValue({
+      date: mlbScheduledDetail.gameDate,
+      fetched_at: "2026-08-04T10:00:00-04:00",
+      source: "rotowire",
+      games: [completeLineupGame],
+    });
+    useMlbLineupMatchup.mockReturnValue({ data: matchup });
+
+    renderWithClient(<MlbPregameCenter detail={mlbScheduledDetail} />);
+
+    expect(await screen.findByText("1.21")).toBeInTheDocument();
+    expect(useMlbLineupMatchup).toHaveBeenLastCalledWith({
+      dateEt: mlbScheduledDetail.gameDate,
+      away: mlbScheduledDetail.away.abbrev,
+      home: mlbScheduledDetail.home.abbrev,
+      enabled: true,
+    });
+  });
+
+  it("prefers a later complete match when an earlier same-abbrev entry is incomplete", async () => {
+    const incompleteGame: ApiMlbLineupGame = {
+      ...completeLineupGame,
+      home: { ...completeLineupGame.home, batters: [] },
+    };
+    fetchMlbLineups.mockResolvedValue({
+      date: mlbScheduledDetail.gameDate,
+      fetched_at: "2026-08-04T10:00:00-04:00",
+      source: "rotowire",
+      games: [incompleteGame, completeLineupGame],
+    });
+    renderWithClient(<MlbPregameCenter detail={mlbScheduledDetail} />);
+    expect(await screen.findByText("MacKenzie Gore")).toBeInTheDocument();
+    expect(screen.getByText("Away Batter 1")).toBeInTheDocument();
+  });
+
+  it("treats an incomplete lineup (missing batters) as unavailable", async () => {
+    const incompleteGame: ApiMlbLineupGame = {
+      ...completeLineupGame,
+      home: { ...completeLineupGame.home, batters: [] },
+    };
+    fetchMlbLineups.mockResolvedValue({
+      date: mlbScheduledDetail.gameDate,
+      fetched_at: "2026-08-04T10:00:00-04:00",
+      source: "rotowire",
+      games: [incompleteGame],
+    });
+    renderWithClient(<MlbPregameCenter detail={mlbScheduledDetail} />);
+    expect(
+      await screen.findByText("Lineups unavailable"),
+    ).toBeInTheDocument();
+  });
+
+  it("switches stub panels on tab click", async () => {
+    fetchMlbLineups.mockResolvedValue({
+      date: mlbScheduledDetail.gameDate,
+      fetched_at: "2026-08-04T10:00:00-04:00",
+      source: "rotowire",
+      games: [],
+    });
+    const user = userEvent.setup();
+    renderWithClient(<MlbPregameCenter detail={mlbScheduledDetail} />);
+    await user.click(
+      screen.getByRole("tab", { name: /washington nationals/i }),
+    );
+    expect(
+      screen.getByText(/washington nationals preview coming soon/i),
+    ).toBeInTheDocument();
+  });
+});

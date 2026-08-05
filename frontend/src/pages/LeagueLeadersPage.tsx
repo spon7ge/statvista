@@ -1,6 +1,6 @@
-import { LeagueSubnav } from "@/components/league/LeagueSubnav";
-import { LeadersGrid } from "@/components/league/LeadersGrid";
-import { useWnbaLeaders } from "@/hooks/useWnbaLeaders";
+import { LeagueSubnav } from "@/features/basketball/league/LeagueSubnav";
+import { LeadersGrid } from "@/features/basketball/league/LeadersGrid";
+import { useWnbaLeaders } from "@/features/basketball/hooks/useWnbaLeaders";
 
 export function LeagueLeadersPage() {
   const { data, isLoading, hasNeverLoaded } = useWnbaLeaders();

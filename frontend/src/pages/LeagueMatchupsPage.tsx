@@ -1,22 +1,22 @@
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { LeagueHero } from "@/components/league/LeagueHero";
-import { LeagueSubnav } from "@/components/league/LeagueSubnav";
-import { MatchupsPanel } from "@/components/league/MatchupsPanel";
+import { LeagueHero } from "@/features/basketball/league/LeagueHero";
+import { LeagueSubnav } from "@/features/basketball/league/LeagueSubnav";
+import { MatchupsPanel } from "@/features/basketball/league/MatchupsPanel";
 import {
   isOddsWindowDate,
   isValidEtDate,
   parseMatchupDateParam,
   shiftEtDate,
   slateEtDate,
-} from "@/components/league/matchupSlateDate";
-import { mergeMatchupOdds } from "@/components/league/mergeMatchupOdds";
-import type { LeagueSlug } from "@/components/league/types";
-import { mapToMatchupGames } from "@/components/home/mapScoreboard";
-import { useMlbOdds } from "@/hooks/useMlbOdds";
-import { useMlbScoreboard } from "@/hooks/useMlbScoreboard";
-import { useWnbaOdds } from "@/hooks/useWnbaOdds";
-import { useWnbaScoreboard } from "@/hooks/useWnbaScoreboard";
+} from "@/shared/lib/matchupSlateDate";
+import { mergeMatchupOdds } from "@/shared/lib/mergeMatchupOdds";
+import type { LeagueSlug } from "@/features/basketball/league/types";
+import { mapToMatchupGames } from "@/shared/lib/mapScoreboard";
+import { useMlbOdds } from "@/features/mlb/hooks/useMlbOdds";
+import { useMlbScoreboard } from "@/features/mlb/hooks/useMlbScoreboard";
+import { useWnbaOdds } from "@/features/basketball/hooks/useWnbaOdds";
+import { useWnbaScoreboard } from "@/features/basketball/hooks/useWnbaScoreboard";
 
 type LeagueMatchupsPageProps = {
   league: LeagueSlug;

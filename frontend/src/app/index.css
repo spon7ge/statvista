@@ -1,0 +1,152 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Geist";
+  src: url("../../node_modules/geist/dist/fonts/geist-sans/Geist-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Geist Mono";
+  src: url("../../node_modules/geist/dist/fonts/geist-mono/GeistMono-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Tokens used by the home landing and NotFound page */
+:root {
+  --radius: 0.5rem;
+  --background: oklch(0 0 0);
+  --foreground: oklch(0.98 0 0);
+  --muted-foreground: oklch(0.7 0 0);
+  --border: oklch(1 0 0 / 10%);
+  --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, monospace;
+}
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+}
+
+@keyframes ticker-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Three-phase crossfade: NBA → WNBA → MLB (~3.5s each). */
+@keyframes league-logo-fade-a {
+  0%,
+  28% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  33%,
+  95% {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes league-logo-fade-b {
+  0%,
+  28% {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  33%,
+  61% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  66%,
+  100% {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+@keyframes league-logo-fade-c {
+  0%,
+  61% {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  66%,
+  95% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+.league-logo-slide-a {
+  animation: league-logo-fade-a 10.5s ease-in-out infinite;
+}
+
+.league-logo-slide-b {
+  animation: league-logo-fade-b 10.5s ease-in-out infinite;
+}
+
+.league-logo-slide-c {
+  animation: league-logo-fade-c 10.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .league-logo-slide {
+    animation: none;
+  }
+}
+
+.ticker-marquee-track {
+  animation: ticker-marquee 40s linear infinite;
+}
+
+.ticker-marquee:hover .ticker-marquee-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker-marquee-track {
+    animation: none;
+  }
+
+  .ticker-marquee-duplicate {
+    display: none;
+  }
+
+  .ticker-marquee-viewport {
+    overflow-x: auto;
+  }
+}

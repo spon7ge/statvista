@@ -1,6 +1,6 @@
-import { LeagueSubnav } from "@/components/league/LeagueSubnav";
-import { FuturesBoard } from "@/components/league/FuturesBoard";
-import { useWnbaFutures } from "@/hooks/useWnbaFutures";
+import { LeagueSubnav } from "@/features/basketball/league/LeagueSubnav";
+import { FuturesBoard } from "@/features/basketball/league/FuturesBoard";
+import { useWnbaFutures } from "@/features/basketball/hooks/useWnbaFutures";
 
 export function LeagueFuturesPage() {
   const { data, isLoading, hasNeverLoaded } = useWnbaFutures();

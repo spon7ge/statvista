@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { SiteFooter } from "@/components/SiteFooter";
+import { SiteFooter } from "@/shared/ui/SiteFooter";
 
 export function NotFoundPage() {
   return (

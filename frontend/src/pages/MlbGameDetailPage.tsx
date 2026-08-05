@@ -1,11 +1,11 @@
 import { Link, useParams } from "react-router-dom";
-import { useMlbGameDetail } from "@/hooks/useMlbGameDetail";
-import { mapMlbGameDetail } from "@/components/mlb/mapMlbGameDetail";
-import { MlbFinalCenter } from "@/components/mlb/MlbFinalCenter";
-import { MlbLiveCenter } from "@/components/mlb/MlbLiveCenter";
-import { MlbPregameCenter } from "@/components/mlb/MlbPregameCenter";
-import type { MlbGameDetailView } from "@/components/mlb/types";
-import { GAME_SECTION_SURFACE } from "@/components/game/GameSection";
+import { useMlbGameDetail } from "@/features/mlb/hooks/useMlbGameDetail";
+import { mapMlbGameDetail } from "@/features/mlb/lib/mapMlbGameDetail";
+import { MlbFinalCenter } from "@/features/mlb/game/MlbFinalCenter";
+import { MlbLiveCenter } from "@/features/mlb/game/MlbLiveCenter";
+import { MlbPregameCenter } from "@/features/mlb/game/MlbPregameCenter";
+import type { MlbGameDetailView } from "@/features/mlb/lib/types";
+import { GAME_SECTION_SURFACE } from "@/shared/ui/GameSection";
 
 function attributionLabel(sources: string[]): string {
   return sources.includes("espn")
