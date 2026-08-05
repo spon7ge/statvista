@@ -415,6 +415,48 @@ def prophetx_home_away(competitors: list[dict]) -> tuple[str | None, str | None]
     return away, home
 
 
+def _prophetx_competitor_ids(competitors: list[dict]) -> tuple[int | None, int | None]:
+    """Return (away_id, home_id). ProphetX seq 0 = home, seq 1 = away."""
+    home_id = away_id = None
+    for c in competitors or []:
+        if not isinstance(c, dict):
+            continue
+        cid = c.get("id")
+        seq = c.get("seq")
+        if seq == 0:
+            home_id = cid
+        elif seq == 1:
+            away_id = cid
+    return away_id, home_id
+
+
+def _prophetx_team_side(
+    *,
+    market_type: str,
+    name: str | None,
+    competitor_id: int | None,
+    home_id: int | None,
+    away_id: int | None,
+) -> str:
+    display = str(name or "").strip()
+    market = market_type.lower()
+    name_lower = display.lower()
+
+    if market == "total" or name_lower.startswith("over") or name_lower.startswith("under"):
+        if name_lower.startswith("over"):
+            return "over"
+        if name_lower.startswith("under"):
+            return "under"
+
+    if competitor_id is not None:
+        if home_id is not None and competitor_id == home_id:
+            return "home"
+        if away_id is not None and competitor_id == away_id:
+            return "away"
+
+    return display
+
+
 def prophetx_props_to_rows(
     games: list[dict],
     *,
@@ -477,9 +519,11 @@ def prophetx_team_to_rows(
     for game in games:
         if not isinstance(game, dict):
             continue
-        away, home = prophetx_home_away(game.get("competitors") or [])
+        competitors = game.get("competitors") or []
+        away, home = prophetx_home_away(competitors)
         if not away or not home:
             continue
+        away_id, home_id = _prophetx_competitor_ids(competitors)
         start_time = _parse_line_updated_at(game.get("scheduled"))
         event_id = game.get("event_id")
         for market_type, sides in (game.get("team_markets") or {}).items():
@@ -500,7 +544,13 @@ def prophetx_team_to_rows(
                         "home_team": home,
                         "start_time": start_time,
                         "market_type": str(market_type),
-                        "side": str(name or ""),
+                        "side": _prophetx_team_side(
+                            market_type=str(market_type),
+                            name=name,
+                            competitor_id=side_row.get("competitor_id"),
+                            home_id=home_id,
+                            away_id=away_id,
+                        ),
                         "team": name,
                         "points": side_row.get("line"),
                         "american_price": american,

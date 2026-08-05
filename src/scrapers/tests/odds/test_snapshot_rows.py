@@ -298,29 +298,71 @@ def test_prophetx_team_to_rows_moneyline_and_run_line():
             "event_id": 10079004,
             "scheduled": "2026-08-05T22:35:00Z",
             "competitors": [
-                {"name": "Baltimore Orioles", "seq": 0},
-                {"name": "Los Angeles Angels", "seq": 1},
+                {"id": 10000019, "name": "Baltimore Orioles", "seq": 0},
+                {"id": 10000021, "name": "Los Angeles Angels", "seq": 1},
             ],
             "team_markets": {
                 "moneyline": [
-                    {"name": "Baltimore Orioles", "american": -134, "line": None, "stake": 100.0},
-                    {"name": "Los Angeles Angels", "american": 129, "line": None, "stake": 50.0},
+                    {
+                        "name": "Baltimore Orioles",
+                        "competitor_id": 10000019,
+                        "american": -134,
+                        "line": None,
+                        "stake": 100.0,
+                    },
+                    {
+                        "name": "Los Angeles Angels",
+                        "competitor_id": 10000021,
+                        "american": 129,
+                        "line": None,
+                        "stake": 50.0,
+                    },
                 ],
                 "run_line": [
-                    {"name": "Baltimore Orioles -1", "american": 110, "line": -1, "stake": 2.2},
+                    {
+                        "name": "Baltimore Orioles -1",
+                        "competitor_id": 10000019,
+                        "american": 110,
+                        "line": -1,
+                        "stake": 2.2,
+                    },
+                ],
+                "total": [
+                    {"name": "over 8", "competitor_id": None, "american": 105, "line": 8, "stake": 3654.5},
+                    {"name": "under 8", "competitor_id": None, "american": -107, "line": 8, "stake": 445.14},
                 ],
                 "1st_inning_moneyline": [
-                    {"name": "Baltimore Orioles", "american": -105, "line": None, "stake": 10.0},
+                    {
+                        "name": "Baltimore Orioles",
+                        "competitor_id": 10000019,
+                        "american": -105,
+                        "line": None,
+                        "stake": 10.0,
+                    },
                 ],
             },
         }
     ]
     rows = prophetx_team_to_rows(games, league="mlb", scraped_at=scraped)
     types = {r["market_type"] for r in rows}
-    assert types == {"moneyline", "run_line", "1st_inning_moneyline"}
+    assert types == {"moneyline", "run_line", "total", "1st_inning_moneyline"}
     ml = [r for r in rows if r["market_type"] == "moneyline"]
     assert len(ml) == 2
     assert ml[0]["american_price"] == -134
     assert float(ml[0]["stake"]) == 100.0
+    assert ml[0]["side"] == "home"
+    assert ml[0]["team"] == "Baltimore Orioles"
+    assert ml[1]["side"] == "away"
+    assert ml[1]["team"] == "Los Angeles Angels"
     rl = next(r for r in rows if r["market_type"] == "run_line")
     assert float(rl["points"]) == -1.0
+    assert rl["side"] == "home"
+    assert rl["team"] == "Baltimore Orioles -1"
+    totals = {r["side"]: r for r in rows if r["market_type"] == "total"}
+    assert set(totals) == {"over", "under"}
+    assert totals["over"]["team"] == "over 8"
+    assert totals["under"]["team"] == "under 8"
+    assert float(totals["over"]["points"]) == 8.0
+    inn = next(r for r in rows if r["market_type"] == "1st_inning_moneyline")
+    assert inn["side"] == "home"
+    assert inn["team"] == "Baltimore Orioles"
