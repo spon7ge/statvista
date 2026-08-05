@@ -1,15 +1,15 @@
 import { useState } from "react";
-import { LeagueSubnav } from "@/components/league/LeagueSubnav";
-import { PropPicksFilters } from "@/components/league/PropPicksFilters";
-import { PropPicksTable } from "@/components/league/PropPicksTable";
+import { LeagueSubnav } from "@/features/basketball/league/LeagueSubnav";
+import { PropPicksFilters } from "@/features/basketball/league/PropPicksFilters";
+import { PropPicksTable } from "@/features/basketball/league/PropPicksTable";
 import {
   collectStatOptions,
   collectTeamOptions,
   excludePastGameProps,
   filterPropLines,
-} from "@/components/league/filterPropLines";
-import { useWnbaProps } from "@/hooks/useWnbaProps";
-import { useWnbaScoreboard } from "@/hooks/useWnbaScoreboard";
+} from "@/features/basketball/league/filterPropLines";
+import { useWnbaProps } from "@/features/basketball/hooks/useWnbaProps";
+import { useWnbaScoreboard } from "@/features/basketball/hooks/useWnbaScoreboard";
 
 export function LeaguePropPicksPage() {
   const { data, isLoading, isError, isFetched, dataUpdatedAt } = useWnbaProps();

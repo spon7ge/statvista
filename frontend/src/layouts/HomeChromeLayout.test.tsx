@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { HomeChromeLayout } from "./HomeChromeLayout";
 
-vi.mock("@/hooks/useWnbaScoreboard", () => ({
+vi.mock("@/features/basketball/hooks/useWnbaScoreboard", () => ({
   useWnbaScoreboard: () => ({
     isLoading: false,
     hasNeverLoaded: false,

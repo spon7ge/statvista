@@ -1,5 +1,5 @@
 import { GameSection } from "@/shared/ui/GameSection";
-import type { GameDetail } from "./types";
+import type { GameDetail } from "../lib/types";
 
 type MatchupPredictionProps = {
   detail: GameDetail;

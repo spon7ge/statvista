@@ -3,8 +3,8 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { ApiWnbaGameDetail } from "@/shared/lib/api";
 import { PlayByPlay } from "./PlayByPlay";
-import { mapGameDetail } from "./mapGameDetail";
-import { detail } from "./testFixtures";
+import { mapGameDetail } from "../lib/mapGameDetail";
+import { detail } from "../lib/testFixtures";
 
 describe("PlayByPlay", () => {
   it("defaults to the latest period with plays", () => {

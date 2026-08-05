@@ -1,6 +1,6 @@
-import { LeagueSubnav } from "@/components/league/LeagueSubnav";
-import { StandingsGrid } from "@/components/league/StandingsGrid";
-import { useWnbaStandings } from "@/hooks/useWnbaStandings";
+import { LeagueSubnav } from "@/features/basketball/league/LeagueSubnav";
+import { StandingsGrid } from "@/features/basketball/league/StandingsGrid";
+import { useWnbaStandings } from "@/features/basketball/hooks/useWnbaStandings";
 
 export function LeagueStandingsPage() {
   const { data, isLoading, hasNeverLoaded } = useWnbaStandings();

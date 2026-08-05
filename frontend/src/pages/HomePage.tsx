@@ -6,7 +6,7 @@ import { PropExplainerSection } from "@/components/home/PropExplainerSection";
 import { LeagueCtaSection } from "@/components/home/LeagueCtaSection";
 import { mergeLeagueScoreboards } from "@/components/home/mergeLeagueScoreboards";
 import { useMlbScoreboard } from "@/features/mlb/hooks/useMlbScoreboard";
-import { useWnbaScoreboard } from "@/hooks/useWnbaScoreboard";
+import { useWnbaScoreboard } from "@/features/basketball/hooks/useWnbaScoreboard";
 
 export function HomePage() {
   const wnba = useWnbaScoreboard();

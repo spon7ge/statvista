@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { GameHeader } from "./GameHeader";
-import { detail } from "./testFixtures";
-import type { GameDetail } from "./types";
+import { detail } from "../lib/testFixtures";
+import type { GameDetail } from "../lib/types";
 
 function renderHeader(overrides: Partial<GameDetail> = {}) {
   return render(

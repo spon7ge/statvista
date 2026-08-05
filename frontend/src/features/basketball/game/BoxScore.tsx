@@ -1,4 +1,4 @@
-import type { GameDetail, GameDetailBoxScorePlayer, GameDetailTeam } from "./types";
+import type { GameDetail, GameDetailBoxScorePlayer, GameDetailTeam } from "../lib/types";
 import { GameSection } from "@/shared/ui/GameSection";
 
 const STAT_COLS =

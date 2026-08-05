@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { GameSection } from "@/shared/ui/GameSection";
-import type { GameDetail } from "./types";
+import type { GameDetail } from "../lib/types";
 
 function periodLabel(period: number): string {
   const ordinals = ["1st", "2nd", "3rd", "4th"];

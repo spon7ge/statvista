@@ -4,7 +4,7 @@ import { TeamAbbrevAvatar } from "@/shared/ui/TeamAbbrevAvatar";
 import {
   PROP_BOOK_OPTIONS,
   type PropBookKey,
-} from "@/components/league/filterPropLines";
+} from "@/features/basketball/league/filterPropLines";
 
 export const PROP_PICKS_PAGE_SIZE = 50;
 

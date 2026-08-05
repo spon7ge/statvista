@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
 import { useParams } from "react-router-dom";
-import { LeagueSubnav } from "@/components/league/LeagueSubnav";
-import { PlayerHeader } from "@/components/league/PlayerHeader";
-import { PlayerRecentGames } from "@/components/league/PlayerRecentGames";
-import { useWnbaPlayer } from "@/hooks/useWnbaPlayer";
+import { LeagueSubnav } from "@/features/basketball/league/LeagueSubnav";
+import { PlayerHeader } from "@/features/basketball/league/PlayerHeader";
+import { PlayerRecentGames } from "@/features/basketball/league/PlayerRecentGames";
+import { useWnbaPlayer } from "@/features/basketball/hooks/useWnbaPlayer";
 
 function isNotFoundError(error: unknown): boolean {
   return error instanceof Error && /:\s*404\b/.test(error.message);

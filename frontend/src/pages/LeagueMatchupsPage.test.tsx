@@ -5,7 +5,7 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { LeagueMatchupsPage } from "./LeagueMatchupsPage";
 
-vi.mock("@/hooks/useWnbaScoreboard", () => ({
+vi.mock("@/features/basketball/hooks/useWnbaScoreboard", () => ({
   useWnbaScoreboard: (dateEt?: string) => ({
     games: [],
     isLoading: false,
@@ -14,7 +14,7 @@ vi.mock("@/hooks/useWnbaScoreboard", () => ({
   }),
 }));
 
-vi.mock("@/hooks/useWnbaOdds", () => ({
+vi.mock("@/features/basketball/hooks/useWnbaOdds", () => ({
   useWnbaOdds: () => ({ data: undefined }),
 }));
 

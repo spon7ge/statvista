@@ -4,7 +4,7 @@ import { LiveTicker } from "@/components/home/LiveTicker";
 import { mergeLeagueScoreboards } from "@/components/home/mergeLeagueScoreboards";
 import { SiteFooter } from "@/shared/ui/SiteFooter";
 import { useMlbScoreboard } from "@/features/mlb/hooks/useMlbScoreboard";
-import { useWnbaScoreboard } from "@/hooks/useWnbaScoreboard";
+import { useWnbaScoreboard } from "@/features/basketball/hooks/useWnbaScoreboard";
 
 export function HomeChromeLayout() {
   const wnba = useWnbaScoreboard();

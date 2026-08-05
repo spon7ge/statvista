@@ -51,7 +51,7 @@ const mockProps: ApiWnbaPropLine[] = [
   }),
 ];
 
-vi.mock("@/hooks/useWnbaProps", () => ({
+vi.mock("@/features/basketball/hooks/useWnbaProps", () => ({
   useWnbaProps: () => ({
     data: { props: mockProps, error: null },
     isLoading: false,
@@ -61,7 +61,7 @@ vi.mock("@/hooks/useWnbaProps", () => ({
   }),
 }));
 
-vi.mock("@/hooks/useWnbaScoreboard", () => ({
+vi.mock("@/features/basketball/hooks/useWnbaScoreboard", () => ({
   useWnbaScoreboard: () => ({
     games: [],
     data: { date: "2026-08-02", games: [], fetched_at: "" },

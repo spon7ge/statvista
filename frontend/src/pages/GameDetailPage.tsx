@@ -1,15 +1,15 @@
 import { Link, useParams } from "react-router-dom";
-import { useGameDetail } from "@/hooks/useGameDetail";
-import { mapGameDetail } from "@/components/game/mapGameDetail";
-import { GameHeader } from "@/components/game/GameHeader";
-import { InjuryReport } from "@/components/game/InjuryReport";
-import { MatchupPrediction } from "@/components/game/MatchupPrediction";
-import { ProjectedStarters } from "@/components/game/ProjectedStarters";
-import { SeasonLeaders } from "@/components/game/SeasonLeaders";
-import { ShotChart } from "@/components/game/ShotChart";
-import { PlayByPlay } from "@/components/game/PlayByPlay";
-import { WinProbabilityPanel } from "@/components/game/WinProbabilityPanel";
-import { BoxScore } from "@/components/game/BoxScore";
+import { useGameDetail } from "@/features/basketball/hooks/useGameDetail";
+import { mapGameDetail } from "@/features/basketball/lib/mapGameDetail";
+import { GameHeader } from "@/features/basketball/game/GameHeader";
+import { InjuryReport } from "@/features/basketball/game/InjuryReport";
+import { MatchupPrediction } from "@/features/basketball/game/MatchupPrediction";
+import { ProjectedStarters } from "@/features/basketball/game/ProjectedStarters";
+import { SeasonLeaders } from "@/features/basketball/game/SeasonLeaders";
+import { ShotChart } from "@/features/basketball/game/ShotChart";
+import { PlayByPlay } from "@/features/basketball/game/PlayByPlay";
+import { WinProbabilityPanel } from "@/features/basketball/game/WinProbabilityPanel";
+import { BoxScore } from "@/features/basketball/game/BoxScore";
 import { GAME_SECTION_SURFACE } from "@/shared/ui/GameSection";
 
 function GameDetailSkeleton() {

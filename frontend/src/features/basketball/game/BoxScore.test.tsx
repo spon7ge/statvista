@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { BoxScore } from "./BoxScore";
-import { buildGameDetailFixture } from "./testFixtures";
+import { buildGameDetailFixture } from "../lib/testFixtures";
 
 describe("BoxScore", () => {
   it("renders both team box scores with player stats and DNP", () => {

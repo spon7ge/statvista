@@ -3,7 +3,7 @@ import type {
   GameDetail,
   GameDetailSeasonLeader,
   GameDetailTeam,
-} from "./types";
+} from "../lib/types";
 
 type SeasonLeadersProps = {
   detail: GameDetail;

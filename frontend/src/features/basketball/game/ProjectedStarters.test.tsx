@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { ProjectedStarters } from "./ProjectedStarters";
-import { buildScheduledDetail } from "./testFixtures";
+import { buildScheduledDetail } from "../lib/testFixtures";
 
 describe("ProjectedStarters", () => {
   it("renders starters for both teams", () => {

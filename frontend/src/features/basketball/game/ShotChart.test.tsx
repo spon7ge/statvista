@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ShotChart } from "./ShotChart";
-import { detail } from "./testFixtures";
+import { detail } from "../lib/testFixtures";
 
 describe("ShotChart", () => {
   it("renders the shot chart title", () => {

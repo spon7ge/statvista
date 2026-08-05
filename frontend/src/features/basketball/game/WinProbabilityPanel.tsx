@@ -1,13 +1,13 @@
 import { useEffect, useState, type MouseEvent } from "react";
 import { GameSection } from "@/shared/ui/GameSection";
-import type { GameDetail } from "./types";
+import type { GameDetail } from "../lib/types";
 import {
   buildSplitSeriesPaths,
   CHART_GEOMETRY,
   nearestIndexForClientX,
   xForIndex,
   yForPct,
-} from "./winProbabilityPaths";
+} from "../lib/winProbabilityPaths";
 
 export function WinProbabilityPanel({ detail }: { detail: GameDetail }) {
   const data = detail.winProbability;

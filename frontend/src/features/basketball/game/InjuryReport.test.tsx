@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { InjuryReport } from "./InjuryReport";
-import { buildScheduledDetail } from "./testFixtures";
+import { buildScheduledDetail } from "../lib/testFixtures";
 
 describe("InjuryReport", () => {
   it("renders injury rows", () => {

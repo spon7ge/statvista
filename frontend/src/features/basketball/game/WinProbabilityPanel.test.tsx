@@ -2,11 +2,11 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import { WinProbabilityPanel } from "./WinProbabilityPanel";
-import { buildGameDetailFixture } from "./testFixtures";
+import { buildGameDetailFixture } from "../lib/testFixtures";
 import type {
   GameDetailWinProbability,
   GameDetailWinProbabilityPoint,
-} from "./types";
+} from "../lib/types";
 
 function buildDenseTimeline(count: number): GameDetailWinProbabilityPoint[] {
   return Array.from({ length: count }, (_, index) => ({

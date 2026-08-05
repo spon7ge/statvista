@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { SeasonLeaders } from "./SeasonLeaders";
-import { buildScheduledDetail } from "./testFixtures";
+import { buildScheduledDetail } from "../lib/testFixtures";
 
 describe("SeasonLeaders", () => {
   it("renders points assists rebounds leaders", () => {

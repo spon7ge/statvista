@@ -1,5 +1,5 @@
 import { GameSection } from "@/shared/ui/GameSection";
-import type { GameDetail, GameDetailStarter, GameDetailTeam } from "./types";
+import type { GameDetail, GameDetailStarter, GameDetailTeam } from "../lib/types";
 
 type ProjectedStartersProps = {
   detail: GameDetail;
