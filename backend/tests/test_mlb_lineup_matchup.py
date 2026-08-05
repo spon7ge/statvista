@@ -73,6 +73,9 @@ async def test_matchup_enriches_pitcher_and_bvp():
             "innings_pitched": "112.1",
             "strikeouts": 70,
             "whip": "1.34",
+            "k_per_9": "5.61",
+            "bb_per_9": "2.40",
+            "strikeout_walk_ratio": "2.33",
         }
 
     async def fake_vs(client, batter_id, pitcher_id):
@@ -105,6 +108,9 @@ async def test_matchup_enriches_pitcher_and_bvp():
     assert result.away is not None
     assert result.away.pitcher.mlbam_id == 641793
     assert result.away.pitcher.whip == "1.34"
+    assert result.away.pitcher.k_per_9 == "5.61"
+    assert result.away.pitcher.bb_per_9 == "2.40"
+    assert result.away.pitcher.strikeout_walk_ratio == "2.33"
     assert result.away.batters[0].vs_pitcher is not None
     assert result.away.batters[0].vs_pitcher.ab == 10
     assert result.away.batters[1].name == "Batter 2"

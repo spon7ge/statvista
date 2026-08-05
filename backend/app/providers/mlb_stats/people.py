@@ -61,6 +61,9 @@ async def fetch_season_pitching(
         "innings_pitched": None,
         "strikeouts": None,
         "whip": None,
+        "k_per_9": None,
+        "bb_per_9": None,
+        "strikeout_walk_ratio": None,
     }
     try:
         res = await client.get(
@@ -84,6 +87,9 @@ async def fetch_season_pitching(
             "innings_pitched": st.get("inningsPitched"),
             "strikeouts": st.get("strikeOuts"),
             "whip": st.get("whip"),
+            "k_per_9": st.get("strikeoutsPer9Inn"),
+            "bb_per_9": st.get("walksPer9Inn"),
+            "strikeout_walk_ratio": st.get("strikeoutWalkRatio"),
         }
     except Exception as exc:
         logger.warning("season pitching failed for %s: %s", person_id, exc)

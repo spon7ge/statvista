@@ -51,6 +51,9 @@ async def test_fetch_season_pitching_maps_fields():
                                     "inningsPitched": "112.1",
                                     "strikeOuts": 70,
                                     "whip": "1.34",
+                                    "strikeoutsPer9Inn": "5.61",
+                                    "walksPer9Inn": "2.40",
+                                    "strikeoutWalkRatio": "2.33",
                                 }
                             }
                         ]
@@ -66,6 +69,9 @@ async def test_fetch_season_pitching_maps_fields():
     assert stats["wins"] == 7
     assert stats["innings_pitched"] == "112.1"
     assert stats["strikeouts"] == 70
+    assert stats["k_per_9"] == "5.61"
+    assert stats["bb_per_9"] == "2.40"
+    assert stats["strikeout_walk_ratio"] == "2.33"
 
 
 @pytest.mark.asyncio

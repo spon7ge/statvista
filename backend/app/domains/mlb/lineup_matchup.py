@@ -82,6 +82,9 @@ async def _enrich_pitcher(
         innings_pitched=season_stats.get("innings_pitched"),
         strikeouts=season_stats.get("strikeouts"),
         whip=season_stats.get("whip"),
+        k_per_9=season_stats.get("k_per_9"),
+        bb_per_9=season_stats.get("bb_per_9"),
+        strikeout_walk_ratio=season_stats.get("strikeout_walk_ratio"),
     )
 
 

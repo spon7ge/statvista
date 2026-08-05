@@ -70,6 +70,9 @@ class MlbLineupMatchupPitcher(BaseModel):
     innings_pitched: str | None = None
     strikeouts: int | None = None
     whip: str | None = None
+    k_per_9: str | None = None
+    bb_per_9: str | None = None
+    strikeout_walk_ratio: str | None = None
 
 
 class MlbLineupMatchupBatter(BaseModel):

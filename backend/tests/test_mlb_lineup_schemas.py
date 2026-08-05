@@ -19,6 +19,9 @@ def test_matchup_response_round_trip():
             innings_pitched="112.1",
             strikeouts=70,
             whip="1.34",
+            k_per_9="5.61",
+            bb_per_9="2.40",
+            strikeout_walk_ratio="2.33",
         ),
         batters=[
             MlbLineupMatchupBatter(
@@ -42,5 +45,8 @@ def test_matchup_response_round_trip():
     )
     dumped = body.model_dump()
     assert dumped["away"]["pitcher"]["whip"] == "1.34"
+    assert dumped["away"]["pitcher"]["k_per_9"] == "5.61"
+    assert dumped["away"]["pitcher"]["bb_per_9"] == "2.40"
+    assert dumped["away"]["pitcher"]["strikeout_walk_ratio"] == "2.33"
     assert dumped["away"]["batters"][0]["vs_pitcher"]["ab"] == 10
     assert dumped["source"] == "rotowire+statsapi"
