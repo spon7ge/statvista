@@ -100,6 +100,7 @@ def _tier1(side_books: SideBooks) -> FairResult | None:
 
 
 def _tier2(side_books: SideBooks) -> FairResult | None:
+    # Single DK or FD is valid Tier 2 fair, analogous to sharp single-source.
     dk = side_books.get("draftkings")
     fd = side_books.get("fanduel")
 

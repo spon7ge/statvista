@@ -47,13 +47,31 @@ def test_single_source_dk_agree_chip_does_not_move_fair():
     assert r.source_tier == "sharp_single_source"
     assert r.fair_pct == 54.0
     assert "dk_fd_agrees" in r.confidence_chips
-    assert "px_only" in r.sample_chips or "prophetx_only" in r.sample_chips
+    assert "prophetx_only" in r.sample_chips
 
 
 def test_mid_tier_when_no_exchanges():
     r = compute_fair({"prophetx": None, "novig": None, "draftkings": 55.0, "fanduel": 54.0})
     assert r.source_tier == "mid_tier_fallback"
     assert abs(r.fair_pct - (0.55 * 55.0 + 0.45 * 54.0)) < 0.05
+
+
+def test_mid_tier_disagreement_uses_draftkings():
+    r = compute_fair({"prophetx": None, "novig": None, "draftkings": 58.0, "fanduel": 50.0})
+    assert r.source_tier == "mid_tier_fallback"
+    assert r.fair_pct == 58.0
+
+
+def test_mid_tier_draftkings_only():
+    r = compute_fair({"prophetx": None, "novig": None, "draftkings": 55.0, "fanduel": None})
+    assert r.source_tier == "mid_tier_fallback"
+    assert r.fair_pct == 55.0
+
+
+def test_mid_tier_fanduel_only():
+    r = compute_fair({"prophetx": None, "novig": None, "draftkings": None, "fanduel": 54.0})
+    assert r.source_tier == "mid_tier_fallback"
+    assert r.fair_pct == 54.0
 
 
 def test_no_sharp_read():
