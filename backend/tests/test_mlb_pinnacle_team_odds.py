@@ -60,6 +60,123 @@ def test_normalize_mlb_pinnacle_spread_and_total():
     assert g.game_date == "2026-08-03"
 
 
+def test_normalize_builds_team_perspective_board():
+    rows = [
+        {
+            "away_team": "Los Angeles Angels",
+            "home_team": "Baltimore Orioles",
+            "start_time": "2026-08-05T23:05:00Z",
+            "market_type": "moneyline",
+            "side": "away",
+            "team": "Los Angeles Angels",
+            "points": None,
+            "american_price": 113,
+        },
+        {
+            "away_team": "Los Angeles Angels",
+            "home_team": "Baltimore Orioles",
+            "start_time": "2026-08-05T23:05:00Z",
+            "market_type": "moneyline",
+            "side": "home",
+            "team": "Baltimore Orioles",
+            "points": None,
+            "american_price": -115,
+        },
+        {
+            "away_team": "Los Angeles Angels",
+            "home_team": "Baltimore Orioles",
+            "start_time": "2026-08-05T23:05:00Z",
+            "market_type": "spread",
+            "side": "away",
+            "team": "Los Angeles Angels",
+            "points": 1.5,
+            "american_price": -182,
+        },
+        {
+            "away_team": "Los Angeles Angels",
+            "home_team": "Baltimore Orioles",
+            "start_time": "2026-08-05T23:05:00Z",
+            "market_type": "spread",
+            "side": "home",
+            "team": "Baltimore Orioles",
+            "points": -1.5,
+            "american_price": 174,
+        },
+        {
+            "away_team": "Los Angeles Angels",
+            "home_team": "Baltimore Orioles",
+            "start_time": "2026-08-05T23:05:00Z",
+            "market_type": "total",
+            "side": "over",
+            "points": 7.5,
+            "american_price": -113,
+        },
+        {
+            "away_team": "Los Angeles Angels",
+            "home_team": "Baltimore Orioles",
+            "start_time": "2026-08-05T23:05:00Z",
+            "market_type": "total",
+            "side": "under",
+            "points": 7.5,
+            "american_price": 108,
+        },
+    ]
+    games = svc.normalize_pinnacle_team_rows(rows)
+    assert len(games) == 1
+    g = games[0]
+    assert g.board is not None
+    assert g.board.away.moneyline == 113
+    assert g.board.home.moneyline == -115
+    assert g.board.away.spread is not None and g.board.away.spread.line == 1.5
+    assert g.board.away.spread.price == -182
+    assert g.board.home.spread is not None and g.board.home.spread.line == -1.5
+    assert g.board.home.spread.price == 174
+    assert g.board.away.total is not None
+    assert g.board.away.total.side == "over" and g.board.away.total.line == 7.5
+    assert g.board.away.total.price == -113
+    assert g.board.home.total is not None
+    assert g.board.home.total.side == "under" and g.board.home.total.line == 7.5
+    assert g.board.home.total.price == 108
+    assert g.spread_team_abbrev == "BAL" and g.spread_line == -1.5
+    assert g.total == 7.5
+
+
+def test_merge_prefers_pinnacle_board():
+    from app.domains.mlb.schemas import (
+        MlbOddsBoard,
+        MlbOddsBoardSide,
+    )
+
+    pin = [
+        MlbOddsGame(
+            home_abbrev="BAL",
+            away_abbrev="LAA",
+            spread_team_abbrev="BAL",
+            spread_line=-1.5,
+            total=7.5,
+            sportsbook="pinnacle",
+            board=MlbOddsBoard(
+                away=MlbOddsBoardSide(moneyline=113),
+                home=MlbOddsBoardSide(moneyline=-115),
+            ),
+        )
+    ]
+    sharp = [
+        MlbOddsGame(
+            home_abbrev="BAL",
+            away_abbrev="LAA",
+            spread_team_abbrev="BAL",
+            spread_line=-1.5,
+            total=8.0,
+            sportsbook="draftkings",
+        )
+    ]
+    merged = svc.merge_pinnacle_prefer_sharp(pin, sharp)
+    assert merged[0].sportsbook == "pinnacle"
+    assert merged[0].board is not None
+    assert merged[0].board.away.moneyline == 113
+
+
 def test_skips_junk_away_runs_events():
     rows = [
         {

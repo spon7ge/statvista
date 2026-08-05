@@ -14,7 +14,14 @@ from app.providers.sharp.odds import (
     merge_odds_prefer_primary,
     normalize_sharp_odds,
 )
-from app.domains.mlb.schemas import MlbOddsGame, MlbOddsResponse
+from app.domains.mlb.schemas import (
+    MlbOddsBoard,
+    MlbOddsBoardLine,
+    MlbOddsBoardSide,
+    MlbOddsBoardTotal,
+    MlbOddsGame,
+    MlbOddsResponse,
+)
 from app.schemas.odds import WnbaOddsGame
 from app.domains.mlb.team_names import abbrev_from_team_name, canonical_mlb_abbrev
 from app.core.odds_snapshots import fetch_latest_pinnacle_team
@@ -86,6 +93,18 @@ def _spread_side_abbrev(
     return None
 
 
+def _int_price(raw: Any) -> int | None:
+    if raw is None:
+        return None
+    try:
+        return int(raw)
+    except (TypeError, ValueError):
+        try:
+            return int(float(raw))
+        except (TypeError, ValueError):
+            return None
+
+
 def normalize_pinnacle_team_rows(rows: list[dict[str, Any]]) -> list[MlbOddsGame]:
     """Collapse Pinnacle team snapshot rows into one game with favorite spread + total."""
     by_matchup: dict[tuple[str, str, str], dict[str, Any]] = {}
@@ -103,10 +122,20 @@ def normalize_pinnacle_team_rows(rows: list[dict[str, Any]]) -> list[MlbOddsGame
                 "game_date": _game_date_from_start_time(row.get("start_time")),
                 "spreads": [],
                 "totals": [],
+                "moneylines": [],
+                "board_spreads": [],
+                "board_totals": [],
             },
         )
 
         market = str(row.get("market_type") or "").lower()
+        price = _int_price(row.get("american_price"))
+        if market == "moneyline":
+            team = _spread_side_abbrev(row, home, away)
+            if team and price is not None:
+                bucket["moneylines"].append((team, price))
+            continue
+
         points_raw = row.get("points")
         if points_raw is None:
             continue
@@ -119,8 +148,13 @@ def normalize_pinnacle_team_rows(rows: list[dict[str, Any]]) -> list[MlbOddsGame
             team = _spread_side_abbrev(row, home, away)
             if team:
                 bucket["spreads"].append((team, points_f))
+                if price is not None:
+                    bucket["board_spreads"].append((team, points_f, price))
         elif market == "total":
             bucket["totals"].append(points_f)
+            side = str(row.get("side") or "").lower()
+            if side in {"over", "under"} and price is not None:
+                bucket["board_totals"].append((side, points_f, price))
 
     games: list[MlbOddsGame] = []
     for bucket in by_matchup.values():
@@ -139,6 +173,74 @@ def normalize_pinnacle_team_rows(rows: list[dict[str, Any]]) -> list[MlbOddsGame
         if spread_line is None and total is None:
             continue
 
+        moneylines: list[tuple[str, int]] = bucket["moneylines"]
+        board_spreads: list[tuple[str, float, int]] = bucket["board_spreads"]
+        board_totals: list[tuple[str, float, int]] = bucket["board_totals"]
+        away_moneyline = next(
+            (price for team, price in moneylines if team == bucket["away_abbrev"]),
+            None,
+        )
+        home_moneyline = next(
+            (price for team, price in moneylines if team == bucket["home_abbrev"]),
+            None,
+        )
+        away_spread = next(
+            (
+                MlbOddsBoardLine(line=line, price=price)
+                for team, line, price in board_spreads
+                if team == bucket["away_abbrev"]
+            ),
+            None,
+        )
+        home_spread = next(
+            (
+                MlbOddsBoardLine(line=line, price=price)
+                for team, line, price in board_spreads
+                if team == bucket["home_abbrev"]
+            ),
+            None,
+        )
+        away_total = next(
+            (
+                MlbOddsBoardTotal(side="over", line=line, price=price)
+                for side, line, price in board_totals
+                if side == "over"
+            ),
+            None,
+        )
+        home_total = next(
+            (
+                MlbOddsBoardTotal(side="under", line=line, price=price)
+                for side, line, price in board_totals
+                if side == "under"
+            ),
+            None,
+        )
+        board = None
+        if any(
+            value is not None
+            for value in (
+                away_moneyline,
+                home_moneyline,
+                away_spread,
+                home_spread,
+                away_total,
+                home_total,
+            )
+        ):
+            board = MlbOddsBoard(
+                away=MlbOddsBoardSide(
+                    moneyline=away_moneyline,
+                    spread=away_spread,
+                    total=away_total,
+                ),
+                home=MlbOddsBoardSide(
+                    moneyline=home_moneyline,
+                    spread=home_spread,
+                    total=home_total,
+                ),
+            )
+
         games.append(
             MlbOddsGame(
                 home_abbrev=bucket["home_abbrev"],
@@ -148,6 +250,7 @@ def normalize_pinnacle_team_rows(rows: list[dict[str, Any]]) -> list[MlbOddsGame
                 total=total,
                 game_date=bucket.get("game_date"),
                 sportsbook="pinnacle",
+                board=board,
             )
         )
 
