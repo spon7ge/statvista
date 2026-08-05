@@ -95,6 +95,25 @@ function mapPitcherRow(
   };
 }
 
+function mapPlayerCard(
+  card: {
+    name: string;
+    hand?: string | null;
+    summary?: string | null;
+    id?: number | null;
+    headshot_url?: string | null;
+  } | null,
+) {
+  if (!card) return null;
+  return {
+    name: card.name,
+    hand: card.hand ?? null,
+    summary: card.summary ?? null,
+    id: card.id ?? null,
+    headshotUrl: card.headshot_url ?? null,
+  };
+}
+
 export function mapMlbGameDetail(detail: ApiMlbGameDetail): MlbGameDetailView {
   return {
     mlbGamePk: detail.mlb_game_pk,
@@ -152,28 +171,12 @@ export function mapMlbGameDetail(detail: ApiMlbGameDetail): MlbGameDetailView {
             isStrike: pitch.is_strike,
             zoneX: pitch.zone_x,
             zoneY: pitch.zone_y,
+            spinRate: pitch.spin_rate ?? null,
+            spinDirection: pitch.spin_direction ?? null,
           })),
-          atBat: detail.situation.at_bat
-            ? {
-                name: detail.situation.at_bat.name,
-                hand: detail.situation.at_bat.hand,
-                summary: detail.situation.at_bat.summary,
-              }
-            : null,
-          onDeck: detail.situation.on_deck
-            ? {
-                name: detail.situation.on_deck.name,
-                hand: detail.situation.on_deck.hand,
-                summary: detail.situation.on_deck.summary,
-              }
-            : null,
-          pitching: detail.situation.pitching
-            ? {
-                name: detail.situation.pitching.name,
-                hand: detail.situation.pitching.hand,
-                summary: detail.situation.pitching.summary,
-              }
-            : null,
+          atBat: mapPlayerCard(detail.situation.at_bat),
+          onDeck: mapPlayerCard(detail.situation.on_deck),
+          pitching: mapPlayerCard(detail.situation.pitching),
           latestPlayText: detail.situation.latest_play_text,
         }
       : null,

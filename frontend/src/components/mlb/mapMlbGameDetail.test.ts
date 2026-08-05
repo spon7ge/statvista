@@ -273,4 +273,46 @@ describe("mapMlbGameDetail", () => {
     expect(view.plays[0].scoringTeam).toBe("home");
     expect(view.teamStats?.home.hr).toBe(1);
   });
+
+  it("maps situation headshots and pitch spin", () => {
+    const raw = buildApiDetail({
+      situation: {
+        balls: 2,
+        strikes: 1,
+        outs: 1,
+        runners: { first: true, second: false, third: false },
+        pitches: [
+          {
+            number: 1,
+            type: "FF",
+            mph: 95.2,
+            result: "Ball",
+            is_strike: false,
+            zone_x: 0.1,
+            zone_y: 0.2,
+            spin_rate: 2286,
+            spin_direction: 63,
+          },
+        ],
+        at_bat: {
+          name: "Mookie Betts",
+          hand: "R",
+          summary: ".280 AVG",
+          id: 605141,
+          headshot_url:
+            "https://img.mlbstatic.com/mlb-photos/image/upload/people/605141/headshot/67/current",
+        },
+        on_deck: { name: "Freddie Freeman", hand: "L", summary: null },
+        pitching: { name: "Chris Sale", hand: "L", summary: "6 K" },
+        latest_play_text: "Ball",
+      },
+    });
+
+    const mapped = mapMlbGameDetail(raw);
+    expect(mapped.situation?.atBat?.id).not.toBeNull();
+    expect(mapped.situation?.atBat?.headshotUrl).toContain("people/");
+    expect(mapped.situation?.pitches.some((p) => p.spinRate === 2286)).toBe(
+      true,
+    );
+  });
 });

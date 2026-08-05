@@ -54,6 +54,8 @@ export type MlbPlayerCard = {
   name: string;
   hand: string | null;
   summary: string | null;
+  id: number | null;
+  headshotUrl: string | null;
 };
 
 export type MlbPitch = {
@@ -64,6 +66,8 @@ export type MlbPitch = {
   isStrike: boolean;
   zoneX: number | null;
   zoneY: number | null;
+  spinRate: number | null;
+  spinDirection: number | null;
 };
 
 export type MlbSituation = {

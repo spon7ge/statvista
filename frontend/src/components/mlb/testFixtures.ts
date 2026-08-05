@@ -54,6 +54,8 @@ export const mlbLiveDetail: MlbGameDetailView = {
         isStrike: false,
         zoneX: 0.1,
         zoneY: 0.2,
+        spinRate: 2286,
+        spinDirection: 63,
       },
       {
         number: 2,
@@ -63,22 +65,33 @@ export const mlbLiveDetail: MlbGameDetailView = {
         isStrike: true,
         zoneX: -0.05,
         zoneY: 0.1,
+        spinRate: 2280,
+        spinDirection: 199,
       },
     ],
     atBat: {
       name: "Mookie Betts",
       hand: "RHB",
       summary: ".280 · 0-0 today",
+      id: 605141,
+      headshotUrl:
+        "https://img.mlbstatic.com/mlb-photos/image/upload/people/605141/headshot/67/current",
     },
     onDeck: {
       name: "Freddie Freeman",
       hand: "LHB",
       summary: ".264",
+      id: 518692,
+      headshotUrl:
+        "https://img.mlbstatic.com/mlb-photos/image/upload/people/518692/headshot/67/current",
     },
     pitching: {
       name: "Chris Sale",
       hand: "LHP",
       summary: "6 P · 0.1 IP, 0 ER, 6 K, 0 BB",
+      id: 519242,
+      headshotUrl:
+        "https://img.mlbstatic.com/mlb-photos/image/upload/people/519242/headshot/67/current",
     },
     latestPlayText: "Ball",
   },
