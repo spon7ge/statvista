@@ -286,6 +286,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/mlb/lineups/matchup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Mlb Lineups Matchup */
+        get: operations["mlb_lineups_matchup_api_mlb_lineups_matchup_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/mlb/odds/today": {
         parameters: {
             query?: never;
@@ -1641,6 +1658,70 @@ export interface components {
             /** Status */
             status: string | null;
         };
+        /** MlbLineupMatchupBatter */
+        MlbLineupMatchupBatter: {
+            /** Hand */
+            hand: string | null;
+            /** Mlbam Id */
+            mlbam_id: number | null;
+            /** Name */
+            name: string | null;
+            /** Order */
+            order: number;
+            /** Position */
+            position: string | null;
+            vs_pitcher: components["schemas"]["MlbVsPitcherStats"] | null;
+        };
+        /** MlbLineupMatchupPitcher */
+        MlbLineupMatchupPitcher: {
+            /** Era */
+            era: string | null;
+            /** Hand */
+            hand: string | null;
+            /** Innings Pitched */
+            innings_pitched: string | null;
+            /** Losses */
+            losses: number | null;
+            /** Mlbam Id */
+            mlbam_id: number | null;
+            /** Name */
+            name: string | null;
+            /** Strikeouts */
+            strikeouts: number | null;
+            /** Whip */
+            whip: string | null;
+            /** Wins */
+            wins: number | null;
+        };
+        /** MlbLineupMatchupResponse */
+        MlbLineupMatchupResponse: {
+            away: components["schemas"]["MlbLineupMatchupSide"] | null;
+            /** Away Abbrev */
+            away_abbrev: string | null;
+            /**
+             * Date
+             * @description YYYY-MM-DD in America/New_York
+             */
+            date: string;
+            /** Fetched At */
+            fetched_at: string;
+            home: components["schemas"]["MlbLineupMatchupSide"] | null;
+            /** Home Abbrev */
+            home_abbrev: string | null;
+            /**
+             * Source
+             * @default rotowire+statsapi
+             */
+            source: string;
+            /** Status */
+            status: string | null;
+        };
+        /** MlbLineupMatchupSide */
+        MlbLineupMatchupSide: {
+            /** Batters */
+            batters: components["schemas"]["MlbLineupMatchupBatter"][];
+            pitcher: components["schemas"]["MlbLineupMatchupPitcher"];
+        };
         /** MlbLineupPitcher */
         MlbLineupPitcher: {
             /** Era */
@@ -1896,6 +1977,17 @@ export interface components {
         MlbTeamStatsPair: {
             away: components["schemas"]["MlbTeamStatLine"];
             home: components["schemas"]["MlbTeamStatLine"];
+        };
+        /** MlbVsPitcherStats */
+        MlbVsPitcherStats: {
+            /** Ab */
+            ab: number | null;
+            /** Avg */
+            avg: string | null;
+            /** H */
+            h: number | null;
+            /** Hr */
+            hr: number | null;
         };
         /** MlbWinProbability */
         MlbWinProbability: {
@@ -3188,6 +3280,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MlbLineupsResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    mlb_lineups_matchup_api_mlb_lineups_matchup_get: {
+        parameters: {
+            query: {
+                date: string;
+                away: string;
+                home: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MlbLineupMatchupResponse"];
                 };
             };
             /** @description Validation Error */

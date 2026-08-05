@@ -3107,6 +3107,297 @@
         "title": "MlbLineupGame",
         "type": "object"
       },
+      "MlbLineupMatchupBatter": {
+        "properties": {
+          "hand": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hand"
+          },
+          "mlbam_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mlbam Id"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "order": {
+            "title": "Order",
+            "type": "integer"
+          },
+          "position": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Position"
+          },
+          "vs_pitcher": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbVsPitcherStats"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "order",
+          "position",
+          "name",
+          "hand",
+          "mlbam_id",
+          "vs_pitcher"
+        ],
+        "title": "MlbLineupMatchupBatter",
+        "type": "object"
+      },
+      "MlbLineupMatchupPitcher": {
+        "properties": {
+          "era": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Era"
+          },
+          "hand": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hand"
+          },
+          "innings_pitched": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Innings Pitched"
+          },
+          "losses": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Losses"
+          },
+          "mlbam_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mlbam Id"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "strikeouts": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Strikeouts"
+          },
+          "whip": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Whip"
+          },
+          "wins": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wins"
+          }
+        },
+        "required": [
+          "name",
+          "hand",
+          "mlbam_id",
+          "wins",
+          "losses",
+          "era",
+          "innings_pitched",
+          "strikeouts",
+          "whip"
+        ],
+        "title": "MlbLineupMatchupPitcher",
+        "type": "object"
+      },
+      "MlbLineupMatchupResponse": {
+        "properties": {
+          "away": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbLineupMatchupSide"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "away_abbrev": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Away Abbrev"
+          },
+          "date": {
+            "description": "YYYY-MM-DD in America/New_York",
+            "title": "Date",
+            "type": "string"
+          },
+          "fetched_at": {
+            "title": "Fetched At",
+            "type": "string"
+          },
+          "home": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbLineupMatchupSide"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "home_abbrev": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Home Abbrev"
+          },
+          "source": {
+            "default": "rotowire+statsapi",
+            "title": "Source",
+            "type": "string"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          }
+        },
+        "required": [
+          "date",
+          "away_abbrev",
+          "home_abbrev",
+          "status",
+          "away",
+          "home",
+          "source",
+          "fetched_at"
+        ],
+        "title": "MlbLineupMatchupResponse",
+        "type": "object"
+      },
+      "MlbLineupMatchupSide": {
+        "properties": {
+          "batters": {
+            "items": {
+              "$ref": "#/components/schemas/MlbLineupMatchupBatter"
+            },
+            "title": "Batters",
+            "type": "array"
+          },
+          "pitcher": {
+            "$ref": "#/components/schemas/MlbLineupMatchupPitcher"
+          }
+        },
+        "required": [
+          "pitcher",
+          "batters"
+        ],
+        "title": "MlbLineupMatchupSide",
+        "type": "object"
+      },
       "MlbLineupPitcher": {
         "properties": {
           "era": {
@@ -4194,6 +4485,62 @@
           "home"
         ],
         "title": "MlbTeamStatsPair",
+        "type": "object"
+      },
+      "MlbVsPitcherStats": {
+        "properties": {
+          "ab": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ab"
+          },
+          "avg": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avg"
+          },
+          "h": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "H"
+          },
+          "hr": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hr"
+          }
+        },
+        "required": [
+          "ab",
+          "h",
+          "hr",
+          "avg"
+        ],
+        "title": "MlbVsPitcherStats",
         "type": "object"
       },
       "MlbWinProbability": {
@@ -8038,6 +8385,69 @@
           }
         },
         "summary": "Mlb Lineups By Date",
+        "tags": [
+          "mlb"
+        ]
+      }
+    },
+    "/api/mlb/lineups/matchup": {
+      "get": {
+        "operationId": "mlb_lineups_matchup_api_mlb_lineups_matchup_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "date",
+            "required": true,
+            "schema": {
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "title": "Date",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "away",
+            "required": true,
+            "schema": {
+              "minLength": 1,
+              "title": "Away",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "home",
+            "required": true,
+            "schema": {
+              "minLength": 1,
+              "title": "Home",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MlbLineupMatchupResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Mlb Lineups Matchup",
         "tags": [
           "mlb"
         ]

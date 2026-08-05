@@ -39,6 +39,37 @@ def test_lineups_requires_date(client):
     assert client.get("/api/mlb/lineups").status_code == 422
 
 
+def test_matchup_requires_params(client):
+    assert client.get("/api/mlb/lineups/matchup").status_code == 422
+
+
+def test_matchup_returns_enriched_payload(client):
+    from app.schemas.mlb_lineups import MlbLineupMatchupResponse
+
+    async def fake_matchup(date_et, away, home):
+        return MlbLineupMatchupResponse(
+            date=date_et,
+            away_abbrev=away.upper(),
+            home_abbrev=home.upper(),
+            status="expected",
+            away=None,
+            home=None,
+            fetched_at="2026-08-04T17:00:00+00:00",
+        )
+
+    with patch(
+        "app.api.routes.mlb_lineups.get_mlb_lineup_matchup",
+        side_effect=fake_matchup,
+    ):
+        res = client.get(
+            "/api/mlb/lineups/matchup?date=2026-08-04&away=WSH&home=SF"
+        )
+
+    assert res.status_code == 200
+    assert res.json()["source"] == "rotowire+statsapi"
+    assert res.json()["away_abbrev"] == "WSH"
+
+
 def test_lineups_today_returns_games(monkeypatch, client):
     games = parse_mlb_lineups_html(FIXTURE.read_text())
     today_et = _today_et()
