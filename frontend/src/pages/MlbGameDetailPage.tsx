@@ -1,17 +1,9 @@
 import { Link, useParams } from "react-router-dom";
 import { useMlbGameDetail } from "@/hooks/useMlbGameDetail";
 import { mapMlbGameDetail } from "@/components/mlb/mapMlbGameDetail";
-import { MlbBoxScore } from "@/components/mlb/MlbBoxScore";
 import { MlbFinalCenter } from "@/components/mlb/MlbFinalCenter";
-import { MlbHitChart } from "@/components/mlb/MlbHitChart";
-import { MlbLinescore } from "@/components/mlb/MlbLinescore";
-import { MlbLiveBroadcastHeader } from "@/components/mlb/MlbLiveBroadcastHeader";
-import { MlbLiveMatchupPanel } from "@/components/mlb/MlbLiveMatchupPanel";
-import { MlbLiveSituation } from "@/components/mlb/MlbLiveSituation";
-import { MlbPlayByPlay } from "@/components/mlb/MlbPlayByPlay";
+import { MlbLiveCenter } from "@/components/mlb/MlbLiveCenter";
 import { MlbPregameCenter } from "@/components/mlb/MlbPregameCenter";
-import { MlbTeamToggleBatters } from "@/components/mlb/MlbTeamToggleBatters";
-import { MlbWinProbability } from "@/components/mlb/MlbWinProbability";
 import type { MlbGameDetailView } from "@/components/mlb/types";
 import { GAME_SECTION_SURFACE } from "@/components/game/GameSection";
 
@@ -169,30 +161,7 @@ export function MlbGameDetailPage() {
   return (
     <div className="mx-auto max-w-6xl space-y-4 px-4 py-6 sm:px-6">
       {chrome}
-      <div data-testid="mlb-live-center" className="space-y-4">
-        <MlbLiveBroadcastHeader detail={detail} />
-        <div className="grid gap-4 lg:grid-cols-5">
-          <div className="lg:col-span-3">
-            <MlbLiveMatchupPanel detail={detail} />
-          </div>
-          <div className="lg:col-span-2">
-            <MlbLinescore detail={detail} />
-          </div>
-        </div>
-        <MlbTeamToggleBatters detail={detail} />
-        <MlbLiveSituation detail={detail} variant="pitchZone" />
-        <MlbPlayByPlay detail={detail} />
-        <MlbBoxScore detail={detail} />
-        <div
-          data-testid="mlb-live-viz-row"
-          className="grid items-start gap-4 lg:grid-cols-3"
-        >
-          <div className="lg:col-span-2">
-            <MlbWinProbability detail={detail} compact />
-          </div>
-          <MlbHitChart detail={detail} />
-        </div>
-      </div>
+      <MlbLiveCenter detail={detail} />
     </div>
   );
 }

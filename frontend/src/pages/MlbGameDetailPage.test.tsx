@@ -30,7 +30,20 @@ function mlbDetail(status: "live" | "final" | "scheduled", sources = ["statsapi"
       color: "#005A9C",
       logo_url: null,
     },
-    linescore: null,
+    linescore:
+      status === "scheduled"
+        ? null
+        : {
+            current_inning: 3,
+            inning_half: "top",
+            innings: [
+              { num: 1, away_runs: 0, home_runs: 1 },
+              { num: 2, away_runs: 1, home_runs: 0 },
+              { num: 3, away_runs: 1, home_runs: 0 },
+            ],
+            away: { runs: 2, hits: 3, errors: 0 },
+            home: { runs: 1, hits: 2, errors: 1 },
+          },
     situation: null,
     plays: [],
     scoring_plays: [],
@@ -75,9 +88,16 @@ describe("MlbGameDetailPage", () => {
     renderPage();
     expect(await screen.findByTestId("mlb-live-center")).toBeInTheDocument();
     expect(screen.getByTestId("mlb-broadcast-header")).toBeInTheDocument();
-    expect(await screen.findByTestId("mlb-live-viz-row")).toBeInTheDocument();
+    expect(
+      screen.getByRole("tablist", { name: /live game details/i }),
+    ).toBeInTheDocument();
+    expect(screen.getByTestId("mlb-live-situation")).toBeInTheDocument();
+    expect(screen.getByTestId("mlb-final-play-feed")).toBeInTheDocument();
+    expect(screen.getByTestId("mlb-final-linescore-card")).toBeInTheDocument();
     expect(screen.getByTestId("mlb-game-flow")).toBeInTheDocument();
     expect(screen.getByTestId("mlb-hit-chart")).toBeInTheDocument();
+    expect(screen.queryByTestId("mlb-live-viz-row")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("mlb-live-matchup")).not.toBeInTheDocument();
     expect(screen.getByText(/Data: MLB Stats API · ESPN/i)).toBeInTheDocument();
     expect(screen.getAllByText(/Top 3rd/i)).toHaveLength(1);
     expect(screen.getAllByText(/Fenway Park/i).length).toBeGreaterThanOrEqual(1);
