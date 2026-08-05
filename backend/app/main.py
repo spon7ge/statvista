@@ -22,6 +22,7 @@ from app.api.routes import (
     wnba_futures,
 )
 from app.core.config import CORS_ORIGINS
+from app.core.errors import register_exception_handlers
 
 app = FastAPI(
     title="statvista API",
@@ -37,6 +38,8 @@ app = FastAPI(
         "stats.wnba.com, MLB Stats API, RotoWire, or SharpAPI for live league data."
     ),
 )
+
+register_exception_handlers(app)
 
 app.add_middleware(
     CORSMiddleware,
