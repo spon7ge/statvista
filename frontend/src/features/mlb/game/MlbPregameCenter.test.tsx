@@ -7,12 +7,14 @@ import { mlbScheduledDetail } from "../lib/testFixtures";
 import type {
   ApiMlbLineupGame,
   ApiMlbLineupMatchupResponse,
+  ApiMlbOddsResponse,
 } from "@/shared/lib/api";
 
 const fetchMlbLineups = vi.fn();
 const useMlbLineupMatchup = vi.fn(() => ({
   data: null as ApiMlbLineupMatchupResponse | null,
 }));
+const useMlbOdds = vi.fn(() => ({ data: null as ApiMlbOddsResponse | null }));
 
 vi.mock("@/shared/lib/api", () => ({
   fetchMlbLineups: (...args: unknown[]) => fetchMlbLineups(...args),
@@ -20,6 +22,10 @@ vi.mock("@/shared/lib/api", () => ({
 
 vi.mock("@/features/mlb/hooks/useMlbLineupMatchup", () => ({
   useMlbLineupMatchup: (...args: unknown[]) => useMlbLineupMatchup(...args),
+}));
+
+vi.mock("@/features/mlb/hooks/useMlbOdds", () => ({
+  useMlbOdds: (...args: unknown[]) => useMlbOdds(...args),
 }));
 
 const completeLineupGame: ApiMlbLineupGame = {
@@ -60,6 +66,8 @@ describe("MlbPregameCenter", () => {
     fetchMlbLineups.mockReset();
     useMlbLineupMatchup.mockClear();
     useMlbLineupMatchup.mockReturnValue({ data: null });
+    useMlbOdds.mockClear();
+    useMlbOdds.mockReturnValue({ data: null });
   });
   afterEach(() => {
     vi.clearAllMocks();
@@ -78,6 +86,51 @@ describe("MlbPregameCenter", () => {
       screen.getByTestId("mlb-pregame-broadcast-header"),
     ).toBeInTheDocument();
     expect(screen.getByTestId("mlb-projected-lineups")).toBeInTheDocument();
+  });
+
+  it("renders the matching odds board on Preview", () => {
+    fetchMlbLineups.mockResolvedValue({
+      date: mlbScheduledDetail.gameDate,
+      fetched_at: "2026-08-04T10:00:00-04:00",
+      source: "rotowire",
+      games: [],
+    });
+    useMlbOdds.mockReturnValue({
+      data: {
+        as_of: "2026-08-04T17:00:00Z",
+        error: null,
+        sportsbook: "pinnacle",
+        games: [
+          {
+            away_abbrev: "WSH",
+            home_abbrev: "PHI",
+            game_date: mlbScheduledDetail.gameDate,
+            sportsbook: "pinnacle",
+            total: null,
+            spread_line: null,
+            spread_team_abbrev: null,
+            board: {
+              away: {
+                moneyline: 113,
+                spread: { line: 1.5, price: -182 },
+                total: { side: "over", line: 7.5, price: -113 },
+              },
+              home: {
+                moneyline: -115,
+                spread: { line: -1.5, price: 174 },
+                total: { side: "under", line: 7.5, price: 108 },
+              },
+            },
+          },
+        ],
+      },
+      isPending: false,
+    });
+
+    renderWithClient(<MlbPregameCenter detail={mlbScheduledDetail} />);
+
+    expect(screen.getByTestId("mlb-game-odds-board")).toBeInTheDocument();
+    expect(screen.getByText("+113")).toBeInTheDocument();
   });
 
   it("shows a loading line instead of unavailable while the fetch is pending", () => {
@@ -132,6 +185,9 @@ describe("MlbPregameCenter", () => {
           innings_pitched: "121.2",
           strikeouts: 142,
           whip: "1.21",
+          k_per_9: "10.52",
+          bb_per_9: "3.10",
+          strikeout_walk_ratio: "3.39",
         },
         batters: [],
       },
@@ -146,6 +202,9 @@ describe("MlbPregameCenter", () => {
           innings_pitched: "132.0",
           strikeouts: 151,
           whip: "0.98",
+          k_per_9: "10.30",
+          bb_per_9: "2.05",
+          strikeout_walk_ratio: "5.03",
         },
         batters: [],
       },

@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useMlbLineupMatchup } from "@/features/mlb/hooks/useMlbLineupMatchup";
 import { useMlbLineups } from "@/features/mlb/hooks/useMlbLineups";
+import { useMlbOdds } from "@/features/mlb/hooks/useMlbOdds";
 import type { ApiMlbLineupGame, ApiMlbLineupSide } from "@/shared/lib/api";
 import {
   MlbPregameBroadcastHeader,
   type PregameTab,
 } from "./MlbPregameBroadcastHeader";
 import { MlbProjectedLineups } from "./MlbProjectedLineups";
+import { findMlbOddsGame, toMlbOddsBoardView } from "../lib/mlbOddsBoard";
 import type { MlbGameDetailView } from "../lib/types";
 
 function sideComplete(side: ApiMlbLineupSide | undefined | null): boolean {
@@ -47,6 +49,7 @@ export function MlbPregameCenter({ detail }: { detail: MlbGameDetailView }) {
   const { data, isPending } = useMlbLineups(
     activeTab === "preview" ? detail.gameDate : undefined,
   );
+  const oddsQuery = useMlbOdds();
   const matchedGame = findCompleteMatch(
     data?.games,
     detail.away.abbrev,
@@ -58,6 +61,19 @@ export function MlbPregameCenter({ detail }: { detail: MlbGameDetailView }) {
     home: detail.home.abbrev,
     enabled: activeTab === "preview" && matchedGame !== null,
   });
+  const oddsGame = findMlbOddsGame(
+    oddsQuery.data?.games,
+    detail.away.abbrev,
+    detail.home.abbrev,
+    detail.gameDate ?? undefined,
+  );
+  const oddsView = oddsGame
+    ? toMlbOddsBoardView(
+        oddsGame,
+        oddsQuery.data?.as_of ?? null,
+        oddsQuery.data?.sportsbook ?? null,
+      )
+    : null;
 
   const stub =
     activeTab === "away"
@@ -82,6 +98,8 @@ export function MlbPregameCenter({ detail }: { detail: MlbGameDetailView }) {
             game={matchedGame}
             matchup={matchupQuery.data ?? null}
             isPending={isPending}
+            oddsView={oddsView}
+            oddsPending={oddsQuery.isPending}
           />
         ) : (
           <p className="text-sm text-white/60">{stub}</p>

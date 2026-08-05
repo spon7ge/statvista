@@ -59,6 +59,9 @@ const enrichedMatchup: ApiMlbLineupMatchupResponse = {
       innings_pitched: "121.2",
       strikeouts: 142,
       whip: "1.21",
+      k_per_9: "10.52",
+      bb_per_9: "3.10",
+      strikeout_walk_ratio: "3.39",
     },
     batters: [
       {
@@ -90,6 +93,9 @@ const enrichedMatchup: ApiMlbLineupMatchupResponse = {
       innings_pitched: "132.0",
       strikeouts: 151,
       whip: "0.98",
+      k_per_9: "10.30",
+      bb_per_9: "2.05",
+      strikeout_walk_ratio: "5.03",
     },
     batters: [
       {
@@ -108,10 +114,20 @@ describe("MlbProjectedLineups", () => {
   it("renders the RotoWire title", () => {
     render(<MlbProjectedLineups detail={mlbScheduledDetail} game={lineupGame} />);
     expect(
-      screen.getByRole("heading", { name: /projected lineups/i }),
+      screen.getByRole("heading", { name: /projected rotowire lineups/i }),
     ).toBeInTheDocument();
-    expect(screen.getByText("RotoWire expected lineup")).toBeInTheDocument();
-    expect(screen.getByTestId("mlb-projected-lineups")).toHaveClass("sm:w-1/2");
+    expect(
+      screen.getByTestId("mlb-preview-lineups-odds-grid"),
+    ).toHaveClass("lg:grid-cols-2");
+    expect(
+      screen.getByTestId("mlb-preview-lineups-odds-grid"),
+    ).toContainElement(screen.getByTestId("mlb-projected-lineups"));
+    expect(
+      screen.getByTestId("mlb-preview-lineups-odds-grid"),
+    ).toContainElement(screen.getByTestId("mlb-game-odds-board"));
+    expect(screen.getByTestId("mlb-projected-lineups")).not.toHaveClass(
+      "sm:w-1/2",
+    );
   });
 
   it("shows 'Lineups unavailable' when no matched game exists", () => {
@@ -138,14 +154,18 @@ describe("MlbProjectedLineups", () => {
     );
 
     expect(
-      screen.getByRole("heading", { name: "LHP MacKenzie Gore" }),
+      screen.getByRole("heading", { name: "MacKenzie Gore - L" }),
     ).toBeInTheDocument();
     expect(screen.getByText("Lineup vs Zack Wheeler")).toBeInTheDocument();
-    expect(screen.getByText("W-L")).toBeInTheDocument();
+    expect(screen.getByText("Record")).toBeInTheDocument();
     expect(screen.getByText("ERA")).toBeInTheDocument();
-    expect(screen.getByText("IP")).toBeInTheDocument();
-    expect(screen.getByText("K")).toBeInTheDocument();
     expect(screen.getByText("WHIP")).toBeInTheDocument();
+    expect(screen.getByText("K/9")).toBeInTheDocument();
+    expect(screen.getByText("BB/9")).toBeInTheDocument();
+    expect(screen.getByText("K/BB")).toBeInTheDocument();
+    expect(screen.getByText("10.52")).toBeInTheDocument();
+    expect(screen.getByText("3.10")).toBeInTheDocument();
+    expect(screen.getByText("3.39")).toBeInTheDocument();
     expect(screen.getByRole("columnheader", { name: "AB" })).toBeInTheDocument();
     expect(screen.getByRole("columnheader", { name: "H" })).toBeInTheDocument();
     expect(screen.getByRole("columnheader", { name: "HR" })).toBeInTheDocument();
@@ -212,7 +232,7 @@ describe("MlbProjectedLineups", () => {
     );
 
     expect(
-      screen.getByRole("heading", { name: "LHP MacKenzie Gore" }),
+      screen.getByRole("heading", { name: "MacKenzie Gore - L" }),
     ).toBeInTheDocument();
     expect(screen.getByText("CJ Abrams")).toBeInTheDocument();
     expect(screen.getByText("Robert Hassell III")).toBeInTheDocument();
@@ -232,13 +252,13 @@ describe("MlbProjectedLineups", () => {
       "true",
     );
     expect(
-      screen.getByRole("heading", { name: "RHP Zack Wheeler" }),
+      screen.getByRole("heading", { name: "Zack Wheeler - R" }),
     ).toBeInTheDocument();
     expect(screen.getByText("Lineup vs MacKenzie Gore")).toBeInTheDocument();
     expect(screen.getByText("Trea Turner")).toBeInTheDocument();
     expect(screen.getByText("Johan Rojas")).toBeInTheDocument();
     expect(
-      screen.queryByRole("heading", { name: "LHP MacKenzie Gore" }),
+      screen.queryByRole("heading", { name: "MacKenzie Gore - L" }),
     ).not.toBeInTheDocument();
   });
 
@@ -254,7 +274,7 @@ describe("MlbProjectedLineups", () => {
     fireEvent.click(screen.getByTestId("mlb-lineup-toggle-home"));
 
     expect(
-      screen.getByRole("heading", { name: "RHP Zack Wheeler" }),
+      screen.getByRole("heading", { name: "Zack Wheeler - R" }),
     ).toBeInTheDocument();
     expect(screen.getByText("Lineup vs MacKenzie Gore")).toBeInTheDocument();
     expect(screen.getByRole("row", { name: /Trea Turner/ })).toHaveTextContent(
@@ -267,5 +287,55 @@ describe("MlbProjectedLineups", () => {
 
     expect(screen.getByTestId("mlb-lineup-toggle-away")).toHaveTextContent("WSH");
     expect(screen.getByTestId("mlb-lineup-toggle-home")).toHaveTextContent("PHI");
+  });
+
+  it("renders season stats and injuries under lineups when unavailable", () => {
+    render(
+      <MlbProjectedLineups
+        detail={{
+          ...mlbScheduledDetail,
+          seasonTeamStats: {
+            away: {
+              hr: 1,
+              r: 2,
+              h: 3,
+              avg: ".200",
+              obp: ".300",
+              slg: ".400",
+              era: "4.00",
+              so: 10,
+              bb: 5,
+            },
+            home: {
+              hr: 2,
+              r: 3,
+              h: 4,
+              avg: ".250",
+              obp: ".350",
+              slg: ".450",
+              era: "3.50",
+              so: 12,
+              bb: 4,
+            },
+          },
+          injuries: {
+            away: [
+              {
+                name: "Dalton Rushing",
+                position: "C",
+                status: "10-Day IL",
+                detail: "Arm",
+              },
+            ],
+            home: [],
+          },
+        }}
+        game={null}
+      />,
+    );
+    expect(screen.getByText("Lineups unavailable")).toBeInTheDocument();
+    expect(screen.getByTestId("mlb-projected-lineups-stack")).toBeInTheDocument();
+    expect(screen.getByTestId("mlb-season-team-stats")).toHaveClass("sm:w-1/2");
+    expect(screen.getByTestId("mlb-injury-report")).toHaveClass("sm:w-1/2");
   });
 });
