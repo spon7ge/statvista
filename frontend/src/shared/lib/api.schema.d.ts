@@ -917,6 +917,7 @@ export interface components {
              */
             hit_chart: components["schemas"]["MlbHitPoint"][];
             home: components["schemas"]["MlbGameDetailTeam"];
+            injuries: components["schemas"]["MlbInjuries"] | null;
             /**
              * League
              * @default mlb
@@ -936,6 +937,7 @@ export interface components {
              * @default []
              */
             scoring_plays: components["schemas"]["MlbPlay"][];
+            season_team_stats: components["schemas"]["MlbSeasonTeamStatsPair"] | null;
             situation: components["schemas"]["MlbSituation"] | null;
             /** Sources */
             sources: string[];
@@ -990,6 +992,24 @@ export interface components {
             x: number;
             /** Y */
             y: number;
+        };
+        /** MlbInjuries */
+        MlbInjuries: {
+            /** Away */
+            away: components["schemas"]["MlbInjury"][];
+            /** Home */
+            home: components["schemas"]["MlbInjury"][];
+        };
+        /** MlbInjury */
+        MlbInjury: {
+            /** Detail */
+            detail: string | null;
+            /** Name */
+            name: string;
+            /** Position */
+            position: string | null;
+            /** Status */
+            status: string;
         };
         /** MlbLinescore */
         MlbLinescore: {
@@ -1058,18 +1078,24 @@ export interface components {
         };
         /** MlbLineupMatchupPitcher */
         MlbLineupMatchupPitcher: {
+            /** Bb Per 9 */
+            bb_per_9: string | null;
             /** Era */
             era: string | null;
             /** Hand */
             hand: string | null;
             /** Innings Pitched */
             innings_pitched: string | null;
+            /** K Per 9 */
+            k_per_9: string | null;
             /** Losses */
             losses: number | null;
             /** Mlbam Id */
             mlbam_id: number | null;
             /** Name */
             name: string | null;
+            /** Strikeout Walk Ratio */
+            strikeout_walk_ratio: string | null;
             /** Strikeouts */
             strikeouts: number | null;
             /** Whip */
@@ -1140,10 +1166,42 @@ export interface components {
              */
             source: string;
         };
+        /** MlbOddsBoard */
+        MlbOddsBoard: {
+            away: components["schemas"]["MlbOddsBoardSide"];
+            home: components["schemas"]["MlbOddsBoardSide"];
+        };
+        /** MlbOddsBoardLine */
+        MlbOddsBoardLine: {
+            /** Line */
+            line: number;
+            /** Price */
+            price: number | null;
+        };
+        /** MlbOddsBoardSide */
+        MlbOddsBoardSide: {
+            /** Moneyline */
+            moneyline: number | null;
+            spread: components["schemas"]["MlbOddsBoardLine"] | null;
+            total: components["schemas"]["MlbOddsBoardTotal"] | null;
+        };
+        /** MlbOddsBoardTotal */
+        MlbOddsBoardTotal: {
+            /** Line */
+            line: number;
+            /** Price */
+            price: number | null;
+            /**
+             * Side
+             * @enum {string}
+             */
+            side: "over" | "under";
+        };
         /** MlbOddsGame */
         MlbOddsGame: {
             /** Away Abbrev */
             away_abbrev: string;
+            board: components["schemas"]["MlbOddsBoard"] | null;
             /** Game Date */
             game_date: string | null;
             /** Home Abbrev */
@@ -1311,6 +1369,32 @@ export interface components {
             fetched_at: string;
             /** Games */
             games: components["schemas"]["MlbGame"][];
+        };
+        /** MlbSeasonTeamStatLine */
+        MlbSeasonTeamStatLine: {
+            /** Avg */
+            avg: string | null;
+            /** Bb */
+            bb: number | null;
+            /** Era */
+            era: string | null;
+            /** H */
+            h: number | null;
+            /** Hr */
+            hr: number | null;
+            /** Obp */
+            obp: string | null;
+            /** R */
+            r: number | null;
+            /** Slg */
+            slg: string | null;
+            /** So */
+            so: number | null;
+        };
+        /** MlbSeasonTeamStatsPair */
+        MlbSeasonTeamStatsPair: {
+            away: components["schemas"]["MlbSeasonTeamStatLine"];
+            home: components["schemas"]["MlbSeasonTeamStatLine"];
         };
         /** MlbSituation */
         MlbSituation: {

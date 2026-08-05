@@ -1415,6 +1415,16 @@
           "home": {
             "$ref": "#/components/schemas/MlbGameDetailTeam"
           },
+          "injuries": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbInjuries"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "league": {
             "const": "mlb",
             "default": "mlb",
@@ -1450,6 +1460,16 @@
             },
             "title": "Scoring Plays",
             "type": "array"
+          },
+          "season_team_stats": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbSeasonTeamStatsPair"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "situation": {
             "anyOf": [
@@ -1533,6 +1553,8 @@
           "game_date_label",
           "decisions",
           "team_stats",
+          "season_team_stats",
+          "injuries",
           "sources",
           "fetched_at"
         ],
@@ -1667,6 +1689,72 @@
           "player_name"
         ],
         "title": "MlbHitPoint",
+        "type": "object"
+      },
+      "MlbInjuries": {
+        "properties": {
+          "away": {
+            "items": {
+              "$ref": "#/components/schemas/MlbInjury"
+            },
+            "title": "Away",
+            "type": "array"
+          },
+          "home": {
+            "items": {
+              "$ref": "#/components/schemas/MlbInjury"
+            },
+            "title": "Home",
+            "type": "array"
+          }
+        },
+        "required": [
+          "away",
+          "home"
+        ],
+        "title": "MlbInjuries",
+        "type": "object"
+      },
+      "MlbInjury": {
+        "properties": {
+          "detail": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detail"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "position": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Position"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "position",
+          "status",
+          "detail"
+        ],
+        "title": "MlbInjury",
         "type": "object"
       },
       "MlbLinescore": {
@@ -1942,6 +2030,17 @@
       },
       "MlbLineupMatchupPitcher": {
         "properties": {
+          "bb_per_9": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bb Per 9"
+          },
           "era": {
             "anyOf": [
               {
@@ -1975,6 +2074,17 @@
             ],
             "title": "Innings Pitched"
           },
+          "k_per_9": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "K Per 9"
+          },
           "losses": {
             "anyOf": [
               {
@@ -2007,6 +2117,17 @@
               }
             ],
             "title": "Name"
+          },
+          "strikeout_walk_ratio": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Strikeout Walk Ratio"
           },
           "strikeouts": {
             "anyOf": [
@@ -2051,7 +2172,10 @@
           "era",
           "innings_pitched",
           "strikeouts",
-          "whip"
+          "whip",
+          "k_per_9",
+          "bb_per_9",
+          "strikeout_walk_ratio"
         ],
         "title": "MlbLineupMatchupPitcher",
         "type": "object"
@@ -2268,11 +2392,138 @@
         "title": "MlbLineupsResponse",
         "type": "object"
       },
+      "MlbOddsBoard": {
+        "properties": {
+          "away": {
+            "$ref": "#/components/schemas/MlbOddsBoardSide"
+          },
+          "home": {
+            "$ref": "#/components/schemas/MlbOddsBoardSide"
+          }
+        },
+        "required": [
+          "away",
+          "home"
+        ],
+        "title": "MlbOddsBoard",
+        "type": "object"
+      },
+      "MlbOddsBoardLine": {
+        "properties": {
+          "line": {
+            "title": "Line",
+            "type": "number"
+          },
+          "price": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price"
+          }
+        },
+        "required": [
+          "line",
+          "price"
+        ],
+        "title": "MlbOddsBoardLine",
+        "type": "object"
+      },
+      "MlbOddsBoardSide": {
+        "properties": {
+          "moneyline": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Moneyline"
+          },
+          "spread": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbOddsBoardLine"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "total": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbOddsBoardTotal"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "moneyline",
+          "spread",
+          "total"
+        ],
+        "title": "MlbOddsBoardSide",
+        "type": "object"
+      },
+      "MlbOddsBoardTotal": {
+        "properties": {
+          "line": {
+            "title": "Line",
+            "type": "number"
+          },
+          "price": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price"
+          },
+          "side": {
+            "enum": [
+              "over",
+              "under"
+            ],
+            "title": "Side",
+            "type": "string"
+          }
+        },
+        "required": [
+          "side",
+          "line",
+          "price"
+        ],
+        "title": "MlbOddsBoardTotal",
+        "type": "object"
+      },
       "MlbOddsGame": {
         "properties": {
           "away_abbrev": {
             "title": "Away Abbrev",
             "type": "string"
+          },
+          "board": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbOddsBoard"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "game_date": {
             "anyOf": [
@@ -2341,7 +2592,8 @@
           "spread_line",
           "total",
           "game_date",
-          "sportsbook"
+          "sportsbook",
+          "board"
         ],
         "title": "MlbOddsGame",
         "type": "object"
@@ -3016,6 +3268,138 @@
           "fetched_at"
         ],
         "title": "MlbScoreboardResponse",
+        "type": "object"
+      },
+      "MlbSeasonTeamStatLine": {
+        "properties": {
+          "avg": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avg"
+          },
+          "bb": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bb"
+          },
+          "era": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Era"
+          },
+          "h": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "H"
+          },
+          "hr": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hr"
+          },
+          "obp": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Obp"
+          },
+          "r": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "R"
+          },
+          "slg": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Slg"
+          },
+          "so": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "So"
+          }
+        },
+        "required": [
+          "hr",
+          "r",
+          "h",
+          "avg",
+          "obp",
+          "slg",
+          "era",
+          "so",
+          "bb"
+        ],
+        "title": "MlbSeasonTeamStatLine",
+        "type": "object"
+      },
+      "MlbSeasonTeamStatsPair": {
+        "properties": {
+          "away": {
+            "$ref": "#/components/schemas/MlbSeasonTeamStatLine"
+          },
+          "home": {
+            "$ref": "#/components/schemas/MlbSeasonTeamStatLine"
+          }
+        },
+        "required": [
+          "away",
+          "home"
+        ],
+        "title": "MlbSeasonTeamStatsPair",
         "type": "object"
       },
       "MlbSituation": {
