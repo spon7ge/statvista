@@ -14,6 +14,8 @@ from sqlalchemy import text
 from src.odds.snapshot_rows import (
     parlay_props_to_api_odds_rows,
     prizepicks_projections_to_rows,
+    prophetx_props_to_rows,
+    prophetx_team_to_rows,
     selenium_pinnacle_props_to_rows,
     selenium_pinnacle_team_to_rows,
     sharp_props_to_book_rows,
@@ -72,6 +74,25 @@ _PINNACLE_TEAM_CONFLICT_COLS = [
     "market_type",
     "period",
     "is_alternate",
+    "side",
+    "points",
+    "scraped_at",
+]
+
+_PROPHETX_PROPS_CONFLICT_COLS = [
+    "league",
+    "event_id",
+    "player_name",
+    "stat_name",
+    "side",
+    "line_score",
+    "scraped_at",
+]
+
+_PROPHETX_TEAM_CONFLICT_COLS = [
+    "league",
+    "event_id",
+    "market_type",
     "side",
     "points",
     "scraped_at",
@@ -292,6 +313,78 @@ def load_pinnacle_team_json_file(path: str, *, scraped_at: datetime | None = Non
     return load_pinnacle_team_snapshot(
         games, league=league, scraped_at=scraped_at
     )
+
+
+def load_prophetx_props_snapshot(
+    games: list[dict],
+    *,
+    league: str,
+    scraped_at: datetime | None = None,
+) -> int:
+    if _skip_db("PROPHETX_SKIP_DB"):
+        return 0
+    scraped_at = scraped_at or datetime.now(timezone.utc)
+    rows = prophetx_props_to_rows(games, league=league, scraped_at=scraped_at)
+    if not rows:
+        return 0
+    df = _coerce_float_columns(pd.DataFrame(rows), ["line_score", "stake"])
+    df = _dedupe_conflict_rows(df, _PROPHETX_PROPS_CONFLICT_COLS)
+    if df.empty:
+        return 0
+    upsert_df(
+        "mlb_prophetx",
+        df,
+        schema="odds",
+        conflict_cols=_PROPHETX_PROPS_CONFLICT_COLS,
+        lineage_col="fetched_at",
+    )
+    return len(df)
+
+
+def load_prophetx_team_snapshot(
+    games: list[dict],
+    *,
+    league: str,
+    scraped_at: datetime | None = None,
+) -> int:
+    if _skip_db("PROPHETX_SKIP_DB"):
+        return 0
+    scraped_at = scraped_at or datetime.now(timezone.utc)
+    rows = prophetx_team_to_rows(games, league=league, scraped_at=scraped_at)
+    if not rows:
+        return 0
+    df = _coerce_float_columns(pd.DataFrame(rows), ["points", "stake"])
+    df = _dedupe_conflict_rows(df, _PROPHETX_TEAM_CONFLICT_COLS)
+    if df.empty:
+        return 0
+    upsert_df(
+        "mlb_prophetx_team",
+        df,
+        schema="odds",
+        conflict_cols=_PROPHETX_TEAM_CONFLICT_COLS,
+        lineage_col="fetched_at",
+    )
+    return len(df)
+
+
+def load_prophetx_props_json_file(path: str, *, scraped_at: datetime | None = None) -> int:
+    with open(path, encoding="utf-8") as f:
+        payload = json.load(f)
+    league = str(payload.get("league") or "mlb").strip().lower()
+    games = payload.get("games") or []
+    if not isinstance(games, list):
+        raise ValueError(f"invalid props snapshot games in {path}")
+    return load_prophetx_props_snapshot(games, league=league, scraped_at=scraped_at)
+
+
+def load_prophetx_team_json_file(path: str, *, scraped_at: datetime | None = None) -> int:
+    with open(path, encoding="utf-8") as f:
+        payload = json.load(f)
+    league = str(payload.get("league") or "mlb").strip().lower()
+    games = payload.get("games") or []
+    if not isinstance(games, list):
+        raise ValueError(f"invalid team snapshot games in {path}")
+    return load_prophetx_team_snapshot(games, league=league, scraped_at=scraped_at)
 
 
 def _latest_scraped_at(table: str, league: str) -> datetime | None:

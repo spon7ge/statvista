@@ -561,3 +561,23 @@ def test_load_pinnacle_props_snapshot_empty_returns_zero(mock_upsert):
     )
     assert count == 0
     mock_upsert.assert_not_called()
+
+
+def test_load_prophetx_props_skip_db(monkeypatch, mock_upsert):
+    monkeypatch.setenv("PROPHETX_SKIP_DB", "1")
+    count = load_snapshots.load_prophetx_props_snapshot(
+        [{"event_id": 1, "competitors": [], "props": []}],
+        league="mlb",
+    )
+    assert count == 0
+    mock_upsert.assert_not_called()
+
+
+def test_load_prophetx_team_skip_db(monkeypatch, mock_upsert):
+    monkeypatch.setenv("PROPHETX_SKIP_DB", "1")
+    count = load_snapshots.load_prophetx_team_snapshot(
+        [{"event_id": 1, "competitors": [], "team_markets": {}}],
+        league="mlb",
+    )
+    assert count == 0
+    mock_upsert.assert_not_called()
