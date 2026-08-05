@@ -7,6 +7,8 @@ from src.odds.snapshot_rows import (
     parlay_props_to_api_odds_rows,
     parlay_props_to_book_rows,
     prizepicks_projections_to_rows,
+    prophetx_props_to_rows,
+    prophetx_team_to_rows,
     sharp_props_to_book_rows,
     underdog_picks_to_rows,
 )
@@ -241,3 +243,84 @@ def test_parlay_props_to_book_rows_allows_one_sided_dfs():
     assert rows[0]["side"] == "over"
     assert rows[0]["line_score"] == 3.5
     assert rows[0]["american_price"] == -110
+
+
+def test_prophetx_props_to_rows_emits_over_under_with_stake():
+    scraped = datetime(2026, 8, 5, tzinfo=timezone.utc)
+    games = [
+        {
+            "event_id": 10079004,
+            "scheduled": "2026-08-05T22:35:00Z",
+            "competitors": [
+                {"name": "Baltimore Orioles", "seq": 0},
+                {"name": "Los Angeles Angels", "seq": 1},
+            ],
+            "props": [
+                {
+                    "player": "Mike Trout",
+                    "stat": "hits",
+                    "line": 0.5,
+                    "over": {"american": -200, "stake": 134.33},
+                    "under": {"american": 172, "stake": 400.37},
+                    "market_id": 460000600,
+                    "sub_type": "player_total_hits",
+                },
+                {
+                    "player": "Skip Me",
+                    "stat": "hits",
+                    "line": 0.5,
+                    "over": {"american": None, "stake": 1},
+                    "under": None,
+                    "market_id": 1,
+                    "sub_type": "player_total_hits",
+                },
+            ],
+        }
+    ]
+    rows = prophetx_props_to_rows(games, league="mlb", scraped_at=scraped)
+    assert len(rows) == 2
+    over = next(r for r in rows if r["side"] == "over")
+    assert over["player_name"] == "Mike Trout"
+    assert over["stat_name"] == "hits"
+    assert float(over["line_score"]) == 0.5
+    assert over["american_price"] == -200
+    assert float(over["stake"]) == 134.33
+    assert over["away_team"] == "Los Angeles Angels"
+    assert over["home_team"] == "Baltimore Orioles"
+    assert over["event_id"] == 10079004
+    assert over["scraped_at"] == scraped
+
+
+def test_prophetx_team_to_rows_moneyline_and_run_line():
+    scraped = datetime(2026, 8, 5, tzinfo=timezone.utc)
+    games = [
+        {
+            "event_id": 10079004,
+            "scheduled": "2026-08-05T22:35:00Z",
+            "competitors": [
+                {"name": "Baltimore Orioles", "seq": 0},
+                {"name": "Los Angeles Angels", "seq": 1},
+            ],
+            "team_markets": {
+                "moneyline": [
+                    {"name": "Baltimore Orioles", "american": -134, "line": None, "stake": 100.0},
+                    {"name": "Los Angeles Angels", "american": 129, "line": None, "stake": 50.0},
+                ],
+                "run_line": [
+                    {"name": "Baltimore Orioles -1", "american": 110, "line": -1, "stake": 2.2},
+                ],
+                "1st_inning_moneyline": [
+                    {"name": "Baltimore Orioles", "american": -105, "line": None, "stake": 10.0},
+                ],
+            },
+        }
+    ]
+    rows = prophetx_team_to_rows(games, league="mlb", scraped_at=scraped)
+    types = {r["market_type"] for r in rows}
+    assert types == {"moneyline", "run_line", "1st_inning_moneyline"}
+    ml = [r for r in rows if r["market_type"] == "moneyline"]
+    assert len(ml) == 2
+    assert ml[0]["american_price"] == -134
+    assert float(ml[0]["stake"]) == 100.0
+    rl = next(r for r in rows if r["market_type"] == "run_line")
+    assert float(rl["points"]) == -1.0

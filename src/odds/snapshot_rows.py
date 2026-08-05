@@ -398,3 +398,114 @@ def selenium_pinnacle_team_to_rows(
                     )
 
     return rows
+
+
+def prophetx_home_away(competitors: list[dict]) -> tuple[str | None, str | None]:
+    """Return (away_team, home_team). ProphetX seq 0 = home, seq 1 = away."""
+    home = away = None
+    for c in competitors or []:
+        if not isinstance(c, dict):
+            continue
+        name = (c.get("name") or c.get("displayName") or "").strip() or None
+        seq = c.get("seq")
+        if seq == 0:
+            home = name
+        elif seq == 1:
+            away = name
+    return away, home
+
+
+def prophetx_props_to_rows(
+    games: list[dict],
+    *,
+    league: str,
+    scraped_at: datetime,
+) -> list[dict]:
+    rows: list[dict] = []
+    league_key = league.lower()
+    for game in games:
+        if not isinstance(game, dict):
+            continue
+        away, home = prophetx_home_away(game.get("competitors") or [])
+        start_time = _parse_line_updated_at(game.get("scheduled"))
+        event_id = game.get("event_id")
+        for prop in game.get("props") or []:
+            if not isinstance(prop, dict):
+                continue
+            player = prop.get("player")
+            stat = prop.get("stat")
+            line = prop.get("line")
+            if not player or not stat or line is None:
+                continue
+            for side in ("over", "under"):
+                payload = prop.get(side)
+                if not isinstance(payload, dict):
+                    continue
+                american = parse_american_price(payload.get("american"))
+                if american is None:
+                    continue
+                stake = payload.get("stake")
+                rows.append(
+                    {
+                        "league": league_key,
+                        "event_id": event_id,
+                        "away_team": away,
+                        "home_team": home,
+                        "start_time": start_time,
+                        "player_name": player,
+                        "stat_name": stat,
+                        "line_score": line,
+                        "side": side,
+                        "american_price": american,
+                        "stake": stake,
+                        "market_id": prop.get("market_id"),
+                        "sub_type": prop.get("sub_type"),
+                        "scraped_at": scraped_at,
+                    }
+                )
+    return rows
+
+
+def prophetx_team_to_rows(
+    games: list[dict],
+    *,
+    league: str,
+    scraped_at: datetime,
+) -> list[dict]:
+    rows: list[dict] = []
+    league_key = league.lower()
+    for game in games:
+        if not isinstance(game, dict):
+            continue
+        away, home = prophetx_home_away(game.get("competitors") or [])
+        if not away or not home:
+            continue
+        start_time = _parse_line_updated_at(game.get("scheduled"))
+        event_id = game.get("event_id")
+        for market_type, sides in (game.get("team_markets") or {}).items():
+            if not isinstance(sides, list):
+                continue
+            for side_row in sides:
+                if not isinstance(side_row, dict):
+                    continue
+                american = parse_american_price(side_row.get("american"))
+                if american is None:
+                    continue
+                name = side_row.get("name")
+                rows.append(
+                    {
+                        "league": league_key,
+                        "event_id": event_id,
+                        "away_team": away,
+                        "home_team": home,
+                        "start_time": start_time,
+                        "market_type": str(market_type),
+                        "side": str(name or ""),
+                        "team": name,
+                        "points": side_row.get("line"),
+                        "american_price": american,
+                        "stake": side_row.get("stake"),
+                        "scraped_at": scraped_at,
+                    }
+                )
+    return rows
