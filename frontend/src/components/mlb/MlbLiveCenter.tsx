@@ -8,7 +8,8 @@ import { MlbFinalLinescoreCard } from "./MlbFinalLinescoreCard";
 import { MlbFinalPlayFeed } from "./MlbFinalPlayFeed";
 import { MlbFinalTeamStats } from "./MlbFinalTeamStats";
 import { MlbHitChart } from "./MlbHitChart";
-import { MlbLiveSituation } from "./MlbLiveSituation";
+import { MlbLiveMatchupPanel } from "./MlbLiveMatchupPanel";
+import { MlbPitchZone } from "./MlbPitchZone";
 import { MlbWinProbability } from "./MlbWinProbability";
 import type { MlbGameDetailView } from "./types";
 
@@ -30,7 +31,10 @@ export function MlbLiveCenter({ detail }: { detail: MlbGameDetailView }) {
           className="grid items-start gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]"
         >
           <div className="space-y-4">
-            <MlbLiveSituation detail={detail} variant="pitchZone" />
+            <MlbLiveMatchupPanel detail={detail} />
+            {detail.situation ? (
+              <MlbPitchZone situation={detail.situation} />
+            ) : null}
             <MlbFinalPlayFeed detail={detail} />
           </div>
           <div className="space-y-4">

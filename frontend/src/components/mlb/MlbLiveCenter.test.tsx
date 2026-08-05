@@ -5,7 +5,7 @@ import { MlbLiveCenter } from "./MlbLiveCenter";
 import { mlbLiveDetail } from "./testFixtures";
 
 describe("MlbLiveCenter", () => {
-  it("renders Summary with pitch zone above play feed and linescore atop right rail", async () => {
+  it("renders Summary with matchup above pitch zone above play feed and linescore atop right rail", async () => {
     const user = userEvent.setup();
     render(<MlbLiveCenter detail={mlbLiveDetail} />);
 
@@ -14,13 +14,18 @@ describe("MlbLiveCenter", () => {
     expect(screen.getByTestId("mlb-broadcast-header")).toBeInTheDocument();
 
     const summary = screen.getByRole("tabpanel", { name: /summary/i });
-    const pitchZone = within(summary).getByTestId("mlb-live-situation");
+    const matchup = within(summary).getByTestId("mlb-live-matchup");
+    const pitchZone = within(summary).getByTestId("mlb-pitch-zone");
     const playFeed = within(summary).getByTestId("mlb-final-play-feed");
     const linescore = within(summary).getByTestId("mlb-final-linescore-card");
     const teamStats = within(summary).getByTestId("mlb-final-team-stats");
     const gameFlow = within(summary).getByTestId("mlb-game-flow");
     const hitChart = within(summary).getByTestId("mlb-hit-chart");
 
+    expect(
+      matchup.compareDocumentPosition(pitchZone) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
     expect(
       pitchZone.compareDocumentPosition(playFeed) &
         Node.DOCUMENT_POSITION_FOLLOWING,
@@ -38,7 +43,6 @@ describe("MlbLiveCenter", () => {
         Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
 
-    expect(screen.queryByTestId("mlb-live-matchup")).not.toBeInTheDocument();
     expect(screen.queryByTestId("mlb-box-score")).not.toBeInTheDocument();
 
     await user.click(screen.getByRole("tab", { name: /box/i }));
@@ -48,7 +52,8 @@ describe("MlbLiveCenter", () => {
       "grid-cols-2",
     );
     expect(screen.queryByTestId("mlb-final-play-feed")).not.toBeInTheDocument();
-    expect(screen.queryByTestId("mlb-live-situation")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("mlb-live-matchup")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("mlb-pitch-zone")).not.toBeInTheDocument();
     expect(screen.queryByTestId("mlb-game-flow")).not.toBeInTheDocument();
     expect(screen.queryByTestId("mlb-hit-chart")).not.toBeInTheDocument();
   });

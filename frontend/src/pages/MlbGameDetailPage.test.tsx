@@ -44,7 +44,30 @@ function mlbDetail(status: "live" | "final" | "scheduled", sources = ["statsapi"
             away: { runs: 2, hits: 3, errors: 0 },
             home: { runs: 1, hits: 2, errors: 1 },
           },
-    situation: null,
+    situation:
+      status === "scheduled"
+        ? null
+        : {
+            balls: 2,
+            strikes: 1,
+            outs: 1,
+            runners: { first: true, second: false, third: false },
+            pitches: [
+              {
+                number: 1,
+                type: "FF",
+                mph: 95.2,
+                result: "Ball",
+                is_strike: false,
+                zone_x: 0.1,
+                zone_y: 0.2,
+              },
+            ],
+            at_bat: { name: "Mookie Betts", hand: "R", summary: ".280 AVG" },
+            on_deck: { name: "Freddie Freeman", hand: "L", summary: null },
+            pitching: { name: "Chris Sale", hand: "L", summary: "6 K" },
+            latest_play_text: "Ball",
+          },
     plays: [],
     scoring_plays: [],
     box_score: null,
@@ -91,13 +114,13 @@ describe("MlbGameDetailPage", () => {
     expect(
       screen.getByRole("tablist", { name: /live game details/i }),
     ).toBeInTheDocument();
-    expect(screen.getByTestId("mlb-live-situation")).toBeInTheDocument();
+    expect(screen.getByTestId("mlb-live-matchup")).toBeInTheDocument();
+    expect(screen.getByTestId("mlb-pitch-zone")).toBeInTheDocument();
     expect(screen.getByTestId("mlb-final-play-feed")).toBeInTheDocument();
     expect(screen.getByTestId("mlb-final-linescore-card")).toBeInTheDocument();
     expect(screen.getByTestId("mlb-game-flow")).toBeInTheDocument();
     expect(screen.getByTestId("mlb-hit-chart")).toBeInTheDocument();
     expect(screen.queryByTestId("mlb-live-viz-row")).not.toBeInTheDocument();
-    expect(screen.queryByTestId("mlb-live-matchup")).not.toBeInTheDocument();
     expect(screen.getByText(/Data: MLB Stats API · ESPN/i)).toBeInTheDocument();
     expect(screen.getAllByText(/Top 3rd/i)).toHaveLength(1);
     expect(screen.getAllByText(/Fenway Park/i).length).toBeGreaterThanOrEqual(1);
