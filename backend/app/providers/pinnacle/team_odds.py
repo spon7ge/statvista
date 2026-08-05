@@ -9,15 +9,14 @@ from datetime import datetime, timezone
 from typing import Any
 from zoneinfo import ZoneInfo
 
-from app.domains.wnba.schemas_odds import WnbaOddsGame, WnbaOddsResponse
+from app.schemas.odds import WnbaOddsGame, WnbaOddsResponse
 from app.providers.sharp.odds import (
     fetch_sharp_odds_rows,
     merge_odds_prefer_primary,
     normalize_sharp_odds,
 )
-from app.services.odds_snapshots import fetch_latest_pinnacle_team
-from app.domains.wnba.scoreboard import canonical_abbrev
-from app.domains.wnba.team_names import abbrev_from_team_name
+from app.providers.odds_snapshots import fetch_latest_pinnacle_team
+from app.domains.betting.team_names import abbrev_from_team_name, canonical_abbrev
 
 logger = logging.getLogger(__name__)
 

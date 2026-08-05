@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from app.services import parlay_odds as svc
+from app.domains.betting import parlay_odds as svc
 
 FIXTURE = Path(__file__).parent / "fixtures" / "parlay_wnba_odds.json"
 

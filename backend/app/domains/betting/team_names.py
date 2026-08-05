@@ -4,9 +4,17 @@ from __future__ import annotations
 
 import re
 
-from app.domains.wnba.scoreboard import canonical_abbrev
-
 _TRICODE_RE = re.compile(r"^[A-Z]{2,3}$")
+_ABBREV_ALIASES = {
+    "GS": "GSV",
+    "LA": "LAS",
+    "LV": "LVA",
+    "NY": "NYL",
+    "PHX": "PHO",
+    "POR": "PDX",
+    "CONN": "CON",
+    "WSH": "WAS",
+}
 
 NAME_TO_ABBREV = {
     "atlanta dream": "ATL",
@@ -42,6 +50,12 @@ NAME_TO_ABBREV = {
     "was mystics": "WAS",
     "wsh mystics": "WAS",
 }
+
+
+def canonical_abbrev(abbrev: str) -> str:
+    """Map a WNBA tricode to the shared stats.wnba.com spelling."""
+    upper = str(abbrev or "").strip().upper()
+    return _ABBREV_ALIASES.get(upper, upper)
 
 
 def abbrev_from_team_name(label: str | None) -> str | None:

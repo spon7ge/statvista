@@ -1,5 +1,5 @@
-from app.domains.wnba.schemas_props import WnbaPropBookQuote, WnbaPropLine
-from app.services.dfs_attach import attach_dfs_snapshots
+from app.domains.betting.schemas_props import WnbaPropBookQuote, WnbaPropLine
+from app.domains.betting.dfs_attach import attach_dfs_snapshots
 
 
 def _sb(player: str, market: str, side: str, **books) -> WnbaPropLine:
@@ -83,7 +83,7 @@ def test_parlay_dfs_quotes_ignored():
 
 
 def test_pick_closest_prefers_exact_either_target():
-    from app.services.dfs_attach import pick_closest_quote
+    from app.domains.betting.dfs_attach import pick_closest_quote
 
     q19 = WnbaPropBookQuote(line=19.5, odds_american=-110)
     q21 = WnbaPropBookQuote(line=21.5, odds_american=-105)

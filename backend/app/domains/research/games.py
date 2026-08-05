@@ -7,7 +7,7 @@ import re
 from fastapi import APIRouter, HTTPException, Query
 
 from app.core import db
-from app.schemas.game import Game, GameSlate, GameWithProps
+from app.domains.research.schemas_game import Game, GameSlate, GameWithProps
 from app.schemas.prop import PropLine
 
 router = APIRouter(tags=["games"])

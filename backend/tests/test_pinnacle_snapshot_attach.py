@@ -3,9 +3,9 @@ from __future__ import annotations
 import asyncio
 from unittest.mock import AsyncMock, patch
 
-from app.domains.wnba.schemas_props import WnbaPropBookQuote, WnbaPropLine
-from app.services import parlay_props as svc
-from app.services.dfs_attach import attach_pinnacle_snapshot
+from app.domains.betting.schemas_props import WnbaPropBookQuote, WnbaPropLine
+from app.domains.betting import parlay_props as svc
+from app.domains.betting.dfs_attach import attach_pinnacle_snapshot
 
 
 def test_attach_overwrites_null_pinnacle():
@@ -157,17 +157,17 @@ def test_get_today_props_pinnacle_from_supabase_snapshot():
 
     async def _run():
         with (
-            patch("app.services.parlay_props.parlay_get", new_callable=AsyncMock) as mock_get,
-            patch("app.services.parlay_props.fetch_latest_pinnacle", return_value=pin_snapshot),
-            patch("app.services.parlay_props.fetch_latest_prizepicks", return_value=pp_snapshot),
-            patch("app.services.parlay_props.fetch_latest_underdog", return_value=[]),
+            patch("app.domains.betting.parlay_props.parlay_get", new_callable=AsyncMock) as mock_get,
+            patch("app.domains.betting.parlay_props.fetch_latest_pinnacle", return_value=pin_snapshot),
+            patch("app.domains.betting.parlay_props.fetch_latest_prizepicks", return_value=pp_snapshot),
+            patch("app.domains.betting.parlay_props.fetch_latest_underdog", return_value=[]),
             patch(
-                "app.services.parlay_props.build_player_team_index",
+                "app.domains.betting.parlay_props.build_player_team_index",
                 new_callable=AsyncMock,
                 return_value={},
             ),
             patch("src.odds.load_snapshots.maybe_persist_parlay_props"),
-            patch("app.services.parlay_props.PARLAY_API_KEY", "test-key"),
+            patch("app.domains.betting.parlay_props.PARLAY_API_KEY", "test-key"),
         ):
             mock_get.return_value = parlay_payload
             svc._cache.clear()
@@ -207,7 +207,7 @@ def test_fetch_allowlist_excludes_pinnacle():
     ]
 
     async def _run() -> list[dict]:
-        with patch("app.services.parlay_props.parlay_get", new_callable=AsyncMock) as mock_get:
+        with patch("app.domains.betting.parlay_props.parlay_get", new_callable=AsyncMock) as mock_get:
             mock_get.return_value = payload
             return await svc.fetch_parlay_prop_rows()
 

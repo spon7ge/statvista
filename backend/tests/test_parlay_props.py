@@ -7,8 +7,8 @@ from unittest.mock import patch
 from fastapi.testclient import TestClient
 
 from app.main import app
-from app.domains.wnba.schemas_props import PROP_SPORTSBOOKS
-from app.services import parlay_props as svc
+from app.domains.betting.schemas_props import PROP_SPORTSBOOKS
+from app.domains.betting import parlay_props as svc
 
 FIXTURE = Path(__file__).parent / "fixtures" / "parlay_wnba_props.json"
 

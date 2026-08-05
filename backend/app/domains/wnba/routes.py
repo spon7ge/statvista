@@ -12,16 +12,12 @@ from app.domains.wnba.schemas import (
     WnbaFuturesResponse,
     WnbaGameDetail,
     WnbaLeadersResponse,
-    WnbaOddsResponse,
     WnbaPlayerResponse,
-    WnbaPropsResponse,
     WnbaScoreboardResponse,
     WnbaStandingsResponse,
 )
 from app.domains.wnba.scoreboard import get_scoreboard_for_date, get_today_scoreboard
 from app.domains.wnba.standings import get_wnba_standings
-from app.providers.pinnacle.team_odds import get_today_odds
-from app.services.parlay_props import get_today_props
 
 logger = logging.getLogger(__name__)
 
@@ -133,18 +129,6 @@ async def wnba_futures(response: Response) -> WnbaFuturesResponse:
             detail="WNBA futures are temporarily unavailable",
             headers=_NO_STORE,
         ) from exc
-
-
-@router.get("/wnba/odds/today", response_model=WnbaOddsResponse)
-async def wnba_odds_today(response: Response) -> WnbaOddsResponse:
-    response.headers["Cache-Control"] = "no-store"
-    return await get_today_odds()
-
-
-@router.get("/wnba/props/today", response_model=WnbaPropsResponse)
-async def wnba_props_today(response: Response) -> WnbaPropsResponse:
-    response.headers["Cache-Control"] = "no-store"
-    return await get_today_props()
 
 
 @router.get("/wnba/games/{espn_event_id}", response_model=WnbaGameDetail)

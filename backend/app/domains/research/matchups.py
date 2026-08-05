@@ -4,7 +4,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Query
 
 from app.core import db
-from app.schemas.matchup import MatchupFeatures
+from app.domains.research.schemas_matchup import MatchupFeatures
 
 router = APIRouter(tags=["matchups"])
 

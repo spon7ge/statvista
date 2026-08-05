@@ -4,8 +4,8 @@ from __future__ import annotations
 from fastapi import APIRouter, HTTPException, Query
 
 from app.core import db
-from app.schemas.feature import PlayerListResponse, PlayerSummary
-from app.schemas.player import (
+from app.domains.research.schemas_feature import PlayerListResponse, PlayerSummary
+from app.domains.research.schemas_player import (
     PlayerGame,
     PlayerProfile,
     RollingAvg5,

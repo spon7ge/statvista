@@ -9,15 +9,15 @@ from typing import Any
 import httpx
 
 from app.core.config import SHARP_API_KEY
-from app.domains.wnba.schemas_props import (
+from app.domains.betting.schemas_props import (
     PROP_SPORTSBOOKS,
     WnbaPropBookQuote,
     WnbaPropLine,
     WnbaPropsResponse,
 )
 from app.providers.espn.wnba_roster import get_roster_index, norm_player_name
-from app.services.odds_snapshots import fetch_latest_prizepicks, fetch_latest_underdog
-from app.domains.wnba.scoreboard import canonical_abbrev
+from app.providers.odds_snapshots import fetch_latest_prizepicks, fetch_latest_underdog
+from app.domains.betting.team_names import canonical_abbrev
 
 logger = logging.getLogger(__name__)
 

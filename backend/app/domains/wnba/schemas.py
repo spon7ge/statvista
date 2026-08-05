@@ -29,17 +29,10 @@ from app.domains.wnba.schemas_leaders import (
     WnbaLeaderRow,
     WnbaLeadersResponse,
 )
-from app.domains.wnba.schemas_odds import WnbaOddsGame, WnbaOddsResponse
 from app.domains.wnba.schemas_player import (
     WnbaPlayerAverages,
     WnbaPlayerGame,
     WnbaPlayerResponse,
-)
-from app.domains.wnba.schemas_props import (
-    PROP_SPORTSBOOKS,
-    WnbaPropBookQuote,
-    WnbaPropLine,
-    WnbaPropsResponse,
 )
 from app.domains.wnba.schemas_scoreboard import (
     GameStatus,

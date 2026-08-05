@@ -2,12 +2,12 @@ from __future__ import annotations
 
 from typing import Any
 
-from app.domains.wnba.schemas_props import (
+from app.domains.betting.schemas_props import (
     PROP_SPORTSBOOKS,
     WnbaPropBookQuote,
     WnbaPropLine,
 )
-from app.services.prop_stat_keys import (
+from app.domains.betting.prop_stat_keys import (
     canonical_stat_key_from_parlay_market,
     canonical_stat_key_from_pp,
     canonical_stat_key_from_ud,

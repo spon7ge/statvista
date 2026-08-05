@@ -1,4 +1,4 @@
-from app.services.prop_stat_keys import (
+from app.domains.betting.prop_stat_keys import (
     canonical_stat_key_from_pp,
     canonical_stat_key_from_ud,
     canonical_stat_key_from_parlay_market,

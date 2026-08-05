@@ -1,7 +1,7 @@
-from app.schemas.feature import PlayerListResponse, PlayerSummary
-from app.schemas.game import Game, GameWithProps
-from app.schemas.matchup import MatchupFeatures
-from app.schemas.player import PlayerGame, PlayerProfile
+from app.domains.research.schemas_feature import PlayerListResponse, PlayerSummary
+from app.domains.research.schemas_game import Game, GameWithProps
+from app.domains.research.schemas_matchup import MatchupFeatures
+from app.domains.research.schemas_player import PlayerGame, PlayerProfile
 from app.schemas.prop import PropLine
 
 __all__ = [

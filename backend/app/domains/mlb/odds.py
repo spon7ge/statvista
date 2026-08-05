@@ -15,9 +15,9 @@ from app.providers.sharp.odds import (
     normalize_sharp_odds,
 )
 from app.domains.mlb.schemas import MlbOddsGame, MlbOddsResponse
-from app.domains.wnba.schemas_odds import WnbaOddsGame
+from app.schemas.odds import WnbaOddsGame
 from app.domains.mlb.team_names import abbrev_from_team_name, canonical_mlb_abbrev
-from app.services.odds_snapshots import fetch_latest_pinnacle_team
+from app.providers.odds_snapshots import fetch_latest_pinnacle_team
 
 logger = logging.getLogger(__name__)
 

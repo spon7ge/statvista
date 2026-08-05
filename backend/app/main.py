@@ -2,16 +2,13 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes import (
-    games,
     health,
-    matchups,
-    players,
-    props,
-    slates,
 )
 from app.core.config import CORS_ORIGINS
 from app.core.errors import register_exception_handlers
+from app.domains.betting.routes import router as betting_router
 from app.domains.mlb.routes import router as mlb_router
+from app.domains.research.routes import router as research_router
 from app.domains.wnba.routes import router as wnba_router
 
 app = FastAPI(
@@ -41,14 +38,9 @@ app.add_middleware(
 
 # ── Core Phase 9 routes ────────────────────────────────────────────────────
 app.include_router(health.router, prefix="/api")
-app.include_router(players.router, prefix="/api")
-app.include_router(games.router, prefix="/api")
-
-# ── Additional DB-backed routes ────────────────────────────────────────────
-app.include_router(props.router, prefix="/api")
-app.include_router(matchups.router, prefix="/api")
-app.include_router(slates.router, prefix="/api")
+app.include_router(research_router, prefix="/api")
 
 # ── Direct upstream (non-DB) routes ────────────────────────────────────────
+app.include_router(betting_router, prefix="/api")
 app.include_router(mlb_router, prefix="/api")
 app.include_router(wnba_router, prefix="/api")

@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from app.services import odds_snapshots as svc
+from app.providers import odds_snapshots as svc
 
 
 def _mock_engine(rows: list[dict]):
