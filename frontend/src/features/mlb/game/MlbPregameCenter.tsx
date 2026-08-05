@@ -49,7 +49,7 @@ export function MlbPregameCenter({ detail }: { detail: MlbGameDetailView }) {
   const { data, isPending } = useMlbLineups(
     activeTab === "preview" ? detail.gameDate : undefined,
   );
-  const oddsQuery = useMlbOdds();
+  const oddsQuery = useMlbOdds({ enabled: activeTab === "preview" });
   const matchedGame = findCompleteMatch(
     data?.games,
     detail.away.abbrev,

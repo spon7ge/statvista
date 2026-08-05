@@ -335,7 +335,9 @@ describe("MlbProjectedLineups", () => {
     );
     expect(screen.getByText("Lineups unavailable")).toBeInTheDocument();
     expect(screen.getByTestId("mlb-projected-lineups-stack")).toBeInTheDocument();
-    expect(screen.getByTestId("mlb-season-team-stats")).toHaveClass("sm:w-1/2");
-    expect(screen.getByTestId("mlb-injury-report")).toHaveClass("sm:w-1/2");
+    expect(screen.getByTestId("mlb-season-team-stats")).not.toHaveClass(
+      "sm:w-1/2",
+    );
+    expect(screen.getByTestId("mlb-injury-report")).not.toHaveClass("sm:w-1/2");
   });
 });

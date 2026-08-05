@@ -35,6 +35,8 @@ function buildApiDetail(
     game_date_label: null,
     decisions: null,
     team_stats: null,
+    season_team_stats: null,
+    injuries: null,
     linescore: {
       current_inning: 3,
       inning_half: "top",
@@ -186,6 +188,45 @@ describe("mapMlbGameDetail", () => {
     expect(mapped.boxScore?.homePitchers[0]?.strikes).toBe(28);
     expect(mapped.boxScore?.homePitchingTotals?.ip).toBe("9.0");
     expect(mapped.hitChart[0]?.playerName).toBe("Betts");
+    expect(mapped.seasonTeamStats).toBeNull();
+    expect(mapped.injuries).toBeNull();
+  });
+
+  it("maps season_team_stats and injuries", () => {
+    const view = mapMlbGameDetail(
+      buildApiDetail({
+        season_team_stats: {
+          away: {
+            hr: 1,
+            r: 2,
+            h: 3,
+            avg: ".200",
+            obp: ".300",
+            slg: ".400",
+            era: "4.00",
+            so: 10,
+            bb: 5,
+          },
+          home: {
+            hr: 2,
+            r: 3,
+            h: 4,
+            avg: ".250",
+            obp: ".350",
+            slg: ".450",
+            era: "3.50",
+            so: 12,
+            bb: 4,
+          },
+        },
+        injuries: {
+          away: [{ name: "A", position: "P", status: "IL", detail: "Arm" }],
+          home: [],
+        },
+      }),
+    );
+    expect(view.seasonTeamStats?.away.hr).toBe(1);
+    expect(view.injuries?.away[0].name).toBe("A");
   });
 
   it("maps final additive fields", () => {

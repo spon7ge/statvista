@@ -86,6 +86,7 @@ describe("MlbPregameCenter", () => {
       screen.getByTestId("mlb-pregame-broadcast-header"),
     ).toBeInTheDocument();
     expect(screen.getByTestId("mlb-projected-lineups")).toBeInTheDocument();
+    expect(useMlbOdds).toHaveBeenLastCalledWith({ enabled: true });
   });
 
   it("renders the matching odds board on Preview", () => {
@@ -276,5 +277,6 @@ describe("MlbPregameCenter", () => {
     expect(
       screen.getByText(/washington nationals preview coming soon/i),
     ).toBeInTheDocument();
+    expect(useMlbOdds).toHaveBeenLastCalledWith({ enabled: false });
   });
 });

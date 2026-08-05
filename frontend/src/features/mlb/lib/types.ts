@@ -24,6 +24,25 @@ export type MlbTeamStatLine = {
   era: string | null;
 };
 
+export type MlbSeasonTeamStatLine = {
+  hr: number | null;
+  r: number | null;
+  h: number | null;
+  avg: string | null;
+  obp: string | null;
+  slg: string | null;
+  era: string | null;
+  so: number | null;
+  bb: number | null;
+};
+
+export type MlbInjury = {
+  name: string;
+  position: string | null;
+  status: string;
+  detail: string | null;
+};
+
 export type MlbDecisions = {
   winner: string | null;
   loser: string | null;
@@ -201,6 +220,11 @@ export type MlbGameDetailView = {
   scoringPlays: MlbPlay[];
   boxScore: MlbBoxScore | null;
   teamStats: { away: MlbTeamStatLine; home: MlbTeamStatLine } | null;
+  seasonTeamStats: {
+    away: MlbSeasonTeamStatLine;
+    home: MlbSeasonTeamStatLine;
+  } | null;
+  injuries: { away: MlbInjury[]; home: MlbInjury[] } | null;
   winProbability: MlbWinProbability | null;
   hitChart: MlbHitPoint[];
   sources: string[];

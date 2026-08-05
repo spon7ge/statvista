@@ -48,6 +48,33 @@ function mapTeamStatLine(
   };
 }
 
+function mapSeasonTeamStatLine(
+  line: NonNullable<ApiMlbGameDetail["season_team_stats"]>["away"],
+) {
+  return {
+    hr: line.hr ?? null,
+    r: line.r ?? null,
+    h: line.h ?? null,
+    avg: line.avg ?? null,
+    obp: line.obp ?? null,
+    slg: line.slg ?? null,
+    era: line.era ?? null,
+    so: line.so ?? null,
+    bb: line.bb ?? null,
+  };
+}
+
+function mapInjury(
+  injury: NonNullable<ApiMlbGameDetail["injuries"]>["away"][number],
+) {
+  return {
+    name: injury.name,
+    position: injury.position ?? null,
+    status: injury.status,
+    detail: injury.detail ?? null,
+  };
+}
+
 function mapNoteLine(line: { label: string; value: string }) {
   return { label: line.label, value: line.value };
 }
@@ -242,6 +269,18 @@ export function mapMlbGameDetail(detail: ApiMlbGameDetail): MlbGameDetailView {
       ? {
           away: mapTeamStatLine(detail.team_stats.away),
           home: mapTeamStatLine(detail.team_stats.home),
+        }
+      : null,
+    seasonTeamStats: detail.season_team_stats
+      ? {
+          away: mapSeasonTeamStatLine(detail.season_team_stats.away),
+          home: mapSeasonTeamStatLine(detail.season_team_stats.home),
+        }
+      : null,
+    injuries: detail.injuries
+      ? {
+          away: detail.injuries.away.map(mapInjury),
+          home: detail.injuries.home.map(mapInjury),
         }
       : null,
     winProbability: detail.win_probability

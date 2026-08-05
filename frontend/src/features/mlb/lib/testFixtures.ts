@@ -257,6 +257,8 @@ export const mlbLiveDetail: MlbGameDetailView = {
       era: "4.20",
     },
   },
+  seasonTeamStats: null,
+  injuries: null,
   winProbability: {
     awayAbbrev: "BOS",
     homeAbbrev: "LAD",
@@ -502,6 +504,8 @@ export const mlbFinalDetail: MlbGameDetailView = {
       era: "3.20",
     },
   },
+  seasonTeamStats: null,
+  injuries: null,
   winProbability: null,
   hitChart: [
     {
@@ -551,6 +555,8 @@ export const mlbScheduledDetail: MlbGameDetailView = {
   scoringPlays: [],
   boxScore: null,
   teamStats: null,
+  seasonTeamStats: null,
+  injuries: null,
   winProbability: null,
   hitChart: [],
   decisions: null,
