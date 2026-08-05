@@ -1,7 +1,13 @@
+import type { ReactElement } from "react";
 import { render, screen } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it } from "vitest";
 import { LeadersGrid } from "./LeadersGrid";
 import type { ApiWnbaLeaderCategory } from "@/lib/api";
+
+function renderGrid(ui: ReactElement) {
+  return render(<MemoryRouter>{ui}</MemoryRouter>);
+}
 
 const categories: ApiWnbaLeaderCategory[] = [
   {
@@ -29,9 +35,7 @@ const categories: ApiWnbaLeaderCategory[] = [
 
 describe("LeadersGrid", () => {
   it("renders season label, cards, colors, and attribution", () => {
-    render(
-      <LeadersGrid season={2026} categories={categories} />,
-    );
+    renderGrid(<LeadersGrid season={2026} categories={categories} />);
     expect(screen.getByText("2026 season · per game")).toBeInTheDocument();
     expect(screen.getByText("Points")).toBeInTheDocument();
     expect(screen.getByText("A'ja Wilson")).toBeInTheDocument();
@@ -42,14 +46,12 @@ describe("LeadersGrid", () => {
   });
 
   it("shows loading skeletons", () => {
-    render(<LeadersGrid season={2026} categories={[]} isLoading />);
+    renderGrid(<LeadersGrid season={2026} categories={[]} isLoading />);
     expect(screen.getByLabelText(/loading leaders/i)).toBeInTheDocument();
   });
 
   it("shows error copy when never loaded", () => {
-    render(
-      <LeadersGrid season={2026} categories={[]} isError />,
-    );
+    renderGrid(<LeadersGrid season={2026} categories={[]} isError />);
     expect(screen.getByText(/leaders unavailable/i)).toBeInTheDocument();
   });
 });
