@@ -71,14 +71,18 @@ Build output goes to `frontend/dist/` (gitignored; regenerate as needed).
 ## Project structure
 
 ```
-frontend/
-  src/
-    components/home/  # Nav, ticker, hero, LIVE NOW (+ format helpers/tests)
-    pages/            # Home, NotFound
-    AppRouter.tsx     # `/` + `*`
-    main.tsx
-    index.css         # Tailwind + theme tokens used by the landing
-  public/             # Favicon and static assets
+frontend/src/
+  app/                 # entry, router, chrome layout, global CSS
+  features/
+    basketball/        # WNBA (+ future NBA) game, league UI, hooks
+    mlb/               # MLB game UI + hooks
+    home/              # landing marketing sections
+    about/
+  pages/               # thin route composers
+  shared/
+    ui/                # cross-feature chrome (GameSection, avatars, footer)
+    lib/               # api client + cross-league slate helpers
+  assets/
 ```
 
 Coding standards for this app follow repo `claude.md` (typing, small focused modules, input guards, tests with changes).
