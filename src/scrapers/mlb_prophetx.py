@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import logging
 import os
 import time
@@ -330,3 +331,138 @@ def fetch_markets_for_events(
         if isinstance(data, list):
             out.extend([row for row in data if isinstance(row, dict)])
     return out
+
+
+def build_game_snapshots(
+    events: list[dict[str, Any]],
+    team_market_rows: list[dict[str, Any]],
+    prop_market_rows: list[dict[str, Any]],
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    team_by_id = {
+        int(row["eventId"]): row.get("markets") or []
+        for row in team_market_rows
+        if row.get("eventId") is not None
+    }
+    props_by_id = {
+        int(row["eventId"]): row.get("markets") or []
+        for row in prop_market_rows
+        if row.get("eventId") is not None
+    }
+    props_games: list[dict[str, Any]] = []
+    team_games: list[dict[str, Any]] = []
+    for event in events:
+        base = normalize_event(event)
+        event_id = base.get("event_id")
+        if event_id is None:
+            continue
+        event_id_int = int(event_id)
+        props_games.append(
+            {**base, "props": extract_props(props_by_id.get(event_id_int, []))}
+        )
+        team_games.append(
+            {
+                **base,
+                "team_markets": extract_team_markets(
+                    team_by_id.get(event_id_int, [])
+                ),
+            }
+        )
+    return props_games, team_games
+
+
+def _payload_base(*, fetched_at: str) -> dict[str, Any]:
+    return {
+        "source": "prophetx",
+        "fetched_at": fetched_at,
+        "league": "mlb",
+        "tournament_id": MLB_TOURNAMENT_ID,
+    }
+
+
+def write_snapshots(
+    props_games: list[dict[str, Any]],
+    team_games: list[dict[str, Any]],
+    *,
+    props_path: str,
+) -> tuple[str, str]:
+    fetched_at = datetime.now(_OUTPUT_TZ).isoformat(timespec="seconds")
+    base = _payload_base(fetched_at=fetched_at)
+    props_payload = {**base, "snapshot_kind": "props", "games": props_games}
+    team_payload = {**base, "snapshot_kind": "team", "games": team_games}
+    team_path = team_output_path(props_path)
+    for path, payload in ((props_path, props_payload), (team_path, team_payload)):
+        os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
+        with open(path, "w", encoding="utf-8") as output_file:
+            json.dump(payload, output_file, ensure_ascii=False, indent=2)
+    return props_path, team_path
+
+
+def maybe_load_supabase_stub(
+    props_games: list[dict[str, Any]],
+    team_games: list[dict[str, Any]],
+) -> None:
+    """Log the future Supabase load point without persisting any data."""
+    logger.info(
+        "Supabase ProphetX load stub (no-op): props_games=%s team_games=%s",
+        len(props_games),
+        len(team_games),
+    )
+
+
+def _merge_market_rows(
+    primary: list[dict[str, Any]],
+    extra: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    markets_by_event: dict[int, list[dict[str, Any]]] = {}
+    for row in primary + extra:
+        event_id = row.get("eventId")
+        if event_id is None:
+            continue
+        markets_by_event.setdefault(int(event_id), []).extend(
+            row.get("markets") or []
+        )
+    return [
+        {"eventId": event_id, "markets": markets}
+        for event_id, markets in markets_by_event.items()
+    ]
+
+
+def run() -> None:
+    logging.basicConfig(
+        level=getattr(
+            logging,
+            os.environ.get("LOG_LEVEL", "INFO").upper(),
+            logging.INFO,
+        ),
+        format="[%(levelname)-8s] %(name)s: %(message)s",
+    )
+    session = requests.Session()
+    events = fetch_mlb_events(session)
+    event_ids = [int(event["id"]) for event in events if event.get("id") is not None]
+    team_rows = fetch_markets_for_events(
+        session,
+        event_ids,
+        market_types="moneyline,spread,total",
+    )
+    period_rows = fetch_markets_for_events(
+        session,
+        event_ids,
+        market_sub_types="1st_inning_moneyline,1st_5th_inning_moneyline",
+    )
+    prop_rows = fetch_markets_for_events(
+        session,
+        event_ids,
+        market_sub_types=",".join(PROP_SUBTYPE_TO_STAT),
+    )
+    props_games, team_games = build_game_snapshots(
+        events,
+        _merge_market_rows(team_rows, period_rows),
+        prop_rows,
+    )
+    props_path = resolve_props_output_path()
+    write_snapshots(props_games, team_games, props_path=props_path)
+    maybe_load_supabase_stub(props_games, team_games)
+
+
+if __name__ == "__main__":
+    run()

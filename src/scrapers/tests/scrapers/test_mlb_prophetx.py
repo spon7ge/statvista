@@ -306,3 +306,50 @@ def test_fetch_markets_batches() -> None:
     by_event = {row["eventId"]: row["markets"] for row in out}
     assert by_event[1][0]["id"] == 1
     assert by_event[2][0]["id"] == 2
+
+
+def test_build_game_snapshots_splits_props_and_team() -> None:
+    px = _load_scraper()
+    events = [
+        {
+            "id": 10079004,
+            "name": "Los Angeles Angels at Baltimore Orioles",
+            "scheduled": "2026-08-05T22:35:00Z",
+            "status": "not_started",
+            "competitors": [],
+        }
+    ]
+    team_rows = [
+        {"eventId": 10079004, "markets": [_MONEYLINE_MARKET, _RUN_LINE_MARKET]}
+    ]
+    prop_rows = [{"eventId": 10079004, "markets": [_HITS_PROP]}]
+    props_games, team_games = px.build_game_snapshots(
+        events, team_rows, prop_rows
+    )
+    assert len(props_games) == 1
+    assert len(team_games) == 1
+    assert props_games[0]["props"][0]["stat"] == "hits"
+    assert "moneyline" in team_games[0]["team_markets"]
+    assert "props" not in team_games[0]
+    assert "team_markets" not in props_games[0]
+
+
+def test_write_snapshots(tmp_path) -> None:
+    px = _load_scraper()
+    props_path = str(tmp_path / "prophetx_mlb_2026-08-05_143000_props.json")
+    props_games = [{"event_id": 1, "props": []}]
+    team_games = [{"event_id": 1, "team_markets": {}}]
+    p_path, t_path = px.write_snapshots(
+        props_games, team_games, props_path=props_path
+    )
+    assert p_path.endswith("_props.json")
+    assert t_path.endswith("_team.json")
+    import json
+
+    props_payload = json.loads(Path(p_path).read_text())
+    team_payload = json.loads(Path(t_path).read_text())
+    assert props_payload["snapshot_kind"] == "props"
+    assert team_payload["snapshot_kind"] == "team"
+    assert props_payload["league"] == "mlb"
+    assert props_payload["tournament_id"] == 109
+    assert props_payload["source"] == "prophetx"
