@@ -105,6 +105,11 @@ TEAM_SUBTYPE_TO_KEY: dict[str, str] = {
     "1st_5th_inning_moneyline": "1st_5th_inning_moneyline",
 }
 
+# Top-level selections fallback applies only to moneyline-style keys.
+_MONEYLINE_OUTPUT_KEYS = frozenset(
+    {"moneyline", "1st_inning_moneyline", "1st_5th_inning_moneyline"}
+)
+
 
 def normalize_event(event: dict[str, Any]) -> dict[str, Any]:
     competitors = []
@@ -165,12 +170,10 @@ def extract_team_markets(markets: list[dict[str, Any]]) -> dict[str, Any]:
         if not key:
             continue
         book: dict[str, Any] | None
-        if key == "moneyline" and market.get("selections"):
+        if key in _MONEYLINE_OUTPUT_KEYS and market.get("selections"):
             book = market
         else:
-            book = pick_main_market_line(market) or (
-                market if market.get("selections") else None
-            )
+            book = pick_main_market_line(market)
         if not book:
             continue
         rows = _side_rows(_sides_from_book(book))

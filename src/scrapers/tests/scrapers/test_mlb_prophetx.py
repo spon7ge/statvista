@@ -172,6 +172,45 @@ def test_extract_team_markets_moneyline_and_main_run_line() -> None:
     assert out["run_line"][0]["american"] == -110
 
 
+_AMBIGUOUS_SPREAD_WITH_TOP_SELECTIONS = {
+    "id": 253,
+    "name": "Run Line",
+    "type": "spread",
+    "subType": "spread",
+    "selections": [
+        [
+            {
+                "name": "Baltimore Orioles",
+                "odds": -110,
+                "line": -1.5,
+                "stake": 80.0,
+            }
+        ],
+        [
+            {
+                "name": "Los Angeles Angels",
+                "odds": -110,
+                "line": 1.5,
+                "stake": 80.0,
+            }
+        ],
+    ],
+    "marketLines": [
+        {"name": "Fixed home -1.5", "selections": [[], []]},
+        {"name": "Fixed home -2.5", "selections": [[], []]},
+    ],
+}
+
+
+def test_extract_team_markets_skips_ambiguous_spread_with_top_selections() -> None:
+    px = _load_scraper()
+    out = px.extract_team_markets(
+        [_AMBIGUOUS_SPREAD_WITH_TOP_SELECTIONS, _MONEYLINE_MARKET]
+    )
+    assert "run_line" not in out
+    assert "moneyline" in out
+
+
 _HITS_PROP = {
     "id": 460000600,
     "name": "Mike Trout Total Hits",
