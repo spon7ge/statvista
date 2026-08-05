@@ -41,7 +41,14 @@ from app.domains.mlb.schemas_lineups import (
     MlbLineupsResponse,
     MlbVsPitcherStats,
 )
-from app.domains.mlb.schemas_odds import MlbOddsGame, MlbOddsResponse
+from app.domains.mlb.schemas_odds import (
+    MlbOddsBoard,
+    MlbOddsBoardLine,
+    MlbOddsBoardSide,
+    MlbOddsBoardTotal,
+    MlbOddsGame,
+    MlbOddsResponse,
+)
 from app.domains.mlb.schemas_scoreboard import (
     MlbGame,
     MlbScoreboardResponse,
@@ -72,6 +79,10 @@ __all__ = [
     "MlbLinescore",
     "MlbLinescoreInning",
     "MlbLinescoreTotals",
+    "MlbOddsBoard",
+    "MlbOddsBoardLine",
+    "MlbOddsBoardSide",
+    "MlbOddsBoardTotal",
     "MlbOddsGame",
     "MlbOddsResponse",
     "MlbPitch",
