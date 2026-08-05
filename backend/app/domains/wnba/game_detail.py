@@ -9,7 +9,7 @@ from zoneinfo import ZoneInfo
 
 import httpx
 
-from app.schemas.wnba_game_detail import (
+from app.domains.wnba.schemas_game_detail import (
     GameDetailBoxScore,
     GameDetailBoxScorePlayer,
     GameDetailInjuries,
@@ -28,7 +28,7 @@ from app.schemas.wnba_game_detail import (
     GameDetailWinProbabilityPoint,
     WnbaGameDetail,
 )
-from app.schemas.wnba_scoreboard import GameStatus
+from app.domains.wnba.schemas_scoreboard import GameStatus
 from app.providers.espn.wnba_roster import enrich_starters, get_roster_index
 from app.providers.rotowire.wnba_lineups import get_rotowire_starters_for_matchup
 

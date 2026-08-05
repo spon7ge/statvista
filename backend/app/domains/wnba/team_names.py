@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 
-from app.services.wnba_scoreboard import canonical_abbrev
+from app.domains.wnba.scoreboard import canonical_abbrev
 
 _TRICODE_RE = re.compile(r"^[A-Z]{2,3}$")
 

@@ -8,14 +8,13 @@ from datetime import date, datetime
 from typing import Any
 
 import httpx
-from fastapi import HTTPException
 
-from app.schemas.wnba_player import (
+from app.domains.wnba.schemas_player import (
     WnbaPlayerAverages,
     WnbaPlayerGame,
     WnbaPlayerResponse,
 )
-from app.services.wnba_leaders import current_wnba_season_year
+from app.domains.wnba.leaders import current_wnba_season_year
 
 logger = logging.getLogger(__name__)
 
@@ -484,11 +483,7 @@ async def get_wnba_player(player_id: str) -> WnbaPlayerResponse:
             raise
 
         if response is None:
-            raise HTTPException(
-                status_code=404,
-                detail="Player not found",
-                headers={"Cache-Control": "no-store"},
-            )
+            raise LookupError(player_id)
 
         _cache[player_id] = {
             "response": response,

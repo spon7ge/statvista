@@ -9,12 +9,12 @@ from urllib.parse import urlparse
 
 import httpx
 
-from app.schemas.wnba_futures import (
+from app.domains.wnba.schemas_futures import (
     WnbaFuturesEntry,
     WnbaFuturesMarket,
     WnbaFuturesResponse,
 )
-from app.services.wnba_standings import current_wnba_season_year
+from app.domains.wnba.standings import current_wnba_season_year
 
 logger = logging.getLogger(__name__)
 

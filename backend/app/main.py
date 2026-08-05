@@ -8,18 +8,11 @@ from app.api.routes import (
     players,
     props,
     slates,
-    wnba_game_detail,
-    wnba_leaders,
-    wnba_odds,
-    wnba_player,
-    wnba_props,
-    wnba_scoreboard,
-    wnba_standings,
-    wnba_futures,
 )
 from app.core.config import CORS_ORIGINS
 from app.core.errors import register_exception_handlers
 from app.domains.mlb.routes import router as mlb_router
+from app.domains.wnba.routes import router as wnba_router
 
 app = FastAPI(
     title="statvista API",
@@ -57,12 +50,5 @@ app.include_router(matchups.router, prefix="/api")
 app.include_router(slates.router, prefix="/api")
 
 # ── Direct upstream (non-DB) routes ────────────────────────────────────────
-app.include_router(wnba_scoreboard.router, prefix="/api")
 app.include_router(mlb_router, prefix="/api")
-app.include_router(wnba_leaders.router, prefix="/api")
-app.include_router(wnba_player.router, prefix="/api")
-app.include_router(wnba_standings.router, prefix="/api")
-app.include_router(wnba_futures.router, prefix="/api")
-app.include_router(wnba_odds.router, prefix="/api")
-app.include_router(wnba_props.router, prefix="/api")
-app.include_router(wnba_game_detail.router, prefix="/api")
+app.include_router(wnba_router, prefix="/api")

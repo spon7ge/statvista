@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 from unittest.mock import AsyncMock, patch
 
-from app.schemas.wnba_props import WnbaPropBookQuote, WnbaPropLine
+from app.domains.wnba.schemas_props import WnbaPropBookQuote, WnbaPropLine
 from app.services import parlay_props as svc
 from app.services.dfs_attach import attach_pinnacle_snapshot
 

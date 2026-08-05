@@ -9,7 +9,7 @@ from zoneinfo import ZoneInfo
 
 import httpx
 
-from app.schemas.wnba_standings import (
+from app.domains.wnba.schemas_standings import (
     ConferenceKey,
     WnbaStandingsConference,
     WnbaStandingsResponse,

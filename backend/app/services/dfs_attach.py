@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from app.schemas.wnba_props import (
+from app.domains.wnba.schemas_props import (
     PROP_SPORTSBOOKS,
     WnbaPropBookQuote,
     WnbaPropLine,

@@ -9,7 +9,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app
-from app.services import wnba_leaders as svc
+from app.domains.wnba import leaders as svc
 
 FIXTURES = Path(__file__).parent / "fixtures"
 

@@ -1,4 +1,4 @@
-from app.schemas.wnba_props import WnbaPropBookQuote, WnbaPropLine
+from app.domains.wnba.schemas_props import WnbaPropBookQuote, WnbaPropLine
 from app.services.dfs_attach import attach_dfs_snapshots
 
 

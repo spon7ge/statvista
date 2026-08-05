@@ -10,7 +10,7 @@ from zoneinfo import ZoneInfo
 
 import httpx
 
-from app.schemas.wnba_scoreboard import (
+from app.domains.wnba.schemas_scoreboard import (
     GameStatus,
     WnbaGame,
     WnbaScoreboardResponse,

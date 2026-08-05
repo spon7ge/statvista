@@ -7,7 +7,7 @@ import httpx
 from fastapi.testclient import TestClient
 
 from app.main import app
-from app.services import wnba_game_detail as svc
+from app.domains.wnba import game_detail as svc
 
 FIXTURES = Path(__file__).parent / "fixtures"
 client = TestClient(app)

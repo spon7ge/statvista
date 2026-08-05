@@ -5,11 +5,11 @@ from pathlib import Path
 
 import pytest
 
-from app.schemas.wnba_scoreboard import WnbaGame, WnbaTeam
+from app.domains.wnba.schemas_scoreboard import WnbaGame, WnbaTeam
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from app.services.wnba_scoreboard import (
+from app.domains.wnba.scoreboard import (
     cache_ttl_seconds,
     canonical_abbrev,
     combine_with_overnight_carryover,

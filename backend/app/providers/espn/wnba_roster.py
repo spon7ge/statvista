@@ -5,7 +5,7 @@ import unicodedata
 
 import httpx
 
-from app.schemas.wnba_game_detail import GameDetailStarter
+from app.domains.wnba.schemas_game_detail import GameDetailStarter
 
 ESPN_ROSTER_URL = (
     "https://site.api.espn.com/apis/site/v2/sports/basketball/wnba/teams/{team_id}/roster"

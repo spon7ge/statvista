@@ -7,11 +7,10 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pytest
-from fastapi import HTTPException
 from fastapi.testclient import TestClient
 
+from app.domains.wnba import player as svc
 from app.main import app
-from app.services import wnba_player as svc
 
 FIXTURES = Path(__file__).parent / "fixtures"
 
@@ -194,7 +193,7 @@ def test_player_route_200_no_store():
             gamelog=_load("stats_wnba_player_gamelog.json"),
         )
 
-    with patch("app.api.routes.wnba_player.get_wnba_player", side_effect=fake_get):
+    with patch("app.domains.wnba.routes.get_wnba_player", side_effect=fake_get):
         client = TestClient(app)
         res = client.get("/api/wnba/player/1628932")
     assert res.status_code == 200
@@ -204,9 +203,9 @@ def test_player_route_200_no_store():
 
 def test_player_route_404():
     async def missing(player_id: str):
-        raise HTTPException(status_code=404, detail="Player not found")
+        raise LookupError(player_id)
 
-    with patch("app.api.routes.wnba_player.get_wnba_player", side_effect=missing):
+    with patch("app.domains.wnba.routes.get_wnba_player", side_effect=missing):
         client = TestClient(app)
         res = client.get("/api/wnba/player/999")
     assert res.status_code == 404
@@ -281,7 +280,7 @@ def test_get_wnba_player_stale_while_error():
     assert stale.name == "A'ja Wilson"
 
 
-def test_get_wnba_player_404_when_missing():
+def test_get_wnba_player_raises_lookup_error_when_missing():
     async def fake_dash(season: int):
         return _load("stats_wnba_player_dash.json")
 
@@ -295,9 +294,8 @@ def test_get_wnba_player_404_when_missing():
          patch.object(svc, "fetch_commonplayerinfo", side_effect=fake_info), \
          patch.object(svc, "fetch_playergamelog", side_effect=fake_gamelog), \
          patch.object(svc, "current_wnba_season_year", return_value=2026):
-        with pytest.raises(HTTPException) as exc_info:
+        with pytest.raises(LookupError):
             asyncio.run(svc.get_wnba_player("999"))
-    assert exc_info.value.status_code == 404
 
 
 def test_refresh_locks_are_per_player_id():

@@ -11,8 +11,8 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app
-from app.schemas.wnba_futures import WnbaFuturesResponse
-from app.services import wnba_futures as svc
+from app.domains.wnba.schemas_futures import WnbaFuturesResponse
+from app.domains.wnba import futures as svc
 
 FIXTURES = Path(__file__).parent / "fixtures"
 FUTURES_FIXTURE = FIXTURES / "espn_wnba_futures.json"

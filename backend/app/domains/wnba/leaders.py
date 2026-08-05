@@ -9,7 +9,7 @@ from zoneinfo import ZoneInfo
 
 import httpx
 
-from app.schemas.wnba_leaders import (
+from app.domains.wnba.schemas_leaders import (
     LeaderCategoryKey,
     WnbaLeaderCategory,
     WnbaLeaderRow,

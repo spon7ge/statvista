@@ -1,8 +1,8 @@
 import json
 from pathlib import Path
 
-from app.schemas.wnba_game_detail import GameDetailTeamStat
-from app.services.wnba_game_detail import normalize_espn_summary
+from app.domains.wnba.schemas_game_detail import GameDetailTeamStat
+from app.domains.wnba.game_detail import normalize_espn_summary
 
 FIXTURES = Path(__file__).parent / "fixtures"
 

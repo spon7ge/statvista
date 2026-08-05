@@ -66,7 +66,7 @@ def _lookup_starters(
     by_abbr: dict[str, list[dict[str, str | None]]], abbrev: str
 ) -> list[dict[str, str | None]] | None:
     """Resolve starters, mapping ESPN tricodes (e.g. WSH) to RotoWire (WAS)."""
-    from app.services.wnba_scoreboard import canonical_abbrev
+    from app.domains.wnba.scoreboard import canonical_abbrev
 
     raw = str(abbrev or "").strip().upper()
     if not raw:

@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from app.services.wnba_leaders import normalize_leaguedashplayerstats
+from app.domains.wnba.leaders import normalize_leaguedashplayerstats
 
 FIXTURES = Path(__file__).parent / "fixtures"
 

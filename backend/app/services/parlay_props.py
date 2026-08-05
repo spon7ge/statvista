@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 from typing import Any
 
 from app.core.config import PARLAY_API_KEY
-from app.schemas.wnba_props import (
+from app.domains.wnba.schemas_props import (
     PROP_SPORTSBOOKS,
     WnbaPropBookQuote,
     WnbaPropLine,
@@ -21,8 +21,8 @@ from app.services.odds_snapshots import (
 )
 from app.providers.espn.wnba_roster import get_roster_index, norm_player_name
 from app.providers.parlay.client import parlay_get
-from app.services.wnba_scoreboard import canonical_abbrev
-from app.services.wnba_team_names import abbrev_from_team_name
+from app.domains.wnba.scoreboard import canonical_abbrev
+from app.domains.wnba.team_names import abbrev_from_team_name
 from src.odds.parlay_main_lines import select_parlay_main_lines
 
 logger = logging.getLogger(__name__)

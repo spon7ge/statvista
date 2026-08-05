@@ -9,10 +9,10 @@ from unittest.mock import patch
 import pytest
 from fastapi.testclient import TestClient
 
-from app.api.routes import wnba_scoreboard as route
+from app.domains.wnba import routes as route
 from app.main import app
-from app.schemas.wnba_scoreboard import WnbaScoreboardResponse
-from app.services import wnba_scoreboard as svc
+from app.domains.wnba.schemas_scoreboard import WnbaScoreboardResponse
+from app.domains.wnba import scoreboard as svc
 
 FIXTURES = Path(__file__).parent / "fixtures"
 

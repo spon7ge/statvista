@@ -5,7 +5,7 @@ from unittest.mock import patch
 import pytest
 
 from app.providers.pinnacle import team_odds as svc
-from app.schemas.wnba_odds import WnbaOddsGame
+from app.domains.wnba.schemas_odds import WnbaOddsGame
 
 
 def test_normalize_spread_and_total():

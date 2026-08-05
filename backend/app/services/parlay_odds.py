@@ -7,8 +7,8 @@ from typing import Any
 
 from app.core.config import PARLAY_API_KEY
 from app.providers.parlay.client import parlay_get
-from app.schemas.wnba_odds import WnbaOddsGame, WnbaOddsResponse
-from app.services.wnba_team_names import abbrev_from_team_name
+from app.domains.wnba.schemas_odds import WnbaOddsGame, WnbaOddsResponse
+from app.domains.wnba.team_names import abbrev_from_team_name
 
 logger = logging.getLogger(__name__)
 

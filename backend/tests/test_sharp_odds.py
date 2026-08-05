@@ -114,7 +114,7 @@ def test_normalize_maps_conn_abbrev_to_con():
 
 
 def test_merge_odds_prefer_primary_keeps_dk_over_fd():
-    from app.schemas.wnba_odds import WnbaOddsGame
+    from app.domains.wnba.schemas_odds import WnbaOddsGame
 
     dk = [
         WnbaOddsGame(
@@ -145,7 +145,7 @@ def test_merge_odds_prefer_primary_keeps_dk_over_fd():
 
 
 def test_merge_odds_prefer_primary_fills_missing_game_from_fd():
-    from app.schemas.wnba_odds import WnbaOddsGame
+    from app.domains.wnba.schemas_odds import WnbaOddsGame
 
     dk = [
         WnbaOddsGame(
