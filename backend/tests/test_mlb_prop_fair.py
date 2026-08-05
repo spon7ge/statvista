@@ -1,0 +1,102 @@
+from datetime import datetime, timedelta, timezone
+
+import pytest
+
+from app.domains.mlb.prop_fair import (
+    american_to_fair_pct,
+    compute_fair,
+    recency_chip,
+)
+from app.domains.mlb.prop_formats import breakeven_pct
+
+
+def test_american_to_fair_pct_favorite():
+    assert american_to_fair_pct(-140) == 58.3  # 140/240
+
+
+def test_breakeven_power_4():
+    # 10x ^ (-1/4) ≈ 56.234...
+    assert abs(breakeven_pct("prizepicks", "power", 4) - 56.234) < 0.01
+
+
+def test_breakeven_rejects_bad_app_format_legs():
+    with pytest.raises(ValueError):
+        breakeven_pct("prizepicks", "standard", 4)
+    with pytest.raises(ValueError):
+        breakeven_pct("underdog", "power", 4)
+    with pytest.raises(ValueError):
+        breakeven_pct("draftkings", "power", 4)
+    with pytest.raises(ValueError):
+        breakeven_pct("prizepicks", "power", 7)
+
+
+def test_consensus_blend_60_40():
+    r = compute_fair({"prophetx": 58.0, "novig": 57.0, "draftkings": None, "fanduel": None})
+    assert r.source_tier == "sharp_consensus"
+    assert abs(r.fair_pct - (0.6 * 58.0 + 0.4 * 57.0)) < 0.05
+
+
+def test_disagreement_uses_prophetx():
+    r = compute_fair({"prophetx": 60.0, "novig": 50.0, "draftkings": None, "fanduel": None})
+    assert r.source_tier == "sharp_disagreement"
+    assert r.fair_pct == 60.0
+
+
+def test_single_source_dk_agree_chip_does_not_move_fair():
+    r = compute_fair({"prophetx": 54.0, "novig": None, "draftkings": 53.5, "fanduel": None})
+    assert r.source_tier == "sharp_single_source"
+    assert r.fair_pct == 54.0
+    assert "dk_fd_agrees" in r.confidence_chips
+    assert "px_only" in r.sample_chips or "prophetx_only" in r.sample_chips
+
+
+def test_mid_tier_when_no_exchanges():
+    r = compute_fair({"prophetx": None, "novig": None, "draftkings": 55.0, "fanduel": 54.0})
+    assert r.source_tier == "mid_tier_fallback"
+    assert abs(r.fair_pct - (0.55 * 55.0 + 0.45 * 54.0)) < 0.05
+
+
+def test_no_sharp_read():
+    r = compute_fair({"prophetx": None, "novig": None, "draftkings": None, "fanduel": None})
+    assert r.source_tier == "no_sharp_read"
+    assert r.fair_pct is None
+
+
+def test_recency_fresh_vs_stale():
+    now = datetime(2026, 8, 5, 20, 0, tzinfo=timezone.utc)
+    chip = recency_chip(
+        sharp_changed_at=now - timedelta(minutes=4),
+        dfs_changed_at=now - timedelta(minutes=41),
+        now=now,
+    )
+    assert chip == "fresh_sharp_vs_stale_dfs"
+
+
+def test_recency_fresh_sharp():
+    now = datetime(2026, 8, 5, 20, 0, tzinfo=timezone.utc)
+    chip = recency_chip(
+        sharp_changed_at=now - timedelta(minutes=5),
+        dfs_changed_at=now - timedelta(minutes=10),
+        now=now,
+    )
+    assert chip == "fresh_sharp"
+
+
+def test_recency_stale_sharp():
+    now = datetime(2026, 8, 5, 20, 0, tzinfo=timezone.utc)
+    chip = recency_chip(
+        sharp_changed_at=now - timedelta(minutes=90),
+        dfs_changed_at=now - timedelta(minutes=10),
+        now=now,
+    )
+    assert chip == "stale_sharp"
+
+
+def test_recency_none_in_middle_window():
+    now = datetime(2026, 8, 5, 20, 0, tzinfo=timezone.utc)
+    chip = recency_chip(
+        sharp_changed_at=now - timedelta(minutes=30),
+        dfs_changed_at=now - timedelta(minutes=10),
+        now=now,
+    )
+    assert chip is None
