@@ -6,7 +6,7 @@ export const mlbLiveDetail: MlbGameDetailView = {
   status: "live",
   statusLabel: "Top 3rd",
   gameDate: "2026-08-02",
-  gameDateLabel: null,
+  gameDateLabel: "Today",
   venue: "Fenway Park",
   away: {
     id: "111",
