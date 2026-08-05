@@ -29,8 +29,8 @@ from app.schemas.wnba_game_detail import (
     WnbaGameDetail,
 )
 from app.schemas.wnba_scoreboard import GameStatus
-from app.services.wnba_espn_roster import enrich_starters, get_roster_index
-from app.services.wnba_rotowire_lineups import get_rotowire_starters_for_matchup
+from app.providers.espn.wnba_roster import enrich_starters, get_roster_index
+from app.providers.rotowire.wnba_lineups import get_rotowire_starters_for_matchup
 
 logger = logging.getLogger(__name__)
 

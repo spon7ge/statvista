@@ -189,7 +189,7 @@ def test_get_game_detail_fetches_prior_games_for_starters(monkeypatch):
 
 
 def test_get_game_detail_prefers_rotowire_starters(monkeypatch):
-    from app.services.wnba_espn_roster import roster_player_index
+    from app.providers.espn.wnba_roster import roster_player_index
 
     svc.clear_game_detail_cache()
     scheduled = load_fixture("espn_wnba_summary_scheduled_preview.json")

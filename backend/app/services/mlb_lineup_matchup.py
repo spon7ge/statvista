@@ -19,13 +19,13 @@ from app.schemas.mlb_lineups import (
     MlbLineupPitcher,
     MlbVsPitcherStats,
 )
-from app.services.mlb_lineups import get_mlb_lineups
-from app.services.mlb_stats_people import (
+from app.providers.mlb_stats.people import (
     STATS_TIMEOUT_SECONDS,
     fetch_season_pitching,
     fetch_vs_pitcher_total,
     search_person_id,
 )
+from app.services.mlb_lineups import get_mlb_lineups
 
 logger = logging.getLogger(__name__)
 

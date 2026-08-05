@@ -13,7 +13,7 @@ from app.services.prop_stat_keys import (
     canonical_stat_key_from_ud,
     display_stat_label,
 )
-from app.services.wnba_espn_roster import norm_player_name
+from app.providers.espn.wnba_roster import norm_player_name
 
 US_PROP_SPORTSBOOKS: tuple[str, ...] = (
     "fanduel",

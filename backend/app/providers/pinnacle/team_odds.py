@@ -10,12 +10,12 @@ from typing import Any
 from zoneinfo import ZoneInfo
 
 from app.schemas.wnba_odds import WnbaOddsGame, WnbaOddsResponse
-from app.services.odds_snapshots import fetch_latest_pinnacle_team
-from app.services.sharp_odds import (
+from app.providers.sharp.odds import (
     fetch_sharp_odds_rows,
     merge_odds_prefer_primary,
     normalize_sharp_odds,
 )
+from app.services.odds_snapshots import fetch_latest_pinnacle_team
 from app.services.wnba_scoreboard import canonical_abbrev
 from app.services.wnba_team_names import abbrev_from_team_name
 

@@ -4,8 +4,8 @@ from unittest.mock import patch
 
 import pytest
 
+from app.providers.pinnacle import team_odds as svc
 from app.schemas.wnba_odds import WnbaOddsGame
-from app.services import pinnacle_team_odds as svc
 
 
 def test_normalize_spread_and_total():
@@ -166,7 +166,10 @@ def test_get_today_odds_merges_pinnacle_and_sharp():
     ]
 
     with (
-        patch("app.services.pinnacle_team_odds.fetch_latest_pinnacle_team", return_value=pin_rows),
+        patch(
+            "app.providers.pinnacle.team_odds.fetch_latest_pinnacle_team",
+            return_value=pin_rows,
+        ),
         patch.object(svc, "_fetch_sharp_games", return_value=(sharp_games, [])),
     ):
         body = __import__("asyncio").run(svc.get_today_odds())

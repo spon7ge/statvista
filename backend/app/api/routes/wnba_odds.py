@@ -4,8 +4,8 @@ import logging
 
 from fastapi import APIRouter, Response
 
+from app.providers.pinnacle.team_odds import get_today_odds
 from app.schemas.wnba_odds import WnbaOddsResponse
-from app.services.pinnacle_team_odds import get_today_odds
 
 logger = logging.getLogger(__name__)
 

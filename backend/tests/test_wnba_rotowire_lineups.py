@@ -1,7 +1,7 @@
 import asyncio
 from pathlib import Path
 
-import app.services.wnba_rotowire_lineups as rw
+import app.providers.rotowire.wnba_lineups as rw
 from src.scrapers.rotowire_starters_scraper import WNBADailyLineups
 
 FIXTURES = Path(__file__).parent / "fixtures"

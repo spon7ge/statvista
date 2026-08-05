@@ -8,7 +8,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app
-from app.services import sharp_props as svc
+from app.providers.sharp import props as svc
 
 FIXTURE = Path(__file__).parent / "fixtures" / "sharp_wnba_props.json"
 

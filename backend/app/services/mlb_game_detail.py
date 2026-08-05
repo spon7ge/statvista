@@ -32,7 +32,7 @@ from app.schemas.mlb_game_detail import (
     MlbWinProbability,
 )
 from app.schemas.mlb_scoreboard import GameStatus
-from app.services.mlb_espn_bridge import (
+from app.providers.espn.mlb_bridge import (
     ESPN_TIMEOUT_SECONDS,
     normalize_espn_mlb_win_probability,
     resolve_espn_event_id,

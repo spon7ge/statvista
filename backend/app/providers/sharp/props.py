@@ -15,8 +15,8 @@ from app.schemas.wnba_props import (
     WnbaPropLine,
     WnbaPropsResponse,
 )
+from app.providers.espn.wnba_roster import get_roster_index, norm_player_name
 from app.services.odds_snapshots import fetch_latest_prizepicks, fetch_latest_underdog
-from app.services.wnba_espn_roster import get_roster_index, norm_player_name
 from app.services.wnba_scoreboard import canonical_abbrev
 
 logger = logging.getLogger(__name__)

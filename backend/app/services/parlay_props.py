@@ -19,8 +19,8 @@ from app.services.odds_snapshots import (
     fetch_latest_prizepicks,
     fetch_latest_underdog,
 )
-from app.services.parlay_client import parlay_get
-from app.services.wnba_espn_roster import get_roster_index, norm_player_name
+from app.providers.espn.wnba_roster import get_roster_index, norm_player_name
+from app.providers.parlay.client import parlay_get
 from app.services.wnba_scoreboard import canonical_abbrev
 from app.services.wnba_team_names import abbrev_from_team_name
 from src.odds.parlay_main_lines import select_parlay_main_lines

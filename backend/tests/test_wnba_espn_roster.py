@@ -3,8 +3,8 @@ import json
 from pathlib import Path
 from unittest.mock import patch
 
-import app.services.wnba_espn_roster as roster_svc
-from app.services.wnba_espn_roster import (
+import app.providers.espn.wnba_roster as roster_svc
+from app.providers.espn.wnba_roster import (
     enrich_starters,
     norm_player_name,
     roster_player_index,

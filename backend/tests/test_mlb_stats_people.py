@@ -1,5 +1,5 @@
 import pytest
-from app.services.mlb_stats_people import (
+from app.providers.mlb_stats.people import (
     fetch_season_pitching,
     fetch_vs_pitcher_total,
     pick_best_person,

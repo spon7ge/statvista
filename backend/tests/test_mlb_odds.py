@@ -6,9 +6,9 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app
+from app.providers.sharp import odds as sharp_svc
 from app.schemas.mlb_odds import MlbOddsGame, MlbOddsResponse
 from app.services import mlb_odds as mlb_svc
-from app.services import sharp_odds as sharp_svc
 
 
 @pytest.fixture(autouse=True)

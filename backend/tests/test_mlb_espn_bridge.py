@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from app.services.mlb_espn_bridge import (
+from app.providers.espn.mlb_bridge import (
     match_espn_event_id,
     normalize_espn_mlb_win_probability,
 )
