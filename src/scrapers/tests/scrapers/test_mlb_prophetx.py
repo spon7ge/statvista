@@ -172,6 +172,59 @@ def test_extract_team_markets_moneyline_and_main_run_line() -> None:
     assert out["run_line"][0]["american"] == -110
 
 
+_HITS_PROP = {
+    "id": 460000600,
+    "name": "Mike Trout Total Hits",
+    "subType": "player_total_hits",
+    "type": "total",
+    "status": "active",
+    "marketLines": [
+        {
+            "name": "Fixed total 0.5",
+            "favourite": True,
+            "selections": [
+                [
+                    {
+                        "id": 12,
+                        "name": "over 0.5",
+                        "odds": -200,
+                        "line": 0.5,
+                        "stake": 134.33,
+                    }
+                ],
+                [
+                    {
+                        "id": 13,
+                        "name": "under 0.5",
+                        "odds": 150,
+                        "line": 0.5,
+                        "stake": 90.0,
+                    }
+                ],
+            ],
+        },
+        {
+            "name": "Fixed total 1.5",
+            "selections": [[], []],
+        },
+    ],
+}
+
+
+def test_extract_props_main_hits_only() -> None:
+    px = _load_scraper()
+    props = px.extract_props([_HITS_PROP, {"subType": "unknown_stat", "name": "X"}])
+    assert len(props) == 1
+    row = props[0]
+    assert row["player"] == "Mike Trout"
+    assert row["stat"] == "hits"
+    assert row["line"] == 0.5
+    assert row["over"]["american"] == -200
+    assert row["under"]["american"] == 150
+    assert row["sub_type"] == "player_total_hits"
+    assert row["market_id"] == 460000600
+
+
 def test_normalize_event() -> None:
     px = _load_scraper()
     event = {

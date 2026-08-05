@@ -156,3 +156,83 @@ def extract_team_markets(markets: list[dict[str, Any]]) -> dict[str, Any]:
         if rows:
             out[key] = rows
     return out
+
+
+PROP_SUBTYPE_TO_STAT: dict[str, str] = {
+    "player_total_hits": "hits",
+    "player_total_home_runs": "home_runs",
+    "player_total_rbis": "rbis",
+    "player_total_runs": "runs",
+    "player_total_bases": "total_bases",
+    "player_stolen_bases": "stolen_bases",
+    "player_singles": "singles",
+    "player_doubles": "doubles",
+    "player_hits_allowed": "hits_allowed",
+}
+
+_PROP_NAME_SUFFIXES = (
+    " Total Hits",
+    " Total Home Runs",
+    " Total RBIs",
+    " Total Runs",
+    " Total Bases",
+    " Stolen Bases",
+    " Singles",
+    " Doubles",
+    " Hits Allowed",
+)
+
+
+def player_name_from_market(market: dict[str, Any]) -> str:
+    name = str(market.get("name") or "").strip()
+    for suffix in _PROP_NAME_SUFFIXES:
+        if name.endswith(suffix):
+            return name[: -len(suffix)].strip()
+    return name
+
+
+def extract_props(markets: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for market in markets:
+        if not isinstance(market, dict):
+            continue
+        sub = str(market.get("subType") or "")
+        stat = PROP_SUBTYPE_TO_STAT.get(sub)
+        if not stat:
+            continue
+        book = pick_main_market_line(market)
+        if not book:
+            continue
+        sides = _sides_from_book(book)
+        over = under = None
+        line: float | None = None
+        for side in sides:
+            best = best_selection(side)
+            if not best:
+                continue
+            american, stake = american_and_stake(best)
+            side_name = str(best.get("name") or "").lower()
+            payload = {"american": american, "stake": stake}
+            if best.get("line") is not None:
+                try:
+                    line = float(best["line"])
+                except (TypeError, ValueError):
+                    pass
+            if side_name.startswith("over"):
+                over = payload
+            elif side_name.startswith("under"):
+                under = payload
+        if over is None and under is None:
+            continue
+        rows.append(
+            {
+                "player": player_name_from_market(market),
+                "stat": stat,
+                "line": line,
+                "over": over,
+                "under": under,
+                "market_id": market.get("id"),
+                "sub_type": sub,
+            }
+        )
+    return rows
