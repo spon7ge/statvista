@@ -392,3 +392,63 @@ def test_write_snapshots(tmp_path) -> None:
     assert props_payload["league"] == "mlb"
     assert props_payload["tournament_id"] == 109
     assert props_payload["source"] == "prophetx"
+
+
+def test_load_supabase_snapshots_calls_loaders(monkeypatch, caplog) -> None:
+    px = _load_scraper()
+    calls: list[tuple[str, list, str]] = []
+
+    def fake_props(games, *, league, scraped_at):
+        calls.append(("props", games, league))
+        return 3
+
+    def fake_team(games, *, league, scraped_at):
+        calls.append(("team", games, league))
+        return 5
+
+    import src.odds.load_snapshots as load_snapshots
+
+    monkeypatch.setattr(
+        load_snapshots, "load_prophetx_props_snapshot", fake_props
+    )
+    monkeypatch.setattr(
+        load_snapshots, "load_prophetx_team_snapshot", fake_team
+    )
+
+    props_games = [{"event_id": 1, "props": []}]
+    team_games = [{"event_id": 1, "team_markets": {}}]
+    with caplog.at_level("INFO"):
+        px.load_supabase_snapshots(
+            props_games,
+            team_games,
+            props_path="/tmp/props.json",
+            team_path="/tmp/team.json",
+        )
+
+    assert calls == [
+        ("props", props_games, "mlb"),
+        ("team", team_games, "mlb"),
+    ]
+    assert "Supabase ProphetX upserted props=3 team=5" in caplog.text
+    assert "props_path=/tmp/props.json" in caplog.text
+    assert "team_path=/tmp/team.json" in caplog.text
+
+
+def test_load_supabase_snapshots_logs_error_on_failure(
+    monkeypatch, caplog
+) -> None:
+    px = _load_scraper()
+    import src.odds.load_snapshots as load_snapshots
+
+    def fail_props(*_args, **_kwargs):
+        raise RuntimeError("db down")
+
+    monkeypatch.setattr(
+        load_snapshots, "load_prophetx_props_snapshot", fail_props
+    )
+
+    with caplog.at_level("ERROR"):
+        px.load_supabase_snapshots([], [])
+
+    assert "Supabase ProphetX load failed (JSON kept)" in caplog.text
+    assert "db down" in caplog.text

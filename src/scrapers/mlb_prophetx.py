@@ -6,7 +6,7 @@ import json
 import logging
 import os
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, TypeVar
 from zoneinfo import ZoneInfo
 
@@ -400,16 +400,37 @@ def write_snapshots(
     return props_path, team_path
 
 
-def maybe_load_supabase_stub(
+def load_supabase_snapshots(
     props_games: list[dict[str, Any]],
     team_games: list[dict[str, Any]],
+    *,
+    scraped_at: datetime | None = None,
+    props_path: str | None = None,
+    team_path: str | None = None,
 ) -> None:
-    """Log the future Supabase load point without persisting any data."""
-    logger.info(
-        "Supabase ProphetX load stub (no-op): props_games=%s team_games=%s",
-        len(props_games),
-        len(team_games),
-    )
+    """Upsert snapshot games to odds.mlb_prophetx / odds.mlb_prophetx_team."""
+    try:
+        from src.odds.load_snapshots import (
+            load_prophetx_props_snapshot,
+            load_prophetx_team_snapshot,
+        )
+
+        when = scraped_at or datetime.now(timezone.utc)
+        n_props = load_prophetx_props_snapshot(
+            props_games, league="mlb", scraped_at=when
+        )
+        n_team = load_prophetx_team_snapshot(
+            team_games, league="mlb", scraped_at=when
+        )
+        logger.info(
+            "Supabase ProphetX upserted props=%s team=%s%s%s",
+            n_props,
+            n_team,
+            f" props_path={props_path}" if props_path else "",
+            f" team_path={team_path}" if team_path else "",
+        )
+    except Exception as exc:
+        logger.error("Supabase ProphetX load failed (JSON kept): %s", exc)
 
 
 def _merge_market_rows(
@@ -463,8 +484,22 @@ def run() -> None:
         prop_rows,
     )
     props_path = resolve_props_output_path()
-    write_snapshots(props_games, team_games, props_path=props_path)
-    maybe_load_supabase_stub(props_games, team_games)
+    props_path, team_path = write_snapshots(
+        props_games, team_games, props_path=props_path
+    )
+    logger.info(
+        "Wrote ProphetX snapshots: props_games=%s team_games=%s props=%s team=%s",
+        len(props_games),
+        len(team_games),
+        props_path,
+        team_path,
+    )
+    load_supabase_snapshots(
+        props_games,
+        team_games,
+        props_path=props_path,
+        team_path=team_path,
+    )
 
 
 if __name__ == "__main__":
