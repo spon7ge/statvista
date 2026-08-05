@@ -3656,6 +3656,28 @@
             ],
             "title": "Result"
           },
+          "spin_direction": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spin Direction"
+          },
+          "spin_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spin Rate"
+          },
           "type": {
             "anyOf": [
               {
@@ -3697,7 +3719,9 @@
           "result",
           "is_strike",
           "zone_x",
-          "zone_y"
+          "zone_y",
+          "spin_rate",
+          "spin_direction"
         ],
         "title": "MlbPitch",
         "type": "object"
@@ -4135,6 +4159,28 @@
             ],
             "title": "Hand"
           },
+          "headshot_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Headshot Url"
+          },
+          "id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
           "name": {
             "title": "Name",
             "type": "string"
@@ -4154,7 +4200,9 @@
         "required": [
           "name",
           "hand",
-          "summary"
+          "summary",
+          "id",
+          "headshot_url"
         ],
         "title": "MlbPlayerCard",
         "type": "object"

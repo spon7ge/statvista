@@ -108,6 +108,8 @@ class MlbPlayerCard(BaseModel):
     name: str
     hand: str | None = None
     summary: str | None = None
+    id: int | None = None
+    headshot_url: str | None = None
 
 
 class MlbPitch(BaseModel):
@@ -120,6 +122,8 @@ class MlbPitch(BaseModel):
     is_strike: bool
     zone_x: float | None
     zone_y: float | None
+    spin_rate: float | None = None
+    spin_direction: float | None = None
 
 
 class MlbRunners(BaseModel):

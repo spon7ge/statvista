@@ -451,3 +451,41 @@ def test_standings_last10_map_negative_caches_on_failure(monkeypatch):
     mapping = asyncio.run(svc._standings_last10_map())
     assert mapping == {}
     assert calls == 1
+
+
+def test_normalize_situation_player_ids_and_headshots():
+    detail = normalize_mlb_live_feed(
+        _payload(), game_pk="776543", fetched_at="2026-08-02T18:00:00+00:00"
+    )
+    situation = detail.situation
+    assert situation is not None
+    assert situation.at_bat is not None
+    assert situation.at_bat.id is not None
+    assert situation.at_bat.headshot_url is not None
+    assert str(situation.at_bat.id) in situation.at_bat.headshot_url
+    assert "people/" in situation.at_bat.headshot_url
+    assert situation.pitching is not None
+    assert situation.pitching.id is not None
+    assert situation.pitching.headshot_url is not None
+
+
+def test_normalize_pitch_spin_from_breaks():
+    payload = _payload()
+    mutated = False
+    for event in payload["liveData"]["plays"]["currentPlay"].get("playEvents") or []:
+        if isinstance(event, dict) and event.get("isPitch"):
+            pitch_data = event.setdefault("pitchData", {})
+            breaks = pitch_data.setdefault("breaks", {})
+            breaks["spinRate"] = 2286
+            breaks["spinDirection"] = 63
+            mutated = True
+            break
+    assert mutated
+    detail = normalize_mlb_live_feed(
+        payload, game_pk="776543", fetched_at="2026-08-02T18:00:00+00:00"
+    )
+    assert detail.situation is not None
+    spins = [p for p in detail.situation.pitches if p.spin_rate is not None]
+    assert len(spins) >= 1
+    assert spins[0].spin_rate == 2286
+    assert spins[0].spin_direction == 63

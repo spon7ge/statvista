@@ -1797,6 +1797,10 @@ export interface components {
             number: number;
             /** Result */
             result: string | null;
+            /** Spin Direction */
+            spin_direction: number | null;
+            /** Spin Rate */
+            spin_rate: number | null;
             /** Type */
             type: string | null;
             /** Zone X */
@@ -1894,6 +1898,10 @@ export interface components {
         MlbPlayerCard: {
             /** Hand */
             hand: string | null;
+            /** Headshot Url */
+            headshot_url: string | null;
+            /** Id */
+            id: number | null;
             /** Name */
             name: string;
             /** Summary */

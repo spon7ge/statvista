@@ -42,6 +42,11 @@ from app.services.mlb_scoreboard import format_tip_label
 logger = logging.getLogger(__name__)
 
 TEAM_LOGO = "https://www.mlbstatic.com/team-logos/{id}.svg"
+HEADSHOT = (
+    "https://img.mlbstatic.com/mlb-photos/image/upload/"
+    "d_people:generic:headshot:67:current.png/w_213,q_auto:best/"
+    "v1/people/{id}/headshot/67/current"
+)
 FALLBACK_AWAY_COLOR = "#BD3039"
 FALLBACK_HOME_COLOR = "#1D4ED8"
 
@@ -80,6 +85,12 @@ def _team_logo_url(team_id: Any) -> str | None:
     if team_id is None:
         return None
     return TEAM_LOGO.format(id=team_id)
+
+
+def _headshot_url(person_id: int | None) -> str | None:
+    if person_id is None:
+        return None
+    return HEADSHOT.format(id=person_id)
 
 
 def _team_color(team: dict, *, side: Literal["away", "home"]) -> str:
@@ -304,7 +315,14 @@ def _player_card(
     name = person.get("fullName") or person.get("name")
     if not name:
         return None
-    return MlbPlayerCard(name=str(name), hand=hand, summary=summary)
+    person_id = _person_id(person)
+    return MlbPlayerCard(
+        name=str(name),
+        hand=hand,
+        summary=summary,
+        id=person_id,
+        headshot_url=_headshot_url(person_id),
+    )
 
 
 def _boxscore_players(boxscore: dict) -> dict[int, dict]:
@@ -397,6 +415,7 @@ def _pitches_from_events(events: list) -> list[MlbPitch]:
             continue
         details = _as_dict(event.get("details"))
         pitch_data = _as_dict(event.get("pitchData"))
+        breaks = _as_dict(pitch_data.get("breaks"))
         pitch_type = _as_dict(details.get("type"))
         zone_x, zone_y = _zone_coords(pitch_data)
         number = _int_or_none(event.get("pitchNumber")) or (len(pitches) + 1)
@@ -417,6 +436,8 @@ def _pitches_from_events(events: list) -> list[MlbPitch]:
                 is_strike=_is_strike_pitch(details),
                 zone_x=zone_x,
                 zone_y=zone_y,
+                spin_rate=_float_or_none(breaks.get("spinRate")),
+                spin_direction=_float_or_none(breaks.get("spinDirection")),
             )
         )
     return pitches
