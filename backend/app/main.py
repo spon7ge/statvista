@@ -27,7 +27,7 @@ app = FastAPI(
     title="statvista API",
     version="0.3.0",
     description=(
-        "Statvista basketball and baseball data backend. Database-backed endpoints read "
+        "statvista basketball and baseball data backend. Database-backed endpoints read "
         "from Supabase (silver / gold schemas) and make no NBA or Odds API calls. "
         "The exceptions are /api/wnba/scoreboard/today, /api/mlb/scoreboard/today, "
         "/api/mlb/scoreboard, /api/mlb/odds/today, /api/wnba/leaders, "
