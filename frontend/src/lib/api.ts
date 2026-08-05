@@ -61,6 +61,7 @@ export type ApiMlbLineupGame = Schemas["MlbLineupGame"];
 export type ApiMlbLineupSide = Schemas["MlbLineupSide"];
 export type ApiMlbLineupBatter = Schemas["MlbLineupBatter"];
 export type ApiMlbLineupPitcher = Schemas["MlbLineupPitcher"];
+export type ApiMlbLineupMatchupResponse = Schemas["MlbLineupMatchupResponse"];
 
 /** Shared shape for matchup odds merge (WNBA + MLB). */
 export type ApiMatchupOddsGame = ApiWnbaOddsGame | ApiMlbOddsGame;
@@ -236,6 +237,26 @@ export async function fetchMlbLineups(
   );
   if (!res.ok) {
     throw new Error(`MLB lineups request failed: ${res.status}`);
+  }
+  return res.json();
+}
+
+export async function fetchMlbLineupMatchup(
+  dateEt: string,
+  away: string,
+  home: string,
+): Promise<ApiMlbLineupMatchupResponse> {
+  const qs = new URLSearchParams({
+    date: dateEt,
+    away,
+    home,
+  });
+  const res = await fetch(`${API_BASE}/api/mlb/lineups/matchup?${qs}`, {
+    headers: { Accept: "application/json" },
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    throw new Error(`MLB lineup matchup request failed: ${res.status}`);
   }
   return res.json();
 }
