@@ -4,12 +4,22 @@ import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MlbPregameCenter } from "./MlbPregameCenter";
 import { mlbScheduledDetail } from "./testFixtures";
-import type { ApiMlbLineupGame } from "@/lib/api";
+import type {
+  ApiMlbLineupGame,
+  ApiMlbLineupMatchupResponse,
+} from "@/lib/api";
 
 const fetchMlbLineups = vi.fn();
+const useMlbLineupMatchup = vi.fn(() => ({
+  data: null as ApiMlbLineupMatchupResponse | null,
+}));
 
 vi.mock("@/lib/api", () => ({
   fetchMlbLineups: (...args: unknown[]) => fetchMlbLineups(...args),
+}));
+
+vi.mock("@/hooks/useMlbLineupMatchup", () => ({
+  useMlbLineupMatchup: (...args: unknown[]) => useMlbLineupMatchup(...args),
 }));
 
 const completeLineupGame: ApiMlbLineupGame = {
@@ -48,6 +58,8 @@ function renderWithClient(ui: React.ReactElement) {
 describe("MlbPregameCenter", () => {
   beforeEach(() => {
     fetchMlbLineups.mockReset();
+    useMlbLineupMatchup.mockClear();
+    useMlbLineupMatchup.mockReturnValue({ data: null });
   });
   afterEach(() => {
     vi.clearAllMocks();
@@ -99,6 +111,62 @@ describe("MlbPregameCenter", () => {
     expect(await screen.findByText("MacKenzie Gore")).toBeInTheDocument();
     expect(screen.getByText("Away Batter 1")).toBeInTheDocument();
     expect(fetchMlbLineups).toHaveBeenCalledWith(mlbScheduledDetail.gameDate);
+  });
+
+  it("loads matchup enrichment for a complete Preview lineup", async () => {
+    const matchup: ApiMlbLineupMatchupResponse = {
+      date: mlbScheduledDetail.gameDate,
+      away_abbrev: "WSH",
+      home_abbrev: "PHI",
+      status: "expected",
+      source: "rotowire+statsapi",
+      fetched_at: "2026-08-04T17:00:00Z",
+      away: {
+        pitcher: {
+          name: "MacKenzie Gore",
+          hand: "L",
+          mlbam_id: 669022,
+          wins: 8,
+          losses: 6,
+          era: "3.40",
+          innings_pitched: "121.2",
+          strikeouts: 142,
+          whip: "1.21",
+        },
+        batters: [],
+      },
+      home: {
+        pitcher: {
+          name: "Zack Wheeler",
+          hand: "R",
+          mlbam_id: 554430,
+          wins: 10,
+          losses: 4,
+          era: "2.80",
+          innings_pitched: "132.0",
+          strikeouts: 151,
+          whip: "0.98",
+        },
+        batters: [],
+      },
+    };
+    fetchMlbLineups.mockResolvedValue({
+      date: mlbScheduledDetail.gameDate,
+      fetched_at: "2026-08-04T10:00:00-04:00",
+      source: "rotowire",
+      games: [completeLineupGame],
+    });
+    useMlbLineupMatchup.mockReturnValue({ data: matchup });
+
+    renderWithClient(<MlbPregameCenter detail={mlbScheduledDetail} />);
+
+    expect(await screen.findByText("1.21")).toBeInTheDocument();
+    expect(useMlbLineupMatchup).toHaveBeenLastCalledWith({
+      dateEt: mlbScheduledDetail.gameDate,
+      away: mlbScheduledDetail.away.abbrev,
+      home: mlbScheduledDetail.home.abbrev,
+      enabled: true,
+    });
   });
 
   it("prefers a later complete match when an earlier same-abbrev entry is incomplete", async () => {

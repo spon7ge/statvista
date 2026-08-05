@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useMlbLineupMatchup } from "@/hooks/useMlbLineupMatchup";
 import { useMlbLineups } from "@/hooks/useMlbLineups";
 import type { ApiMlbLineupGame, ApiMlbLineupSide } from "@/lib/api";
 import {
@@ -51,6 +52,12 @@ export function MlbPregameCenter({ detail }: { detail: MlbGameDetailView }) {
     detail.away.abbrev,
     detail.home.abbrev,
   );
+  const matchupQuery = useMlbLineupMatchup({
+    dateEt: detail.gameDate,
+    away: detail.away.abbrev,
+    home: detail.home.abbrev,
+    enabled: activeTab === "preview" && matchedGame !== null,
+  });
 
   const stub =
     activeTab === "away"
@@ -73,6 +80,7 @@ export function MlbPregameCenter({ detail }: { detail: MlbGameDetailView }) {
           <MlbProjectedLineups
             detail={detail}
             game={matchedGame}
+            matchup={matchupQuery.data ?? null}
             isPending={isPending}
           />
         ) : (
