@@ -69,6 +69,38 @@ async def test_fetch_season_pitching_maps_fields():
 
 
 @pytest.mark.asyncio
+async def test_fetch_vs_pitcher_total_maps_fields():
+    class FakeResp:
+        def raise_for_status(self):
+            return None
+
+        def json(self):
+            return {
+                "stats": [
+                    {
+                        "splits": [
+                            {
+                                "stat": {
+                                    "atBats": 10,
+                                    "hits": 3,
+                                    "homeRuns": 1,
+                                    "avg": ".300",
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+
+    class FakeClient:
+        async def get(self, url, params=None):
+            return FakeResp()
+
+    stats = await fetch_vs_pitcher_total(FakeClient(), 695578, 554430)
+    assert stats == {"ab": 10, "h": 3, "hr": 1, "avg": ".300"}
+
+
+@pytest.mark.asyncio
 async def test_fetch_vs_pitcher_total_empty_splits_returns_none():
     class FakeResp:
         def raise_for_status(self):

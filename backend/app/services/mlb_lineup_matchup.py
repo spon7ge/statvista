@@ -45,10 +45,22 @@ def _find_game(
     games: list[MlbLineupGame], away: str, home: str
 ) -> MlbLineupGame | None:
     a, h = away.upper(), home.upper()
-    for game in games:
-        if game.away_abbrev.upper() == a and game.home_abbrev.upper() == h:
-            return game
-    return None
+    matches = [
+        game
+        for game in games
+        if game.away_abbrev.upper() == a and game.home_abbrev.upper() == h
+    ]
+    return next(
+        (
+            game
+            for game in matches
+            if game.away.pitcher.name
+            and len(game.away.batters) == 9
+            and game.home.pitcher.name
+            and len(game.home.batters) == 9
+        ),
+        matches[0] if matches else None,
+    )
 
 
 async def _enrich_pitcher(
@@ -82,7 +94,7 @@ async def _enrich_batter(
     vs = None
     if mlbam_id is not None and opposing_pitcher_id is not None:
         raw = await fetch_vs_pitcher_total(client, mlbam_id, opposing_pitcher_id)
-        if raw is not None:
+        if raw is not None and raw.get("ab") not in (None, 0):
             vs = MlbVsPitcherStats(
                 ab=raw.get("ab"),
                 h=raw.get("h"),

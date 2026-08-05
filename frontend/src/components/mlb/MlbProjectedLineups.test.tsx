@@ -169,6 +169,36 @@ describe("MlbProjectedLineups", () => {
     );
   });
 
+  it("keeps the full RotoWire lineup when matchup batters are partial", () => {
+    const partialMatchup: ApiMlbLineupMatchupResponse = {
+      ...enrichedMatchup,
+      away: {
+        ...enrichedMatchup.away!,
+        batters: [
+          {
+            ...enrichedMatchup.away!.batters[0],
+            name: "Stats API Name",
+          },
+        ],
+      },
+    };
+
+    render(
+      <MlbProjectedLineups
+        detail={mlbScheduledDetail}
+        game={lineupGame}
+        matchup={partialMatchup}
+      />,
+    );
+
+    expect(screen.getByText("CJ Abrams")).toBeInTheDocument();
+    expect(screen.queryByText("Stats API Name")).not.toBeInTheDocument();
+    expect(screen.getByText("Robert Hassell III")).toBeInTheDocument();
+    expect(screen.getByRole("row", { name: /CJ Abrams/ })).toHaveTextContent(
+      "1CJ AbramsSS1031.300",
+    );
+  });
+
   it("defaults to the away side and renders the starter plus 9 batters", () => {
     render(<MlbProjectedLineups detail={mlbScheduledDetail} game={lineupGame} />);
 

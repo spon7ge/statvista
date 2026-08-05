@@ -9,6 +9,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app
+from app.services.mlb_lineup_matchup import clear_mlb_lineup_matchup_cache
 from app.services.mlb_lineups import clear_mlb_lineups_cache
 from src.scrapers.mlb_rotowire_lineups import parse_mlb_lineups_html
 
@@ -21,8 +22,10 @@ FIXTURE = (
 @pytest.fixture
 def client():
     clear_mlb_lineups_cache()
+    clear_mlb_lineup_matchup_cache()
     yield TestClient(app)
     clear_mlb_lineups_cache()
+    clear_mlb_lineup_matchup_cache()
 
 
 def _today_et_date() -> date:

@@ -64,6 +64,23 @@ function orderedMatchupBatters(batters: MatchupBatter[]): MatchupBatter[] {
   return [...batters].sort((a, b) => a.order - b.order);
 }
 
+function mergeMatchupBatters(
+  slateBatters: ApiMlbLineupBatter[],
+  matchupBatters: MatchupBatter[],
+) {
+  const matchupByOrder = new Map(
+    orderedMatchupBatters(matchupBatters).map((batter) => [batter.order, batter]),
+  );
+  return orderedBatters(slateBatters).map((batter) => {
+    const matchupBatter = matchupByOrder.get(batter.order);
+    return {
+      ...batter,
+      mlbam_id: matchupBatter?.mlbam_id ?? null,
+      vsPitcher: matchupBatter?.vs_pitcher ?? null,
+    };
+  });
+}
+
 function formatPitcherTitle(
   hand: string | null | undefined,
   name: string | null | undefined,
@@ -160,10 +177,7 @@ function LineupTable({
   opposingPitcherName: string;
 }) {
   const batters = matchupSide
-    ? orderedMatchupBatters(matchupSide.batters).map((batter) => ({
-        ...batter,
-        vsPitcher: batter.vs_pitcher,
-      }))
+    ? mergeMatchupBatters(slateSide.batters, matchupSide.batters)
     : orderedBatters(slateSide.batters).map((batter) => ({
         ...batter,
         vsPitcher: null,
