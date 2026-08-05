@@ -207,6 +207,13 @@ def _underdog_table(league: str) -> str:
     return "wnba_underdogs"
 
 
+def _pinnacle_props_table(league: str) -> str:
+    lg = (league or "").strip().lower()
+    if lg == "mlb":
+        return "mlb_pinnacle"
+    return "wnba_pinnacle"
+
+
 def load_underdog_snapshot(
     picks: list[dict],
     *,
@@ -256,7 +263,7 @@ def load_pinnacle_props_snapshot(
     if df.empty:
         return 0
     upsert_df(
-        "wnba_pinnacle",
+        _pinnacle_props_table(league),
         df,
         schema="odds",
         conflict_cols=_PARLAY_BOOK_CONFLICT_COLS,

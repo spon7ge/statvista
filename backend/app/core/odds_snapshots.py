@@ -16,38 +16,56 @@ from sqlalchemy import text
 
 logger = logging.getLogger(__name__)
 
-_PRIZEPICKS_SQL = """
-SELECT player_name, stat_type, line_score, odds_type
-FROM odds.wnba_prizepicks
-WHERE league = :league
-  AND scraped_at = (
-    SELECT MAX(scraped_at) FROM odds.wnba_prizepicks WHERE league = :league
-  )
-"""
-
-_UNDERDOG_SQL = """
-SELECT player_name, stat_name, line_score, side, american_price
-FROM odds.wnba_underdogs
-WHERE league = :league
-  AND scraped_at = (
-    SELECT MAX(scraped_at) FROM odds.wnba_underdogs WHERE league = :league
-  )
-"""
-
-_PINNACLE_SQL = """
-SELECT player_name, market_type, side, line_score, american_price
-FROM odds.wnba_pinnacle
-WHERE league = :league
-  AND scraped_at = (
-    SELECT MAX(scraped_at) FROM odds.wnba_pinnacle WHERE league = :league
-  )
-"""
+_PRIZEPICKS_TABLE = {
+    "mlb": "mlb_prizepicks",
+    "wnba": "wnba_prizepicks",
+    "nba": "wnba_prizepicks",
+}
+_UNDERDOG_TABLE = {
+    "mlb": "mlb_underdogs",
+    "wnba": "wnba_underdogs",
+    "nba": "wnba_underdogs",
+}
+_PINNACLE_TABLE = {
+    "mlb": "mlb_pinnacle",
+    "wnba": "wnba_pinnacle",
+    "nba": "wnba_pinnacle",
+}
+_PROPHETX_TABLE = {"mlb": "mlb_prophetx"}
 
 _PINNACLE_TEAM_TABLE = {
     "mlb": "mlb_pinnacle_team",
     "wnba": "wnba_pinnacle_team",
     "nba": "wnba_pinnacle_team",
 }
+
+
+def _latest_snapshot_sql(table: str, columns: str) -> str:
+    return f"""
+SELECT {columns}
+FROM odds.{table}
+WHERE league = :league
+  AND scraped_at = (
+    SELECT MAX(scraped_at) FROM odds.{table} WHERE league = :league
+  )
+"""
+
+
+_PRIZEPICKS_SQL = _latest_snapshot_sql(
+    "wnba_prizepicks", "player_name, stat_type, line_score, odds_type"
+)
+_UNDERDOG_SQL = _latest_snapshot_sql(
+    "wnba_underdogs",
+    "player_name, stat_name, line_score, side, american_price",
+)
+_PINNACLE_SQL = _latest_snapshot_sql(
+    "wnba_pinnacle",
+    "player_name, market_type, side, line_score, american_price",
+)
+
+
+def _normalized_league(league: str, default: str) -> str:
+    return (league or default).strip().lower()
 
 
 def _fetch_rows(sql: str, league: str) -> list[dict[str, Any]]:
@@ -74,22 +92,48 @@ def _fetch_rows(sql: str, league: str) -> list[dict[str, Any]]:
 
 def fetch_latest_prizepicks(league: str = "wnba") -> list[dict]:
     """Return rows from the latest PrizePicks snapshot for *league*."""
-    return _fetch_rows(_PRIZEPICKS_SQL, league)
+    lg = _normalized_league(league, "wnba")
+    table = _PRIZEPICKS_TABLE.get(lg, "wnba_prizepicks")
+    sql = _latest_snapshot_sql(
+        table, "player_name, stat_type, line_score, odds_type"
+    )
+    return _fetch_rows(sql, lg)
 
 
 def fetch_latest_underdog(league: str = "wnba") -> list[dict]:
     """Return rows from the latest Underdog snapshot for *league*."""
-    return _fetch_rows(_UNDERDOG_SQL, league)
+    lg = _normalized_league(league, "wnba")
+    table = _UNDERDOG_TABLE.get(lg, "wnba_underdogs")
+    sql = _latest_snapshot_sql(
+        table, "player_name, stat_name, line_score, side, american_price"
+    )
+    return _fetch_rows(sql, lg)
 
 
 def fetch_latest_pinnacle(league: str = "wnba") -> list[dict]:
     """Return rows from the latest Selenium Pinnacle player snapshot for *league*."""
-    return _fetch_rows(_PINNACLE_SQL, league)
+    lg = _normalized_league(league, "wnba")
+    table = _PINNACLE_TABLE.get(lg, "wnba_pinnacle")
+    sql = _latest_snapshot_sql(
+        table, "player_name, market_type, side, line_score, american_price"
+    )
+    return _fetch_rows(sql, lg)
+
+
+def fetch_latest_prophetx(league: str = "mlb") -> list[dict]:
+    """Return rows from the latest ProphetX player snapshot for *league*."""
+    lg = _normalized_league(league, "mlb")
+    table = _PROPHETX_TABLE.get(lg, "mlb_prophetx")
+    sql = _latest_snapshot_sql(
+        table,
+        "player_name, stat_name, line_score, side, american_price, scraped_at",
+    )
+    return _fetch_rows(sql, lg)
 
 
 def fetch_latest_pinnacle_team(league: str = "wnba") -> list[dict]:
     """Return full-game (period=0, non-alternate) team rows from latest snapshot."""
-    lg = (league or "wnba").strip().lower()
+    lg = _normalized_league(league, "wnba")
     table = _PINNACLE_TEAM_TABLE.get(lg, "wnba_pinnacle_team")
     sql = f"""
 SELECT away_team, home_team, start_time, market_type, period, is_alternate,
