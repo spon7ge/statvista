@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import { HomeChromeLayout } from "@/layouts/HomeChromeLayout";
+import { HomeChromeLayout } from "@/app/layouts/HomeChromeLayout";
 import { HomePage } from "@/pages/HomePage";
 import { AboutPage } from "@/pages/AboutPage";
 import { GameDetailPage } from "@/pages/GameDetailPage";
