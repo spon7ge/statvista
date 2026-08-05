@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 from datetime import datetime
+from typing import Any
 from zoneinfo import ZoneInfo
 
 _ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -37,3 +38,39 @@ def resolve_props_output_path(*, now: datetime | None = None) -> str:
     base = env_dir or _DEFAULT_OUTPUT_DIR
     os.makedirs(base, exist_ok=True)
     return os.path.join(base, name)
+
+
+def pick_main_market_line(market: dict[str, Any]) -> dict[str, Any] | None:
+    lines = [ln for ln in (market.get("marketLines") or []) if isinstance(ln, dict)]
+    if not lines:
+        return None
+    favourites = [ln for ln in lines if ln.get("favourite") is True]
+    if len(favourites) == 1:
+        return favourites[0]
+    if len(favourites) > 1:
+        return favourites[0]
+    if len(lines) == 1:
+        return lines[0]
+    return None
+
+
+def best_selection(side: list[dict[str, Any]]) -> dict[str, Any] | None:
+    for sel in side:
+        if isinstance(sel, dict):
+            return sel
+    return None
+
+
+def american_and_stake(sel: dict[str, Any]) -> tuple[int | None, float | None]:
+    raw = sel.get("odds")
+    american: int | None
+    try:
+        american = int(raw) if raw is not None else None
+    except (TypeError, ValueError):
+        american = None
+    stake_raw = sel.get("stake")
+    try:
+        stake = float(stake_raw) if stake_raw is not None else None
+    except (TypeError, ValueError):
+        stake = None
+    return american, stake
