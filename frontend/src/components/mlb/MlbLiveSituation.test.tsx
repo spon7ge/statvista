@@ -28,7 +28,7 @@ describe("MlbLiveSituation", () => {
 
   it("renders only the pitch zone in pitchZone variant", () => {
     render(<MlbLiveSituation detail={mlbLiveDetail} variant="pitchZone" />);
-    expect(screen.getByText("Pitch zone")).toBeInTheDocument();
+    expect(screen.getByTestId("mlb-pitch-zone")).toBeInTheDocument();
     expect(screen.queryByText("CALL VALUE")).not.toBeInTheDocument();
     expect(screen.queryByText("AT BAT")).not.toBeInTheDocument();
   });
