@@ -7,8 +7,7 @@ import re
 from fastapi import APIRouter, HTTPException, Query
 
 from app.core import db
-from app.schemas.game import Game, GameSlate, GameWithPredictions, GameWithProps
-from app.schemas.ml_prediction import MLPrediction
+from app.schemas.game import Game, GameSlate, GameWithProps
 from app.schemas.prop import PropLine
 
 router = APIRouter(tags=["games"])
@@ -100,24 +99,6 @@ WHERE game_date = %(game_date)s
 ORDER BY player_name, market_category, side
 """
 
-_PREDICTIONS_SQL = """
-SELECT
-    prop,
-    game_id,
-    player_id,
-    prediction,
-    predicted_at,
-    game_date,
-    player_name,
-    model_path
-FROM ml.predictions
-WHERE game_date = %(game_date)s
-  AND (%(prop)s IS NULL OR prop = %(prop)s)
-ORDER BY player_name NULLS LAST, prop
-LIMIT %(limit)s
-"""
-
-
 def _validate_date(date_str: str) -> str:
     if not _DATE_RE.match(date_str):
         raise HTTPException(
@@ -143,21 +124,6 @@ def get_games(date: str) -> list[Game]:
     return [Game(**r) for r in rows]
 
 
-@router.get("/games/{date}/predictions", response_model=list[MLPrediction])
-def get_game_predictions(
-    date: str,
-    prop: str | None = Query(default=None),
-    limit: int = Query(default=2000, ge=1, le=5000),
-) -> list[MLPrediction]:
-    """All ML predictions for a slate date from **ml.predictions**."""
-    _validate_date(date)
-    rows = db.query(
-        _PREDICTIONS_SQL,
-        {"game_date": date, "prop": prop.lower() if prop else None, "limit": limit},
-    )
-    return [MLPrediction(**row) for row in rows]
-
-
 @router.get("/games/{date}/props", response_model=list[PropLine])
 def get_game_props(
     date: str,
@@ -180,16 +146,14 @@ def get_game_props(
 
 @router.get("/games/{date}/slate", response_model=GameSlate)
 def get_game_slate(date: str) -> GameSlate:
-    """Combined games + props + predictions for a full slate view."""
+    """Combined games + props for a full slate view."""
     _validate_date(date)
     games = get_games(date)
     props = get_game_props(date)
-    predictions = get_game_predictions(date)
     return GameSlate(
         game_date=datetime.date.fromisoformat(date),
         games=games,
         props=props,
-        predictions=predictions,
     )
 
 
@@ -229,28 +193,3 @@ def get_games_with_props(
         )
 
     return results
-
-
-@router.get("/games/{date}/with-predictions", response_model=list[GameWithPredictions])
-def get_games_with_predictions(
-    date: str,
-    prop: str | None = Query(default=None),
-) -> list[GameWithPredictions]:
-    """Games on *date* with ML predictions attached."""
-    _validate_date(date)
-    game_rows = db.query(_GAMES_SQL, {"game_date": date})
-    if not game_rows:
-        return []
-
-    all_preds = get_game_predictions(date, prop=prop)
-    by_game: dict[str, list[MLPrediction]] = {}
-    for row in all_preds:
-        by_game.setdefault(row.game_id, []).append(row)
-
-    return [
-        GameWithPredictions(
-            **game_row,
-            predictions=by_game.get(game_row.get("game_id") or "", []),
-        )
-        for game_row in game_rows
-    ]

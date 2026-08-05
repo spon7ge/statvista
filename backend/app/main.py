@@ -2,20 +2,14 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes import (
-    accuracy,
-    features,
     games,
     health,
-    live_props,
-    live_slates,
     matchups,
     mlb_game_detail,
     mlb_lineups,
     mlb_odds,
     mlb_scoreboard,
-    performance,
     players,
-    predictions,
     props,
     slates,
     wnba_game_detail,
@@ -33,8 +27,8 @@ app = FastAPI(
     title="statvista API",
     version="0.3.0",
     description=(
-        "NBA prop prediction backend. Most endpoints read from Supabase "
-        "(silver / gold / ml schemas) and make no NBA or Odds API calls. "
+        "Statvista basketball and baseball data backend. Database-backed endpoints read "
+        "from Supabase (silver / gold schemas) and make no NBA or Odds API calls. "
         "The exceptions are /api/wnba/scoreboard/today, /api/mlb/scoreboard/today, "
         "/api/mlb/scoreboard, /api/mlb/odds/today, /api/wnba/leaders, "
         "/api/wnba/player/{player_id}, /api/wnba/standings, /api/wnba/futures, "
@@ -54,17 +48,11 @@ app.add_middleware(
 
 # ── Core Phase 9 routes ────────────────────────────────────────────────────
 app.include_router(health.router, prefix="/api")
-app.include_router(predictions.router, prefix="/api")
 app.include_router(players.router, prefix="/api")
 app.include_router(games.router, prefix="/api")
 
 # ── Additional DB-backed routes ────────────────────────────────────────────
-app.include_router(live_props.router, prefix="/api")
-app.include_router(live_slates.router, prefix="/api")
-app.include_router(performance.router, prefix="/api")
-app.include_router(accuracy.router, prefix="/api")
 app.include_router(props.router, prefix="/api")
-app.include_router(features.router, prefix="/api")
 app.include_router(matchups.router, prefix="/api")
 app.include_router(slates.router, prefix="/api")
 

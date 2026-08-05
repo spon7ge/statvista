@@ -6,7 +6,6 @@ from fastapi import APIRouter, HTTPException, Query
 from app.core import db
 from app.schemas.feature import PlayerListResponse, PlayerSummary
 from app.schemas.player import (
-    MLPredictionSummary,
     PlayerGame,
     PlayerProfile,
     RollingAvg5,
@@ -103,19 +102,6 @@ ORDER BY game_date DESC
 LIMIT 1
 """
 
-_PREDICTIONS_SQL = """
-SELECT
-    prop,
-    game_id,
-    prediction,
-    predicted_at,
-    game_date
-FROM ml.predictions
-WHERE player_id = %(player_id)s
-ORDER BY predicted_at DESC
-LIMIT %(n)s
-"""
-
 _SEARCH_SQL = """
 SELECT
     player_id,
@@ -152,9 +138,8 @@ def search_players(
 def get_player(
     player_id: int,
     recent_n: int = Query(default=10, ge=1, le=82),
-    include_predictions: bool = Query(default=True),
 ) -> PlayerProfile:
-    """Player profile, recent games, rolling context, and latest ML predictions."""
+    """Player profile, recent games, and rolling context."""
     params = {"player_id": player_id}
 
     profile_row = db.query_one(_PROFILE_SQL, params)
@@ -165,15 +150,9 @@ def get_player(
     roll5_row = db.query_one(_ROLL5_SQL, params)
     roll10_row = db.query_one(_ROLL10_SQL, params)
 
-    predictions: list[MLPredictionSummary] = []
-    if include_predictions:
-        pred_rows = db.query(_PREDICTIONS_SQL, {"player_id": player_id, "n": 20})
-        predictions = [MLPredictionSummary(**row) for row in pred_rows]
-
     return PlayerProfile(
         **profile_row,
         recent_games=[PlayerGame(**g) for g in game_rows],
         rolling_avg_5=RollingAvg5(**roll5_row) if roll5_row else None,
         rolling_avg_10=RollingAvg10(**roll10_row) if roll10_row else None,
-        predictions=predictions,
     )

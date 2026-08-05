@@ -5,7 +5,6 @@ import datetime
 
 from pydantic import BaseModel
 
-from app.schemas.ml_prediction import MLPrediction
 from app.schemas.prop import PropLine
 
 
@@ -25,12 +24,7 @@ class GameWithProps(Game):
     props: list[PropLine] = []
 
 
-class GameWithPredictions(Game):
-    predictions: list[MLPrediction] = []
-
-
 class GameSlate(BaseModel):
     game_date: datetime.date
     games: list[Game]
     props: list[PropLine] = []
-    predictions: list[MLPrediction] = []

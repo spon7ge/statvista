@@ -4,26 +4,6 @@
  */
 
 export interface paths {
-    "/api/features/{prop}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List Features
-         * @description Return ML input features for model training / debugging.
-         */
-        get: operations["list_features_api_features__prop__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/games/today": {
         parameters: {
             query?: never;
@@ -64,26 +44,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/games/{date}/predictions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Game Predictions
-         * @description All ML predictions for a slate date from **ml.predictions**.
-         */
-        get: operations["get_game_predictions_api_games__date__predictions_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/games/{date}/props": {
         parameters: {
             query?: never;
@@ -113,29 +73,9 @@ export interface paths {
         };
         /**
          * Get Game Slate
-         * @description Combined games + props + predictions for a full slate view.
+         * @description Combined games + props for a full slate view.
          */
         get: operations["get_game_slate_api_games__date__slate_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/games/{date}/with-predictions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Games With Predictions
-         * @description Games on *date* with ML predictions attached.
-         */
-        get: operations["get_games_with_predictions_api_games__date__with_predictions_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -176,54 +116,6 @@ export interface paths {
          * @description Basic health check with a lightweight DB ping.
          */
         get: operations["health_api_health_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/live-props": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List Live Props
-         * @description Return the most recently generated enriched prop picks.
-         *
-         *     Each pick includes:
-         *     - **model** — stat quantiles (q10/q50/q90), p_over, p_under, lean
-         *     - **game_context** — opp_def_rating, opp_pace, game_total, spread
-         *     - **form** — over-rate vs the line in the last 5 / 10 / 15 games
-         *     - **vs_opp** — historical stats against tonight's opponent
-         */
-        get: operations["list_live_props_api_live_props_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/live-slates": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List Live Slates
-         * @description Return the most recent greedy multi-leg parlays for Top Legs.
-         *
-         *     Response ``slates`` is nested as ``{ "2": { "prizepicks": [...], ... }, ... }``.
-         */
-        get: operations["list_live_slates_api_live_slates_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -354,49 +246,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/models/{model_id}/accuracy": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Backtesting accuracy for a model version
-         * @description Returns hit rate, Q50 calibration, MAE, and signed bias for a specific model version, broken down by prop type. Aggregated from **gold.gold_prediction_accuracy** (populated by the grading pipeline). Games whose actuals have not yet landed are excluded automatically.
-         */
-        get: operations["model_accuracy_api_models__model_id__accuracy_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/performance": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Performance
-         * @description Hit rates for graded live props (DNPs excluded from denominators).
-         *
-         *     Also joins latest Top Legs parlays to grades so each parlay shows per-leg
-         *     hit/miss and whether the ticket cashed.
-         */
-        get: operations["get_performance_api_performance_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/player/{player_id}": {
         parameters: {
             query?: never;
@@ -406,7 +255,7 @@ export interface paths {
         };
         /**
          * Get Player
-         * @description Player profile, recent games, rolling context, and latest ML predictions.
+         * @description Player profile, recent games, and rolling context.
          */
         get: operations["get_player_api_player__player_id__get"];
         put?: never;
@@ -429,66 +278,6 @@ export interface paths {
          * @description Search the player directory from **silver.silver_players**.
          */
         get: operations["search_players_api_players_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/predictions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List Predictions
-         * @description Return ML model predictions from **ml.predictions** (no external API calls).
-         */
-        get: operations["list_predictions_api_predictions_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/predictions/player/{player_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Predictions For Player
-         * @description Latest ML predictions for one player.
-         */
-        get: operations["predictions_for_player_api_predictions_player__player_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/predictions/today": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Predictions Today
-         * @description Shortcut for today's slate predictions.
-         */
-        get: operations["predictions_today_api_predictions_today_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -694,39 +483,6 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        /**
-         * BookDailyTrend
-         * @description Daily hit-rate series for one bookmaker.
-         */
-        BookDailyTrend: {
-            /** Bookmaker */
-            bookmaker: string;
-            /** Points */
-            points?: components["schemas"]["DailyHitRate"][];
-        };
-        /** DailyHitRate */
-        DailyHitRate: {
-            /**
-             * Game Date
-             * Format: date
-             */
-            game_date: string;
-            /** Hit Rate */
-            hit_rate?: number | null;
-            /** Hits */
-            hits: number;
-            /** N */
-            n: number;
-        };
-        /** Form */
-        Form: {
-            /** Over L10 */
-            over_l10?: number | null;
-            /** Over L15 */
-            over_l15?: number | null;
-            /** Over L5 */
-            over_l5?: number | null;
-        };
         /** Game */
         Game: {
             /** Away Team Abbrev */
@@ -746,23 +502,6 @@ export interface components {
             season_year?: string | null;
             /** Source */
             source?: string | null;
-        };
-        /** GameContext */
-        GameContext: {
-            /** Game Total */
-            game_total?: number | null;
-            /** Opp Def Rating */
-            opp_def_rating?: number | null;
-            /** Opp Def Rating Rank */
-            opp_def_rating_rank?: number | null;
-            /** Opp Pace */
-            opp_pace?: number | null;
-            /** Team Def Rating */
-            team_def_rating?: number | null;
-            /** Team Pace */
-            team_pace?: number | null;
-            /** Team Spread */
-            team_spread?: number | null;
         };
         /** GameDetailBoxScore */
         GameDetailBoxScore: {
@@ -970,40 +709,10 @@ export interface components {
             /** Games */
             games: components["schemas"]["Game"][];
             /**
-             * Predictions
-             * @default []
-             */
-            predictions: components["schemas"]["MLPrediction"][];
-            /**
              * Props
              * @default []
              */
             props: components["schemas"]["PropLine"][];
-        };
-        /** GameWithPredictions */
-        GameWithPredictions: {
-            /** Away Team Abbrev */
-            away_team_abbrev: string;
-            /** Event Id */
-            event_id?: number | null;
-            /**
-             * Game Date
-             * Format: date
-             */
-            game_date: string;
-            /** Game Id */
-            game_id?: string | null;
-            /** Home Team Abbrev */
-            home_team_abbrev: string;
-            /**
-             * Predictions
-             * @default []
-             */
-            predictions: components["schemas"]["MLPrediction"][];
-            /** Season Year */
-            season_year?: string | null;
-            /** Source */
-            source?: string | null;
         };
         /** GameWithProps */
         GameWithProps: {
@@ -1030,335 +739,10 @@ export interface components {
             /** Source */
             source?: string | null;
         };
-        /**
-         * GradedLeg
-         * @description One leg of a Top Legs parlay, joined to a graded prop when possible.
-         */
-        GradedLeg: {
-            /** Actual Stat */
-            actual_stat?: number | null;
-            /**
-             * Hit
-             * @description True/False when graded; null if DNP or no matching grade.
-             */
-            hit?: boolean | null;
-            /** Line */
-            line?: number | null;
-            /** Market */
-            market: string;
-            /** Miss Reason */
-            miss_reason?: string | null;
-            /** Player Name */
-            player_name: string;
-            /** Side */
-            side: string;
-            /** Team Abbr */
-            team_abbr?: string | null;
-        };
-        /**
-         * GradedParlay
-         * @description A Top Legs parlay with per-leg outcomes.
-         */
-        GradedParlay: {
-            /** Bookmaker */
-            bookmaker: string;
-            /**
-             * Cashed
-             * @description True if every scored leg hit and none pending; False on any miss; null if incomplete.
-             */
-            cashed?: boolean | null;
-            /** Ev */
-            ev?: number | null;
-            /**
-             * Game Date
-             * Format: date
-             */
-            game_date: string;
-            /** Legs */
-            legs: components["schemas"]["GradedLeg"][];
-            /**
-             * Legs Hit
-             * @description Legs that hit (excl. DNP / ungraded)
-             */
-            legs_hit: number;
-            /**
-             * Legs Pending
-             * @description Legs without a grade or DNP
-             */
-            legs_pending: number;
-            /**
-             * Legs Scored
-             * @description Legs with a non-DNP grade
-             */
-            legs_scored: number;
-            /** N Legs */
-            n_legs: number;
-            /** Parlay Prob */
-            parlay_prob?: number | null;
-        };
-        /**
-         * GradedPick
-         * @description One graded prop for the Results feed.
-         */
-        GradedPick: {
-            /** Abs Error */
-            abs_error?: number | null;
-            /** Actual Stat */
-            actual_stat?: number | null;
-            /** Bookmaker */
-            bookmaker: string;
-            /**
-             * Game Date
-             * Format: date
-             */
-            game_date: string;
-            /** Hit */
-            hit: boolean;
-            /** Line */
-            line?: number | null;
-            /** Market */
-            market: string;
-            /** Miss Reason */
-            miss_reason: string;
-            /** P Over */
-            p_over?: number | null;
-            /** Player Name */
-            player_name: string;
-            /** Side */
-            side: string;
-            /** Stat Q50 */
-            stat_q50?: number | null;
-            /** Team Abbr */
-            team_abbr?: string | null;
-        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
-        };
-        /**
-         * HitRateBucket
-         * @description Hit rate for one slice (overall, market, book, or side).
-         */
-        HitRateBucket: {
-            /**
-             * Dnps
-             * @default 0
-             */
-            dnps: number;
-            /** Hit Rate */
-            hit_rate?: number | null;
-            /** Hits */
-            hits: number;
-            /**
-             * Key
-             * @description Slice label, e.g. overall | PTS | PrizePicks | over
-             */
-            key: string;
-            /**
-             * N
-             * @description Graded props excluding DNPs
-             */
-            n: number;
-        };
-        /**
-         * LivePropPick
-         * @description One enriched prop pick from ml.live_prop_predictions.
-         */
-        LivePropPick: {
-            form: components["schemas"]["Form"];
-            game_context: components["schemas"]["GameContext"];
-            /** Game Date */
-            game_date?: string | null;
-            /** Is Home */
-            is_home?: boolean | null;
-            /** League */
-            league?: string | null;
-            /** Line */
-            line?: number | null;
-            /** Market */
-            market: string;
-            model: components["schemas"]["ModelOutput"];
-            /** Opponent Abbr */
-            opponent_abbr?: string | null;
-            /** Platform */
-            platform: string;
-            /** Player */
-            player: string;
-            /** Run At */
-            run_at?: string | null;
-            /** Team Abbr */
-            team_abbr?: string | null;
-            vs_opp: components["schemas"]["VsOpp"];
-        };
-        /**
-         * LivePropsResponse
-         * @description Envelope for the GET /api/live-props response.
-         */
-        LivePropsResponse: {
-            /** Game Date */
-            game_date: string;
-            /**
-             * Generated At
-             * Format: date-time
-             */
-            generated_at: string;
-            /** League */
-            league: string;
-            /** N Picks */
-            n_picks: number;
-            /** Picks */
-            picks: components["schemas"]["LivePropPick"][];
-        };
-        /**
-         * LiveSlateParlay
-         * @description One greedy parlay row (FlatParlayRow-compatible; LEGS nested).
-         */
-        LiveSlateParlay: {
-            /** Anchor Name */
-            ANCHOR_NAME?: string | null;
-            /** Anchor Win Prob */
-            ANCHOR_WIN_PROB?: number | null;
-            /** Combo Profile */
-            COMBO_PROFILE?: string | null;
-            /** Ev */
-            EV?: number | null;
-            /** Ev Dollars */
-            EV_DOLLARS?: number | null;
-            /** Kelly */
-            KELLY?: number | null;
-            /** Kelly Quarter */
-            KELLY_QUARTER?: number | null;
-            /** Legs */
-            LEGS?: {
-                [key: string]: unknown;
-            }[];
-            /** N Legs */
-            N_LEGS?: number | null;
-            /** Parlay Prob */
-            PARLAY_PROB?: number | null;
-            /** Strategy Tier */
-            STRATEGY_TIER?: number | null;
-        } & {
-            [key: string]: unknown;
-        };
-        /**
-         * LiveSlatesResponse
-         * @description Envelope for GET /api/live-slates.
-         */
-        LiveSlatesResponse: {
-            /** Count */
-            count: number;
-            /** Game Date */
-            game_date: string;
-            /**
-             * Generated At
-             * Format: date-time
-             */
-            generated_at: string;
-            /** League */
-            league: string;
-            /** Run At */
-            run_at?: string | null;
-            /** Slates */
-            slates: {
-                [key: string]: {
-                    [key: string]: components["schemas"]["LiveSlateParlay"][];
-                };
-            };
-        };
-        /**
-         * MLFeatureRow
-         * @description Shared base features from ml.features (subset exposed via API).
-         */
-        MLFeatureRow: {
-            /** Ast Roll5 */
-            ast_roll5?: number | null;
-            /** Days Rest */
-            days_rest?: number | null;
-            /** Expected Pace */
-            expected_pace?: number | null;
-            /** Game Date */
-            game_date?: string | null;
-            /** Game Id */
-            game_id: string;
-            /** Is B2B */
-            is_b2b?: number | null;
-            /** Is Home */
-            is_home?: number | null;
-            /** Min Roll10 */
-            min_roll10?: number | null;
-            /** Min Roll5 */
-            min_roll5?: number | null;
-            /** Opp Def Rating Roll10 */
-            opp_def_rating_roll10?: number | null;
-            /** Opp Team Abbreviation */
-            opp_team_abbreviation?: string | null;
-            /** Player Id */
-            player_id: number;
-            /** Player Name */
-            player_name?: string | null;
-            /** Pts Roll5 */
-            pts_roll5?: number | null;
-            /** Reb Roll5 */
-            reb_roll5?: number | null;
-            /** Season Year */
-            season_year?: string | null;
-            /** Team Abbreviation */
-            team_abbreviation?: string | null;
-            /** Usg Pct Roll10 */
-            usg_pct_roll10?: number | null;
-            /** Usg Pct Roll5 */
-            usg_pct_roll5?: number | null;
-        } & {
-            [key: string]: unknown;
-        };
-        /** MLPrediction */
-        MLPrediction: {
-            /** Game Date */
-            game_date?: string | null;
-            /** Game Id */
-            game_id: string;
-            /** Model Path */
-            model_path?: string | null;
-            /** Player Id */
-            player_id: number;
-            /** Player Name */
-            player_name?: string | null;
-            /**
-             * Predicted At
-             * Format: date-time
-             */
-            predicted_at: string;
-            /**
-             * Prediction
-             * @description Median quantile (q0.50) model output.
-             */
-            prediction: number;
-            /**
-             * Prop
-             * @description Model target: min, ppm, rpm, or apm.
-             */
-            prop: string;
-        };
-        /**
-         * MLPredictionSummary
-         * @description Latest model output for one prop type.
-         */
-        MLPredictionSummary: {
-            /** Game Date */
-            game_date?: string | null;
-            /** Game Id */
-            game_id: string;
-            /**
-             * Predicted At
-             * Format: date-time
-             */
-            predicted_at: string;
-            /** Prediction */
-            prediction: number;
-            /** Prop */
-            prop: string;
         };
         /** MatchupFeatures */
         MatchupFeatures: {
@@ -2024,111 +1408,6 @@ export interface components {
             label: string;
         };
         /**
-         * ModelAccuracy
-         * @description All prop-level accuracy breakdowns for a single model version.
-         */
-        ModelAccuracy: {
-            /**
-             * Breakdown
-             * @description One entry per prop type that has scored predictions.
-             */
-            breakdown: components["schemas"]["PropAccuracy"][];
-            /** Model Id */
-            model_id: string;
-        };
-        /** ModelOutput */
-        ModelOutput: {
-            /** Lean */
-            lean?: string | null;
-            /** Min Q10 */
-            min_q10?: number | null;
-            /** Min Q50 */
-            min_q50?: number | null;
-            /** Min Q90 */
-            min_q90?: number | null;
-            /** P Over */
-            p_over?: number | null;
-            /** P Under */
-            p_under?: number | null;
-            /** Stat Q10 */
-            stat_q10?: number | null;
-            /** Stat Q50 */
-            stat_q50?: number | null;
-            /** Stat Q90 */
-            stat_q90?: number | null;
-        };
-        /**
-         * ParlaySummary
-         * @description Aggregate Top Legs results for the lookback window.
-         */
-        ParlaySummary: {
-            /** Cash Rate */
-            cash_rate?: number | null;
-            /**
-             * Cashed
-             * @default 0
-             */
-            cashed: number;
-            /**
-             * Decided
-             * @description Parlays with no pending legs (fully graded, excl. all-DNP).
-             * @default 0
-             */
-            decided: number;
-            /** Leg Hit Rate */
-            leg_hit_rate?: number | null;
-            /**
-             * Legs Hit
-             * @default 0
-             */
-            legs_hit: number;
-            /**
-             * Legs Scored
-             * @default 0
-             */
-            legs_scored: number;
-        };
-        /**
-         * PerformanceResponse
-         * @description Envelope for GET /api/performance.
-         */
-        PerformanceResponse: {
-            /**
-             * Brier Score
-             * @description Mean squared error of p_over vs over/under outcome (excl. DNP).
-             */
-            brier_score?: number | null;
-            /** By Book */
-            by_book: components["schemas"]["HitRateBucket"][];
-            /** By Market */
-            by_market: components["schemas"]["HitRateBucket"][];
-            /** By Side */
-            by_side: components["schemas"]["HitRateBucket"][];
-            /** Days */
-            days: number;
-            /**
-             * Generated At
-             * Format: date-time
-             */
-            generated_at: string;
-            /** Graded Parlays */
-            graded_parlays?: components["schemas"]["GradedParlay"][];
-            last_n_days: components["schemas"]["HitRateBucket"];
-            last_night: components["schemas"]["HitRateBucket"];
-            /** League */
-            league: string;
-            parlay_summary?: components["schemas"]["ParlaySummary"];
-            /** Recent Picks */
-            recent_picks: components["schemas"]["GradedPick"][];
-            /** Trend */
-            trend: components["schemas"]["DailyHitRate"][];
-            /**
-             * Trend By Book
-             * @description Per-bookmaker daily hit-rate series for the chart.
-             */
-            trend_by_book?: components["schemas"]["BookDailyTrend"][];
-        };
-        /**
          * PlayerGame
          * @description One row from gold_player_game_stats.
          */
@@ -2200,18 +1479,6 @@ export interface components {
             /** Players */
             players: components["schemas"]["PlayerSummary"][];
         };
-        /** PlayerPredictions */
-        PlayerPredictions: {
-            /** Player Id */
-            player_id: number;
-            /** Player Name */
-            player_name?: string | null;
-            /**
-             * Predictions
-             * @default []
-             */
-            predictions: components["schemas"]["MLPrediction"][];
-        };
         /**
          * PlayerProfile
          * @description Full player response — profile + recent games + rolling context.
@@ -2225,11 +1492,6 @@ export interface components {
             player_id: number;
             /** Player Name */
             player_name: string;
-            /**
-             * Predictions
-             * @default []
-             */
-            predictions: components["schemas"]["MLPredictionSummary"][];
             /**
              * Recent Games
              * @default []
@@ -2256,57 +1518,6 @@ export interface components {
             team_abbreviation?: string | null;
             /** Team Name */
             team_name?: string | null;
-        };
-        /**
-         * PropAccuracy
-         * @description Aggregated backtesting metrics for one (model_id, prop) pair.
-         */
-        PropAccuracy: {
-            /**
-             * Hit Rate
-             * @description Fraction of predictions where the model's predicted direction (over/under the book line) matched the actual outcome. Null when no book lines are available.
-             */
-            hit_rate?: number | null;
-            /**
-             * Mae
-             * @description Mean absolute error in model-native units (per-minute rates for ppm/rpm/apm; minutes for min).
-             */
-            mae?: number | null;
-            /**
-             * Model Id
-             * @description UUID of the model version from ml.model_registry.
-             */
-            model_id: string;
-            /**
-             * N Games
-             * @description Number of scored predictions (games with landed actuals).
-             */
-            n_games: number;
-            /**
-             * N With Book Line
-             * @description Subset of n_games where a book line was available for hit-rate computation.
-             */
-            n_with_book_line: number;
-            /**
-             * Prop
-             * @description Model target: min, ppm, rpm, or apm.
-             */
-            prop: string;
-            /**
-             * Q50 Calibration
-             * @description Fraction of actuals that fell below the median (Q50) prediction. A perfectly calibrated model produces 0.50.
-             */
-            q50_calibration?: number | null;
-            /**
-             * Scored Through
-             * @description Latest game_date included in these metrics.
-             */
-            scored_through?: string | null;
-            /**
-             * Signed Bias
-             * @description Mean signed error (prediction − actual) in model-native units. Positive = model systematically over-predicts.
-             */
-            signed_bias?: number | null;
         };
         /**
          * PropLine
@@ -2445,15 +1656,6 @@ export interface components {
             msg: string;
             /** Error Type */
             type: string;
-        };
-        /** VsOpp */
-        VsOpp: {
-            /** Avg Stat */
-            avg_stat?: number | null;
-            /** N Games */
-            n_games?: number | null;
-            /** Over Rate At Line */
-            over_rate_at_line?: number | null;
         };
         /** WnbaFuturesEntry */
         WnbaFuturesEntry: {
@@ -2850,41 +2052,6 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    list_features_api_features__prop__get: {
-        parameters: {
-            query?: {
-                date?: string | null;
-                player_id?: number | null;
-                limit?: number;
-            };
-            header?: never;
-            path: {
-                prop: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MLFeatureRow"][];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
     get_todays_games_api_games_today_get: {
         parameters: {
             query?: never;
@@ -2923,40 +2090,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Game"][];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    get_game_predictions_api_games__date__predictions_get: {
-        parameters: {
-            query?: {
-                prop?: string | null;
-                limit?: number;
-            };
-            header?: never;
-            path: {
-                date: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MLPrediction"][];
                 };
             };
             /** @description Validation Error */
@@ -3035,39 +2168,6 @@ export interface operations {
             };
         };
     };
-    get_games_with_predictions_api_games__date__with_predictions_get: {
-        parameters: {
-            query?: {
-                prop?: string | null;
-            };
-            header?: never;
-            path: {
-                date: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GameWithPredictions"][];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
     get_games_with_props_api_games__date__with_props_get: {
         parameters: {
             query?: {
@@ -3120,85 +2220,6 @@ export interface operations {
                     "application/json": {
                         [key: string]: string;
                     };
-                };
-            };
-        };
-    };
-    list_live_props_api_live_props_get: {
-        parameters: {
-            query?: {
-                /** @description Slate date YYYY-MM-DD. Defaults to today. */
-                date?: string | null;
-                /** @description nba | wnba */
-                league?: string;
-                /** @description PTS | AST | REB */
-                market?: string | null;
-                /** @description Filter by bookmaker, e.g. PrizePicks, Underdog, Betr */
-                bookmaker?: string | null;
-                /** @description Partial player name filter (case-insensitive). */
-                player?: string | null;
-                limit?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["LivePropsResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    list_live_slates_api_live_slates_get: {
-        parameters: {
-            query?: {
-                /** @description Slate date YYYY-MM-DD. Defaults to today. */
-                date?: string | null;
-                /** @description nba | wnba */
-                league?: string;
-                /** @description Optional book filter: prizepicks | underdog | draftkings | betr */
-                book?: string | null;
-                /** @description Optional leg count filter: 2 | 3 | 5 | 6 */
-                n_legs?: number | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["LiveSlatesResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -3405,87 +2426,10 @@ export interface operations {
             };
         };
     };
-    model_accuracy_api_models__model_id__accuracy_get: {
-        parameters: {
-            query?: {
-                /** @description Filter to one prop type: min | ppm | rpm | apm. */
-                prop?: string | null;
-                /** @description Earliest game_date to include (YYYY-MM-DD). */
-                since?: string | null;
-            };
-            header?: never;
-            path: {
-                model_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ModelAccuracy"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    get_performance_api_performance_get: {
-        parameters: {
-            query?: {
-                /** @description nba | wnba */
-                league?: string;
-                /** @description Lookback window in days */
-                days?: number;
-                /** @description Optional start date YYYY-MM-DD (overrides days). */
-                since?: string | null;
-                /** @description Optional book filter: prizepicks | underdog | draftkings | betr (or display name). When set, hit rates / parlays / Brier are scoped to that book only. */
-                book?: string | null;
-                /** @description all | singles | 2 | 3 | 5 | 6 — scopes lists and accuracy. */
-                legs?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PerformanceResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
     get_player_api_player__player_id__get: {
         parameters: {
             query?: {
                 recent_n?: number;
-                include_predictions?: boolean;
             };
             header?: never;
             path: {
@@ -3537,110 +2481,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PlayerListResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    list_predictions_api_predictions_get: {
-        parameters: {
-            query?: {
-                /** @description Filter by game_date (YYYY-MM-DD). */
-                date?: string | null;
-                /** @description min | ppm | rpm | apm */
-                prop?: string | null;
-                player_id?: number | null;
-                game_id?: string | null;
-                limit?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MLPrediction"][];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    predictions_for_player_api_predictions_player__player_id__get: {
-        parameters: {
-            query?: {
-                date?: string | null;
-                prop?: string | null;
-                limit?: number;
-            };
-            header?: never;
-            path: {
-                player_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PlayerPredictions"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    predictions_today_api_predictions_today_get: {
-        parameters: {
-            query?: {
-                prop?: string | null;
-                limit?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MLPrediction"][];
                 };
             };
             /** @description Validation Error */

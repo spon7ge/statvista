@@ -38,7 +38,7 @@ Two backend families exist. The **live website mainly uses the WNBA and MLB upst
 |--------|----------|------------------------------|
 | WNBA upstream | `/api/wnba/scoreboard/*`, `props/today`, `games/{id}`, … | Yes |
 | MLB upstream | `/api/mlb/scoreboard/*`, `/api/mlb/odds/today` | Yes (home + matchups) |
-| DB-backed (silver / gold / ml) | `/api/live-props`, `/api/predictions`, `/api/games/{date}/slate`, … | No |
+| DB-backed (silver / gold) | `/api/games/{date}/slate`, `/api/props`, … | No |
 
 Shared chrome (`HomeChromeLayout`) wraps most routes with nav, live ticker, and footer. `/about` is static (no API).
 
@@ -146,7 +146,9 @@ backend/app/
   core/             # config; DB helpers for older DB-backed routes
 ```
 
-Site-facing WNBA and MLB routes are adapters over external APIs and Supabase odds tables. Older `/api/live-*`, `/api/predictions`, and related routes remain mounted for the research dashboard but are **not** wired into the current React pages.
+Site-facing WNBA and MLB routes are adapters over external APIs and Supabase odds tables. The unused
+live-props, live-slates, and prediction routes were removed on 2026-08-04; the remaining
+research routes do not attach ML predictions.
 
 ### Errors & empty states
 
