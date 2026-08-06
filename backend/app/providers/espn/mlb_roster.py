@@ -47,27 +47,40 @@ def roster_player_index(
     *,
     team_abbrev: str | None,
 ) -> dict[str, MlbRosterPlayer]:
+    """Index players from an ESPN MLB roster payload.
+
+    MLB nests athletes under position groups: ``athletes[].items[]``.
+    Flat athlete lists (WNBA-style) are still accepted for fixtures.
+    """
     index: dict[str, MlbRosterPlayer] = {}
-    for athlete in payload.get("athletes") or []:
-        if not isinstance(athlete, dict):
+    for group_or_athlete in payload.get("athletes") or []:
+        if not isinstance(group_or_athlete, dict):
             continue
-        display_name = str(athlete.get("displayName") or "").strip()
-        espn_id = str(athlete.get("id") or "").strip()
-        if not display_name or not espn_id:
-            continue
-        key = norm_player_name(display_name)
-        if key in index:
-            continue
-        position_block = athlete.get("position") or {}
-        position = None
-        if isinstance(position_block, dict):
-            position = str(position_block.get("abbreviation") or "").strip() or None
-        index[key] = {
-            "espn_id": espn_id,
-            "position": position,
-            "team_abbrev": (team_abbrev or None),
-            "headshot_url": headshot_url_for(espn_id),
-        }
+        nested = group_or_athlete.get("items")
+        if isinstance(nested, list):
+            candidates = [a for a in nested if isinstance(a, dict)]
+        else:
+            candidates = [group_or_athlete]
+        for athlete in candidates:
+            display_name = str(athlete.get("displayName") or "").strip()
+            espn_id = str(athlete.get("id") or "").strip()
+            if not display_name or not espn_id:
+                continue
+            key = norm_player_name(display_name)
+            if key in index:
+                continue
+            position_block = athlete.get("position") or {}
+            position = None
+            if isinstance(position_block, dict):
+                position = (
+                    str(position_block.get("abbreviation") or "").strip() or None
+                )
+            index[key] = {
+                "espn_id": espn_id,
+                "position": position,
+                "team_abbrev": (team_abbrev or None),
+                "headshot_url": headshot_url_for(espn_id),
+            }
     return index
 
 

@@ -24,3 +24,20 @@ def test_roster_player_index_maps_name_position_team_headshot():
     assert entry["position"] == "RF"
     assert entry["team_abbrev"] == "NYY"
     assert entry["headshot_url"] == headshot_url_for("33192")
+
+
+def test_roster_player_index_accepts_flat_athlete_list():
+    payload = {
+        "athletes": [
+            {
+                "id": "1",
+                "displayName": "Flat Player",
+                "position": {"abbreviation": "C"},
+            }
+        ]
+    }
+    index = roster_player_index(payload, team_abbrev="BOS")
+    entry = index[norm_player_name("Flat Player")]
+    assert entry["espn_id"] == "1"
+    assert entry["position"] == "C"
+    assert entry["team_abbrev"] == "BOS"
