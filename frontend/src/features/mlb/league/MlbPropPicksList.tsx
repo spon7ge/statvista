@@ -7,6 +7,11 @@ const BOOK_LABELS: Record<string, string> = {
   draftkings: "DraftKings",
   fanduel: "FanDuel",
   pinnacle: "Pinnacle",
+  caesars: "Caesars",
+  kalshi: "Kalshi",
+  bet365: "bet365",
+  betmgm: "BetMGM",
+  fanatics: "Fanatics",
 };
 
 function sideLabel(side: string | null): string {
@@ -220,6 +225,31 @@ function ExpandedPanel({
           quote={row.books.pinnacle}
           lastUpdatedAt={lastUpdatedAt}
         />
+        <BookQuoteCell
+          bookKey="caesars"
+          quote={row.books.caesars}
+          lastUpdatedAt={lastUpdatedAt}
+        />
+        <BookQuoteCell
+          bookKey="kalshi"
+          quote={row.books.kalshi}
+          lastUpdatedAt={lastUpdatedAt}
+        />
+        <BookQuoteCell
+          bookKey="bet365"
+          quote={row.books.bet365}
+          lastUpdatedAt={lastUpdatedAt}
+        />
+        <BookQuoteCell
+          bookKey="betmgm"
+          quote={row.books.betmgm}
+          lastUpdatedAt={lastUpdatedAt}
+        />
+        <BookQuoteCell
+          bookKey="fanatics"
+          quote={row.books.fanatics}
+          lastUpdatedAt={lastUpdatedAt}
+        />
       </div>
       <div className="flex flex-wrap items-center gap-4 text-[14px] text-white/50">
         <span>
@@ -261,9 +291,11 @@ function PropPickCard({
   return (
     <article
       data-testid="mlb-prop-row"
-      className={`rounded-xl bg-[#3a3d42] p-4 transition-colors ${
-        isNoRead ? "opacity-60" : "hover:bg-[#45484d]"
-      }`}
+      className={`rounded-xl bg-[#3a3d42] p-4 ring-2 transition-[box-shadow,opacity] ${
+        expanded
+          ? "ring-[#059669]"
+          : "ring-transparent hover:ring-[#059669]"
+      } ${isNoRead ? "opacity-60" : ""}`}
     >
       <button
         type="button"

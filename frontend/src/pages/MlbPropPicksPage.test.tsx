@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi, beforeEach } from "vitest";
 import type { ApiMlbPropRow } from "@/shared/lib/api";
 import { MlbPropPicksPage } from "./MlbPropPicksPage";
 
@@ -27,6 +27,11 @@ function row(
       draftkings: null,
       fanduel: null,
       pinnacle: null,
+      caesars: null,
+      kalshi: null,
+      bet365: null,
+      betmgm: null,
+      fanatics: null,
     },
     dfs: { line: 1.5, changed_at: null },
     fair_explain: "PX+Novig agree within 2pp; 60/40 blend.",
@@ -74,6 +79,18 @@ function renderPage() {
 }
 
 describe("MlbPropPicksPage", () => {
+  beforeEach(() => {
+    window.matchMedia = vi.fn().mockImplementation((query: string) => ({
+      matches: false,
+      media: query,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    }));
+  });
+
   it("defaults the toolbar to prizepicks/power/4 and lists rows", () => {
     mockUseMlbProps.mockReturnValue({
       data: {

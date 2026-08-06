@@ -50,6 +50,11 @@ function row(
         changed_at: "2026-08-05T19:30:00Z",
         role: "comparison",
       },
+      caesars: null,
+      kalshi: null,
+      bet365: null,
+      betmgm: null,
+      fanatics: null,
     },
     dfs: { line: 1.5, changed_at: "2026-08-05T19:00:00Z" },
     fair_explain: "PX+Novig agree within 2pp; 60/40 blend.",
@@ -79,6 +84,11 @@ const noRead = row({
     draftkings: null,
     fanduel: null,
     pinnacle: null,
+    caesars: null,
+    kalshi: null,
+    bet365: null,
+    betmgm: null,
+    fanatics: null,
   },
 });
 
@@ -182,6 +192,50 @@ describe("MlbPropPicksList", () => {
     expect(within(expanded).getByText("ProphetX")).toBeInTheDocument();
     expect(within(expanded).getByText("Pinnacle")).toBeInTheDocument();
     expect(within(expanded).getByText(/cmp/i)).toBeInTheDocument();
+    expect(within(expanded).getByText("Caesars")).toBeInTheDocument();
+    expect(within(expanded).getByText("Kalshi")).toBeInTheDocument();
+    expect(within(expanded).getByText("bet365")).toBeInTheDocument();
+    expect(within(expanded).getByText("BetMGM")).toBeInTheDocument();
+    expect(within(expanded).getByText("Fanatics")).toBeInTheDocument();
+    expect(screen.getByTestId("mlb-prop-row").className).toMatch(
+      /ring-\[#059669\]/,
+    );
+  });
+
+  it("marks Parlay soft books as comparison on expand", async () => {
+    const user = userEvent.setup();
+    const withCmp = row({
+      player_name: "Aaron Judge",
+      books: {
+        ...judge.books,
+        caesars: {
+          side: "over",
+          fair_pct: 56.0,
+          american: -127,
+          changed_at: "2026-08-05T19:40:00Z",
+          role: "comparison",
+        },
+        kalshi: {
+          side: "over",
+          fair_pct: 54.0,
+          american: -117,
+          changed_at: "2026-08-05T19:41:00Z",
+          role: "comparison",
+        },
+      },
+    });
+    render(
+      <MlbPropPicksList
+        props={[withCmp]}
+        format="power"
+        legs={4}
+        breakevenPct={54.3}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: /Aaron Judge/i }));
+    const expanded = screen.getByTestId("mlb-prop-row-expand");
+    const caesarsLabels = within(expanded).getAllByText(/cmp/i);
+    expect(caesarsLabels.length).toBeGreaterThanOrEqual(2);
   });
 
   it("renders No Sharp Read rows muted with edge em-dash, parked last", () => {

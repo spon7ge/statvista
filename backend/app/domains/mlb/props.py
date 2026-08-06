@@ -57,9 +57,17 @@ FETCH_TIMEOUT_SECONDS = 12.0
 PROPS_LIMIT = 10000
 
 # Parlay books that may drive fair% (Tier 1 exchange + Tier 2 fallback).
-# Pinnacle is fetched separately from the Selenium snapshot table and is
-# comparison-only — never eligible for compute_fair.
+# Soft / prediction books below are comparison-only on expand — never
+# eligible for compute_fair. Pinnacle comes from Selenium snapshots, not Parlay.
 _PARLAY_FAIR_BOOKS: tuple[str, ...] = ("novig", "fanduel", "draftkings")
+_PARLAY_CMP_BOOKS: tuple[str, ...] = (
+    "caesars",
+    "kalshi",
+    "bet365",
+    "betmgm",
+    "fanatics",
+)
+_PARLAY_KEEP_BOOKS: tuple[str, ...] = _PARLAY_FAIR_BOOKS + _PARLAY_CMP_BOOKS
 _VALID_SIDES: tuple[str, ...] = ("over", "under")
 
 # format is fixed per app in v1 (see prop_formats.py multiplier tables).
@@ -208,17 +216,20 @@ def _index_snapshot_rows(
 def _index_parlay(
     rows: list[dict[str, Any]], now: datetime
 ) -> dict[str, SideIndex]:
-    """Index Novig/FanDuel/DraftKings Parlay rows by (player, stat, side, line).
+    """Index Parlay rows by (player, stat, side, line) for fair + cmp books.
+
+    Fair books (Novig/FD/DK) may drive ``compute_fair``. Cmp books
+    (Caesars/Kalshi/bet365/BetMGM/Fanatics) are display-only on expand.
 
     ParlayAPI is fetched live with no persisted per-quote history in v1, so
     ``changed_at`` for these books is approximated as the current request
     time — a documented limitation vs. the sharp book's true last-move time
     (see design doc's "Open implementation notes").
     """
-    by_book: dict[str, SideIndex] = {book: {} for book in _PARLAY_FAIR_BOOKS}
+    by_book: dict[str, SideIndex] = {book: {} for book in _PARLAY_KEEP_BOOKS}
     for row in rows:
         book = str(row.get("bookmaker") or "").lower().strip()
-        if book not in _PARLAY_FAIR_BOOKS:
+        if book not in _PARLAY_KEEP_BOOKS:
             continue
         player = str(row.get("player") or "").strip()
         market_key = str(row.get("market_key") or "").strip()
@@ -330,7 +341,10 @@ def _assemble_rows(
     parlay_by_book: dict[str, SideIndex],
     now: datetime,
 ) -> list[MlbPropRow]:
-    fair_book_indexes = {"prophetx": prophetx_idx, **parlay_by_book}
+    fair_book_indexes = {
+        "prophetx": prophetx_idx,
+        **{book: parlay_by_book.get(book, {}) for book in _PARLAY_FAIR_BOOKS},
+    }
     novig_idx = parlay_by_book.get("novig", {})
     dk_idx = parlay_by_book.get("draftkings", {})
     fd_idx = parlay_by_book.get("fanduel", {})
@@ -365,12 +379,23 @@ def _assemble_rows(
         alt_edge = edges.get(alt_side) if alt_side else None
 
         display_key: SideKey = (norm_player, stat_key, recommended, _line_key(line_f))
+
+        def _cmp_quote(book: str) -> MlbPropBookQuote | None:
+            return _book_quote(
+                parlay_by_book.get(book, {}), display_key, role="comparison"
+            )
+
         books = MlbPropBooks(
             prophetx=_book_quote(prophetx_idx, display_key),
             novig=_book_quote(novig_idx, display_key),
             draftkings=_book_quote(dk_idx, display_key),
             fanduel=_book_quote(fd_idx, display_key),
             pinnacle=_book_quote(pinnacle_idx, display_key, role="comparison"),
+            caesars=_cmp_quote("caesars"),
+            kalshi=_cmp_quote("kalshi"),
+            bet365=_cmp_quote("bet365"),
+            betmgm=_cmp_quote("betmgm"),
+            fanatics=_cmp_quote("fanatics"),
         )
 
         driving_changed_at = _fair_driving_changed_at(
@@ -463,7 +488,7 @@ async def get_mlb_props_today(*, app: str, format: str, legs: int) -> MlbPropsRe
     )
 
     parlay_error: str | None = None
-    parlay_by_book: dict[str, SideIndex] = {book: {} for book in _PARLAY_FAIR_BOOKS}
+    parlay_by_book: dict[str, SideIndex] = {book: {} for book in _PARLAY_KEEP_BOOKS}
     try:
         parlay_rows = await _fetch_parlay_rows()
         parlay_by_book = _index_parlay(parlay_rows, now)

@@ -33,6 +33,11 @@ class MlbPropBooks(BaseModel):
     draftkings: MlbPropBookQuote | None = None
     fanduel: MlbPropBookQuote | None = None
     pinnacle: MlbPropBookQuote | None = None
+    caesars: MlbPropBookQuote | None = None
+    kalshi: MlbPropBookQuote | None = None
+    bet365: MlbPropBookQuote | None = None
+    betmgm: MlbPropBookQuote | None = None
+    fanatics: MlbPropBookQuote | None = None
 
 
 class MlbPropDfs(BaseModel):
