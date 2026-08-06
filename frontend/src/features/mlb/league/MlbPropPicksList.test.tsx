@@ -2,7 +2,11 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ApiMlbPropRow } from "@/shared/lib/api";
-import { MlbPropPicksList } from "./MlbPropPicksList";
+import {
+  formatMlbPropPicksUpdatedAt,
+  MlbPropPicksList,
+  resolveBookLastUpdatedMs,
+} from "./MlbPropPicksList";
 
 function row(
   partial: Partial<ApiMlbPropRow> & Pick<ApiMlbPropRow, "player_name">,
@@ -273,6 +277,81 @@ describe("MlbPropPicksList", () => {
     ).toBeInTheDocument();
   });
 
+  it("sets book cell title from quote.changed_at on expand", async () => {
+    const user = userEvent.setup();
+    const boardMs = Date.parse("2026-08-05T20:00:00Z");
+    render(
+      <MlbPropPicksList
+        props={[judge]}
+        format="power"
+        legs={4}
+        breakevenPct={54.3}
+        lastUpdatedAt={boardMs}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: /Aaron Judge/i }));
+    const expanded = screen.getByTestId("mlb-prop-row-expand");
+    const px = within(expanded).getByText("ProphetX").closest("div");
+    expect(px).toHaveAttribute(
+      "title",
+      `Last updated ${formatMlbPropPicksUpdatedAt(Date.parse("2026-08-05T19:50:00Z"))}`,
+    );
+    expect(within(expanded).queryByText(/ago/i)).not.toBeInTheDocument();
+    expect(within(expanded).queryByText(/DFS line updated/i)).not.toBeInTheDocument();
+  });
+
+  it("falls back book cell title to board lastUpdatedAt when changed_at is null", async () => {
+    const user = userEvent.setup();
+    const boardMs = Date.parse("2026-08-05T20:00:00Z");
+    const withNullChanged = row({
+      player_name: "Aaron Judge",
+      books: {
+        ...judge.books,
+        prophetx: {
+          side: "over",
+          fair_pct: 58.5,
+          american: -140,
+          changed_at: null,
+          role: null,
+        },
+      },
+    });
+    render(
+      <MlbPropPicksList
+        props={[withNullChanged]}
+        format="power"
+        legs={4}
+        breakevenPct={54.3}
+        lastUpdatedAt={boardMs}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: /Aaron Judge/i }));
+    const expanded = screen.getByTestId("mlb-prop-row-expand");
+    const px = within(expanded).getByText("ProphetX").closest("div");
+    expect(px).toHaveAttribute(
+      "title",
+      `Last updated ${formatMlbPropPicksUpdatedAt(boardMs)}`,
+    );
+  });
+
+  it("lays out expand books on two rows (not five-across)", async () => {
+    const user = userEvent.setup();
+    render(
+      <MlbPropPicksList
+        props={[judge]}
+        format="power"
+        legs={4}
+        breakevenPct={54.3}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: /Aaron Judge/i }));
+    const expanded = screen.getByTestId("mlb-prop-row-expand");
+    const booksGrid = within(expanded).getByText("ProphetX").closest(".grid");
+    expect(booksGrid?.className).toMatch(/grid-cols-2/);
+    expect(booksGrid?.className).toMatch(/sm:grid-cols-3/);
+    expect(booksGrid?.className).not.toMatch(/lg:grid-cols-5/);
+  });
+
   it("lays out props row-major so highest edges fill across the top", () => {
     render(
       <MlbPropPicksList
@@ -287,5 +366,21 @@ describe("MlbPropPicksList", () => {
     expect(grid.className).toMatch(/md:grid-cols-2/);
     expect(grid.className).toMatch(/lg:grid-cols-3/);
     expect(grid.className).not.toMatch(/columns-/);
+  });
+});
+
+describe("resolveBookLastUpdatedMs", () => {
+  it("prefers changed_at over board", () => {
+    expect(
+      resolveBookLastUpdatedMs("2026-08-05T19:50:00Z", Date.parse("2026-08-05T20:00:00Z")),
+    ).toBe(Date.parse("2026-08-05T19:50:00Z"));
+  });
+  it("falls back to board when changed_at null or invalid", () => {
+    const board = Date.parse("2026-08-05T20:00:00Z");
+    expect(resolveBookLastUpdatedMs(null, board)).toBe(board);
+    expect(resolveBookLastUpdatedMs("not-a-date", board)).toBe(board);
+  });
+  it("returns null when neither available", () => {
+    expect(resolveBookLastUpdatedMs(null, undefined)).toBeNull();
   });
 });

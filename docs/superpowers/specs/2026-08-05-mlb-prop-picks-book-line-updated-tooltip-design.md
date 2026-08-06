@@ -1,7 +1,7 @@
 # MLB Prop Picks — per-book “Last updated” hover tooltip
 
 Date: 2026-08-05  
-Status: Approved for planning
+Status: Implemented
 
 ## Goal
 

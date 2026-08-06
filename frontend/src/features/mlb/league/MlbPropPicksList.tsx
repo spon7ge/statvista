@@ -48,16 +48,6 @@ function formatFormatLabel(format: string): string {
   return format.charAt(0).toUpperCase() + format.slice(1);
 }
 
-function formatAge(changedAt: string | null): string {
-  if (!changedAt) return "—";
-  const changedMs = Date.parse(changedAt);
-  if (Number.isNaN(changedMs)) return "—";
-  const diffMin = Math.max(0, Math.round((Date.now() - changedMs) / 60_000));
-  if (diffMin < 1) return "just now";
-  if (diffMin < 60) return `${diffMin}m ago`;
-  return `${Math.round(diffMin / 60)}h ago`;
-}
-
 export function formatMlbPropPicksUpdatedAt(ms: number): string {
   return new Intl.DateTimeFormat("en-US", {
     month: "short",
@@ -65,6 +55,20 @@ export function formatMlbPropPicksUpdatedAt(ms: number): string {
     hour: "numeric",
     minute: "2-digit",
   }).format(new Date(ms));
+}
+
+export function resolveBookLastUpdatedMs(
+  changedAt: string | null | undefined,
+  boardLastUpdatedAt: number | undefined,
+): number | null {
+  if (changedAt) {
+    const ms = Date.parse(changedAt);
+    if (!Number.isNaN(ms)) return ms;
+  }
+  if (boardLastUpdatedAt != null && !Number.isNaN(boardLastUpdatedAt)) {
+    return boardLastUpdatedAt;
+  }
+  return null;
 }
 
 function rowKey(row: ApiMlbPropRow): string {
@@ -90,12 +94,25 @@ function Skeletons() {
 function BookQuoteCell({
   bookKey,
   quote,
+  lastUpdatedAt,
 }: {
   bookKey: string;
   quote: ApiMlbPropBookQuote | null;
+  lastUpdatedAt?: number;
 }) {
+  const updatedMs = quote
+    ? resolveBookLastUpdatedMs(quote.changed_at, lastUpdatedAt)
+    : null;
+  const title =
+    updatedMs != null
+      ? `Last updated ${formatMlbPropPicksUpdatedAt(updatedMs)}`
+      : undefined;
+
   return (
-    <div className="flex flex-col items-center gap-0.5 rounded-md bg-[#45484d] px-2 py-1.5 text-center">
+    <div
+      className="flex flex-col items-center gap-0.5 rounded-md bg-[#45484d] px-2 py-1.5 text-center"
+      title={title}
+    >
       <span className="text-[14px] font-medium tracking-wide text-white/45 uppercase">
         {BOOK_LABELS[bookKey] ?? bookKey}
         {quote?.role === "comparison" ? (
@@ -110,8 +127,6 @@ function BookQuoteCell({
           </span>
           <span className="text-[14px] text-white/40">
             {quote.american !== null ? formatAmericanOdds(quote.american) : "—"}
-            {" · "}
-            {formatAge(quote.changed_at)}
           </span>
         </>
       ) : (
@@ -121,7 +136,13 @@ function BookQuoteCell({
   );
 }
 
-function ExpandedPanel({ row }: { row: ApiMlbPropRow }) {
+function ExpandedPanel({
+  row,
+  lastUpdatedAt,
+}: {
+  row: ApiMlbPropRow;
+  lastUpdatedAt?: number;
+}) {
   const alt = altSideOf(row.recommended_side);
   return (
     <div
@@ -129,12 +150,32 @@ function ExpandedPanel({ row }: { row: ApiMlbPropRow }) {
       className="mt-3 space-y-3 border-t border-white/10 pt-3 text-[18px]"
     >
       <p className="text-[14px] text-white/70">{row.fair_explain}</p>
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
-        <BookQuoteCell bookKey="prophetx" quote={row.books.prophetx} />
-        <BookQuoteCell bookKey="novig" quote={row.books.novig} />
-        <BookQuoteCell bookKey="draftkings" quote={row.books.draftkings} />
-        <BookQuoteCell bookKey="fanduel" quote={row.books.fanduel} />
-        <BookQuoteCell bookKey="pinnacle" quote={row.books.pinnacle} />
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+        <BookQuoteCell
+          bookKey="prophetx"
+          quote={row.books.prophetx}
+          lastUpdatedAt={lastUpdatedAt}
+        />
+        <BookQuoteCell
+          bookKey="novig"
+          quote={row.books.novig}
+          lastUpdatedAt={lastUpdatedAt}
+        />
+        <BookQuoteCell
+          bookKey="draftkings"
+          quote={row.books.draftkings}
+          lastUpdatedAt={lastUpdatedAt}
+        />
+        <BookQuoteCell
+          bookKey="fanduel"
+          quote={row.books.fanduel}
+          lastUpdatedAt={lastUpdatedAt}
+        />
+        <BookQuoteCell
+          bookKey="pinnacle"
+          quote={row.books.pinnacle}
+          lastUpdatedAt={lastUpdatedAt}
+        />
       </div>
       <div className="flex flex-wrap items-center gap-4 text-[14px] text-white/50">
         <span>
@@ -145,7 +186,6 @@ function ExpandedPanel({ row }: { row: ApiMlbPropRow }) {
             {sideLabel(alt)} edge {formatEdge(row.alt_edge_pct)}
           </span>
         ) : null}
-        <span>DFS line updated {formatAge(row.dfs.changed_at)}</span>
       </div>
     </div>
   );
@@ -160,10 +200,12 @@ function PropPickCard({
   row,
   expanded,
   onToggle,
+  lastUpdatedAt,
 }: {
   row: ApiMlbPropRow;
   expanded: boolean;
   onToggle: () => void;
+  lastUpdatedAt?: number;
 }) {
   const [imgFailed, setImgFailed] = useState(false);
   const isNoRead = row.source_tier === "no_sharp_read";
@@ -223,7 +265,9 @@ function PropPickCard({
         </div>
       </button>
 
-      {expanded ? <ExpandedPanel row={row} /> : null}
+      {expanded ? (
+        <ExpandedPanel row={row} lastUpdatedAt={lastUpdatedAt} />
+      ) : null}
     </article>
   );
 }
@@ -305,6 +349,7 @@ export function MlbPropPicksList({
                 row={row}
                 expanded={expandedKeys.has(key)}
                 onToggle={() => toggleRow(key)}
+                lastUpdatedAt={lastUpdatedAt}
               />
             );
           })}
