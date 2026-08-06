@@ -40,6 +40,13 @@ describe("LeagueSubnav", () => {
     );
   });
 
+  it("links MLB Prop Picks to /mlb/prop_picks", () => {
+    renderSubnav("/mlb/prop_picks", "mlb");
+    const propPicks = screen.getByRole("link", { name: "Prop Picks" });
+    expect(propPicks).toHaveAttribute("href", "/mlb/prop_picks");
+    expect(propPicks).toHaveAttribute("aria-current", "page");
+  });
+
   it("keeps Leaders and Standings disabled on NBA", () => {
     renderSubnav("/nba/matchups", "nba");
     expect(screen.getByRole("button", { name: "Leaders" })).toBeDisabled();

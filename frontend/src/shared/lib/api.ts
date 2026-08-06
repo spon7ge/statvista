@@ -62,6 +62,17 @@ export type ApiMlbLineupSide = Schemas["MlbLineupSide"];
 export type ApiMlbLineupBatter = Schemas["MlbLineupBatter"];
 export type ApiMlbLineupPitcher = Schemas["MlbLineupPitcher"];
 export type ApiMlbLineupMatchupResponse = Schemas["MlbLineupMatchupResponse"];
+export type ApiMlbPropBookQuote = Schemas["MlbPropBookQuote"];
+export type ApiMlbPropBooks = Schemas["MlbPropBooks"];
+export type ApiMlbPropDfs = Schemas["MlbPropDfs"];
+export type ApiMlbPropRow = Schemas["MlbPropRow"];
+export type ApiMlbPropsResponse = Schemas["MlbPropsResponse"];
+
+export type MlbPropsParams = {
+  app: string;
+  format: string;
+  legs: number;
+};
 
 /** Shared shape for matchup odds merge (WNBA + MLB). */
 export type ApiMatchupOddsGame = ApiWnbaOddsGame | ApiMlbOddsGame;
@@ -211,6 +222,26 @@ export async function fetchMlbOdds(): Promise<ApiMlbOddsResponse> {
   });
   if (!res.ok) {
     throw new Error(`MLB odds request failed: ${res.status}`);
+  }
+  return res.json();
+}
+
+export async function fetchMlbProps({
+  app,
+  format,
+  legs,
+}: MlbPropsParams): Promise<ApiMlbPropsResponse> {
+  const qs = new URLSearchParams({
+    app,
+    format,
+    legs: String(legs),
+  });
+  const res = await fetch(`${API_BASE}/api/mlb/props/today?${qs}`, {
+    headers: { Accept: "application/json" },
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    throw new Error(`MLB props request failed: ${res.status}`);
   }
   return res.json();
 }

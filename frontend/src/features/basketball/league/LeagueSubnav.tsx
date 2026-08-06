@@ -28,7 +28,8 @@ export function LeagueSubnav({ league }: LeagueSubnavProps) {
 
   function itemPath(item: string): string | null {
     if (item === "Matchups") return `/${league}/matchups`;
-    if (item === "Prop Picks" && league === "wnba") return "/wnba/prop_picks";
+    if (item === "Prop Picks" && league !== "nba")
+      return `/${league}/prop_picks`;
     if (item === "Leaders" && league === "wnba") return "/wnba/leaders";
     if (item === "Standings" && league === "wnba") return "/wnba/standings";
     if (item === "Futures" && league === "wnba") return "/wnba/futures";

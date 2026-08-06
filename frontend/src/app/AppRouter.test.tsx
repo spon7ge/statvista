@@ -156,6 +156,47 @@ describe("AppRouter", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("renders MLB prop picks at /mlb/prop_picks", async () => {
+    fetchMock.mockImplementation(async (input: RequestInfo) => {
+      const url = String(input);
+      if (url.includes("/api/mlb/props/today")) {
+        return {
+          ok: true,
+          json: async () => ({
+            as_of: "now",
+            app: "prizepicks",
+            format: "power",
+            legs: 4,
+            breakeven_pct: 54.3,
+            props: [],
+            error: null,
+          }),
+        };
+      }
+      return {
+        ok: true,
+        json: async () => ({ date: "2026-07-29", fetched_at: "", games: [] }),
+      };
+    });
+
+    renderWithProviders(["/mlb/prop_picks"]);
+
+    expect(
+      await screen.findByRole("heading", { name: "MLB Prop Picks" }),
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByText("No MLB prop picks available."),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Prop Picks" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/mlb/props/today?app=prizepicks&format=power&legs=4",
+      expect.objectContaining({ cache: "no-store" }),
+    );
+  });
+
   it("renders MLB game detail shell at /mlb/games/:gamePk", async () => {
     fetchMock.mockImplementation(async (input: RequestInfo) => {
       const url = String(input);
