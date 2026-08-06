@@ -89,4 +89,27 @@ describe("MlbPropPicksFilters", () => {
     await user.click(screen.getByRole("button", { name: "Clear filters" }));
     expect(onClear).toHaveBeenCalled();
   });
+
+  it("hides Team filter when no team options are available", () => {
+    render(
+      <MlbPropPicksFilters
+        stats={["Hits"]}
+        teams={[]}
+        selectedStats={new Set()}
+        selectedTeams={new Set()}
+        selectedSides={new Set()}
+        selectedTiers={new Set()}
+        freshVsStaleOnly={false}
+        onStatsChange={vi.fn()}
+        onTeamsChange={vi.fn()}
+        onSidesChange={vi.fn()}
+        onTiersChange={vi.fn()}
+        onFreshVsStaleToggle={vi.fn()}
+        onClear={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByRole("button", { name: "Stat" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Team" })).not.toBeInTheDocument();
+  });
 });

@@ -212,6 +212,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/mlb/props/today": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Mlb Props Today */
+        get: operations["mlb_props_today_api_mlb_props_today_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/mlb/scoreboard": {
         parameters: {
             query?: never;
@@ -1229,82 +1246,6 @@ export interface components {
              */
             sportsbook: string;
         };
-        /** MlbPropBookQuote */
-        MlbPropBookQuote: {
-            /** Side */
-            side: "over" | "under";
-            /** Fair Pct */
-            fair_pct: number | null;
-            /** American */
-            american: number | null;
-            /** Changed At */
-            changed_at: string | null;
-            /** Role */
-            role: "comparison" | null;
-        };
-        /** MlbPropBooks */
-        MlbPropBooks: {
-            prophetx: components["schemas"]["MlbPropBookQuote"] | null;
-            novig: components["schemas"]["MlbPropBookQuote"] | null;
-            draftkings: components["schemas"]["MlbPropBookQuote"] | null;
-            fanduel: components["schemas"]["MlbPropBookQuote"] | null;
-            pinnacle: components["schemas"]["MlbPropBookQuote"] | null;
-        };
-        /** MlbPropDfs */
-        MlbPropDfs: {
-            /** Line */
-            line: number;
-            /** Changed At */
-            changed_at: string | null;
-        };
-        /** MlbPropRow */
-        MlbPropRow: {
-            /** Player Name */
-            player_name: string;
-            /** Team Abbrev */
-            team_abbrev: string | null;
-            /** Stat */
-            stat: string;
-            /** Line */
-            line: number;
-            /** Recommended Side */
-            recommended_side: "over" | "under" | null;
-            /** Fair Pct */
-            fair_pct: number | null;
-            /** Edge Pct */
-            edge_pct: number | null;
-            /** Alt Edge Pct */
-            alt_edge_pct: number | null;
-            /** Source Tier */
-            source_tier: "sharp_consensus" | "sharp_disagreement" | "sharp_single_source" | "mid_tier_fallback" | "no_sharp_read";
-            /** Confidence Chips */
-            confidence_chips: string[];
-            /** Sample Chips */
-            sample_chips: string[];
-            /** Recency Chip */
-            recency_chip: string | null;
-            books: components["schemas"]["MlbPropBooks"];
-            dfs: components["schemas"]["MlbPropDfs"];
-            /** Fair Explain */
-            fair_explain: string;
-        };
-        /** MlbPropsResponse */
-        MlbPropsResponse: {
-            /** As Of */
-            as_of: string;
-            /** App */
-            app: string;
-            /** Format */
-            format: string;
-            /** Legs */
-            legs: number;
-            /** Breakeven Pct */
-            breakeven_pct: number;
-            /** Props */
-            props: components["schemas"]["MlbPropRow"][];
-            /** Error */
-            error: string | null;
-        };
         /** MlbPitch */
         MlbPitch: {
             /** Is Strike */
@@ -1424,6 +1365,91 @@ export interface components {
             name: string;
             /** Summary */
             summary: string | null;
+        };
+        /**
+         * MlbPropBookQuote
+         * @description A single book's quote at the row's exact line, for the display side.
+         */
+        MlbPropBookQuote: {
+            /** American */
+            american: number | null;
+            /** Changed At */
+            changed_at: string | null;
+            /** Fair Pct */
+            fair_pct: number | null;
+            /** Role */
+            role: "comparison" | null;
+            /**
+             * Side
+             * @enum {string}
+             */
+            side: "over" | "under";
+        };
+        /** MlbPropBooks */
+        MlbPropBooks: {
+            draftkings: components["schemas"]["MlbPropBookQuote"] | null;
+            fanduel: components["schemas"]["MlbPropBookQuote"] | null;
+            novig: components["schemas"]["MlbPropBookQuote"] | null;
+            pinnacle: components["schemas"]["MlbPropBookQuote"] | null;
+            prophetx: components["schemas"]["MlbPropBookQuote"] | null;
+        };
+        /** MlbPropDfs */
+        MlbPropDfs: {
+            /** Changed At */
+            changed_at: string | null;
+            /** Line */
+            line: number;
+        };
+        /** MlbPropRow */
+        MlbPropRow: {
+            /** Alt Edge Pct */
+            alt_edge_pct: number | null;
+            books: components["schemas"]["MlbPropBooks"];
+            /** Confidence Chips */
+            confidence_chips: string[];
+            dfs: components["schemas"]["MlbPropDfs"];
+            /** Edge Pct */
+            edge_pct: number | null;
+            /** Fair Explain */
+            fair_explain: string;
+            /** Fair Pct */
+            fair_pct: number | null;
+            /** Line */
+            line: number;
+            /** Player Name */
+            player_name: string;
+            /** Recency Chip */
+            recency_chip: string | null;
+            /** Recommended Side */
+            recommended_side: ("over" | "under") | null;
+            /** Sample Chips */
+            sample_chips: string[];
+            /**
+             * Source Tier
+             * @enum {string}
+             */
+            source_tier: "sharp_consensus" | "sharp_disagreement" | "sharp_single_source" | "mid_tier_fallback" | "no_sharp_read";
+            /** Stat */
+            stat: string;
+            /** Team Abbrev */
+            team_abbrev: string | null;
+        };
+        /** MlbPropsResponse */
+        MlbPropsResponse: {
+            /** App */
+            app: string;
+            /** As Of */
+            as_of: string;
+            /** Breakeven Pct */
+            breakeven_pct: number;
+            /** Error */
+            error: string | null;
+            /** Format */
+            format: string;
+            /** Legs */
+            legs: number;
+            /** Props */
+            props: components["schemas"]["MlbPropRow"][];
         };
         /** MlbRunners */
         MlbRunners: {
@@ -2531,6 +2557,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MlbOddsResponse"];
+                };
+            };
+        };
+    };
+    mlb_props_today_api_mlb_props_today_get: {
+        parameters: {
+            query: {
+                app: "prizepicks" | "underdog";
+                format: string;
+                legs: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MlbPropsResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

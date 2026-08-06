@@ -165,12 +165,14 @@ export function MlbPropPicksFilters({
         selected={selectedStats}
         onChange={onStatsChange}
       />
-      <MultiSelectFilter
-        label="Team"
-        options={teams.map((t) => ({ value: t, label: t }))}
-        selected={selectedTeams}
-        onChange={onTeamsChange}
-      />
+      {teams.length > 0 ? (
+        <MultiSelectFilter
+          label="Team"
+          options={teams.map((t) => ({ value: t, label: t }))}
+          selected={selectedTeams}
+          onChange={onTeamsChange}
+        />
+      ) : null}
       <MultiSelectFilter
         label="Side"
         options={[

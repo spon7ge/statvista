@@ -3220,6 +3220,354 @@
         "title": "MlbPlayerCard",
         "type": "object"
       },
+      "MlbPropBookQuote": {
+        "description": "A single book's quote at the row's exact line, for the display side.",
+        "properties": {
+          "american": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "American"
+          },
+          "changed_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Changed At"
+          },
+          "fair_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fair Pct"
+          },
+          "role": {
+            "anyOf": [
+              {
+                "const": "comparison",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Role"
+          },
+          "side": {
+            "enum": [
+              "over",
+              "under"
+            ],
+            "title": "Side",
+            "type": "string"
+          }
+        },
+        "required": [
+          "side",
+          "fair_pct",
+          "american",
+          "changed_at",
+          "role"
+        ],
+        "title": "MlbPropBookQuote",
+        "type": "object"
+      },
+      "MlbPropBooks": {
+        "properties": {
+          "draftkings": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbPropBookQuote"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "fanduel": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbPropBookQuote"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "novig": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbPropBookQuote"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "pinnacle": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbPropBookQuote"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "prophetx": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbPropBookQuote"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "prophetx",
+          "novig",
+          "draftkings",
+          "fanduel",
+          "pinnacle"
+        ],
+        "title": "MlbPropBooks",
+        "type": "object"
+      },
+      "MlbPropDfs": {
+        "properties": {
+          "changed_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Changed At"
+          },
+          "line": {
+            "title": "Line",
+            "type": "number"
+          }
+        },
+        "required": [
+          "line",
+          "changed_at"
+        ],
+        "title": "MlbPropDfs",
+        "type": "object"
+      },
+      "MlbPropRow": {
+        "properties": {
+          "alt_edge_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alt Edge Pct"
+          },
+          "books": {
+            "$ref": "#/components/schemas/MlbPropBooks"
+          },
+          "confidence_chips": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Confidence Chips",
+            "type": "array"
+          },
+          "dfs": {
+            "$ref": "#/components/schemas/MlbPropDfs"
+          },
+          "edge_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Edge Pct"
+          },
+          "fair_explain": {
+            "title": "Fair Explain",
+            "type": "string"
+          },
+          "fair_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fair Pct"
+          },
+          "line": {
+            "title": "Line",
+            "type": "number"
+          },
+          "player_name": {
+            "title": "Player Name",
+            "type": "string"
+          },
+          "recency_chip": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recency Chip"
+          },
+          "recommended_side": {
+            "anyOf": [
+              {
+                "enum": [
+                  "over",
+                  "under"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recommended Side"
+          },
+          "sample_chips": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Sample Chips",
+            "type": "array"
+          },
+          "source_tier": {
+            "enum": [
+              "sharp_consensus",
+              "sharp_disagreement",
+              "sharp_single_source",
+              "mid_tier_fallback",
+              "no_sharp_read"
+            ],
+            "title": "Source Tier",
+            "type": "string"
+          },
+          "stat": {
+            "title": "Stat",
+            "type": "string"
+          },
+          "team_abbrev": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Team Abbrev"
+          }
+        },
+        "required": [
+          "player_name",
+          "team_abbrev",
+          "stat",
+          "line",
+          "recommended_side",
+          "fair_pct",
+          "edge_pct",
+          "alt_edge_pct",
+          "source_tier",
+          "confidence_chips",
+          "sample_chips",
+          "recency_chip",
+          "books",
+          "dfs",
+          "fair_explain"
+        ],
+        "title": "MlbPropRow",
+        "type": "object"
+      },
+      "MlbPropsResponse": {
+        "properties": {
+          "app": {
+            "title": "App",
+            "type": "string"
+          },
+          "as_of": {
+            "title": "As Of",
+            "type": "string"
+          },
+          "breakeven_pct": {
+            "title": "Breakeven Pct",
+            "type": "number"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "format": {
+            "title": "Format",
+            "type": "string"
+          },
+          "legs": {
+            "title": "Legs",
+            "type": "integer"
+          },
+          "props": {
+            "items": {
+              "$ref": "#/components/schemas/MlbPropRow"
+            },
+            "title": "Props",
+            "type": "array"
+          }
+        },
+        "required": [
+          "as_of",
+          "app",
+          "format",
+          "legs",
+          "breakeven_pct",
+          "props",
+          "error"
+        ],
+        "title": "MlbPropsResponse",
+        "type": "object"
+      },
       "MlbRunners": {
         "properties": {
           "first": {
@@ -6744,6 +7092,73 @@
           }
         },
         "summary": "Mlb Odds Today",
+        "tags": [
+          "mlb"
+        ]
+      }
+    },
+    "/api/mlb/props/today": {
+      "get": {
+        "operationId": "mlb_props_today_api_mlb_props_today_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "app",
+            "required": true,
+            "schema": {
+              "enum": [
+                "prizepicks",
+                "underdog"
+              ],
+              "title": "App",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "format",
+            "required": true,
+            "schema": {
+              "minLength": 1,
+              "title": "Format",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "legs",
+            "required": true,
+            "schema": {
+              "maximum": 6,
+              "minimum": 2,
+              "title": "Legs",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MlbPropsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Mlb Props Today",
         "tags": [
           "mlb"
         ]
