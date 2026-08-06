@@ -94,10 +94,12 @@ describe("MlbPropPicksList", () => {
       />,
     );
 
-    expect(screen.getByText("Aaron Judge")).toBeInTheDocument();
+    const collapsed = screen.getByTestId("mlb-prop-row");
+    expect(collapsed).toHaveTextContent("Aaron Judge - Total Bases @ 1.5");
+    expect(within(collapsed).getByText("Over")).toBeInTheDocument();
     expect(screen.getByText("+5.1%")).toBeInTheDocument();
     expect(screen.getByText("Sharp Consensus")).toBeInTheDocument();
-    expect(screen.getByText("Fresh sharp vs stale DFS")).toBeInTheDocument();
+    expect(collapsed).toHaveTextContent("Fresh sharp vs stale DFS");
     // Expand content is not shown until the row is toggled.
     expect(screen.queryByText(/PX\+Novig agree/i)).not.toBeInTheDocument();
   });
@@ -134,7 +136,7 @@ describe("MlbPropPicksList", () => {
 
     const rows = screen.getAllByTestId("mlb-prop-row");
     expect(rows).toHaveLength(2);
-    expect(within(rows[1]!).getByText("Mookie Betts")).toBeInTheDocument();
+    expect(rows[1]!).toHaveTextContent("Mookie Betts - Hits @ 1.5");
     expect(within(rows[1]!).getByText("—")).toBeInTheDocument();
     expect(within(rows[1]!).getByText("No Sharp Read")).toBeInTheDocument();
     expect(rows[1]!.className).toMatch(/dashed/);
@@ -222,5 +224,22 @@ describe("MlbPropPicksList", () => {
     expect(
       screen.getByText("Breakeven for 4-pick Power: 54.3%"),
     ).toBeInTheDocument();
+  });
+
+  it("lays out props in a scoreboard-style card grid", () => {
+    const { container } = render(
+      <MlbPropPicksList
+        props={[judge, noRead]}
+        format="power"
+        legs={4}
+        breakevenPct={54.3}
+      />,
+    );
+    const grid = container.querySelector(".md\\:grid-cols-2");
+    expect(grid).toBeTruthy();
+    expect(grid?.className).toMatch(/grid-cols-1/);
+    expect(screen.getAllByTestId("mlb-prop-row")[0]!.className).toMatch(
+      /rounded-xl/,
+    );
   });
 });

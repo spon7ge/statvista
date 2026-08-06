@@ -42,11 +42,11 @@ export function HomeNav() {
   }, [leagueOpen]);
 
   return (
-    <header className="border-b border-white/10 bg-black">
+    <header className="border-b border-white/10 bg-background">
       <div className="mx-auto flex h-12 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
         <Link to="/" className="flex items-center gap-2 text-white no-underline">
           <BarChart3 className="size-4 shrink-0" aria-hidden strokeWidth={1.75} />
-          <span className="text-[17px] font-semibold tracking-tight">
+          <span className="text-[18px] font-semibold tracking-tight text-white">
             statvista
           </span>
         </Link>
@@ -63,8 +63,8 @@ export function HomeNav() {
                     aria-current={active ? "page" : undefined}
                     className={
                       active
-                        ? "flex items-center gap-2 rounded-md bg-white/10 px-3 py-1 text-[14px] font-medium text-white no-underline"
-                        : "flex items-center gap-2 rounded-md px-3 py-1 text-[14px] font-medium text-white/55 no-underline transition-colors hover:text-white"
+                        ? "flex items-center gap-2 rounded-md bg-white/10 px-3 py-1 text-[18px] font-medium text-white no-underline"
+                        : "flex items-center gap-2 rounded-md px-3 py-1 text-[18px] font-medium text-white no-underline transition-colors hover:bg-white/5"
                     }
                   >
                     <img
@@ -88,8 +88,8 @@ export function HomeNav() {
                 onClick={() => setLeagueOpen((open) => !open)}
                 className={
                   activeLeague || aboutActive
-                    ? "inline-flex items-center gap-1.5 rounded-md bg-white/10 px-2.5 py-1 text-[14px] font-medium text-white"
-                    : "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[14px] font-medium text-white/55 transition-colors hover:bg-white/5 hover:text-white"
+                    ? "inline-flex items-center gap-1.5 rounded-md bg-white/10 px-2.5 py-1 text-[18px] font-medium text-white"
+                    : "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[18px] font-medium text-white transition-colors hover:bg-white/5"
                 }
               >
                 {activeLeague ? (
@@ -131,8 +131,8 @@ export function HomeNav() {
                           onClick={() => setLeagueOpen(false)}
                           className={
                             active
-                              ? "flex items-center gap-2 px-2.5 py-1.5 text-[14px] font-medium text-white no-underline bg-white/10"
-                              : "flex items-center gap-2 px-2.5 py-1.5 text-[14px] font-medium text-white/70 no-underline hover:bg-white/5 hover:text-white"
+                              ? "flex items-center gap-2 px-2.5 py-1.5 text-[18px] font-medium text-white no-underline bg-white/10"
+                              : "flex items-center gap-2 px-2.5 py-1.5 text-[18px] font-medium text-white no-underline hover:bg-white/5"
                           }
                         >
                           <img
@@ -154,8 +154,8 @@ export function HomeNav() {
                       onClick={() => setLeagueOpen(false)}
                       className={
                         aboutActive
-                          ? "flex items-center gap-2 px-2.5 py-1.5 text-[14px] font-medium text-white no-underline bg-white/10"
-                          : "flex items-center gap-2 px-2.5 py-1.5 text-[14px] font-medium text-white/70 no-underline hover:bg-white/5 hover:text-white"
+                          ? "flex items-center gap-2 px-2.5 py-1.5 text-[18px] font-medium text-white no-underline bg-white/10"
+                          : "flex items-center gap-2 px-2.5 py-1.5 text-[18px] font-medium text-white no-underline hover:bg-white/5"
                       }
                     >
                       About
@@ -170,8 +170,8 @@ export function HomeNav() {
               aria-current={aboutActive ? "page" : undefined}
               className={
                 aboutActive
-                  ? "hidden rounded-md bg-white/10 px-2.5 py-1 text-[14px] font-medium text-white no-underline sm:inline"
-                  : "hidden rounded-md px-2.5 py-1 text-[14px] font-medium text-white/55 no-underline transition-colors hover:bg-white/5 hover:text-white sm:inline"
+                  ? "hidden rounded-md bg-white/10 px-2.5 py-1 text-[18px] font-medium text-white no-underline sm:inline"
+                  : "hidden rounded-md px-2.5 py-1 text-[18px] font-medium text-white no-underline transition-colors hover:bg-white/5 sm:inline"
               }
             >
               About
@@ -181,7 +181,7 @@ export function HomeNav() {
           <button
             type="button"
             aria-label="Settings"
-            className="rounded-md p-1.5 text-white/45 transition-colors hover:bg-white/5 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            className="rounded-md p-1.5 text-white transition-colors hover:bg-white/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           >
             <Settings className="size-4" strokeWidth={1.75} />
           </button>

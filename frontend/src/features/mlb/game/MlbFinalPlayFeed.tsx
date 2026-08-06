@@ -73,7 +73,7 @@ function StatcastMetrics({ play }: { play: MlbPlay }) {
   if (metrics.length === 0) return null;
 
   return (
-    <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 border-t border-white/10 pt-2 text-xs text-white/60">
+    <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 border-t border-white/10 pt-2 text-[18px] text-white/60">
       {metrics.map((metric) => (
         <span key={metric} className="font-mono tabular-nums">
           {metric}
@@ -96,10 +96,10 @@ function PlayRow({
     <li className={isFirst ? "" : "border-t border-white/10 pt-3"}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-sm text-white/90">{play.text}</p>
+          <p className="text-[18px] text-white/90">{play.text}</p>
         </div>
         {event ? (
-          <span className="shrink-0 rounded-full bg-black/20 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-white/80">
+          <span className="shrink-0 rounded-full bg-black/20 px-2 py-1 text-[14px] font-semibold uppercase tracking-wide text-white/80">
             {event}
           </span>
         ) : null}
@@ -125,7 +125,7 @@ function HalfInningCard({
       style={{ backgroundColor: battingTeamColor(detail, group.half) }}
     >
       <div className="bg-black/55 p-3">
-        <h3 className="text-xs font-medium uppercase tracking-wide text-white/60">
+        <h3 className="text-[18px] font-medium uppercase tracking-wide text-white/60">
           {title}
         </h3>
         <ul className="mt-3 space-y-3">
@@ -150,13 +150,13 @@ export function MlbFinalPlayFeed({
   return (
     <GameSection className="!p-3 h-fit self-start" data-testid="mlb-final-play-feed">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <h2 className="text-sm font-semibold text-white">Play feed</h2>
+        <h2 className="text-[18px] font-semibold text-white">Play feed</h2>
         <div className="flex rounded-full bg-white/5 p-0.5">
           <button
             type="button"
             onClick={() => setFilter("scoring")}
             aria-pressed={filter === "scoring"}
-            className={`rounded-full px-2 py-1 text-xs font-medium transition-colors ${
+            className={`rounded-full px-2 py-1 text-[18px] font-medium transition-colors ${
               filter === "scoring"
                 ? "bg-white/15 text-white"
                 : "text-white/50 hover:text-white/80"
@@ -168,7 +168,7 @@ export function MlbFinalPlayFeed({
             type="button"
             onClick={() => setFilter("all")}
             aria-pressed={filter === "all"}
-            className={`rounded-full px-2 py-1 text-xs font-medium transition-colors ${
+            className={`rounded-full px-2 py-1 text-[18px] font-medium transition-colors ${
               filter === "all"
                 ? "bg-white/15 text-white"
                 : "text-white/50 hover:text-white/80"
@@ -180,7 +180,7 @@ export function MlbFinalPlayFeed({
       </div>
 
       {plays.length === 0 ? (
-        <p className="text-xs text-white/40">No plays available</p>
+        <p className="text-[18px] text-white/40">No plays available</p>
       ) : (
         <ul className="space-y-2">
           {playGroups.map((group) => (

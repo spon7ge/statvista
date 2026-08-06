@@ -13,6 +13,8 @@ export type TickerGame = {
   league: HomeLeague;
   awayAbbrev: string;
   homeAbbrev: string;
+  awayLogoUrl: string | null;
+  homeLogoUrl: string | null;
   statusLabel: string;
   status: GameStatus;
   awayScore: number | null;

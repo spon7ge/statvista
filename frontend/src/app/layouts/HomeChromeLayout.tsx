@@ -11,7 +11,7 @@ export function HomeChromeLayout() {
   const mlb = useMlbScoreboard();
   const { tickerGames, hasNeverLoaded } = mergeLeagueScoreboards([wnba, mlb]);
   return (
-    <div className="flex min-h-screen flex-col bg-black text-white">
+    <div className="flex min-h-screen flex-col bg-background text-white">
       <HomeNav />
       <LiveTicker games={tickerGames} isError={hasNeverLoaded} />
       <main className="flex-1">

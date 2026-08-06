@@ -84,6 +84,8 @@ describe("scoreboard mappers", () => {
         league: "wnba",
         awayAbbrev: "ATL",
         homeAbbrev: "DAL",
+        awayLogoUrl: null,
+        homeLogoUrl: null,
         statusLabel: "Q3 7:13",
         status: "live",
         awayScore: 36,
@@ -131,7 +133,7 @@ describe("scoreboard mappers", () => {
     expect(mapToLiveGames([game])[0].espnEventId).toBe("401857098");
   });
 
-  it("maps logo_url to logoUrl for live and matchup games", () => {
+  it("maps logo_url to logoUrl for ticker, live, and matchup games", () => {
     const game = apiGame({
       away: {
         abbrev: "ATL",
@@ -146,6 +148,13 @@ describe("scoreboard mappers", () => {
         logo_url: "https://a.espncdn.com/i/teamlogos/wnba/500/dal.png",
       },
     });
+    const ticker = mapToTickerGames([game])[0];
+    expect(ticker.awayLogoUrl).toBe(
+      "https://a.espncdn.com/i/teamlogos/wnba/500/atl.png",
+    );
+    expect(ticker.homeLogoUrl).toBe(
+      "https://a.espncdn.com/i/teamlogos/wnba/500/dal.png",
+    );
     const live = mapToLiveGames([game])[0];
     expect(live.away.logoUrl).toBe(
       "https://a.espncdn.com/i/teamlogos/wnba/500/atl.png",
@@ -163,6 +172,9 @@ describe("scoreboard mappers", () => {
   });
 
   it("maps null logo_url to null logoUrl", () => {
+    const ticker = mapToTickerGames([apiGame()])[0];
+    expect(ticker.awayLogoUrl).toBeNull();
+    expect(ticker.homeLogoUrl).toBeNull();
     const live = mapToLiveGames([apiGame()])[0];
     expect(live.away.logoUrl).toBeNull();
     expect(live.home.logoUrl).toBeNull();

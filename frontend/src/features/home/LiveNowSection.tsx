@@ -20,7 +20,7 @@ type LiveNowSectionProps = {
 function SkeletonGameCard() {
   return (
     <article
-      className="rounded-xl border border-white/10 bg-white/[0.03] p-4"
+      className="rounded-xl bg-[#3a3d42] p-4"
       aria-hidden
     >
       <div className="mb-4 flex items-center justify-between">
@@ -51,7 +51,7 @@ function LiveGameCard({ game }: { game: LiveGame }) {
         <span className="text-[11px] font-medium tracking-wide text-white/40 uppercase">
           {game.league}
         </span>
-        <span className="flex items-center gap-2 text-xs text-red-400">
+        <span className="flex items-center gap-2 text-sm text-red-400">
           <span className="size-1.5 animate-pulse rounded-full bg-red-500" />
           {game.statusLabel}
         </span>
@@ -64,13 +64,13 @@ function LiveGameCard({ game }: { game: LiveGame }) {
               logoUrl={team.logoUrl}
               sizeClassName="size-7"
             />
-            <span className="shrink-0 text-xs font-semibold text-white">
+            <span className="shrink-0 text-[18px] font-bold text-white">
               {team.abbrev}
             </span>
-            <span className="min-w-0 flex-1 truncate text-xs text-white/45">
+            <span className="min-w-0 flex-1 truncate text-sm text-white/45">
               {team.name}
             </span>
-            <span className="shrink-0 font-mono text-sm font-semibold tracking-tight text-white">
+            <span className="shrink-0 font-mono text-[18px] font-semibold tracking-tight text-white">
               {team.score ?? "–"}
             </span>
           </div>
@@ -80,14 +80,14 @@ function LiveGameCard({ game }: { game: LiveGame }) {
   );
 
   const baseCardClassName =
-    "rounded-xl border border-white/10 bg-white/[0.03] p-4";
+    "rounded-xl bg-[#3a3d42] p-4";
 
   const href = gameDetailHref(game);
   if (href) {
     return (
       <Link
         to={href}
-        className={`block ${baseCardClassName} transition-colors hover:border-white/20`}
+        className={`block ${baseCardClassName} transition-colors hover:bg-[#45484d]`}
       >
         {card}
       </Link>

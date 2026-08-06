@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import sys
 import time
 from datetime import datetime, timezone
 from typing import Any, TypeVar
@@ -28,7 +29,10 @@ DEFAULT_HEADERS = {
 
 T = TypeVar("T")
 
+# Repo root on sys.path so `python mlb_prophetx.py` from scrapers/ can import src.*
 _ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+if _ROOT not in sys.path:
+    sys.path.insert(0, _ROOT)
 _DEFAULT_OUTPUT_DIR = os.path.join(_ROOT, "data", "props", "prophetx", "mlb")
 _OUTPUT_TZ = ZoneInfo("America/Los_Angeles")
 

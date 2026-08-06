@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import type { ApiMlbPropBookQuote, ApiMlbPropRow } from "@/shared/lib/api";
+import { TeamAbbrevAvatar } from "@/shared/ui/TeamAbbrevAvatar";
 
 const SOURCE_TIER_LABELS: Record<string, string> = {
   sharp_consensus: "Sharp Consensus",
@@ -88,11 +89,14 @@ function rowKey(row: ApiMlbPropRow): string {
 
 function Skeletons() {
   return (
-    <div className="space-y-0" aria-label="Loading MLB prop picks">
+    <div
+      className="grid grid-cols-1 gap-3 md:grid-cols-2"
+      aria-label="Loading MLB prop picks"
+    >
       {Array.from({ length: 6 }, (_, i) => (
         <div
           key={i}
-          className="h-14 animate-pulse border-b border-white/10 bg-white/[0.03] last:border-b-0"
+          className="h-28 animate-pulse rounded-xl border border-white/10 bg-white/[0.03]"
         />
       ))}
     </div>
@@ -108,7 +112,7 @@ function BookQuoteCell({
 }) {
   return (
     <div className="flex flex-col items-center gap-0.5 rounded-md border border-white/10 bg-white/[0.03] px-2 py-1.5 text-center">
-      <span className="text-[10px] font-medium tracking-wide text-white/45 uppercase">
+      <span className="text-[14px] font-medium tracking-wide text-white/45 uppercase">
         {BOOK_LABELS[bookKey] ?? bookKey}
         {quote?.role === "comparison" ? (
           <span className="ml-1 text-white/30">(cmp)</span>
@@ -116,39 +120,39 @@ function BookQuoteCell({
       </span>
       {quote ? (
         <>
-          <span className="font-mono text-xs text-white/90">
+          <span className="font-mono text-[18px] text-white/90">
             {sideLabel(quote.side)}{" "}
             {quote.fair_pct !== null ? formatFair(quote.fair_pct) : "—"}
           </span>
-          <span className="text-[10px] text-white/40">
+          <span className="text-[14px] text-white/40">
             {quote.american !== null ? formatAmericanOdds(quote.american) : "—"}
             {" · "}
             {formatAge(quote.changed_at)}
           </span>
         </>
       ) : (
-        <span className="text-xs text-white/20">No line</span>
+        <span className="text-[14px] text-white/20">No line</span>
       )}
     </div>
   );
 }
 
-function ExpandedRow({ row }: { row: ApiMlbPropRow }) {
+function ExpandedPanel({ row }: { row: ApiMlbPropRow }) {
   const alt = altSideOf(row.recommended_side);
   return (
     <div
       data-testid="mlb-prop-row-expand"
-      className="space-y-3 border-b border-white/10 bg-white/[0.02] px-3 py-3 text-xs last:border-b-0 sm:px-4"
+      className="mt-3 space-y-3 border-t border-white/10 pt-3 text-[18px]"
     >
-      <p className="text-white/70">{row.fair_explain}</p>
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+      <p className="text-[14px] text-white/70">{row.fair_explain}</p>
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
         <BookQuoteCell bookKey="prophetx" quote={row.books.prophetx} />
         <BookQuoteCell bookKey="novig" quote={row.books.novig} />
         <BookQuoteCell bookKey="draftkings" quote={row.books.draftkings} />
         <BookQuoteCell bookKey="fanduel" quote={row.books.fanduel} />
         <BookQuoteCell bookKey="pinnacle" quote={row.books.pinnacle} />
       </div>
-      <div className="flex flex-wrap items-center gap-4 text-[11px] text-white/50">
+      <div className="flex flex-wrap items-center gap-4 text-[14px] text-white/50">
         <span>
           {sideLabel(row.recommended_side)} edge {formatEdge(row.edge_pct)}
         </span>
@@ -163,7 +167,7 @@ function ExpandedRow({ row }: { row: ApiMlbPropRow }) {
   );
 }
 
-function CollapsedRow({
+function PropPickCard({
   row,
   expanded,
   onToggle,
@@ -174,90 +178,105 @@ function CollapsedRow({
 }) {
   const isNoRead = row.source_tier === "no_sharp_read";
   const alt = altSideOf(row.recommended_side);
-  const edgePositive = row.edge_pct !== null && row.edge_pct >= 0;
+  const chips = [
+    ...row.sample_chips,
+    ...row.confidence_chips,
+    ...(row.recency_chip ? [row.recency_chip] : []),
+  ];
+  const lean = sideLabel(row.recommended_side);
 
   return (
-    <button
-      type="button"
+    <article
       data-testid="mlb-prop-row"
-      onClick={onToggle}
-      aria-expanded={expanded}
-      className={`flex w-full flex-wrap items-center gap-3 border-b px-3 py-2.5 text-left transition-colors last:border-b-0 sm:px-4 ${
+      className={`rounded-xl border bg-white/[0.03] p-4 transition-colors ${
         isNoRead
-          ? "border-dashed border-white/10 opacity-60 hover:opacity-90"
-          : "border-white/10 hover:bg-white/[0.03]"
+          ? "border-dashed border-white/10 opacity-60"
+          : "border-white/10 hover:border-white/20"
       }`}
     >
-      <div className="min-w-[9rem] flex-1">
-        <p className="truncate text-sm font-medium text-white">
-          {row.player_name}
-        </p>
-        <p className="truncate text-[11px] text-white/45">
-          {row.stat} {row.line}
-          {row.team_abbrev ? ` · ${row.team_abbrev}` : ""}
-        </p>
-      </div>
-
-      <div className="flex min-w-[4rem] flex-col items-start gap-0.5">
-        <span className="text-xs font-semibold text-white">
-          {sideLabel(row.recommended_side)}
-        </span>
-        {alt ? (
-          <span className="text-[10px] text-white/35">
-            {sideLabel(alt)} {formatEdge(row.alt_edge_pct)}
-          </span>
-        ) : null}
-      </div>
-
-      <div className="flex min-w-[4.5rem] flex-col items-end">
-        <span
-          className={`font-mono text-sm font-semibold ${
-            isNoRead
-              ? "text-white/30"
-              : edgePositive
-                ? "text-emerald-400"
-                : "text-red-400"
-          }`}
-        >
-          {formatEdge(row.edge_pct)}
-        </span>
-        <span className="text-[10px] text-white/35">
-          fair {formatFair(row.fair_pct)}
-        </span>
-      </div>
-
-      <div className="flex min-w-[7rem] flex-col items-end gap-1">
-        <span
-          className={`rounded-md border px-1.5 py-0.5 text-[10px] font-medium whitespace-nowrap ${
-            isNoRead
-              ? "border-dashed border-white/15 text-white/40"
-              : "border-white/15 text-white/70"
-          }`}
-        >
-          {SOURCE_TIER_LABELS[row.source_tier] ?? row.source_tier}
-        </span>
-        <div className="flex flex-wrap justify-end gap-1.5">
-          {[...row.sample_chips, ...row.confidence_chips].map((chip) => (
-            <span key={chip} className="text-[10px] text-white/35">
-              {chipLabel(chip)}
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={expanded}
+        className="flex w-full items-center gap-3 text-left"
+      >
+        <div className="min-w-0 flex-1">
+          {/* Matchup-style top header: status pill (green for now) + subtle meta */}
+          <div className="mb-4 flex items-start justify-between gap-3">
+            <span
+              className={`inline-flex shrink-0 items-center rounded-full px-2.5 py-0.5 text-[14px] font-semibold ${
+                isNoRead
+                  ? "bg-white/10 text-white/45"
+                  : "bg-emerald-400 text-black"
+              }`}
+            >
+              {isNoRead ? "No read" : lean}
             </span>
-          ))}
-          {row.recency_chip ? (
-            <span className="text-[10px] text-sky-300/80">
-              {chipLabel(row.recency_chip)}
+            <span className="truncate text-right text-[14px] text-white/40">
+              {SOURCE_TIER_LABELS[row.source_tier] ?? row.source_tier}
             </span>
-          ) : null}
+          </div>
+
+          {/* Matchup TeamRow-style body: avatar · identity · edge-as-score */}
+          <div className="flex items-center gap-2.5">
+            {row.team_abbrev ? (
+              <TeamAbbrevAvatar
+                abbrev={row.team_abbrev}
+                sizeClassName="size-8"
+              />
+            ) : (
+              <span
+                className="flex size-8 shrink-0 items-center justify-center rounded-full bg-white/10 text-[14px] font-semibold text-white/45"
+                aria-hidden
+              >
+                {(row.player_name.trim()[0] ?? "?").toUpperCase()}
+              </span>
+            )}
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-[18px] font-medium text-white">
+                {row.player_name}
+                <span className="font-normal text-white/55">
+                  {" "}
+                  - {row.stat} @ {row.line}
+                </span>
+              </span>
+              {alt || chips.length > 0 ? (
+                <span className="mt-0.5 block truncate text-[14px] text-white/40">
+                  {alt ? (
+                    <>
+                      {sideLabel(alt)} {formatEdge(row.alt_edge_pct)}
+                    </>
+                  ) : null}
+                  {alt && chips.length > 0 ? " · " : null}
+                  {chips.map((chip) => chipLabel(chip)).join(" · ")}
+                </span>
+              ) : null}
+            </span>
+            <span
+              className={`shrink-0 font-mono text-[18px] font-semibold tracking-tight ${
+                isNoRead ? "text-white/30" : "text-white"
+              }`}
+            >
+              {formatEdge(row.edge_pct)}
+            </span>
+          </div>
+
+          <p className="mt-2 text-right text-[14px] text-white/35">
+            fair {formatFair(row.fair_pct)}
+          </p>
         </div>
-      </div>
 
-      <ChevronDown
-        className={`size-3.5 shrink-0 text-white/30 transition-transform ${
-          expanded ? "rotate-180" : ""
-        }`}
-        aria-hidden
-        strokeWidth={1.75}
-      />
-    </button>
+        <ChevronDown
+          className={`size-4 shrink-0 text-white/25 transition-transform ${
+            expanded ? "rotate-180" : ""
+          }`}
+          aria-hidden
+          strokeWidth={1.75}
+        />
+      </button>
+
+      {expanded ? <ExpandedPanel row={row} /> : null}
+    </article>
   );
 }
 
@@ -307,15 +326,15 @@ export function MlbPropPicksList({
       : "Prop lines unavailable");
 
   return (
-    <section className="space-y-2">
+    <section className="space-y-3">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <p className="text-xs text-white/45">
+        <p className="text-[14px] text-white/45">
           {breakevenPct !== null
             ? `Breakeven for ${legs}-pick ${formatFormatLabel(format)}: ${formatFair(breakevenPct)}`
             : null}
         </p>
         {lastUpdatedAt ? (
-          <p className="text-xs text-white/40">
+          <p className="text-[14px] text-white/40">
             Last updated {formatMlbPropPicksUpdatedAt(lastUpdatedAt)}
           </p>
         ) : null}
@@ -324,28 +343,25 @@ export function MlbPropPicksList({
       {isLoading ? (
         <Skeletons />
       ) : isError || props.length === 0 ? (
-        <p className="px-1 text-xs text-white/40">{emptyCopy}</p>
+        <p className="px-1 text-[14px] text-white/40">{emptyCopy}</p>
       ) : (
-        <div className="overflow-hidden rounded-xl border border-white/10">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           {props.map((row) => {
             const key = rowKey(row);
-            const expanded = expandedKeys.has(key);
             return (
-              <div key={key}>
-                <CollapsedRow
-                  row={row}
-                  expanded={expanded}
-                  onToggle={() => toggleRow(key)}
-                />
-                {expanded ? <ExpandedRow row={row} /> : null}
-              </div>
+              <PropPickCard
+                key={key}
+                row={row}
+                expanded={expandedKeys.has(key)}
+                onToggle={() => toggleRow(key)}
+              />
             );
           })}
         </div>
       )}
 
       {!isLoading && props.length > 0 ? (
-        <p className="px-1 text-[11px] text-white/35">
+        <p className="px-1 text-[14px] text-white/35">
           Fair from ProphetX/Novig (then DK/FD). DFS lines from
           PrizePicks/Underdog. Pinnacle comparison only.
         </p>

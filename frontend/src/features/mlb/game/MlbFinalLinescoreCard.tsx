@@ -12,7 +12,7 @@ function Decision({
   if (!player) return null;
 
   return (
-    <span className="text-xs">
+    <span className="text-[18px]">
       <span className="text-white/45">{label}: </span>
       <span className="font-medium text-white">{player}</span>
     </span>

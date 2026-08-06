@@ -50,6 +50,7 @@ describe("MlbLiveCenter", () => {
     expect(screen.getByTestId("mlb-box-score")).toBeInTheDocument();
     expect(screen.getByTestId("mlb-box-score-layout")).toHaveClass(
       "grid-cols-2",
+      "gap-2",
     );
     expect(screen.queryByTestId("mlb-final-play-feed")).not.toBeInTheDocument();
     expect(screen.queryByTestId("mlb-live-matchup")).not.toBeInTheDocument();

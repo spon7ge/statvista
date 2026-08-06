@@ -16,7 +16,7 @@ export function LeagueCtaSection() {
         <h2 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
           Enter a league
         </h2>
-        <p className="mt-3 text-sm text-white/40 sm:text-base">
+        <p className="mt-3 text-sm text-white/40">
           Matchups, props, and standings — pick your court.
         </p>
       </div>
@@ -26,7 +26,7 @@ export function LeagueCtaSection() {
             key={league.id}
             to={league.href}
             aria-label={league.label}
-            className="rounded-xl border border-white/10 px-6 py-8 text-center no-underline transition-colors hover:border-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            className="rounded-xl bg-[#3a3d42] px-6 py-8 text-center no-underline transition-colors hover:bg-[#45484d] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           >
             <span className="block text-lg font-semibold tracking-tight text-white">
               {league.label}

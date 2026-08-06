@@ -43,6 +43,8 @@ export function mapToTickerGames(games: ScoreboardGame[]): TickerGame[] {
     league: g.league,
     awayAbbrev: g.away.abbrev,
     homeAbbrev: g.home.abbrev,
+    awayLogoUrl: g.away.logo_url,
+    homeLogoUrl: g.home.logo_url,
     statusLabel: g.status_label,
     status: g.status,
     awayScore: g.away.score,

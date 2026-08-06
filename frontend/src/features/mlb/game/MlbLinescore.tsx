@@ -35,7 +35,7 @@ function TeamMark({ team }: { team: MlbGameDetailTeam }) {
           onError={() => setLogoFailed(true)}
         />
       ) : null}
-      <span className="font-sans text-[11px] font-semibold tracking-wide text-white">
+      <span className="font-sans text-[18px] font-semibold tracking-wide text-white">
         {team.abbrev}
       </span>
     </span>
@@ -60,7 +60,7 @@ export function MlbLinescore({
   const table = (
     <div className="overflow-x-auto">
       <table
-        className="w-full min-w-[28rem] border-collapse text-center text-xs"
+        className="w-full min-w-[28rem] border-collapse text-center text-[18px]"
         data-testid="mlb-linescore-table"
       >
         <thead>

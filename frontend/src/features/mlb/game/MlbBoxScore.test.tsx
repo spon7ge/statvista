@@ -25,6 +25,8 @@ describe("MlbBoxScore", () => {
 
     expect(screen.getByTestId("mlb-box-score-layout")).toHaveClass(
       "grid-cols-2",
+      "w-full",
+      "gap-2",
     );
     expect(screen.getByTestId("mlb-box-score-layout")).toHaveClass(
       "items-start",
@@ -54,12 +56,16 @@ describe("MlbBoxScore", () => {
     expect(
       screen.queryByText("Inherited runners-scored:"),
     ).not.toBeInTheDocument();
+    expect(screen.getAllByText("IP").length).toBeGreaterThan(0);
     expect(screen.getAllByText("ERA").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("HR").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("SB").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Totals").length).toBeGreaterThan(0);
   });
 
-  it("appends pitcher decision to the name", () => {
+  it("appends pitcher decision letter only", () => {
     render(<MlbBoxScore detail={mlbFinalDetail} />);
-    expect(screen.getByText("(W, 12-6)")).toBeInTheDocument();
+    expect(screen.getByText("W")).toBeInTheDocument();
+    expect(screen.queryByText("(W, 12-6)")).not.toBeInTheDocument();
   });
 });

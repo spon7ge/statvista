@@ -82,6 +82,30 @@ def test_parse_batter_names_and_hands():
     assert away_batters[-1]["hand"] == "L"
 
 
+def test_parse_prefers_full_name_over_abbreviated_link_text():
+    """RotoWire often shortens visible link text (e.g. 'V. Grissom').
+
+    Stats API people/search returns 0 hits for those abbreviations, so the
+    scraper must prefer the anchor `title` (full name) and, when that is
+    missing, expand the `/baseball/player/{slug}-{id}` href.
+    """
+    games = parse_mlb_lineups_html(FIXTURE.read_text())
+    g = games[0]
+
+    # Away SP link text is "G. Rodriguez" with no title — use href slug.
+    assert g["away"]["pitcher"]["name"] == "Grayson Rodriguez"
+
+    away_by_order = {b["order"]: b["name"] for b in g["away"]["batters"]}
+    assert away_by_order[3] == "Vaughn Grissom"  # link text "V. Grissom"
+    assert away_by_order[5] == "Nolan Schanuel"  # "N. Schanuel"
+    assert away_by_order[8] == "Travis d'Arnaud"  # "T. d'Arnaud"
+
+    home_by_order = {b["order"]: b["name"] for b in g["home"]["batters"]}
+    assert home_by_order[3] == "Gunnar Henderson"  # "G. Henderson"
+    assert home_by_order[4] == "Tyler O'Neill"  # "T. O'Neill"
+    assert home_by_order[5] == "Christian Encarnacion-Strand"
+
+
 def test_parse_status_is_expected_lineup():
     games = parse_mlb_lineups_html(FIXTURE.read_text())
     assert games[0]["status"] == "expected"

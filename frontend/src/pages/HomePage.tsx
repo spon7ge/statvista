@@ -1,8 +1,6 @@
 import { BrandHero } from "@/features/home/BrandHero";
 import { LiveNowSection } from "@/features/home/LiveNowSection";
 import { StoriesSection } from "@/features/home/StoriesSection";
-import { FeatureStrip } from "@/features/home/FeatureStrip";
-import { PropExplainerSection } from "@/features/home/PropExplainerSection";
 import { LeagueCtaSection } from "@/features/home/LeagueCtaSection";
 import { mergeLeagueScoreboards } from "@/features/home/lib/mergeLeagueScoreboards";
 import { useMlbScoreboard } from "@/features/mlb/hooks/useMlbScoreboard";
@@ -24,8 +22,6 @@ export function HomePage() {
         isError={hasNeverLoaded}
       />
       <StoriesSection />
-      <FeatureStrip />
-      <PropExplainerSection />
       <LeagueCtaSection />
     </>
   );

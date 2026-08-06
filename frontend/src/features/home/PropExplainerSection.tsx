@@ -15,7 +15,7 @@ export function PropExplainerSection() {
         <h2 className="mt-3 text-2xl font-semibold tracking-tight text-white sm:text-3xl">
           Read the line. See the edge.
         </h2>
-        <p className="mt-3 text-sm text-white/40 sm:text-base">
+        <p className="mt-3 text-sm text-white/40">
           A simple Over example — line, odds, model, and EV in plain English.
         </p>
       </div>
@@ -34,7 +34,7 @@ export function PropExplainerSection() {
       </div>
 
       <div className="mx-auto mt-12 max-w-2xl text-center">
-        <p className="text-sm leading-relaxed text-white/40 sm:text-base">
+        <p className="text-sm leading-relaxed text-white/40">
           We project the player. Books set the line and price. Positive EV means
           the model likes your side a bit more than that price implies.
         </p>

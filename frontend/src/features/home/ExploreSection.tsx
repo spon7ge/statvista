@@ -174,8 +174,8 @@ function ExploreCard({
             {item.headline}
           </h3>
           <p
-            className={`leading-relaxed text-white/50 ${
-              featured ? "max-w-xl text-sm sm:text-base" : "text-sm"
+            className={`leading-relaxed text-white/50 text-sm ${
+              featured ? "max-w-xl" : ""
             }`}
           >
             {item.summary}

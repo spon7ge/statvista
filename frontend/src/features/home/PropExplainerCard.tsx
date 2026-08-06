@@ -32,7 +32,7 @@ export function PropExplainerCard() {
         </div>
       </header>
 
-      <div className="mb-5 flex items-center justify-between text-xs text-white/45">
+      <div className="mb-5 flex items-center justify-between text-sm text-white/45">
         <span>{DEMO_PROP.matchup}</span>
         <span>{DEMO_PROP.tip}</span>
       </div>
@@ -44,22 +44,22 @@ export function PropExplainerCard() {
         <p className="mt-1 text-sm text-white/50">{DEMO_PROP.stat}</p>
       </div>
 
-      <div className="mb-5 grid grid-cols-3 gap-3 text-center text-xs">
+      <div className="mb-5 grid grid-cols-3 gap-3 text-center text-sm">
         <div>
           <p className="mb-1 text-white/40">Model</p>
-          <p className="text-sm font-medium text-white">{DEMO_PROP.model}</p>
+          <p className="font-medium text-white">{DEMO_PROP.model}</p>
         </div>
         <div>
           <p className="mb-1 text-white/40">EV</p>
           <p
-            className={`inline-block rounded-full border px-2 py-0.5 text-sm font-medium ${evClassName}`}
+            className={`inline-block rounded-full border px-2 py-0.5 font-medium ${evClassName}`}
           >
             {formatEvPercent(ev)}
           </p>
         </div>
         <div>
           <p className="mb-1 text-white/40">{DEMO_PROP.bookLabel}</p>
-          <p className="text-sm font-medium text-white">
+          <p className="font-medium text-white">
             {formatAmericanOdds(DEMO_PROP.oddsAmerican)}
           </p>
         </div>

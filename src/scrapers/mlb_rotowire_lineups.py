@@ -28,6 +28,11 @@ _USER_AGENT = (
     "(KHTML, like Gecko) Chrome/124.0 Safari/537.36"
 )
 _PITCHER_STATS_RE = re.compile(r"(\d+-\d+)\s+([\d.]+)\s*ERA")
+# /baseball/player/grayson-rodriguez-15420 → slug "grayson-rodriguez"
+_PLAYER_HREF_RE = re.compile(
+    r"/baseball/player/(?P<slug>[a-z0-9'-]+)-(?P<id>\d+)/?$",
+    re.IGNORECASE,
+)
 
 
 def fetch_mlb_lineups_html(*, date_token: str | None = None) -> str:
@@ -168,6 +173,47 @@ def _resolve_pitcher_highlights(
     return away, home
 
 
+def _name_from_player_href(href: str | None) -> str | None:
+    """Expand a RotoWire player href slug into a display name.
+
+    Example: `/baseball/player/grayson-rodriguez-15420` → `Grayson Rodriguez`.
+    Apostrophes in real names (d'Arnaud) are usually lost in the slug; prefer
+    the anchor `title` when available.
+    """
+    if not href:
+        return None
+    path = href.split("?", 1)[0]
+    match = _PLAYER_HREF_RE.search(path)
+    if not match:
+        return None
+    parts = [p for p in match.group("slug").split("-") if p]
+    if not parts:
+        return None
+    return " ".join(part.capitalize() for part in parts)
+
+
+def _player_display_name(name_el: Tag | None) -> str | None:
+    """Resolve a full player name from a RotoWire player anchor.
+
+    Visible link text is often abbreviated (`V. Guerrero`), which Stats API
+    `people/search` cannot resolve. Prefer `title`, then the player-page href
+    slug, then the link text.
+    """
+    if name_el is None:
+        return None
+
+    title = (name_el.get("title") or "").strip()
+    if title:
+        return title
+
+    from_href = _name_from_player_href(name_el.get("href"))
+    if from_href:
+        return from_href
+
+    text = name_el.get_text(strip=True)
+    return text or None
+
+
 def _extract_pitcher_from_highlight(highlight: Tag | None) -> dict[str, Any]:
     """Extract SP name/hand/record/era from a `lineup__player-highlight` element."""
     empty = {"name": None, "hand": None, "record": None, "era": None}
@@ -175,7 +221,7 @@ def _extract_pitcher_from_highlight(highlight: Tag | None) -> dict[str, Any]:
         return empty
 
     name_el = highlight.find("a")
-    name = name_el.get_text(strip=True) if name_el else None
+    name = _player_display_name(name_el)
 
     throws_el = highlight.find("span", class_="lineup__throws")
     hand = throws_el.get_text(strip=True) or None if throws_el else None
@@ -207,7 +253,7 @@ def _extract_batters(side_list: Tag | None) -> list[dict[str, Any]]:
             {
                 "order": order,
                 "position": pos_el.get_text(strip=True) if pos_el else None,
-                "name": name_el.get_text(strip=True) if name_el else None,
+                "name": _player_display_name(name_el),
                 "hand": bats_el.get_text(strip=True) if bats_el else None,
             }
         )

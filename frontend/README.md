@@ -14,7 +14,7 @@ React + TypeScript home landing for statvista, built with [Vite](https://vite.de
 |---------|--------|
 | Borders | Subtle dark borders separate sections |
 | Spacing | Generous vertical spacing |
-| Typography | Bold headings, regular body, muted secondary |
+| Typography | Body 18px, subtle/muted 14px; Calibre / Courier stacks |
 | Color accents | League badges are the only color besides white/gray |
 | Cards | Subtle rounded boxes group related information |
 | CTAs | lucide arrow icons on links/actions |

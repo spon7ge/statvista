@@ -26,7 +26,7 @@ export function MlbFinalCenter({ detail }: { detail: MlbGameDetailView }) {
           id="mlb-final-summary-panel"
           role="tabpanel"
           aria-labelledby="mlb-final-summary-tab"
-          className="grid items-start gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]"
+          className="grid items-start gap-4 text-[18px] lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]"
         >
           <MlbFinalPlayFeed detail={detail} />
           <div className="space-y-4">

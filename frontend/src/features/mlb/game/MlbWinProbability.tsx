@@ -38,8 +38,8 @@ export function MlbWinProbability({
   if (!data) {
     return (
       <GameSection className="!p-3" data-testid="mlb-game-flow">
-        <h2 className="text-base font-semibold text-white">Game flow</h2>
-        <p className="mt-1.5 text-sm text-white/50">
+        <h2 className="text-[18px] font-semibold text-white">Game flow</h2>
+        <p className="mt-1.5 text-[18px] text-white/50">
           Win probability unavailable
         </p>
       </GameSection>
@@ -95,7 +95,7 @@ export function MlbWinProbability({
 
   return (
     <GameSection className="!p-3" data-testid="mlb-game-flow">
-      <h2 className="text-base font-semibold text-white">Game flow</h2>
+      <h2 className="text-[18px] font-semibold text-white">Game flow</h2>
 
       {points.length > 0 ? (
         <div className="relative mt-2">
@@ -215,7 +215,7 @@ export function MlbWinProbability({
           />
         </div>
       ) : (
-        <p className="mt-1.5 text-sm text-white/50">
+        <p className="mt-1.5 text-[18px] text-white/50">
           Win probability unavailable
         </p>
       )}

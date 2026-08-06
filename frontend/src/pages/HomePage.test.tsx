@@ -57,14 +57,18 @@ describe("HomePage", () => {
       screen.getByRole("heading", { name: /stories/i }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { name: /built to get you ready/i }),
+      screen.getByRole("heading", { name: /enter a league/i }),
     ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /wnba/i })).toHaveAttribute(
+      "href",
+      "/wnba/matchups",
+    );
     expect(
-      screen.getByRole("heading", { name: /read the line\. see the edge/i }),
-    ).toBeInTheDocument();
+      screen.queryByRole("heading", { name: /built to get you ready/i }),
+    ).not.toBeInTheDocument();
     expect(
-      screen.getByRole("link", { name: /see live props/i }),
-    ).toHaveAttribute("href", "/wnba/prop_picks");
+      screen.queryByRole("heading", { name: /read the line\. see the edge/i }),
+    ).not.toBeInTheDocument();
     expect(
       screen.queryByRole("heading", { name: /learn the game/i }),
     ).not.toBeInTheDocument();

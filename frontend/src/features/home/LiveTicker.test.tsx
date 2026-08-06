@@ -9,6 +9,8 @@ const liveGame: TickerGame = {
   league: "wnba",
   awayAbbrev: "ATL",
   homeAbbrev: "DAL",
+  awayLogoUrl: null,
+  homeLogoUrl: null,
   statusLabel: "Q3 7:13",
   status: "live",
   awayScore: 36,
@@ -25,6 +27,8 @@ const scheduledGame: TickerGame = {
   league: "wnba",
   awayAbbrev: "NYL",
   homeAbbrev: "LVA",
+  awayLogoUrl: null,
+  homeLogoUrl: null,
   statusLabel: "7:00 PM ET",
   status: "scheduled",
   awayScore: null,
@@ -36,6 +40,8 @@ const finalGame: TickerGame = {
   league: "wnba",
   awayAbbrev: "CHI",
   homeAbbrev: "MIN",
+  awayLogoUrl: null,
+  homeLogoUrl: null,
   statusLabel: "Final",
   status: "final",
   awayScore: 78,
@@ -120,6 +126,26 @@ describe("LiveTicker", () => {
     expect(screen.getAllByText("ATL")).toHaveLength(2);
   });
 
+  it("renders team logos next to abbreviations when logo URLs are set", () => {
+    const withLogos: TickerGame = {
+      ...liveGame,
+      awayLogoUrl: "https://a.espncdn.com/i/teamlogos/wnba/500/atl.png",
+      homeLogoUrl: "https://a.espncdn.com/i/teamlogos/wnba/500/dal.png",
+    };
+    const { container } = render(<LiveTicker games={[withLogos]} />);
+    const imgs = container.querySelectorAll("img");
+    // Primary + duplicate marquee tracks
+    expect(imgs).toHaveLength(4);
+    expect(imgs[0]).toHaveAttribute(
+      "src",
+      "https://a.espncdn.com/i/teamlogos/wnba/500/atl.png",
+    );
+    expect(imgs[1]).toHaveAttribute(
+      "src",
+      "https://a.espncdn.com/i/teamlogos/wnba/500/dal.png",
+    );
+  });
+
   it("marks the duplicate track as aria-hidden", () => {
     const { container } = render(<LiveTicker games={[liveGame]} />);
     const duplicate = container.querySelector(".ticker-marquee-duplicate");
@@ -158,6 +184,8 @@ describe("LiveTicker", () => {
       mlbGamePk: "9",
       awayAbbrev: "BOS",
       homeAbbrev: "NYY",
+      awayLogoUrl: null,
+      homeLogoUrl: null,
       statusLabel: "Top 3rd",
       status: "live",
       awayScore: 2,

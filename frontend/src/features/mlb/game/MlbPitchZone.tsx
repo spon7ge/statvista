@@ -31,13 +31,13 @@ function SpinLine({ pitch }: { pitch: MlbPitch }) {
   if (pitch.spinRate != null) parts.push(`${Math.round(pitch.spinRate)} rpm`);
   if (pitch.spinDirection != null)
     parts.push(`${Math.round(pitch.spinDirection)} deg`);
-  return <p className="text-[11px] text-white/45">Spin: {parts.join(", ")}</p>;
+  return <p className="text-[18px] text-white/45">Spin: {parts.join(", ")}</p>;
 }
 
 function PitchNumberDot({ pitch }: { pitch: MlbPitch }) {
   return (
     <span
-      className={`inline-flex size-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-black ${
+      className={`inline-flex size-6 shrink-0 items-center justify-center rounded-full text-[14px] font-bold text-black ${
         pitch.isStrike ? "bg-red-400/90" : "bg-green-400/90"
       }`}
     >
@@ -48,7 +48,7 @@ function PitchNumberDot({ pitch }: { pitch: MlbPitch }) {
 
 function PitchFooterCard({ pitch }: { pitch: MlbPitch }) {
   return (
-    <li className="min-w-0 space-y-0.5 px-2 py-1.5 text-xs even:border-l even:border-white/10">
+    <li className="min-w-0 space-y-0.5 px-2 py-1.5 text-[18px] even:border-l even:border-white/10">
       <p className="flex items-center gap-1.5 font-semibold text-white">
         <PitchNumberDot pitch={pitch} />
         <span className="truncate">{pitch.result ?? "Pitch"}</span>
@@ -185,7 +185,7 @@ export function MlbPitchZone({ situation }: { situation: MlbSituation }) {
 
       <ul className="mt-2 grid grid-cols-2 border-t border-white/10 pt-1.5">
         {pitches.length === 0 ? (
-          <li className="col-span-2 py-1.5 text-center text-xs text-white/40">
+          <li className="col-span-2 py-1.5 text-center text-[18px] text-white/40">
             No pitches yet
           </li>
         ) : (

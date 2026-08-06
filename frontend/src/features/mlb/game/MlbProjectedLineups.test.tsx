@@ -121,6 +121,9 @@ describe("MlbProjectedLineups", () => {
     ).toHaveClass("lg:grid-cols-2");
     expect(
       screen.getByTestId("mlb-preview-lineups-odds-grid"),
+    ).toContainElement(screen.getByTestId("mlb-preview-left-column"));
+    expect(
+      screen.getByTestId("mlb-preview-left-column"),
     ).toContainElement(screen.getByTestId("mlb-projected-lineups"));
     expect(
       screen.getByTestId("mlb-preview-lineups-odds-grid"),
@@ -335,9 +338,9 @@ describe("MlbProjectedLineups", () => {
     );
     expect(screen.getByText("Lineups unavailable")).toBeInTheDocument();
     expect(screen.getByTestId("mlb-projected-lineups-stack")).toBeInTheDocument();
-    expect(screen.getByTestId("mlb-season-team-stats")).not.toHaveClass(
-      "sm:w-1/2",
-    );
-    expect(screen.getByTestId("mlb-injury-report")).not.toHaveClass("sm:w-1/2");
+    const left = screen.getByTestId("mlb-preview-left-column");
+    expect(left).toContainElement(screen.getByTestId("mlb-projected-lineups"));
+    expect(left).toContainElement(screen.getByTestId("mlb-season-team-stats"));
+    expect(left).toContainElement(screen.getByTestId("mlb-injury-report"));
   });
 });

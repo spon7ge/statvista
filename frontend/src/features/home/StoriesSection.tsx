@@ -77,7 +77,7 @@ function resolveStories(stories: Story[] | undefined): Story[] {
 
 function StoryCard({ story }: { story: Story }) {
   return (
-    <article className="rounded-xl border border-white/10 px-5 py-6">
+    <article className="rounded-xl bg-[#3a3d42] px-5 py-6">
       <p className="text-[11px] font-medium tracking-wide text-white/35 uppercase">
         {story.league} · {story.dateLabel}
       </p>

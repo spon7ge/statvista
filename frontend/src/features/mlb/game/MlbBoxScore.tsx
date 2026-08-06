@@ -7,8 +7,14 @@ import type {
   MlbPitchingTotals,
 } from "../lib/types";
 
-const BATTER_COLS = ["AB", "R", "H", "RBI", "BB", "SO"] as const;
+const BATTER_COLS = ["AB", "R", "H", "RBI", "HR", "SB", "BB", "K"] as const;
 const PITCHER_COLS = ["IP", "H", "R", "ER", "BB", "K", "HR", "ERA"] as const;
+
+/** Keeps W/L/S/H only — drops record like "(W, 12-6)" → "W". */
+function formatPitcherDecision(decision: string): string {
+  const match = decision.match(/[WLSH]/i);
+  return match ? match[0].toUpperCase() : decision;
+}
 
 function batterValues(row: MlbBatterRow): Array<string | number> {
   return [
@@ -16,6 +22,8 @@ function batterValues(row: MlbBatterRow): Array<string | number> {
     row.r ?? "–",
     row.h ?? "–",
     row.rbi ?? "–",
+    row.hr ?? "–",
+    row.sb ?? "–",
     row.bb ?? "–",
     row.so ?? "–",
   ];
@@ -57,10 +65,7 @@ function TeamHeader({ team }: { team: MlbGameDetailTeam }) {
           className="size-6 object-contain"
         />
       ) : null}
-      <span
-        className="text-sm font-semibold"
-        style={{ color: team.color }}
-      >
+      <span className="text-[18px] font-semibold text-white">
         {team.abbrev}
       </span>
     </div>
@@ -146,35 +151,42 @@ function BatterTable({
 }) {
   if (batters.length === 0) return null;
   return (
-    <div className="overflow-x-auto">
-      <div className="grid grid-cols-[minmax(6.5rem,1.4fr)_repeat(6,minmax(1.6rem,1fr))] gap-x-1.5 border-b border-white/[0.08] pb-1.5 text-[9px] tracking-wide text-white/40">
-        <span>Batters</span>
-        {BATTER_COLS.map((col) => (
-          <span key={col} className="text-right uppercase">
-            {col}
-          </span>
-        ))}
+    <div className="w-full overflow-x-auto rounded-xl border border-white/10 bg-white/[0.03] p-3">
+      <div className="mb-2">
+        <TeamHeader team={team} />
+      </div>
+      <div className="flex items-baseline justify-between gap-2 border-b border-white/[0.08] pb-1.5 text-[14px] tracking-wide text-white/40">
+        <span className="min-w-0 flex-1">Batters</span>
+        <div className="flex shrink-0 gap-x-0">
+          {BATTER_COLS.map((col) => (
+            <span key={col} className="w-7 text-right uppercase">
+              {col}
+            </span>
+          ))}
+        </div>
       </div>
       <ul>
         {batters.map((batter) => (
           <li
             key={`${team.id}-${batter.name}-${batter.order ?? ""}`}
-            className="grid grid-cols-[minmax(6.5rem,1.4fr)_repeat(6,minmax(1.6rem,1fr))] gap-x-1.5 border-b border-white/[0.06] py-1.5 text-[11px]"
+            className="flex items-baseline justify-between gap-2 border-b border-white/[0.06] py-1.5 text-[18px]"
           >
-            <span className="truncate text-white">
+            <span className="min-w-0 flex-1 whitespace-nowrap text-white">
               {batter.name}
               {batter.position ? (
                 <span className="ml-1 text-white/40">{batter.position}</span>
               ) : null}
             </span>
-            {batterValues(batter).map((value, index) => (
-              <span
-                key={`${batter.name}-${BATTER_COLS[index]}`}
-                className="text-right tabular-nums text-white/85"
-              >
-                {value}
-              </span>
-            ))}
+            <div className="flex shrink-0 gap-x-0">
+              {batterValues(batter).map((value, index) => (
+                <span
+                  key={`${batter.name}-${BATTER_COLS[index]}`}
+                  className="w-7 text-right tabular-nums text-white/85"
+                >
+                  {value}
+                </span>
+              ))}
+            </div>
           </li>
         ))}
       </ul>
@@ -193,48 +205,63 @@ function PitcherTable({
 }) {
   if (pitchers.length === 0) return null;
   return (
-    <div className="overflow-x-auto">
-      <div className="grid grid-cols-[minmax(6.5rem,1.4fr)_repeat(8,minmax(1.5rem,1fr))] gap-x-1.5 border-b border-white/[0.08] pb-1.5 text-[9px] tracking-wide text-white/40">
-        <span>Pitchers</span>
-        {PITCHER_COLS.map((col) => (
-          <span key={col} className="text-right uppercase">
-            {col}
-          </span>
-        ))}
+    <div className="w-full overflow-x-auto rounded-xl border border-white/10 bg-white/[0.03] p-3">
+      <div className="flex items-baseline justify-between gap-2 border-b border-white/[0.08] pb-1.5 text-[14px] tracking-wide text-white/40">
+        <span className="min-w-0 flex-1">Pitchers</span>
+        <div className="flex shrink-0 gap-x-0">
+          {PITCHER_COLS.map((col) => (
+            <span
+              key={col}
+              className={`text-right uppercase ${col === "ERA" ? "w-9" : "w-7"}`}
+            >
+              {col}
+            </span>
+          ))}
+        </div>
       </div>
       <ul>
         {pitchers.map((pitcher) => (
           <li
             key={`${team.id}-${pitcher.name}`}
-            className="grid grid-cols-[minmax(6.5rem,1.4fr)_repeat(8,minmax(1.5rem,1fr))] gap-x-1.5 border-b border-white/[0.06] py-1.5 text-[11px]"
+            className="flex items-baseline justify-between gap-2 border-b border-white/[0.06] py-1.5 text-[18px]"
           >
-            <span className="truncate text-white">
+            <span className="min-w-0 flex-1 whitespace-nowrap text-white">
               {pitcher.name}
               {pitcher.decision ? (
-                <span className="ml-1 text-white/55">{pitcher.decision}</span>
+                <span className="ml-1 text-white/55">
+                  {formatPitcherDecision(pitcher.decision)}
+                </span>
               ) : null}
             </span>
-            {pitcherValues(pitcher).map((value, index) => (
-              <span
-                key={`${pitcher.name}-${PITCHER_COLS[index]}`}
-                className="text-right tabular-nums text-white/85"
-              >
-                {value}
-              </span>
-            ))}
+            <div className="flex shrink-0 gap-x-0">
+              {pitcherValues(pitcher).map((value, index) => (
+                <span
+                  key={`${pitcher.name}-${PITCHER_COLS[index]}`}
+                  className={`text-right tabular-nums text-white/85 ${
+                    PITCHER_COLS[index] === "ERA" ? "w-9" : "w-7"
+                  }`}
+                >
+                  {value}
+                </span>
+              ))}
+            </div>
           </li>
         ))}
         {totals ? (
-          <li className="grid grid-cols-[minmax(6.5rem,1.4fr)_repeat(8,minmax(1.5rem,1fr))] gap-x-1.5 border-t border-white/[0.12] pt-1.5 text-[11px] font-medium">
-            <span className="text-white/90">Totals</span>
-            {totalsValues(totals).map((value, index) => (
-              <span
-                key={`totals-${PITCHER_COLS[index]}`}
-                className="text-right tabular-nums text-white/85"
-              >
-                {value}
-              </span>
-            ))}
+          <li className="flex items-baseline justify-between gap-2 border-t border-white/[0.12] pt-1.5 text-[18px] font-medium">
+            <span className="min-w-0 flex-1 text-white/90">Totals</span>
+            <div className="flex shrink-0 gap-x-0">
+              {totalsValues(totals).map((value, index) => (
+                <span
+                  key={`totals-${PITCHER_COLS[index]}`}
+                  className={`text-right tabular-nums text-white/85 ${
+                    PITCHER_COLS[index] === "ERA" ? "w-9" : "w-7"
+                  }`}
+                >
+                  {value}
+                </span>
+              ))}
+            </div>
           </li>
         ) : null}
       </ul>
@@ -272,11 +299,8 @@ function TeamBox({
   }
 
   return (
-    <div
-      data-testid={testId}
-      className="space-y-4 rounded-xl border border-white/10 bg-white/[0.03] p-3"
-    >
-      <TeamHeader team={team} />
+    <div data-testid={testId} className="min-w-0 w-full space-y-3">
+      {batters.length === 0 ? <TeamHeader team={team} /> : null}
       <BatterTable team={team} batters={batters} />
       <NoteLines notes={battingNotes} />
       <NoteLines notes={baserunningNotes} />
@@ -312,36 +336,34 @@ export function MlbBoxScore({
 
   return (
     <section data-testid="mlb-box-score">
-      <div className={sideBySide ? "overflow-x-auto" : undefined}>
-        <div
-          data-testid="mlb-box-score-layout"
-          className={
-            sideBySide
-              ? "grid min-w-[42rem] grid-cols-2 items-start gap-5"
-              : "grid items-start gap-5 lg:grid-cols-2"
-          }
-        >
-          <TeamBox
-            testId="mlb-box-team-away"
-            team={detail.away}
-            batters={box.awayBatters}
-            pitchers={box.awayPitchers}
-            battingNotes={box.awayBattingNotes}
-            baserunningNotes={box.awayBaserunningNotes}
-            fieldingNotes={box.awayFieldingNotes}
-            pitchingTotals={box.awayPitchingTotals}
-          />
-          <TeamBox
-            testId="mlb-box-team-home"
-            team={detail.home}
-            batters={box.homeBatters}
-            pitchers={box.homePitchers}
-            battingNotes={box.homeBattingNotes}
-            baserunningNotes={box.homeBaserunningNotes}
-            fieldingNotes={box.homeFieldingNotes}
-            pitchingTotals={box.homePitchingTotals}
-          />
-        </div>
+      <div
+        data-testid="mlb-box-score-layout"
+        className={
+          sideBySide
+            ? "grid w-full grid-cols-2 items-start gap-2"
+            : "grid w-full items-start gap-4 lg:grid-cols-2 lg:gap-2"
+        }
+      >
+        <TeamBox
+          testId="mlb-box-team-away"
+          team={detail.away}
+          batters={box.awayBatters}
+          pitchers={box.awayPitchers}
+          battingNotes={box.awayBattingNotes}
+          baserunningNotes={box.awayBaserunningNotes}
+          fieldingNotes={box.awayFieldingNotes}
+          pitchingTotals={box.awayPitchingTotals}
+        />
+        <TeamBox
+          testId="mlb-box-team-home"
+          team={detail.home}
+          batters={box.homeBatters}
+          pitchers={box.homePitchers}
+          battingNotes={box.homeBattingNotes}
+          baserunningNotes={box.homeBaserunningNotes}
+          fieldingNotes={box.homeFieldingNotes}
+          pitchingTotals={box.homePitchingTotals}
+        />
       </div>
     </section>
   );

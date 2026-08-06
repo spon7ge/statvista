@@ -201,7 +201,7 @@ export function MlbHitChart({ detail }: { detail: MlbGameDetailView }) {
 
   return (
     <GameSection className="!p-3 min-w-0" data-testid="mlb-hit-chart">
-      <h2 className="text-[15px] font-semibold text-white">Hit chart</h2>
+      <h2 className="text-[18px] font-semibold text-white">Hit chart</h2>
 
       <div className="mt-2.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
         <div
@@ -217,7 +217,7 @@ export function MlbHitChart({ detail }: { detail: MlbGameDetailView }) {
                 type="button"
                 onClick={() => setFilter(key)}
                 aria-pressed={active}
-                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                className={`rounded-full px-3 py-1 text-[18px] font-medium transition-colors ${
                   active
                     ? "bg-[#6e2a32] text-white"
                     : "text-white/55 hover:text-white/85"
@@ -229,7 +229,7 @@ export function MlbHitChart({ detail }: { detail: MlbGameDetailView }) {
           })}
         </div>
 
-        <div className="flex items-center gap-3 text-[11px] text-white/65">
+        <div className="flex items-center gap-3 text-[18px] text-white/65">
           {(Object.keys(RESULT_STYLE) as Array<MlbHitPoint["result"]>).map(
             (result) => (
               <span key={result} className="inline-flex items-center gap-1.5">
@@ -245,12 +245,12 @@ export function MlbHitChart({ detail }: { detail: MlbGameDetailView }) {
       </div>
 
       {filtered.length === 0 ? (
-        <p className="mt-4 text-xs text-white/40">No hit chart data yet</p>
+        <p className="mt-4 text-[18px] text-white/40">No hit chart data yet</p>
       ) : (
         <FieldDiagram points={filtered} />
       )}
 
-      <p className="mt-2 text-[10px] leading-snug text-white/40">
+      <p className="mt-2 text-[18px] leading-snug text-white/40">
         Wall traces this park&apos;s real outfield dimensions; the shaded ring
         past it is home-run territory.
       </p>

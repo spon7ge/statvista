@@ -117,7 +117,7 @@ function TeamLabel({
       }`}
     >
       {team.logoUrl ? <TeamLogo url={team.logoUrl} /> : null}
-      <span className="text-sm font-semibold text-white">{label}</span>
+      <span className="text-[18px] font-semibold text-white">{label}</span>
     </div>
   );
 }
@@ -133,13 +133,13 @@ function PlayerNameLine({
 }) {
   return (
     <p
-      className={`flex items-baseline gap-1.5 text-sm font-bold text-white ${
+      className={`flex items-baseline gap-1.5 text-[18px] font-bold text-white ${
         align === "right" ? "flex-row-reverse" : ""
       }`}
     >
       <span>{name}</span>
       {meta ? (
-        <span className="text-xs font-medium text-white/50">{meta}</span>
+        <span className="text-[18px] font-medium text-white/50">{meta}</span>
       ) : null}
     </p>
   );
@@ -154,7 +154,7 @@ export function MlbLiveMatchupPanel({
   if (!situation) {
     return (
       <GameSection className="!p-2.5">
-        <p className="text-xs text-white/40">Matchup unavailable</p>
+        <p className="text-[18px] text-white/40">Matchup unavailable</p>
       </GameSection>
     );
   }
@@ -185,7 +185,7 @@ export function MlbLiveMatchupPanel({
             occupiedStroke="rgba(255,255,255,0.95)"
           />
           <OutsDots outs={situation.outs} />
-          <p className="font-mono text-lg font-semibold tabular-nums text-white">
+          <p className="font-mono text-[18px] font-semibold tabular-nums text-white">
             {situation.balls} - {situation.strikes}
           </p>
         </div>
@@ -206,11 +206,11 @@ export function MlbLiveMatchupPanel({
                 align="left"
               />
               {atBat.summary ? (
-                <p className="text-xs text-white/45">{atBat.summary}</p>
+                <p className="text-[18px] text-white/45">{atBat.summary}</p>
               ) : null}
             </>
           ) : (
-            <p className="text-xs text-white/40">Batter TBD</p>
+            <p className="text-[18px] text-white/40">Batter TBD</p>
           )}
         </div>
 
@@ -223,11 +223,11 @@ export function MlbLiveMatchupPanel({
                 align="right"
               />
               {pitcher.summary ? (
-                <p className="text-xs text-white/45">{pitcher.summary}</p>
+                <p className="text-[18px] text-white/45">{pitcher.summary}</p>
               ) : null}
             </>
           ) : (
-            <p className="text-xs text-white/40">Pitcher TBD</p>
+            <p className="text-[18px] text-white/40">Pitcher TBD</p>
           )}
         </div>
       </div>

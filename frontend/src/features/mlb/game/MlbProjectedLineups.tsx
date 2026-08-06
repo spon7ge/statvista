@@ -306,46 +306,55 @@ export function MlbProjectedLineups({
         data-testid="mlb-preview-lineups-odds-grid"
         className="grid items-start gap-4 lg:grid-cols-2"
       >
-        <GameSection className="w-full !p-3" data-testid="mlb-projected-lineups">
-          <div className="mb-3 flex flex-col items-center gap-2">
-            <h2 className="text-center text-[18px] font-semibold leading-snug text-white">
-              Projected Rotowire Lineups
-            </h2>
-            <div className="flex items-center justify-center gap-1">
-              <LogoToggleButton
-                team={detail.away}
-                side="away"
-                active={side === "away"}
-                onClick={() => setSide("away")}
-              />
-              <LogoToggleButton
-                team={detail.home}
-                side="home"
-                active={side === "home"}
-                onClick={() => setSide("home")}
-              />
+        {/* Left column: Team Stats + Injuries share the lineups column width */}
+        <div
+          data-testid="mlb-preview-left-column"
+          className="min-w-0 space-y-4"
+        >
+          <GameSection
+            className="w-full !p-3"
+            data-testid="mlb-projected-lineups"
+          >
+            <div className="mb-3 flex flex-col items-center gap-2">
+              <h2 className="text-center text-[18px] font-semibold leading-snug text-white">
+                Projected Rotowire Lineups
+              </h2>
+              <div className="flex items-center justify-center gap-1">
+                <LogoToggleButton
+                  team={detail.away}
+                  side="away"
+                  active={side === "away"}
+                  onClick={() => setSide("away")}
+                />
+                <LogoToggleButton
+                  team={detail.home}
+                  side="home"
+                  active={side === "home"}
+                  onClick={() => setSide("home")}
+                />
+              </div>
             </div>
-          </div>
-          {isPending ? (
-            <p className="text-[18px] text-white/50">Loading lineups…</p>
-          ) : !game ? (
-            <p className="text-[18px] text-white/50">Lineups unavailable</p>
-          ) : (
-            <LineupSideView
-              slateSide={game[side]}
-              matchupSide={matchup?.[side] ?? null}
-              opposingPitcherName={opposingPitcherName}
-            />
-          )}
-        </GameSection>
+            {isPending ? (
+              <p className="text-[18px] text-white/50">Loading lineups…</p>
+            ) : !game ? (
+              <p className="text-[18px] text-white/50">Lineups unavailable</p>
+            ) : (
+              <LineupSideView
+                slateSide={game[side]}
+                matchupSide={matchup?.[side] ?? null}
+                opposingPitcherName={opposingPitcherName}
+              />
+            )}
+          </GameSection>
+          <MlbSeasonTeamStats detail={detail} />
+          <MlbInjuryReport detail={detail} />
+        </div>
         <MlbGameOddsBoard
           detail={detail}
           view={oddsView}
           isPending={oddsPending}
         />
       </div>
-      <MlbSeasonTeamStats detail={detail} />
-      <MlbInjuryReport detail={detail} />
     </div>
   );
 }

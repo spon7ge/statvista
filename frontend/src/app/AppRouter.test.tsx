@@ -182,7 +182,7 @@ describe("AppRouter", () => {
     renderWithProviders(["/mlb/prop_picks"]);
 
     expect(
-      await screen.findByRole("heading", { name: "MLB Prop Picks" }),
+      await screen.findByRole("heading", { name: "MLB Props" }),
     ).toBeInTheDocument();
     expect(
       await screen.findByText("No PrizePicks board available."),

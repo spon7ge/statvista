@@ -22,17 +22,17 @@ function TeamRow({
         logoUrl={team.logoUrl}
         sizeClassName="size-8"
       />
-      <span className="w-9 shrink-0 text-xs font-semibold text-white">
+      <span className="w-10 shrink-0 text-[18px] font-semibold text-white">
         {team.abbrev}
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block truncate text-xs text-white">{team.name}</span>
+        <span className="block truncate text-[18px] text-white">{team.name}</span>
         {team.record ? (
-          <span className="block text-[11px] text-white/40">{team.record}</span>
+          <span className="block text-[14px] text-white/40">{team.record}</span>
         ) : null}
       </span>
       {showScore ? (
-        <span className="shrink-0 font-mono text-sm font-semibold tracking-tight text-white">
+        <span className="shrink-0 font-mono text-[18px] font-semibold tracking-tight text-white">
           {team.score ?? "–"}
         </span>
       ) : null}
@@ -44,14 +44,14 @@ function OddsByCaption({ sportsbook }: { sportsbook?: string | null }) {
   const book = (sportsbook || "draftkings").toLowerCase();
   if (book === "pinnacle") {
     return (
-      <p className="mt-1 text-right text-[10px] tracking-wide text-white/35">
+      <p className="mt-1 text-right text-[14px] tracking-wide text-white/35">
         Odds by Pinnacle
       </p>
     );
   }
   const isFanDuel = book === "fanduel";
   return (
-    <p className="mt-1 flex items-center justify-end gap-1 text-[10px] tracking-wide text-white/35">
+    <p className="mt-1 flex items-center justify-end gap-1 text-[14px] tracking-wide text-white/35">
       <span>Odds by</span>
       <img
         src={isFanDuel ? fanDuelLogo : draftKingsLogo}
@@ -78,7 +78,7 @@ function OddsBlock({
       data-sportsbook={(sportsbook || "draftkings").toLowerCase()}
       className="shrink-0 text-right"
     >
-      <span className="inline-flex max-w-[11rem] rounded-full border border-white/10 bg-white/[0.03] px-2.5 py-1 font-mono text-[11px] text-white/70 sm:max-w-none">
+      <span className="inline-flex max-w-[11rem] rounded-full border border-white/10 bg-white/[0.03] px-2.5 py-1 font-mono text-[14px] text-white/70 sm:max-w-none">
         {label}
       </span>
       <OddsByCaption sportsbook={sportsbook} />
@@ -102,7 +102,7 @@ export function MatchupGameCard({ game }: { game: MatchupGame }) {
       <div className="min-w-0 flex-1">
         <div className="mb-4 flex items-start justify-between gap-3">
           <span
-            className={`flex shrink-0 items-center gap-2 text-xs ${
+            className={`flex shrink-0 items-center gap-2 text-[18px] ${
               isLive ? "text-red-400" : "text-white/45"
             }`}
           >
@@ -112,7 +112,7 @@ export function MatchupGameCard({ game }: { game: MatchupGame }) {
             {game.statusLabel}
           </span>
           {venueLabel ? (
-            <span className="truncate text-right text-[11px] text-white/35">
+            <span className="truncate text-right text-[14px] text-white/35">
               {venueLabel}
             </span>
           ) : null}

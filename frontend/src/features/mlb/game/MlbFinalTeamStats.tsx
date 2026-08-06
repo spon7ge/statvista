@@ -56,7 +56,7 @@ function TeamLogo({ team, align }: { team: MlbGameDetailTeam; align: "left" | "r
   if (!team.logoUrl) {
     return (
       <span
-        className={`text-xs font-semibold ${
+        className={`text-[18px] font-semibold ${
           align === "right" ? "text-right" : ""
         }`}
         style={{ color: team.color }}
@@ -92,7 +92,7 @@ function StatValue({
 }) {
   return (
     <div
-      className={`flex items-center gap-1.5 font-mono text-xs tabular-nums text-white/85 ${
+      className={`flex items-center gap-1.5 font-mono text-[18px] tabular-nums text-white/85 ${
         side === "home" ? "justify-end" : ""
       }`}
     >
@@ -132,7 +132,7 @@ export function MlbFinalTeamStats({
     >
       <div className="mb-3 grid grid-cols-[1fr_auto_1fr] items-center gap-x-3">
         <TeamLogo team={detail.away} align="left" />
-        <h2 className="text-sm font-semibold text-white">Team Stats</h2>
+        <h2 className="text-[18px] font-semibold text-white">Team Stats</h2>
         <TeamLogo team={detail.home} align="right" />
       </div>
       <div>
@@ -157,7 +157,7 @@ export function MlbFinalTeamStats({
                 isLeader={winningSide === "away"}
                 color={detail.away.color}
               />
-              <span className="min-w-[2.5rem] text-center text-[10px] font-medium tracking-wide text-white/45">
+              <span className="min-w-[2.5rem] text-center text-[18px] font-medium tracking-wide text-white/45">
                 {stat.label}
               </span>
               <StatValue

@@ -3,12 +3,14 @@ import { ChevronDown } from "lucide-react";
 import { MLB_SOURCE_TIER_OPTIONS } from "./filterMlbPropPicks";
 
 type FilterOption = { value: string; label: string };
+type FilterTone = "default" | "banner";
 
 type MultiSelectFilterProps = {
   label: string;
   options: FilterOption[];
   selected: Set<string>;
   onChange: (next: Set<string>) => void;
+  tone?: FilterTone;
 };
 
 function MultiSelectFilter({
@@ -16,12 +18,14 @@ function MultiSelectFilter({
   options,
   selected,
   onChange,
+  tone = "default",
 }: MultiSelectFilterProps) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const listId = useId();
   const triggerLabel =
     selected.size > 0 ? `${label} (${selected.size})` : label;
+  const onBanner = tone === "banner";
 
   useEffect(() => {
     if (!open) return;
@@ -56,15 +60,23 @@ function MultiSelectFilter({
         aria-expanded={open}
         aria-controls={listId}
         onClick={() => setOpen((v) => !v)}
-        className={`inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-medium transition-colors ${
-          selected.size > 0
-            ? "border-white/20 bg-white/10 text-white"
-            : "border-white/10 bg-transparent text-white/55 hover:text-white"
-        }`}
+        className={
+          onBanner
+            ? `inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[14px] font-semibold shadow-sm ${
+                selected.size > 0
+                  ? "bg-white text-emerald-900"
+                  : "bg-white/90 text-emerald-800 hover:bg-white"
+              }`
+            : `inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-[18px] font-medium transition-colors ${
+                selected.size > 0
+                  ? "border-white/20 bg-white/10 text-white"
+                  : "border-white/10 bg-transparent text-white/55 hover:text-white"
+              }`
+        }
       >
         {triggerLabel}
         <ChevronDown
-          className="size-3 opacity-70"
+          className="size-3.5 opacity-70"
           aria-hidden
           strokeWidth={1.75}
         />
@@ -75,10 +87,18 @@ function MultiSelectFilter({
           role="listbox"
           aria-label={label}
           aria-multiselectable="true"
-          className="absolute top-full left-0 z-20 mt-1.5 max-h-56 min-w-[10rem] overflow-y-auto rounded-lg border border-white/10 bg-black py-0.5"
+          className={
+            onBanner
+              ? "absolute top-full left-0 z-50 mt-1.5 max-h-56 min-w-[10rem] overflow-y-auto rounded-xl border border-black/10 bg-white py-1 shadow-lg"
+              : "absolute top-full left-0 z-20 mt-1.5 max-h-56 min-w-[10rem] overflow-y-auto rounded-lg border border-white/10 bg-black py-0.5"
+          }
         >
           {options.length === 0 ? (
-            <li className="px-2.5 py-1.5 text-[11px] text-white/40">
+            <li
+              className={`px-2.5 py-1.5 text-[14px] ${
+                onBanner ? "text-zinc-400" : "text-white/40"
+              }`}
+            >
               No options
             </li>
           ) : (
@@ -90,14 +110,26 @@ function MultiSelectFilter({
                     type="button"
                     role="option"
                     aria-selected={checked}
-                    className="flex w-full items-center gap-2 px-2.5 py-1.5 text-left text-xs text-white/80 hover:bg-white/5"
+                    className={
+                      onBanner
+                        ? `flex w-full items-center gap-2 px-2.5 py-1.5 text-left text-[14px] ${
+                            checked
+                              ? "bg-emerald-50 text-emerald-900"
+                              : "text-zinc-800 hover:bg-zinc-50"
+                          }`
+                        : "flex w-full items-center gap-2 px-2.5 py-1.5 text-left text-[18px] text-white/80 hover:bg-white/5"
+                    }
                     onClick={() => toggle(opt.value)}
                   >
                     <span
-                      className={`flex size-4 shrink-0 items-center justify-center rounded border text-[10px] ${
-                        checked
-                          ? "border-white/40 bg-white/15 text-white"
-                          : "border-white/20 bg-transparent text-transparent"
+                      className={`flex size-4 shrink-0 items-center justify-center rounded border text-[14px] ${
+                        onBanner
+                          ? checked
+                            ? "border-emerald-600 bg-emerald-600 text-white"
+                            : "border-zinc-300 bg-transparent text-transparent"
+                          : checked
+                            ? "border-white/40 bg-white/15 text-white"
+                            : "border-white/20 bg-transparent text-transparent"
                       }`}
                       aria-hidden
                     >
@@ -130,6 +162,8 @@ export type MlbPropPicksFiltersProps = {
   onTiersChange: (next: Set<string>) => void;
   onFreshVsStaleToggle: () => void;
   onClear: () => void;
+  /** White capsule pills for use inside the green Scores-style header. */
+  tone?: FilterTone;
 };
 
 export function MlbPropPicksFilters({
@@ -146,6 +180,7 @@ export function MlbPropPicksFilters({
   onTiersChange,
   onFreshVsStaleToggle,
   onClear,
+  tone = "default",
 }: MlbPropPicksFiltersProps) {
   const hasActive =
     selectedStats.size > 0 ||
@@ -153,6 +188,7 @@ export function MlbPropPicksFilters({
     selectedSides.size > 0 ||
     selectedTiers.size > 0 ||
     freshVsStaleOnly;
+  const onBanner = tone === "banner";
 
   return (
     <div
@@ -161,6 +197,7 @@ export function MlbPropPicksFilters({
     >
       <MultiSelectFilter
         label="Stat"
+        tone={tone}
         options={stats.map((s) => ({ value: s, label: s }))}
         selected={selectedStats}
         onChange={onStatsChange}
@@ -168,6 +205,7 @@ export function MlbPropPicksFilters({
       {teams.length > 0 ? (
         <MultiSelectFilter
           label="Team"
+          tone={tone}
           options={teams.map((t) => ({ value: t, label: t }))}
           selected={selectedTeams}
           onChange={onTeamsChange}
@@ -175,6 +213,7 @@ export function MlbPropPicksFilters({
       ) : null}
       <MultiSelectFilter
         label="Side"
+        tone={tone}
         options={[
           { value: "over", label: "Over" },
           { value: "under", label: "Under" },
@@ -184,6 +223,7 @@ export function MlbPropPicksFilters({
       />
       <MultiSelectFilter
         label="Tier"
+        tone={tone}
         options={MLB_SOURCE_TIER_OPTIONS.map((t) => ({
           value: t.value,
           label: t.label,
@@ -195,11 +235,19 @@ export function MlbPropPicksFilters({
         type="button"
         aria-pressed={freshVsStaleOnly}
         onClick={onFreshVsStaleToggle}
-        className={`rounded-md border px-2.5 py-1 text-xs font-medium transition-colors ${
-          freshVsStaleOnly
-            ? "border-white/20 bg-white/10 text-white"
-            : "border-white/10 bg-transparent text-white/55 hover:text-white"
-        }`}
+        className={
+          onBanner
+            ? `rounded-full px-3 py-1.5 text-[14px] font-semibold shadow-sm ${
+                freshVsStaleOnly
+                  ? "bg-white text-emerald-900"
+                  : "bg-white/90 text-emerald-800 hover:bg-white"
+              }`
+            : `rounded-md border px-2.5 py-1.5 text-[18px] font-medium transition-colors ${
+                freshVsStaleOnly
+                  ? "border-white/20 bg-white/10 text-white"
+                  : "border-white/10 bg-transparent text-white/55 hover:text-white"
+              }`
+        }
       >
         Fresh sharp vs stale DFS only
       </button>
@@ -207,7 +255,11 @@ export function MlbPropPicksFilters({
         <button
           type="button"
           onClick={onClear}
-          className="px-1.5 text-xs text-white/40 transition-colors hover:text-white"
+          className={
+            onBanner
+              ? "rounded-full bg-white/20 px-3 py-1.5 text-[14px] font-semibold text-white hover:bg-white/30"
+              : "px-1.5 text-[14px] text-white/40 transition-colors hover:text-white"
+          }
         >
           Clear filters
         </button>

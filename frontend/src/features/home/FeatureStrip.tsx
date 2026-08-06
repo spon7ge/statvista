@@ -23,7 +23,7 @@ export function FeatureStrip() {
         <h2 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
           Built to get you ready
         </h2>
-        <p className="mt-3 text-sm text-white/40 sm:text-base">
+        <p className="mt-3 text-sm text-white/40">
           Watch first. Learn the lines. Bet with a plan.
         </p>
       </div>

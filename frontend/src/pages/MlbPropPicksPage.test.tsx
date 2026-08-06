@@ -98,16 +98,13 @@ describe("MlbPropPicksPage", () => {
       format: "power",
       legs: 4,
     });
-    expect(screen.getByRole("heading", { name: "MLB Prop Picks" })).toBeInTheDocument();
-    expect(screen.getByText("Aaron Judge")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /PrizePicks/i })).toHaveAttribute(
-      "aria-pressed",
+    expect(screen.getByRole("heading", { name: "MLB Props" })).toBeInTheDocument();
+    expect(screen.getByText(/Aaron Judge/)).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: "PrizePicks" })).toHaveAttribute(
+      "aria-selected",
       "true",
     );
-    expect(screen.getByRole("button", { name: /^4$/ })).toHaveAttribute(
-      "aria-pressed",
-      "true",
-    );
+    expect(screen.getByText("4-pick")).toBeInTheDocument();
   });
 
   it("refetches via the hook when switching app and legs", async () => {
@@ -131,7 +128,7 @@ describe("MlbPropPicksPage", () => {
     renderPage();
     mockUseMlbProps.mockClear();
 
-    await user.click(screen.getByRole("button", { name: /Underdog/i }));
+    await user.click(screen.getByRole("tab", { name: "Underdog" }));
     expect(mockUseMlbProps).toHaveBeenCalledWith({
       app: "underdog",
       format: "standard",
@@ -139,7 +136,13 @@ describe("MlbPropPicksPage", () => {
     });
 
     mockUseMlbProps.mockClear();
-    await user.click(screen.getByRole("button", { name: /^6$/ }));
+    await user.click(screen.getByRole("button", { name: "More legs" }));
+    expect(mockUseMlbProps).toHaveBeenCalledWith({
+      app: "underdog",
+      format: "standard",
+      legs: 5,
+    });
+    await user.click(screen.getByRole("button", { name: "More legs" }));
     expect(mockUseMlbProps).toHaveBeenCalledWith({
       app: "underdog",
       format: "standard",

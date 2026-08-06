@@ -19,12 +19,17 @@
 /* Tokens used by the home landing and NotFound page */
 :root {
   --radius: 0.5rem;
-  --background: oklch(0 0 0);
+  --background: #2d2d2d;
   --foreground: oklch(0.98 0 0);
   --muted-foreground: oklch(0.7 0 0);
   --border: oklch(1 0 0 / 10%);
-  --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "Geist Mono", ui-monospace, monospace;
+  --font-sans: calibre, calibre-fallback, ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol";
+  --font-mono: "Courier New", ui-monospace, SFMono-Regular, Menlo, Monaco,
+    Consolas, "Liberation Mono", "Courier New", monospace;
+  --text-body: 18px;
+  --text-subtle: 14px;
 }
 
 @theme inline {
@@ -38,6 +43,10 @@
   --color-border: var(--border);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
+  --text-sm: var(--text-subtle);
+  --text-sm--line-height: 1.4;
+  --text-base: var(--text-body);
+  --text-base--line-height: 1.45;
 }
 
 @layer base {
@@ -45,7 +54,10 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-background text-foreground font-sans text-base antialiased;
+  }
+  .text-muted-foreground {
+    font-size: var(--text-subtle);
   }
 }
 
