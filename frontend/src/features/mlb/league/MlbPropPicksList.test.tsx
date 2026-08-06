@@ -9,6 +9,8 @@ function row(
 ): ApiMlbPropRow {
   return {
     team_abbrev: null,
+    position: null,
+    headshot_url: null,
     stat: "Total Bases",
     line: 1.5,
     recommended_side: "over",
@@ -84,24 +86,68 @@ describe("MlbPropPicksList", () => {
     vi.useRealTimers();
   });
 
-  it("shows edge and sharp consensus chip on collapsed row", () => {
+  it("renders PrizePicks-style collapsed card", () => {
+    const enriched = row({
+      player_name: "Aaron Judge",
+      team_abbrev: "NYY",
+      position: "RF",
+      headshot_url:
+        "https://a.espncdn.com/i/headshots/mlb/players/full/33192.png",
+      edge_pct: 5.1,
+    });
     render(
       <MlbPropPicksList
-        props={[judge]}
+        props={[enriched]}
+        format="power"
+        legs={4}
+        breakevenPct={54.3}
+      />,
+    );
+    const card = screen.getByTestId("mlb-prop-row");
+    expect(within(card).getByRole("img", { name: /Aaron Judge/i })).toHaveAttribute(
+      "src",
+      expect.stringContaining("33192.png"),
+    );
+    expect(within(card).getByText("NYY · RF")).toBeInTheDocument();
+    expect(within(card).getByText("Aaron Judge")).toBeInTheDocument();
+    expect(within(card).getByText("1.5 Total Bases")).toBeInTheDocument();
+    expect(within(card).getByText("Over")).toBeInTheDocument();
+    expect(within(card).getByText("+5.1%").className).toMatch(/text-emerald-400/);
+    expect(screen.queryByText(/PX\+Novig agree/i)).not.toBeInTheDocument();
+  });
+
+  it("uses initials placeholder when headshot missing", () => {
+    render(
+      <MlbPropPicksList
+        props={[row({ player_name: "Aaron Judge", headshot_url: null })]}
+        format="power"
+        legs={4}
+        breakevenPct={54.3}
+      />,
+    );
+    expect(screen.queryByRole("img", { name: /Aaron Judge/i })).not.toBeInTheDocument();
+    expect(screen.getByTestId("mlb-prop-headshot-fallback")).toHaveTextContent("A");
+  });
+
+  it("colors negative edge red on collapsed row", () => {
+    render(
+      <MlbPropPicksList
+        props={[
+          row({
+            player_name: "Juan Soto",
+            recommended_side: "under",
+            edge_pct: -3.2,
+          }),
+        ]}
         format="power"
         legs={4}
         breakevenPct={54.3}
       />,
     );
 
-    const collapsed = screen.getByTestId("mlb-prop-row");
-    expect(collapsed).toHaveTextContent("Aaron Judge - Total Bases @ 1.5");
-    expect(within(collapsed).getByText("Over")).toBeInTheDocument();
-    expect(screen.getByText("+5.1%")).toBeInTheDocument();
-    expect(screen.getByText("Sharp Consensus")).toBeInTheDocument();
-    expect(collapsed).toHaveTextContent("Fresh sharp vs stale DFS");
-    // Expand content is not shown until the row is toggled.
-    expect(screen.queryByText(/PX\+Novig agree/i)).not.toBeInTheDocument();
+    const edge = screen.getByText("-3.2%");
+    expect(edge.className).toMatch(/text-red-400/);
+    expect(screen.getByText("Under")).toBeInTheDocument();
   });
 
   it("expands to show prophetx and pinnacle comparison", async () => {
@@ -124,7 +170,7 @@ describe("MlbPropPicksList", () => {
     expect(within(expanded).getByText(/cmp/i)).toBeInTheDocument();
   });
 
-  it("renders No Sharp Read rows muted/dashed with edge em-dash, parked last", () => {
+  it("renders No Sharp Read rows muted with edge em-dash, parked last", () => {
     render(
       <MlbPropPicksList
         props={[judge, noRead]}
@@ -136,10 +182,11 @@ describe("MlbPropPicksList", () => {
 
     const rows = screen.getAllByTestId("mlb-prop-row");
     expect(rows).toHaveLength(2);
-    expect(rows[1]!).toHaveTextContent("Mookie Betts - Hits @ 1.5");
+    expect(within(rows[1]!).getByText("Mookie Betts")).toBeInTheDocument();
+    expect(within(rows[1]!).getByText("1.5 Hits")).toBeInTheDocument();
     expect(within(rows[1]!).getByText("—")).toBeInTheDocument();
-    expect(within(rows[1]!).getByText("No Sharp Read")).toBeInTheDocument();
-    expect(rows[1]!.className).toMatch(/dashed/);
+    expect(screen.queryByText("No Sharp Read")).not.toBeInTheDocument();
+    expect(rows[1]!.className).toMatch(/opacity-60/);
   });
 
   it("shows loading skeletons", () => {
@@ -226,7 +273,7 @@ describe("MlbPropPicksList", () => {
     ).toBeInTheDocument();
   });
 
-  it("lays out props in a scoreboard-style card grid", () => {
+  it("lays out props in independent columns so expand only shifts one column", () => {
     const { container } = render(
       <MlbPropPicksList
         props={[judge, noRead]}
@@ -235,11 +282,12 @@ describe("MlbPropPicksList", () => {
         breakevenPct={54.3}
       />,
     );
-    const grid = container.querySelector(".md\\:grid-cols-2");
-    expect(grid).toBeTruthy();
-    expect(grid?.className).toMatch(/grid-cols-1/);
-    expect(screen.getAllByTestId("mlb-prop-row")[0]!.className).toMatch(
-      /rounded-xl/,
-    );
+    const masonry = screen.getByTestId("mlb-prop-picks-masonry");
+    expect(masonry.className).toMatch(/columns-1/);
+    expect(masonry.className).toMatch(/md:columns-2/);
+    expect(masonry.className).toMatch(/lg:columns-3/);
+    const cardWrap = screen.getAllByTestId("mlb-prop-row")[0]!.parentElement;
+    expect(cardWrap?.className).toMatch(/break-inside-avoid/);
+    expect(container.querySelector(".grid-cols-1")).toBeNull();
   });
 });

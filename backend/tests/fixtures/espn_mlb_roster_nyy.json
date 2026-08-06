@@ -1,0 +1,16 @@
+{
+  "athletes": [
+    {
+      "id": "33192",
+      "displayName": "Aaron Judge",
+      "jersey": "99",
+      "position": { "abbreviation": "RF" }
+    },
+    {
+      "id": "33786",
+      "displayName": "Giancarlo Stanton",
+      "jersey": "27",
+      "position": { "abbreviation": "DH" }
+    }
+  ]
+}

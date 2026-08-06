@@ -1414,10 +1414,14 @@ export interface components {
             fair_explain: string;
             /** Fair Pct */
             fair_pct: number | null;
+            /** Headshot Url */
+            headshot_url: string | null;
             /** Line */
             line: number;
             /** Player Name */
             player_name: string;
+            /** Position */
+            position: string | null;
             /** Recency Chip */
             recency_chip: string | null;
             /** Recommended Side */

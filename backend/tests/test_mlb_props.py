@@ -9,6 +9,7 @@ from fastapi.testclient import TestClient
 
 from app.domains.mlb import props as svc
 from app.main import app
+from app.providers.espn.wnba_roster import norm_player_name
 
 FIXTURE = Path(__file__).parent / "fixtures" / "parlay_mlb_props_minimal.json"
 
@@ -356,6 +357,80 @@ def test_route_validation_app_format_mismatch(client):
         "/api/mlb/props/today", params={"app": "prizepicks", "format": "standard", "legs": 4}
     )
     assert r.status_code == 422
+
+
+def test_props_attach_roster_enrichment(monkeypatch):
+    now = datetime.now(timezone.utc)
+    _stub_snapshots(
+        monkeypatch,
+        dfs_pp=[
+            {
+                "player_name": "Aaron Judge",
+                "stat_type": "Total Bases",
+                "line_score": 1.5,
+                "odds_type": "standard",
+                "scraped_at": now - timedelta(minutes=5),
+            },
+        ],
+        prophetx=[
+            {
+                "player_name": "Aaron Judge",
+                "stat_name": "total_bases",
+                "line_score": 1.5,
+                "side": "over",
+                "american_price": -130,
+                "scraped_at": now - timedelta(minutes=4),
+            },
+        ],
+        parlay_rows=_parlay_rows(),
+    )
+
+    async def fake_index():
+        return {
+            norm_player_name("Aaron Judge"): {
+                "espn_id": "33192",
+                "position": "RF",
+                "team_abbrev": "NYY",
+                "headshot_url": "https://a.espncdn.com/i/headshots/mlb/players/full/33192.png",
+            }
+        }
+
+    monkeypatch.setattr(svc, "get_mlb_player_index", fake_index)
+
+    import asyncio
+
+    response = asyncio.run(svc.get_mlb_props_today(app="prizepicks", format="power", legs=4))
+    judge = next(r for r in response.props if r.player_name == "Aaron Judge")
+    assert judge.position == "RF"
+    assert judge.team_abbrev == "NYY"
+    assert judge.headshot_url and "33192" in judge.headshot_url
+
+
+def test_props_survive_roster_index_failure(monkeypatch):
+    now = datetime.now(timezone.utc)
+    _stub_snapshots(
+        monkeypatch,
+        dfs_pp=[
+            {
+                "player_name": "Aaron Judge",
+                "stat_type": "Total Bases",
+                "line_score": 1.5,
+                "odds_type": "standard",
+                "scraped_at": now,
+            },
+        ],
+    )
+
+    async def boom():
+        raise RuntimeError("espn down")
+
+    monkeypatch.setattr(svc, "get_mlb_player_index", boom)
+
+    import asyncio
+
+    response = asyncio.run(svc.get_mlb_props_today(app="prizepicks", format="power", legs=4))
+    assert response.props
+    assert all(r.headshot_url is None for r in response.props)
 
 
 def test_route_success_sets_no_store(client, monkeypatch):

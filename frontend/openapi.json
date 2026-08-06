@@ -3427,6 +3427,17 @@
             ],
             "title": "Fair Pct"
           },
+          "headshot_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Headshot Url"
+          },
           "line": {
             "title": "Line",
             "type": "number"
@@ -3434,6 +3445,17 @@
           "player_name": {
             "title": "Player Name",
             "type": "string"
+          },
+          "position": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Position"
           },
           "recency_chip": {
             "anyOf": [
@@ -3498,6 +3520,8 @@
         "required": [
           "player_name",
           "team_abbrev",
+          "headshot_url",
+          "position",
           "stat",
           "line",
           "recommended_side",

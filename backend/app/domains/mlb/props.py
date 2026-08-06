@@ -45,6 +45,8 @@ from app.domains.mlb.schemas_props import (
     MlbPropRow,
     MlbPropsResponse,
 )
+from app.providers.espn.mlb_roster import get_mlb_player_index
+from app.providers.espn.wnba_roster import norm_player_name
 from app.providers.parlay.client import parlay_get
 
 logger = logging.getLogger(__name__)
@@ -412,6 +414,28 @@ def _assemble_rows(
     return rows
 
 
+def _apply_roster_enrichment(
+    rows: list[MlbPropRow],
+    index: dict[str, Any],
+) -> list[MlbPropRow]:
+    enriched: list[MlbPropRow] = []
+    for row in rows:
+        entry = index.get(norm_player_name(row.player_name))
+        if not entry:
+            enriched.append(row)
+            continue
+        enriched.append(
+            row.model_copy(
+                update={
+                    "headshot_url": entry.get("headshot_url"),
+                    "position": entry.get("position"),
+                    "team_abbrev": entry.get("team_abbrev") or row.team_abbrev,
+                }
+            )
+        )
+    return enriched
+
+
 async def get_mlb_props_today(*, app: str, format: str, legs: int) -> MlbPropsResponse:
     """Assemble the DFS-first, +EV-ranked MLB prop board for one app/format/legs."""
     validate_query(app, format, legs)
@@ -448,6 +472,12 @@ async def get_mlb_props_today(*, app: str, format: str, legs: int) -> MlbPropsRe
         parlay_error = str(exc)
 
     rows = _assemble_rows(board, breakeven, prophetx_idx, pinnacle_idx, parlay_by_book, now)
+
+    try:
+        roster_index = await get_mlb_player_index()
+        rows = _apply_roster_enrichment(rows, roster_index)
+    except Exception as exc:
+        logger.warning("MLB prop roster enrichment skipped: %s", exc)
 
     response = MlbPropsResponse(
         as_of=_iso(now) or "",

@@ -47,6 +47,8 @@ class MlbPropRow(BaseModel):
 
     player_name: str
     team_abbrev: str | None = None
+    headshot_url: str | None = None
+    position: str | None = None
     stat: str
     line: float
     recommended_side: Side | None = None
