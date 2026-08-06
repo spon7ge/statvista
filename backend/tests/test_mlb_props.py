@@ -206,6 +206,47 @@ def test_underdog_uses_stored_side_only(monkeypatch):
     assert response.props[0].dfs.line == 6.5
 
 
+def test_mid_tier_fallback_recency_chip_uses_dk_fd_timestamps():
+    """recency_chip must reflect DK/FD changed_at when fair is DK/FD-driven.
+
+    Regression test: previously ``_assemble_rows`` only looked at
+    ProphetX/Novig ``changed_at`` for the recency chip, so ``mid_tier_fallback``
+    rows (fair driven by DraftKings/FanDuel alone) always got ``recency_chip =
+    None`` even when the DK/FD quotes were fresh and the DFS line was stale.
+    """
+    now = datetime.now(timezone.utc)
+    board = {
+        ("aaron judge", "total_bases", 1.5): {
+            "player_name": "Aaron Judge",
+            "stat": "Total Bases",
+            "line": 1.5,
+            "sides": {"over", "under"},
+            "scraped_at": now - timedelta(minutes=41),
+        },
+    }
+    dk_hit = {"american": -130, "changed_at": now - timedelta(minutes=4)}
+    fd_hit = {"american": -125, "changed_at": now - timedelta(minutes=4)}
+    parlay_by_book = {
+        "novig": {},
+        "draftkings": {("aaron judge", "total_bases", "over", 1.5): dk_hit},
+        "fanduel": {("aaron judge", "total_bases", "over", 1.5): fd_hit},
+    }
+
+    rows = svc._assemble_rows(
+        board,
+        breakeven=52.4,
+        prophetx_idx={},
+        pinnacle_idx={},
+        parlay_by_book=parlay_by_book,
+        now=now,
+    )
+
+    assert len(rows) == 1
+    row = rows[0]
+    assert row.source_tier == "mid_tier_fallback"
+    assert row.recency_chip == "fresh_sharp_vs_stale_dfs"
+
+
 def test_parlay_failure_still_returns_dfs_and_prophetx(monkeypatch):
     now = datetime.now(timezone.utc)
     _stub_snapshots(

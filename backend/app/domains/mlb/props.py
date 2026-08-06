@@ -289,6 +289,37 @@ def _pick_recommended_side(
     return available_sides[0] if available_sides else None
 
 
+def _fair_driving_changed_at(
+    source_tier: str,
+    display_key: SideKey,
+    prophetx_idx: SideIndex,
+    novig_idx: SideIndex,
+    dk_idx: SideIndex,
+    fd_idx: SideIndex,
+) -> datetime | None:
+    """Return ``changed_at`` for whichever book(s) actually drove ``fair_pct``.
+
+    Tier 1 (consensus/disagreement/single-source) is driven by ProphetX and/or
+    Novig; Tier 2 (``mid_tier_fallback``) is driven by DraftKings and/or
+    FanDuel. Recency chips must reflect the driving book so mid-tier rows
+    aren't silently missing a chip that DK/FD timestamps would warrant.
+    """
+    if source_tier == "mid_tier_fallback":
+        candidates = (dk_idx, fd_idx)
+    else:
+        candidates = (prophetx_idx, novig_idx)
+
+    changed_ats = [
+        hit["changed_at"]
+        for idx in candidates
+        for hit in (idx.get(display_key),)
+        if hit is not None
+    ]
+    # When both books contributed (agree-and-blend or disagree-use-one), the
+    # more recent timestamp best represents how fresh the fair read is.
+    return max(changed_ats) if changed_ats else None
+
+
 def _assemble_rows(
     board: dict[BoardKey, dict[str, Any]],
     breakeven: float,
@@ -340,16 +371,13 @@ def _assemble_rows(
             pinnacle=_book_quote(pinnacle_idx, display_key, role="comparison"),
         )
 
-        sharp_changed_at: datetime | None = None
-        for idx in (prophetx_idx, novig_idx):
-            hit = idx.get(display_key)
-            if hit is not None:
-                sharp_changed_at = hit.get("changed_at")
-                break
+        driving_changed_at = _fair_driving_changed_at(
+            primary.source_tier, display_key, prophetx_idx, novig_idx, dk_idx, fd_idx
+        )
 
         dfs_changed_at = bucket.get("scraped_at")
         chip = recency_chip(
-            sharp_changed_at=sharp_changed_at,
+            sharp_changed_at=driving_changed_at,
             dfs_changed_at=dfs_changed_at,
             now=now,
         )
