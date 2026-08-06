@@ -6,6 +6,7 @@ import {
   formatMlbPropPicksUpdatedAt,
   MlbPropPicksList,
   resolveBookLastUpdatedMs,
+  splitPropsIntoColumns,
 } from "./MlbPropPicksList";
 
 function row(
@@ -84,6 +85,15 @@ const noRead = row({
 describe("MlbPropPicksList", () => {
   beforeEach(() => {
     vi.setSystemTime(new Date("2026-08-05T20:00:00Z"));
+    window.matchMedia = vi.fn().mockImplementation((query: string) => ({
+      matches: false,
+      media: query,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    }));
   });
 
   afterEach(() => {
@@ -352,7 +362,7 @@ describe("MlbPropPicksList", () => {
     expect(booksGrid?.className).not.toMatch(/lg:grid-cols-5/);
   });
 
-  it("lays out props row-major so highest edges fill across the top", () => {
+  it("lays out props in independent columns with row-major rank order", () => {
     render(
       <MlbPropPicksList
         props={[judge, noRead]}
@@ -362,10 +372,23 @@ describe("MlbPropPicksList", () => {
       />,
     );
     const grid = screen.getByTestId("mlb-prop-picks-grid");
-    expect(grid.className).toMatch(/grid-cols-1/);
-    expect(grid.className).toMatch(/md:grid-cols-2/);
-    expect(grid.className).toMatch(/lg:grid-cols-3/);
+    expect(grid.className).toMatch(/\bflex\b/);
     expect(grid.className).not.toMatch(/columns-/);
+    expect(screen.getAllByTestId("mlb-prop-picks-column").length).toBeGreaterThanOrEqual(1);
+  });
+});
+
+describe("splitPropsIntoColumns", () => {
+  it("round-robins so visual rows keep rank order", () => {
+    expect(splitPropsIntoColumns([1, 2, 3, 4, 5, 6], 3)).toEqual([
+      [1, 4],
+      [2, 5],
+      [3, 6],
+    ]);
+  });
+
+  it("uses a single column when count is 1", () => {
+    expect(splitPropsIntoColumns(["a", "b"], 1)).toEqual([["a", "b"]]);
   });
 });
 

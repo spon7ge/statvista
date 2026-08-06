@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ApiMlbPropBookQuote, ApiMlbPropRow } from "@/shared/lib/api";
 
 const BOOK_LABELS: Record<string, string> = {
@@ -71,21 +71,65 @@ export function resolveBookLastUpdatedMs(
   return null;
 }
 
+/**
+ * Round-robin into columns so visual rows stay edge-rank order (1,2,3 then
+ * 4,5,6…) while each column expands independently.
+ */
+export function splitPropsIntoColumns<T>(
+  items: T[],
+  columnCount: number,
+): T[][] {
+  const n = Math.max(1, Math.floor(columnCount));
+  const cols: T[][] = Array.from({ length: n }, () => []);
+  items.forEach((item, i) => {
+    cols[i % n]!.push(item);
+  });
+  return cols;
+}
+
+function usePropPicksColumnCount(): number {
+  const [count, setCount] = useState(1);
+
+  useEffect(() => {
+    const md = window.matchMedia("(min-width: 768px)");
+    const lg = window.matchMedia("(min-width: 1024px)");
+    function sync() {
+      if (lg.matches) setCount(3);
+      else if (md.matches) setCount(2);
+      else setCount(1);
+    }
+    sync();
+    md.addEventListener("change", sync);
+    lg.addEventListener("change", sync);
+    return () => {
+      md.removeEventListener("change", sync);
+      lg.removeEventListener("change", sync);
+    };
+  }, []);
+
+  return count;
+}
+
 function rowKey(row: ApiMlbPropRow): string {
   return `${row.player_name}:${row.stat}:${row.line}:${row.recommended_side ?? ""}`;
 }
 
-function Skeletons() {
+function Skeletons({ columnCount }: { columnCount: number }) {
+  const perCol = Math.ceil(6 / columnCount);
   return (
     <div
-      className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3"
+      className="flex gap-3"
       aria-label="Loading MLB prop picks"
     >
-      {Array.from({ length: 6 }, (_, i) => (
-        <div
-          key={i}
-          className="h-28 animate-pulse rounded-xl bg-[#3a3d42]"
-        />
+      {Array.from({ length: columnCount }, (_, col) => (
+        <div key={col} className="flex min-w-0 flex-1 flex-col gap-3">
+          {Array.from({ length: perCol }, (_, i) => (
+            <div
+              key={i}
+              className="h-28 animate-pulse rounded-xl bg-[#3a3d42]"
+            />
+          ))}
+        </div>
       ))}
     </div>
   );
@@ -301,6 +345,8 @@ export function MlbPropPicksList({
   const [expandedKeys, setExpandedKeys] = useState<Set<string>>(
     () => new Set(),
   );
+  const columnCount = usePropPicksColumnCount();
+  const columns = splitPropsIntoColumns(props, columnCount);
 
   function toggleRow(key: string) {
     setExpandedKeys((prev) => {
@@ -333,26 +379,34 @@ export function MlbPropPicksList({
       </div>
 
       {isLoading ? (
-        <Skeletons />
+        <Skeletons columnCount={columnCount} />
       ) : isError || props.length === 0 ? (
         <p className="px-1 text-[14px] text-white/40">{emptyCopy}</p>
       ) : (
         <div
           data-testid="mlb-prop-picks-grid"
-          className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3"
+          className="flex gap-3"
         >
-          {props.map((row) => {
-            const key = rowKey(row);
-            return (
-              <PropPickCard
-                key={key}
-                row={row}
-                expanded={expandedKeys.has(key)}
-                onToggle={() => toggleRow(key)}
-                lastUpdatedAt={lastUpdatedAt}
-              />
-            );
-          })}
+          {columns.map((colRows, colIdx) => (
+            <div
+              key={colIdx}
+              data-testid="mlb-prop-picks-column"
+              className="flex min-w-0 flex-1 flex-col gap-3"
+            >
+              {colRows.map((row) => {
+                const key = rowKey(row);
+                return (
+                  <PropPickCard
+                    key={key}
+                    row={row}
+                    expanded={expandedKeys.has(key)}
+                    onToggle={() => toggleRow(key)}
+                    lastUpdatedAt={lastUpdatedAt}
+                  />
+                );
+              })}
+            </div>
+          ))}
         </div>
       )}
 
