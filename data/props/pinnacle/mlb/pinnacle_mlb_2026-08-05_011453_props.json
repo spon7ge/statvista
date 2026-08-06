@@ -1,0 +1,441 @@
+{
+  "fetched_at": "2026-08-05T01:20:20-07:00",
+  "source": "pinnacle_selenium",
+  "sport": "baseball",
+  "league": "mlb",
+  "list_page": "https://www.pinnacle.com/en/baseball/mlb/matchups/#all",
+  "parallel_workers_configured": 5,
+  "parallel_workers_effective": 5,
+  "games_per_worker_target": 2,
+  "arcadia_timeout_s": 90.0,
+  "arcadia_poll_s": 0.22,
+  "snapshot_kind": "props",
+  "games": [
+    {
+      "matchup_id": 1633091899,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/athletics-vs-cincinnati-reds/1633091899/#all",
+      "path": "/en/baseball/mlb/athletics-vs-cincinnati-reds/1633091899/",
+      "league": "MLB",
+      "start_time": null,
+      "label": "Athletics vs Cincinnati Reds",
+      "participants": [
+        "Athletics",
+        "Cincinnati Reds"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1633095536,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/chicago-white-sox-vs-boston-red-sox/1633095536/#all",
+      "path": "/en/baseball/mlb/chicago-white-sox-vs-boston-red-sox/1633095536/",
+      "league": "MLB",
+      "start_time": "2026-08-05T23:10:00Z",
+      "label": "Chicago White Sox vs Boston Red Sox",
+      "participants": [
+        "Chicago White Sox",
+        "Boston Red Sox"
+      ],
+      "props": [
+        {
+          "stat": "home_runs",
+          "player": "Colson Montgomery",
+          "line": 0.5,
+          "market_id": 1633401078,
+          "decimal_over": 4.68,
+          "decimal_under": 1.168,
+          "american_over": 368,
+          "american_under": -595
+        },
+        {
+          "stat": "home_runs",
+          "player": "Miguel Vargas",
+          "line": 0.5,
+          "market_id": 1633401099,
+          "decimal_over": 4.81,
+          "decimal_under": 1.161,
+          "american_over": 381,
+          "american_under": -623
+        },
+        {
+          "stat": "home_runs",
+          "player": "Munetaka Murakami",
+          "line": 0.5,
+          "market_id": 1633401105,
+          "decimal_over": 3.85,
+          "decimal_under": 1.235,
+          "american_over": 285,
+          "american_under": -426
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Sean Burke",
+          "line": 6.5,
+          "market_id": 1633401117,
+          "decimal_over": 2.2,
+          "decimal_under": 1.625,
+          "american_over": 120,
+          "american_under": -160
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Sonny Gray",
+          "line": 5.5,
+          "market_id": 1633401120,
+          "decimal_over": 2.12,
+          "decimal_under": 1.671,
+          "american_over": 112,
+          "american_under": -149
+        },
+        {
+          "stat": "home_runs",
+          "player": "Willson Contreras",
+          "line": 0.5,
+          "market_id": 1633401126,
+          "decimal_over": 4.68,
+          "decimal_under": 1.168,
+          "american_over": 368,
+          "american_under": -595
+        },
+        {
+          "stat": "home_runs",
+          "player": "Wilyer Abreu",
+          "line": 0.5,
+          "market_id": 1633401132,
+          "decimal_over": 5.45,
+          "decimal_under": 1.128,
+          "american_over": 445,
+          "american_under": -779
+        }
+      ]
+    },
+    {
+      "matchup_id": 1633101459,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/detroit-tigers-vs-seattle-mariners/1633101459/#all",
+      "path": "/en/baseball/mlb/detroit-tigers-vs-seattle-mariners/1633101459/",
+      "league": "MLB",
+      "start_time": null,
+      "label": "Detroit Tigers vs Seattle Mariners",
+      "participants": [
+        "Detroit Tigers",
+        "Seattle Mariners"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1633099677,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/los-angeles-angels-vs-baltimore-orioles/1633099677/#all",
+      "path": "/en/baseball/mlb/los-angeles-angels-vs-baltimore-orioles/1633099677/",
+      "league": "MLB",
+      "start_time": "2026-08-05T22:35:00Z",
+      "label": "Los Angeles Angels vs Baltimore Orioles",
+      "participants": [
+        "Los Angeles Angels",
+        "Baltimore Orioles"
+      ],
+      "props": [
+        {
+          "stat": "home_runs",
+          "player": "Coby Mayo",
+          "line": 0.5,
+          "market_id": 1633401150,
+          "decimal_over": 3.95,
+          "decimal_under": 1.224,
+          "american_over": 295,
+          "american_under": -446
+        },
+        {
+          "stat": "home_runs",
+          "player": "Mike Trout",
+          "line": 0.5,
+          "market_id": 1633401177,
+          "decimal_over": 4.56,
+          "decimal_under": 1.176,
+          "american_over": 356,
+          "american_under": -568
+        },
+        {
+          "stat": "home_runs",
+          "player": "Pete Alonso",
+          "line": 0.5,
+          "market_id": 1633401186,
+          "decimal_over": 4.01,
+          "decimal_under": 1.219,
+          "american_over": 301,
+          "american_under": -457
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Reid Detmers",
+          "line": 6.5,
+          "market_id": 1633401192,
+          "decimal_over": 1.633,
+          "decimal_under": 2.18,
+          "american_over": -158,
+          "american_under": 118
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Trevor Rogers",
+          "line": 5.5,
+          "market_id": 1633401198,
+          "decimal_over": 1.833,
+          "decimal_under": 1.909,
+          "american_over": -120,
+          "american_under": -110
+        },
+        {
+          "stat": "home_runs",
+          "player": "Tyler O'Neill",
+          "line": 0.5,
+          "market_id": 1633401204,
+          "decimal_over": 4.31,
+          "decimal_under": 1.193,
+          "american_over": 331,
+          "american_under": -517
+        },
+        {
+          "stat": "home_runs",
+          "player": "Zach Neto",
+          "line": 0.5,
+          "market_id": 1633401226,
+          "decimal_over": 4.68,
+          "decimal_under": 1.168,
+          "american_over": 368,
+          "american_under": -595
+        }
+      ]
+    },
+    {
+      "matchup_id": 1633073098,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/los-angeles-dodgers-vs-chicago-cubs/1633073098/#all",
+      "path": "/en/baseball/mlb/los-angeles-dodgers-vs-chicago-cubs/1633073098/",
+      "league": "MLB",
+      "start_time": "2026-08-05T18:20:00Z",
+      "label": "Los Angeles Dodgers vs Chicago Cubs",
+      "participants": [
+        "Los Angeles Dodgers",
+        "Chicago Cubs"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1633099687,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/miami-marlins-vs-atlanta-braves/1633099687/#all",
+      "path": "/en/baseball/mlb/miami-marlins-vs-atlanta-braves/1633099687/",
+      "league": "MLB",
+      "start_time": "2026-08-05T23:15:00Z",
+      "label": "Miami Marlins vs Atlanta Braves",
+      "participants": [
+        "Miami Marlins",
+        "Atlanta Braves"
+      ],
+      "props": [
+        {
+          "stat": "strikeouts",
+          "player": "Bryce Elder",
+          "line": 4.5,
+          "market_id": 1633401199,
+          "decimal_over": 1.741,
+          "decimal_under": 2.02,
+          "american_over": -135,
+          "american_under": 102
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Eury Pérez",
+          "line": 5.5,
+          "market_id": 1633401222,
+          "decimal_over": 2.06,
+          "decimal_under": 1.709,
+          "american_over": 106,
+          "american_under": -141
+        },
+        {
+          "stat": "home_runs",
+          "player": "Kyle Stowers",
+          "line": 0.5,
+          "market_id": 1633401255,
+          "decimal_over": 4.43,
+          "decimal_under": 1.185,
+          "american_over": 343,
+          "american_under": -540
+        },
+        {
+          "stat": "home_runs",
+          "player": "Matt Olson",
+          "line": 0.5,
+          "market_id": 1633401264,
+          "decimal_over": 4.56,
+          "decimal_under": 1.176,
+          "american_over": 356,
+          "american_under": -568
+        },
+        {
+          "stat": "home_runs",
+          "player": "Ronald Acuna Jr.",
+          "line": 0.5,
+          "market_id": 1633401318,
+          "decimal_over": 4.93,
+          "decimal_under": 1.153,
+          "american_over": 393,
+          "american_under": -652
+        }
+      ]
+    },
+    {
+      "matchup_id": 1633099699,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/minnesota-twins-vs-kansas-city-royals/1633099699/#all",
+      "path": "/en/baseball/mlb/minnesota-twins-vs-kansas-city-royals/1633099699/",
+      "league": "MLB",
+      "start_time": "2026-08-05T23:40:00Z",
+      "label": "Minnesota Twins vs Kansas City Royals",
+      "participants": [
+        "Minnesota Twins",
+        "Kansas City Royals"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1633099678,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/new-york-mets-vs-cleveland-guardians/1633099678/#all",
+      "path": "/en/baseball/mlb/new-york-mets-vs-cleveland-guardians/1633099678/",
+      "league": "MLB",
+      "start_time": "2026-08-05T22:40:00Z",
+      "label": "New York Mets vs Cleveland Guardians",
+      "participants": [
+        "New York Mets",
+        "Cleveland Guardians"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1633095557,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/pittsburgh-pirates-vs-milwaukee-brewers/1633095557/#all",
+      "path": "/en/baseball/mlb/pittsburgh-pirates-vs-milwaukee-brewers/1633095557/",
+      "league": "MLB",
+      "start_time": "2026-08-05T23:40:00Z",
+      "label": "Pittsburgh Pirates vs Milwaukee Brewers",
+      "participants": [
+        "Pittsburgh Pirates",
+        "Milwaukee Brewers"
+      ],
+      "props": [
+        {
+          "stat": "home_runs",
+          "player": "Brandon Lowe",
+          "line": 0.5,
+          "market_id": 1633401681,
+          "decimal_over": 5.45,
+          "decimal_under": 1.128,
+          "american_over": 445,
+          "american_under": -779
+        },
+        {
+          "stat": "home_runs",
+          "player": "Bryan Reynolds",
+          "line": 0.5,
+          "market_id": 1633401702,
+          "decimal_over": 5.45,
+          "decimal_under": 1.128,
+          "american_over": 445,
+          "american_under": -779
+        },
+        {
+          "stat": "home_runs",
+          "player": "Esmerlyn Valdez",
+          "line": 0.5,
+          "market_id": 1633401723,
+          "decimal_over": 4.19,
+          "decimal_under": 1.203,
+          "american_over": 319,
+          "american_under": -492
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Kyle Harrison",
+          "line": 5.5,
+          "market_id": 1633401747,
+          "decimal_over": 1.725,
+          "decimal_under": 2.04,
+          "american_over": -138,
+          "american_under": 104
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Paul Skenes",
+          "line": 6.5,
+          "market_id": 1633401759,
+          "decimal_over": 1.676,
+          "decimal_under": 2.11,
+          "american_over": -148,
+          "american_under": 111
+        }
+      ]
+    },
+    {
+      "matchup_id": 1633099714,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/san-diego-padres-vs-arizona-diamondbacks/1633099714/#all",
+      "path": "/en/baseball/mlb/san-diego-padres-vs-arizona-diamondbacks/1633099714/",
+      "league": "MLB",
+      "start_time": "2026-08-06T01:40:00Z",
+      "label": "San Diego Padres vs Arizona Diamondbacks",
+      "participants": [
+        "San Diego Padres",
+        "Arizona Diamondbacks"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1633091908,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/st-louis-cardinals-vs-new-york-yankees/1633091908/#all",
+      "path": "/en/baseball/mlb/st-louis-cardinals-vs-new-york-yankees/1633091908/",
+      "league": "MLB",
+      "start_time": "2026-08-05T23:05:00Z",
+      "label": "St. Louis Cardinals vs New York Yankees",
+      "participants": [
+        "St. Louis Cardinals",
+        "New York Yankees"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1633091868,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/tampa-bay-rays-vs-colorado-rockies/1633091868/#all",
+      "path": "/en/baseball/mlb/tampa-bay-rays-vs-colorado-rockies/1633091868/",
+      "league": "MLB",
+      "start_time": "2026-08-05T19:10:00Z",
+      "label": "Tampa Bay Rays vs Colorado Rockies",
+      "participants": [
+        "Tampa Bay Rays",
+        "Colorado Rockies"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1633070360,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/toronto-blue-jays-vs-houston-astros/1633070360/#all",
+      "path": "/en/baseball/mlb/toronto-blue-jays-vs-houston-astros/1633070360/",
+      "league": "MLB",
+      "start_time": "2026-08-05T18:10:00Z",
+      "label": "Toronto Blue Jays vs Houston Astros",
+      "participants": [
+        "Toronto Blue Jays",
+        "Houston Astros"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1633099679,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/washington-nationals-vs-philadelphia-phillies/1633099679/#all",
+      "path": "/en/baseball/mlb/washington-nationals-vs-philadelphia-phillies/1633099679/",
+      "league": "MLB",
+      "start_time": "2026-08-05T22:40:00Z",
+      "label": "Washington Nationals vs Philadelphia Phillies",
+      "participants": [
+        "Washington Nationals",
+        "Philadelphia Phillies"
+      ],
+      "props": []
+    }
+  ]
+}

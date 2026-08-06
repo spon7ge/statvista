@@ -1,0 +1,456 @@
+{
+  "fetched_at": "2026-08-05T17:52:15-07:00",
+  "source": "pinnacle_selenium",
+  "sport": "baseball",
+  "league": "mlb",
+  "list_page": "https://www.pinnacle.com/en/baseball/mlb/matchups/#all",
+  "parallel_workers_configured": 5,
+  "parallel_workers_effective": 5,
+  "games_per_worker_target": 2,
+  "arcadia_timeout_s": 90.0,
+  "arcadia_poll_s": 0.22,
+  "snapshot_kind": "props",
+  "games": [
+    {
+      "matchup_id": 1633114353,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/athletics-vs-cincinnati-reds/1633114353/#all",
+      "path": "/en/baseball/mlb/athletics-vs-cincinnati-reds/1633114353/",
+      "league": "MLB",
+      "start_time": "2026-08-06T16:40:00Z",
+      "label": "Athletics vs Cincinnati Reds",
+      "participants": [
+        "Athletics",
+        "Cincinnati Reds"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1633146191,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/chicago-white-sox-vs-boston-red-sox/1633146191/#all",
+      "path": "/en/baseball/mlb/chicago-white-sox-vs-boston-red-sox/1633146191/",
+      "league": "MLB",
+      "start_time": "2026-08-06T23:10:00Z",
+      "label": "Chicago White Sox vs Boston Red Sox",
+      "participants": [
+        "Chicago White Sox",
+        "Boston Red Sox"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1633101459,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/detroit-tigers-vs-seattle-mariners/1633101459/#all",
+      "path": "/en/baseball/mlb/detroit-tigers-vs-seattle-mariners/1633101459/",
+      "league": "MLB",
+      "start_time": "2026-08-06T01:40:00Z",
+      "label": "Detroit Tigers vs Seattle Mariners",
+      "participants": [
+        "Detroit Tigers",
+        "Seattle Mariners"
+      ],
+      "props": [
+        {
+          "stat": "strikeouts",
+          "player": "Bryan Woo",
+          "line": 6.5,
+          "market_id": 1633401285,
+          "decimal_over": 2.15,
+          "decimal_under": 1.654,
+          "american_over": 115,
+          "american_under": -153
+        },
+        {
+          "stat": "home_runs",
+          "player": "Cal Raleigh",
+          "line": 0.5,
+          "market_id": 1633401291,
+          "decimal_over": 4.56,
+          "decimal_under": 1.176,
+          "american_over": 356,
+          "american_under": -568
+        },
+        {
+          "stat": "home_runs",
+          "player": "Dominic Canzone",
+          "line": 0.5,
+          "market_id": 1633401321,
+          "decimal_over": 5.45,
+          "decimal_under": 1.128,
+          "american_over": 445,
+          "american_under": -779
+        },
+        {
+          "stat": "home_runs",
+          "player": "Julio Rodriguez",
+          "line": 0.5,
+          "market_id": 1633401339,
+          "decimal_over": 5.3,
+          "decimal_under": 1.135,
+          "american_over": 430,
+          "american_under": -741
+        },
+        {
+          "stat": "home_runs",
+          "player": "Kevin McGonigle",
+          "line": 0.5,
+          "market_id": 1633401345,
+          "decimal_over": 5.3,
+          "decimal_under": 1.135,
+          "american_over": 430,
+          "american_under": -741
+        },
+        {
+          "stat": "home_runs",
+          "player": "Riley Greene",
+          "line": 0.5,
+          "market_id": 1633401354,
+          "decimal_over": 4.31,
+          "decimal_under": 1.194,
+          "american_over": 331,
+          "american_under": -516
+        },
+        {
+          "stat": "home_runs",
+          "player": "Spencer Torkelson",
+          "line": 0.5,
+          "market_id": 1633401360,
+          "decimal_over": 5.5,
+          "decimal_under": 1.126,
+          "american_over": 450,
+          "american_under": -792
+        },
+        {
+          "stat": "hits_allowed",
+          "player": "Bryan Woo",
+          "line": 4.5,
+          "market_id": 1633447285,
+          "decimal_over": 1.645,
+          "decimal_under": 2.16,
+          "american_over": -155,
+          "american_under": 116
+        },
+        {
+          "stat": "runs",
+          "player": "Bryan Woo",
+          "line": 1.5,
+          "market_id": 1633447291,
+          "decimal_over": 1.575,
+          "decimal_under": 2.3,
+          "american_over": -174,
+          "american_under": 130
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Drew Anderson",
+          "line": 3.5,
+          "market_id": 1633458925,
+          "decimal_over": 2.19,
+          "decimal_under": 1.629,
+          "american_over": 119,
+          "american_under": -159
+        },
+        {
+          "stat": "runs",
+          "player": "Drew Anderson",
+          "line": 1.5,
+          "market_id": 1633458928,
+          "decimal_over": 2.14,
+          "decimal_under": 1.658,
+          "american_over": 114,
+          "american_under": -152
+        },
+        {
+          "stat": "hits_allowed",
+          "player": "Drew Anderson",
+          "line": 2.5,
+          "market_id": 1633458934,
+          "decimal_over": 1.787,
+          "decimal_under": 1.962,
+          "american_over": -127,
+          "american_under": -104
+        }
+      ]
+    },
+    {
+      "matchup_id": 1633114389,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/detroit-tigers-vs-seattle-mariners/1633114389/#all",
+      "path": "/en/baseball/mlb/detroit-tigers-vs-seattle-mariners/1633114389/",
+      "league": "MLB",
+      "start_time": "2026-08-06T20:10:00Z",
+      "label": "Detroit Tigers vs Seattle Mariners",
+      "participants": [
+        "Detroit Tigers",
+        "Seattle Mariners"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1633117067,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/los-angeles-angels-vs-baltimore-orioles/1633117067/#period:1",
+      "path": "/en/baseball/mlb/los-angeles-angels-vs-baltimore-orioles/1633117067/",
+      "league": "MLB",
+      "start_time": "2026-08-06T16:35:00Z",
+      "label": "Los Angeles Angels vs Baltimore Orioles",
+      "participants": [
+        "Los Angeles Angels",
+        "Baltimore Orioles"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1633133762,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/miami-marlins-vs-atlanta-braves/1633133762/#all",
+      "path": "/en/baseball/mlb/miami-marlins-vs-atlanta-braves/1633133762/",
+      "league": "MLB",
+      "start_time": "2026-08-06T23:15:00Z",
+      "label": "Miami Marlins vs Atlanta Braves",
+      "participants": [
+        "Miami Marlins",
+        "Atlanta Braves"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1633146199,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/minnesota-twins-vs-kansas-city-royals/1633146199/#all",
+      "path": "/en/baseball/mlb/minnesota-twins-vs-kansas-city-royals/1633146199/",
+      "league": "MLB",
+      "start_time": "2026-08-06T23:40:00Z",
+      "label": "Minnesota Twins vs Kansas City Royals",
+      "participants": [
+        "Minnesota Twins",
+        "Kansas City Royals"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1633114361,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/new-york-mets-vs-cleveland-guardians/1633114361/#all",
+      "path": "/en/baseball/mlb/new-york-mets-vs-cleveland-guardians/1633114361/",
+      "league": "MLB",
+      "start_time": "2026-08-06T17:10:00Z",
+      "label": "New York Mets vs Cleveland Guardians",
+      "participants": [
+        "New York Mets",
+        "Cleveland Guardians"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1633117074,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/pittsburgh-pirates-vs-milwaukee-brewers/1633117074/#all",
+      "path": "/en/baseball/mlb/pittsburgh-pirates-vs-milwaukee-brewers/1633117074/",
+      "league": "MLB",
+      "start_time": "2026-08-06T18:10:00Z",
+      "label": "Pittsburgh Pirates vs Milwaukee Brewers",
+      "participants": [
+        "Pittsburgh Pirates",
+        "Milwaukee Brewers"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1633099714,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/san-diego-padres-vs-arizona-diamondbacks/1633099714/#all",
+      "path": "/en/baseball/mlb/san-diego-padres-vs-arizona-diamondbacks/1633099714/",
+      "league": "MLB",
+      "start_time": "2026-08-06T01:40:00Z",
+      "label": "San Diego Padres vs Arizona Diamondbacks",
+      "participants": [
+        "San Diego Padres",
+        "Arizona Diamondbacks"
+      ],
+      "props": [
+        {
+          "stat": "home_runs",
+          "player": "Corbin Carroll",
+          "line": 0.5,
+          "market_id": 1633446745,
+          "decimal_over": 5.2,
+          "decimal_under": 1.14,
+          "american_over": 420,
+          "american_under": -716
+        },
+        {
+          "stat": "home_runs",
+          "player": "Fernando Tatis Jr.",
+          "line": 0.5,
+          "market_id": 1633446748,
+          "decimal_over": 5.0,
+          "decimal_under": 1.15,
+          "american_over": 400,
+          "american_under": -668
+        },
+        {
+          "stat": "home_runs",
+          "player": "Jackson Merrill",
+          "line": 0.5,
+          "market_id": 1633446760,
+          "decimal_over": 6.0,
+          "decimal_under": 1.107,
+          "american_over": 500,
+          "american_under": -932
+        },
+        {
+          "stat": "home_runs",
+          "player": "Ketel Marte",
+          "line": 0.5,
+          "market_id": 1633446799,
+          "decimal_over": 4.19,
+          "decimal_under": 1.203,
+          "american_over": 319,
+          "american_under": -493
+        },
+        {
+          "stat": "home_runs",
+          "player": "Lars Nootbaar",
+          "line": 0.5,
+          "market_id": 1633446811,
+          "decimal_over": 7.0,
+          "decimal_under": 1.079,
+          "american_over": 600,
+          "american_under": -1268
+        },
+        {
+          "stat": "home_runs",
+          "player": "Luis Campusano",
+          "line": 0.5,
+          "market_id": 1633446838,
+          "decimal_over": 6.5,
+          "decimal_under": 1.092,
+          "american_over": 550,
+          "american_under": -1089
+        },
+        {
+          "stat": "home_runs",
+          "player": "Manny Machado",
+          "line": 0.5,
+          "market_id": 1633446862,
+          "decimal_over": 4.4,
+          "decimal_under": 1.187,
+          "american_over": 340,
+          "american_under": -535
+        },
+        {
+          "stat": "home_runs",
+          "player": "Nolan Arenado",
+          "line": 0.5,
+          "market_id": 1633446889,
+          "decimal_over": 6.21,
+          "decimal_under": 1.101,
+          "american_over": 521,
+          "american_under": -994
+        },
+        {
+          "stat": "home_runs",
+          "player": "Ty France",
+          "line": 0.5,
+          "market_id": 1633446952,
+          "decimal_over": 7.0,
+          "decimal_under": 1.079,
+          "american_over": 600,
+          "american_under": -1268
+        },
+        {
+          "stat": "hits_allowed",
+          "player": "Casey Mize",
+          "line": 4.5,
+          "market_id": 1633447816,
+          "decimal_over": 1.82,
+          "decimal_under": 1.917,
+          "american_over": -122,
+          "american_under": -109
+        },
+        {
+          "stat": "runs",
+          "player": "Casey Mize",
+          "line": 2.5,
+          "market_id": 1633447822,
+          "decimal_over": 2.09,
+          "decimal_under": 1.69,
+          "american_over": 109,
+          "american_under": -145
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Casey Mize",
+          "line": 4.5,
+          "market_id": 1633447825,
+          "decimal_over": 2.13,
+          "decimal_under": 1.667,
+          "american_over": 113,
+          "american_under": -150
+        },
+        {
+          "stat": "hits_allowed",
+          "player": "Mitch Bratt",
+          "line": 4.5,
+          "market_id": 1633447828,
+          "decimal_over": 1.617,
+          "decimal_under": 2.21,
+          "american_over": -162,
+          "american_under": 121
+        },
+        {
+          "stat": "runs",
+          "player": "Mitch Bratt",
+          "line": 2.5,
+          "market_id": 1633447834,
+          "decimal_over": 2.02,
+          "decimal_under": 1.741,
+          "american_over": 102,
+          "american_under": -135
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Mitch Bratt",
+          "line": 3.5,
+          "market_id": 1633447837,
+          "decimal_over": 2.22,
+          "decimal_under": 1.613,
+          "american_over": 122,
+          "american_under": -163
+        }
+      ]
+    },
+    {
+      "matchup_id": 1633146213,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/san-diego-padres-vs-arizona-diamondbacks/1633146213/#all",
+      "path": "/en/baseball/mlb/san-diego-padres-vs-arizona-diamondbacks/1633146213/",
+      "league": "MLB",
+      "start_time": "2026-08-07T01:40:00Z",
+      "label": "San Diego Padres vs Arizona Diamondbacks",
+      "participants": [
+        "San Diego Padres",
+        "Arizona Diamondbacks"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1633114373,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/toronto-blue-jays-vs-chicago-cubs/1633114373/#period:0",
+      "path": "/en/baseball/mlb/toronto-blue-jays-vs-chicago-cubs/1633114373/",
+      "league": "MLB",
+      "start_time": "2026-08-06T18:20:00Z",
+      "label": "Toronto Blue Jays vs Chicago Cubs",
+      "participants": [
+        "Toronto Blue Jays",
+        "Chicago Cubs"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1633133750,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/washington-nationals-vs-philadelphia-phillies/1633133750/#all",
+      "path": "/en/baseball/mlb/washington-nationals-vs-philadelphia-phillies/1633133750/",
+      "league": "MLB",
+      "start_time": "2026-08-06T22:05:00Z",
+      "label": "Washington Nationals vs Philadelphia Phillies",
+      "participants": [
+        "Washington Nationals",
+        "Philadelphia Phillies"
+      ],
+      "props": []
+    }
+  ]
+}
