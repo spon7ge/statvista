@@ -74,13 +74,13 @@ function rowKey(row: ApiMlbPropRow): string {
 function Skeletons() {
   return (
     <div
-      className="columns-1 gap-3 md:columns-2 lg:columns-3"
+      className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3"
       aria-label="Loading MLB prop picks"
     >
       {Array.from({ length: 6 }, (_, i) => (
         <div
           key={i}
-          className="mb-3 h-28 break-inside-avoid animate-pulse rounded-xl bg-[#3a3d42]"
+          className="h-28 animate-pulse rounded-xl bg-[#3a3d42]"
         />
       ))}
     </div>
@@ -294,19 +294,18 @@ export function MlbPropPicksList({
         <p className="px-1 text-[14px] text-white/40">{emptyCopy}</p>
       ) : (
         <div
-          data-testid="mlb-prop-picks-masonry"
-          className="columns-1 gap-3 md:columns-2 lg:columns-3"
+          data-testid="mlb-prop-picks-grid"
+          className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3"
         >
           {props.map((row) => {
             const key = rowKey(row);
             return (
-              <div key={key} className="mb-3 break-inside-avoid">
-                <PropPickCard
-                  row={row}
-                  expanded={expandedKeys.has(key)}
-                  onToggle={() => toggleRow(key)}
-                />
-              </div>
+              <PropPickCard
+                key={key}
+                row={row}
+                expanded={expandedKeys.has(key)}
+                onToggle={() => toggleRow(key)}
+              />
             );
           })}
         </div>

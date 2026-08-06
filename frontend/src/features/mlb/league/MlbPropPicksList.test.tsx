@@ -273,8 +273,8 @@ describe("MlbPropPicksList", () => {
     ).toBeInTheDocument();
   });
 
-  it("lays out props in independent columns so expand only shifts one column", () => {
-    const { container } = render(
+  it("lays out props row-major so highest edges fill across the top", () => {
+    render(
       <MlbPropPicksList
         props={[judge, noRead]}
         format="power"
@@ -282,12 +282,10 @@ describe("MlbPropPicksList", () => {
         breakevenPct={54.3}
       />,
     );
-    const masonry = screen.getByTestId("mlb-prop-picks-masonry");
-    expect(masonry.className).toMatch(/columns-1/);
-    expect(masonry.className).toMatch(/md:columns-2/);
-    expect(masonry.className).toMatch(/lg:columns-3/);
-    const cardWrap = screen.getAllByTestId("mlb-prop-row")[0]!.parentElement;
-    expect(cardWrap?.className).toMatch(/break-inside-avoid/);
-    expect(container.querySelector(".grid-cols-1")).toBeNull();
+    const grid = screen.getByTestId("mlb-prop-picks-grid");
+    expect(grid.className).toMatch(/grid-cols-1/);
+    expect(grid.className).toMatch(/md:grid-cols-2/);
+    expect(grid.className).toMatch(/lg:grid-cols-3/);
+    expect(grid.className).not.toMatch(/columns-/);
   });
 });

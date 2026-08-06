@@ -79,8 +79,8 @@ No chips, fair, avatar-from-abbrev, or source-tier on the collapsed face.
 
 ### Grid / expand
 
-- Keep CSS columns masonry (expand only shifts that column).
-- Expanded panel unchanged.
+- Use CSS grid (`1` / `2` / `3` cols) so ranked edges fill **row-major** (left→right, then down). Highest edges appear across the top rows, not stacked down the first column.
+- Expanding a card can shift its row; that tradeoff is preferred over column-fill reading order.
 
 ### Tests
 
