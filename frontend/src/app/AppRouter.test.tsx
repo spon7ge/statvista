@@ -185,7 +185,7 @@ describe("AppRouter", () => {
       await screen.findByRole("heading", { name: "MLB Prop Picks" }),
     ).toBeInTheDocument();
     expect(
-      await screen.findByText("No MLB prop picks available."),
+      await screen.findByText("No PrizePicks board available."),
     ).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Prop Picks" })).toHaveAttribute(
       "aria-current",
