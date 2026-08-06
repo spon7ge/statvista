@@ -161,7 +161,7 @@ function PitcherCard({
   const handLetter = formatPitcherHand(pitcher.hand);
 
   return (
-    <div className="rounded-lg border border-white/10 p-3">
+    <div className="rounded-lg bg-[#45484d] p-3">
       <h3
         aria-label={formatPitcherTitle(pitcher.hand, pitcher.name)}
         className="text-center text-[18px] font-semibold text-white"

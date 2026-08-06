@@ -63,8 +63,8 @@ export function HomeNav() {
                     aria-current={active ? "page" : undefined}
                     className={
                       active
-                        ? "flex items-center gap-2 rounded-md bg-white/10 px-3 py-1 text-[18px] font-medium text-white no-underline"
-                        : "flex items-center gap-2 rounded-md px-3 py-1 text-[18px] font-medium text-white no-underline transition-colors hover:bg-white/5"
+                        ? "flex items-center gap-2 rounded-md bg-white/10 px-3 py-1 text-[14px] font-medium text-white no-underline"
+                        : "flex items-center gap-2 rounded-md px-3 py-1 text-[14px] font-medium text-white no-underline transition-colors hover:bg-white/5"
                     }
                   >
                     <img
@@ -88,8 +88,8 @@ export function HomeNav() {
                 onClick={() => setLeagueOpen((open) => !open)}
                 className={
                   activeLeague || aboutActive
-                    ? "inline-flex items-center gap-1.5 rounded-md bg-white/10 px-2.5 py-1 text-[18px] font-medium text-white"
-                    : "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[18px] font-medium text-white transition-colors hover:bg-white/5"
+                    ? "inline-flex items-center gap-1.5 rounded-md bg-white/10 px-2.5 py-1 text-[14px] font-medium text-white"
+                    : "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[14px] font-medium text-white transition-colors hover:bg-white/5"
                 }
               >
                 {activeLeague ? (
@@ -131,8 +131,8 @@ export function HomeNav() {
                           onClick={() => setLeagueOpen(false)}
                           className={
                             active
-                              ? "flex items-center gap-2 px-2.5 py-1.5 text-[18px] font-medium text-white no-underline bg-white/10"
-                              : "flex items-center gap-2 px-2.5 py-1.5 text-[18px] font-medium text-white no-underline hover:bg-white/5"
+                              ? "flex items-center gap-2 px-2.5 py-1.5 text-[14px] font-medium text-white no-underline bg-white/10"
+                              : "flex items-center gap-2 px-2.5 py-1.5 text-[14px] font-medium text-white no-underline hover:bg-white/5"
                           }
                         >
                           <img
@@ -154,8 +154,8 @@ export function HomeNav() {
                       onClick={() => setLeagueOpen(false)}
                       className={
                         aboutActive
-                          ? "flex items-center gap-2 px-2.5 py-1.5 text-[18px] font-medium text-white no-underline bg-white/10"
-                          : "flex items-center gap-2 px-2.5 py-1.5 text-[18px] font-medium text-white no-underline hover:bg-white/5"
+                          ? "flex items-center gap-2 px-2.5 py-1.5 text-[14px] font-medium text-white no-underline bg-white/10"
+                          : "flex items-center gap-2 px-2.5 py-1.5 text-[14px] font-medium text-white no-underline hover:bg-white/5"
                       }
                     >
                       About
@@ -170,8 +170,8 @@ export function HomeNav() {
               aria-current={aboutActive ? "page" : undefined}
               className={
                 aboutActive
-                  ? "hidden rounded-md bg-white/10 px-2.5 py-1 text-[18px] font-medium text-white no-underline sm:inline"
-                  : "hidden rounded-md px-2.5 py-1 text-[18px] font-medium text-white no-underline transition-colors hover:bg-white/5 sm:inline"
+                  ? "hidden rounded-md bg-white/10 px-2.5 py-1 text-[14px] font-medium text-white no-underline sm:inline"
+                  : "hidden rounded-md px-2.5 py-1 text-[14px] font-medium text-white no-underline transition-colors hover:bg-white/5 sm:inline"
               }
             >
               About

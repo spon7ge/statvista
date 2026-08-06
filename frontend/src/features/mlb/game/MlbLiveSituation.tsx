@@ -57,7 +57,7 @@ function CallValueCard({
   stakes: { label: string; homeWinDelta: number };
 }) {
   return (
-    <div className="rounded-lg border border-white/10 px-3 py-2.5">
+    <div className="rounded-lg bg-[#45484d] px-3 py-2.5">
       <div className="flex items-start justify-between gap-2">
         <p className="text-[10px] font-medium uppercase tracking-wide text-white/40">
           CALL VALUE

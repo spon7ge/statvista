@@ -117,9 +117,11 @@ describe("GameDetailPage", () => {
     expect(await screen.findByText("Matchup prediction")).toBeInTheDocument();
     expect(document.querySelector(".bg-\\[\\#141414\\]")).toBeNull();
     expect(screen.getByText("Matchup prediction").closest("section")).toHaveClass(
-      "bg-white/[0.03]",
-      "border-white/10",
+      "bg-[#3a3d42]",
     );
+    expect(
+      screen.getByText("Matchup prediction").closest("section"),
+    ).not.toHaveClass("border-white/10");
   });
 
   it("shows live panels for live games", async () => {

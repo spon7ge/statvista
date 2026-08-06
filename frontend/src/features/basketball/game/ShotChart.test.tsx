@@ -124,9 +124,9 @@ describe("ShotChart", () => {
     const heading = screen.getByRole("heading", { name: /shot chart/i });
     expect(heading.closest("section")).toHaveClass(
       "rounded-xl",
-      "border-white/10",
-      "bg-white/[0.03]",
+      "bg-[#3a3d42]",
       "!p-3",
     );
+    expect(heading.closest("section")).not.toHaveClass("border-white/10");
   });
 });

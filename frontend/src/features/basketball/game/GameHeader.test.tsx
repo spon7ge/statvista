@@ -119,6 +119,7 @@ describe("GameHeader", () => {
     const { container } = renderHeader();
     expect(container.querySelector(".bg-\\[\\#141414\\]")).toBeNull();
     const card = screen.getByText("Golden State Valkyries").closest("div.rounded-xl");
-    expect(card).toHaveClass("border-white/10", "bg-white/[0.03]", "p-4");
+    expect(card).toHaveClass("bg-[#3a3d42]", "p-4");
+    expect(card).not.toHaveClass("border-white/10");
   });
 });

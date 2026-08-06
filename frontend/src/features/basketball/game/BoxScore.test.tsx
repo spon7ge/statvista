@@ -113,11 +113,7 @@ describe("BoxScore", () => {
     });
     render(<BoxScore detail={fixture} />);
     const section = screen.getByText(fixture.away.abbrev).closest("section");
-    expect(section).toHaveClass(
-      "rounded-xl",
-      "border-white/10",
-      "bg-white/[0.03]",
-      "!p-3",
-    );
+    expect(section).toHaveClass("rounded-xl", "bg-[#3a3d42]", "!p-3");
+    expect(section).not.toHaveClass("border-white/10");
   });
 });

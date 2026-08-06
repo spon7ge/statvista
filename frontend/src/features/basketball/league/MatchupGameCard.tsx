@@ -92,8 +92,7 @@ export function MatchupGameCard({ game }: { game: MatchupGame }) {
   const venueLabel = game.venue
     ? [game.venue, game.venueCity].filter(Boolean).join(" · ")
     : null;
-  const baseClassName =
-    "block rounded-xl border border-white/10 bg-white/[0.03] p-4";
+  const baseClassName = "block rounded-xl bg-[#3a3d42] p-4";
   const odds: MatchupOdds | null | undefined = game.odds;
   const oddsLabel = odds ? formatOddsPill(odds) : null;
 
@@ -162,7 +161,7 @@ export function MatchupGameCard({ game }: { game: MatchupGame }) {
     return (
       <Link
         to={href}
-        className={`${baseClassName} transition-colors hover:border-white/20`}
+        className={`${baseClassName} transition-colors hover:bg-[#45484d]`}
       >
         {content}
       </Link>
