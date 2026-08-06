@@ -44,10 +44,6 @@ function formatFair(value: number | null): string {
   return `${value.toFixed(1)}%`;
 }
 
-function formatAmericanOdds(odds: number): string {
-  return odds > 0 ? `+${odds}` : `${odds}`.replace("-", "−");
-}
-
 function formatFormatLabel(format: string): string {
   if (format.length === 0) return format;
   return format.charAt(0).toUpperCase() + format.slice(1);
@@ -162,22 +158,13 @@ function BookQuoteCell({
       className="flex flex-col items-center gap-0.5 rounded-md bg-[#45484d] px-2 py-1.5 text-center"
       title={title}
     >
-      <span className="text-[14px] font-medium tracking-wide text-white/45 uppercase">
+      <span className="text-[14px] font-medium tracking-wide text-white uppercase">
         {BOOK_LABELS[bookKey] ?? bookKey}
-        {quote?.role === "comparison" ? (
-          <span className="ml-1 text-white/30">(cmp)</span>
-        ) : null}
       </span>
       {quote ? (
-        <>
-          <span className="font-mono text-[18px] text-white/90">
-            {sideLabel(quote.side)}{" "}
-            {quote.fair_pct !== null ? formatFair(quote.fair_pct) : "—"}
-          </span>
-          <span className="text-[14px] text-white/40">
-            {quote.american !== null ? formatAmericanOdds(quote.american) : "—"}
-          </span>
-        </>
+        <span className="font-mono text-[18px] text-white/90">
+          {quote.fair_pct !== null ? formatFair(quote.fair_pct) : "—"}
+        </span>
       ) : (
         <span className="text-[14px] text-white/20">No line</span>
       )}

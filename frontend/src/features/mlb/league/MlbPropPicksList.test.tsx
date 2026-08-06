@@ -191,7 +191,6 @@ describe("MlbPropPicksList", () => {
     const expanded = screen.getByTestId("mlb-prop-row-expand");
     expect(within(expanded).getByText("ProphetX")).toBeInTheDocument();
     expect(within(expanded).getByText("Pinnacle")).toBeInTheDocument();
-    expect(within(expanded).getByText(/cmp/i)).toBeInTheDocument();
     expect(within(expanded).getByText("Caesars")).toBeInTheDocument();
     expect(within(expanded).getByText("Kalshi")).toBeInTheDocument();
     expect(within(expanded).getByText("bet365")).toBeInTheDocument();
@@ -202,7 +201,7 @@ describe("MlbPropPicksList", () => {
     );
   });
 
-  it("marks Parlay soft books as comparison on expand", async () => {
+  it("shows Parlay soft book quotes on expand when present", async () => {
     const user = userEvent.setup();
     const withCmp = row({
       player_name: "Aaron Judge",
@@ -234,8 +233,9 @@ describe("MlbPropPicksList", () => {
     );
     await user.click(screen.getByRole("button", { name: /Aaron Judge/i }));
     const expanded = screen.getByTestId("mlb-prop-row-expand");
-    const caesarsLabels = within(expanded).getAllByText(/cmp/i);
-    expect(caesarsLabels.length).toBeGreaterThanOrEqual(2);
+    expect(within(expanded).getByText("Caesars")).toBeInTheDocument();
+    expect(within(expanded).getByText("Kalshi")).toBeInTheDocument();
+    expect(within(expanded).queryByText(/\(cmp\)/i)).not.toBeInTheDocument();
   });
 
   it("renders No Sharp Read rows muted with edge em-dash, parked last", () => {
