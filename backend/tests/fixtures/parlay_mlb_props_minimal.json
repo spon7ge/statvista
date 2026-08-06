@@ -1,0 +1,50 @@
+[
+  {
+    "bookmaker": "novig",
+    "bookmaker_title": "Novig",
+    "player": "Aaron Judge",
+    "market_key": "player_total_bases",
+    "market": "Total Bases",
+    "line": 1.5,
+    "over_price": -130,
+    "under_price": 110,
+    "home_team": "New York Yankees",
+    "away_team": "Boston Red Sox"
+  },
+  {
+    "bookmaker": "fanduel",
+    "bookmaker_title": "FanDuel",
+    "player": "Aaron Judge",
+    "market_key": "player_total_bases",
+    "market": "Total Bases",
+    "line": 1.5,
+    "over_price": -125,
+    "under_price": 105,
+    "home_team": "New York Yankees",
+    "away_team": "Boston Red Sox"
+  },
+  {
+    "bookmaker": "draftkings",
+    "bookmaker_title": "DraftKings",
+    "player": "Aaron Judge",
+    "market_key": "player_total_bases",
+    "market": "Total Bases",
+    "line": 1.5,
+    "over_price": -128,
+    "under_price": 108,
+    "home_team": "New York Yankees",
+    "away_team": "Boston Red Sox"
+  },
+  {
+    "bookmaker": "novig",
+    "bookmaker_title": "Novig",
+    "player": "Aaron Judge",
+    "market_key": "player_total_bases",
+    "market": "Total Bases",
+    "line": 2.5,
+    "over_price": 140,
+    "under_price": -165,
+    "home_team": "New York Yankees",
+    "away_team": "Boston Red Sox"
+  }
+]

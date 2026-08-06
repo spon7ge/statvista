@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 from datetime import date as Date
+from typing import Literal
 
 from fastapi import APIRouter, HTTPException, Query, Response
 
@@ -9,11 +10,13 @@ from app.domains.mlb.game_detail import get_mlb_game_detail
 from app.domains.mlb.lineup_matchup import get_mlb_lineup_matchup
 from app.domains.mlb.lineups import get_mlb_lineups
 from app.domains.mlb.odds import get_today_odds
+from app.domains.mlb.props import get_mlb_props_today
 from app.domains.mlb.schemas import (
     MlbGameDetail,
     MlbLineupMatchupResponse,
     MlbLineupsResponse,
     MlbOddsResponse,
+    MlbPropsResponse,
     MlbScoreboardResponse,
 )
 from app.domains.mlb.scoreboard import get_scoreboard_for_date, get_today_scoreboard
@@ -66,6 +69,24 @@ async def mlb_scoreboard_today(response: Response) -> MlbScoreboardResponse:
 async def mlb_odds_today(response: Response) -> MlbOddsResponse:
     response.headers["Cache-Control"] = "no-store"
     return await get_today_odds()
+
+
+@router.get("/mlb/props/today", response_model=MlbPropsResponse)
+async def mlb_props_today(
+    response: Response,
+    app: Literal["prizepicks", "underdog"] = Query(...),
+    format: str = Query(..., min_length=1),
+    legs: int = Query(..., ge=2, le=6),
+) -> MlbPropsResponse:
+    response.headers["Cache-Control"] = "no-store"
+    try:
+        return await get_mlb_props_today(app=app, format=format, legs=legs)
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=422,
+            detail=str(exc),
+            headers=_NO_STORE,
+        ) from exc
 
 
 @router.get("/mlb/games/{game_pk}", response_model=MlbGameDetail)

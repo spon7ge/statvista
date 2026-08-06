@@ -91,11 +91,15 @@ def _fetch_rows(sql: str, league: str) -> list[dict[str, Any]]:
 
 
 def fetch_latest_prizepicks(league: str = "wnba") -> list[dict]:
-    """Return rows from the latest PrizePicks snapshot for *league*."""
+    """Return rows from the latest PrizePicks snapshot for *league*.
+
+    Includes ``scraped_at`` so callers can derive a v1 "line last changed"
+    timestamp without a per-quote change-history table.
+    """
     lg = _normalized_league(league, "wnba")
     table = _PRIZEPICKS_TABLE.get(lg, "wnba_prizepicks")
     sql = _latest_snapshot_sql(
-        table, "player_name, stat_type, line_score, odds_type"
+        table, "player_name, stat_type, line_score, odds_type, scraped_at"
     )
     return _fetch_rows(sql, lg)
 
@@ -105,7 +109,8 @@ def fetch_latest_underdog(league: str = "wnba") -> list[dict]:
     lg = _normalized_league(league, "wnba")
     table = _UNDERDOG_TABLE.get(lg, "wnba_underdogs")
     sql = _latest_snapshot_sql(
-        table, "player_name, stat_name, line_score, side, american_price"
+        table,
+        "player_name, stat_name, line_score, side, american_price, scraped_at",
     )
     return _fetch_rows(sql, lg)
 
@@ -115,7 +120,8 @@ def fetch_latest_pinnacle(league: str = "wnba") -> list[dict]:
     lg = _normalized_league(league, "wnba")
     table = _PINNACLE_TABLE.get(lg, "wnba_pinnacle")
     sql = _latest_snapshot_sql(
-        table, "player_name, market_type, side, line_score, american_price"
+        table,
+        "player_name, market_type, side, line_score, american_price, scraped_at",
     )
     return _fetch_rows(sql, lg)
 

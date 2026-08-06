@@ -1,0 +1,36 @@
+from app.domains.mlb.prop_stat_keys import (
+    canonical_stat_key_from_pp_mlb,
+    canonical_stat_key_from_sharp_mlb,
+    canonical_stat_key_from_ud_mlb,
+)
+
+
+def test_pp_core_stats():
+    assert canonical_stat_key_from_pp_mlb("Total Bases") == "total_bases"
+    assert canonical_stat_key_from_pp_mlb("Hits+Runs+RBIs") == "hits_runs_rbis"
+    assert canonical_stat_key_from_pp_mlb("Hitter Strikeouts") == "batter_strikeouts"
+    assert canonical_stat_key_from_pp_mlb("Pitcher Strikeouts") == "pitcher_strikeouts"
+
+
+def test_pp_unmatched_returns_none():
+    assert canonical_stat_key_from_pp_mlb("Pitcher Strikeouts (Combo)") is None
+    assert canonical_stat_key_from_pp_mlb("1st Inning Runs Allowed") is None
+
+
+def test_ud_core_stats():
+    assert canonical_stat_key_from_ud_mlb("total_bases") == "total_bases"
+    assert canonical_stat_key_from_ud_mlb("strikeouts") == "pitcher_strikeouts"
+    assert canonical_stat_key_from_ud_mlb("batter_strikeouts") == "batter_strikeouts"
+
+
+def test_sharp_prefixed_and_bare_forms():
+    assert canonical_stat_key_from_sharp_mlb("player_total_bases") == "total_bases"
+    assert canonical_stat_key_from_sharp_mlb("total_bases") == "total_bases"
+    assert canonical_stat_key_from_sharp_mlb("batter_strikeouts") == "batter_strikeouts"
+    assert canonical_stat_key_from_sharp_mlb("pitcher_strikeouts") == "pitcher_strikeouts"
+    # ProphetX emits bare "strikeouts" for pitcher K props today.
+    assert canonical_stat_key_from_sharp_mlb("strikeouts") == "pitcher_strikeouts"
+
+
+def test_sharp_unmatched_returns_none():
+    assert canonical_stat_key_from_sharp_mlb("player_first_touchdown") is None

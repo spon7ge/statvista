@@ -110,6 +110,7 @@ main.tsx
 | `/games/:espnEventId` | Full game center | `useGameDetail` | `GET /api/wnba/games/{id}` | ESPN summary; RotoWire / ESPN roster for scheduled starters |
 | `/nba/matchups` | Placeholder | — | none | “NBA matchups coming soon” |
 | `/mlb/matchups?date=` | Daily slate; odds when date is in odds window | `useMlbScoreboard(date)`, `useMlbOdds` | scoreboard (`/today` or `?date=`), `GET /api/mlb/odds/today` | Stats API schedule; Sharp MLB run line/total (DK prefer FD); cards → `/mlb/games/:gamePk` |
+| `/mlb/prop_picks` *(API only; page pending frontend tasks)* | DFS-first, +EV-ranked prop board for PrizePicks/Underdog | — | `GET /api/mlb/props/today?app=&format=&legs=` | Exact-line join of Supabase ProphetX/Pinnacle/PrizePicks/Underdog snapshots + live Parlay Novig/FanDuel/DraftKings; server computes fair%/edge/source_tier/recency per row (never blends Pinnacle into fair) |
 | `/mlb/games/:gamePk` | Game detail: pregame broadcast header (Preview shows RotoWire lineups when matched with right-rail odds board beside lineups, away/team tabs stub; under lineups: season Team Stats + Injuries), live Summary/Box center (ESPN-style matchup + pitch zone above play feed, linescore/team stats/win prob/hit chart in Summary right rail, box score side-by-side in Box tab), or final center | `useMlbGameDetail(gamePk)`, `useMlbLineups(date)`, `useMlbLineupMatchup`, `useMlbOdds` | `GET /api/mlb/games/{gamePk}`, `GET /api/mlb/lineups?date=` (Preview tab), `GET /api/mlb/lineups/matchup?date=&away=&home=`, `GET /api/mlb/odds/today` (Preview odds board) | MLB Stats API (+ ESPN when available); RotoWire projected lineups for Preview, matched by abbrev with both sides' pitcher + 9 batters complete; Stats API enriches the matched lineup with season pitching and career BvP; Pinnacle `board` on odds/today for Preview right-rail when matched; Preview soft-merges season YTD team hitting/pitching (Stats) + injuries (ESPN) under projected lineups even when lineups are unavailable; halftime falls back to compact header |
 
 ### Cross-cutting API behavior
@@ -201,5 +202,6 @@ Feature-level history lives under `docs/superpowers/specs/` and `docs/superpower
 | GET | `/api/mlb/scoreboard/today` | `mlb_scoreboard` (MLB Stats API) |
 | GET | `/api/mlb/scoreboard?date=` | `mlb_scoreboard` |
 | GET | `/api/mlb/odds/today` | `mlb_odds` (Sharp `league=mlb`) |
+| GET | `/api/mlb/props/today` | `mlb.props` (+ `prop_fair`, `prop_formats`, `prop_stat_keys`, `odds_snapshots`) |
 
 Health (ops, not UI): `GET /api/health`.
