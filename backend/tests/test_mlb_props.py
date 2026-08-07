@@ -145,6 +145,64 @@ def test_exact_line_mismatch_omits_book(monkeypatch):
     assert row.source_tier == "no_sharp_read"
 
 
+def test_exact_line_attaches_prophetx_alt_when_favourite_differs(monkeypatch):
+    now = datetime.now(timezone.utc)
+    _stub_snapshots(
+        monkeypatch,
+        dfs_pp=[
+            {
+                "player_name": "Mookie Betts",
+                "stat_type": "Total Bases",
+                "line_score": 1.5,
+                "odds_type": "standard",
+                "scraped_at": now,
+            },
+        ],
+        prophetx=[
+            {
+                "player_name": "Mookie Betts",
+                "stat_name": "total_bases",
+                "line_score": 2.5,
+                "side": "over",
+                "american_price": -105,
+                "is_main": True,
+                "scraped_at": now,
+            },
+            {
+                "player_name": "Mookie Betts",
+                "stat_name": "total_bases",
+                "line_score": 1.5,
+                "side": "over",
+                "american_price": -130,
+                "is_main": False,
+                "scraped_at": now,
+            },
+            {
+                "player_name": "Mookie Betts",
+                "stat_name": "total_bases",
+                "line_score": 1.5,
+                "side": "under",
+                "american_price": 110,
+                "is_main": False,
+                "scraped_at": now,
+            },
+        ],
+    )
+
+    import asyncio
+
+    response = asyncio.run(
+        svc.get_mlb_props_today(app="prizepicks", format="power", legs=4)
+    )
+
+    assert len(response.props) == 1
+    row = response.props[0]
+    assert row.line == 1.5
+    assert row.books.prophetx is not None
+    assert row.books.prophetx.american == -130
+    assert row.source_tier != "no_sharp_read"
+
+
 def test_pinnacle_is_comparison_only_and_exact_line(monkeypatch):
     now = datetime.now(timezone.utc)
     _stub_snapshots(
