@@ -128,8 +128,14 @@ def canonical_stat_key_from_sharp_mlb(market_key: str) -> str | None:
     Tries the prefixed form first (so ``batter_strikeouts`` and
     ``pitcher_strikeouts`` resolve to distinct keys) before falling back to
     the bare form (ProphetX already emits bare names).
+
+    Parlay alt props use the same base key with a trailing ``_alternate``
+    suffix (e.g. ``player_total_bases_alternate``); strip it once so alts
+    share the main canonical key.
     """
     norm = _norm(market_key)
+    if norm.endswith("_alternate"):
+        norm = norm[: -len("_alternate")]
     for prefix in _SHARP_PREFIXES:
         if not norm.startswith(prefix):
             continue

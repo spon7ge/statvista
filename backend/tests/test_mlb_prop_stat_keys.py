@@ -34,3 +34,26 @@ def test_sharp_prefixed_and_bare_forms():
 
 def test_sharp_unmatched_returns_none():
     assert canonical_stat_key_from_sharp_mlb("player_first_touchdown") is None
+
+
+def test_sharp_strips_alternate_suffix():
+    assert (
+        canonical_stat_key_from_sharp_mlb("player_total_bases_alternate")
+        == "total_bases"
+    )
+    assert (
+        canonical_stat_key_from_sharp_mlb("batter_strikeouts_alternate")
+        == "batter_strikeouts"
+    )
+    assert (
+        canonical_stat_key_from_sharp_mlb("pitcher_strikeouts_alternate")
+        == "pitcher_strikeouts"
+    )
+    # Main key unchanged
+    assert canonical_stat_key_from_sharp_mlb("player_total_bases") == "total_bases"
+
+
+def test_sharp_alternate_and_main_share_canonical_key():
+    main = canonical_stat_key_from_sharp_mlb("player_total_bases")
+    alt = canonical_stat_key_from_sharp_mlb("player_total_bases_alternate")
+    assert main == alt == "total_bases"
