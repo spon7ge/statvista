@@ -244,24 +244,73 @@ _HITS_PROP = {
         },
         {
             "name": "Fixed total 1.5",
-            "selections": [[], []],
+            "selections": [
+                [{"id": 14, "name": "over 1.5", "odds": 120, "line": 1.5, "stake": 40.0}],
+                [{"id": 15, "name": "under 1.5", "odds": -140, "line": 1.5, "stake": 55.0}],
+            ],
         },
     ],
 }
 
 
-def test_extract_props_main_hits_only() -> None:
+def test_extract_props_main_and_alt_hits() -> None:
     px = _load_scraper()
     props = px.extract_props([_HITS_PROP, {"subType": "unknown_stat", "name": "X"}])
+    assert len(props) == 2
+    by_line = {row["line"]: row for row in props}
+    main = by_line[0.5]
+    alt = by_line[1.5]
+    assert main["player"] == "Mike Trout"
+    assert main["stat"] == "hits"
+    assert main["is_main"] is True
+    assert main["over"]["american"] == -200
+    assert alt["is_main"] is False
+    assert alt["over"]["american"] == 120
+    assert alt["under"]["american"] == -140
+
+
+def test_extract_props_sole_line_is_main() -> None:
+    px = _load_scraper()
+    market = {
+        "id": 1,
+        "name": "Mike Trout Total Hits",
+        "subType": "player_total_hits",
+        "marketLines": [
+            {
+                "name": "Fixed total 0.5",
+                "selections": [
+                    [{"name": "over 0.5", "odds": -110, "line": 0.5, "stake": 1}],
+                    [{"name": "under 0.5", "odds": -110, "line": 0.5, "stake": 1}],
+                ],
+            }
+        ],
+    }
+    props = px.extract_props([market])
     assert len(props) == 1
-    row = props[0]
-    assert row["player"] == "Mike Trout"
-    assert row["stat"] == "hits"
-    assert row["line"] == 0.5
-    assert row["over"]["american"] == -200
-    assert row["under"]["american"] == 150
-    assert row["sub_type"] == "player_total_hits"
-    assert row["market_id"] == 460000600
+    assert props[0]["is_main"] is True
+
+
+def test_extract_props_skips_empty_alt_selections() -> None:
+    px = _load_scraper()
+    market = {
+        "id": 2,
+        "name": "Mike Trout Total Hits",
+        "subType": "player_total_hits",
+        "marketLines": [
+            {
+                "name": "Fixed total 0.5",
+                "favourite": True,
+                "selections": [
+                    [{"name": "over 0.5", "odds": -110, "line": 0.5, "stake": 1}],
+                    [{"name": "under 0.5", "odds": -110, "line": 0.5, "stake": 1}],
+                ],
+            },
+            {"name": "Fixed total 1.5", "selections": [[], []]},
+        ],
+    }
+    props = px.extract_props([market])
+    assert len(props) == 1
+    assert props[0]["line"] == 0.5
 
 
 def test_normalize_event() -> None:
