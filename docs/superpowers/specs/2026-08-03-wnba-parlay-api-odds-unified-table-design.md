@@ -59,7 +59,7 @@ Main lines only (existing `select_parlay_main_lines` / mapper behavior).
 2. **Mapper** — include `sportsbook` on each row; prefer a single multi-book mapper used by the loader.
 3. **Loader** — `maybe_persist_parlay_props` upserts once into `wnba_parlay_api_odds`; throttle via `MAX(scraped_at)` on that table only.
 4. **Remove** Parlay use of `_PARLAY_BOOK_TABLES` per-book targets.
-5. **Leave alone** — Prop Picks live Parlay fetch; Selenium Pinnacle; scraper `wnba_prizepicks` / `wnba_underdogs`; Sharp persist into `wnba_fanduel` / `wnba_draftkings` if still used.
+5. **Leave alone** — Prop Picks live Parlay fetch; Selenium Pinnacle; scraper `wnba_prizepick` / `wnba_underdogs`; Sharp persist into `wnba_fanduel` / `wnba_draftkings` if still used.
 
 ## Out of scope
 
