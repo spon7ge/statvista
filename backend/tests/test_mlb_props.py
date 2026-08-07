@@ -203,6 +203,63 @@ def test_exact_line_attaches_prophetx_alt_when_favourite_differs(monkeypatch):
     assert row.source_tier != "no_sharp_read"
 
 
+def test_exact_line_attaches_parlay_alternate_market_key(monkeypatch):
+    now = datetime.now(timezone.utc)
+    _stub_snapshots(
+        monkeypatch,
+        dfs_pp=[
+            {
+                "player_name": "Mookie Betts",
+                "stat_type": "Total Bases",
+                "line_score": 1.5,
+                "odds_type": "standard",
+                "scraped_at": now,
+            },
+        ],
+        prophetx=[],  # force fair via Parlay Novig only
+        parlay_rows=[
+            {
+                "player": "Mookie Betts",
+                "market_key": "player_total_bases",
+                "line": 2.5,
+                "bookmaker": "novig",
+                "over_price": -110,
+                "under_price": -110,
+            },
+            {
+                "player": "Mookie Betts",
+                "market_key": "player_total_bases_alternate",
+                "line": 1.5,
+                "bookmaker": "novig",
+                "over_price": -130,
+                "under_price": 110,
+            },
+            {
+                "player": "Mookie Betts",
+                "market_key": "player_total_bases_alternate",
+                "line": 0.5,
+                "bookmaker": "novig",
+                "over_price": -200,
+                "under_price": 160,
+            },
+        ],
+    )
+
+    import asyncio
+
+    response = asyncio.run(
+        svc.get_mlb_props_today(app="prizepicks", format="power", legs=4)
+    )
+
+    assert len(response.props) == 1
+    row = response.props[0]
+    assert row.line == 1.5
+    assert row.books.novig is not None
+    assert row.books.novig.american == -130
+    assert row.source_tier == "sharp_single_source"
+    assert row.fair_pct is not None
+
+
 def test_pinnacle_is_comparison_only_and_exact_line(monkeypatch):
     now = datetime.now(timezone.utc)
     _stub_snapshots(
