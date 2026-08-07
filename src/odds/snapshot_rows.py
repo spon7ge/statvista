@@ -479,6 +479,9 @@ def prophetx_props_to_rows(
             line = prop.get("line")
             if not player or not stat or line is None:
                 continue
+            is_main = prop.get("is_main")
+            if not isinstance(is_main, bool):
+                is_main = True
             for side in ("over", "under"):
                 payload = prop.get(side)
                 if not isinstance(payload, dict):
@@ -502,6 +505,7 @@ def prophetx_props_to_rows(
                         "stake": stake,
                         "market_id": prop.get("market_id"),
                         "sub_type": prop.get("sub_type"),
+                        "is_main": is_main,
                         "scraped_at": scraped_at,
                     }
                 )

@@ -289,6 +289,76 @@ def test_prophetx_props_to_rows_emits_over_under_with_stake():
     assert over["home_team"] == "Baltimore Orioles"
     assert over["event_id"] == 10079004
     assert over["scraped_at"] == scraped
+    assert over["is_main"] is True
+
+
+def test_prophetx_props_to_rows_copies_is_main():
+    scraped = datetime(2026, 8, 5, tzinfo=timezone.utc)
+    games = [
+        {
+            "event_id": 1,
+            "scheduled": "2026-08-05T22:35:00Z",
+            "competitors": [
+                {"name": "Away", "seq": 0},
+                {"name": "Home", "seq": 1},
+            ],
+            "props": [
+                {
+                    "player": "Mike Trout",
+                    "stat": "hits",
+                    "line": 0.5,
+                    "is_main": True,
+                    "over": {"american": -200, "stake": 1},
+                    "under": {"american": 150, "stake": 1},
+                    "market_id": 1,
+                    "sub_type": "player_total_hits",
+                },
+                {
+                    "player": "Mike Trout",
+                    "stat": "hits",
+                    "line": 1.5,
+                    "is_main": False,
+                    "over": {"american": 120, "stake": 1},
+                    "under": {"american": -140, "stake": 1},
+                    "market_id": 1,
+                    "sub_type": "player_total_hits",
+                },
+            ],
+        }
+    ]
+    rows = prophetx_props_to_rows(games, league="mlb", scraped_at=scraped)
+    assert len(rows) == 4
+    main_over = next(r for r in rows if float(r["line_score"]) == 0.5 and r["side"] == "over")
+    alt_over = next(r for r in rows if float(r["line_score"]) == 1.5 and r["side"] == "over")
+    assert main_over["is_main"] is True
+    assert alt_over["is_main"] is False
+
+
+def test_prophetx_props_to_rows_defaults_missing_is_main_true():
+    scraped = datetime(2026, 8, 5, tzinfo=timezone.utc)
+    games = [
+        {
+            "event_id": 1,
+            "scheduled": "2026-08-05T22:35:00Z",
+            "competitors": [
+                {"name": "Away", "seq": 0},
+                {"name": "Home", "seq": 1},
+            ],
+            "props": [
+                {
+                    "player": "Mike Trout",
+                    "stat": "hits",
+                    "line": 0.5,
+                    "over": {"american": -110, "stake": 1},
+                    "under": {"american": -110, "stake": 1},
+                    "market_id": 1,
+                    "sub_type": "player_total_hits",
+                },
+            ],
+        }
+    ]
+    rows = prophetx_props_to_rows(games, league="mlb", scraped_at=scraped)
+    assert all(r["is_main"] is True for r in rows)
 
 
 def test_prophetx_team_to_rows_moneyline_and_run_line():
