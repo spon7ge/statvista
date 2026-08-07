@@ -1,7 +1,7 @@
 # MLB Prop Picks — Parlay `*_alternate` market keys
 
 Date: 2026-08-06  
-Status: Approved for planning  
+Status: Implemented  
 Related: `2026-08-05-mlb-prop-picks-design.md`, `2026-08-05-mlb-prop-picks-parlay-cmp-books-design.md`, `2026-08-06-mlb-prophetx-alt-lines-design.md`
 
 ## Goal
@@ -39,15 +39,11 @@ Examples:
 - `batter_strikeouts_alternate` → `batter_strikeouts`
 - `player_total_bases` → `total_bases` (no change)
 
-### Suffix verification (pre-impl)
+### Suffix verification
 
-Repo Parlay fixtures today only include bare keys (`player_total_bases`, `player_points`, …) — no multi-day Parlay dumps on disk. Before coding:
+Live sample skipped; shipped docs-documented `_alternate` only.
 
-1. Fetch a live `GET /v1/sports/baseball_mlb/props` sample (or capture a fixture from it).
-2. Collect distinct `market_key` values that look like alts.
-3. Confirm the only alt suffix in use is `_alternate` (not `_alt` / `_alts` / etc.). Parlay docs document `*_alternate`.
-
-If another suffix appears, extend the strip list in the same function and document it in this spec.
+Implementation strips the single trailing `_alternate` suffix in `canonical_stat_key_from_sharp_mlb` (no `_alt`, `_alts`, or other variants added). Parlay API docs document `*_alternate` as the alt key form.
 
 ## Tests
 
@@ -58,14 +54,14 @@ Minimum:
 3. **Regression — main only:** bare `player_total_bases` still maps; no-alt board behavior unchanged.
 4. **WNBA untouched:** existing WNBA / `select_parlay_main_lines` tests still pass; this change does not route WNBA through the MLB mapper for filtering.
 
-## Rollout check
+## Rollout (ops)
 
-After deploy, on a few consecutive MLB prop boards:
+After deploy, for 2–3 MLB prop boards:
 
-- Count rows with `source_tier == no_sharp_read` before vs after (same slate window / similar DFS set).
-- Note how many newly resolve fair % via Parlay (Novig/DK/FD) at the DFS line.
-
-Record the before/after counts in the PR or a short follow-up note — do not rely on “tests pass” alone.
+1. Count `source_tier == no_sharp_read` before deploy (or from a pre-deploy snapshot).
+2. Recount after deploy on a comparable slate.
+3. Note how many newly resolved rows attach via Parlay (Novig/DK/FD) at the DFS line.
+4. Paste before/after counts in the PR description or a follow-up note.
 
 ## Out of scope
 
