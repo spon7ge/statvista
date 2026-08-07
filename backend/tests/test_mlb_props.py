@@ -351,6 +351,22 @@ def test_parlay_cmp_books_attach_without_driving_fair(monkeypatch):
                 "over_price": -122,
                 "under_price": 102,
             },
+            {
+                "bookmaker": "hardrock",
+                "player": "Mookie Betts",
+                "market_key": "player_total_bases",
+                "line": 1.5,
+                "over_price": -125,
+                "under_price": 103,
+            },
+            {
+                "bookmaker": "fliff",
+                "player": "Mookie Betts",
+                "market_key": "player_total_bases",
+                "line": 1.5,
+                "over_price": -118,
+                "under_price": 98,
+            },
         ],
     )
 
@@ -361,7 +377,15 @@ def test_parlay_cmp_books_attach_without_driving_fair(monkeypatch):
     row = response.props[0]
     assert row.source_tier == "no_sharp_read"
     assert row.fair_pct is None
-    for book_name in ("caesars", "kalshi", "bet365", "betmgm", "fanatics"):
+    for book_name in (
+        "caesars",
+        "kalshi",
+        "bet365",
+        "betmgm",
+        "fanatics",
+        "hardrock",
+        "fliff",
+    ):
         quote = getattr(row.books, book_name)
         assert quote is not None, book_name
         assert quote.role == "comparison"

@@ -3349,6 +3349,26 @@
               }
             ]
           },
+          "fliff": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbPropBookQuote"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "hardrock": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbPropBookQuote"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "kalshi": {
             "anyOf": [
               {
@@ -3400,7 +3420,9 @@
           "kalshi",
           "bet365",
           "betmgm",
-          "fanatics"
+          "fanatics",
+          "hardrock",
+          "fliff"
         ],
         "title": "MlbPropBooks",
         "type": "object"

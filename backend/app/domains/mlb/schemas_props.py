@@ -38,6 +38,8 @@ class MlbPropBooks(BaseModel):
     bet365: MlbPropBookQuote | None = None
     betmgm: MlbPropBookQuote | None = None
     fanatics: MlbPropBookQuote | None = None
+    hardrock: MlbPropBookQuote | None = None
+    fliff: MlbPropBookQuote | None = None
 
 
 class MlbPropDfs(BaseModel):

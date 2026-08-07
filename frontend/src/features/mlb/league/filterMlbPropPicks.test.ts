@@ -31,6 +31,8 @@ function row(partial: Partial<ApiMlbPropRow> & Pick<ApiMlbPropRow, "player_name"
       bet365: null,
       betmgm: null,
       fanatics: null,
+      hardrock: null,
+      fliff: null,
     },
     dfs: { line: 1.5, changed_at: null },
     fair_explain: "PX+Novig agree within 2pp; 60/40 blend.",

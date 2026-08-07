@@ -66,6 +66,8 @@ _PARLAY_CMP_BOOKS: tuple[str, ...] = (
     "bet365",
     "betmgm",
     "fanatics",
+    "hardrock",
+    "fliff",
 )
 _PARLAY_KEEP_BOOKS: tuple[str, ...] = _PARLAY_FAIR_BOOKS + _PARLAY_CMP_BOOKS
 _VALID_SIDES: tuple[str, ...] = ("over", "under")
@@ -396,6 +398,8 @@ def _assemble_rows(
             bet365=_cmp_quote("bet365"),
             betmgm=_cmp_quote("betmgm"),
             fanatics=_cmp_quote("fanatics"),
+            hardrock=_cmp_quote("hardrock"),
+            fliff=_cmp_quote("fliff"),
         )
 
         driving_changed_at = _fair_driving_changed_at(

@@ -1393,6 +1393,8 @@ export interface components {
             draftkings: components["schemas"]["MlbPropBookQuote"] | null;
             fanatics: components["schemas"]["MlbPropBookQuote"] | null;
             fanduel: components["schemas"]["MlbPropBookQuote"] | null;
+            fliff: components["schemas"]["MlbPropBookQuote"] | null;
+            hardrock: components["schemas"]["MlbPropBookQuote"] | null;
             kalshi: components["schemas"]["MlbPropBookQuote"] | null;
             novig: components["schemas"]["MlbPropBookQuote"] | null;
             pinnacle: components["schemas"]["MlbPropBookQuote"] | null;

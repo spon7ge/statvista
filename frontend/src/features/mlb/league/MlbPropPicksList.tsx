@@ -12,6 +12,8 @@ const BOOK_LABELS: Record<string, string> = {
   bet365: "bet365",
   betmgm: "BetMGM",
   fanatics: "Fanatics",
+  hardrock: "Hard Rock",
+  fliff: "Fliff",
 };
 
 function sideLabel(side: string | null): string {
@@ -235,6 +237,16 @@ function ExpandedPanel({
         <BookQuoteCell
           bookKey="fanatics"
           quote={row.books.fanatics}
+          lastUpdatedAt={lastUpdatedAt}
+        />
+        <BookQuoteCell
+          bookKey="hardrock"
+          quote={row.books.hardrock}
+          lastUpdatedAt={lastUpdatedAt}
+        />
+        <BookQuoteCell
+          bookKey="fliff"
+          quote={row.books.fliff}
           lastUpdatedAt={lastUpdatedAt}
         />
       </div>

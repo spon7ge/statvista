@@ -55,6 +55,8 @@ function row(
       bet365: null,
       betmgm: null,
       fanatics: null,
+      hardrock: null,
+      fliff: null,
     },
     dfs: { line: 1.5, changed_at: "2026-08-05T19:00:00Z" },
     fair_explain: "PX+Novig agree within 2pp; 60/40 blend.",
@@ -89,6 +91,8 @@ const noRead = row({
     bet365: null,
     betmgm: null,
     fanatics: null,
+    hardrock: null,
+    fliff: null,
   },
 });
 
@@ -196,6 +200,8 @@ describe("MlbPropPicksList", () => {
     expect(within(expanded).getByText("bet365")).toBeInTheDocument();
     expect(within(expanded).getByText("BetMGM")).toBeInTheDocument();
     expect(within(expanded).getByText("Fanatics")).toBeInTheDocument();
+    expect(within(expanded).getByText("Hard Rock")).toBeInTheDocument();
+    expect(within(expanded).getByText("Fliff")).toBeInTheDocument();
     expect(screen.getByTestId("mlb-prop-row").className).toMatch(
       /ring-\[#059669\]/,
     );
