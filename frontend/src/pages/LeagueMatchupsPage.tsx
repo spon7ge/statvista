@@ -13,7 +13,6 @@ import {
 import { mergeMatchupOdds } from "@/shared/lib/mergeMatchupOdds";
 import type { LeagueSlug } from "@/features/basketball/league/types";
 import { mapToMatchupGames } from "@/shared/lib/mapScoreboard";
-import { useMlbOdds } from "@/features/mlb/hooks/useMlbOdds";
 import { useMlbScoreboard } from "@/features/mlb/hooks/useMlbScoreboard";
 import { useWnbaOdds } from "@/features/basketball/hooks/useWnbaOdds";
 import { useWnbaScoreboard } from "@/features/basketball/hooks/useWnbaScoreboard";
@@ -92,7 +91,6 @@ function MlbMatchupsPage() {
   const today = slateEtDate();
   const raw = searchParams.get("date");
   const selectedDate = parseMatchupDateParam(raw, today);
-  const showOdds = isOddsWindowDate(selectedDate, today);
 
   useEffect(() => {
     if (raw !== null && !isValidEtDate(raw)) {
@@ -102,13 +100,7 @@ function MlbMatchupsPage() {
 
   const { games, isLoading, hasNeverLoaded, data } =
     useMlbScoreboard(selectedDate);
-  const oddsQuery = useMlbOdds();
-  const matchupGames = mergeMatchupOdds(
-    mapToMatchupGames(games),
-    showOdds ? oddsQuery.data?.games : undefined,
-    selectedDate,
-    { wnbaAliases: false },
-  );
+  const matchupGames = mapToMatchupGames(games);
 
   const setDate = (next: string) => {
     if (next === today) setSearchParams({});

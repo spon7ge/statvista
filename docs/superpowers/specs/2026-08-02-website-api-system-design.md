@@ -20,7 +20,7 @@ Document how the live HoopVista website is structured today: routes, shared chro
 
 ## 1. Overview & boundaries
 
-HoopVista’s public site is a React + Vite app talking to a FastAPI service over `/api`. The product surface today is primarily **WNBA** (home, league hubs, game detail, prop picks, player pages). **MLB** adds live scoreboard on the home chrome, a live matchups hub (dated slate + Sharp odds), and a game detail center (live when live, final archive when final, thin not-live when scheduled). NBA is scaffolded (`/nba/matchups` placeholder).
+HoopVista’s public site is a React + Vite app talking to a FastAPI service over `/api`. The product surface today is primarily **WNBA** (home, league hubs, game detail, prop picks, player pages). **MLB** adds live scoreboard on the home chrome, a live matchups hub (dated slate), and a game detail center (live when live, final archive when final, thin not-live when scheduled). NBA is scaffolded (`/nba/matchups` placeholder).
 
 ### Read-path model
 
@@ -37,7 +37,7 @@ Two backend families exist. The **live website mainly uses the WNBA and MLB upst
 | Family | Examples | Used by current React pages? |
 |--------|----------|------------------------------|
 | WNBA upstream | `/api/wnba/scoreboard/*`, `props/today`, `games/{id}`, … | Yes |
-| MLB upstream | `/api/mlb/scoreboard/*`, `/api/mlb/odds/today`, `/api/mlb/games/{game_pk}` | Yes (home + matchups + game detail) |
+| MLB upstream | `/api/mlb/scoreboard/*`, `/api/mlb/odds/today`, `/api/mlb/games/{game_pk}` | Yes (home + game detail; Preview odds) |
 | DB-backed (silver / gold / ml) | `/api/live-props`, `/api/predictions`, `/api/games/{date}/slate`, … | No |
 
 Shared chrome (`HomeChromeLayout`) wraps most routes with nav, live ticker, and footer. `/about` is static (no API).
@@ -109,7 +109,7 @@ main.tsx
 | `/wnba/player/:id` | Bio, averages, recent games | `useWnbaPlayer` | `GET /api/wnba/player/{id}` | stats.wnba.com (info + dash + gamelog) |
 | `/games/:espnEventId` | Full game center | `useGameDetail` | `GET /api/wnba/games/{id}` | ESPN summary; RotoWire / ESPN roster for scheduled starters |
 | `/nba/matchups` | Placeholder | — | none | “NBA matchups coming soon” |
-| `/mlb/matchups?date=` | Daily slate; odds when date is in odds window | `useMlbScoreboard(date)`, `useMlbOdds` | scoreboard (`/today` or `?date=`), `GET /api/mlb/odds/today` | Stats API schedule; Sharp MLB run line/total (DK prefer FD); cards → `/mlb/games/:gamePk` |
+| `/mlb/matchups?date=` | Daily slate (no team-lines odds pill) | `useMlbScoreboard(date)` | scoreboard (`/today` or `?date=`) | Stats API schedule; cards → `/mlb/games/:gamePk` (Preview odds board still uses `GET /api/mlb/odds/today`) |
 | `/mlb/games/:gamePk` | Live center when live; final archive when final; thin not-live yet when scheduled | `useMlbGameDetail` | `GET /api/mlb/games/{game_pk}` | Stats live feed + ESPN win probability (soft-fail); live or final archive center |
 
 ### Cross-cutting API behavior

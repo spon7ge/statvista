@@ -36,3 +36,6 @@ notebooks/pbp_checkpoint.csv
 data/cache/
 .worktrees/
 .superpowers/
+
+# PrizePicks browser session (auto-saved by scrapers; do not commit)
+**/.session_cookie.txt
