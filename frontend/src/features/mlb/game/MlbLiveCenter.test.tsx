@@ -21,6 +21,7 @@ describe("MlbLiveCenter", () => {
     const teamStats = within(summary).getByTestId("mlb-final-team-stats");
     const gameFlow = within(summary).getByTestId("mlb-game-flow");
     const hitChart = within(summary).getByTestId("mlb-hit-chart");
+    const gameInfo = within(summary).getByTestId("mlb-game-info");
 
     expect(
       matchup.compareDocumentPosition(pitchZone) &
@@ -42,6 +43,10 @@ describe("MlbLiveCenter", () => {
       gameFlow.compareDocumentPosition(hitChart) &
         Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
+    expect(
+      hitChart.compareDocumentPosition(gameInfo) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
 
     expect(screen.queryByTestId("mlb-box-score")).not.toBeInTheDocument();
 
@@ -57,5 +62,6 @@ describe("MlbLiveCenter", () => {
     expect(screen.queryByTestId("mlb-pitch-zone")).not.toBeInTheDocument();
     expect(screen.queryByTestId("mlb-game-flow")).not.toBeInTheDocument();
     expect(screen.queryByTestId("mlb-hit-chart")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("mlb-game-info")).not.toBeInTheDocument();
   });
 });

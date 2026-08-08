@@ -9,6 +9,7 @@ import type {
 import type { MlbGameDetailTeam, MlbGameDetailView } from "../lib/types";
 import { MlbInjuryReport } from "./MlbInjuryReport";
 import { MlbGameOddsBoard } from "./MlbGameOddsBoard";
+import { MlbGameInfo } from "./MlbGameInfo";
 import { MlbSeasonTeamStats } from "./MlbSeasonTeamStats";
 import type { MlbOddsBoardView } from "../lib/mlbOddsBoard";
 
@@ -349,11 +350,17 @@ export function MlbProjectedLineups({
           <MlbSeasonTeamStats detail={detail} />
           <MlbInjuryReport detail={detail} />
         </div>
-        <MlbGameOddsBoard
-          detail={detail}
-          view={oddsView}
-          isPending={oddsPending}
-        />
+        <div
+          data-testid="mlb-preview-right-column"
+          className="min-w-0 space-y-4"
+        >
+          <MlbGameOddsBoard
+            detail={detail}
+            view={oddsView}
+            isPending={oddsPending}
+          />
+          <MlbGameInfo detail={detail} />
+        </div>
       </div>
     </div>
   );

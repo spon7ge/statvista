@@ -8,6 +8,7 @@ import { MlbFinalLinescoreCard } from "./MlbFinalLinescoreCard";
 import { MlbFinalPlayFeed } from "./MlbFinalPlayFeed";
 import { MlbFinalTeamStats } from "./MlbFinalTeamStats";
 import { MlbHitChart } from "./MlbHitChart";
+import { MlbGameInfo } from "./MlbGameInfo";
 import { MlbLiveMatchupPanel } from "./MlbLiveMatchupPanel";
 import { MlbPitchZone } from "./MlbPitchZone";
 import { MlbWinProbability } from "./MlbWinProbability";
@@ -42,6 +43,7 @@ export function MlbLiveCenter({ detail }: { detail: MlbGameDetailView }) {
             <MlbFinalTeamStats detail={detail} />
             <MlbWinProbability detail={detail} compact />
             <MlbHitChart detail={detail} />
+            <MlbGameInfo detail={detail} />
           </div>
         </div>
       ) : (

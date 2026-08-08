@@ -125,9 +125,20 @@ describe("MlbProjectedLineups", () => {
     expect(
       screen.getByTestId("mlb-preview-left-column"),
     ).toContainElement(screen.getByTestId("mlb-projected-lineups"));
+    const rightColumn = screen.getByTestId("mlb-preview-right-column");
     expect(
       screen.getByTestId("mlb-preview-lineups-odds-grid"),
-    ).toContainElement(screen.getByTestId("mlb-game-odds-board"));
+    ).toContainElement(rightColumn);
+    expect(rightColumn).toContainElement(
+      screen.getByTestId("mlb-game-odds-board"),
+    );
+    expect(rightColumn).toContainElement(screen.getByTestId("mlb-game-info"));
+    expect(
+      screen
+        .getByTestId("mlb-game-odds-board")
+        .compareDocumentPosition(screen.getByTestId("mlb-game-info")) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
     expect(screen.getByTestId("mlb-projected-lineups")).not.toHaveClass(
       "sm:w-1/2",
     );

@@ -23,6 +23,7 @@ describe("MlbFinalCenter", () => {
     expect(screen.getByTestId("mlb-final-team-stats")).toBeInTheDocument();
     expect(screen.getByTestId("mlb-game-flow")).toBeInTheDocument();
     expect(screen.getByTestId("mlb-hit-chart")).toBeInTheDocument();
+    expect(screen.getByTestId("mlb-game-info")).toBeInTheDocument();
     expect(screen.queryByTestId("mlb-box-score")).not.toBeInTheDocument();
 
     const summary = screen.getByRole("tabpanel", {
@@ -31,12 +32,17 @@ describe("MlbFinalCenter", () => {
     const teamStats = within(summary).getByTestId("mlb-final-team-stats");
     const gameFlow = within(summary).getByTestId("mlb-game-flow");
     const hitChart = within(summary).getByTestId("mlb-hit-chart");
+    const gameInfo = within(summary).getByTestId("mlb-game-info");
     expect(
       teamStats.compareDocumentPosition(gameFlow) &
         Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
     expect(
       gameFlow.compareDocumentPosition(hitChart) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      hitChart.compareDocumentPosition(gameInfo) &
         Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
 
@@ -50,5 +56,6 @@ describe("MlbFinalCenter", () => {
     expect(screen.queryByTestId("mlb-final-play-feed")).not.toBeInTheDocument();
     expect(screen.queryByTestId("mlb-game-flow")).not.toBeInTheDocument();
     expect(screen.queryByTestId("mlb-hit-chart")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("mlb-game-info")).not.toBeInTheDocument();
   });
 });

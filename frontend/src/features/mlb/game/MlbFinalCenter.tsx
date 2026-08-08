@@ -8,6 +8,7 @@ import { MlbFinalLinescoreCard } from "./MlbFinalLinescoreCard";
 import { MlbFinalPlayFeed } from "./MlbFinalPlayFeed";
 import { MlbFinalTeamStats } from "./MlbFinalTeamStats";
 import { MlbHitChart } from "./MlbHitChart";
+import { MlbGameInfo } from "./MlbGameInfo";
 import { MlbWinProbability } from "./MlbWinProbability";
 import type { MlbGameDetailView } from "../lib/types";
 
@@ -34,6 +35,7 @@ export function MlbFinalCenter({ detail }: { detail: MlbGameDetailView }) {
             <MlbFinalTeamStats detail={detail} />
             <MlbWinProbability detail={detail} compact />
             <MlbHitChart detail={detail} />
+            <MlbGameInfo detail={detail} />
           </div>
         </div>
       ) : (
