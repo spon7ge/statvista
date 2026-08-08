@@ -10,6 +10,7 @@ import type { MlbGameDetailTeam, MlbGameDetailView } from "../lib/types";
 import { MlbInjuryReport } from "./MlbInjuryReport";
 import { MlbGameOddsBoard } from "./MlbGameOddsBoard";
 import { MlbGameInfo } from "./MlbGameInfo";
+import { MlbMatchupPrediction } from "./MlbMatchupPrediction";
 import { MlbSeasonTeamStats } from "./MlbSeasonTeamStats";
 import type { MlbOddsBoardView } from "../lib/mlbOddsBoard";
 
@@ -343,6 +344,7 @@ export function MlbProjectedLineups({
             isPending={oddsPending}
           />
           <MlbGameInfo detail={detail} />
+          <MlbMatchupPrediction detail={detail} />
         </div>
       </div>
     </div>

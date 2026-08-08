@@ -303,6 +303,33 @@ describe("MlbProjectedLineups", () => {
     expect(screen.getByTestId("mlb-lineup-toggle-home")).toHaveTextContent("PHI");
   });
 
+  it("renders Matchup prediction under Game Info in the right column", () => {
+    render(
+      <MlbProjectedLineups
+        detail={{
+          ...mlbScheduledDetail,
+          matchupPrediction: {
+            awayWinPct: 59,
+            homeWinPct: 41,
+            sourceLabel: "ESPN game projection",
+          },
+        }}
+        game={lineupGame}
+      />,
+    );
+
+    const right = screen.getByTestId("mlb-preview-right-column");
+    expect(right).toContainElement(screen.getByTestId("mlb-matchup-prediction"));
+    expect(right).toContainElement(screen.getByTestId("mlb-game-odds-board"));
+    expect(right).toContainElement(screen.getByText("Game Info"));
+    expect(
+      screen
+        .getByTestId("mlb-game-info")
+        .compareDocumentPosition(screen.getByTestId("mlb-matchup-prediction")) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
   it("renders season stats and injuries under lineups when unavailable", () => {
     render(
       <MlbProjectedLineups
