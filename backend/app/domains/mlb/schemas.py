@@ -67,6 +67,12 @@ from app.domains.mlb.schemas_scoreboard import (
     MlbScoreboardResponse,
     MlbTeam,
 )
+from app.domains.mlb.schemas_standings import (
+    MlbStandingsDivision,
+    MlbStandingsLeague,
+    MlbStandingsResponse,
+    MlbStandingsRow,
+)
 
 __all__ = [
     "GameStatus",
@@ -117,6 +123,10 @@ __all__ = [
     "MlbSeasonTeamStatLine",
     "MlbSeasonTeamStatsPair",
     "MlbSituation",
+    "MlbStandingsDivision",
+    "MlbStandingsLeague",
+    "MlbStandingsResponse",
+    "MlbStandingsRow",
     "MlbTeam",
     "MlbTeamStatLine",
     "MlbTeamStatsPair",

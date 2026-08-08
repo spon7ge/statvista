@@ -1,0 +1,142 @@
+{
+  "copyright": "Copyright 2026 MLB Advanced Media, L.P.",
+  "records": [
+    {
+      "standingsType": "regularSeason",
+      "league": { "id": 103, "link": "/api/v1/league/103" },
+      "division": { "id": 201, "link": "/api/v1/divisions/201" },
+      "teamRecords": [
+        {
+          "team": { "id": 139, "name": "Rays", "link": "/api/v1/teams/139" },
+          "season": "2026",
+          "streak": { "streakType": "wins", "streakNumber": 4, "streakCode": "W4" },
+          "divisionRank": "1",
+          "gamesBack": "-",
+          "winningPercentage": ".600",
+          "wins": 69,
+          "losses": 46,
+          "records": {
+            "splitRecords": [
+              { "wins": 7, "losses": 3, "type": "lastTen", "pct": ".700" }
+            ]
+          }
+        },
+        {
+          "team": { "name": "Broken" },
+          "wins": 1,
+          "losses": 1
+        }
+      ]
+    },
+    {
+      "standingsType": "regularSeason",
+      "league": { "id": 103, "link": "/api/v1/league/103" },
+      "division": { "id": 202, "link": "/api/v1/divisions/202" },
+      "teamRecords": [
+        {
+          "team": { "id": 142, "name": "Twins", "link": "/api/v1/teams/142" },
+          "season": "2026",
+          "streak": { "streakCode": "L1" },
+          "divisionRank": "1",
+          "gamesBack": "-",
+          "winningPercentage": ".520",
+          "wins": 52,
+          "losses": 48,
+          "records": {
+            "splitRecords": [
+              { "wins": 5, "losses": 5, "type": "lastTen", "pct": ".500" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "standingsType": "regularSeason",
+      "league": { "id": 103, "link": "/api/v1/league/103" },
+      "division": { "id": 200, "link": "/api/v1/divisions/200" },
+      "teamRecords": [
+        {
+          "team": { "id": 117, "name": "Astros", "link": "/api/v1/teams/117" },
+          "season": "2026",
+          "streak": { "streakCode": "W2" },
+          "divisionRank": "1",
+          "gamesBack": "-",
+          "winningPercentage": ".540",
+          "wins": 54,
+          "losses": 46,
+          "records": {
+            "splitRecords": [
+              { "wins": 6, "losses": 4, "type": "lastTen", "pct": ".600" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "standingsType": "regularSeason",
+      "league": { "id": 104, "link": "/api/v1/league/104" },
+      "division": { "id": 204, "link": "/api/v1/divisions/204" },
+      "teamRecords": [
+        {
+          "team": { "id": 143, "name": "Phillies", "link": "/api/v1/teams/143" },
+          "season": "2026",
+          "streak": { "streakCode": "W1" },
+          "divisionRank": "1",
+          "gamesBack": "-",
+          "winningPercentage": ".560",
+          "wins": 56,
+          "losses": 44,
+          "records": {
+            "splitRecords": [
+              { "wins": 6, "losses": 4, "type": "lastTen", "pct": ".600" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "standingsType": "regularSeason",
+      "league": { "id": 104, "link": "/api/v1/league/104" },
+      "division": { "id": 205, "link": "/api/v1/divisions/205" },
+      "teamRecords": [
+        {
+          "team": { "id": 158, "name": "Brewers", "link": "/api/v1/teams/158" },
+          "season": "2026",
+          "streak": { "streakCode": "L2" },
+          "divisionRank": "1",
+          "gamesBack": "-",
+          "winningPercentage": ".550",
+          "wins": 55,
+          "losses": 45,
+          "records": {
+            "splitRecords": [
+              { "wins": 4, "losses": 6, "type": "lastTen", "pct": ".400" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "standingsType": "regularSeason",
+      "league": { "id": 104, "link": "/api/v1/league/104" },
+      "division": { "id": 203, "link": "/api/v1/divisions/203" },
+      "teamRecords": [
+        {
+          "team": { "id": 119, "name": "Dodgers", "link": "/api/v1/teams/119" },
+          "season": "2026",
+          "streak": { "streakCode": "W3" },
+          "divisionRank": "1",
+          "gamesBack": "-",
+          "winningPercentage": ".580",
+          "wins": 58,
+          "losses": 42,
+          "records": {
+            "splitRecords": [
+              { "wins": 8, "losses": 2, "type": "lastTen", "pct": ".800" }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
