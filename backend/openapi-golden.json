@@ -1441,6 +1441,16 @@
               }
             ]
           },
+          "matchup_prediction": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbMatchupPrediction"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "mlb_game_pk": {
             "title": "Mlb Game Pk",
             "type": "string"
@@ -1595,6 +1605,7 @@
           "box_score",
           "hit_chart",
           "win_probability",
+          "matchup_prediction",
           "game_date",
           "game_date_label",
           "decisions",
@@ -2664,6 +2675,29 @@
           "fetched_at"
         ],
         "title": "MlbLineupsResponse",
+        "type": "object"
+      },
+      "MlbMatchupPrediction": {
+        "properties": {
+          "away_win_pct": {
+            "title": "Away Win Pct",
+            "type": "integer"
+          },
+          "home_win_pct": {
+            "title": "Home Win Pct",
+            "type": "integer"
+          },
+          "source_label": {
+            "title": "Source Label",
+            "type": "string"
+          }
+        },
+        "required": [
+          "away_win_pct",
+          "home_win_pct",
+          "source_label"
+        ],
+        "title": "MlbMatchupPrediction",
         "type": "object"
       },
       "MlbOddsBoard": {

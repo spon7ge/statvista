@@ -218,6 +218,12 @@ export type MlbGameUmpires = {
   thirdBase: string | null;
 };
 
+export type MlbMatchupPrediction = {
+  awayWinPct: number;
+  homeWinPct: number;
+  sourceLabel: string;
+};
+
 export type MlbGameDetailView = {
   mlbGamePk: string;
   league: "mlb";
@@ -245,6 +251,7 @@ export type MlbGameDetailView = {
   } | null;
   injuries: { away: MlbInjury[]; home: MlbInjury[] } | null;
   winProbability: MlbWinProbability | null;
+  matchupPrediction: MlbMatchupPrediction | null;
   hitChart: MlbHitPoint[];
   sources: string[];
   fetchedAt: string;

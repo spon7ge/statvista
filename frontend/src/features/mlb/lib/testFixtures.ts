@@ -269,6 +269,7 @@ export const mlbLiveDetail: MlbGameDetailView = {
     points: [{ playId: "p2", label: "Top 3", homeWinPct: 0.48 }],
     stakes: { label: "On this pitch", homeWinDelta: -2.1 },
   },
+  matchupPrediction: null,
   hitChart: [],
   sources: ["statsapi", "espn"],
   fetchedAt: "2026-08-02T00:00:00Z",
@@ -515,6 +516,7 @@ export const mlbFinalDetail: MlbGameDetailView = {
   seasonTeamStats: null,
   injuries: null,
   winProbability: null,
+  matchupPrediction: null,
   hitChart: [
     {
       id: "h-final",
@@ -571,6 +573,7 @@ export const mlbScheduledDetail: MlbGameDetailView = {
   seasonTeamStats: null,
   injuries: null,
   winProbability: null,
+  matchupPrediction: null,
   hitChart: [],
   decisions: null,
   sources: ["statsapi"],

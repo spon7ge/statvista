@@ -327,6 +327,13 @@ export function mapMlbGameDetail(detail: ApiMlbGameDetail): MlbGameDetailView {
             : null,
         }
       : null,
+    matchupPrediction: detail.matchup_prediction
+      ? {
+          awayWinPct: detail.matchup_prediction.away_win_pct,
+          homeWinPct: detail.matchup_prediction.home_win_pct,
+          sourceLabel: detail.matchup_prediction.source_label,
+        }
+      : null,
     hitChart: detail.hit_chart.map((point) => ({
       id: point.id,
       team: point.team,

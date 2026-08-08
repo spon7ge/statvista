@@ -976,6 +976,7 @@ export interface components {
              */
             league: "mlb";
             linescore: components["schemas"]["MlbLinescore"] | null;
+            matchup_prediction: components["schemas"]["MlbMatchupPrediction"] | null;
             /** Mlb Game Pk */
             mlb_game_pk: string;
             /**
@@ -1286,6 +1287,15 @@ export interface components {
              * @default rotowire
              */
             source: string;
+        };
+        /** MlbMatchupPrediction */
+        MlbMatchupPrediction: {
+            /** Away Win Pct */
+            away_win_pct: number;
+            /** Home Win Pct */
+            home_win_pct: number;
+            /** Source Label */
+            source_label: string;
         };
         /** MlbOddsBoard */
         MlbOddsBoard: {

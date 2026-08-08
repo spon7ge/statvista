@@ -158,6 +158,7 @@ function buildApiDetail(
     ],
     sources: ["statsapi", "espn"],
     fetched_at: "2026-08-02T00:00:00Z",
+    matchup_prediction: null,
     ...overrides,
   };
 }
@@ -359,6 +360,29 @@ describe("mapMlbGameDetail", () => {
     expect(view.venueState).toBeNull();
     expect(view.weather).toBeNull();
     expect(view.umpires).toBeNull();
+  });
+
+  it("maps matchup_prediction to matchupPrediction", () => {
+    const mapped = mapMlbGameDetail(
+      buildApiDetail({
+        matchup_prediction: {
+          away_win_pct: 59,
+          home_win_pct: 41,
+          source_label: "ESPN game projection",
+        },
+      }),
+    );
+
+    expect(mapped.matchupPrediction).toEqual({
+      awayWinPct: 59,
+      homeWinPct: 41,
+      sourceLabel: "ESPN game projection",
+    });
+  });
+
+  it("maps null matchup_prediction to null", () => {
+    const mapped = mapMlbGameDetail(buildApiDetail({ matchup_prediction: null }));
+    expect(mapped.matchupPrediction).toBeNull();
   });
 
   it("maps situation headshots and pitch spin", () => {
