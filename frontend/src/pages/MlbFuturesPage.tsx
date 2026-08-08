@@ -16,7 +16,6 @@ export function MlbFuturesPage() {
       <section className="mx-auto max-w-6xl space-y-6 px-4 pb-16 sm:px-6 sm:pb-20">
         <MlbFuturesHeader season={season} />
         <MlbFuturesBoard
-          season={season}
           markets={data?.markets ?? []}
           group={group}
           onGroupChange={setGroup}

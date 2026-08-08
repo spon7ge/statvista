@@ -56,7 +56,6 @@ describe("MlbFuturesBoard", () => {
   it("defaults World Series pill selected and shows matching markets", () => {
     render(
       <MlbFuturesBoard
-        season={2026}
         markets={sampleMarkets}
         group="world_series"
         onGroupChange={vi.fn()}
@@ -83,7 +82,6 @@ describe("MlbFuturesBoard", () => {
 
     render(
       <MlbFuturesBoard
-        season={2026}
         markets={sampleMarkets}
         group="world_series"
         onGroupChange={onGroupChange}
@@ -97,7 +95,6 @@ describe("MlbFuturesBoard", () => {
   it("shows division markets when group is division", () => {
     render(
       <MlbFuturesBoard
-        season={2026}
         markets={sampleMarkets}
         group="division"
         onGroupChange={vi.fn()}
@@ -117,7 +114,6 @@ describe("MlbFuturesBoard", () => {
   it("shows loading skeletons", () => {
     render(
       <MlbFuturesBoard
-        season={2026}
         markets={[]}
         group="world_series"
         onGroupChange={vi.fn()}
@@ -130,7 +126,6 @@ describe("MlbFuturesBoard", () => {
   it("shows error copy when never loaded", () => {
     render(
       <MlbFuturesBoard
-        season={2026}
         markets={[]}
         group="world_series"
         onGroupChange={vi.fn()}
@@ -143,7 +138,6 @@ describe("MlbFuturesBoard", () => {
   it("shows empty copy when no markets", () => {
     render(
       <MlbFuturesBoard
-        season={2026}
         markets={[]}
         group="world_series"
         onGroupChange={vi.fn()}
@@ -156,7 +150,6 @@ describe("MlbFuturesBoard", () => {
   it("shows empty group copy when pill has no matching markets", () => {
     render(
       <MlbFuturesBoard
-        season={2026}
         markets={[sampleMarkets[0]!]}
         group="division"
         onGroupChange={vi.fn()}

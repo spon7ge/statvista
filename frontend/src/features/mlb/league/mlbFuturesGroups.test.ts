@@ -28,7 +28,7 @@ const al = market({
   display_name: "American League Winner",
 });
 
-const nlWest = market({
+const nlEast = market({
   id: "2763",
   name: "MLB - National League East Division Winner",
   display_name: "NL East Division Winner",
@@ -45,16 +45,16 @@ describe("mlbFuturesGroups", () => {
     expect(marketMatchesGroup(ws, "world_series")).toBe(true);
     expect(marketMatchesGroup(al, "league")).toBe(true);
     expect(marketMatchesGroup(winningLeague, "league")).toBe(true);
-    expect(marketMatchesGroup(nlWest, "division")).toBe(true);
-    expect(marketMatchesGroup(nlWest, "league")).toBe(false);
+    expect(marketMatchesGroup(nlEast, "division")).toBe(true);
+    expect(marketMatchesGroup(nlEast, "league")).toBe(false);
     expect(marketMatchesGroup(ws, "league")).toBe(false);
     expect(marketMatchesGroup(al, "division")).toBe(false);
   });
 
   it("filters markets by group", () => {
-    const markets = [ws, al, nlWest, winningLeague];
+    const markets = [ws, al, nlEast, winningLeague];
     expect(filterMarketsByGroup(markets, "world_series")).toEqual([ws]);
     expect(filterMarketsByGroup(markets, "league")).toEqual([al, winningLeague]);
-    expect(filterMarketsByGroup(markets, "division")).toEqual([nlWest]);
+    expect(filterMarketsByGroup(markets, "division")).toEqual([nlEast]);
   });
 });

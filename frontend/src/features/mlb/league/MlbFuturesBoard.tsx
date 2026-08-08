@@ -7,7 +7,6 @@ import {
 } from "./mlbFuturesGroups";
 
 type MlbFuturesBoardProps = {
-  season: number;
   markets: ApiMlbFuturesMarket[];
   group: FuturesGroupId;
   onGroupChange: (group: FuturesGroupId) => void;
@@ -65,7 +64,6 @@ function MarketBlock({ market }: { market: ApiMlbFuturesMarket }) {
 }
 
 export function MlbFuturesBoard({
-  season,
   markets,
   group,
   onGroupChange,
@@ -75,7 +73,7 @@ export function MlbFuturesBoard({
   const filteredMarkets = filterMarketsByGroup(markets, group);
 
   return (
-    <section className="mx-auto max-w-6xl space-y-4 px-4 pb-12 sm:space-y-5 sm:px-6 sm:pb-16">
+    <section className="space-y-4 sm:space-y-5">
       <div
         role="tablist"
         aria-label="Futures group"
