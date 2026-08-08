@@ -205,6 +205,19 @@ export type MlbHitPoint = {
   y: number;
 };
 
+export type MlbGameWeather = {
+  condition: string | null;
+  tempF: string | null;
+  wind: string | null;
+};
+
+export type MlbGameUmpires = {
+  homePlate: string | null;
+  firstBase: string | null;
+  secondBase: string | null;
+  thirdBase: string | null;
+};
+
 export type MlbGameDetailView = {
   mlbGamePk: string;
   league: "mlb";
@@ -213,6 +226,10 @@ export type MlbGameDetailView = {
   gameDate: string | null;
   gameDateLabel: string | null;
   venue: string | null;
+  venueCity: string | null;
+  venueState: string | null;
+  weather: MlbGameWeather | null;
+  umpires: MlbGameUmpires | null;
   away: MlbGameDetailTeam;
   home: MlbGameDetailTeam;
   decisions: MlbDecisions | null;

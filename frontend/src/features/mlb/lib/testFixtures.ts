@@ -8,6 +8,10 @@ export const mlbLiveDetail: MlbGameDetailView = {
   gameDate: "2026-08-02",
   gameDateLabel: "Today",
   venue: "Fenway Park",
+  venueCity: null,
+  venueState: null,
+  weather: null,
+  umpires: null,
   away: {
     id: "111",
     abbrev: "BOS",
@@ -278,6 +282,10 @@ export const mlbFinalDetail: MlbGameDetailView = {
   gameDate: "2026-08-02",
   gameDateLabel: "Today",
   venue: "Chase Field",
+  venueCity: null,
+  venueState: null,
+  weather: null,
+  umpires: null,
   away: {
     id: "109",
     abbrev: "ARI",
@@ -530,6 +538,10 @@ export const mlbScheduledDetail: MlbGameDetailView = {
   gameDate: "2026-08-04",
   gameDateLabel: "Today",
   venue: "Citizens Bank Park",
+  venueCity: null,
+  venueState: null,
+  weather: null,
+  umpires: null,
   away: {
     id: "120",
     abbrev: "WSH",

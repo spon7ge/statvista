@@ -317,6 +317,50 @@ describe("mapMlbGameDetail", () => {
     expect(view.teamStats?.home.hr).toBe(1);
   });
 
+  it("maps game info venue location, weather, and umpires", () => {
+    const view = mapMlbGameDetail(
+      buildApiDetail({
+        venue: "Yankee Stadium",
+        venue_city: "Bronx",
+        venue_state: "New York",
+        weather: {
+          condition: "Cloudy",
+          temp_f: "74",
+          wind: "2 mph N",
+        },
+        umpires: {
+          home_plate: "Mark Ripperger",
+          first_base: "Dan Merzel",
+          second_base: "Dan Bellino",
+          third_base: "Derek Thomas",
+        },
+      }),
+    );
+
+    expect(view.venue).toBe("Yankee Stadium");
+    expect(view.venueCity).toBe("Bronx");
+    expect(view.venueState).toBe("New York");
+    expect(view.weather).toEqual({
+      condition: "Cloudy",
+      tempF: "74",
+      wind: "2 mph N",
+    });
+    expect(view.umpires).toEqual({
+      homePlate: "Mark Ripperger",
+      firstBase: "Dan Merzel",
+      secondBase: "Dan Bellino",
+      thirdBase: "Derek Thomas",
+    });
+  });
+
+  it("maps null game info fields when absent", () => {
+    const view = mapMlbGameDetail(buildApiDetail());
+    expect(view.venueCity).toBeNull();
+    expect(view.venueState).toBeNull();
+    expect(view.weather).toBeNull();
+    expect(view.umpires).toBeNull();
+  });
+
   it("maps situation headshots and pitch spin", () => {
     const raw = buildApiDetail({
       situation: {

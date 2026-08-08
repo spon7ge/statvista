@@ -1000,8 +1000,14 @@ export interface components {
             /** Status Label */
             status_label: string;
             team_stats: components["schemas"]["MlbTeamStatsPair"] | null;
+            umpires: components["schemas"]["MlbGameUmpires"] | null;
             /** Venue */
             venue: string | null;
+            /** Venue City */
+            venue_city: string | null;
+            /** Venue State */
+            venue_state: string | null;
+            weather: components["schemas"]["MlbGameWeather"] | null;
             win_probability: components["schemas"]["MlbWinProbability"] | null;
         };
         /** MlbGameDetailTeam */
@@ -1022,6 +1028,26 @@ export interface components {
             record: string | null;
             /** Score */
             score: number | null;
+        };
+        /** MlbGameUmpires */
+        MlbGameUmpires: {
+            /** First Base */
+            first_base: string | null;
+            /** Home Plate */
+            home_plate: string | null;
+            /** Second Base */
+            second_base: string | null;
+            /** Third Base */
+            third_base: string | null;
+        };
+        /** MlbGameWeather */
+        MlbGameWeather: {
+            /** Condition */
+            condition: string | null;
+            /** Temp F */
+            temp_f: string | null;
+            /** Wind */
+            wind: string | null;
         };
         /** MlbHitPoint */
         MlbHitPoint: {

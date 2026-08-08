@@ -141,6 +141,29 @@ function mapPlayerCard(
   };
 }
 
+function mapWeather(
+  weather: ApiMlbGameDetail["weather"],
+): MlbGameDetailView["weather"] {
+  if (!weather) return null;
+  return {
+    condition: weather.condition,
+    tempF: weather.temp_f,
+    wind: weather.wind,
+  };
+}
+
+function mapUmpires(
+  umpires: ApiMlbGameDetail["umpires"],
+): MlbGameDetailView["umpires"] {
+  if (!umpires) return null;
+  return {
+    homePlate: umpires.home_plate,
+    firstBase: umpires.first_base,
+    secondBase: umpires.second_base,
+    thirdBase: umpires.third_base,
+  };
+}
+
 export function mapMlbGameDetail(detail: ApiMlbGameDetail): MlbGameDetailView {
   return {
     mlbGamePk: detail.mlb_game_pk,
@@ -150,6 +173,10 @@ export function mapMlbGameDetail(detail: ApiMlbGameDetail): MlbGameDetailView {
     gameDate: detail.game_date ?? null,
     gameDateLabel: detail.game_date_label,
     venue: detail.venue,
+    venueCity: detail.venue_city ?? null,
+    venueState: detail.venue_state ?? null,
+    weather: mapWeather(detail.weather),
+    umpires: mapUmpires(detail.umpires),
     away: mapTeam(detail.away),
     home: mapTeam(detail.home),
     decisions: detail.decisions

@@ -1512,6 +1512,16 @@
               }
             ]
           },
+          "umpires": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbGameUmpires"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "venue": {
             "anyOf": [
               {
@@ -1522,6 +1532,38 @@
               }
             ],
             "title": "Venue"
+          },
+          "venue_city": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Venue City"
+          },
+          "venue_state": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Venue State"
+          },
+          "weather": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbGameWeather"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "win_probability": {
             "anyOf": [
@@ -1540,6 +1582,10 @@
           "status",
           "status_label",
           "venue",
+          "venue_city",
+          "venue_state",
+          "weather",
+          "umpires",
           "away",
           "home",
           "linescore",
@@ -1635,6 +1681,106 @@
           "last_10"
         ],
         "title": "MlbGameDetailTeam",
+        "type": "object"
+      },
+      "MlbGameUmpires": {
+        "properties": {
+          "first_base": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "First Base"
+          },
+          "home_plate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Home Plate"
+          },
+          "second_base": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Second Base"
+          },
+          "third_base": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Third Base"
+          }
+        },
+        "required": [
+          "home_plate",
+          "first_base",
+          "second_base",
+          "third_base"
+        ],
+        "title": "MlbGameUmpires",
+        "type": "object"
+      },
+      "MlbGameWeather": {
+        "properties": {
+          "condition": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Condition"
+          },
+          "temp_f": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Temp F"
+          },
+          "wind": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wind"
+          }
+        },
+        "required": [
+          "condition",
+          "temp_f",
+          "wind"
+        ],
+        "title": "MlbGameWeather",
         "type": "object"
       },
       "MlbHitPoint": {
