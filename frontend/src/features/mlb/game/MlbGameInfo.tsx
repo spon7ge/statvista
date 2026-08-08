@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Building2, Calendar, Cloud, Wind } from "lucide-react";
+import { GameSection } from "@/shared/ui/GameSection";
 import type {
   MlbGameDetailView,
   MlbGameUmpires,
@@ -99,11 +100,8 @@ export function MlbGameInfo({ detail }: MlbGameInfoProps) {
   const showUmpires = hasUmpires(detail.umpires);
 
   return (
-    <section
-      data-testid="mlb-game-info"
-      className="rounded-xl border border-white/10 bg-white/[0.03] p-4"
-    >
-      <h2 className="text-base font-semibold text-white">Game Info</h2>
+    <GameSection data-testid="mlb-game-info">
+      <h2 className="text-[18px] font-semibold text-white">Game Info</h2>
 
       <div className="mt-4 space-y-4">
         {showDate ? (
@@ -156,6 +154,6 @@ export function MlbGameInfo({ detail }: MlbGameInfoProps) {
           </InfoRow>
         ) : null}
       </div>
-    </section>
+    </GameSection>
   );
 }
