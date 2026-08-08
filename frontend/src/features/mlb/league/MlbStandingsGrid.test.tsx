@@ -70,13 +70,11 @@ describe("MlbStandingsGrid", () => {
     ).toHaveClass("text-[18px]");
     expect(screen.getByText("AL East")).toBeInTheDocument();
     expect(screen.getByText("NL West")).toBeInTheDocument();
-    expect(screen.getByText("New York Yankees")).toBeInTheDocument();
     expect(screen.getByText("NYY")).toBeInTheDocument();
     expect(screen.getByText("80-50")).toBeInTheDocument();
     expect(screen.getByText(".615")).toBeInTheDocument();
     expect(screen.getByText("7-3")).toBeInTheDocument();
     expect(screen.getByText("W3")).toBeInTheDocument();
-    expect(screen.getByText("Los Angeles Dodgers")).toBeInTheDocument();
     expect(screen.getByText("LAD")).toBeInTheDocument();
     expect(screen.getByText("75-55")).toBeInTheDocument();
     expect(screen.getByText("5-5")).toBeInTheDocument();

@@ -1,6 +1,5 @@
 import type { ApiMlbStandingsDivision } from "@/shared/lib/api";
 import { TeamAbbrevAvatar } from "@/shared/ui/TeamAbbrevAvatar";
-import { teamColor } from "./mlbTeamColors";
 import { mlbTeamLogoUrl } from "./mlbTeamLogos";
 
 type MlbStandingsDivisionCardProps = {
@@ -22,9 +21,9 @@ export function MlbStandingsDivisionCard({
         {division.label}
       </h3>
       <div className="overflow-x-auto">
-        <table className="w-full text-left text-[18px]">
+        <table className="w-full min-w-max text-left text-[18px]">
           <thead>
-            <tr className="text-[14px] tracking-wide text-white/35 uppercase">
+            <tr className="whitespace-nowrap text-[14px] tracking-wide text-white/35 uppercase">
               <th className="pb-2 pr-1.5 font-medium">#</th>
               <th className="pb-2 pr-1 font-medium">Team</th>
               <th className="pb-2 pr-1.5 font-medium">W-L</th>
@@ -45,22 +44,21 @@ export function MlbStandingsDivisionCard({
               division.teams.map((row) => {
                 const logoUrl = row.logo_url ?? mlbTeamLogoUrl(row.abbrev);
                 return (
-                  <tr key={`${division.key}-${row.team_id}`}>
+                  <tr
+                    key={`${division.key}-${row.team_id}`}
+                    className="whitespace-nowrap"
+                  >
                     <td className="py-1 pr-1.5 text-white/50">{row.rank}</td>
                     <td className="py-1 pr-1">
-                      <div className="flex items-center gap-1.5">
+                      <div className="flex items-center gap-1.5 whitespace-nowrap">
                         <TeamAbbrevAvatar
                           abbrev={row.abbrev}
                           logoUrl={logoUrl}
                           sizeClassName="size-5"
                         />
-                        <span
-                          className="font-semibold"
-                          style={{ color: teamColor(row.abbrev) }}
-                        >
+                        <span className="shrink-0 font-semibold text-white">
                           {row.abbrev}
                         </span>
-                        <span className="text-white/80">{row.name}</span>
                       </div>
                     </td>
                     <td className="py-1 pr-1.5 tabular-nums text-white">
