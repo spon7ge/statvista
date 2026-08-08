@@ -202,3 +202,149 @@ def test_normalize_event() -> None:
     assert norm["event_id"] == 13002464
     assert norm["status"] == "not_started"
     assert len(norm["competitors"]) == 2
+
+
+_POINTS_PROP = {
+    "id": 460000700,
+    "name": "A'ja Wilson Total Points",
+    "subType": "player_total_points",
+    "type": "total",
+    "status": "active",
+    "marketLines": [
+        {
+            "name": "Fixed total 22.5",
+            "favourite": True,
+            "selections": [
+                [
+                    {
+                        "id": 12,
+                        "name": "over 22.5",
+                        "odds": -120,
+                        "line": 22.5,
+                        "stake": 134.33,
+                    }
+                ],
+                [
+                    {
+                        "id": 13,
+                        "name": "under 22.5",
+                        "odds": 100,
+                        "line": 22.5,
+                        "stake": 90.0,
+                    }
+                ],
+            ],
+        },
+        {
+            "name": "Fixed total 24.5",
+            "selections": [
+                [
+                    {
+                        "id": 14,
+                        "name": "over 24.5",
+                        "odds": 140,
+                        "line": 24.5,
+                        "stake": 40.0,
+                    }
+                ],
+                [
+                    {
+                        "id": 15,
+                        "name": "under 24.5",
+                        "odds": -160,
+                        "line": 24.5,
+                        "stake": 55.0,
+                    }
+                ],
+            ],
+        },
+    ],
+}
+
+_PRA_PROP = {
+    "id": 460000701,
+    "name": "A'ja Wilson Total Points, Rebounds & Assists",
+    "subType": "player_total_points_rebounds_assists",
+    "type": "total",
+    "status": "active",
+    "marketLines": [
+        {
+            "name": "Fixed total 34.5",
+            "favourite": True,
+            "selections": [
+                [{"name": "over 34.5", "odds": -110, "line": 34.5, "stake": 10.0}],
+                [{"name": "under 34.5", "odds": -110, "line": 34.5, "stake": 10.0}],
+            ],
+        }
+    ],
+}
+
+
+def test_extract_props_main_and_alt_points() -> None:
+    px = _load_scraper()
+    props = px.extract_props([_POINTS_PROP, {"subType": "unknown_stat", "name": "X"}])
+    assert len(props) == 2
+    by_line = {row["line"]: row for row in props}
+    main = by_line[22.5]
+    alt = by_line[24.5]
+    assert main["player"] == "A'ja Wilson"
+    assert main["stat"] == "points"
+    assert main["is_main"] is True
+    assert main["over"]["american"] == -120
+    assert alt["is_main"] is False
+    assert alt["over"]["american"] == 140
+    assert alt["under"]["american"] == -160
+
+
+def test_extract_props_combo_pra() -> None:
+    px = _load_scraper()
+    props = px.extract_props([_PRA_PROP])
+    assert len(props) == 1
+    assert props[0]["stat"] == "points_rebounds_assists"
+    assert props[0]["player"] == "A'ja Wilson"
+    assert props[0]["is_main"] is True
+
+
+def test_extract_props_sole_line_is_main() -> None:
+    px = _load_scraper()
+    market = {
+        "id": 1,
+        "name": "Breanna Stewart Total Rebounds",
+        "subType": "player_total_rebounds",
+        "marketLines": [
+            {
+                "name": "Fixed total 7.5",
+                "selections": [
+                    [{"name": "over 7.5", "odds": -110, "line": 7.5, "stake": 1}],
+                    [{"name": "under 7.5", "odds": -110, "line": 7.5, "stake": 1}],
+                ],
+            }
+        ],
+    }
+    props = px.extract_props([market])
+    assert len(props) == 1
+    assert props[0]["stat"] == "rebounds"
+    assert props[0]["is_main"] is True
+
+
+def test_extract_props_skips_empty_alt_selections() -> None:
+    px = _load_scraper()
+    market = {
+        "id": 2,
+        "name": "Breanna Stewart Total Assists",
+        "subType": "player_total_assists",
+        "marketLines": [
+            {
+                "name": "Fixed total 4.5",
+                "favourite": True,
+                "selections": [
+                    [{"name": "over 4.5", "odds": -110, "line": 4.5, "stake": 1}],
+                    [{"name": "under 4.5", "odds": -110, "line": 4.5, "stake": 1}],
+                ],
+            },
+            {"name": "Fixed total 5.5", "selections": [[], []]},
+        ],
+    }
+    props = px.extract_props([market])
+    assert len(props) == 1
+    assert props[0]["line"] == 4.5

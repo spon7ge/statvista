@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import os
 import sys
 from datetime import datetime
@@ -13,6 +14,8 @@ if _ROOT not in sys.path:
     sys.path.insert(0, _ROOT)
 _DEFAULT_OUTPUT_DIR = os.path.join(_ROOT, "data", "props", "prophetx", "wnba")
 _OUTPUT_TZ = ZoneInfo("America/Los_Angeles")
+
+logger = logging.getLogger(__name__)
 
 
 def output_filename(league: str, now: datetime, *, kind: str) -> str:
@@ -160,3 +163,108 @@ def extract_team_markets(markets: list[dict[str, Any]]) -> dict[str, Any]:
         if rows:
             out[key] = rows
     return out
+
+
+PROP_SUBTYPE_TO_STAT: dict[str, str] = {
+    "player_total_points": "points",
+    "player_total_rebounds": "rebounds",
+    "player_total_assists": "assists",
+    "player_total_points_rebounds_assists": "points_rebounds_assists",
+    "player_total_points_rebounds": "points_rebounds",
+    "player_total_points_assists": "points_assists",
+    "player_total_rebounds_assists": "rebounds_assists",
+}
+
+_PROP_NAME_SUFFIXES = (
+    " Total Points, Rebounds & Assists",
+    " Total Points & Rebounds",
+    " Total Points & Assists",
+    " Total Rebounds & Assists",
+    " Total Points",
+    " Total Rebounds",
+    " Total Assists",
+)
+
+
+def player_name_from_market(market: dict[str, Any]) -> str:
+    name = str(market.get("name") or "").strip()
+    for suffix in _PROP_NAME_SUFFIXES:
+        if name.endswith(suffix):
+            return name[: -len(suffix)].strip()
+    return name
+
+
+def _prop_row_from_book(
+    market: dict[str, Any],
+    book: dict[str, Any],
+    *,
+    stat: str,
+    sub: str,
+    is_main: bool,
+) -> dict[str, Any] | None:
+    sides = _sides_from_book(book)
+    over = under = None
+    line: float | None = None
+    for side in sides:
+        best = best_selection(side)
+        if not best:
+            continue
+        american, stake = american_and_stake(best)
+        side_name = str(best.get("name") or "").lower()
+        payload = {"american": american, "stake": stake}
+        if best.get("line") is not None:
+            try:
+                line = float(best["line"])
+            except (TypeError, ValueError):
+                pass
+        if side_name.startswith("over"):
+            over = payload
+        elif side_name.startswith("under"):
+            under = payload
+    if over is None and under is None:
+        return None
+    return {
+        "player": player_name_from_market(market),
+        "stat": stat,
+        "line": line,
+        "over": over,
+        "under": under,
+        "market_id": market.get("id"),
+        "sub_type": sub,
+        "is_main": is_main,
+    }
+
+
+def extract_props(markets: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for market in markets:
+        if not isinstance(market, dict):
+            continue
+        sub = str(market.get("subType") or "")
+        stat = PROP_SUBTYPE_TO_STAT.get(sub)
+        if not stat:
+            continue
+        lines = [ln for ln in (market.get("marketLines") or []) if isinstance(ln, dict)]
+        if not lines:
+            continue
+        favourites = [ln for ln in lines if ln.get("favourite") is True]
+        if len(favourites) > 1:
+            logger.debug(
+                "ProphetX prop market %s has %s favourite lines; marking first as is_main",
+                market.get("id"),
+                len(favourites),
+            )
+        if favourites:
+            main_book = favourites[0]
+        elif len(lines) == 1:
+            main_book = lines[0]
+        else:
+            main_book = None
+        for book in lines:
+            is_main = book is main_book
+            row = _prop_row_from_book(
+                market, book, stat=stat, sub=sub, is_main=is_main
+            )
+            if row is not None:
+                rows.append(row)
+    return rows
