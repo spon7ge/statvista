@@ -240,6 +240,54 @@ describe("AppRouter", () => {
     );
   });
 
+  it("renders MLB futures at /mlb/futures", async () => {
+    fetchMock.mockImplementation(async (input: RequestInfo) => {
+      const url = String(input);
+      if (url.includes("/api/mlb/futures")) {
+        return {
+          ok: true,
+          json: async () => ({
+            season: 2026,
+            as_of: "2026-08-08T00:00:00Z",
+            markets: [
+              {
+                id: "2761",
+                name: "MLB  - World Series - Winner",
+                display_name: "World Series Winner",
+                provider: "DraftKings",
+                entries: [
+                  {
+                    team_id: "10",
+                    abbrev: "NYY",
+                    name: "New York Yankees",
+                    logo_url: null,
+                    odds_american: "+450",
+                  },
+                ],
+              },
+            ],
+            error: null,
+          }),
+        };
+      }
+      return {
+        ok: true,
+        json: async () => ({ date: "2026-07-29", fetched_at: "", games: [] }),
+      };
+    });
+    renderWithProviders(["/mlb/futures"]);
+    expect(
+      await screen.findByRole("heading", { name: "MLB 2026 Futures" }),
+    ).toBeInTheDocument();
+    expect(await screen.findByText("World Series Winner")).toBeInTheDocument();
+    expect(await screen.findByText("New York Yankees")).toBeInTheDocument();
+    expect(screen.getByText("+450")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Futures" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+  });
+
   it("renders MLB prop picks at /mlb/prop_picks", async () => {
     fetchMock.mockImplementation(async (input: RequestInfo) => {
       const url = String(input);

@@ -34,7 +34,8 @@ export function LeagueSubnav({ league }: LeagueSubnavProps) {
       return `/${league}/leaders`;
     if (item === "Standings" && (league === "wnba" || league === "mlb"))
       return `/${league}/standings`;
-    if (item === "Futures" && league === "wnba") return "/wnba/futures";
+    if (item === "Futures" && (league === "wnba" || league === "mlb"))
+      return `/${league}/futures`;
     return null;
   }
 

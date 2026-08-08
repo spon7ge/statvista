@@ -71,6 +71,14 @@ describe("LeagueSubnav", () => {
     );
   });
 
+  it("links Futures to /mlb/futures for mlb", () => {
+    renderSubnav("/mlb/futures", "mlb");
+    expect(screen.getByRole("link", { name: "Futures" })).toHaveAttribute(
+      "href",
+      "/mlb/futures",
+    );
+  });
+
   it("links Futures for WNBA and leaves it disabled for NBA", () => {
     const { unmount } = renderSubnav("/wnba/futures");
     const futures = screen.getByRole("link", { name: "Futures" });
