@@ -185,6 +185,61 @@ describe("AppRouter", () => {
     );
   });
 
+  it("renders MLB standings at /mlb/standings", async () => {
+    fetchMock.mockImplementation(async (input: RequestInfo) => {
+      const url = String(input);
+      if (url.includes("/api/mlb/standings")) {
+        return {
+          ok: true,
+          json: async () => ({
+            season: 2026,
+            leagues: [
+              {
+                key: "al",
+                label: "American League",
+                divisions: [
+                  {
+                    key: "al_east",
+                    label: "AL East",
+                    teams: [
+                      {
+                        rank: 1,
+                        team_id: "139",
+                        abbrev: "TB",
+                        name: "Rays",
+                        logo_url: null,
+                        wins: 69,
+                        losses: 46,
+                        wl: "69-46",
+                        pct: ".600",
+                        gb: "-",
+                        l10: "7-3",
+                        streak: "W4",
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          }),
+        };
+      }
+      return {
+        ok: true,
+        json: async () => ({ date: "2026-07-29", fetched_at: "", games: [] }),
+      };
+    });
+    renderWithProviders(["/mlb/standings"]);
+    expect(
+      await screen.findByRole("heading", { name: "MLB 2026 Standings" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Data: statsapi.mlb.com")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Standings" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+  });
+
   it("renders MLB prop picks at /mlb/prop_picks", async () => {
     fetchMock.mockImplementation(async (input: RequestInfo) => {
       const url = String(input);
