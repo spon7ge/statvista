@@ -67,6 +67,9 @@ export type ApiMlbPropBooks = Schemas["MlbPropBooks"];
 export type ApiMlbPropDfs = Schemas["MlbPropDfs"];
 export type ApiMlbPropRow = Schemas["MlbPropRow"];
 export type ApiMlbPropsResponse = Schemas["MlbPropsResponse"];
+export type ApiMlbLeaderRow = Schemas["MlbLeaderRow"];
+export type ApiMlbLeaderCategory = Schemas["MlbLeaderCategory"];
+export type ApiMlbLeadersResponse = Schemas["MlbLeadersResponse"];
 
 export type MlbPropsParams = {
   app: string;
@@ -211,6 +214,17 @@ export async function fetchMlbScoreboardByDate(
   );
   if (!res.ok) {
     throw new Error(`MLB scoreboard request failed: ${res.status}`);
+  }
+  return res.json();
+}
+
+export async function fetchMlbLeaders(): Promise<ApiMlbLeadersResponse> {
+  const res = await fetch(`${API_BASE}/api/mlb/leaders`, {
+    headers: { Accept: "application/json" },
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    throw new Error(`MLB leaders failed: ${res.status}`);
   }
   return res.json();
 }
