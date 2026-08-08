@@ -5,6 +5,7 @@ import type {
   ApiMlbPropRow,
 } from "@/shared/lib/api";
 import { formatAmericanOdds } from "@/features/mlb/lib/mlbOddsBoard";
+import { StatvistaBarsMark } from "@/shared/ui/StatvistaBarsMark";
 
 const BOOK_LABELS: Record<string, string> = {
   prophetx: "ProphetX",
@@ -308,12 +309,14 @@ function PropPickCard({
   return (
     <article
       data-testid="mlb-prop-row"
-      className={`rounded-xl bg-[#3a3d42] p-4 ring-2 transition-[box-shadow,opacity] ${
+      className={`relative rounded-xl bg-[#3a3d42] p-4 ring-2 transition-[box-shadow,opacity] ${
         expanded
           ? "ring-[#059669]"
           : "ring-transparent hover:ring-[#059669]"
       } ${isNoRead ? "opacity-60" : ""}`}
     >
+      {/* Decorative for now; wrap in a button when per-card actions land. */}
+      <StatvistaBarsMark className="pointer-events-none absolute left-3 top-3 size-4 text-white" />
       <button
         type="button"
         onClick={onToggle}

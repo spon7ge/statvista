@@ -145,6 +145,7 @@ describe("MlbPropPicksList", () => {
     expect(within(card).getByText("NYY · RF")).toBeInTheDocument();
     expect(within(card).getByText("Aaron Judge")).toBeInTheDocument();
     expect(within(card).getByText("1.5 Total Bases")).toBeInTheDocument();
+    expect(within(card).getByTestId("statvista-bars-mark")).toBeInTheDocument();
     expect(within(card).queryByTestId("mlb-prop-dfs-odds")).not.toBeInTheDocument();
     expect(within(card).getByText("Over")).toBeInTheDocument();
     expect(within(card).getByText("+5.1%").className).toMatch(/text-emerald-400/);

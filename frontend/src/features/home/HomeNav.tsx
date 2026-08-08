@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { ChevronDown, Settings } from "lucide-react";
 import nbaLogo from "@/assets/nba_logo.png";
 import wnbaLogo from "@/assets/wnba_logo.png";
+import { StatvistaBarsMark } from "@/shared/ui/StatvistaBarsMark";
 
 const MLB_LOGO =
   "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png";
@@ -45,20 +46,7 @@ export function HomeNav() {
     <header className="border-b border-white/10 bg-background">
       <div className="mx-auto flex h-12 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
         <Link to="/" className="flex items-center gap-2 text-white no-underline">
-          <svg
-            className="size-4 shrink-0"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden
-          >
-            <line x1="6" y1="20" x2="6" y2="10" />
-            <line x1="12" y1="20" x2="12" y2="4" />
-            <line x1="18" y1="20" x2="18" y2="14" />
-          </svg>
+          <StatvistaBarsMark />
           <span className="text-[18px] font-semibold tracking-tight text-white">
             statvista
           </span>
