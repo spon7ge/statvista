@@ -24,6 +24,7 @@ from app.domains.mlb.schemas import (
     MlbLinescore,
     MlbLinescoreInning,
     MlbLinescoreTotals,
+    MlbMatchupPrediction,
     MlbPitch,
     MlbPitcherRow,
     MlbPitchingTotals,
@@ -42,8 +43,10 @@ from app.domains.mlb.schemas import GameStatus
 from app.providers.espn.mlb_bridge import (
     ESPN_TIMEOUT_SECONDS,
     EspnInjuries,
+    EspnMatchupPrediction,
     EspnWinProbability,
     normalize_espn_mlb_injuries,
+    normalize_espn_mlb_matchup_prediction,
     normalize_espn_mlb_win_probability,
     resolve_espn_event_id,
 )
@@ -1055,6 +1058,32 @@ def attach_win_probability(
     return detail.model_copy(update={"win_probability": wp, "sources": sources})
 
 
+def attach_matchup_prediction(
+    detail: MlbGameDetail,
+    prediction: MlbMatchupPrediction | None,
+) -> MlbGameDetail:
+    if prediction is None:
+        return detail
+    sources = list(detail.sources)
+    if "espn" not in sources:
+        sources.append("espn")
+    return detail.model_copy(
+        update={"matchup_prediction": prediction, "sources": sources}
+    )
+
+
+def _to_mlb_matchup_prediction(
+    pred: EspnMatchupPrediction | None,
+) -> MlbMatchupPrediction | None:
+    if pred is None:
+        return None
+    return MlbMatchupPrediction(
+        away_win_pct=pred.away_win_pct,
+        home_win_pct=pred.home_win_pct,
+        source_label=pred.source_label,
+    )
+
+
 def attach_season_team_stats(
     detail: MlbGameDetail,
     pair: MlbSeasonTeamStatsPair | None,
@@ -1317,6 +1346,11 @@ async def _attach_espn_summary_enrichment(
             )
         )
         detail = attach_win_probability(detail, wp)
+
+        detail = attach_matchup_prediction(
+            detail,
+            _to_mlb_matchup_prediction(normalize_espn_mlb_matchup_prediction(summary)),
+        )
 
         away_espn_id, home_espn_id = _espn_competitor_team_ids(summary)
         if away_espn_id and home_espn_id:

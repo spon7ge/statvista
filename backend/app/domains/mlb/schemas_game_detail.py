@@ -21,6 +21,7 @@ __all__ = [
     "MlbLinescore",
     "MlbLinescoreInning",
     "MlbLinescoreTotals",
+    "MlbMatchupPrediction",
     "MlbPitch",
     "MlbPitcherRow",
     "MlbPlay",
@@ -320,6 +321,14 @@ class MlbWinProbability(BaseModel):
     stakes: MlbWinProbabilityStakes | None = None
 
 
+class MlbMatchupPrediction(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    away_win_pct: int
+    home_win_pct: int
+    source_label: str
+
+
 class MlbGameWeather(BaseModel):
     model_config = _RESPONSE_CONFIG
 
@@ -358,6 +367,7 @@ class MlbGameDetail(BaseModel):
     box_score: MlbBoxScore | None = None
     hit_chart: list[MlbHitPoint] = []
     win_probability: MlbWinProbability | None = None
+    matchup_prediction: MlbMatchupPrediction | None = None
     game_date: str | None = None
     game_date_label: str | None = None
     decisions: MlbDecisions | None = None

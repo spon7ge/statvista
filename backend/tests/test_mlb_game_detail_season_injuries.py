@@ -6,11 +6,16 @@ import pytest
 
 from app.domains.mlb.game_detail import (
     attach_injuries,
+    attach_matchup_prediction,
     attach_season_team_stats,
     clear_mlb_game_detail_cache,
     get_mlb_game_detail,
 )
-from app.domains.mlb.schemas import MlbGameDetail, MlbGameDetailTeam
+from app.domains.mlb.schemas import (
+    MlbGameDetail,
+    MlbGameDetailTeam,
+    MlbMatchupPrediction,
+)
 from app.domains.mlb.schemas_game_detail import (
     MlbInjuries,
     MlbInjury,
@@ -76,6 +81,21 @@ def test_attach_injuries():
 def test_attach_injuries_none_noop():
     detail = _scheduled_detail()
     assert attach_injuries(detail, None) is detail
+
+
+def test_attach_matchup_prediction():
+    detail = _scheduled_detail()
+    pred = MlbMatchupPrediction(
+        away_win_pct=59, home_win_pct=41, source_label="ESPN game projection"
+    )
+    out = attach_matchup_prediction(detail, pred)
+    assert out.matchup_prediction == pred
+    assert "espn" in out.sources
+
+
+def test_attach_matchup_prediction_none_noop():
+    detail = _scheduled_detail()
+    assert attach_matchup_prediction(detail, None) is detail
 
 
 @pytest.mark.asyncio

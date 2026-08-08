@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 
+from app.providers.espn import mlb_bridge
 from app.providers.espn.mlb_bridge import (
     match_espn_event_id,
     normalize_espn_mlb_win_probability,
@@ -25,6 +26,20 @@ def test_normalize_win_probability_points_and_stakes():
     assert len(wp.points) >= 2
     assert wp.stakes is not None
     assert wp.home_abbrev == "LAD"
+
+
+def test_normalize_espn_mlb_matchup_prediction():
+    summary = json.loads((FIXTURES / "espn_mlb_summary_wp.json").read_text())
+    pred = mlb_bridge.normalize_espn_mlb_matchup_prediction(summary)
+    assert pred is not None
+    assert pred.away_win_pct == 59
+    assert pred.home_win_pct == 41
+    assert pred.source_label == "ESPN game projection"
+
+
+def test_normalize_espn_mlb_matchup_prediction_missing():
+    assert mlb_bridge.normalize_espn_mlb_matchup_prediction({}) is None
+    assert mlb_bridge.normalize_espn_mlb_matchup_prediction({"predictor": {}}) is None
 
 
 def test_attach_win_probability_adds_espn_source():

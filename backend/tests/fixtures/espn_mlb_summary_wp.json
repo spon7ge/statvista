@@ -21,6 +21,11 @@
       }
     ]
   },
+  "predictor": {
+    "header": "Chance to win",
+    "homeTeam": { "id": "home1", "gameProjection": "41.2" },
+    "awayTeam": { "id": "away1", "gameProjection": "58.8" }
+  },
   "winprobability": [
     {
       "homeWinPercentage": 0.52,

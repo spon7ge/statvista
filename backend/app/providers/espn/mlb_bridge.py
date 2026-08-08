@@ -62,6 +62,13 @@ class EspnInjuries:
     home: list[EspnInjury] = field(default_factory=list)
 
 
+@dataclass(frozen=True)
+class EspnMatchupPrediction:
+    away_win_pct: int
+    home_win_pct: int
+    source_label: str
+
+
 def _as_dict(value: Any) -> dict:
     return value if isinstance(value, dict) else {}
 
@@ -260,6 +267,25 @@ def normalize_espn_mlb_injuries(
     if not away and not home:
         return None
     return EspnInjuries(away=away, home=home)
+
+
+def normalize_espn_mlb_matchup_prediction(
+    summary: dict,
+) -> EspnMatchupPrediction | None:
+    """Map ESPN summary ``predictor`` gameProjection percents."""
+    predictor = summary.get("predictor")
+    if not isinstance(predictor, dict):
+        return None
+    try:
+        away = float((_as_dict(predictor.get("awayTeam")).get("gameProjection")))
+        home = float((_as_dict(predictor.get("homeTeam")).get("gameProjection")))
+    except (TypeError, ValueError):
+        return None
+    return EspnMatchupPrediction(
+        away_win_pct=round(away),
+        home_win_pct=round(home),
+        source_label="ESPN game projection",
+    )
 
 
 async def resolve_espn_event_id(
