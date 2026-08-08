@@ -332,6 +332,84 @@ def clear_cache():
     svc._cache.clear()
 
 
+def test_normalize_prophetx_run_line_as_spread():
+    rows = [
+        {
+            "away_team": "Pittsburgh Pirates",
+            "home_team": "Chicago Cubs",
+            "start_time": "2026-08-07T23:00:00Z",
+            "market_type": "run_line",
+            "side": "away",
+            "team": "Pittsburgh Pirates -1",
+            "points": -1.0,
+            "american_price": 114,
+        },
+        {
+            "away_team": "Pittsburgh Pirates",
+            "home_team": "Chicago Cubs",
+            "start_time": "2026-08-07T23:00:00Z",
+            "market_type": "run_line",
+            "side": "home",
+            "team": "Chicago Cubs +1",
+            "points": 1.0,
+            "american_price": -130,
+        },
+        {
+            "away_team": "Pittsburgh Pirates",
+            "home_team": "Chicago Cubs",
+            "start_time": "2026-08-07T23:00:00Z",
+            "market_type": "total",
+            "side": "over",
+            "points": 8.5,
+            "american_price": 103,
+        },
+    ]
+    games = svc.normalize_team_odds_rows(rows, sportsbook="prophetx")
+    assert len(games) == 1
+    g = games[0]
+    assert g.sportsbook == "prophetx"
+    assert g.away_abbrev == "PIT" and g.home_abbrev == "CHC"
+    assert g.spread_team_abbrev == "PIT" and g.spread_line == -1.0
+    assert g.total == 8.5
+
+
+def test_merge_odds_by_priority_pinnacle_over_prophetx():
+    pin = [
+        MlbOddsGame(
+            home_abbrev="CHC",
+            away_abbrev="LAD",
+            spread_team_abbrev="LAD",
+            spread_line=-2.0,
+            total=9.0,
+            sportsbook="pinnacle",
+        )
+    ]
+    px = [
+        MlbOddsGame(
+            home_abbrev="CHC",
+            away_abbrev="LAD",
+            spread_team_abbrev="LAD",
+            spread_line=-1.5,
+            total=8.0,
+            sportsbook="prophetx",
+        )
+    ]
+    sharp = [
+        MlbOddsGame(
+            home_abbrev="CHC",
+            away_abbrev="LAD",
+            spread_team_abbrev="LAD",
+            spread_line=-1.5,
+            total=8.5,
+            sportsbook="fanduel",
+        )
+    ]
+    merged = svc.merge_odds_by_priority(pin, px, sharp)
+    assert len(merged) == 1
+    assert merged[0].sportsbook == "pinnacle"
+    assert merged[0].total == 9.0
+
+
 def test_get_today_odds_prefers_pinnacle(monkeypatch):
     pin_rows = [
         {
@@ -339,6 +417,86 @@ def test_get_today_odds_prefers_pinnacle(monkeypatch):
             "home_team": "Chicago Cubs",
             "start_time": "2026-08-03T23:00:00Z",
             "market_type": "spread",
+            "side": "away",
+            "team": "Los Angeles Dodgers",
+            "points": -2.0,
+            "american_price": -115,
+        },
+        {
+            "away_team": "Los Angeles Dodgers",
+            "home_team": "Chicago Cubs",
+            "start_time": "2026-08-03T23:00:00Z",
+            "market_type": "total",
+            "side": "over",
+            "points": 9.0,
+            "american_price": -110,
+        },
+    ]
+    px_rows = [
+        {
+            "away_team": "Los Angeles Dodgers",
+            "home_team": "Chicago Cubs",
+            "start_time": "2026-08-03T23:00:00Z",
+            "market_type": "run_line",
+            "side": "away",
+            "team": "Los Angeles Dodgers",
+            "points": -1.5,
+            "american_price": -115,
+        },
+        {
+            "away_team": "Los Angeles Dodgers",
+            "home_team": "Chicago Cubs",
+            "start_time": "2026-08-03T23:00:00Z",
+            "market_type": "total",
+            "side": "over",
+            "points": 8.0,
+            "american_price": -110,
+        },
+    ]
+    sharp_games = [
+        MlbOddsGame(
+            home_abbrev="BOS",
+            away_abbrev="NYY",
+            spread_team_abbrev="NYY",
+            spread_line=-1.5,
+            total=8.5,
+            game_date="2026-08-03",
+            sportsbook="fanduel",
+        )
+    ]
+
+    with (
+        patch(
+            "app.domains.mlb.odds.fetch_latest_prophetx_team",
+            return_value=px_rows,
+        ),
+        patch(
+            "app.domains.mlb.odds.fetch_latest_pinnacle_team",
+            return_value=pin_rows,
+        ),
+        patch.object(
+            svc, "_fetch_sharp_games", return_value=(sharp_games, [])
+        ),
+    ):
+        body = asyncio.run(svc.get_today_odds())
+
+    assert body.sportsbook == "pinnacle"
+    assert len(body.games) == 2
+    chc = next(g for g in body.games if g.home_abbrev == "CHC")
+    assert chc.sportsbook == "pinnacle"
+    assert chc.spread_line == -2.0
+    assert chc.total == 9.0
+    bos = next(g for g in body.games if g.home_abbrev == "BOS")
+    assert bos.sportsbook == "fanduel"
+
+
+def test_get_today_odds_prefers_prophetx_when_pinnacle_empty(monkeypatch):
+    px_rows = [
+        {
+            "away_team": "Los Angeles Dodgers",
+            "home_team": "Chicago Cubs",
+            "start_time": "2026-08-03T23:00:00Z",
+            "market_type": "run_line",
             "side": "away",
             "team": "Los Angeles Dodgers",
             "points": -1.5,
@@ -362,44 +520,15 @@ def test_get_today_odds_prefers_pinnacle(monkeypatch):
             spread_line=-1.5,
             total=8.5,
             game_date="2026-08-03",
-            sportsbook="draftkings",
+            sportsbook="fanduel",
         )
     ]
 
     with (
         patch(
-            "app.domains.mlb.odds.fetch_latest_pinnacle_team",
-            return_value=pin_rows,
+            "app.domains.mlb.odds.fetch_latest_prophetx_team",
+            return_value=px_rows,
         ),
-        patch.object(
-            svc, "_fetch_sharp_games", return_value=(sharp_games, [])
-        ),
-    ):
-        body = asyncio.run(svc.get_today_odds())
-
-    assert body.sportsbook == "pinnacle"
-    assert len(body.games) == 2
-    chc = next(g for g in body.games if g.home_abbrev == "CHC")
-    assert chc.sportsbook == "pinnacle"
-    assert chc.spread_line == -1.5
-    bos = next(g for g in body.games if g.home_abbrev == "BOS")
-    assert bos.sportsbook == "draftkings"
-
-
-def test_get_today_odds_sharp_only_when_pinnacle_empty(monkeypatch):
-    sharp_games = [
-        MlbOddsGame(
-            home_abbrev="BOS",
-            away_abbrev="NYY",
-            spread_team_abbrev="NYY",
-            spread_line=-1.5,
-            total=8.5,
-            game_date="2026-08-03",
-            sportsbook="draftkings",
-        )
-    ]
-
-    with (
         patch(
             "app.domains.mlb.odds.fetch_latest_pinnacle_team",
             return_value=[],
@@ -410,6 +539,43 @@ def test_get_today_odds_sharp_only_when_pinnacle_empty(monkeypatch):
     ):
         body = asyncio.run(svc.get_today_odds())
 
-    assert body.sportsbook == "draftkings"
+    assert body.sportsbook == "prophetx"
+    assert len(body.games) == 2
+    chc = next(g for g in body.games if g.home_abbrev == "CHC")
+    assert chc.sportsbook == "prophetx"
+    assert chc.spread_line == -1.5
+    bos = next(g for g in body.games if g.home_abbrev == "BOS")
+    assert bos.sportsbook == "fanduel"
+
+
+def test_get_today_odds_sharp_only_when_snapshots_empty(monkeypatch):
+    sharp_games = [
+        MlbOddsGame(
+            home_abbrev="BOS",
+            away_abbrev="NYY",
+            spread_team_abbrev="NYY",
+            spread_line=-1.5,
+            total=8.5,
+            game_date="2026-08-03",
+            sportsbook="fanduel",
+        )
+    ]
+
+    with (
+        patch(
+            "app.domains.mlb.odds.fetch_latest_prophetx_team",
+            return_value=[],
+        ),
+        patch(
+            "app.domains.mlb.odds.fetch_latest_pinnacle_team",
+            return_value=[],
+        ),
+        patch.object(
+            svc, "_fetch_sharp_games", return_value=(sharp_games, [])
+        ),
+    ):
+        body = asyncio.run(svc.get_today_odds())
+
+    assert body.sportsbook == "fanduel"
     assert len(body.games) == 1
     assert body.games[0].away_abbrev == "NYY"

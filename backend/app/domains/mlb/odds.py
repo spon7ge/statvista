@@ -1,4 +1,4 @@
-"""MLB matchup odds: Selenium Pinnacle team lines with Sharp fallback."""
+"""MLB matchup odds: Pinnacle → ProphetX → FanDuel → DraftKings."""
 
 from __future__ import annotations
 
@@ -24,13 +24,25 @@ from app.domains.mlb.schemas import (
 )
 from app.schemas.odds import WnbaOddsGame
 from app.domains.mlb.team_names import abbrev_from_team_name, canonical_mlb_abbrev
-from app.core.odds_snapshots import fetch_latest_pinnacle_team
+from app.core.odds_snapshots import (
+    fetch_latest_pinnacle_team,
+    fetch_latest_prophetx_team,
+)
 
 logger = logging.getLogger(__name__)
 
 LA = ZoneInfo("America/Los_Angeles")
 CACHE_TTL_SECONDS = 45.0
 MLB_MARKETS = "run_line,total_runs"
+
+# Snapshot + Sharp market_type aliases → board buckets.
+_MARKET_KIND = {
+    "moneyline": "moneyline",
+    "spread": "spread",
+    "run_line": "spread",
+    "total": "total",
+    "total_runs": "total",
+}
 
 _cache: dict[str, Any] = {}
 
@@ -105,15 +117,19 @@ def _int_price(raw: Any) -> int | None:
             return None
 
 
-def normalize_pinnacle_team_rows(rows: list[dict[str, Any]]) -> list[MlbOddsGame]:
-    """Collapse Pinnacle team snapshot rows into one game with favorite spread + total."""
+def normalize_team_odds_rows(
+    rows: list[dict[str, Any]],
+    *,
+    sportsbook: str,
+) -> list[MlbOddsGame]:
+    """Collapse team snapshot rows into one game with favorite spread + total."""
     by_matchup: dict[tuple[str, str, str], dict[str, Any]] = {}
 
     for row in rows:
         key = _matchup_key(row)
         if key is None:
             continue
-        away, home, start_key = key
+        away, home, _start_key = key
         bucket = by_matchup.setdefault(
             key,
             {
@@ -128,7 +144,9 @@ def normalize_pinnacle_team_rows(rows: list[dict[str, Any]]) -> list[MlbOddsGame
             },
         )
 
-        market = str(row.get("market_type") or "").lower()
+        market = _MARKET_KIND.get(str(row.get("market_type") or "").lower())
+        if market is None:
+            continue
         price = _int_price(row.get("american_price"))
         if market == "moneyline":
             team = _spread_side_abbrev(row, home, away)
@@ -144,7 +162,7 @@ def normalize_pinnacle_team_rows(rows: list[dict[str, Any]]) -> list[MlbOddsGame
         except (TypeError, ValueError):
             continue
 
-        # Pinnacle occasionally publishes a line before (or without) a price;
+        # Books occasionally publish a line before (or without) a price;
         # the line alone is still worth showing, so keep it with a null price.
         if market == "spread":
             team = _spread_side_abbrev(row, home, away)
@@ -250,13 +268,18 @@ def normalize_pinnacle_team_rows(rows: list[dict[str, Any]]) -> list[MlbOddsGame
                 spread_line=spread_line,
                 total=total,
                 game_date=bucket.get("game_date"),
-                sportsbook="pinnacle",
+                sportsbook=sportsbook,
                 board=board,
             )
         )
 
     games.sort(key=lambda g: (g.game_date or "", g.home_abbrev, g.away_abbrev))
     return games
+
+
+def normalize_pinnacle_team_rows(rows: list[dict[str, Any]]) -> list[MlbOddsGame]:
+    """Collapse Pinnacle team snapshot rows into one game with favorite spread + total."""
+    return normalize_team_odds_rows(rows, sportsbook="pinnacle")
 
 
 def _to_mlb_games(games: list[WnbaOddsGame]) -> list[MlbOddsGame]:
@@ -285,42 +308,29 @@ def _has_markets(game: MlbOddsGame) -> bool:
     return game.spread_line is not None or game.total is not None
 
 
+def merge_odds_by_priority(*sources: list[MlbOddsGame]) -> list[MlbOddsGame]:
+    """Prefer earlier source lists per matchup when that game has markets."""
+    merged_by_team: dict[tuple[str, str], MlbOddsGame] = {}
+    for source in sources:
+        for game in source:
+            game = _canonicalize_game(game)
+            if not _has_markets(game):
+                continue
+            key = _team_merge_key(game)
+            if key not in merged_by_team:
+                merged_by_team[key] = game
+
+    games = list(merged_by_team.values())
+    games.sort(key=lambda g: (g.game_date or "", g.home_abbrev, g.away_abbrev))
+    return games
+
+
 def merge_pinnacle_prefer_sharp(
     pinnacle: list[MlbOddsGame],
     sharp: list[MlbOddsGame],
 ) -> list[MlbOddsGame]:
     """Prefer Pinnacle per game when it has spread or total; else Sharp."""
-    pin_by_team: dict[tuple[str, str], MlbOddsGame] = {}
-
-    for game in pinnacle:
-        game = _canonicalize_game(game)
-        team_key = _team_merge_key(game)
-        prev = pin_by_team.get(team_key)
-        if prev is None or (not _has_markets(prev) and _has_markets(game)):
-            pin_by_team[team_key] = game
-
-    merged_by_team: dict[tuple[str, str], MlbOddsGame] = {}
-
-    for game in sharp:
-        game = _canonicalize_game(game)
-        team_key = _team_merge_key(game)
-        pin = pin_by_team.get(team_key)
-        if pin is not None and _has_markets(pin):
-            merged_by_team[team_key] = pin
-        elif pin is not None and _has_markets(game):
-            merged_by_team[team_key] = game
-        elif _has_markets(game):
-            merged_by_team[team_key] = game
-
-    for game in pinnacle:
-        game = _canonicalize_game(game)
-        team_key = _team_merge_key(game)
-        if team_key not in merged_by_team and _has_markets(game):
-            merged_by_team[team_key] = game
-
-    games = [g for g in merged_by_team.values() if _has_markets(g)]
-    games.sort(key=lambda g: (g.game_date or "", g.home_abbrev, g.away_abbrev))
-    return games
+    return merge_odds_by_priority(pinnacle, sharp)
 
 
 async def _fetch_sharp_games() -> tuple[list[MlbOddsGame], list[str]]:
@@ -352,17 +362,16 @@ async def _fetch_sharp_games() -> tuple[list[MlbOddsGame], list[str]]:
 
     if not dk_games and not fd_games:
         return [], errors
-    return _to_mlb_games(merge_odds_prefer_primary(dk_games, fd_games)), errors
+    return _to_mlb_games(merge_odds_prefer_primary(fd_games, dk_games)), errors
 
 
 def _response_sportsbook(games: list[MlbOddsGame]) -> str:
-    if any(g.sportsbook == "pinnacle" for g in games):
-        return "pinnacle"
-    if any(g.sportsbook == "draftkings" for g in games):
-        return "draftkings"
+    for book in ("pinnacle", "prophetx", "fanduel", "draftkings"):
+        if any(g.sportsbook == book for g in games):
+            return book
     if games and games[0].sportsbook:
         return games[0].sportsbook
-    return "draftkings"
+    return "fanduel"
 
 
 async def get_today_odds() -> MlbOddsResponse:
@@ -375,8 +384,10 @@ async def get_today_odds() -> MlbOddsResponse:
     try:
         pin_rows = fetch_latest_pinnacle_team("mlb")
         pin_games = normalize_pinnacle_team_rows(pin_rows)
+        px_rows = fetch_latest_prophetx_team("mlb")
+        px_games = normalize_team_odds_rows(px_rows, sportsbook="prophetx")
         sharp_games, sharp_errors = await _fetch_sharp_games()
-        games = merge_pinnacle_prefer_sharp(pin_games, sharp_games)
+        games = merge_odds_by_priority(pin_games, px_games, sharp_games)
 
         error = "; ".join(sharp_errors) if sharp_errors else None
         if not games and sharp_errors:
@@ -392,7 +403,7 @@ async def get_today_odds() -> MlbOddsResponse:
         _cache["expires_at"] = now + CACHE_TTL_SECONDS
         return response
     except Exception as exc:
-        logger.warning("Pinnacle team MLB odds unavailable: %s", exc)
+        logger.warning("MLB matchup odds unavailable: %s", exc)
         if cached is not None:
             return MlbOddsResponse(
                 as_of=cached.as_of,

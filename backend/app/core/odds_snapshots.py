@@ -1,10 +1,10 @@
-"""Read latest PrizePicks / Underdog / Pinnacle odds snapshots from Supabase.
+"""Read latest PrizePicks / Underdog / Pinnacle / ProphetX odds snapshots from Supabase.
 
 DB-only reads (no vendor HTTP), so this does not belong under ``providers/``.
 It lives in ``core`` rather than a single domain because both the MLB and
-betting domains read pinnacle team-odds snapshots for their own leagues
-(see ``fetch_latest_pinnacle_team``'s per-league table map) and domains must
-not import each other.
+betting domains read team-odds snapshots for their own leagues
+(see ``fetch_latest_pinnacle_team`` / ``fetch_latest_prophetx_team``) and
+domains must not import each other.
 """
 
 from __future__ import annotations
@@ -32,6 +32,7 @@ _PINNACLE_TABLE = {
     "nba": "wnba_pinnacle",
 }
 _PROPHETX_TABLE = {"mlb": "mlb_prophetx"}
+_PROPHETX_TEAM_TABLE = {"mlb": "mlb_prophetx_team"}
 
 _PINNACLE_TEAM_TABLE = {
     "mlb": "mlb_pinnacle_team",
@@ -151,5 +152,26 @@ WHERE league = :league
   )
   AND period = 0
   AND is_alternate = false
+"""
+    return _fetch_rows(sql, lg)
+
+
+def fetch_latest_prophetx_team(league: str = "mlb") -> list[dict]:
+    """Return full-game team market rows from the latest ProphetX snapshot.
+
+    Filters to moneyline / run line / total so period markets
+    (1st inning, F5, etc.) never reach the matchup board.
+    """
+    lg = _normalized_league(league, "mlb")
+    table = _PROPHETX_TEAM_TABLE.get(lg, "mlb_prophetx_team")
+    sql = f"""
+SELECT away_team, home_team, start_time, market_type, side, team, points,
+       american_price, event_id
+FROM odds.{table}
+WHERE league = :league
+  AND scraped_at = (
+    SELECT MAX(scraped_at) FROM odds.{table} WHERE league = :league
+  )
+  AND market_type IN ('moneyline', 'run_line', 'spread', 'total', 'total_runs')
 """
     return _fetch_rows(sql, lg)

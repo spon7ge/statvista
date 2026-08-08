@@ -170,7 +170,7 @@ describe("MlbProjectedLineups", () => {
     expect(
       screen.getByRole("heading", { name: "MacKenzie Gore - L" }),
     ).toBeInTheDocument();
-    expect(screen.getByText("Lineup vs Zack Wheeler")).toBeInTheDocument();
+    expect(screen.queryByText(/Lineup vs/i)).not.toBeInTheDocument();
     expect(screen.getByText("Record")).toBeInTheDocument();
     expect(screen.getByText("ERA")).toBeInTheDocument();
     expect(screen.getByText("WHIP")).toBeInTheDocument();
@@ -250,7 +250,7 @@ describe("MlbProjectedLineups", () => {
     ).toBeInTheDocument();
     expect(screen.getByText("CJ Abrams")).toBeInTheDocument();
     expect(screen.getByText("Robert Hassell III")).toBeInTheDocument();
-    expect(screen.getByText("Lineup vs Zack Wheeler")).toBeInTheDocument();
+    expect(screen.queryByText(/Lineup vs/i)).not.toBeInTheDocument();
     expect(screen.getByRole("row", { name: /CJ Abrams/ })).toHaveTextContent(
       "1CJ AbramsSS––––",
     );
@@ -268,7 +268,7 @@ describe("MlbProjectedLineups", () => {
     expect(
       screen.getByRole("heading", { name: "Zack Wheeler - R" }),
     ).toBeInTheDocument();
-    expect(screen.getByText("Lineup vs MacKenzie Gore")).toBeInTheDocument();
+    expect(screen.queryByText(/Lineup vs/i)).not.toBeInTheDocument();
     expect(screen.getByText("Trea Turner")).toBeInTheDocument();
     expect(screen.getByText("Johan Rojas")).toBeInTheDocument();
     expect(
@@ -276,7 +276,7 @@ describe("MlbProjectedLineups", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("switches enriched lineup and opposing pitcher together", () => {
+  it("switches enriched lineup with team toggle", () => {
     render(
       <MlbProjectedLineups
         detail={mlbScheduledDetail}
@@ -290,7 +290,7 @@ describe("MlbProjectedLineups", () => {
     expect(
       screen.getByRole("heading", { name: "Zack Wheeler - R" }),
     ).toBeInTheDocument();
-    expect(screen.getByText("Lineup vs MacKenzie Gore")).toBeInTheDocument();
+    expect(screen.queryByText(/Lineup vs/i)).not.toBeInTheDocument();
     expect(screen.getByRole("row", { name: /Trea Turner/ })).toHaveTextContent(
       "1Trea TurnerSS720.286",
     );

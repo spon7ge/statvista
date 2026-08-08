@@ -26,6 +26,7 @@ const SPORTSBOOK_LABELS: Record<string, string> = {
   draftkings: "DraftKings",
   fanduel: "FanDuel",
   pinnacle: "Pinnacle",
+  prophetx: "ProphetX",
 };
 
 function formatSportsbook(sportsbook: string | null | undefined): string | null {

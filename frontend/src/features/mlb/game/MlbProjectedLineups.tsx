@@ -162,7 +162,7 @@ function PitcherCard({
   const handLetter = formatPitcherHand(pitcher.hand);
 
   return (
-    <div className="rounded-lg bg-[#45484d] p-3">
+    <div className="rounded-lg border border-white bg-[#45484d] p-3">
       <h3
         aria-label={formatPitcherTitle(pitcher.hand, pitcher.name)}
         className="text-center text-[18px] font-semibold text-white"
@@ -194,11 +194,9 @@ function PitcherCard({
 function LineupTable({
   slateSide,
   matchupSide,
-  opposingPitcherName,
 }: {
   slateSide: ApiMlbLineupSide;
   matchupSide: MatchupSide | null;
-  opposingPitcherName: string;
 }) {
   const batters = matchupSide
     ? mergeMatchupBatters(slateSide.batters, matchupSide.batters)
@@ -209,9 +207,6 @@ function LineupTable({
 
   return (
     <div className="mt-4">
-      <h3 className="mb-2 text-[18px] font-medium text-white/55">
-        Lineup vs {opposingPitcherName}
-      </h3>
       {batters.length === 0 ? (
         <p className="text-[18px] text-white/50">No batters listed</p>
       ) : (
@@ -268,20 +263,14 @@ function LineupTable({
 function LineupSideView({
   slateSide,
   matchupSide,
-  opposingPitcherName,
 }: {
   slateSide: ApiMlbLineupSide;
   matchupSide: MatchupSide | null;
-  opposingPitcherName: string;
 }) {
   return (
     <>
       <PitcherCard slateSide={slateSide} matchupSide={matchupSide} />
-      <LineupTable
-        slateSide={slateSide}
-        matchupSide={matchupSide}
-        opposingPitcherName={opposingPitcherName}
-      />
+      <LineupTable slateSide={slateSide} matchupSide={matchupSide} />
     </>
   );
 }
@@ -295,11 +284,6 @@ export function MlbProjectedLineups({
   oddsPending,
 }: Props) {
   const [side, setSide] = useState<TeamSide>("away");
-  const opposingSide = side === "away" ? "home" : "away";
-  const opposingPitcherName =
-    matchup?.[opposingSide]?.pitcher.name ??
-    game?.[opposingSide].pitcher.name ??
-    "TBD";
 
   return (
     <div className="space-y-4" data-testid="mlb-projected-lineups-stack">
@@ -343,7 +327,6 @@ export function MlbProjectedLineups({
               <LineupSideView
                 slateSide={game[side]}
                 matchupSide={matchup?.[side] ?? null}
-                opposingPitcherName={opposingPitcherName}
               />
             )}
           </GameSection>
