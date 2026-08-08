@@ -56,6 +56,12 @@ from app.domains.mlb.schemas_props import (
     MlbPropRow,
     MlbPropsResponse,
 )
+from app.domains.mlb.schemas_leaders import (
+    MlbLeaderCategory,
+    MlbLeaderCategoryKey,
+    MlbLeaderRow,
+    MlbLeadersResponse,
+)
 from app.domains.mlb.schemas_scoreboard import (
     MlbGame,
     MlbScoreboardResponse,
@@ -74,6 +80,10 @@ __all__ = [
     "MlbHitPoint",
     "MlbInjuries",
     "MlbInjury",
+    "MlbLeaderCategory",
+    "MlbLeaderCategoryKey",
+    "MlbLeaderRow",
+    "MlbLeadersResponse",
     "MlbLineupBatter",
     "MlbLineupGame",
     "MlbLineupMatchupBatter",
