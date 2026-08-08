@@ -1,7 +1,7 @@
 # MLB Game Info card
 
 Date: 2026-08-07  
-Status: Approved for planning
+Status: Implemented
 
 ## Goal
 
