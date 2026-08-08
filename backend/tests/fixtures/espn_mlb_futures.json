@@ -1,0 +1,135 @@
+{
+  "count": 4,
+  "pageIndex": 1,
+  "pageSize": 25,
+  "pageCount": 1,
+  "items": [
+    {
+      "id": "2761",
+      "name": "MLB  - World Series - Winner",
+      "displayName": "World Series Winner",
+      "futures": [
+        {
+          "provider": {
+            "id": "58",
+            "name": "ESPN BET",
+            "active": 1,
+            "priority": 0
+          },
+          "books": [
+            {
+              "team": {
+                "$ref": "http://sports.core.api.espn.com/v2/sports/baseball/leagues/mlb/seasons/2026/teams/10?lang=en&region=us"
+              },
+              "value": "+999"
+            }
+          ]
+        },
+        {
+          "provider": {
+            "id": "100",
+            "name": "DraftKings",
+            "active": 1,
+            "priority": 1
+          },
+          "books": [
+            {
+              "team": {
+                "$ref": "http://sports.core.api.espn.com/v2/sports/baseball/leagues/mlb/seasons/2026/teams/19?lang=en&region=us"
+              },
+              "value": "+600"
+            },
+            {
+              "team": {
+                "$ref": "http://sports.core.api.espn.com/v2/sports/baseball/leagues/mlb/seasons/2026/teams/10?lang=en&region=us"
+              },
+              "value": "+450"
+            },
+            {
+              "team": {
+                "id": "26",
+                "abbreviation": "SF",
+                "displayName": "San Francisco Giants",
+                "logos": [
+                  {
+                    "href": "https://a.espncdn.com/i/teamlogos/mlb/500/sf.png"
+                  }
+                ]
+              },
+              "value": "+800"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2762",
+      "name": "MLB - American League Winner",
+      "displayName": "American League Winner",
+      "futures": [
+        {
+          "provider": {
+            "id": "100",
+            "name": "DraftKings",
+            "active": 1
+          },
+          "books": [
+            {
+              "team": {
+                "$ref": "http://sports.core.api.espn.com/v2/sports/baseball/leagues/mlb/seasons/2026/teams/10?lang=en&region=us"
+              },
+              "value": "+220"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2763",
+      "name": "MLB - National League East Division Winner",
+      "displayName": "NL East Division Winner",
+      "futures": [
+        {
+          "provider": {
+            "id": "100",
+            "name": "DraftKings",
+            "active": 1
+          },
+          "books": [
+            {
+              "team": {
+                "$ref": "http://sports.core.api.espn.com/v2/sports/baseball/leagues/mlb/seasons/2026/teams/19?lang=en&region=us"
+              },
+              "value": "+150"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2764",
+      "name": "MLB - Winning League",
+      "displayName": "Winning League",
+      "futures": [
+        {
+          "provider": {
+            "id": "100",
+            "name": "DraftKings",
+            "active": 1
+          },
+          "books": [
+            {
+              "team": {
+                "id": "14",
+                "abbreviation": "AL",
+                "displayName": "American League",
+                "logos": []
+              },
+              "value": "-110"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

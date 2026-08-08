@@ -1,0 +1,303 @@
+from __future__ import annotations
+
+import asyncio
+import logging
+import time
+from datetime import datetime, timezone
+from typing import Any
+from urllib.parse import urlparse
+
+import httpx
+
+from app.domains.mlb.leaders import current_mlb_season_year
+from app.domains.mlb.schemas_futures import (
+    MlbFuturesEntry,
+    MlbFuturesMarket,
+    MlbFuturesResponse,
+)
+
+logger = logging.getLogger(__name__)
+
+FUTURES_URL = (
+    "https://sports.core.api.espn.com/v2/sports/baseball/leagues/"
+    "mlb/seasons/{season}/futures"
+)
+CACHE_TTL_SECONDS = 300.0
+
+# Team $ref GETs are limited to ESPN sports API hosts (not arbitrary URLs).
+_ALLOWED_ESPN_TEAM_REF_HOSTS = frozenset(
+    {
+        "sports.core.api.espn.com",
+        "site.api.espn.com",
+    }
+)
+
+_team_cache: dict[str, dict[str, Any]] = {}
+_cache: dict = {}
+_refresh_lock: asyncio.Lock | None = None
+_refresh_lock_loop: asyncio.AbstractEventLoop | None = None
+
+
+def display_name_for_market(*, name: str, display_name: str | None) -> str:
+    if display_name and display_name.strip():
+        return display_name.strip()
+    return name.strip() or "Futures"
+
+
+def parse_american_odds(value: str) -> int | None:
+    text = str(value or "").strip().replace("−", "-")
+    if not text:
+        return None
+    if text[0] not in "+-" and not text.isdigit():
+        return None
+    try:
+        return int(text)
+    except ValueError:
+        return None
+
+
+def pick_provider(futures: list[dict]) -> dict | None:
+    if not futures:
+        return None
+
+    def is_active(entry: dict) -> bool:
+        provider = entry.get("provider") or {}
+        active = provider.get("active")
+        return active in (1, True, "1")
+
+    for entry in futures:
+        if not isinstance(entry, dict):
+            continue
+        provider = entry.get("provider") or {}
+        provider_name = str(provider.get("name") or "").lower()
+        if is_active(entry) and "draftkings" in provider_name:
+            return entry
+
+    for entry in futures:
+        if isinstance(entry, dict) and is_active(entry):
+            return entry
+
+    first = futures[0]
+    return first if isinstance(first, dict) else None
+
+
+def _logo_url(team: dict[str, Any]) -> str | None:
+    logos = team.get("logos") or []
+    if not isinstance(logos, list):
+        return None
+    for logo in logos:
+        if not isinstance(logo, dict):
+            continue
+        href = str(logo.get("href") or "").strip()
+        if href:
+            return href
+    return None
+
+
+def _normalize_team_payload(payload: dict[str, Any]) -> dict[str, Any] | None:
+    team_id = str(payload.get("id") or "").strip()
+    abbrev = str(payload.get("abbreviation") or "").strip().upper()
+    name = str(payload.get("displayName") or "").strip()
+    if not team_id or not abbrev or not name:
+        return None
+    return {
+        "id": team_id,
+        "abbreviation": abbrev,
+        "displayName": name,
+        "logo_url": _logo_url(payload),
+    }
+
+
+def _is_allowed_espn_team_ref_url(url: str) -> bool:
+    try:
+        parsed = urlparse(url)
+    except Exception:
+        return False
+    if parsed.scheme not in ("http", "https"):
+        return False
+    host = (parsed.hostname or "").lower()
+    return host in _ALLOWED_ESPN_TEAM_REF_HOSTS
+
+
+async def resolve_book_team(
+    book: dict[str, Any], client: httpx.AsyncClient
+) -> dict | None:
+    """Resolve a book row's team from embedded payload or $ref (HTTP only if needed)."""
+    team = book.get("team")
+    if not isinstance(team, dict):
+        return None
+
+    embedded = _normalize_team_payload(team)
+    if embedded is not None:
+        cache_key = str(embedded["id"])
+        _team_cache[cache_key] = embedded
+        return embedded
+
+    ref = str(team.get("$ref") or "").strip()
+    if ref:
+        return await resolve_team(ref, client)
+
+    return None
+
+
+async def resolve_team(ref_or_id: str, client: httpx.AsyncClient) -> dict | None:
+    ref = str(ref_or_id or "").strip()
+    if not ref:
+        return None
+
+    cache_key = ref.replace("http://", "https://")
+    if cache_key in _team_cache:
+        return _team_cache[cache_key]
+
+    if ref.startswith("http://") or ref.startswith("https://"):
+        url = ref.replace("http://", "https://", 1)
+        if not _is_allowed_espn_team_ref_url(url):
+            logger.warning("Rejected non-ESPN MLB team ref host: %s", ref)
+            return None
+        try:
+            res = await client.get(url)
+            res.raise_for_status()
+            payload = res.json()
+        except Exception:
+            logger.warning("Failed to resolve MLB team ref: %s", ref)
+            return None
+    else:
+        payload = {"id": ref}
+
+    normalized = _normalize_team_payload(payload)
+    if normalized is not None:
+        _team_cache[cache_key] = normalized
+    return normalized
+
+
+def _sort_key(entry: MlbFuturesEntry) -> tuple[int, int]:
+    parsed = parse_american_odds(entry.odds_american)
+    if parsed is None:
+        return (1, 0)
+    return (0, parsed)
+
+
+async def normalize_futures_payload(
+    payload: dict[str, Any],
+    season: int,
+    client: httpx.AsyncClient,
+) -> MlbFuturesResponse:
+    markets: list[MlbFuturesMarket] = []
+
+    for item in payload.get("items") or []:
+        if not isinstance(item, dict):
+            continue
+
+        market_id = str(item.get("id") or "").strip()
+        market_name = str(item.get("name") or "").strip()
+        market_display_name = item.get("displayName")
+        if not market_id or not market_name:
+            continue
+
+        provider_blob = pick_provider(item.get("futures") or [])
+        if provider_blob is None:
+            continue
+
+        provider = provider_blob.get("provider") or {}
+        provider_name = str(provider.get("name") or "").strip() or "Unknown"
+
+        entries: list[MlbFuturesEntry] = []
+        for book in provider_blob.get("books") or []:
+            if not isinstance(book, dict):
+                continue
+
+            odds = str(book.get("value") or "").strip()
+            if not odds:
+                continue
+
+            team = await resolve_book_team(book, client)
+            if team is None:
+                continue
+
+            entries.append(
+                MlbFuturesEntry(
+                    team_id=str(team["id"]),
+                    abbrev=str(team["abbreviation"]),
+                    name=str(team["displayName"]),
+                    logo_url=team.get("logo_url"),
+                    odds_american=odds,
+                )
+            )
+
+        entries.sort(key=_sort_key)
+        markets.append(
+            MlbFuturesMarket(
+                id=market_id,
+                name=market_name,
+                display_name=display_name_for_market(
+                    name=market_name,
+                    display_name=(
+                        str(market_display_name)
+                        if market_display_name is not None
+                        else None
+                    ),
+                ),
+                provider=provider_name,
+                entries=entries,
+            )
+        )
+
+    as_of = datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace(
+        "+00:00", "Z"
+    )
+    return MlbFuturesResponse(season=season, as_of=as_of, markets=markets)
+
+
+def _get_refresh_lock() -> asyncio.Lock:
+    global _refresh_lock, _refresh_lock_loop
+    loop = asyncio.get_running_loop()
+    if _refresh_lock is None or _refresh_lock_loop is not loop:
+        _refresh_lock = asyncio.Lock()
+        _refresh_lock_loop = loop
+    return _refresh_lock
+
+
+async def fetch_espn_futures(season: int) -> dict:
+    url = FUTURES_URL.format(season=season)
+    async with httpx.AsyncClient(timeout=10.0) as client:
+        res = await client.get(url, params={"limit": 200, "lang": "en", "region": "us"})
+        res.raise_for_status()
+        return res.json()
+
+
+def _fresh_cached() -> MlbFuturesResponse | None:
+    cached = _cache.get("response")
+    if cached is None:
+        return None
+    if _cache.get("season") != current_mlb_season_year():
+        return None
+    if time.time() >= float(_cache.get("expires_at") or 0):
+        return None
+    return cached
+
+
+async def get_mlb_futures() -> MlbFuturesResponse:
+    fresh = _fresh_cached()
+    if fresh is not None:
+        return fresh
+
+    lock = _get_refresh_lock()
+    async with lock:
+        fresh = _fresh_cached()
+        if fresh is not None:
+            return fresh
+        season = current_mlb_season_year()
+        try:
+            payload = await fetch_espn_futures(season)
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                response = await normalize_futures_payload(payload, season, client)
+        except Exception:
+            stale = _cache.get("response")
+            if stale is not None and _cache.get("season") == season:
+                logger.warning("MLB futures refresh failed; serving stale cache")
+                return stale
+            raise
+        _cache["response"] = response
+        _cache["expires_at"] = time.time() + CACHE_TTL_SECONDS
+        _cache["season"] = response.season
+        return response
