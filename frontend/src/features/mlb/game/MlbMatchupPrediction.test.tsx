@@ -1,16 +1,19 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { MlbMatchupPrediction } from "./MlbMatchupPrediction";
+import { mlbTeamLogoUrl } from "../league/mlbTeamLogos";
 import { mlbScheduledDetail } from "../lib/testFixtures";
 
 describe("MlbMatchupPrediction", () => {
-  it("renders bar, percents, and source", () => {
+  it("renders taller pill with white percents, logos, and white abbrevs", () => {
     const awayAbbrev = mlbScheduledDetail.away.abbrev;
     const homeAbbrev = mlbScheduledDetail.home.abbrev;
     const awayWinPct = 59;
     const homeWinPct = 41;
+    const awayLogo = mlbTeamLogoUrl(awayAbbrev);
+    const homeLogo = mlbTeamLogoUrl(homeAbbrev);
 
-    const { container } = render(
+    render(
       <MlbMatchupPrediction
         detail={{
           ...mlbScheduledDetail,
@@ -22,35 +25,32 @@ describe("MlbMatchupPrediction", () => {
         }}
       />,
     );
+
     expect(screen.getByText("Matchup prediction")).toBeInTheDocument();
-    expect(
-      screen.getByText((_content, node) => {
-        const text = node?.textContent ?? "";
-        return (
-          node?.tagName === "SPAN" &&
-          text.includes(awayAbbrev) &&
-          text.includes(`${awayWinPct}%`)
-        );
-      }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText((_content, node) => {
-        const text = node?.textContent ?? "";
-        return (
-          node?.tagName === "SPAN" &&
-          text.includes(homeAbbrev) &&
-          text.includes(`${homeWinPct}%`)
-        );
-      }),
-    ).toBeInTheDocument();
-    expect(screen.getByText("ESPN game projection")).toBeInTheDocument();
+    expect(screen.getByText(awayAbbrev)).toHaveClass("text-white");
+    expect(screen.getByText(homeAbbrev)).toHaveClass("text-white");
+    expect(screen.getByText(`${awayWinPct}%`)).toBeInTheDocument();
+    expect(screen.getByText(`${homeWinPct}%`)).toBeInTheDocument();
+    expect(screen.queryByText("ESPN game projection")).not.toBeInTheDocument();
     expect(screen.getByText("Matchup prediction").closest("section")).toHaveClass(
       "bg-[#3a3d42]",
     );
 
-    const barSegments = container.querySelectorAll(".mt-3.flex.h-2 > div");
-    expect(barSegments).toHaveLength(2);
-    expect(barSegments[0]).toHaveStyle({ width: `${awayWinPct}%` });
+    const pill = screen.getByTestId("mlb-matchup-prediction-pill");
+    expect(pill).toHaveClass("h-9");
+    const segments = pill.querySelectorAll(":scope > div");
+    expect(segments).toHaveLength(2);
+    expect(segments[0]).toHaveStyle({ width: `${awayWinPct}%` });
+    expect(segments[0]).toHaveTextContent(`${awayWinPct}%`);
+    expect(segments[0]).toHaveClass("text-white");
+    expect(segments[1]).toHaveTextContent(`${homeWinPct}%`);
+
+    const imgs = Array.from(
+      screen.getByTestId("mlb-matchup-prediction").querySelectorAll("img"),
+    );
+    expect(imgs.map((img) => img.getAttribute("src"))).toEqual(
+      expect.arrayContaining([awayLogo, homeLogo]),
+    );
   });
 
   it("renders nothing without prediction", () => {
