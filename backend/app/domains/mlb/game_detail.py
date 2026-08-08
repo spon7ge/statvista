@@ -16,6 +16,8 @@ from app.domains.mlb.schemas import (
     MlbDecisions,
     MlbGameDetail,
     MlbGameDetailTeam,
+    MlbGameUmpires,
+    MlbGameWeather,
     MlbHitPoint,
     MlbInjuries,
     MlbInjury,
@@ -880,6 +882,53 @@ def _hits(all_plays: list) -> list[MlbHitPoint]:
     return points
 
 
+def _venue_location(game_data: dict) -> tuple[str | None, str | None]:
+    loc = _as_dict(_as_dict(game_data.get("venue")).get("location"))
+    city = str(loc.get("city") or "").strip() or None
+    state = str(loc.get("state") or "").strip() or None
+    return city, state
+
+
+def _weather(game_data: dict) -> MlbGameWeather | None:
+    raw = _as_dict(game_data.get("weather"))
+    if not raw:
+        return None
+    condition = str(raw.get("condition") or "").strip() or None
+    temp_f = str(raw.get("temp") or "").strip() or None
+    wind = str(raw.get("wind") or "").strip() or None
+    if not condition and not temp_f and not wind:
+        return None
+    return MlbGameWeather(condition=condition, temp_f=temp_f, wind=wind)
+
+
+_UMPIRE_TYPE_MAP = {
+    "home plate": "home_plate",
+    "first base": "first_base",
+    "second base": "second_base",
+    "third base": "third_base",
+}
+
+
+def _umpires(boxscore: dict) -> MlbGameUmpires | None:
+    slots: dict[str, str | None] = {
+        "home_plate": None,
+        "first_base": None,
+        "second_base": None,
+        "third_base": None,
+    }
+    for entry in _as_list(boxscore.get("officials")):
+        item = _as_dict(entry)
+        key = _UMPIRE_TYPE_MAP.get(str(item.get("officialType") or "").strip().lower())
+        if not key:
+            continue
+        name = str(_as_dict(item.get("official")).get("fullName") or "").strip()
+        if name:
+            slots[key] = name
+    if not any(slots.values()):
+        return None
+    return MlbGameUmpires(**slots)
+
+
 def _detail_team(
     team: dict,
     *,
@@ -934,8 +983,11 @@ def normalize_mlb_live_feed(
         home_score = None
 
     venue = _as_dict(game_data.get("venue")).get("name")
+    venue_city, venue_state = _venue_location(game_data)
+    weather = _weather(game_data)
     plays, scoring_plays = _plays(all_plays)
     boxscore = _as_dict(live_data.get("boxscore"))
+    umpires = _umpires(boxscore)
 
     return MlbGameDetail(
         mlb_game_pk=str(game_pk),
@@ -943,6 +995,10 @@ def normalize_mlb_live_feed(
         status=status,
         status_label=status_label,
         venue=str(venue) if venue else None,
+        venue_city=venue_city,
+        venue_state=venue_state,
+        weather=weather,
+        umpires=umpires,
         away=_detail_team(away_team, side="away", score=away_score),
         home=_detail_team(home_team, side="home", score=home_score),
         linescore=linescore,

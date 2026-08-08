@@ -15,6 +15,8 @@ __all__ = [
     "MlbDecisions",
     "MlbGameDetail",
     "MlbGameDetailTeam",
+    "MlbGameUmpires",
+    "MlbGameWeather",
     "MlbHitPoint",
     "MlbLinescore",
     "MlbLinescoreInning",
@@ -318,6 +320,23 @@ class MlbWinProbability(BaseModel):
     stakes: MlbWinProbabilityStakes | None = None
 
 
+class MlbGameWeather(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    condition: str | None = None
+    temp_f: str | None = None
+    wind: str | None = None
+
+
+class MlbGameUmpires(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    home_plate: str | None = None
+    first_base: str | None = None
+    second_base: str | None = None
+    third_base: str | None = None
+
+
 class MlbGameDetail(BaseModel):
     model_config = _RESPONSE_CONFIG
 
@@ -326,6 +345,10 @@ class MlbGameDetail(BaseModel):
     status: GameStatus
     status_label: str
     venue: str | None
+    venue_city: str | None = None
+    venue_state: str | None = None
+    weather: MlbGameWeather | None = None
+    umpires: MlbGameUmpires | None = None
     away: MlbGameDetailTeam
     home: MlbGameDetailTeam
     linescore: MlbLinescore | None = None
