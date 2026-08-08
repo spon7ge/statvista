@@ -215,6 +215,46 @@ describe("fetchMlbProps", () => {
   });
 });
 
+describe("fetchMlbFutures", () => {
+  beforeEach(() => {
+    vi.resetModules();
+    fetchMock.mockReset();
+    vi.stubGlobal("fetch", fetchMock);
+  });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
+  });
+
+  it("hits /api/mlb/futures", async () => {
+    vi.stubEnv("VITE_API_BASE_URL", undefined);
+    fetchMock.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        season: 2026,
+        as_of: "now",
+        markets: [],
+        error: null,
+      }),
+    });
+    const { fetchMlbFutures } = await import("./api");
+    await fetchMlbFutures();
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/mlb/futures",
+      expect.objectContaining({ cache: "no-store" }),
+    );
+  });
+
+  it("throws when the response is not ok", async () => {
+    vi.stubEnv("VITE_API_BASE_URL", undefined);
+    fetchMock.mockResolvedValue({ ok: false, status: 502 });
+    const { fetchMlbFutures } = await import("./api");
+    await expect(fetchMlbFutures()).rejects.toThrow(
+      "MLB futures failed: 502",
+    );
+  });
+});
+
 describe("fetchWnbaFutures", () => {
   beforeEach(() => {
     vi.resetModules();
