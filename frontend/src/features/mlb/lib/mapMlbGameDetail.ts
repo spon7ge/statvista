@@ -305,6 +305,7 @@ export function mapMlbGameDetail(detail: ApiMlbGameDetail): MlbGameDetailView {
       team: point.team,
       playerName: point.player_name,
       result: point.result,
+      outcome: point.outcome ?? null,
       x: point.x,
       y: point.y,
     })),

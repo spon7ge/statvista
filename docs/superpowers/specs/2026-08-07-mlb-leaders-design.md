@@ -12,13 +12,13 @@ Ship `/mlb/leaders` matching the WNBA leaders page pattern: Explore subnav with 
 | Topic | Choice |
 | --- | --- |
 | Scope | MLB only; WNBA leaders unchanged (including its current type sizes) |
-| Data source | `statsapi.mlb.com` `/api/v1/stats/leaders` (Approach 1 — backend proxy) |
+| Data source | `statsapi.mlb.com` `/api/v1/stats` season splits sorted by category (includes `gamesPlayed`; `/stats/leaders` has no GP) |
 | Categories | 12 boards below, top 10 each, StatsAPI-qualified season leaders |
 | Season label | `{season} season` (not “per game”) |
 | Page chrome | No league hero; subnav → title/season → grid → attribution |
 | Team colors | Hardcoded frontend MLB abbrev→color map (new `mlbTeamColors.ts`) |
 | Team abbrev | Backend maps StatsAPI `team.id` → abbreviation (teams list or static map) |
-| GP column | Keep column for parity; `gp` nullable — StatsAPI leaders payload has no GP → UI shows `—` |
+| GP column | Keep column; populate from season split `gamesPlayed` (nullable only if upstream omits it → UI `—`) |
 | Player links | Plain text names (no `/mlb/player/:id` route yet) |
 | Subnav | Enable Leaders for `league === "mlb"` → `/mlb/leaders` |
 | Attribution | `Data: statsapi.mlb.com` |
@@ -62,8 +62,8 @@ LeagueSubnav Leaders → /mlb/leaders
   useMlbLeaders() → GET /api/mlb/leaders
         │
         ▼
-  statsapi.mlb.com /api/v1/stats/leaders (per category, limit=10, sportId=1, season)
-        → normalize → twelve top-10 categories → cache
+  statsapi.mlb.com /api/v1/stats (season, sortStat per category, limit=10)
+        → normalize (incl. gamesPlayed) → twelve top-10 categories → cache
 ```
 
 ### Routing
@@ -126,7 +126,7 @@ Response (mirrors WNBA shape with MLB keys / pace):
           "player_id": "670541",
           "name": "Yordan Alvarez",
           "team_abbrev": "HOU",
-          "gp": null,
+          "gp": 115,
           "value": ".328"
         }
       ]
@@ -150,11 +150,12 @@ Response (mirrors WNBA shape with MLB keys / pace):
 
 ### Upstream fetch
 
-- Base: `https://statsapi.mlb.com/api/v1/stats/leaders`
-- Params per category: `leaderCategories`, `statGroup`, `season` (ET calendar year, same season helper pattern as other MLB services if one exists), `sportId=1`, `limit=10`
+- Base: `https://statsapi.mlb.com/api/v1/stats`
+- Params per category: `stats=season`, `group` (hitting|pitching), `sortStat`, `order` (`asc` for ERA/WHIP, else `desc`), `season`, `sportIds=1`, `limit=10`; `playerPool=qualified` for AVG/OPS/ERA/WHIP
 - Prefer concurrent fetches for the 12 categories (bounded gather).
-- Team abbrev: one cached `GET /api/v1/teams?sportId=1&season={season}` (or equivalent) id→abbreviation map; fallback `"???"` / empty only if missing.
-- Do not invent closest-line or ranking — use StatsAPI `rank` / `value` / `person` as returned.
+- Team abbrev: one cached `GET /api/v1/teams?sportId=1&season={season}` id→abbreviation map via `canonical_mlb_abbrev`; fallback `"???"` if missing.
+- Row `gp` from split `stat.gamesPlayed`; value from `stat[sortStat]` (preserve string forms like `.329`).
+- Do not invent ranking — use StatsAPI `rank` as returned.
 
 ## Frontend modules
 

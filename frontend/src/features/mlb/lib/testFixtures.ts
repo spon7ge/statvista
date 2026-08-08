@@ -513,6 +513,7 @@ export const mlbFinalDetail: MlbGameDetailView = {
       team: "home",
       playerName: "Freeman",
       result: "hr",
+      outcome: "HR",
       x: 0.55,
       y: 0.35,
     },

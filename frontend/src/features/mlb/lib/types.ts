@@ -199,6 +199,8 @@ export type MlbHitPoint = {
   team: "away" | "home";
   playerName: string | null;
   result: "hr" | "hit" | "out";
+  /** Single / Double / Triple / HR / Flyout, etc. */
+  outcome: string | null;
   x: number;
   y: number;
 };

@@ -816,6 +816,24 @@ def _hit_result(event_type: str | None) -> Literal["hr", "hit", "out"]:
     return "out"
 
 
+_OUTCOME_BY_EVENT_TYPE = {
+    "single": "Single",
+    "double": "Double",
+    "triple": "Triple",
+    "home_run": "HR",
+}
+
+
+def _hit_outcome(event_type: str | None, event: object | None) -> str | None:
+    if event_type in _OUTCOME_BY_EVENT_TYPE:
+        return _OUTCOME_BY_EVENT_TYPE[event_type]
+    if isinstance(event, str) and event.strip():
+        return event.strip()
+    if event_type:
+        return event_type.replace("_", " ").title()
+    return None
+
+
 def _normalize_hit_coords(coord_x: float, coord_y: float) -> tuple[float, float]:
     # Field diagram is typically ~250×250 with home near the bottom center.
     return coord_x / 250.0, coord_y / 250.0
@@ -834,6 +852,7 @@ def _hits(all_plays: list) -> list[MlbHitPoint]:
         team: Literal["away", "home"] = "away" if half == "top" else "home"
         event_type = result.get("eventType")
         event_type_str = str(event_type) if event_type else None
+        outcome = _hit_outcome(event_type_str, result.get("event"))
         batter_name = _as_dict(_as_dict(play.get("matchup")).get("batter")).get(
             "fullName"
         )
@@ -855,6 +874,7 @@ def _hits(all_plays: list) -> list[MlbHitPoint]:
                     x=x,
                     y=y,
                     player_name=str(batter_name) if batter_name else None,
+                    outcome=outcome,
                 )
             )
     return points

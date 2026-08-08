@@ -169,20 +169,22 @@ export function MlbWinProbability({
                 <text
                   x={labelX}
                   y={homeY}
-                  fill={detail.home.color}
+                  fill="#FFFFFF"
                   textAnchor={labelAnchor}
                   dominantBaseline="middle"
-                  style={{ fontSize: "14px", fontWeight: 600 }}
+                  data-testid="mlb-game-flow-home-pct"
+                  style={{ fontSize: "18px", fontWeight: 600 }}
                 >
                   {detail.home.abbrev} {Math.round(activePoint.homeWinPct)}%
                 </text>
                 <text
                   x={labelX}
                   y={awayY}
-                  fill={detail.away.color}
+                  fill="#FFFFFF"
                   textAnchor={labelAnchor}
                   dominantBaseline="middle"
-                  style={{ fontSize: "14px", fontWeight: 600 }}
+                  data-testid="mlb-game-flow-away-pct"
+                  style={{ fontSize: "18px", fontWeight: 600 }}
                 >
                   {detail.away.abbrev} {Math.round(activePoint.awayWinPct)}%
                 </text>

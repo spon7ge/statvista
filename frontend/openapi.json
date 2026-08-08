@@ -1643,6 +1643,17 @@
             "title": "Id",
             "type": "string"
           },
+          "outcome": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outcome"
+          },
           "player_name": {
             "anyOf": [
               {
@@ -1686,7 +1697,8 @@
           "result",
           "x",
           "y",
-          "player_name"
+          "player_name",
+          "outcome"
         ],
         "title": "MlbHitPoint",
         "type": "object"

@@ -175,7 +175,9 @@ describe("AppRouter", () => {
       };
     });
     renderWithProviders(["/mlb/leaders"]);
-    expect(await screen.findByText(/2026 season/i)).toBeInTheDocument();
+    expect(
+      await screen.findByRole("heading", { name: "MLB 2026 Leaders" }),
+    ).toBeInTheDocument();
     expect(screen.getByText("Data: statsapi.mlb.com")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Leaders" })).toHaveAttribute(
       "aria-current",

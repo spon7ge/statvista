@@ -1010,6 +1010,8 @@ export interface components {
         MlbHitPoint: {
             /** Id */
             id: string;
+            /** Outcome */
+            outcome: string | null;
             /** Player Name */
             player_name: string | null;
             /**

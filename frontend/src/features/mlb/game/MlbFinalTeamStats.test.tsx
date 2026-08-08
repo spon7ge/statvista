@@ -16,6 +16,36 @@ describe("MlbFinalTeamStats", () => {
     expect(screen.getByTestId("mlb-team-stat-era-home")).toBeInTheDocument();
   });
 
+  it("shows white team abbrev and logo in the header", () => {
+    render(
+      <MlbFinalTeamStats
+        detail={{
+          ...mlbFinalDetail,
+          away: {
+            ...mlbFinalDetail.away,
+            logoUrl: "https://example.com/ari.svg",
+          },
+          home: {
+            ...mlbFinalDetail.home,
+            logoUrl: "https://example.com/lad.svg",
+          },
+        }}
+      />,
+    );
+
+    const section = screen.getByTestId("mlb-final-team-stats");
+    const awayAbbrev = screen.getByText("ARI");
+    const homeAbbrev = screen.getByText("LAD");
+    expect(awayAbbrev).toHaveClass("text-white");
+    expect(homeAbbrev).toHaveClass("text-white");
+    expect(
+      section.querySelector('img[src="https://example.com/ari.svg"]'),
+    ).toBeTruthy();
+    expect(
+      section.querySelector('img[src="https://example.com/lad.svg"]'),
+    ).toBeTruthy();
+  });
+
   it("does not mark a leader for tied, missing, or invalid values", () => {
     render(
       <MlbFinalTeamStats

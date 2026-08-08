@@ -96,6 +96,12 @@ def test_normalize_plays_box_and_hits():
     assert teoscar.hr == 0
     assert teoscar.sb == 1
 
+    assert detail.hit_chart
+    assert all(point.outcome for point in detail.hit_chart)
+    outcomes = {point.outcome for point in detail.hit_chart}
+    # Fixture includes hits and/or field outs with StatsAPI event labels.
+    assert outcomes & {"Single", "Double", "Triple", "HR", "Lineout", "Flyout", "Groundout", "Pop Out"}
+
 
 def test_normalize_final_additions_from_mutated_payload():
     payload = _payload()

@@ -30,7 +30,19 @@ describe("MlbLeaderCategoryCard", () => {
     expect(screen.getByRole("columnheader", { name: "Player" })).toHaveClass(
       "text-[14px]",
     );
-    expect(screen.getByText("—")).toHaveClass("text-[14px]");
+    expect(screen.queryByRole("columnheader", { name: "GP" })).toBeNull();
     expect(document.querySelector('a[href*="/mlb/player"]')).toBeNull();
+  });
+
+  it("renders white team abbrev with mlbstatic logo", () => {
+    render(<MlbLeaderCategoryCard category={category} />);
+
+    const abbrev = screen.getByText("NYY");
+    expect(abbrev).toHaveClass("text-white");
+    const logo = screen.getByRole("presentation");
+    expect(logo).toHaveAttribute(
+      "src",
+      "https://www.mlbstatic.com/team-logos/147.svg",
+    );
   });
 });

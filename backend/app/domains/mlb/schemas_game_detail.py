@@ -290,6 +290,8 @@ class MlbHitPoint(BaseModel):
     x: float
     y: float
     player_name: str | None = None
+    # Human label for tooltip: Single, Double, Triple, HR, Flyout, etc.
+    outcome: str | None = None
 
 
 class MlbWinProbabilityPoint(BaseModel):

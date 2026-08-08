@@ -52,27 +52,28 @@ function leader(
   return awayWins ? "away" : "home";
 }
 
-function TeamLogo({ team, align }: { team: MlbGameDetailTeam; align: "left" | "right" }) {
-  if (!team.logoUrl) {
-    return (
-      <span
-        className={`text-[18px] font-semibold ${
-          align === "right" ? "text-right" : ""
-        }`}
-        style={{ color: team.color }}
-      >
-        {team.abbrev}
-      </span>
-    );
-  }
-
+function TeamMark({
+  team,
+  align,
+}: {
+  team: MlbGameDetailTeam;
+  align: "left" | "right";
+}) {
   return (
-    <div className={align === "right" ? "flex justify-end" : undefined}>
-      <img
-        src={team.logoUrl}
-        alt={team.abbrev}
-        className="size-6 object-contain"
-      />
+    <div
+      className={`flex items-center gap-1.5 ${
+        align === "right" ? "justify-end" : ""
+      }`}
+    >
+      <span className="text-[18px] font-semibold text-white">{team.abbrev}</span>
+      {team.logoUrl ? (
+        <img
+          src={team.logoUrl}
+          alt=""
+          role="presentation"
+          className="size-6 object-contain"
+        />
+      ) : null}
     </div>
   );
 }
@@ -131,9 +132,9 @@ export function MlbFinalTeamStats({
       className="!p-3"
     >
       <div className="mb-3 grid grid-cols-[1fr_auto_1fr] items-center gap-x-3">
-        <TeamLogo team={detail.away} align="left" />
+        <TeamMark team={detail.away} align="left" />
         <h2 className="text-[18px] font-semibold text-white">Team Stats</h2>
-        <TeamLogo team={detail.home} align="right" />
+        <TeamMark team={detail.home} align="right" />
       </div>
       <div>
         {STAT_DEFINITIONS.map((stat) => {

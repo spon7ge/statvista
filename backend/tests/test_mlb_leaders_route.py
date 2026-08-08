@@ -53,13 +53,13 @@ def test_leaders_returns_502_when_unavailable(monkeypatch):
 
 
 def test_leaders_stale_while_error():
-    async def ok_category(client, leader_category, stat_group, season):
+    async def ok_category(client, sort_stat, group, order, season):
         return HR_PAYLOAD
 
     async def ok_teams(client, season):
         return TEAM_MAP
 
-    async def boom_category(client, leader_category, stat_group, season):
+    async def boom_category(client, sort_stat, group, order, season):
         raise RuntimeError("upstream down")
 
     async def boom_teams(client, season):
@@ -81,16 +81,14 @@ def test_leaders_stale_while_error():
     assert res.status_code == 200
     hr = next(c for c in res.json()["categories"] if c["key"] == "hr")
     assert hr["leaders"][0]["name"] == "Yordan Alvarez"
+    assert hr["leaders"][0]["gp"] == 115
 
 
-def test_leaders_request_params_includes_stat_group():
-    request_params = getattr(svc, "leaders_request_params", None)
+def test_stats_request_params_includes_group_and_sort():
+    params = svc.stats_request_params("homeRuns", "hitting", "desc", 2026)
 
-    assert request_params is not None
-    assert request_params("homeRuns", "hitting", 2026) == {
-        "leaderCategories": "homeRuns",
-        "statGroup": "hitting",
-        "season": 2026,
-        "sportId": 1,
-        "limit": 10,
-    }
+    assert params["group"] == "hitting"
+    assert params["sortStat"] == "homeRuns"
+    assert params["stats"] == "season"
+    assert params["limit"] == 10
+    assert "statGroup" not in params

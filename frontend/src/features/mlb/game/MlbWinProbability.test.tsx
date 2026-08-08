@@ -27,6 +27,16 @@ describe("MlbWinProbability", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("shows white enlarged team abbrev + pct labels", () => {
+    render(<MlbWinProbability detail={mlbLiveDetail} />);
+    const home = screen.getByTestId("mlb-game-flow-home-pct");
+    const away = screen.getByTestId("mlb-game-flow-away-pct");
+    expect(home).toHaveAttribute("fill", "#FFFFFF");
+    expect(away).toHaveAttribute("fill", "#FFFFFF");
+    expect(home).toHaveStyle({ fontSize: "18px" });
+    expect(away).toHaveStyle({ fontSize: "18px" });
+  });
+
   it("uses compact viewBox height when compact is set", () => {
     render(<MlbWinProbability detail={mlbLiveDetail} compact />);
     expect(screen.getByLabelText("Win probability chart")).toHaveAttribute(

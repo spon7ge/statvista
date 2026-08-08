@@ -151,6 +151,7 @@ function buildApiDetail(
         team: "away",
         player_name: "Betts",
         result: "hit",
+        outcome: "Single",
         x: 0.4,
         y: 0.5,
       },
@@ -188,6 +189,7 @@ describe("mapMlbGameDetail", () => {
     expect(mapped.boxScore?.homePitchers[0]?.strikes).toBe(28);
     expect(mapped.boxScore?.homePitchingTotals?.ip).toBe("9.0");
     expect(mapped.hitChart[0]?.playerName).toBe("Betts");
+    expect(mapped.hitChart[0]?.outcome).toBe("Single");
     expect(mapped.seasonTeamStats).toBeNull();
     expect(mapped.injuries).toBeNull();
   });

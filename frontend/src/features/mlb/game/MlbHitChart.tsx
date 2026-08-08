@@ -8,8 +8,8 @@ const RESULT_STYLE: Record<
   MlbHitPoint["result"],
   { fill: string; label: string }
 > = {
-  hr: { fill: "#c45c5c", label: "HR" },
-  hit: { fill: "#3f8f55", label: "Hit" },
+  hr: { fill: "#ff5a5a", label: "HR" },
+  hit: { fill: "#3fd96a", label: "Hit" },
   out: { fill: "rgba(200,200,200,0.55)", label: "Out" },
 };
 
@@ -28,6 +28,8 @@ const THETA_RF = 45;
 const THETA_LF = 135;
 const MAX_FT = 430;
 const SCALE = (HOME_Y - 28) / MAX_FT;
+/** Decorative only — enlarges dirt diamond/mound vs true 90 ft scale. */
+const INFIELD_VISUAL_SCALE = 1.7;
 
 /**
  * Generic modern park fence distance (ft) vs spray angle.
@@ -77,113 +79,192 @@ function pathFromPoints(
   return `${body} L${CX} ${HOME_Y} Z`;
 }
 
-function FieldDiagram({ points }: { points: MlbHitPoint[] }) {
-  const { wallPts, hrPts, infield, mound, foulLf, foulRf } = useMemo(() => {
-    const wall = sampleWall(genericWallRadiusFt, 0);
-    const hr = sampleWall(genericWallRadiusFt, 28);
-    const mound = polarToSvg(60.5, 90);
-    const first = polarToSvg(90, 45);
-    const third = polarToSvg(90, 135);
-    const second = polarToSvg(127.3, 90);
-    return {
-      wallPts: wall,
-      hrPts: hr,
-      mound,
-      foulLf: polarToSvg(genericWallRadiusFt(THETA_LF) + 28, THETA_LF),
-      foulRf: polarToSvg(genericWallRadiusFt(THETA_RF) + 28, THETA_RF),
-      infield: [
-        { x: CX, y: HOME_Y - 4 },
-        first,
-        second,
-        third,
-      ],
-    };
-  }, []);
+function closedPolygon(points: Array<{ x: number; y: number }>): string {
+  if (points.length === 0) return "";
+  return `${pathFromPoints(points, false)} Z`;
+}
+
+/** Axis-aligned corners of a diamond = perfect square rotated 45°. */
+function diamondSquare(
+  cx: number,
+  cy: number,
+  halfDiagonal: number,
+): Array<{ x: number; y: number }> {
+  return [
+    { x: cx, y: cy + halfDiagonal }, // home
+    { x: cx + halfDiagonal, y: cy }, // first
+    { x: cx, y: cy - halfDiagonal }, // second
+    { x: cx - halfDiagonal, y: cy }, // third
+  ];
+}
+
+export function hitPointTooltip(
+  point: MlbHitPoint,
+  teamAbbrev: string,
+): { name: string; detail: string } {
+  const outcome =
+    point.outcome?.trim() || RESULT_STYLE[point.result].label;
+  const detail = [outcome, teamAbbrev].filter(Boolean).join(" · ");
+  return {
+    name: point.playerName?.trim() || "Unknown",
+    detail,
+  };
+}
+
+function FieldDiagram({
+  points,
+  teamAbbrev,
+}: {
+  points: MlbHitPoint[];
+  teamAbbrev: (team: MlbHitPoint["team"]) => string;
+}) {
+  const [hoverId, setHoverId] = useState<string | null>(null);
+  const { wallPts, hrPts, infield, infieldGrass, mound, foulLf, foulRf } =
+    useMemo(() => {
+      const wall = sampleWall(genericWallRadiusFt, 0);
+      const hr = sampleWall(genericWallRadiusFt, 28);
+      const s = INFIELD_VISUAL_SCALE;
+      // Geometric center of the diamond (midpoint home ↔ second @ 90√2/2 ft).
+      const center = polarToSvg(63.64 * s, 90);
+      const halfDiag = 63.64 * s * SCALE;
+      const dirt = diamondSquare(center.x, center.y, halfDiag);
+      const grass = diamondSquare(center.x, center.y, halfDiag * 0.72);
+      return {
+        wallPts: wall,
+        hrPts: hr,
+        mound: center,
+        foulLf: polarToSvg(genericWallRadiusFt(THETA_LF) + 28, THETA_LF),
+        foulRf: polarToSvg(genericWallRadiusFt(THETA_RF) + 28, THETA_RF),
+        infield: dirt,
+        infieldGrass: grass,
+      };
+    }, []);
 
   const grassD = pathFromPoints(wallPts, true);
   const hrD = pathFromPoints(hrPts, true);
   const wallStroke = pathFromPoints(wallPts, false);
-  const infieldD = pathFromPoints(infield, true);
+  const infieldD = closedPolygon(infield);
+  const infieldGrassD = closedPolygon(infieldGrass);
+  const hovered = points.find((p) => p.id === hoverId) ?? null;
+  const tip = hovered
+    ? hitPointTooltip(hovered, teamAbbrev(hovered.team))
+    : null;
 
   return (
-    <svg
-      viewBox={`0 0 ${W} ${H}`}
-      className="mt-3 block w-full"
-      aria-label="Hit chart field"
-      data-testid="mlb-hit-chart-field"
-    >
-      {/* HR territory (wall → +28 ft) */}
-      <path
-        d={hrD}
-        fill="rgba(110, 28, 36, 0.5)"
-        data-testid="mlb-hit-chart-hr-ring"
-      />
-      {/* Fair territory grass */}
-      <path d={grassD} fill="#1a3d28" />
+    <div className="relative mt-3">
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        className="block w-full overflow-visible"
+        aria-label="Hit chart field"
+        data-testid="mlb-hit-chart-field"
+      >
+        {/* HR territory (wall → +28 ft) */}
+        <path
+          d={hrD}
+          fill="rgba(110, 28, 36, 0.5)"
+          data-testid="mlb-hit-chart-hr-ring"
+        />
+        {/* Fair territory grass */}
+        <path d={grassD} fill="#1a3d28" />
 
-      {/* Foul lines to poles */}
-      <line
-        x1={CX}
-        y1={HOME_Y}
-        x2={foulLf.x}
-        y2={foulLf.y}
-        stroke="rgba(255,255,255,0.18)"
-        strokeWidth={1}
-      />
-      <line
-        x1={CX}
-        y1={HOME_Y}
-        x2={foulRf.x}
-        y2={foulRf.y}
-        stroke="rgba(255,255,255,0.18)"
-        strokeWidth={1}
-      />
+        {/* Foul lines to poles */}
+        <line
+          x1={CX}
+          y1={HOME_Y}
+          x2={foulLf.x}
+          y2={foulLf.y}
+          stroke="rgba(255,255,255,0.18)"
+          strokeWidth={1}
+        />
+        <line
+          x1={CX}
+          y1={HOME_Y}
+          x2={foulRf.x}
+          y2={foulRf.y}
+          stroke="rgba(255,255,255,0.18)"
+          strokeWidth={1}
+        />
 
-      {/* Outfield wall from polar samples */}
-      <path
-        d={wallStroke}
-        fill="none"
-        stroke="#b94a4a"
-        strokeWidth={2}
-        strokeLinejoin="round"
-        strokeLinecap="round"
-        data-testid="mlb-hit-chart-wall"
-      />
+        {/* Outfield wall from polar samples */}
+        <path
+          d={wallStroke}
+          fill="none"
+          stroke="#b94a4a"
+          strokeWidth={2}
+          strokeLinejoin="round"
+          strokeLinecap="round"
+          data-testid="mlb-hit-chart-wall"
+        />
 
-      {/* Dirt infield diamond (90 ft bases) */}
-      <path
-        d={infieldD}
-        fill="#6e5538"
-        stroke="rgba(160, 130, 90, 0.4)"
-        strokeWidth={1}
-      />
+        {/* Dirt infield diamond (basepaths) */}
+        <path
+          d={infieldD}
+          fill="#6e5538"
+          stroke="rgba(160, 130, 90, 0.4)"
+          strokeWidth={1}
+        />
 
-      {/* Pitcher's mound (60.5 ft) */}
-      <circle cx={mound.x} cy={mound.y} r={5.5} fill="#7d6240" />
+        {/* Inner infield grass (green box inside dirt diamond) */}
+        <path
+          d={infieldGrassD}
+          fill="#2f6b3d"
+          data-testid="mlb-hit-chart-infield-grass"
+        />
 
-      {/* Home plate */}
-      <circle cx={CX} cy={HOME_Y - 1} r={2.75} fill="rgba(255,255,255,0.78)" />
+        {/* Pitcher's mound (visually scaled; not used for hit placement) */}
+        <circle cx={mound.x} cy={mound.y} r={7.5} fill="#7d6240" />
 
-      {points.map((point) => {
-        const style = RESULT_STYLE[point.result];
-        return (
-          <circle
-            key={point.id}
-            data-testid={`mlb-hit-point-${point.id}`}
-            cx={point.x * W}
-            cy={point.y * H}
-            r={point.result === "hr" ? 4.25 : 3.4}
-            fill={style.fill}
-            stroke="rgba(0,0,0,0.45)"
-            strokeWidth={0.65}
-          >
-            <title>
-              {[point.playerName, style.label].filter(Boolean).join(" · ")}
-            </title>
-          </circle>
-        );
-      })}
-    </svg>
+        {/* Home plate */}
+        <circle
+          cx={CX}
+          cy={HOME_Y - 1}
+          r={3.25}
+          fill="rgba(255,255,255,0.78)"
+        />
+
+        {points.map((point) => {
+          const style = RESULT_STYLE[point.result];
+          return (
+            <circle
+              key={point.id}
+              data-testid={`mlb-hit-point-${point.id}`}
+              cx={point.x * W}
+              cy={point.y * H}
+              r={point.result === "hr" ? 4.25 : 3.4}
+              fill={style.fill}
+              stroke="rgba(0,0,0,0.45)"
+              strokeWidth={0.65}
+              className="cursor-pointer"
+              onMouseEnter={() => setHoverId(point.id)}
+              onMouseLeave={() => setHoverId(null)}
+              onFocus={() => setHoverId(point.id)}
+              onBlur={() => setHoverId(null)}
+              tabIndex={0}
+            />
+          );
+        })}
+      </svg>
+
+      {hovered && tip ? (
+        <div
+          role="tooltip"
+          data-testid="mlb-hit-chart-tooltip"
+          className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full rounded-md bg-black/90 px-2.5 py-1.5 text-left shadow-lg"
+          style={{
+            left: `${hovered.x * 100}%`,
+            top: `${hovered.y * 100}%`,
+            marginTop: "-10px",
+          }}
+        >
+          <p className="text-[15px] font-semibold leading-tight text-white">
+            {tip.name}
+          </p>
+          <p className="mt-0.5 text-[13px] leading-tight text-white/70">
+            {tip.detail}
+          </p>
+        </div>
+      ) : null}
+    </div>
   );
 }
 
@@ -247,7 +328,14 @@ export function MlbHitChart({ detail }: { detail: MlbGameDetailView }) {
       {filtered.length === 0 ? (
         <p className="mt-4 text-[18px] text-white/40">No hit chart data yet</p>
       ) : (
-        <FieldDiagram points={filtered} />
+        <FieldDiagram
+          points={filtered}
+          teamAbbrev={(team) =>
+            team === "away"
+              ? detail.away.abbrev || "Away"
+              : detail.home.abbrev || "Home"
+          }
+        />
       )}
 
       <p className="mt-2 text-[18px] leading-snug text-white/40">

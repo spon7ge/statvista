@@ -4,7 +4,7 @@ import asyncio
 import logging
 import time
 from datetime import datetime
-from typing import Any
+from typing import Any, Literal
 from zoneinfo import ZoneInfo
 
 import httpx
@@ -19,7 +19,8 @@ from app.domains.mlb.team_names import canonical_mlb_abbrev
 logger = logging.getLogger(__name__)
 
 ET = ZoneInfo("America/New_York")
-LEADERS_URL = "https://statsapi.mlb.com/api/v1/stats/leaders"
+# /stats/leaders has no gamesPlayed; season /stats splits include GP + ranked values.
+STATS_URL = "https://statsapi.mlb.com/api/v1/stats"
 TEAMS_URL = "https://statsapi.mlb.com/api/v1/teams"
 STATS_TIMEOUT_SECONDS = 10.0
 CACHE_TTL_SECONDS = 10 * 60
@@ -28,20 +29,23 @@ _cache: dict[str, Any] = {}
 _refresh_lock: asyncio.Lock | None = None
 _refresh_lock_loop: asyncio.AbstractEventLoop | None = None
 
-CATEGORY_SPECS: list[tuple[str, str, str, str, str]] = [
-    ("avg", "Batting Average", "AVG", "battingAverage", "hitting"),
-    ("hr", "Home Runs", "HR", "homeRuns", "hitting"),
-    ("rbi", "RBI", "RBI", "runsBattedIn", "hitting"),
-    ("sb", "Stolen Bases", "SB", "stolenBases", "hitting"),
-    ("ops", "OPS", "OPS", "onBasePlusSlugging", "hitting"),
-    ("hits", "Hits", "H", "hits", "hitting"),
-    ("era", "ERA", "ERA", "earnedRunAverage", "pitching"),
-    ("whip", "WHIP", "WHIP", "walksAndHitsPerInningPitched", "pitching"),
-    ("so", "Strikeouts", "SO", "strikeouts", "pitching"),
-    ("w", "Wins", "W", "wins", "pitching"),
-    ("sv", "Saves", "SV", "saves", "pitching"),
-    ("ip", "Innings Pitched", "IP", "inningsPitched", "pitching"),
+# key, label, display_stat, sort_stat, group, order
+CATEGORY_SPECS: list[tuple[str, str, str, str, str, Literal["asc", "desc"]]] = [
+    ("avg", "Batting Average", "AVG", "avg", "hitting", "desc"),
+    ("hr", "Home Runs", "HR", "homeRuns", "hitting", "desc"),
+    ("rbi", "RBI", "RBI", "rbi", "hitting", "desc"),
+    ("sb", "Stolen Bases", "SB", "stolenBases", "hitting", "desc"),
+    ("ops", "OPS", "OPS", "ops", "hitting", "desc"),
+    ("hits", "Hits", "H", "hits", "hitting", "desc"),
+    ("era", "ERA", "ERA", "era", "pitching", "asc"),
+    ("whip", "WHIP", "WHIP", "whip", "pitching", "asc"),
+    ("so", "Strikeouts", "SO", "strikeOuts", "pitching", "desc"),
+    ("w", "Wins", "W", "wins", "pitching", "desc"),
+    ("sv", "Saves", "SV", "saves", "pitching", "desc"),
+    ("ip", "Innings Pitched", "IP", "inningsPitched", "pitching", "desc"),
 ]
+# Rate boards use MLB qualification (same idea as /stats/leaders).
+_QUALIFIED_SORT_STATS = frozenset({"avg", "ops", "era", "whip"})
 TOP_N = 10
 
 
@@ -49,16 +53,24 @@ def current_mlb_season_year() -> int:
     return datetime.now(ET).year
 
 
-def leaders_request_params(
-    leader_category: str, stat_group: str, season: int
+def stats_request_params(
+    sort_stat: str,
+    group: str,
+    order: Literal["asc", "desc"],
+    season: int,
 ) -> dict[str, str | int]:
-    return {
-        "leaderCategories": leader_category,
-        "statGroup": stat_group,
+    params: dict[str, str | int] = {
+        "stats": "season",
+        "group": group,
         "season": season,
-        "sportId": 1,
+        "sportIds": 1,
         "limit": TOP_N,
+        "order": order,
+        "sortStat": sort_stat,
     }
+    if sort_stat in _QUALIFIED_SORT_STATS:
+        params["playerPool"] = "qualified"
+    return params
 
 
 def _get_refresh_lock() -> asyncio.Lock:
@@ -86,16 +98,36 @@ async def fetch_team_abbrev_map(
 
 async def fetch_category_payload(
     client: httpx.AsyncClient,
-    leader_category: str,
-    stat_group: str,
+    sort_stat: str,
+    group: str,
+    order: Literal["asc", "desc"],
     season: int,
 ) -> dict:
     res = await client.get(
-        LEADERS_URL,
-        params=leaders_request_params(leader_category, stat_group, season),
+        STATS_URL,
+        params=stats_request_params(sort_stat, group, order, season),
     )
     res.raise_for_status()
     return res.json()
+
+
+def _format_stat_value(raw: Any) -> str | None:
+    if raw is None:
+        return None
+    if isinstance(raw, bool):
+        return None
+    if isinstance(raw, str):
+        value = raw.strip()
+        return value or None
+    if isinstance(raw, int):
+        return str(raw)
+    if isinstance(raw, float):
+        text = f"{raw}"
+        if "." in text:
+            text = text.rstrip("0").rstrip(".")
+        return text or None
+    value = str(raw).strip()
+    return value or None
 
 
 def normalize_category_payload(
@@ -104,34 +136,41 @@ def normalize_category_payload(
     key: str,
     label: str,
     stat: str,
+    sort_stat: str,
     team_id_to_abbrev: dict[int, str],
 ) -> MlbLeaderCategory:
-    blocks = payload.get("leagueLeaders") or []
-    raw_leaders = (blocks[0] or {}).get("leaders") or [] if blocks else []
+    blocks = payload.get("stats") or []
+    raw_splits = (blocks[0] or {}).get("splits") or [] if blocks else []
     leaders: list[MlbLeaderRow] = []
-    for entry in raw_leaders:
+    for entry in raw_splits:
         if len(leaders) >= TOP_N:
             break
-        person = entry.get("person") or {}
+        player = entry.get("player") or {}
         team = entry.get("team") or {}
-        pid = person.get("id")
-        name = str(person.get("fullName") or "").strip()
-        value = str(entry.get("value") or "").strip()
+        row_stat = entry.get("stat") or {}
+        pid = player.get("id")
+        name = str(player.get("fullName") or "").strip()
+        value = _format_stat_value(row_stat.get(sort_stat))
         try:
             rank = int(entry.get("rank"))
         except (TypeError, ValueError):
             continue
-        if pid is None or not name or not value:
+        if pid is None or not name or value is None:
             continue
         tid = team.get("id")
         abbrev = team_id_to_abbrev.get(int(tid), "???") if tid is not None else "???"
+        gp: int | None
+        try:
+            gp = int(row_stat["gamesPlayed"])
+        except (KeyError, TypeError, ValueError):
+            gp = None
         leaders.append(
             MlbLeaderRow(
                 rank=rank,
                 player_id=str(pid),
                 name=name,
                 team_abbrev=abbrev,
-                gp=None,
+                gp=gp,
                 value=value,
             )
         )
@@ -171,8 +210,17 @@ async def get_mlb_leaders() -> MlbLeadersResponse:
             async with httpx.AsyncClient(timeout=STATS_TIMEOUT_SECONDS) as client:
                 results = await asyncio.gather(
                     *(
-                        fetch_category_payload(client, category, stat_group, season)
-                        for _key, _label, _stat, category, stat_group in CATEGORY_SPECS
+                        fetch_category_payload(
+                            client, sort_stat, group, order, season
+                        )
+                        for (
+                            _key,
+                            _label,
+                            _stat,
+                            sort_stat,
+                            group,
+                            order,
+                        ) in CATEGORY_SPECS
                     ),
                     fetch_team_abbrev_map(client, season),
                 )
@@ -183,11 +231,17 @@ async def get_mlb_leaders() -> MlbLeadersResponse:
                     key=key,
                     label=label,
                     stat=stat,
+                    sort_stat=sort_stat,
                     team_id_to_abbrev=team_id_to_abbrev,
                 )
-                for (key, label, stat, _category, _stat_group), payload in zip(
-                    CATEGORY_SPECS, payloads, strict=True
-                )
+                for (
+                    key,
+                    label,
+                    stat,
+                    sort_stat,
+                    _group,
+                    _order,
+                ), payload in zip(CATEGORY_SPECS, payloads, strict=True)
             ]
             response = assemble_mlb_leaders(categories, season=season)
         except Exception:

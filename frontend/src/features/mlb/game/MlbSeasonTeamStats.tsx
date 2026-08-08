@@ -64,16 +64,17 @@ function TeamMark({
         align === "right" ? "justify-end" : ""
       }`}
     >
+      <span className="text-[18px] font-semibold text-white">
+        {team.abbrev}
+      </span>
       {team.logoUrl ? (
         <img
           src={team.logoUrl}
           alt=""
+          role="presentation"
           className="size-5 object-contain"
         />
       ) : null}
-      <span className="text-[18px] font-semibold text-white">
-        {team.abbrev}
-      </span>
     </div>
   );
 }
