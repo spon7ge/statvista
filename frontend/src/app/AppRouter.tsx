@@ -10,6 +10,7 @@ import { LeagueFuturesPage } from "@/pages/LeagueFuturesPage";
 import { LeaguePlayerPage } from "@/pages/LeaguePlayerPage";
 import { LeaguePropPicksPage } from "@/pages/LeaguePropPicksPage";
 import { MlbGameDetailPage } from "@/pages/MlbGameDetailPage";
+import { MlbLeadersPage } from "@/pages/MlbLeadersPage";
 import { MlbPropPicksPage } from "@/pages/MlbPropPicksPage";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 
@@ -39,6 +40,7 @@ export function AppRouter() {
           element={<LeagueMatchupsPage league="mlb" />}
         />
         <Route path="/mlb/prop_picks" element={<MlbPropPicksPage />} />
+        <Route path="/mlb/leaders" element={<MlbLeadersPage />} />
         <Route path="/mlb/games/:gamePk" element={<MlbGameDetailPage />} />
       </Route>
       <Route path="*" element={<NotFoundPage />} />

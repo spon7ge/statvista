@@ -47,6 +47,13 @@ describe("LeagueSubnav", () => {
     expect(propPicks).toHaveAttribute("aria-current", "page");
   });
 
+  it("links MLB Leaders to /mlb/leaders", () => {
+    renderSubnav("/mlb/leaders", "mlb");
+    const leaders = screen.getByRole("link", { name: "Leaders" });
+    expect(leaders).toHaveAttribute("href", "/mlb/leaders");
+    expect(leaders).toHaveAttribute("aria-current", "page");
+  });
+
   it("keeps Leaders and Standings disabled on NBA", () => {
     renderSubnav("/nba/matchups", "nba");
     expect(screen.getByRole("button", { name: "Leaders" })).toBeDisabled();

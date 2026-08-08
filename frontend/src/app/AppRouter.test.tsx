@@ -156,6 +156,33 @@ describe("AppRouter", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("renders MLB leaders at /mlb/leaders", async () => {
+    fetchMock.mockImplementation(async (input: RequestInfo) => {
+      const url = String(input);
+      if (url.includes("/api/mlb/leaders")) {
+        return {
+          ok: true,
+          json: async () => ({
+            season: 2026,
+            pace: "season",
+            categories: [],
+          }),
+        };
+      }
+      return {
+        ok: true,
+        json: async () => ({ date: "2026-07-29", fetched_at: "", games: [] }),
+      };
+    });
+    renderWithProviders(["/mlb/leaders"]);
+    expect(await screen.findByText(/2026 season/i)).toBeInTheDocument();
+    expect(screen.getByText("Data: statsapi.mlb.com")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Leaders" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+  });
+
   it("renders MLB prop picks at /mlb/prop_picks", async () => {
     fetchMock.mockImplementation(async (input: RequestInfo) => {
       const url = String(input);
