@@ -70,6 +70,10 @@ export type ApiMlbPropsResponse = Schemas["MlbPropsResponse"];
 export type ApiMlbLeaderRow = Schemas["MlbLeaderRow"];
 export type ApiMlbLeaderCategory = Schemas["MlbLeaderCategory"];
 export type ApiMlbLeadersResponse = Schemas["MlbLeadersResponse"];
+export type ApiMlbStandingsRow = Schemas["MlbStandingsRow"];
+export type ApiMlbStandingsDivision = Schemas["MlbStandingsDivision"];
+export type ApiMlbStandingsLeague = Schemas["MlbStandingsLeague"];
+export type ApiMlbStandingsResponse = Schemas["MlbStandingsResponse"];
 
 export type MlbPropsParams = {
   app: string;
@@ -225,6 +229,17 @@ export async function fetchMlbLeaders(): Promise<ApiMlbLeadersResponse> {
   });
   if (!res.ok) {
     throw new Error(`MLB leaders failed: ${res.status}`);
+  }
+  return res.json();
+}
+
+export async function fetchMlbStandings(): Promise<ApiMlbStandingsResponse> {
+  const res = await fetch(`${API_BASE}/api/mlb/standings`, {
+    headers: { Accept: "application/json" },
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    throw new Error(`MLB standings failed: ${res.status}`);
   }
   return res.json();
 }
