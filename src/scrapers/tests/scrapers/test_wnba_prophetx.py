@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import importlib.util
+import json
+import logging
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -412,3 +414,64 @@ def test_fetch_markets_batches() -> None:
     by_event = {row["eventId"]: row["markets"] for row in out}
     assert by_event[1][0]["id"] == 1
     assert by_event[2][0]["id"] == 2
+
+
+def test_build_game_snapshots_splits_props_and_team() -> None:
+    px = _load_scraper()
+    events = [
+        {
+            "id": 13002464,
+            "name": "Indiana Fever at Chicago Sky",
+            "scheduled": "2026-08-08T23:00:00Z",
+            "status": "not_started",
+            "competitors": [],
+        }
+    ]
+    team_rows = [
+        {"eventId": 13002464, "markets": [_MONEYLINE_MARKET, _SPREAD_MARKET]}
+    ]
+    prop_rows = [{"eventId": 13002464, "markets": [_POINTS_PROP, _PRA_PROP]}]
+    props_games, team_games = px.build_game_snapshots(
+        events, team_rows, prop_rows
+    )
+    assert len(props_games) == 1
+    assert len(team_games) == 1
+    stats = {row["stat"] for row in props_games[0]["props"]}
+    assert "points" in stats
+    assert "points_rebounds_assists" in stats
+    assert "spread" in team_games[0]["team_markets"]
+    assert "run_line" not in team_games[0]["team_markets"]
+    assert "props" not in team_games[0]
+    assert "team_markets" not in props_games[0]
+
+
+def test_write_snapshots(tmp_path) -> None:
+    px = _load_scraper()
+    props_path = str(tmp_path / "prophetx_wnba_2026-08-08_143000_props.json")
+    props_games = [{"event_id": 1, "props": []}]
+    team_games = [{"event_id": 1, "team_markets": {}}]
+    p_path, t_path = px.write_snapshots(
+        props_games, team_games, props_path=props_path
+    )
+    assert p_path.endswith("_props.json")
+    assert t_path.endswith("_team.json")
+    props_payload = json.loads(Path(p_path).read_text())
+    team_payload = json.loads(Path(t_path).read_text())
+    assert props_payload["snapshot_kind"] == "props"
+    assert team_payload["snapshot_kind"] == "team"
+    assert props_payload["league"] == "wnba"
+    assert props_payload["tournament_id"] == 1600000176
+    assert props_payload["source"] == "prophetx"
+
+
+def test_load_supabase_snapshots_is_stub(caplog) -> None:
+    px = _load_scraper()
+    with caplog.at_level(logging.INFO):
+        px.load_supabase_snapshots(
+            [{"event_id": 1, "props": []}],
+            [{"event_id": 1, "team_markets": {}}],
+            props_path="/tmp/props.json",
+            team_path="/tmp/team.json",
+        )
+    assert "Supabase" in caplog.text or "skip" in caplog.text.lower()
+    assert "upserted" not in caplog.text.lower()
