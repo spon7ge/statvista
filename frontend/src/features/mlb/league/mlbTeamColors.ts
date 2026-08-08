@@ -1,6 +1,7 @@
 /** Brand colors for MLB Stats API team abbreviations on dark UI. */
 const MLB_TEAM_COLORS: Record<string, string> = {
   ARI: "#A71930",
+  AZ: "#A71930",
   ATL: "#CE1141",
   BAL: "#DF4601",
   BOS: "#BD3039",
@@ -19,6 +20,7 @@ const MLB_TEAM_COLORS: Record<string, string> = {
   MIN: "#002B5C",
   NYM: "#FF5910",
   NYY: "#003087",
+  ATH: "#003831",
   OAK: "#003831",
   PHI: "#E81828",
   PIT: "#FDB827",

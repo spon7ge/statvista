@@ -1,9 +1,11 @@
+import asyncio
 import json
 from pathlib import Path
 
 from app.domains.mlb.leaders import (
     CATEGORY_SPECS,
     assemble_mlb_leaders,
+    fetch_team_abbrev_map,
     normalize_category_payload,
 )
 
@@ -67,3 +69,20 @@ def test_assemble_sets_pace_season():
     resp = assemble_mlb_leaders([hr], season=2026)
     assert resp.pace == "season"
     assert resp.season == 2026
+
+
+def test_fetch_team_abbrev_map_canonicalizes_statsapi_aliases():
+    class FakeResponse:
+        def raise_for_status(self) -> None:
+            pass
+
+        def json(self) -> dict:
+            return {"teams": [{"id": 109, "abbreviation": "AZ"}]}
+
+    class FakeClient:
+        async def get(self, *_args, **_kwargs) -> FakeResponse:
+            return FakeResponse()
+
+    result = asyncio.run(fetch_team_abbrev_map(FakeClient(), season=2026))
+
+    assert result == {109: "ARI"}

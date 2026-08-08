@@ -78,7 +78,7 @@ main.tsx
       /nba/matchups        LeagueMatchupsPage (placeholder)
       /mlb/matchups        LeagueMatchupsPage (league="mlb", live slate)
       /mlb/prop_picks      MlbPropPicksPage
-      /mlb/leaders         LeagueLeadersPage
+      /mlb/leaders         MlbLeadersPage
       /mlb/games/:gamePk   MlbGameStubPage (coming soon)
     * → NotFoundPage
 ```

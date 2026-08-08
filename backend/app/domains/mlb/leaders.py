@@ -14,6 +14,7 @@ from app.domains.mlb.schemas_leaders import (
     MlbLeaderRow,
     MlbLeadersResponse,
 )
+from app.domains.mlb.team_names import canonical_mlb_abbrev
 
 logger = logging.getLogger(__name__)
 
@@ -77,7 +78,7 @@ async def fetch_team_abbrev_map(
     out: dict[int, str] = {}
     for team in res.json().get("teams") or []:
         tid = team.get("id")
-        abbrev = str(team.get("abbreviation") or "").strip().upper()
+        abbrev = canonical_mlb_abbrev(team.get("abbreviation"))
         if tid is not None and abbrev:
             out[int(tid)] = abbrev
     return out
