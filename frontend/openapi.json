@@ -1757,6 +1757,122 @@
         "title": "MlbInjury",
         "type": "object"
       },
+      "MlbLeaderCategory": {
+        "properties": {
+          "key": {
+            "enum": [
+              "avg",
+              "hr",
+              "rbi",
+              "sb",
+              "ops",
+              "hits",
+              "era",
+              "whip",
+              "so",
+              "w",
+              "sv",
+              "ip"
+            ],
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "leaders": {
+            "items": {
+              "$ref": "#/components/schemas/MlbLeaderRow"
+            },
+            "title": "Leaders",
+            "type": "array"
+          },
+          "stat": {
+            "title": "Stat",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "stat",
+          "leaders"
+        ],
+        "title": "MlbLeaderCategory",
+        "type": "object"
+      },
+      "MlbLeaderRow": {
+        "properties": {
+          "gp": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gp"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "player_id": {
+            "title": "Player Id",
+            "type": "string"
+          },
+          "rank": {
+            "title": "Rank",
+            "type": "integer"
+          },
+          "team_abbrev": {
+            "title": "Team Abbrev",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "rank",
+          "player_id",
+          "name",
+          "team_abbrev",
+          "value"
+        ],
+        "title": "MlbLeaderRow",
+        "type": "object"
+      },
+      "MlbLeadersResponse": {
+        "properties": {
+          "categories": {
+            "items": {
+              "$ref": "#/components/schemas/MlbLeaderCategory"
+            },
+            "title": "Categories",
+            "type": "array"
+          },
+          "pace": {
+            "const": "season",
+            "default": "season",
+            "title": "Pace",
+            "type": "string"
+          },
+          "season": {
+            "title": "Season",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "season",
+          "categories"
+        ],
+        "title": "MlbLeadersResponse",
+        "type": "object"
+      },
       "MlbLinescore": {
         "properties": {
           "away": {
@@ -7066,6 +7182,27 @@
           }
         },
         "summary": "Mlb Game Detail",
+        "tags": [
+          "mlb"
+        ]
+      }
+    },
+    "/api/mlb/leaders": {
+      "get": {
+        "operationId": "mlb_leaders_api_mlb_leaders_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MlbLeadersResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Mlb Leaders",
         "tags": [
           "mlb"
         ]

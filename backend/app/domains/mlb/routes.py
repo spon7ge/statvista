@@ -7,6 +7,7 @@ from typing import Literal
 from fastapi import APIRouter, HTTPException, Query, Response
 
 from app.domains.mlb.game_detail import get_mlb_game_detail
+from app.domains.mlb.leaders import get_mlb_leaders
 from app.domains.mlb.lineup_matchup import get_mlb_lineup_matchup
 from app.domains.mlb.lineups import get_mlb_lineups
 from app.domains.mlb.odds import get_today_odds
@@ -19,6 +20,7 @@ from app.domains.mlb.schemas import (
     MlbPropsResponse,
     MlbScoreboardResponse,
 )
+from app.domains.mlb.schemas_leaders import MlbLeadersResponse
 from app.domains.mlb.scoreboard import get_scoreboard_for_date, get_today_scoreboard
 
 logger = logging.getLogger(__name__)
@@ -26,6 +28,22 @@ logger = logging.getLogger(__name__)
 router = APIRouter(tags=["mlb"])
 
 _NO_STORE = {"Cache-Control": "no-store"}
+
+
+@router.get("/mlb/leaders", response_model=MlbLeadersResponse)
+async def mlb_leaders(response: Response) -> MlbLeadersResponse:
+    response.headers["Cache-Control"] = "no-store"
+    try:
+        return await get_mlb_leaders()
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.warning("MLB leaders unavailable: %s", exc)
+        raise HTTPException(
+            status_code=502,
+            detail="MLB leaders are temporarily unavailable",
+            headers=_NO_STORE,
+        ) from exc
 
 
 @router.get("/mlb/scoreboard", response_model=MlbScoreboardResponse)

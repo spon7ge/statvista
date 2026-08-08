@@ -78,6 +78,7 @@ main.tsx
       /nba/matchups        LeagueMatchupsPage (placeholder)
       /mlb/matchups        LeagueMatchupsPage (league="mlb", live slate)
       /mlb/prop_picks      MlbPropPicksPage
+      /mlb/leaders         LeagueLeadersPage
       /mlb/games/:gamePk   MlbGameStubPage (coming soon)
     * → NotFoundPage
 ```
@@ -112,6 +113,7 @@ main.tsx
 | `/nba/matchups` | Placeholder | — | none | “NBA matchups coming soon” |
 | `/mlb/matchups?date=` | Daily slate (no team-lines odds pill) | `useMlbScoreboard(date)` | scoreboard (`/today` or `?date=`) | Stats API schedule; cards → `/mlb/games/:gamePk` (Preview odds board still uses `GET /api/mlb/odds/today`) |
 | `/mlb/prop_picks` | Filterable DFS +EV ranked board (hybrid rows + expand) | `useMlbProps` | `GET /api/mlb/props/today?app=&format=&legs=` | DFS-first from Supabase MLB PrizePicks/Underdog snapshots; server fair/edge/tier/recency (ProphetX/Novig/DK/FD; Pinnacle + Parlay soft books cmp-only incl. Hard Rock/Fliff); defaults PrizePicks power 4 legs; client filters via `filterMlbPropPicks` |
+| `/mlb/leaders` | Season leaderboards | `useMlbLeaders` | `GET /api/mlb/leaders` | MLB Stats API leaders |
 | `/mlb/games/:gamePk` | Game detail: pregame broadcast header (Preview shows RotoWire lineups when matched with right-rail odds board beside lineups, away/team tabs stub; under lineups: season Team Stats + Injuries), live Summary/Box center (ESPN-style matchup + pitch zone above play feed, linescore/team stats/win prob/hit chart in Summary right rail, box score side-by-side in Box tab), or final center | `useMlbGameDetail(gamePk)`, `useMlbLineups(date)`, `useMlbLineupMatchup`, `useMlbOdds` | `GET /api/mlb/games/{gamePk}`, `GET /api/mlb/lineups?date=` (Preview tab), `GET /api/mlb/lineups/matchup?date=&away=&home=`, `GET /api/mlb/odds/today` (Preview odds board) | MLB Stats API (+ ESPN when available); RotoWire projected lineups for Preview, matched by abbrev with both sides' pitcher + 9 batters complete; Stats API enriches the matched lineup with season pitching and career BvP; Pinnacle `board` on odds/today for Preview right-rail when matched; Preview soft-merges season YTD team hitting/pitching (Stats) + injuries (ESPN) under projected lineups even when lineups are unavailable; halftime falls back to compact header |
 
 ### Cross-cutting API behavior
@@ -204,5 +206,6 @@ Feature-level history lives under `docs/superpowers/specs/` and `docs/superpower
 | GET | `/api/mlb/scoreboard?date=` | `mlb_scoreboard` |
 | GET | `/api/mlb/odds/today` | `mlb_odds` (Sharp `league=mlb`) |
 | GET | `/api/mlb/props/today` | `mlb.props` (+ `prop_fair`, `prop_formats`, `prop_stat_keys`, `odds_snapshots`) |
+| GET | `/api/mlb/leaders` | `mlb.leaders` (MLB Stats API) |
 
 Health (ops, not UI): `GET /api/health`.

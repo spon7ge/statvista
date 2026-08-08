@@ -161,6 +161,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/mlb/leaders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Mlb Leaders */
+        get: operations["mlb_leaders_api_mlb_leaders_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/mlb/lineups": {
         parameters: {
             query?: never;
@@ -1027,6 +1044,48 @@ export interface components {
             position: string | null;
             /** Status */
             status: string;
+        };
+        /** MlbLeaderCategory */
+        MlbLeaderCategory: {
+            /**
+             * Key
+             * @enum {string}
+             */
+            key: "avg" | "hr" | "rbi" | "sb" | "ops" | "hits" | "era" | "whip" | "so" | "w" | "sv" | "ip";
+            /** Label */
+            label: string;
+            /** Leaders */
+            leaders: components["schemas"]["MlbLeaderRow"][];
+            /** Stat */
+            stat: string;
+        };
+        /** MlbLeaderRow */
+        MlbLeaderRow: {
+            /** Gp */
+            gp?: number | null;
+            /** Name */
+            name: string;
+            /** Player Id */
+            player_id: string;
+            /** Rank */
+            rank: number;
+            /** Team Abbrev */
+            team_abbrev: string;
+            /** Value */
+            value: string;
+        };
+        /** MlbLeadersResponse */
+        MlbLeadersResponse: {
+            /** Categories */
+            categories: components["schemas"]["MlbLeaderCategory"][];
+            /**
+             * Pace
+             * @default season
+             * @constant
+             */
+            pace: "season";
+            /** Season */
+            season: number;
         };
         /** MlbLinescore */
         MlbLinescore: {
@@ -2484,6 +2543,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    mlb_leaders_api_mlb_leaders_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MlbLeadersResponse"];
                 };
             };
         };
