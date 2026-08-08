@@ -116,22 +116,13 @@ def _row_from_team_record(
     if rank is None or wins is None or losses is None:
         return None
 
-    pct = str(record.get("winningPercentage") or "").strip()
-    if not pct:
-        return None
+    pct = str(record.get("winningPercentage") or "").strip() or ".000"
 
     gb_raw = record.get("gamesBack")
-    if gb_raw is None:
-        return None
-    gb = str(gb_raw).strip()
+    gb = "-" if gb_raw is None else str(gb_raw).strip()
 
-    l10 = _last_ten(record)
-    if not l10:
-        return None
-
-    streak = _streak_code(record)
-    if not streak:
-        return None
+    l10 = _last_ten(record) or "0-0"
+    streak = _streak_code(record) or "-"
 
     return MlbStandingsRow(
         rank=rank,

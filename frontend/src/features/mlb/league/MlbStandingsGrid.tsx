@@ -53,6 +53,9 @@ export function MlbStandingsGrid({
 }: MlbStandingsGridProps) {
   const americanLeague = leagues.find((league) => league.key === "al");
   const nationalLeague = leagues.find((league) => league.key === "nl");
+  const hasStandings =
+    (americanLeague?.divisions.length ?? 0) > 0 ||
+    (nationalLeague?.divisions.length ?? 0) > 0;
 
   return (
     <div className="space-y-10">
@@ -73,6 +76,10 @@ export function MlbStandingsGrid({
         </div>
       ) : isError ? (
         <p className="text-[14px] text-white/40">Standings unavailable</p>
+      ) : !hasStandings ? (
+        <p className="text-[14px] text-white/40">
+          Standings not yet available for this season
+        </p>
       ) : (
         <>
           {americanLeague ? (

@@ -47,6 +47,26 @@ def test_standings_returns_502_when_unavailable(monkeypatch):
     assert res.json()["detail"] == "MLB standings are temporarily unavailable"
 
 
+def test_standings_uses_cache_within_ttl():
+    payload = json.loads((FIXTURES / "mlb_standings_full_sample.json").read_text())
+    calls = {"n": 0}
+
+    async def fake_standings():
+        calls["n"] += 1
+        return payload
+
+    async def fake_teams(client, season):
+        return TEAM_MAP
+
+    with patch.object(
+        svc, "fetch_mlb_standings_payload", side_effect=fake_standings
+    ), patch.object(svc, "fetch_team_abbrev_map", side_effect=fake_teams):
+        client = TestClient(app)
+        assert client.get("/api/mlb/standings").status_code == 200
+        assert client.get("/api/mlb/standings").status_code == 200
+    assert calls["n"] == 1
+
+
 def test_standings_stale_while_error():
     payload = json.loads((FIXTURES / "mlb_standings_full_sample.json").read_text())
 

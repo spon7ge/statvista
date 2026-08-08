@@ -106,6 +106,15 @@ describe("MlbStandingsGrid", () => {
     expect(screen.getByText("Standings unavailable")).toBeInTheDocument();
   });
 
+  it("shows empty-state copy when leagues are empty", () => {
+    render(<MlbStandingsGrid leagues={[]} />);
+
+    expect(
+      screen.getByText("Standings not yet available for this season"),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Data: statsapi.mlb.com")).toBeInTheDocument();
+  });
+
   it("shows No data for empty division", () => {
     render(
       <MlbStandingsGrid

@@ -61,3 +61,16 @@ def test_normalize_maps_core_columns_and_skips_broken_rows():
 def test_normalize_requires_abbrev_from_map():
     result = normalize_mlb_standings(_payload(), {})
     assert result.leagues[0].divisions[0].teams == []
+
+
+def test_normalize_keeps_rows_missing_streak_and_last_ten():
+    payload = _payload()
+    record = payload["records"][0]["teamRecords"][0]
+    record.pop("streak", None)
+    record.pop("records", None)
+
+    result = normalize_mlb_standings(payload, TEAM_MAP)
+    row = result.leagues[0].divisions[0].teams[0]
+    assert row.abbrev == "TB"
+    assert row.l10 == "0-0"
+    assert row.streak == "-"
