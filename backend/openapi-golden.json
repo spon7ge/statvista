@@ -3850,6 +3850,17 @@
       },
       "MlbPropDfs": {
         "properties": {
+          "american": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "American"
+          },
           "changed_at": {
             "anyOf": [
               {
@@ -3864,11 +3875,24 @@
           "line": {
             "title": "Line",
             "type": "number"
+          },
+          "payout_multiplier": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Payout Multiplier"
           }
         },
         "required": [
           "line",
-          "changed_at"
+          "changed_at",
+          "american",
+          "payout_multiplier"
         ],
         "title": "MlbPropDfs",
         "type": "object"

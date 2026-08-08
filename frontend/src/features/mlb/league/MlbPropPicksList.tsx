@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import type { ApiMlbPropBookQuote, ApiMlbPropRow } from "@/shared/lib/api";
+import type {
+  ApiMlbPropBookQuote,
+  ApiMlbPropDfs,
+  ApiMlbPropRow,
+} from "@/shared/lib/api";
+import { formatAmericanOdds } from "@/features/mlb/lib/mlbOddsBoard";
 
 const BOOK_LABELS: Record<string, string> = {
   prophetx: "ProphetX",
@@ -32,6 +37,18 @@ function formatEdge(value: number | null): string {
   if (value === null) return "—";
   const sign = value > 0 ? "+" : "";
   return `${sign}${value.toFixed(1)}%`;
+}
+
+/** Underdog DFS quote for the recommended side: `-102 · 1.05×`. */
+export function dfsOddsPayoutLabel(dfs: ApiMlbPropDfs): string | null {
+  const parts: string[] = [];
+  if (dfs.american != null) {
+    parts.push(formatAmericanOdds(dfs.american));
+  }
+  if (dfs.payout_multiplier != null) {
+    parts.push(`${dfs.payout_multiplier.toFixed(2)}×`);
+  }
+  return parts.length ? parts.join(" · ") : null;
 }
 
 function edgeToneClass(value: number | null): string {
@@ -286,6 +303,7 @@ function PropPickCard({
   const meta = teamPosLabel(row.team_abbrev, row.position);
   const showImg = Boolean(row.headshot_url) && !imgFailed;
   const initial = (row.player_name.trim()[0] ?? "?").toUpperCase();
+  const dfsOddsLabel = dfsOddsPayoutLabel(row.dfs);
 
   return (
     <article
@@ -327,6 +345,14 @@ function PropPickCard({
           <p className="mt-1 text-[18px] text-white">
             {row.line} {row.stat}
           </p>
+          {dfsOddsLabel ? (
+            <p
+              data-testid="mlb-prop-dfs-odds"
+              className="mt-0.5 font-mono text-[13px] text-white"
+            >
+              {dfsOddsLabel}
+            </p>
+          ) : null}
           <div className="mt-3 flex w-full items-center justify-between gap-2">
             <span className="inline-flex rounded-full bg-white px-2.5 py-0.5 text-[14px] font-semibold text-black">
               {lean}

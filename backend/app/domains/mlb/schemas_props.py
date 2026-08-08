@@ -47,6 +47,8 @@ class MlbPropDfs(BaseModel):
 
     line: float
     changed_at: str | None = None
+    american: int | None = None
+    payout_multiplier: float | None = None
 
 
 class MlbPropRow(BaseModel):

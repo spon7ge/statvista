@@ -33,7 +33,12 @@ function row(
       betmgm: null,
       fanatics: null,
     },
-    dfs: { line: 1.5, changed_at: null },
+    dfs: {
+      line: 1.5,
+      changed_at: null,
+      american: null,
+      payout_multiplier: null,
+    },
     fair_explain: "PX+Novig agree within 2pp; 60/40 blend.",
     ...partial,
   };

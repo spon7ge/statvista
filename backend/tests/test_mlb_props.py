@@ -403,6 +403,7 @@ def test_underdog_uses_stored_side_only(monkeypatch):
                 "line_score": 6.5,
                 "side": "over",
                 "american_price": -150,
+                "payout_multiplier": 1.05,
                 "scraped_at": now,
             },
         ],
@@ -415,6 +416,67 @@ def test_underdog_uses_stored_side_only(monkeypatch):
     assert len(response.props) == 1
     assert response.props[0].recommended_side == "over"
     assert response.props[0].dfs.line == 6.5
+    assert response.props[0].dfs.american == -150
+    assert response.props[0].dfs.payout_multiplier == 1.05
+
+
+def test_underdog_dfs_quote_matches_recommended_side(monkeypatch):
+    """When both sides exist at a line, dfs quote follows recommended_side."""
+    now = datetime.now(timezone.utc)
+    _stub_snapshots(
+        monkeypatch,
+        dfs_ud=[
+            {
+                "player_name": "Aaron Judge",
+                "stat_name": "total bases",
+                "line_score": 1.5,
+                "side": "over",
+                "american_price": -110,
+                "payout_multiplier": 1.0,
+                "scraped_at": now,
+            },
+            {
+                "player_name": "Aaron Judge",
+                "stat_name": "total bases",
+                "line_score": 1.5,
+                "side": "under",
+                "american_price": 120,
+                "payout_multiplier": 0.91,
+                "scraped_at": now,
+            },
+        ],
+        prophetx=[
+            {
+                "player_name": "Aaron Judge",
+                "stat_name": "total_bases",
+                "line_score": 1.5,
+                "side": "over",
+                "american_price": -140,
+                "scraped_at": now,
+            },
+            {
+                "player_name": "Aaron Judge",
+                "stat_name": "total_bases",
+                "line_score": 1.5,
+                "side": "under",
+                "american_price": 150,
+                "scraped_at": now,
+            },
+        ],
+    )
+
+    import asyncio
+
+    response = asyncio.run(svc.get_mlb_props_today(app="underdog", format="standard", legs=3))
+    assert len(response.props) == 1
+    row = response.props[0]
+    assert row.recommended_side in ("over", "under")
+    if row.recommended_side == "over":
+        assert row.dfs.american == -110
+        assert row.dfs.payout_multiplier == 1.0
+    else:
+        assert row.dfs.american == 120
+        assert row.dfs.payout_multiplier == 0.91
 
 
 def test_mid_tier_fallback_recency_chip_uses_dk_fd_timestamps():

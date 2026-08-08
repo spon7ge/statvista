@@ -1570,10 +1570,14 @@ export interface components {
         };
         /** MlbPropDfs */
         MlbPropDfs: {
+            /** American */
+            american: number | null;
             /** Changed At */
             changed_at: string | null;
             /** Line */
             line: number;
+            /** Payout Multiplier */
+            payout_multiplier: number | null;
         };
         /** MlbPropRow */
         MlbPropRow: {

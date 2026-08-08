@@ -111,6 +111,18 @@ def _parse_american(raw: Any) -> int | None:
         return None
 
 
+def _parse_payout_multiplier(raw: Any) -> float | None:
+    if raw is None:
+        return None
+    try:
+        value = float(raw)
+    except (TypeError, ValueError):
+        return None
+    if value <= 0:
+        return None
+    return value
+
+
 def _iso(dt: datetime | None) -> str | None:
     if dt is None:
         return None
@@ -174,10 +186,21 @@ def _build_board(app: str, dfs_rows: list[dict[str, Any]]) -> dict[BoardKey, dic
                 "stat": stat_label,
                 "line": line_f,
                 "sides": set(),
+                "side_quotes": {},
                 "scraped_at": None,
             },
         )
         bucket["sides"].update(sides_offered)
+        if app != "prizepicks":
+            # Underdog rows are one side each — keep american + payout for that side.
+            quote = {
+                "american": _parse_american(row.get("american_price")),
+                "payout_multiplier": _parse_payout_multiplier(
+                    row.get("payout_multiplier")
+                ),
+            }
+            for side in sides_offered:
+                bucket["side_quotes"][side] = quote
         scraped_at = row.get("scraped_at")
         if scraped_at is not None:
             bucket["scraped_at"] = scraped_at
@@ -413,6 +436,7 @@ def _assemble_rows(
             now=now,
         )
 
+        side_quote = (bucket.get("side_quotes") or {}).get(recommended) or {}
         rows.append(
             MlbPropRow(
                 player_name=bucket["player_name"],
@@ -428,7 +452,12 @@ def _assemble_rows(
                 sample_chips=primary.sample_chips,
                 recency_chip=chip,
                 books=books,
-                dfs=MlbPropDfs(line=line_f, changed_at=_iso(dfs_changed_at)),
+                dfs=MlbPropDfs(
+                    line=line_f,
+                    changed_at=_iso(dfs_changed_at),
+                    american=side_quote.get("american"),
+                    payout_multiplier=side_quote.get("payout_multiplier"),
+                ),
                 fair_explain=primary.fair_explain,
             )
         )

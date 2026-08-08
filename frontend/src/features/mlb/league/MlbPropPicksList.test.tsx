@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ApiMlbPropRow } from "@/shared/lib/api";
 import {
+  dfsOddsPayoutLabel,
   formatMlbPropPicksUpdatedAt,
   MlbPropPicksList,
   resolveBookLastUpdatedMs,
@@ -58,7 +59,12 @@ function row(
       hardrock: null,
       fliff: null,
     },
-    dfs: { line: 1.5, changed_at: "2026-08-05T19:00:00Z" },
+    dfs: {
+      line: 1.5,
+      changed_at: "2026-08-05T19:00:00Z",
+      american: null,
+      payout_multiplier: null,
+    },
     fair_explain: "PX+Novig agree within 2pp; 60/40 blend.",
     ...partial,
   };
@@ -139,9 +145,34 @@ describe("MlbPropPicksList", () => {
     expect(within(card).getByText("NYY · RF")).toBeInTheDocument();
     expect(within(card).getByText("Aaron Judge")).toBeInTheDocument();
     expect(within(card).getByText("1.5 Total Bases")).toBeInTheDocument();
+    expect(within(card).queryByTestId("mlb-prop-dfs-odds")).not.toBeInTheDocument();
     expect(within(card).getByText("Over")).toBeInTheDocument();
     expect(within(card).getByText("+5.1%").className).toMatch(/text-emerald-400/);
     expect(screen.queryByText(/PX\+Novig agree/i)).not.toBeInTheDocument();
+  });
+
+  it("shows Underdog american odds and payout under the line", () => {
+    render(
+      <MlbPropPicksList
+        props={[
+          row({
+            player_name: "Aaron Judge",
+            dfs: {
+              line: 1.5,
+              changed_at: "2026-08-05T19:00:00Z",
+              american: -102,
+              payout_multiplier: 1.05,
+            },
+          }),
+        ]}
+        format="power"
+        legs={4}
+        breakevenPct={54.3}
+      />,
+    );
+    expect(screen.getByTestId("mlb-prop-dfs-odds")).toHaveTextContent(
+      "-102 · 1.05×",
+    );
   });
 
   it("uses initials placeholder when headshot missing", () => {
@@ -465,5 +496,29 @@ describe("resolveBookLastUpdatedMs", () => {
   });
   it("returns null when neither available", () => {
     expect(resolveBookLastUpdatedMs(null, undefined)).toBeNull();
+  });
+});
+
+describe("dfsOddsPayoutLabel", () => {
+  it("formats american and payout together", () => {
+    expect(
+      dfsOddsPayoutLabel({
+        line: 1.5,
+        changed_at: null,
+        american: -102,
+        payout_multiplier: 1.05,
+      }),
+    ).toBe("-102 · 1.05×");
+  });
+
+  it("returns null when both missing", () => {
+    expect(
+      dfsOddsPayoutLabel({
+        line: 1.5,
+        changed_at: null,
+        american: null,
+        payout_multiplier: null,
+      }),
+    ).toBeNull();
   });
 });

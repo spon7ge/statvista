@@ -57,7 +57,7 @@ _PRIZEPICKS_SQL = _latest_snapshot_sql(
 )
 _UNDERDOG_SQL = _latest_snapshot_sql(
     "wnba_underdogs",
-    "player_name, stat_name, line_score, side, american_price",
+    "player_name, stat_name, line_score, side, american_price, payout_multiplier",
 )
 _PINNACLE_SQL = _latest_snapshot_sql(
     "wnba_pinnacle",
@@ -111,7 +111,8 @@ def fetch_latest_underdog(league: str = "wnba") -> list[dict]:
     table = _UNDERDOG_TABLE.get(lg, "wnba_underdogs")
     sql = _latest_snapshot_sql(
         table,
-        "player_name, stat_name, line_score, side, american_price, scraped_at",
+        "player_name, stat_name, line_score, side, american_price, "
+        "payout_multiplier, scraped_at",
     )
     return _fetch_rows(sql, lg)
 
