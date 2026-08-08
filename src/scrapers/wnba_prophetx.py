@@ -77,3 +77,86 @@ def american_and_stake(sel: dict[str, Any]) -> tuple[int | None, float | None]:
     except (TypeError, ValueError):
         stake = None
     return american, stake
+
+
+TEAM_SUBTYPE_TO_KEY: dict[str, str] = {
+    "moneyline": "moneyline",
+    "spread": "spread",
+    "total": "total",
+}
+
+_MONEYLINE_OUTPUT_KEYS = frozenset({"moneyline"})
+
+
+def normalize_event(event: dict[str, Any]) -> dict[str, Any]:
+    competitors = []
+    for c in event.get("competitors") or []:
+        if not isinstance(c, dict):
+            continue
+        competitors.append(
+            {
+                "id": c.get("id"),
+                "name": c.get("name") or c.get("displayName"),
+                "abbreviation": c.get("abbreviation"),
+                "seq": c.get("seq"),
+            }
+        )
+    return {
+        "event_id": event.get("id"),
+        "name": event.get("name") or event.get("displayName"),
+        "scheduled": event.get("scheduled"),
+        "status": event.get("status"),
+        "competitors": competitors,
+    }
+
+
+def _sides_from_book(book: dict[str, Any]) -> list[list[dict[str, Any]]]:
+    sels = book.get("selections")
+    if isinstance(sels, list) and sels:
+        return [s for s in sels if isinstance(s, list)]
+    return []
+
+
+def _side_rows(sides: list[list[dict[str, Any]]]) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for side in sides:
+        best = best_selection(side)
+        if not best:
+            continue
+        american, stake = american_and_stake(best)
+        line = best.get("line")
+        rows.append(
+            {
+                "name": best.get("name") or best.get("displayName"),
+                "competitor_id": best.get("competitorId"),
+                "american": american,
+                "line": None
+                if line in (0, 0.0, None)
+                and "over" not in str(best.get("name", "")).lower()
+                else line,
+                "stake": stake,
+            }
+        )
+    return rows
+
+
+def extract_team_markets(markets: list[dict[str, Any]]) -> dict[str, Any]:
+    out: dict[str, Any] = {}
+    for market in markets:
+        if not isinstance(market, dict):
+            continue
+        sub = str(market.get("subType") or market.get("type") or "")
+        key = TEAM_SUBTYPE_TO_KEY.get(sub)
+        if not key:
+            continue
+        book: dict[str, Any] | None
+        if key in _MONEYLINE_OUTPUT_KEYS and market.get("selections"):
+            book = market
+        else:
+            book = pick_main_market_line(market)
+        if not book:
+            continue
+        rows = _side_rows(_sides_from_book(book))
+        if rows:
+            out[key] = rows
+    return out

@@ -91,3 +91,114 @@ def test_best_selection_takes_first() -> None:
     assert best is not None
     assert best["odds"] == -110
     assert px.american_and_stake(best) == (-110, 50.0)
+
+
+_MONEYLINE_MARKET = {
+    "id": 251,
+    "name": "Moneyline",
+    "type": "moneyline",
+    "subType": "moneyline",
+    "status": "active",
+    "selections": [
+        [
+            {
+                "name": "Chicago Sky",
+                "competitorId": 1,
+                "odds": -134,
+                "displayOdds": "-134",
+                "line": 0,
+                "stake": 100.0,
+            }
+        ],
+        [
+            {
+                "name": "Indiana Fever",
+                "competitorId": 2,
+                "odds": 130,
+                "displayOdds": "+130",
+                "line": 0,
+                "stake": 50.0,
+            }
+        ],
+    ],
+}
+
+_SPREAD_MARKET = {
+    "id": 252,
+    "name": "Spread",
+    "type": "spread",
+    "subType": "spread",
+    "marketLines": [
+        {
+            "name": "Fixed home -3.5",
+            "favourite": True,
+            "selections": [
+                [
+                    {
+                        "name": "Chicago Sky",
+                        "odds": -110,
+                        "line": -3.5,
+                        "stake": 80.0,
+                    }
+                ],
+                [
+                    {
+                        "name": "Indiana Fever",
+                        "odds": -110,
+                        "line": 3.5,
+                        "stake": 80.0,
+                    }
+                ],
+            ],
+        },
+        {
+            "name": "Fixed home -4.5",
+            "selections": [[], []],
+        },
+    ],
+}
+
+
+def test_extract_team_markets_moneyline_and_main_spread() -> None:
+    px = _load_scraper()
+    out = px.extract_team_markets([_MONEYLINE_MARKET, _SPREAD_MARKET])
+    assert "moneyline" in out
+    assert out["moneyline"][0]["american"] == -134
+    assert out["moneyline"][0]["stake"] == 100.0
+    assert out["moneyline"][1]["american"] == 130
+    assert "spread" in out
+    assert "run_line" not in out
+    assert out["spread"][0]["line"] == -3.5
+    assert out["spread"][0]["american"] == -110
+
+
+def test_extract_team_markets_ignores_first_half() -> None:
+    px = _load_scraper()
+    first_half = {
+        "id": 999,
+        "name": "First Half Moneyline",
+        "type": "moneyline",
+        "subType": "first_half_moneyline",
+        "selections": [[{"name": "Chicago Sky", "odds": -105, "line": 0, "stake": 1}]],
+    }
+    out = px.extract_team_markets([_MONEYLINE_MARKET, first_half])
+    assert "moneyline" in out
+    assert "first_half_moneyline" not in out
+
+
+def test_normalize_event() -> None:
+    px = _load_scraper()
+    event = {
+        "id": 13002464,
+        "name": "Indiana Fever at Chicago Sky",
+        "scheduled": "2026-08-08T23:00:00Z",
+        "status": "not_started",
+        "competitors": [
+            {"id": 1, "name": "Chicago Sky", "abbreviation": "CHI", "seq": 0},
+            {"id": 2, "name": "Indiana Fever", "abbreviation": "IND", "seq": 1},
+        ],
+    }
+    norm = px.normalize_event(event)
+    assert norm["event_id"] == 13002464
+    assert norm["status"] == "not_started"
+    assert len(norm["competitors"]) == 2
