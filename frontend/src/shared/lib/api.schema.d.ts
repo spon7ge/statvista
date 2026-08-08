@@ -280,6 +280,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/mlb/standings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Mlb Standings */
+        get: operations["mlb_standings_api_mlb_standings_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/player/{player_id}": {
         parameters: {
             query?: never;
@@ -1587,6 +1604,61 @@ export interface components {
             /** Strikes */
             strikes: number;
         };
+        /** MlbStandingsDivision */
+        MlbStandingsDivision: {
+            /** Key */
+            key: string;
+            /** Label */
+            label: string;
+            /** Teams */
+            teams: components["schemas"]["MlbStandingsRow"][];
+        };
+        /** MlbStandingsLeague */
+        MlbStandingsLeague: {
+            /** Divisions */
+            divisions: components["schemas"]["MlbStandingsDivision"][];
+            /**
+             * Key
+             * @enum {string}
+             */
+            key: "al" | "nl";
+            /** Label */
+            label: string;
+        };
+        /** MlbStandingsResponse */
+        MlbStandingsResponse: {
+            /** Leagues */
+            leagues: components["schemas"]["MlbStandingsLeague"][];
+            /** Season */
+            season: number;
+        };
+        /** MlbStandingsRow */
+        MlbStandingsRow: {
+            /** Abbrev */
+            abbrev: string;
+            /** Gb */
+            gb: string;
+            /** L10 */
+            l10: string;
+            /** Logo Url */
+            logo_url: string | null;
+            /** Losses */
+            losses: number;
+            /** Name */
+            name: string;
+            /** Pct */
+            pct: string;
+            /** Rank */
+            rank: number;
+            /** Streak */
+            streak: string;
+            /** Team Id */
+            team_id: string;
+            /** Wins */
+            wins: number;
+            /** Wl */
+            wl: string;
+        };
         /** MlbTeam */
         MlbTeam: {
             /** Abbrev */
@@ -2733,6 +2805,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MlbScoreboardResponse"];
+                };
+            };
+        };
+    };
+    mlb_standings_api_mlb_standings_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MlbStandingsResponse"];
                 };
             };
         };

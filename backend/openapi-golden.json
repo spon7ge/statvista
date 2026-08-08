@@ -4059,6 +4059,158 @@
         "title": "MlbSituation",
         "type": "object"
       },
+      "MlbStandingsDivision": {
+        "properties": {
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "teams": {
+            "items": {
+              "$ref": "#/components/schemas/MlbStandingsRow"
+            },
+            "title": "Teams",
+            "type": "array"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "teams"
+        ],
+        "title": "MlbStandingsDivision",
+        "type": "object"
+      },
+      "MlbStandingsLeague": {
+        "properties": {
+          "divisions": {
+            "items": {
+              "$ref": "#/components/schemas/MlbStandingsDivision"
+            },
+            "title": "Divisions",
+            "type": "array"
+          },
+          "key": {
+            "enum": [
+              "al",
+              "nl"
+            ],
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "divisions"
+        ],
+        "title": "MlbStandingsLeague",
+        "type": "object"
+      },
+      "MlbStandingsResponse": {
+        "properties": {
+          "leagues": {
+            "items": {
+              "$ref": "#/components/schemas/MlbStandingsLeague"
+            },
+            "title": "Leagues",
+            "type": "array"
+          },
+          "season": {
+            "title": "Season",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "season",
+          "leagues"
+        ],
+        "title": "MlbStandingsResponse",
+        "type": "object"
+      },
+      "MlbStandingsRow": {
+        "properties": {
+          "abbrev": {
+            "title": "Abbrev",
+            "type": "string"
+          },
+          "gb": {
+            "title": "Gb",
+            "type": "string"
+          },
+          "l10": {
+            "title": "L10",
+            "type": "string"
+          },
+          "logo_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Logo Url"
+          },
+          "losses": {
+            "title": "Losses",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "pct": {
+            "title": "Pct",
+            "type": "string"
+          },
+          "rank": {
+            "title": "Rank",
+            "type": "integer"
+          },
+          "streak": {
+            "title": "Streak",
+            "type": "string"
+          },
+          "team_id": {
+            "title": "Team Id",
+            "type": "string"
+          },
+          "wins": {
+            "title": "Wins",
+            "type": "integer"
+          },
+          "wl": {
+            "title": "Wl",
+            "type": "string"
+          }
+        },
+        "required": [
+          "rank",
+          "team_id",
+          "abbrev",
+          "name",
+          "logo_url",
+          "wins",
+          "losses",
+          "wl",
+          "pct",
+          "gb",
+          "l10",
+          "streak"
+        ],
+        "title": "MlbStandingsRow",
+        "type": "object"
+      },
       "MlbTeam": {
         "properties": {
           "abbrev": {
@@ -7473,6 +7625,27 @@
           }
         },
         "summary": "Mlb Scoreboard Today",
+        "tags": [
+          "mlb"
+        ]
+      }
+    },
+    "/api/mlb/standings": {
+      "get": {
+        "operationId": "mlb_standings_api_mlb_standings_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MlbStandingsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Mlb Standings",
         "tags": [
           "mlb"
         ]

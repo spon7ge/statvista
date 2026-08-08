@@ -1,7 +1,7 @@
 # MLB standings page
 
 Date: 2026-08-07  
-Status: Approved for planning
+Status: Ready for implementation
 
 ## Goal
 
@@ -169,7 +169,7 @@ MlbStandingsRow
 
 - In-process cache similar to Leaders / WNBA standings: store response + `expires_at`.
 - TTL: **10 minutes**.
-- On upstream failure: return stale cache if present; otherwise **503** with `Cache-Control: no-store` (match MLB Leaders route behavior).
+- On upstream failure: return stale cache if present; otherwise **502** with `Cache-Control: no-store` (match MLB Leaders route behavior).
 - Prefer `no-store` on the HTTP response and rely on the in-process TTL.
 
 ### Frontend fetch
@@ -211,7 +211,7 @@ frontend/src/app/AppRouter.test.tsx
 
 - Fixture → normalize produces AL then NL, three divisions each, expected columns (`wl`, `pct`, `gb`, `l10`, `streak`), stable ranks.
 - Malformed team row skipped; other teams still present.
-- Route: happy path `200`; cold upstream failure → `503` + `no-store`.
+- Route: happy path `200`; cold upstream failure → `502` + `no-store`.
 - Cache: second call within TTL does not re-hit upstream (mocked).
 
 ### Frontend

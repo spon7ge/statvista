@@ -1,7 +1,13 @@
 from __future__ import annotations
 
+import asyncio
+import logging
+import time
 from typing import Any
 
+import httpx
+
+from app.domains.mlb.leaders import current_mlb_season_year
 from app.domains.mlb.schemas_standings import (
     LeagueKey,
     MlbStandingsDivision,
@@ -10,6 +16,17 @@ from app.domains.mlb.schemas_standings import (
     MlbStandingsRow,
 )
 from app.domains.mlb.team_names import canonical_mlb_abbrev
+
+logger = logging.getLogger(__name__)
+
+STANDINGS_URL = "https://statsapi.mlb.com/api/v1/standings"
+TEAMS_URL = "https://statsapi.mlb.com/api/v1/teams"
+STATS_TIMEOUT_SECONDS = 10.0
+CACHE_TTL_SECONDS = 10 * 60
+
+_cache: dict[str, Any] = {}
+_refresh_lock: asyncio.Lock | None = None
+_refresh_lock_loop: asyncio.AbstractEventLoop | None = None
 
 _LEAGUE_META: dict[int, tuple[LeagueKey, str]] = {
     103: ("al", "American League"),
@@ -214,3 +231,81 @@ def normalize_mlb_standings(
             )
 
     return MlbStandingsResponse(season=resolved_season, leagues=leagues)
+
+
+def _get_refresh_lock() -> asyncio.Lock:
+    global _refresh_lock, _refresh_lock_loop
+    loop = asyncio.get_running_loop()
+    if _refresh_lock is None or _refresh_lock_loop is not loop:
+        _refresh_lock = asyncio.Lock()
+        _refresh_lock_loop = loop
+    return _refresh_lock
+
+
+async def fetch_mlb_standings_payload() -> dict:
+    async with httpx.AsyncClient(timeout=STATS_TIMEOUT_SECONDS) as client:
+        res = await client.get(
+            STANDINGS_URL,
+            params={"leagueId": "103,104"},
+        )
+        res.raise_for_status()
+        return res.json()
+
+
+async def fetch_team_abbrev_map(
+    client: httpx.AsyncClient, season: int
+) -> dict[int, str]:
+    res = await client.get(TEAMS_URL, params={"sportId": 1, "season": season})
+    res.raise_for_status()
+    out: dict[int, str] = {}
+    for team in res.json().get("teams") or []:
+        tid = team.get("id")
+        abbrev = canonical_mlb_abbrev(team.get("abbreviation"))
+        if tid is not None and abbrev:
+            out[int(tid)] = abbrev
+    return out
+
+
+def _fresh_cached() -> MlbStandingsResponse | None:
+    cached = _cache.get("response")
+    if cached is None:
+        return None
+    if _cache.get("season") != current_mlb_season_year():
+        return None
+    if time.time() >= float(_cache.get("expires_at") or 0):
+        return None
+    return cached
+
+
+async def get_mlb_standings() -> MlbStandingsResponse:
+    fresh = _fresh_cached()
+    if fresh is not None:
+        return fresh
+
+    lock = _get_refresh_lock()
+    async with lock:
+        fresh = _fresh_cached()
+        if fresh is not None:
+            return fresh
+
+        season = current_mlb_season_year()
+        try:
+            async with httpx.AsyncClient(timeout=STATS_TIMEOUT_SECONDS) as client:
+                standings_payload, team_id_to_abbrev = await asyncio.gather(
+                    fetch_mlb_standings_payload(),
+                    fetch_team_abbrev_map(client, season),
+                )
+            response = normalize_mlb_standings(
+                standings_payload, team_id_to_abbrev, season=season
+            )
+        except Exception:
+            stale = _cache.get("response")
+            if stale is not None and _cache.get("season") == season:
+                logger.warning("MLB standings refresh failed; serving stale cache")
+                return stale
+            raise
+
+        _cache["response"] = response
+        _cache["expires_at"] = time.time() + CACHE_TTL_SECONDS
+        _cache["season"] = season
+        return response
