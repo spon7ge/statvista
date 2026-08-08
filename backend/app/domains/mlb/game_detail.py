@@ -1062,6 +1062,7 @@ def attach_matchup_prediction(
     detail: MlbGameDetail,
     prediction: MlbMatchupPrediction | None,
 ) -> MlbGameDetail:
+    """Attach ESPN matchup prediction onto a Stats-normalized detail payload."""
     if prediction is None:
         return detail
     sources = list(detail.sources)
@@ -1322,7 +1323,7 @@ async def _attach_espn_summary_enrichment(
     *,
     cached_espn_event_id: str | None,
 ) -> tuple[MlbGameDetail, str | None]:
-    """Soft-merge ESPN win probability + injuries from one summary fetch."""
+    """Soft-merge ESPN win probability, matchup prediction, and injuries from one summary fetch."""
     espn_event_id = cached_espn_event_id
     try:
         if not espn_event_id:
