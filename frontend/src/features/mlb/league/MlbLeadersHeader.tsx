@@ -25,7 +25,7 @@ export function MlbLeadersHeader({ season }: MlbLeadersHeaderProps) {
               role="presentation"
               className="h-20 w-auto shrink-0 self-center object-contain sm:h-24"
             />
-            <h1 className="text-left text-[32px] leading-none font-bold tracking-tight text-slate-950 sm:text-[36px]">
+            <h1 className="text-left text-[32px] leading-none font-bold tracking-tight text-white sm:text-[36px]">
               MLB {season} Leaders
             </h1>
           </div>
