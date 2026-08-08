@@ -49,3 +49,45 @@ def test_resolve_props_output_path_default(tmp_path, monkeypatch) -> None:
     now = datetime(2026, 8, 8, 14, 30, 0, tzinfo=ZoneInfo("America/Los_Angeles"))
     path = px.resolve_props_output_path(now=now)
     assert path == str(tmp_path / "prophetx_wnba_2026-08-08_143000_props.json")
+
+
+def test_pick_main_market_line_favourite() -> None:
+    px = _load_scraper()
+    market = {
+        "marketLines": [
+            {"name": "Fixed total 18.5", "favourite": True, "selections": []},
+            {"name": "Fixed total 19.5", "selections": []},
+        ]
+    }
+    main = px.pick_main_market_line(market)
+    assert main is not None
+    assert main["name"] == "Fixed total 18.5"
+
+
+def test_pick_main_market_line_sole() -> None:
+    px = _load_scraper()
+    market = {"marketLines": [{"name": "Fixed total 18.5", "selections": []}]}
+    assert px.pick_main_market_line(market)["name"] == "Fixed total 18.5"
+
+
+def test_pick_main_market_line_skips_ambiguous() -> None:
+    px = _load_scraper()
+    market = {
+        "marketLines": [
+            {"name": "Fixed total 18.5", "selections": []},
+            {"name": "Fixed total 19.5", "selections": []},
+        ]
+    }
+    assert px.pick_main_market_line(market) is None
+
+
+def test_best_selection_takes_first() -> None:
+    px = _load_scraper()
+    side = [
+        {"odds": -110, "stake": 50.0, "displayOdds": "-110"},
+        {"odds": -120, "stake": 10.0, "displayOdds": "-120"},
+    ]
+    best = px.best_selection(side)
+    assert best is not None
+    assert best["odds"] == -110
+    assert px.american_and_stake(best) == (-110, 50.0)
