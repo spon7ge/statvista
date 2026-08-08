@@ -6,6 +6,7 @@ from typing import Literal
 
 from fastapi import APIRouter, HTTPException, Query, Response
 
+from app.domains.mlb.futures import get_mlb_futures
 from app.domains.mlb.game_detail import get_mlb_game_detail
 from app.domains.mlb.leaders import get_mlb_leaders
 from app.domains.mlb.standings import get_mlb_standings
@@ -14,6 +15,7 @@ from app.domains.mlb.lineups import get_mlb_lineups
 from app.domains.mlb.odds import get_today_odds
 from app.domains.mlb.props import get_mlb_props_today
 from app.domains.mlb.schemas import (
+    MlbFuturesResponse,
     MlbGameDetail,
     MlbLineupMatchupResponse,
     MlbLineupsResponse,
@@ -30,6 +32,22 @@ logger = logging.getLogger(__name__)
 router = APIRouter(tags=["mlb"])
 
 _NO_STORE = {"Cache-Control": "no-store"}
+
+
+@router.get("/mlb/futures", response_model=MlbFuturesResponse)
+async def mlb_futures(response: Response) -> MlbFuturesResponse:
+    response.headers["Cache-Control"] = "no-store"
+    try:
+        return await get_mlb_futures()
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.warning("MLB futures unavailable: %s", exc)
+        raise HTTPException(
+            status_code=502,
+            detail="MLB futures are temporarily unavailable",
+            headers=_NO_STORE,
+        ) from exc
 
 
 @router.get("/mlb/standings", response_model=MlbStandingsResponse)

@@ -80,6 +80,7 @@ main.tsx
       /mlb/prop_picks      MlbPropPicksPage
       /mlb/leaders         MlbLeadersPage
       /mlb/standings       MlbStandingsPage
+      /mlb/futures         MlbFuturesPage
       /mlb/games/:gamePk   MlbGameStubPage (coming soon)
     * → NotFoundPage
 ```
@@ -116,6 +117,7 @@ main.tsx
 | `/mlb/prop_picks` | Filterable DFS +EV ranked board (hybrid rows + expand) | `useMlbProps` | `GET /api/mlb/props/today?app=&format=&legs=` | DFS-first from Supabase MLB PrizePicks/Underdog snapshots; server fair/edge/tier/recency (ProphetX/Novig/DK/FD; Pinnacle + Parlay soft books cmp-only incl. Hard Rock/Fliff); defaults PrizePicks power 4 legs; client filters via `filterMlbPropPicks` |
 | `/mlb/leaders` | Season leaderboards | `useMlbLeaders` | `GET /api/mlb/leaders` | MLB Stats API season `/stats` (sorted; includes GP) |
 | `/mlb/standings` | Division standings | `useMlbStandings` | `GET /api/mlb/standings` | Stats API standings |
+| `/mlb/futures` | Season futures | `useMlbFutures` | `GET /api/mlb/futures` | ESPN core futures API |
 | `/mlb/games/:gamePk` | Game detail: pregame broadcast header (Preview shows RotoWire lineups when matched with right-rail odds board beside lineups, away/team tabs stub; under lineups: season Team Stats + Injuries; right rail Odds → Game Info → Matchup prediction (ESPN) when present), live Summary/Box center (ESPN-style matchup + pitch zone above play feed, linescore/team stats/win prob/hit chart in Summary right rail, box score side-by-side in Box tab), or final center | `useMlbGameDetail(gamePk)`, `useMlbLineups(date)`, `useMlbLineupMatchup`, `useMlbOdds` | `GET /api/mlb/games/{gamePk}`, `GET /api/mlb/lineups?date=` (Preview tab), `GET /api/mlb/lineups/matchup?date=&away=&home=`, `GET /api/mlb/odds/today` (Preview odds board) | MLB Stats API (+ ESPN when available); RotoWire projected lineups for Preview, matched by abbrev with both sides' pitcher + 9 batters complete; Stats API enriches the matched lineup with season pitching and career BvP; Preview right-rail odds board from `odds/today` (Pinnacle → ProphetX → FD → DK) when matched; Preview soft-merges season YTD team hitting/pitching (Stats) + injuries (ESPN) under projected lineups even when lineups are unavailable; Preview Matchup prediction from ESPN summary `predictor` when available (hidden when null); halftime falls back to compact header; game detail payload also includes optional `venue_city`, `venue_state`, `weather`, and `umpires` for Game Info UI |
 
 ### Cross-cutting API behavior
@@ -210,5 +212,6 @@ Feature-level history lives under `docs/superpowers/specs/` and `docs/superpower
 | GET | `/api/mlb/props/today` | `mlb.props` (+ `prop_fair`, `prop_formats`, `prop_stat_keys`, `odds_snapshots`) |
 | GET | `/api/mlb/leaders` | `mlb.leaders` (MLB Stats API) |
 | GET | `/api/mlb/standings` | `mlb.standings` (MLB Stats API) |
+| GET | `/api/mlb/futures` | `mlb_futures` |
 
 Health (ops, not UI): `GET /api/health`.

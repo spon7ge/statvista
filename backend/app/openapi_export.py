@@ -32,6 +32,7 @@ REQUIRED_MLB_PATHS = (
     "/api/mlb/props/today",
     "/api/mlb/leaders",
     "/api/mlb/standings",
+    "/api/mlb/futures",
 )
 
 REQUIRED_FRONTEND_PATHS = REQUIRED_WNBA_PATHS + REQUIRED_MLB_PATHS
