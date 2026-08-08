@@ -1275,6 +1275,119 @@
         "title": "MlbDecisions",
         "type": "object"
       },
+      "MlbFuturesEntry": {
+        "properties": {
+          "abbrev": {
+            "title": "Abbrev",
+            "type": "string"
+          },
+          "logo_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Logo Url"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "odds_american": {
+            "title": "Odds American",
+            "type": "string"
+          },
+          "team_id": {
+            "title": "Team Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "team_id",
+          "abbrev",
+          "name",
+          "logo_url",
+          "odds_american"
+        ],
+        "title": "MlbFuturesEntry",
+        "type": "object"
+      },
+      "MlbFuturesMarket": {
+        "properties": {
+          "display_name": {
+            "title": "Display Name",
+            "type": "string"
+          },
+          "entries": {
+            "items": {
+              "$ref": "#/components/schemas/MlbFuturesEntry"
+            },
+            "title": "Entries",
+            "type": "array"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "display_name",
+          "provider",
+          "entries"
+        ],
+        "title": "MlbFuturesMarket",
+        "type": "object"
+      },
+      "MlbFuturesResponse": {
+        "properties": {
+          "as_of": {
+            "title": "As Of",
+            "type": "string"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "markets": {
+            "items": {
+              "$ref": "#/components/schemas/MlbFuturesMarket"
+            },
+            "title": "Markets",
+            "type": "array"
+          },
+          "season": {
+            "title": "Season",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "season",
+          "as_of",
+          "markets"
+        ],
+        "title": "MlbFuturesResponse",
+        "type": "object"
+      },
       "MlbGame": {
         "properties": {
           "away": {
@@ -7090,7 +7203,7 @@
     }
   },
   "info": {
-    "description": "statvista basketball and baseball data backend. Database-backed endpoints read from Supabase (silver / gold schemas) and make no NBA or Odds API calls. The exceptions are /api/wnba/scoreboard/today, /api/mlb/scoreboard/today, /api/mlb/scoreboard, /api/mlb/odds/today, /api/wnba/leaders, /api/wnba/player/{player_id}, /api/wnba/standings, /api/wnba/futures, /api/wnba/odds/today, /api/wnba/props/today, WNBA game detail routes, /api/mlb/games/{game_pk}, and /api/mlb/lineups, which call ESPN, stats.wnba.com, MLB Stats API, RotoWire, or SharpAPI for live league data.",
+    "description": "statvista basketball and baseball data backend. Database-backed endpoints read from Supabase (silver / gold schemas) and make no NBA or Odds API calls. The exceptions are /api/wnba/scoreboard/today, /api/mlb/scoreboard/today, /api/mlb/scoreboard, /api/mlb/odds/today, /api/wnba/leaders, /api/wnba/player/{player_id}, /api/wnba/standings, /api/wnba/futures, /api/wnba/odds/today, /api/wnba/props/today, WNBA game detail routes, /api/mlb/games/{game_pk}, /api/mlb/lineups, and /api/mlb/futures, which call ESPN, stats.wnba.com, MLB Stats API, RotoWire, or SharpAPI for live league data.",
     "title": "statvista API",
     "version": "0.3.0"
   },
@@ -7486,6 +7599,27 @@
         "summary": "List Matchups",
         "tags": [
           "matchups"
+        ]
+      }
+    },
+    "/api/mlb/futures": {
+      "get": {
+        "operationId": "mlb_futures_api_mlb_futures_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MlbFuturesResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Mlb Futures",
+        "tags": [
+          "mlb"
         ]
       }
     },

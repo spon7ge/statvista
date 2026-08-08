@@ -144,6 +144,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/mlb/futures": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Mlb Futures */
+        get: operations["mlb_futures_api_mlb_futures_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/mlb/games/{game_pk}": {
         parameters: {
             query?: never;
@@ -922,6 +939,43 @@ export interface components {
             save: string | null;
             /** Winner */
             winner: string | null;
+        };
+        /** MlbFuturesEntry */
+        MlbFuturesEntry: {
+            /** Abbrev */
+            abbrev: string;
+            /** Logo Url */
+            logo_url: string | null;
+            /** Name */
+            name: string;
+            /** Odds American */
+            odds_american: string;
+            /** Team Id */
+            team_id: string;
+        };
+        /** MlbFuturesMarket */
+        MlbFuturesMarket: {
+            /** Display Name */
+            display_name: string;
+            /** Entries */
+            entries: components["schemas"]["MlbFuturesEntry"][];
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Provider */
+            provider: string;
+        };
+        /** MlbFuturesResponse */
+        MlbFuturesResponse: {
+            /** As Of */
+            as_of: string;
+            /** Error */
+            error?: string | null;
+            /** Markets */
+            markets: components["schemas"]["MlbFuturesMarket"][];
+            /** Season */
+            season: number;
         };
         /** MlbGame */
         MlbGame: {
@@ -2622,6 +2676,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    mlb_futures_api_mlb_futures_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MlbFuturesResponse"];
                 };
             };
         };
