@@ -1,7 +1,7 @@
 # MLB Game Preview Player Props (category cards)
 
 Date: 2026-08-09  
-Status: Approved for planning  
+Status: Implemented  
 Product: **statvista**
 
 ## Goal
