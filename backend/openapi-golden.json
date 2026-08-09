@@ -4220,6 +4220,7 @@
               "sharp_disagreement",
               "sharp_single_source",
               "mid_tier_fallback",
+              "soft_consensus",
               "no_sharp_read"
             ],
             "title": "Source Tier",

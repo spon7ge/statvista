@@ -1676,7 +1676,7 @@ export interface components {
              * Source Tier
              * @enum {string}
              */
-            source_tier: "sharp_consensus" | "sharp_disagreement" | "sharp_single_source" | "mid_tier_fallback" | "no_sharp_read";
+            source_tier: "sharp_consensus" | "sharp_disagreement" | "sharp_single_source" | "mid_tier_fallback" | "soft_consensus" | "no_sharp_read";
             /** Stat */
             stat: string;
             /** Team Abbrev */
