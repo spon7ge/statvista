@@ -83,6 +83,27 @@ _SHARP_ALIASES: dict[str, str] = {
     "strikeouts": "pitcher_strikeouts",
 }
 
+# The Odds API ``market`` keys (snake_case, v1 allowlist).
+_ODDS_API_ALIASES: dict[str, str] = {
+    "batter_hits": "hits",
+    "batter_home_runs": "home_runs",
+    "batter_total_bases": "total_bases",
+    "batter_rbis": "rbis",
+    "batter_runs_scored": "runs",
+    "batter_singles": "singles",
+    "batter_doubles": "doubles",
+    "batter_triples": "triples",
+    "batter_walks": "walks",
+    "batter_strikeouts": "batter_strikeouts",
+    "batter_stolen_bases": "stolen_bases",
+    "batter_hits_runs_rbis": "hits_runs_rbis",
+    "pitcher_strikeouts": "pitcher_strikeouts",
+    "pitcher_hits_allowed": "hits_allowed",
+    "pitcher_walks": "walks_allowed",
+    "pitcher_earned_runs": "earned_runs_allowed",
+    "pitcher_outs": "pitching_outs",
+}
+
 _SHARP_PREFIXES: tuple[str, ...] = ("player_", "batter_", "pitcher_")
 
 _LABELS: dict[str, str] = {
@@ -119,6 +140,10 @@ def canonical_stat_key_from_pp_mlb(stat_type: str) -> str | None:
 
 def canonical_stat_key_from_ud_mlb(stat_name: str) -> str | None:
     return _UD_ALIASES.get(_norm(stat_name))
+
+
+def canonical_stat_key_from_odds_api_mlb(market_key: str) -> str | None:
+    return _ODDS_API_ALIASES.get(_norm(market_key))
 
 
 def canonical_stat_key_from_sharp_mlb(market_key: str) -> str | None:
