@@ -61,10 +61,17 @@ class OddsApiMlbNormalized:
     prizepicks_board: list[dict[str, Any]]
     book_indexes: dict[str, SideIndex]
     as_of: str | None
+    # True only for real unavailability (missing key / HTTP failure), not empty slate.
+    unavailable: bool = False
 
 
-def _empty() -> OddsApiMlbNormalized:
-    return OddsApiMlbNormalized(prizepicks_board=[], book_indexes={}, as_of=None)
+def _empty(*, unavailable: bool = True) -> OddsApiMlbNormalized:
+    return OddsApiMlbNormalized(
+        prizepicks_board=[],
+        book_indexes={},
+        as_of=None,
+        unavailable=unavailable,
+    )
 
 
 def _norm_player(name: str) -> str:
@@ -177,6 +184,7 @@ def normalize_event_odds(
         prizepicks_board=prizepicks_board,
         book_indexes=book_indexes,
         as_of=as_of,
+        unavailable=False,
     )
 
 
@@ -225,7 +233,8 @@ async def fetch_mlb_props_normalized(
         if isinstance(ev, dict) and ev.get("id")
     ]
     if not event_ids:
-        return _empty()
+        # Successful fetch, zero events — empty slate, not unavailable.
+        return _empty(unavailable=False)
 
     sem = asyncio.Semaphore(_FETCH_CONCURRENCY)
     results = await asyncio.gather(
@@ -233,5 +242,6 @@ async def fetch_mlb_props_normalized(
     )
     events_odds = [ev for ev in results if isinstance(ev, dict)]
     if not events_odds:
-        return _empty()
+        # Events listed but every per-event odds fetch failed.
+        return _empty(unavailable=True)
     return normalize_event_odds(events_odds)

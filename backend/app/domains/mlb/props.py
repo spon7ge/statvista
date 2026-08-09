@@ -481,7 +481,9 @@ def _apply_roster_enrichment(
 
 
 def _empty_odds() -> OddsApiMlbNormalized:
-    return OddsApiMlbNormalized(prizepicks_board=[], book_indexes={}, as_of=None)
+    return OddsApiMlbNormalized(
+        prizepicks_board=[], book_indexes={}, as_of=None, unavailable=True
+    )
 
 
 async def get_mlb_props_today(*, app: str, format: str, legs: int) -> MlbPropsResponse:
@@ -502,12 +504,11 @@ async def get_mlb_props_today(*, app: str, format: str, legs: int) -> MlbPropsRe
         odds = await fetch_mlb_props_normalized(timeout=FETCH_TIMEOUT_SECONDS)
     except Exception as exc:
         logger.warning("Odds API MLB props unavailable: %s", exc)
-        odds_error = str(exc) or "odds_api_unavailable"
+        odds_error = "odds_api_unavailable"
         odds = _empty_odds()
     else:
-        # Soft-empty (missing key / fetch failure inside provider) surfaces a
-        # stable token; true empty slate is rare and acceptable to flag the same.
-        if not odds.prizepicks_board and not odds.book_indexes:
+        # Only real unavailability (missing key / HTTP failure), not empty slate.
+        if odds.unavailable:
             odds_error = "odds_api_unavailable"
 
     if app == "prizepicks":

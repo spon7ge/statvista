@@ -28,11 +28,13 @@ def _odds(
     board: list[dict] | None = None,
     book_indexes: dict | None = None,
     as_of: str | None = None,
+    unavailable: bool = False,
 ) -> OddsApiMlbNormalized:
     return OddsApiMlbNormalized(
         prizepicks_board=board or [],
         book_indexes=book_indexes or {},
         as_of=as_of,
+        unavailable=unavailable,
     )
 
 
@@ -82,7 +84,7 @@ def _stub_snapshots(
         if odds_error is not None:
             raise odds_error
         if odds_soft_empty:
-            return _odds()
+            return _odds(unavailable=True)
         if odds is not None:
             return odds
         # Default: PP board from dfs_pp + empty book indexes (tests opt into books).
@@ -506,14 +508,13 @@ def test_underdog_uses_stored_side_only(monkeypatch):
                 "scraped_at": now,
             },
         ],
-        # Non-empty Odds books so soft-empty error is not set.
-        odds=_odds(book_indexes={"novig": {}}),
     )
 
     import asyncio
 
     response = asyncio.run(svc.get_mlb_props_today(app="underdog", format="standard", legs=3))
 
+    assert response.error is None
     assert len(response.props) == 1
     assert response.props[0].recommended_side == "over"
     assert response.props[0].dfs.line == 6.5
@@ -564,12 +565,12 @@ def test_underdog_dfs_quote_matches_recommended_side(monkeypatch):
                 "scraped_at": now,
             },
         ],
-        odds=_odds(book_indexes={"novig": {}}),
     )
 
     import asyncio
 
     response = asyncio.run(svc.get_mlb_props_today(app="underdog", format="standard", legs=3))
+    assert response.error is None
     assert len(response.props) == 1
     row = response.props[0]
     assert row.recommended_side in ("over", "under")
@@ -655,7 +656,7 @@ def test_odds_api_failure_still_returns_underdog_and_prophetx(monkeypatch):
     assert response.props[0].source_tier == "sharp_single_source"
 
 
-def test_odds_api_exception_sets_error_string(monkeypatch):
+def test_odds_api_exception_sets_stable_unavailable_token(monkeypatch):
     now = datetime.now(timezone.utc)
     _stub_snapshots(
         monkeypatch,
@@ -676,7 +677,34 @@ def test_odds_api_exception_sets_error_string(monkeypatch):
 
     response = asyncio.run(svc.get_mlb_props_today(app="underdog", format="standard", legs=3))
 
-    assert response.error == "odds boom"
+    assert response.error == "odds_api_unavailable"
+    assert len(response.props) == 1
+
+
+def test_odds_api_true_empty_slate_sets_no_error(monkeypatch):
+    """Successful empty Odds normalize must not surface odds_api_unavailable."""
+    now = datetime.now(timezone.utc)
+    _stub_snapshots(
+        monkeypatch,
+        dfs_ud=[
+            {
+                "player_name": "Aaron Judge",
+                "stat_name": "total bases",
+                "line_score": 1.5,
+                "side": "over",
+                "american_price": -110,
+                "payout_multiplier": 1.0,
+                "scraped_at": now,
+            },
+        ],
+        odds=_odds(),  # empty board + indexes, unavailable=False
+    )
+
+    import asyncio
+
+    response = asyncio.run(svc.get_mlb_props_today(app="underdog", format="standard", legs=3))
+
+    assert response.error is None
     assert len(response.props) == 1
 
 

@@ -71,7 +71,7 @@ def test_skips_unknown_markets():
 def test_normalize_empty_input():
     out = normalize_event_odds([])
     assert out == OddsApiMlbNormalized(
-        prizepicks_board=[], book_indexes={}, as_of=None
+        prizepicks_board=[], book_indexes={}, as_of=None, unavailable=False
     )
 
 
@@ -82,6 +82,27 @@ async def test_fetch_soft_fails_when_key_missing(monkeypatch):
     assert out.prizepicks_board == []
     assert out.book_indexes == {}
     assert out.as_of is None
+    assert out.unavailable is True
+
+
+@pytest.mark.asyncio
+async def test_fetch_zero_events_is_available_empty():
+    """Successful events list with zero games is an empty slate, not unavailable."""
+
+    async def fake_get(path: str, *, params=None, timeout=12.0):
+        if path.endswith("/events") and "/odds" not in path:
+            return []
+        raise AssertionError(f"unexpected path {path}")
+
+    with patch(
+        "app.providers.odds_api.mlb_props.odds_api_get",
+        new=AsyncMock(side_effect=fake_get),
+    ):
+        out = await fetch_mlb_props_normalized()
+
+    assert out.prizepicks_board == []
+    assert out.book_indexes == {}
+    assert out.unavailable is False
 
 
 @pytest.mark.asyncio
@@ -102,5 +123,6 @@ async def test_fetch_calls_normalize_after_client():
     ):
         out = await fetch_mlb_props_normalized()
 
+    assert out.unavailable is False
     assert "betonline" in out.book_indexes
     assert any(r["player_name"] == "Shohei Ohtani" for r in out.prizepicks_board)
