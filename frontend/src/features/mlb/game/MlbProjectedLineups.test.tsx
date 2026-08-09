@@ -303,7 +303,7 @@ describe("MlbProjectedLineups", () => {
     expect(screen.getByTestId("mlb-lineup-toggle-home")).toHaveTextContent("PHI");
   });
 
-  it("renders Matchup Leaders after Matchup prediction in the right column", () => {
+  it("renders Game Leaders after Matchup prediction in the right column", () => {
     render(
       <MlbProjectedLineups
         detail={{
@@ -313,21 +313,18 @@ describe("MlbProjectedLineups", () => {
             homeWinPct: 41,
             sourceLabel: "ESPN game projection",
           },
-          matchupLeaders: {
-            categories: [
+          gameLeaders: {
+            leaders: [
               {
                 key: "hr",
                 label: "HR",
-                leaders: [
-                  {
-                    rank: 1,
-                    playerId: "p1",
-                    name: "Kyle Schwarber",
-                    teamAbbrev: "PHI",
-                    side: "home",
-                    value: "42",
-                  },
-                ],
+                rank: 1,
+                value: "42",
+                playerId: "p1",
+                lastName: "Schwarber",
+                teamAbbrev: "PHI",
+                side: "home",
+                headshotUrl: null,
               },
             ],
           },
@@ -338,7 +335,7 @@ describe("MlbProjectedLineups", () => {
 
     const right = screen.getByTestId("mlb-preview-right-column");
     const prediction = screen.getByTestId("mlb-matchup-prediction");
-    const leaders = screen.getByTestId("mlb-matchup-leaders");
+    const leaders = screen.getByTestId("mlb-game-leaders");
 
     expect(right).toContainElement(leaders);
     expect(
