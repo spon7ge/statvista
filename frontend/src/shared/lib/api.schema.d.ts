@@ -1030,6 +1030,7 @@ export interface components {
              */
             league: "mlb";
             linescore: components["schemas"]["MlbLinescore"] | null;
+            matchup_leaders: components["schemas"]["MlbMatchupLeaders"] | null;
             matchup_prediction: components["schemas"]["MlbMatchupPrediction"] | null;
             /** Mlb Game Pk */
             mlb_game_pk: string;
@@ -1341,6 +1342,41 @@ export interface components {
              * @default rotowire
              */
             source: string;
+        };
+        /** MlbMatchupLeaderCategory */
+        MlbMatchupLeaderCategory: {
+            /**
+             * Key
+             * @enum {string}
+             */
+            key: "hr" | "avg" | "ops" | "era" | "so" | "whip";
+            /** Label */
+            label: string;
+            /** Leaders */
+            leaders: components["schemas"]["MlbMatchupLeaderEntry"][];
+        };
+        /** MlbMatchupLeaderEntry */
+        MlbMatchupLeaderEntry: {
+            /** Name */
+            name: string;
+            /** Player Id */
+            player_id: string;
+            /** Rank */
+            rank: number;
+            /**
+             * Side
+             * @enum {string}
+             */
+            side: "away" | "home";
+            /** Team Abbrev */
+            team_abbrev: string;
+            /** Value */
+            value: string;
+        };
+        /** MlbMatchupLeaders */
+        MlbMatchupLeaders: {
+            /** Categories */
+            categories: components["schemas"]["MlbMatchupLeaderCategory"][];
         };
         /** MlbMatchupPrediction */
         MlbMatchupPrediction: {
@@ -1659,22 +1695,40 @@ export interface components {
         MlbSeasonTeamStatLine: {
             /** Avg */
             avg: string | null;
+            /** Avg Rank */
+            avg_rank: number | null;
             /** Bb */
             bb: number | null;
+            /** Bb Rank */
+            bb_rank: number | null;
             /** Era */
             era: string | null;
+            /** Era Rank */
+            era_rank: number | null;
             /** H */
             h: number | null;
+            /** H Rank */
+            h_rank: number | null;
             /** Hr */
             hr: number | null;
+            /** Hr Rank */
+            hr_rank: number | null;
             /** Obp */
             obp: string | null;
+            /** Obp Rank */
+            obp_rank: number | null;
             /** R */
             r: number | null;
+            /** R Rank */
+            r_rank: number | null;
             /** Slg */
             slg: string | null;
+            /** Slg Rank */
+            slg_rank: number | null;
             /** So */
             so: number | null;
+            /** So Rank */
+            so_rank: number | null;
         };
         /** MlbSeasonTeamStatsPair */
         MlbSeasonTeamStatsPair: {

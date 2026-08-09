@@ -1554,6 +1554,16 @@
               }
             ]
           },
+          "matchup_leaders": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbMatchupLeaders"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "matchup_prediction": {
             "anyOf": [
               {
@@ -1724,6 +1734,7 @@
           "decisions",
           "team_stats",
           "season_team_stats",
+          "matchup_leaders",
           "injuries",
           "sources",
           "fetched_at"
@@ -2788,6 +2799,98 @@
           "fetched_at"
         ],
         "title": "MlbLineupsResponse",
+        "type": "object"
+      },
+      "MlbMatchupLeaderCategory": {
+        "properties": {
+          "key": {
+            "enum": [
+              "hr",
+              "avg",
+              "ops",
+              "era",
+              "so",
+              "whip"
+            ],
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "leaders": {
+            "items": {
+              "$ref": "#/components/schemas/MlbMatchupLeaderEntry"
+            },
+            "title": "Leaders",
+            "type": "array"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "leaders"
+        ],
+        "title": "MlbMatchupLeaderCategory",
+        "type": "object"
+      },
+      "MlbMatchupLeaderEntry": {
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "player_id": {
+            "title": "Player Id",
+            "type": "string"
+          },
+          "rank": {
+            "title": "Rank",
+            "type": "integer"
+          },
+          "side": {
+            "enum": [
+              "away",
+              "home"
+            ],
+            "title": "Side",
+            "type": "string"
+          },
+          "team_abbrev": {
+            "title": "Team Abbrev",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "rank",
+          "player_id",
+          "name",
+          "team_abbrev",
+          "side",
+          "value"
+        ],
+        "title": "MlbMatchupLeaderEntry",
+        "type": "object"
+      },
+      "MlbMatchupLeaders": {
+        "properties": {
+          "categories": {
+            "items": {
+              "$ref": "#/components/schemas/MlbMatchupLeaderCategory"
+            },
+            "title": "Categories",
+            "type": "array"
+          }
+        },
+        "required": [
+          "categories"
+        ],
+        "title": "MlbMatchupLeaders",
         "type": "object"
       },
       "MlbMatchupPrediction": {
@@ -4177,6 +4280,17 @@
             ],
             "title": "Avg"
           },
+          "avg_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avg Rank"
+          },
           "bb": {
             "anyOf": [
               {
@@ -4187,6 +4301,17 @@
               }
             ],
             "title": "Bb"
+          },
+          "bb_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bb Rank"
           },
           "era": {
             "anyOf": [
@@ -4199,6 +4324,17 @@
             ],
             "title": "Era"
           },
+          "era_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Era Rank"
+          },
           "h": {
             "anyOf": [
               {
@@ -4209,6 +4345,17 @@
               }
             ],
             "title": "H"
+          },
+          "h_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "H Rank"
           },
           "hr": {
             "anyOf": [
@@ -4221,6 +4368,17 @@
             ],
             "title": "Hr"
           },
+          "hr_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hr Rank"
+          },
           "obp": {
             "anyOf": [
               {
@@ -4231,6 +4389,17 @@
               }
             ],
             "title": "Obp"
+          },
+          "obp_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Obp Rank"
           },
           "r": {
             "anyOf": [
@@ -4243,6 +4412,17 @@
             ],
             "title": "R"
           },
+          "r_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "R Rank"
+          },
           "slg": {
             "anyOf": [
               {
@@ -4254,6 +4434,17 @@
             ],
             "title": "Slg"
           },
+          "slg_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Slg Rank"
+          },
           "so": {
             "anyOf": [
               {
@@ -4264,6 +4455,17 @@
               }
             ],
             "title": "So"
+          },
+          "so_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "So Rank"
           }
         },
         "required": [
@@ -4275,7 +4477,16 @@
           "slg",
           "era",
           "so",
-          "bb"
+          "bb",
+          "hr_rank",
+          "r_rank",
+          "h_rank",
+          "avg_rank",
+          "obp_rank",
+          "slg_rank",
+          "era_rank",
+          "so_rank",
+          "bb_rank"
         ],
         "title": "MlbSeasonTeamStatLine",
         "type": "object"
