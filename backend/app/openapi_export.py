@@ -30,6 +30,7 @@ REQUIRED_MLB_PATHS = (
     "/api/mlb/lineups",
     "/api/mlb/lineups/matchup",
     "/api/mlb/props/today",
+    "/api/mlb/props/game/{game_pk}",
     "/api/mlb/leaders",
     "/api/mlb/standings",
     "/api/mlb/futures",

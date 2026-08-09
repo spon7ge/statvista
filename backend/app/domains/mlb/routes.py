@@ -13,10 +13,12 @@ from app.domains.mlb.standings import get_mlb_standings
 from app.domains.mlb.lineup_matchup import get_mlb_lineup_matchup
 from app.domains.mlb.lineups import get_mlb_lineups
 from app.domains.mlb.odds import get_today_odds
+from app.domains.mlb.game_props import get_mlb_props_for_game
 from app.domains.mlb.props import get_mlb_props_today
 from app.domains.mlb.schemas import (
     MlbFuturesResponse,
     MlbGameDetail,
+    MlbGamePropsResponse,
     MlbLineupMatchupResponse,
     MlbLineupsResponse,
     MlbOddsResponse,
@@ -135,6 +137,29 @@ async def mlb_props_today(
     response.headers["Cache-Control"] = "no-store"
     try:
         return await get_mlb_props_today(app=app, format=format, legs=legs)
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=422,
+            detail=str(exc),
+            headers=_NO_STORE,
+        ) from exc
+
+
+@router.get("/mlb/props/game/{game_pk}", response_model=MlbGamePropsResponse)
+async def mlb_props_game(
+    game_pk: str,
+    response: Response,
+    app: Literal["prizepicks", "underdog"] = Query(...),
+) -> MlbGamePropsResponse:
+    response.headers["Cache-Control"] = "no-store"
+    try:
+        return await get_mlb_props_for_game(game_pk=game_pk, app=app)
+    except LookupError as exc:
+        raise HTTPException(
+            status_code=404,
+            detail="game not found",
+            headers=_NO_STORE,
+        ) from exc
     except ValueError as exc:
         raise HTTPException(
             status_code=422,
