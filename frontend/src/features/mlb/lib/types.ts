@@ -249,6 +249,21 @@ export type MlbGameLeaders = {
   leaders: MlbGameLeaderCard[];
 };
 
+export type MlbPlayerOfTheGameStat = {
+  label: string | null;
+  value: string;
+};
+
+export type MlbPlayerOfTheGame = {
+  playerId: string;
+  fullName: string;
+  lastName: string;
+  teamAbbrev: string | null;
+  headshotUrl: string | null;
+  stats: MlbPlayerOfTheGameStat[];
+  source: "mlb_player_of_the_game";
+};
+
 export type MlbGameDetailView = {
   mlbGamePk: string;
   league: "mlb";
@@ -278,6 +293,7 @@ export type MlbGameDetailView = {
   winProbability: MlbWinProbability | null;
   matchupPrediction: MlbMatchupPrediction | null;
   gameLeaders: MlbGameLeaders | null;
+  playerOfTheGame: MlbPlayerOfTheGame | null;
   hitChart: MlbHitPoint[];
   sources: string[];
   fetchedAt: string;

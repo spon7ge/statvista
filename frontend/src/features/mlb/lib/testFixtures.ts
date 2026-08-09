@@ -271,6 +271,7 @@ export const mlbLiveDetail: MlbGameDetailView = {
   },
   matchupPrediction: null,
   gameLeaders: null,
+  playerOfTheGame: null,
   hitChart: [],
   sources: ["statsapi", "espn"],
   fetchedAt: "2026-08-02T00:00:00Z",
@@ -519,6 +520,7 @@ export const mlbFinalDetail: MlbGameDetailView = {
   winProbability: null,
   matchupPrediction: null,
   gameLeaders: null,
+  playerOfTheGame: null,
   hitChart: [
     {
       id: "h-final",
@@ -577,6 +579,7 @@ export const mlbScheduledDetail: MlbGameDetailView = {
   winProbability: null,
   matchupPrediction: null,
   gameLeaders: null,
+  playerOfTheGame: null,
   hitChart: [],
   decisions: null,
   sources: ["statsapi"],

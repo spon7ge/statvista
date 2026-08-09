@@ -1,5 +1,10 @@
 import type { ApiMlbGameDetail } from "@/shared/lib/api";
-import type { MlbGameDetailView, MlbGameLeaders, MlbPlay } from "./types";
+import type {
+  MlbGameDetailView,
+  MlbGameLeaders,
+  MlbPlayerOfTheGame,
+  MlbPlay,
+} from "./types";
 
 function mapPlay(play: ApiMlbGameDetail["plays"][number]): MlbPlay {
   return {
@@ -89,6 +94,24 @@ function mapGameLeaders(
       side: leader.side,
       headshotUrl: leader.headshot_url,
     })),
+  };
+}
+
+function mapPlayerOfTheGame(
+  raw: ApiMlbGameDetail["player_of_the_game"],
+): MlbPlayerOfTheGame | null {
+  if (!raw) return null;
+  return {
+    playerId: raw.player_id,
+    fullName: raw.full_name,
+    lastName: raw.last_name,
+    teamAbbrev: raw.team_abbrev ?? null,
+    headshotUrl: raw.headshot_url ?? null,
+    stats: (raw.stats ?? []).map((s) => ({
+      label: s.label ?? null,
+      value: s.value,
+    })),
+    source: "mlb_player_of_the_game",
   };
 }
 
@@ -363,6 +386,7 @@ export function mapMlbGameDetail(detail: ApiMlbGameDetail): MlbGameDetailView {
         }
       : null,
     gameLeaders: mapGameLeaders(detail.game_leaders),
+    playerOfTheGame: mapPlayerOfTheGame(detail.player_of_the_game),
     hitChart: detail.hit_chart.map((point) => ({
       id: point.id,
       team: point.team,

@@ -160,6 +160,7 @@ function buildApiDetail(
     fetched_at: "2026-08-02T00:00:00Z",
     matchup_prediction: null,
     game_leaders: null,
+    player_of_the_game: null,
     ...overrides,
   };
 }
@@ -473,6 +474,38 @@ describe("mapMlbGameDetail", () => {
   it("maps null game_leaders to null", () => {
     const mapped = mapMlbGameDetail(buildApiDetail({ game_leaders: null }));
     expect(mapped.gameLeaders).toBeNull();
+  });
+
+  it("maps player_of_the_game to playerOfTheGame", () => {
+    const mapped = mapMlbGameDetail(
+      buildApiDetail({
+        player_of_the_game: {
+          player_id: "592450",
+          full_name: "Aaron Judge",
+          last_name: "Judge",
+          team_abbrev: "NYY",
+          headshot_url: "https://example.test/judge.png",
+          stats: [{ label: null, value: "3-4 · 2 HR · 5 RBI" }],
+          source: "mlb_player_of_the_game",
+        },
+      }),
+    );
+    expect(mapped.playerOfTheGame).toEqual({
+      playerId: "592450",
+      fullName: "Aaron Judge",
+      lastName: "Judge",
+      teamAbbrev: "NYY",
+      headshotUrl: "https://example.test/judge.png",
+      stats: [{ label: null, value: "3-4 · 2 HR · 5 RBI" }],
+      source: "mlb_player_of_the_game",
+    });
+  });
+
+  it("maps null player_of_the_game", () => {
+    const mapped = mapMlbGameDetail(
+      buildApiDetail({ player_of_the_game: null }),
+    );
+    expect(mapped.playerOfTheGame).toBeNull();
   });
 
   it("maps situation headshots and pitch spin", () => {
