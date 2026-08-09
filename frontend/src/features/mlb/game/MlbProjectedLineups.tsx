@@ -10,6 +10,7 @@ import type { MlbGameDetailTeam, MlbGameDetailView } from "../lib/types";
 import { MlbInjuryReport } from "./MlbInjuryReport";
 import { MlbGameOddsBoard } from "./MlbGameOddsBoard";
 import { MlbGameInfo } from "./MlbGameInfo";
+import { MlbMatchupLeaders } from "./MlbMatchupLeaders";
 import { MlbMatchupPrediction } from "./MlbMatchupPrediction";
 import { MlbSeasonTeamStats } from "./MlbSeasonTeamStats";
 import type { MlbOddsBoardView } from "../lib/mlbOddsBoard";
@@ -345,6 +346,7 @@ export function MlbProjectedLineups({
           />
           <MlbGameInfo detail={detail} />
           <MlbMatchupPrediction detail={detail} />
+          <MlbMatchupLeaders detail={detail} />
         </div>
       </div>
     </div>
