@@ -31,6 +31,7 @@ from app.domains.mlb.schemas import (
     MlbPitchingTotals,
     MlbPlay,
     MlbPlayerCard,
+    MlbPlayerOfTheGame,
     MlbRunners,
     MlbSeasonTeamStatsPair,
     MlbSituation,
@@ -1118,6 +1119,21 @@ def attach_injuries(
     if "espn" not in sources:
         sources.append("espn")
     return detail.model_copy(update={"injuries": injuries, "sources": sources})
+
+
+def attach_player_of_the_game(
+    detail: MlbGameDetail,
+    potg: MlbPlayerOfTheGame | None,
+) -> MlbGameDetail:
+    """Attach MLB Play Player of the Game onto a Stats-normalized detail payload."""
+    if potg is None:
+        return detail
+    sources = list(detail.sources)
+    if "mlb_player_of_the_game" not in sources:
+        sources.append("mlb_player_of_the_game")
+    return detail.model_copy(
+        update={"player_of_the_game": potg, "sources": sources}
+    )
 
 
 def _to_mlb_injuries(injuries: EspnInjuries | None) -> MlbInjuries | None:

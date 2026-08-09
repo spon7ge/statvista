@@ -28,6 +28,8 @@ __all__ = [
     "MlbPitcherRow",
     "MlbPlay",
     "MlbPlayerCard",
+    "MlbPlayerOfTheGame",
+    "MlbPlayerOfTheGameStat",
     "MlbRunners",
     "MlbSituation",
     "MlbInjuries",
@@ -377,6 +379,25 @@ class MlbGameUmpires(BaseModel):
     third_base: str | None = None
 
 
+class MlbPlayerOfTheGameStat(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    label: str | None = None
+    value: str
+
+
+class MlbPlayerOfTheGame(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    player_id: str
+    full_name: str
+    last_name: str
+    team_abbrev: str | None = None
+    headshot_url: str | None = None
+    stats: list[MlbPlayerOfTheGameStat] = []
+    source: Literal["mlb_player_of_the_game"] = "mlb_player_of_the_game"
+
+
 class MlbGameDetail(BaseModel):
     model_config = _RESPONSE_CONFIG
 
@@ -406,5 +427,6 @@ class MlbGameDetail(BaseModel):
     season_team_stats: MlbSeasonTeamStatsPair | None = None
     game_leaders: MlbGameLeaders | None = None
     injuries: MlbInjuries | None = None
+    player_of_the_game: MlbPlayerOfTheGame | None = None
     sources: list[str]
     fetched_at: str
