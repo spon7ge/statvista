@@ -33,7 +33,7 @@ function PlayerHeadshot({
   if (!player?.headshotUrl || failed) {
     return (
       <div
-        className="flex size-14 shrink-0 items-center justify-center rounded-full bg-white/10 text-xs font-semibold text-white/50"
+        className="flex size-20 shrink-0 items-center justify-center rounded-full bg-white/10 text-base font-semibold text-white/50"
         data-testid={testId}
       >
         {player ? player.name.slice(0, 1).toUpperCase() : "?"}
@@ -45,7 +45,7 @@ function PlayerHeadshot({
       src={player.headshotUrl}
       alt={player.name}
       data-testid={testId}
-      className="size-14 shrink-0 rounded-full bg-white/10 object-cover"
+      className="size-20 shrink-0 rounded-full bg-white/10 object-cover"
       onError={() => setFailed(true)}
     />
   );
@@ -54,11 +54,11 @@ function PlayerHeadshot({
 function OutsDots({ outs }: { outs: number }) {
   const capped = Math.min(Math.max(outs, 0), 3);
   return (
-    <span className="flex gap-1" aria-label={`${capped} outs`}>
+    <span className="flex gap-1.5" aria-label={`${capped} outs`}>
       {Array.from({ length: 3 }, (_, index) => (
         <span
           key={index}
-          className={`size-2 rounded-full ${
+          className={`size-2.5 rounded-full ${
             index < capped ? "bg-white" : "border border-white/40"
           }`}
         />
@@ -175,17 +175,18 @@ export function MlbLiveMatchupPanel({
         <TeamLabel team={pitching} label="Pitching" align="right" />
       </div>
 
-      <div className="mt-2 flex items-center justify-between gap-3">
+      <div className="mt-1 flex items-center justify-between gap-3">
         <PlayerHeadshot player={atBat} testId="mlb-live-matchup-headshot-batter" />
 
-        <div className="flex shrink-0 flex-col items-center gap-1.5">
+        <div className="flex shrink-0 flex-col items-center gap-2">
           <MlbBaseDiamond
             runners={situation.runners}
             occupiedFill="rgba(255,255,255,0.95)"
             occupiedStroke="rgba(255,255,255,0.95)"
+            className="h-20 w-[6.5rem] shrink-0"
           />
           <OutsDots outs={situation.outs} />
-          <p className="font-mono text-[18px] font-semibold tabular-nums text-white">
+          <p className="font-mono text-[22px] font-semibold tabular-nums text-white">
             {situation.balls} - {situation.strikes}
           </p>
         </div>
@@ -196,7 +197,7 @@ export function MlbLiveMatchupPanel({
         />
       </div>
 
-      <div className="mt-2 flex items-start justify-between gap-3">
+      <div className="mt-1 flex items-start justify-between gap-3">
         <div className="flex min-w-0 flex-1 flex-col items-start gap-0.5">
           {atBat ? (
             <>

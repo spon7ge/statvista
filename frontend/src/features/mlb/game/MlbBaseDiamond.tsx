@@ -6,10 +6,12 @@ export function MlbBaseDiamond({
   runners,
   occupiedFill = "rgba(248, 113, 113, 0.9)",
   occupiedStroke = "rgb(248, 113, 113)",
+  className = "h-14 w-[4.5rem] shrink-0",
 }: {
   runners: Runners;
   occupiedFill?: string;
   occupiedStroke?: string;
+  className?: string;
 }) {
   const bases = [
     { key: "second", occupied: runners.second, x: 34, y: 8 },
@@ -20,7 +22,7 @@ export function MlbBaseDiamond({
   return (
     <svg
       viewBox="0 0 80 56"
-      className="h-14 w-[4.5rem] shrink-0"
+      className={className}
       role="img"
       aria-label={`Runners: first ${runners.first ? "on" : "empty"}, second ${
         runners.second ? "on" : "empty"
