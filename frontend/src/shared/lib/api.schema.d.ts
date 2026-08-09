@@ -1034,6 +1034,7 @@ export interface components {
             matchup_prediction: components["schemas"]["MlbMatchupPrediction"] | null;
             /** Mlb Game Pk */
             mlb_game_pk: string;
+            player_of_the_game: components["schemas"]["MlbPlayerOfTheGame"] | null;
             /**
              * Plays
              * @default []
@@ -1566,6 +1567,37 @@ export interface components {
             name: string;
             /** Summary */
             summary: string | null;
+        };
+        /** MlbPlayerOfTheGame */
+        MlbPlayerOfTheGame: {
+            /** Full Name */
+            full_name: string;
+            /** Headshot Url */
+            headshot_url: string | null;
+            /** Last Name */
+            last_name: string;
+            /** Player Id */
+            player_id: string;
+            /**
+             * Source
+             * @default mlb_player_of_the_game
+             * @constant
+             */
+            source: "mlb_player_of_the_game";
+            /**
+             * Stats
+             * @default []
+             */
+            stats: components["schemas"]["MlbPlayerOfTheGameStat"][];
+            /** Team Abbrev */
+            team_abbrev: string | null;
+        };
+        /** MlbPlayerOfTheGameStat */
+        MlbPlayerOfTheGameStat: {
+            /** Label */
+            label: string | null;
+            /** Value */
+            value: string;
         };
         /**
          * MlbPropBookQuote

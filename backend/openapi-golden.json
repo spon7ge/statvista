@@ -1578,6 +1578,16 @@
             "title": "Mlb Game Pk",
             "type": "string"
           },
+          "player_of_the_game": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbPlayerOfTheGame"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "plays": {
             "default": [],
             "items": {
@@ -1736,6 +1746,7 @@
           "season_team_stats",
           "game_leaders",
           "injuries",
+          "player_of_the_game",
           "sources",
           "fetched_at"
         ],
@@ -3742,6 +3753,94 @@
           "headshot_url"
         ],
         "title": "MlbPlayerCard",
+        "type": "object"
+      },
+      "MlbPlayerOfTheGame": {
+        "properties": {
+          "full_name": {
+            "title": "Full Name",
+            "type": "string"
+          },
+          "headshot_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Headshot Url"
+          },
+          "last_name": {
+            "title": "Last Name",
+            "type": "string"
+          },
+          "player_id": {
+            "title": "Player Id",
+            "type": "string"
+          },
+          "source": {
+            "const": "mlb_player_of_the_game",
+            "default": "mlb_player_of_the_game",
+            "title": "Source",
+            "type": "string"
+          },
+          "stats": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/MlbPlayerOfTheGameStat"
+            },
+            "title": "Stats",
+            "type": "array"
+          },
+          "team_abbrev": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Team Abbrev"
+          }
+        },
+        "required": [
+          "player_id",
+          "full_name",
+          "last_name",
+          "team_abbrev",
+          "headshot_url",
+          "stats",
+          "source"
+        ],
+        "title": "MlbPlayerOfTheGame",
+        "type": "object"
+      },
+      "MlbPlayerOfTheGameStat": {
+        "properties": {
+          "label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label"
+          },
+          "value": {
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "label",
+          "value"
+        ],
+        "title": "MlbPlayerOfTheGameStat",
         "type": "object"
       },
       "MlbPropBookQuote": {
