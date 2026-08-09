@@ -412,17 +412,38 @@ async def fetch_player_of_the_game(
     if cached is not None:
         return cached
     try:
-        # 1) Resolve Play game / contest for feedId == game_pk via games.json / contests
-        # 2) GET winner payload using URL proven in Task 2
-        # 3) normalize → write_potg_cache → return
-        # On any failure: log warning and return None (no negative cache file)
-        raise NotImplementedError("wire URLs from Task 2 probe")
+        games_resp = await client.get(f"{JSON_BASE}/games.json")
+        games_resp.raise_for_status()
+        games = games_resp.json()
+        match = next(
+            (
+                g
+                for g in games
+                if str(g.get("feedId")) == str(game_pk)
+                and g.get("status") == "complete"
+            ),
+            None,
+        )
+        if not match:
+            return None
+        # Use the exact winner URL/headers proven in Task 2 (contest id may be
+        # match["id"] or a separate contests lookup — wire the working path).
+        winner_resp = await client.get(
+            WINNER_URL_TEMPLATE.format(contest_id=match["id"], game_pk=game_pk),
+            headers={"User-Agent": "Mozilla/5.0"},
+        )
+        winner_resp.raise_for_status()
+        potg = normalize_player_of_the_game(winner_resp.json(), game_pk=game_pk)
+        if potg is None:
+            return None
+        write_potg_cache(game_pk, potg)
+        return potg
     except Exception as exc:
         logger.warning("POTG fetch failed for %s: %s", game_pk, exc)
         return None
 ```
 
-Replace `NotImplementedError` with the real httpx GETs from Task 2 before finishing the task. Add a unit test that mocks `client.get` to return the fixture body and asserts cache file written.
+Define `WINNER_URL_TEMPLATE` from the Task 2 probe before this task’s commit. Add a unit test that mocks `client.get` to return games list + fixture winner body and asserts the cache file is written.
 
 - [ ] **Step 4: Run tests to verify they pass**
 
