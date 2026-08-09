@@ -12,12 +12,15 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, patch
 
 import httpx
 import pytest
 
-from app.domains.mlb.game_detail import attach_player_of_the_game
+from app.domains.mlb.game_detail import (
+    _attach_player_of_the_game,
+    attach_player_of_the_game,
+)
 from app.domains.mlb.schemas import MlbGameDetail, MlbGameDetailTeam
 from app.domains.mlb.schemas_game_detail import (
     MlbPlayerOfTheGame,
@@ -34,6 +37,13 @@ FIXTURE = Path(__file__).parent / "fixtures" / "mlb_play_potg_winner.json"
 CONTESTS_FIXTURE = (
     Path(__file__).parent / "fixtures" / "mlb_play_potg_games_sample.json"
 )
+
+
+@pytest.fixture
+def sample_live_detail(sample_final_detail: MlbGameDetail) -> MlbGameDetail:
+    return sample_final_detail.model_copy(
+        update={"status": "live", "status_label": "Live"}
+    )
 
 
 @pytest.fixture
@@ -83,6 +93,34 @@ def test_attach_player_of_the_game(sample_final_detail):
 def test_attach_player_of_the_game_none_unchanged(sample_final_detail):
     out = attach_player_of_the_game(sample_final_detail, None)
     assert out.player_of_the_game is None
+
+
+@pytest.mark.asyncio
+async def test_attach_skips_non_final(sample_live_detail):
+    with patch(
+        "app.domains.mlb.game_detail.fetch_player_of_the_game",
+        new_callable=AsyncMock,
+    ) as mocked:
+        out = await _attach_player_of_the_game(sample_live_detail)
+        mocked.assert_not_called()
+        assert out.player_of_the_game is None
+
+
+@pytest.mark.asyncio
+async def test_attach_final_merges_winner(sample_final_detail):
+    potg = MlbPlayerOfTheGame(
+        player_id="1",
+        full_name="Test Player",
+        last_name="Player",
+    )
+    with patch(
+        "app.domains.mlb.game_detail.fetch_player_of_the_game",
+        new_callable=AsyncMock,
+        return_value=potg,
+    ):
+        out = await _attach_player_of_the_game(sample_final_detail)
+    assert out.player_of_the_game is not None
+    assert out.player_of_the_game.full_name == "Test Player"
 
 
 def test_normalize_player_of_the_game_from_fixture():

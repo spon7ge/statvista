@@ -54,6 +54,7 @@ from app.providers.espn.mlb_bridge import (
 )
 from app.providers.mlb_stats.game_leaders import fetch_game_leaders
 from app.providers.mlb_stats.team_season import fetch_season_team_stats_pair
+from app.providers.mlb_play.player_of_the_game import fetch_player_of_the_game
 from app.domains.mlb.scoreboard import format_tip_label
 
 logger = logging.getLogger(__name__)
@@ -1368,6 +1369,23 @@ async def _attach_game_leaders(detail: MlbGameDetail, payload: dict) -> MlbGameD
     return attach_game_leaders(detail, leaders)
 
 
+async def _attach_player_of_the_game(detail: MlbGameDetail) -> MlbGameDetail:
+    """Soft-fetch MLB Play Player of the Game for final games only."""
+    if detail.status != "final":
+        return detail
+    try:
+        async with httpx.AsyncClient(timeout=STATS_TIMEOUT_SECONDS) as client:
+            potg = await fetch_player_of_the_game(client, game_pk=detail.mlb_game_pk)
+    except Exception as exc:
+        logger.warning(
+            "player of the game unavailable for %s: %s",
+            detail.mlb_game_pk,
+            exc,
+        )
+        return detail
+    return attach_player_of_the_game(detail, potg)
+
+
 async def _attach_espn_summary_enrichment(
     detail: MlbGameDetail,
     payload: dict,
@@ -1492,6 +1510,15 @@ async def get_mlb_game_detail(game_pk: str) -> MlbGameDetail:
                 detail.mlb_game_pk,
                 exc,
             )
+
+    try:
+        detail = await _attach_player_of_the_game(detail)
+    except Exception as exc:
+        logger.warning(
+            "player of the game unavailable for %s: %s",
+            detail.mlb_game_pk,
+            exc,
+        )
 
     cached_espn_event_id = None
     if cached and isinstance(cached.get("espn_event_id"), str):
