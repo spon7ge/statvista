@@ -143,6 +143,26 @@ def test_normalize_player_of_the_game_from_fixture():
     assert "mlbstatic.com" in potg.headshot_url
 
 
+def test_normalize_pitcher_only_summary_populates_stats():
+    raw = {
+        "feedId": "543037",
+        "name": "Gerrit Cole",
+        "lastName": "Cole",
+        "stats": {
+            "hitting": {"summary": None, "summaryFeed": None},
+            "pitching": {
+                "summary": "7.0 IP · 10 K · 1 ER",
+                "summaryFeed": "7.0 IP | 10 K, 1 ER",
+            },
+        },
+    }
+    potg = normalize_player_of_the_game(raw, game_pk="1", team_abbrev="NYY")
+    assert potg is not None
+    assert potg.stats == [
+        MlbPlayerOfTheGameStat(label=None, value="7.0 IP · 10 K · 1 ER")
+    ]
+
+
 def test_write_and_read_potg_cache(tmp_path, monkeypatch):
     monkeypatch.setenv("MLB_POTG_CACHE_DIR", str(tmp_path))
     potg = normalize_player_of_the_game(
@@ -222,3 +242,74 @@ async def test_fetch_resolves_contest_player_and_writes_cache(
     for call in client.get.await_args_list:
         headers = call.kwargs.get("headers") or {}
         assert headers.get("User-Agent") == "Mozilla/5.0"
+
+
+@pytest.mark.asyncio
+async def test_fetch_succeeds_when_squads_errors(monkeypatch, tmp_path):
+    monkeypatch.setenv("MLB_POTG_CACHE_DIR", str(tmp_path))
+    contests = json.loads(CONTESTS_FIXTURE.read_text())
+    winner = json.loads(FIXTURE.read_text())
+
+    def _response(payload: object) -> httpx.Response:
+        return httpx.Response(
+            200,
+            json=payload,
+            request=httpx.Request("GET", "https://example.test/"),
+        )
+
+    async def fake_get(url: str, **_kwargs: object) -> httpx.Response:
+        if url.endswith("/fan/contests.json"):
+            return _response(contests)
+        if url.endswith("/fan/3661.json"):
+            return _response({"players": [winner]})
+        if url.endswith("/squads.json"):
+            raise httpx.HTTPError("squads down")
+        raise AssertionError(f"unexpected url: {url}")
+
+    client = AsyncMock(spec=httpx.AsyncClient)
+    client.get = AsyncMock(side_effect=fake_get)
+
+    out = await fetch_player_of_the_game(client, game_pk="823426")
+    assert out is not None
+    assert out.player_id == "664770"
+    assert out.team_abbrev is None
+    assert out.stats[0].value == "3-6 | HR, 2 RBI, R"
+
+
+@pytest.mark.asyncio
+async def test_fetch_returns_potg_when_cache_write_fails(
+    monkeypatch, tmp_path
+):
+    monkeypatch.setenv("MLB_POTG_CACHE_DIR", str(tmp_path))
+    contests = json.loads(CONTESTS_FIXTURE.read_text())
+    winner = json.loads(FIXTURE.read_text())
+    squads = [{"id": 9, "abbreviation": "TOR"}]
+
+    def _response(payload: object) -> httpx.Response:
+        return httpx.Response(
+            200,
+            json=payload,
+            request=httpx.Request("GET", "https://example.test/"),
+        )
+
+    async def fake_get(url: str, **_kwargs: object) -> httpx.Response:
+        if url.endswith("/fan/contests.json"):
+            return _response(contests)
+        if url.endswith("/fan/3661.json"):
+            return _response({"players": [winner]})
+        if url.endswith("/squads.json"):
+            return _response(squads)
+        raise AssertionError(f"unexpected url: {url}")
+
+    client = AsyncMock(spec=httpx.AsyncClient)
+    client.get = AsyncMock(side_effect=fake_get)
+
+    with patch(
+        "app.providers.mlb_play.player_of_the_game.Path.write_text",
+        side_effect=OSError("disk full"),
+    ):
+        out = await fetch_player_of_the_game(client, game_pk="823426")
+
+    assert out is not None
+    assert out.player_id == "664770"
+    assert out.team_abbrev == "TOR"

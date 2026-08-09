@@ -57,8 +57,11 @@ def read_potg_cache(game_pk: str) -> MlbPlayerOfTheGame | None:
 
 def write_potg_cache(game_pk: str, potg: MlbPlayerOfTheGame) -> None:
     path = _cache_path(game_pk)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(potg.model_dump_json())
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(potg.model_dump_json())
+    except Exception as exc:
+        logger.warning("POTG cache write failed for %s: %s", game_pk, exc)
 
 
 def _headshot_url(player_id: str) -> str | None:
@@ -75,6 +78,14 @@ def _as_dict(value: Any) -> dict[str, Any]:
 
 def _as_list(value: Any) -> list[Any]:
     return value if isinstance(value, list) else []
+
+
+def _stat_summary(block: dict[str, Any]) -> str | None:
+    for key in ("summary", "summaryFeed"):
+        value = block.get(key)
+        if isinstance(value, str) and value.strip():
+            return value.strip()
+    return None
 
 
 def normalize_player_of_the_game(
@@ -96,11 +107,14 @@ def normalize_player_of_the_game(
         raw_abbrev = player.get("teamAbbrev") or player.get("abbreviation")
         abbrev = str(raw_abbrev).strip() if raw_abbrev else None
 
-    stats: list[MlbPlayerOfTheGameStat] = []
-    hitting = _as_dict(_as_dict(player.get("stats")).get("hitting"))
-    summary = hitting.get("summary")
-    if isinstance(summary, str) and summary.strip():
-        stats = [MlbPlayerOfTheGameStat(label=None, value=summary.strip())]
+    stats_block = _as_dict(player.get("stats"))
+    hitting = _as_dict(stats_block.get("hitting"))
+    pitching = _as_dict(stats_block.get("pitching"))
+    # Prefer hitting showcase text; fall back to pitching for pitcher winners.
+    summary = _stat_summary(hitting) or _stat_summary(pitching)
+    stats: list[MlbPlayerOfTheGameStat] = (
+        [MlbPlayerOfTheGameStat(label=None, value=summary)] if summary else []
+    )
 
     return MlbPlayerOfTheGame(
         player_id=player_id,
@@ -147,15 +161,22 @@ async def _squad_abbrev(
 ) -> str | None:
     if squad_id is None:
         return None
-    resp = await client.get(f"{JSON_BASE}/squads.json", headers=_UA_HEADERS)
-    resp.raise_for_status()
-    for squad in _as_list(resp.json()):
-        if not isinstance(squad, dict):
-            continue
-        if squad.get("id") == squad_id or str(squad.get("id")) == str(squad_id):
-            abbrev = squad.get("abbreviation")
-            return str(abbrev).strip() if abbrev else None
-    return None
+    try:
+        resp = await client.get(f"{JSON_BASE}/squads.json", headers=_UA_HEADERS)
+        resp.raise_for_status()
+        for squad in _as_list(resp.json()):
+            if not isinstance(squad, dict):
+                continue
+            if squad.get("id") == squad_id or str(squad.get("id")) == str(
+                squad_id
+            ):
+                abbrev = squad.get("abbreviation")
+                return str(abbrev).strip() if abbrev else None
+        return None
+    except Exception as exc:
+        # Winner is already known; missing abbrev should not fail POTG.
+        logger.warning("POTG squads.json lookup failed: %s", exc)
+        return None
 
 
 async def fetch_player_of_the_game(
