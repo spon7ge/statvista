@@ -68,6 +68,24 @@ describe("MlbPregameBroadcastHeader", () => {
     expect(onTabChange).toHaveBeenCalledWith("home");
   });
 
+  it("calls onTabChange for PrizePicks and Underdog tabs", async () => {
+    const user = userEvent.setup();
+    const onTabChange = vi.fn();
+    render(
+      <MlbPregameBroadcastHeader
+        detail={mlbScheduledDetail}
+        activeTab="preview"
+        onTabChange={onTabChange}
+      />,
+    );
+
+    await user.click(screen.getByRole("tab", { name: "PrizePicks" }));
+    expect(onTabChange).toHaveBeenCalledWith("prizepicks");
+
+    await user.click(screen.getByRole("tab", { name: "Underdog" }));
+    expect(onTabChange).toHaveBeenCalledWith("underdog");
+  });
+
   it("omits record and last-10 lines when null", () => {
     const detail = {
       ...mlbScheduledDetail,

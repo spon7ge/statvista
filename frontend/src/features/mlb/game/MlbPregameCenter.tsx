@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useMlbGameProps } from "@/features/mlb/hooks/useMlbGameProps";
 import { useMlbLineupMatchup } from "@/features/mlb/hooks/useMlbLineupMatchup";
 import { useMlbLineups } from "@/features/mlb/hooks/useMlbLineups";
 import { useMlbOdds } from "@/features/mlb/hooks/useMlbOdds";
@@ -7,6 +8,7 @@ import {
   MlbPregameBroadcastHeader,
   type PregameTab,
 } from "./MlbPregameBroadcastHeader";
+import { MlbGamePropsGrid } from "./MlbGamePropsGrid";
 import { MlbProjectedLineups } from "./MlbProjectedLineups";
 import { findMlbOddsGame, toMlbOddsBoardView } from "../lib/mlbOddsBoard";
 import type { MlbGameDetailView } from "../lib/types";
@@ -75,6 +77,17 @@ export function MlbPregameCenter({ detail }: { detail: MlbGameDetailView }) {
       )
     : null;
 
+  const prizeQuery = useMlbGameProps({
+    gamePk: detail.mlbGamePk,
+    app: "prizepicks",
+    enabled: activeTab === "preview" || activeTab === "prizepicks",
+  });
+  const underdogQuery = useMlbGameProps({
+    gamePk: detail.mlbGamePk,
+    app: "underdog",
+    enabled: activeTab === "underdog",
+  });
+
   const stub =
     activeTab === "away"
       ? `${detail.away.name} preview coming soon`
@@ -93,13 +106,45 @@ export function MlbPregameCenter({ detail }: { detail: MlbGameDetailView }) {
         aria-labelledby={`mlb-pregame-${activeTab}-tab`}
       >
         {activeTab === "preview" ? (
-          <MlbProjectedLineups
-            detail={detail}
-            game={matchedGame}
-            matchup={matchupQuery.data ?? null}
-            isPending={isPending}
-            oddsView={oddsView}
-            oddsPending={oddsQuery.isPending}
+          <div className="space-y-4">
+            <MlbProjectedLineups
+              detail={detail}
+              game={matchedGame}
+              matchup={matchupQuery.data ?? null}
+              isPending={isPending}
+              oddsView={oddsView}
+              oddsPending={oddsQuery.isPending}
+            />
+            <MlbGamePropsGrid
+              categories={prizeQuery.data?.categories ?? []}
+              isPending={prizeQuery.isPending}
+              error={
+                prizeQuery.isError
+                  ? "Failed to load props"
+                  : prizeQuery.data?.error
+              }
+              onPlayerClick={() => setActiveTab("prizepicks")}
+            />
+          </div>
+        ) : activeTab === "prizepicks" ? (
+          <MlbGamePropsGrid
+            categories={prizeQuery.data?.categories ?? []}
+            isPending={prizeQuery.isPending}
+            error={
+              prizeQuery.isError
+                ? "Failed to load props"
+                : prizeQuery.data?.error
+            }
+          />
+        ) : activeTab === "underdog" ? (
+          <MlbGamePropsGrid
+            categories={underdogQuery.data?.categories ?? []}
+            isPending={underdogQuery.isPending}
+            error={
+              underdogQuery.isError
+                ? "Failed to load props"
+                : underdogQuery.data?.error
+            }
           />
         ) : (
           <p className="text-sm text-white/60">{stub}</p>

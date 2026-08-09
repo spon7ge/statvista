@@ -1,16 +1,18 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MlbPregameCenter } from "./MlbPregameCenter";
 import { mlbScheduledDetail } from "../lib/testFixtures";
 import type {
+  ApiMlbGamePropsResponse,
   ApiMlbLineupGame,
   ApiMlbLineupMatchupResponse,
   ApiMlbOddsResponse,
 } from "@/shared/lib/api";
 
 const fetchMlbLineups = vi.fn();
+const fetchMlbGameProps = vi.fn();
 const useMlbLineupMatchup = vi.fn(() => ({
   data: null as ApiMlbLineupMatchupResponse | null,
 }));
@@ -18,6 +20,7 @@ const useMlbOdds = vi.fn(() => ({ data: null as ApiMlbOddsResponse | null }));
 
 vi.mock("@/shared/lib/api", () => ({
   fetchMlbLineups: (...args: unknown[]) => fetchMlbLineups(...args),
+  fetchMlbGameProps: (...args: unknown[]) => fetchMlbGameProps(...args),
 }));
 
 vi.mock("@/features/mlb/hooks/useMlbLineupMatchup", () => ({
@@ -27,6 +30,36 @@ vi.mock("@/features/mlb/hooks/useMlbLineupMatchup", () => ({
 vi.mock("@/features/mlb/hooks/useMlbOdds", () => ({
   useMlbOdds: (...args: unknown[]) => useMlbOdds(...args),
 }));
+
+const emptyGameProps: ApiMlbGamePropsResponse = {
+  as_of: null,
+  app: "prizepicks",
+  game_pk: mlbScheduledDetail.mlbGamePk,
+  away_abbrev: null,
+  home_abbrev: null,
+  categories: [],
+  error: null,
+};
+
+const judgeGameProps: ApiMlbGamePropsResponse = {
+  ...emptyGameProps,
+  categories: [
+    {
+      stat: "home_runs",
+      label: "Home Runs",
+      players: [
+        {
+          player_name: "A. Judge",
+          team_abbrev: "NYY",
+          headshot_url: null,
+          line: 0.5,
+          over: { american: 270, book: "fanduel" },
+          under: null,
+        },
+      ],
+    },
+  ],
+};
 
 const completeLineupGame: ApiMlbLineupGame = {
   away_abbrev: "wsh",
@@ -64,6 +97,8 @@ function renderWithClient(ui: React.ReactElement) {
 describe("MlbPregameCenter", () => {
   beforeEach(() => {
     fetchMlbLineups.mockReset();
+    fetchMlbGameProps.mockReset();
+    fetchMlbGameProps.mockResolvedValue(emptyGameProps);
     useMlbLineupMatchup.mockClear();
     useMlbLineupMatchup.mockReturnValue({ data: null });
     useMlbOdds.mockClear();
@@ -278,5 +313,100 @@ describe("MlbPregameCenter", () => {
       screen.getByText(/washington nationals preview coming soon/i),
     ).toBeInTheDocument();
     expect(useMlbOdds).toHaveBeenLastCalledWith({ enabled: false });
+  });
+
+  it("shows props grid under Preview lineups", async () => {
+    fetchMlbLineups.mockResolvedValue({
+      date: mlbScheduledDetail.gameDate,
+      fetched_at: "2026-08-04T10:00:00-04:00",
+      source: "rotowire",
+      games: [],
+    });
+    fetchMlbGameProps.mockResolvedValue(judgeGameProps);
+
+    renderWithClient(<MlbPregameCenter detail={mlbScheduledDetail} />);
+
+    expect(screen.getByTestId("mlb-projected-lineups")).toBeInTheDocument();
+    expect(await screen.findByTestId("mlb-game-props-grid")).toBeInTheDocument();
+    expect(await screen.findByText("A. Judge")).toBeInTheDocument();
+    expect(fetchMlbGameProps).toHaveBeenCalledWith({
+      gamePk: mlbScheduledDetail.mlbGamePk,
+      app: "prizepicks",
+    });
+  });
+
+  it("switches to PrizePicks when a Preview prop row is clicked", async () => {
+    fetchMlbLineups.mockResolvedValue({
+      date: mlbScheduledDetail.gameDate,
+      fetched_at: "2026-08-04T10:00:00-04:00",
+      source: "rotowire",
+      games: [],
+    });
+    fetchMlbGameProps.mockResolvedValue(judgeGameProps);
+    const user = userEvent.setup();
+
+    renderWithClient(<MlbPregameCenter detail={mlbScheduledDetail} />);
+
+    await user.click(
+      await screen.findByRole("button", { name: /A\. Judge/i }),
+    );
+
+    expect(screen.getByRole("tab", { name: "PrizePicks" })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    expect(screen.getByTestId("mlb-game-props-grid")).toBeInTheDocument();
+    expect(screen.queryByTestId("mlb-projected-lineups")).not.toBeInTheDocument();
+  });
+
+  it("requests underdog props when Underdog tab is selected", async () => {
+    fetchMlbLineups.mockResolvedValue({
+      date: mlbScheduledDetail.gameDate,
+      fetched_at: "2026-08-04T10:00:00-04:00",
+      source: "rotowire",
+      games: [],
+    });
+    fetchMlbGameProps.mockImplementation(
+      async ({ app }: { gamePk: string; app: string }) => ({
+        ...emptyGameProps,
+        app,
+        categories:
+          app === "underdog"
+            ? [
+                {
+                  stat: "hits",
+                  label: "Hits",
+                  players: [
+                    {
+                      player_name: "J. Soto",
+                      team_abbrev: "NYY",
+                      headshot_url: null,
+                      line: 0.5,
+                      over: { american: -110, book: "draftkings" },
+                      under: null,
+                    },
+                  ],
+                },
+              ]
+            : [],
+      }),
+    );
+    const user = userEvent.setup();
+
+    renderWithClient(<MlbPregameCenter detail={mlbScheduledDetail} />);
+
+    await user.click(screen.getByRole("tab", { name: "Underdog" }));
+
+    await waitFor(() =>
+      expect(fetchMlbGameProps).toHaveBeenCalledWith({
+        gamePk: mlbScheduledDetail.mlbGamePk,
+        app: "underdog",
+      }),
+    );
+    expect(await screen.findByText("J. Soto")).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: "Underdog" })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
   });
 });
