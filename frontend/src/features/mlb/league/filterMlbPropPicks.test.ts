@@ -50,8 +50,6 @@ function emptySelection(): MlbPropFilterSelection {
     stats: new Set(),
     teams: new Set(),
     sides: new Set(),
-    tiers: new Set(),
-    freshVsStaleOnly: false,
   };
 }
 
@@ -113,20 +111,17 @@ describe("filterMlbPropPicks", () => {
     expect(result).toEqual([betts]);
   });
 
-  it("filters by source tier", () => {
-    const result = filterMlbPropPicks(props, {
-      ...emptySelection(),
-      tiers: new Set(["no_sharp_read"]),
+  it("ignores source_tier and recency_chip (no tier / fresh-vs-stale filters)", () => {
+    const selection = emptySelection();
+    expect(selection).toEqual({
+      stats: expect.any(Set),
+      teams: expect.any(Set),
+      sides: expect.any(Set),
     });
-    expect(result).toEqual([betts]);
-  });
-
-  it("filters to fresh_sharp_vs_stale_dfs when the toggle is on", () => {
-    const result = filterMlbPropPicks(props, {
-      ...emptySelection(),
-      freshVsStaleOnly: true,
-    });
-    expect(result).toEqual([judge]);
+    expect(selection).not.toHaveProperty("tiers");
+    expect(selection).not.toHaveProperty("freshVsStaleOnly");
+    // Mixed tiers/recency still all pass when only stats/teams/sides are empty
+    expect(filterMlbPropPicks(props, selection)).toEqual(props);
   });
 
   it("combines multiple active filters with AND semantics", () => {
@@ -135,7 +130,6 @@ describe("filterMlbPropPicks", () => {
       stats: new Set(["Total Bases"]),
       teams: new Set(["NYY"]),
       sides: new Set(["over"]),
-      tiers: new Set(["sharp_consensus"]),
     });
     expect(result).toEqual([judge]);
   });

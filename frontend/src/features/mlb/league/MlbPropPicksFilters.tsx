@@ -1,6 +1,5 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { MLB_SOURCE_TIER_OPTIONS } from "./filterMlbPropPicks";
 
 type FilterOption = { value: string; label: string };
 type FilterTone = "default" | "banner";
@@ -153,14 +152,9 @@ export type MlbPropPicksFiltersProps = {
   selectedStats: Set<string>;
   selectedTeams: Set<string>;
   selectedSides: Set<string>;
-  selectedTiers: Set<string>;
-  /** Fresh sharp vs stale DFS recency chip toggle (v1 spec: single optional filter). */
-  freshVsStaleOnly: boolean;
   onStatsChange: (next: Set<string>) => void;
   onTeamsChange: (next: Set<string>) => void;
   onSidesChange: (next: Set<string>) => void;
-  onTiersChange: (next: Set<string>) => void;
-  onFreshVsStaleToggle: () => void;
   onClear: () => void;
   /** White capsule pills for use inside the green Scores-style header. */
   tone?: FilterTone;
@@ -172,22 +166,16 @@ export function MlbPropPicksFilters({
   selectedStats,
   selectedTeams,
   selectedSides,
-  selectedTiers,
-  freshVsStaleOnly,
   onStatsChange,
   onTeamsChange,
   onSidesChange,
-  onTiersChange,
-  onFreshVsStaleToggle,
   onClear,
   tone = "default",
 }: MlbPropPicksFiltersProps) {
   const hasActive =
     selectedStats.size > 0 ||
     selectedTeams.size > 0 ||
-    selectedSides.size > 0 ||
-    selectedTiers.size > 0 ||
-    freshVsStaleOnly;
+    selectedSides.size > 0;
   const onBanner = tone === "banner";
 
   return (
@@ -221,36 +209,6 @@ export function MlbPropPicksFilters({
         selected={selectedSides}
         onChange={onSidesChange}
       />
-      <MultiSelectFilter
-        label="Tier"
-        tone={tone}
-        options={MLB_SOURCE_TIER_OPTIONS.map((t) => ({
-          value: t.value,
-          label: t.label,
-        }))}
-        selected={selectedTiers}
-        onChange={onTiersChange}
-      />
-      <button
-        type="button"
-        aria-pressed={freshVsStaleOnly}
-        onClick={onFreshVsStaleToggle}
-        className={
-          onBanner
-            ? `rounded-full px-3 py-1.5 text-[14px] font-semibold shadow-sm ${
-                freshVsStaleOnly
-                  ? "bg-white text-emerald-900"
-                  : "bg-white/90 text-emerald-800 hover:bg-white"
-              }`
-            : `rounded-md border px-2.5 py-1.5 text-[18px] font-medium transition-colors ${
-                freshVsStaleOnly
-                  ? "border-white/20 bg-white/10 text-white"
-                  : "border-white/10 bg-transparent text-white/55 hover:text-white"
-              }`
-        }
-      >
-        Fresh sharp vs stale DFS only
-      </button>
       {hasActive ? (
         <button
           type="button"

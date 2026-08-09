@@ -201,8 +201,7 @@ describe("MlbPropPicksPage", () => {
     expect(screen.queryByText("Mookie Betts")).not.toBeInTheDocument();
   });
 
-  it("filters to fresh_sharp_vs_stale_dfs rows when the toggle is on", async () => {
-    const user = userEvent.setup();
+  it("does not render Tier or Fresh sharp vs stale DFS filter controls", () => {
     mockUseMlbProps.mockReturnValue({
       data: {
         as_of: "now",
@@ -220,15 +219,15 @@ describe("MlbPropPicksPage", () => {
     });
 
     renderPage();
-    expect(screen.getByText("Aaron Judge")).toBeInTheDocument();
-    expect(screen.getByText("Mookie Betts")).toBeInTheDocument();
-
-    await user.click(
-      screen.getByRole("button", { name: "Fresh sharp vs stale DFS only" }),
-    );
-
-    expect(screen.getByText("Aaron Judge")).toBeInTheDocument();
-    expect(screen.queryByText("Mookie Betts")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Stat" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Team" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Side" })).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Tier" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /Fresh sharp vs stale DFS/i }),
+    ).not.toBeInTheDocument();
   });
 
   it("shows loading, error, and empty states", () => {

@@ -41,10 +41,6 @@ export function MlbPropPicksPage() {
   const [selectedSides, setSelectedSides] = useState<Set<string>>(
     () => new Set(),
   );
-  const [selectedTiers, setSelectedTiers] = useState<Set<string>>(
-    () => new Set(),
-  );
-  const [freshVsStaleOnly, setFreshVsStaleOnly] = useState(false);
 
   const props = data?.props ?? [];
   const showLoading = isLoading && !isFetched;
@@ -54,9 +50,7 @@ export function MlbPropPicksPage() {
   const filtersActive =
     selectedStats.size > 0 ||
     selectedTeams.size > 0 ||
-    selectedSides.size > 0 ||
-    selectedTiers.size > 0 ||
-    freshVsStaleOnly;
+    selectedSides.size > 0;
 
   const filtered = useMemo(
     () =>
@@ -64,18 +58,14 @@ export function MlbPropPicksPage() {
         stats: selectedStats,
         teams: selectedTeams,
         sides: selectedSides,
-        tiers: selectedTiers,
-        freshVsStaleOnly,
       }),
-    [props, selectedStats, selectedTeams, selectedSides, selectedTiers, freshVsStaleOnly],
+    [props, selectedStats, selectedTeams, selectedSides],
   );
 
   function clearFilters() {
     setSelectedStats(new Set());
     setSelectedTeams(new Set());
     setSelectedSides(new Set());
-    setSelectedTiers(new Set());
-    setFreshVsStaleOnly(false);
   }
 
   function onAppChange(next: MlbPropAppTab) {
@@ -103,13 +93,9 @@ export function MlbPropPicksPage() {
               selectedStats={selectedStats}
               selectedTeams={selectedTeams}
               selectedSides={selectedSides}
-              selectedTiers={selectedTiers}
-              freshVsStaleOnly={freshVsStaleOnly}
               onStatsChange={setSelectedStats}
               onTeamsChange={setSelectedTeams}
               onSidesChange={setSelectedSides}
-              onTiersChange={setSelectedTiers}
-              onFreshVsStaleToggle={() => setFreshVsStaleOnly((v) => !v)}
               onClear={clearFilters}
             />
           ) : null}
