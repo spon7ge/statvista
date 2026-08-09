@@ -37,3 +37,8 @@ if SHARP_API_KEY:
 PARLAY_API_KEY: str | None = os.environ.get("PARLAY_API_KEY") or None
 if PARLAY_API_KEY:
     PARLAY_API_KEY = PARLAY_API_KEY.strip().strip("'").strip('"') or None
+
+# The Odds API — MLB prop picks board + books (optional; empty → soft-fail)
+THE_ODDS_API_KEY: str | None = os.environ.get("THE_ODDS_API_KEY") or None
+if THE_ODDS_API_KEY:
+    THE_ODDS_API_KEY = THE_ODDS_API_KEY.strip().strip("'").strip('"') or None
