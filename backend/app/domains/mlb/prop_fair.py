@@ -8,16 +8,8 @@ from typing import Literal
 
 AGREE_PP = 2.0
 
-SOFT_FAIR_BOOKS: tuple[str, ...] = (
-    "caesars",
-    "kalshi",
-    "bet365",
-    "betmgm",
-    "fanatics",
-    "hardrock",
-    "fliff",
-    "pinnacle",
-)
+SOFT_FAIR_BOOKS: tuple[str, ...] = ("betmgm", "betonline", "pinnacle")
+_TIER1_BOOKS: tuple[str, ...] = ("prophetx", "novig", "kalshi")
 
 SourceTier = Literal[
     "sharp_consensus",
@@ -63,52 +55,34 @@ def _dk_fd_agrees_with(fair_pct: float, side_books: SideBooks) -> bool:
 
 
 def _tier1(side_books: SideBooks) -> FairResult | None:
-    px = side_books.get("prophetx")
-    novig = side_books.get("novig")
-
-    if px is not None and novig is not None:
-        if _agrees(px, novig):
-            fair = round(0.6 * px + 0.4 * novig, 1)
-            return FairResult(
-                fair_pct=fair,
-                source_tier="sharp_consensus",
-                confidence_chips=[],
-                sample_chips=[],
-                fair_explain="PX+Novig agree within 2pp; 60/40 blend.",
-            )
+    present = [
+        (book, side_books[book])
+        for book in _TIER1_BOOKS
+        if side_books.get(book) is not None
+    ]
+    if not present:
+        return None
+    if len(present) >= 2:
+        fair = round(sum(v for _, v in present) / len(present), 1)
+        names = "+".join(b for b, _ in present)
         return FairResult(
-            fair_pct=px,
-            source_tier="sharp_disagreement",
+            fair_pct=fair,
+            source_tier="sharp_consensus",
             confidence_chips=[],
             sample_chips=[],
-            fair_explain="PX+Novig disagree >2pp; ProphetX only.",
+            fair_explain=f"{names} equal avg ({len(present)} sources).",
         )
-
-    if px is not None:
-        confidence: list[str] = []
-        if _dk_fd_agrees_with(px, side_books):
-            confidence.append("dk_fd_agrees")
-        return FairResult(
-            fair_pct=px,
-            source_tier="sharp_single_source",
-            confidence_chips=confidence,
-            sample_chips=["prophetx_only"],
-            fair_explain="ProphetX only (single sharp source).",
-        )
-
-    if novig is not None:
-        confidence = []
-        if _dk_fd_agrees_with(novig, side_books):
-            confidence.append("dk_fd_agrees")
-        return FairResult(
-            fair_pct=novig,
-            source_tier="sharp_single_source",
-            confidence_chips=confidence,
-            sample_chips=["novig_only"],
-            fair_explain="Novig only (single sharp source).",
-        )
-
-    return None
+    book, fair = present[0]
+    confidence: list[str] = []
+    if _dk_fd_agrees_with(fair, side_books):
+        confidence.append("dk_fd_agrees")
+    return FairResult(
+        fair_pct=fair,
+        source_tier="sharp_single_source",
+        confidence_chips=confidence,
+        sample_chips=[f"{book}_only"],
+        fair_explain=f"{book} only (single sharp source).",
+    )
 
 
 def _tier2(side_books: SideBooks) -> FairResult | None:
