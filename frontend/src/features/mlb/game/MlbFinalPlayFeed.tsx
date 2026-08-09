@@ -73,7 +73,10 @@ function StatcastMetrics({ play }: { play: MlbPlay }) {
   if (metrics.length === 0) return null;
 
   return (
-    <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 border-t border-white/10 pt-2 text-[18px] text-white/60">
+    <div
+      data-testid="mlb-play-ball-info"
+      className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-[18px] text-white/60"
+    >
       {metrics.map((metric) => (
         <span key={metric} className="font-mono tabular-nums">
           {metric}
@@ -91,19 +94,36 @@ function PlayRow({
   isFirst: boolean;
 }) {
   const event = eventLabel(play.event);
+  const batterSummary = play.batterSummary?.trim() || null;
 
   return (
     <li className={isFirst ? "" : "border-t border-white/10 pt-3"}>
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <p className="text-[18px] text-white/90">{play.text}</p>
+      <p className="text-[18px] text-white/90">{play.text}</p>
+      {event || batterSummary ? (
+        <div className="mt-1.5 flex flex-wrap items-center gap-2">
+          {event ? (
+            <span
+              data-testid="mlb-play-event-pill"
+              className="shrink-0 rounded-full bg-black/20 px-2 py-1 text-[14px] font-semibold uppercase tracking-wide text-white/80"
+            >
+              {event}
+            </span>
+          ) : null}
+          {event && batterSummary ? (
+            <span className="text-white/40" aria-hidden>
+              –
+            </span>
+          ) : null}
+          {batterSummary ? (
+            <span
+              data-testid="mlb-play-batter-summary"
+              className="text-[18px] text-white/70"
+            >
+              {batterSummary}
+            </span>
+          ) : null}
         </div>
-        {event ? (
-          <span className="shrink-0 rounded-full bg-black/20 px-2 py-1 text-[14px] font-semibold uppercase tracking-wide text-white/80">
-            {event}
-          </span>
-        ) : null}
-      </div>
+      ) : null}
       <StatcastMetrics play={play} />
     </li>
   );
@@ -149,9 +169,12 @@ export function MlbFinalPlayFeed({
 
   return (
     <GameSection className="!p-3 h-fit self-start" data-testid="mlb-final-play-feed">
-      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <h2 className="text-[18px] font-semibold text-white">Play feed</h2>
-        <div className="flex rounded-full bg-white/5 p-0.5">
+      <div className="mb-3 flex justify-center">
+        <div
+          className="flex rounded-full bg-white/5 p-0.5"
+          role="group"
+          aria-label="Play filter"
+        >
           <button
             type="button"
             onClick={() => setFilter("scoring")}

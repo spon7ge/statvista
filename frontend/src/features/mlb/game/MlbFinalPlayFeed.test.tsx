@@ -9,10 +9,34 @@ describe("MlbFinalPlayFeed", () => {
     render(<MlbFinalPlayFeed detail={mlbFinalDetail} />);
 
     expect(screen.getByTestId("mlb-final-play-feed")).toBeInTheDocument();
+    expect(screen.queryByText("Play feed")).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("group", { name: /play filter/i }).parentElement,
+    ).toHaveClass("justify-center");
     expect(
       screen.getByRole("button", { name: /scoring plays/i }),
     ).toHaveAttribute("aria-pressed", "true");
     expect(screen.getByText("Bottom 9th")).toBeInTheDocument();
+
+    const description = screen.getByText("Freeman homers (2)");
+    const pill = screen.getByTestId("mlb-play-event-pill");
+    const batterStats = screen.getByTestId("mlb-play-batter-summary");
+    const ballInfo = screen.getByTestId("mlb-play-ball-info");
+    expect(pill).toHaveTextContent("Home Run");
+    expect(batterStats).toHaveTextContent("2-3 | HR, RBI, 2 R");
+    expect(screen.queryByTestId("mlb-play-score")).not.toBeInTheDocument();
+    expect(
+      description.compareDocumentPosition(pill) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      pill.compareDocumentPosition(batterStats) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      batterStats.compareDocumentPosition(ballInfo) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
     expect(screen.getByText("104.1 mph")).toBeInTheDocument();
     expect(screen.getByText("412 ft")).toBeInTheDocument();
     expect(screen.getByText("28.5°")).toBeInTheDocument();
@@ -73,6 +97,24 @@ describe("MlbFinalPlayFeed", () => {
     expect(screen.getAllByText("Top 4th")).toHaveLength(1);
     expect(halfInningCard).toHaveTextContent("Marte singles");
     expect(halfInningCard).toHaveTextContent("Carroll walks");
+  });
+
+  it("omits batter summary when null", () => {
+    render(
+      <MlbFinalPlayFeed
+        detail={{
+          ...mlbFinalDetail,
+          scoringPlays: [
+            { ...mlbFinalDetail.scoringPlays[0], batterSummary: null },
+          ],
+          plays: [{ ...mlbFinalDetail.plays[0], batterSummary: null }],
+        }}
+      />,
+    );
+    expect(screen.getByTestId("mlb-play-event-pill")).toBeInTheDocument();
+    expect(
+      screen.queryByTestId("mlb-play-batter-summary"),
+    ).not.toBeInTheDocument();
   });
 
   it("hides the metrics row when a play has no Statcast data", () => {
