@@ -6,12 +6,33 @@ import type {
 } from "../lib/types";
 
 type TeamSide = "away" | "home";
-type StatKey = keyof MlbSeasonTeamStatLine;
+type StatValueKey =
+  | "hr"
+  | "r"
+  | "h"
+  | "avg"
+  | "obp"
+  | "slg"
+  | "era"
+  | "so"
+  | "bb";
 
 type StatDefinition = {
-  key: StatKey;
+  key: StatValueKey;
   label: string;
   lowerIsBetter?: boolean;
+};
+
+const RANK_KEY: Record<StatValueKey, keyof MlbSeasonTeamStatLine> = {
+  hr: "hrRank",
+  r: "rRank",
+  h: "hRank",
+  avg: "avgRank",
+  obp: "obpRank",
+  slg: "slgRank",
+  era: "eraRank",
+  so: "soRank",
+  bb: "bbRank",
 };
 
 const STAT_DEFINITIONS: StatDefinition[] = [
@@ -83,12 +104,14 @@ function StatValue({
   side,
   statKey,
   value,
+  rank,
   isLeader,
   color,
 }: {
   side: TeamSide;
-  statKey: StatKey;
+  statKey: StatValueKey;
   value: string | number | null;
+  rank: number | null;
   isLeader: boolean;
   color: string;
 }) {
@@ -107,6 +130,14 @@ function StatValue({
         />
       ) : null}
       <span>{value ?? "–"}</span>
+      {rank != null ? (
+        <span
+          data-testid={`mlb-season-stat-${statKey}-rank-${side}`}
+          className="text-[14px] text-white/40"
+        >
+          {`#${rank}`}
+        </span>
+      ) : null}
       {side === "away" && isLeader ? (
         <span
           aria-label={`${statKey} away leader`}
@@ -156,6 +187,7 @@ export function MlbSeasonTeamStats({
                 side="away"
                 statKey={stat.key}
                 value={awayValue}
+                rank={seasonTeamStats.away[RANK_KEY[stat.key]] as number | null}
                 isLeader={winningSide === "away"}
                 color={detail.away.color}
               />
@@ -166,6 +198,7 @@ export function MlbSeasonTeamStats({
                 side="home"
                 statKey={stat.key}
                 value={homeValue}
+                rank={seasonTeamStats.home[RANK_KEY[stat.key]] as number | null}
                 isLeader={winningSide === "home"}
                 color={detail.home.color}
               />

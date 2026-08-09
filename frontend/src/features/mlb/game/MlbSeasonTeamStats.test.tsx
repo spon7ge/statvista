@@ -4,6 +4,18 @@ import { MlbSeasonTeamStats } from "./MlbSeasonTeamStats";
 import { mlbScheduledDetail } from "../lib/testFixtures";
 import type { MlbSeasonTeamStatLine } from "../lib/types";
 
+const nullRanks = {
+  hrRank: null,
+  rRank: null,
+  hRank: null,
+  avgRank: null,
+  obpRank: null,
+  slgRank: null,
+  eraRank: null,
+  soRank: null,
+  bbRank: null,
+} as const;
+
 const awayLine: MlbSeasonTeamStatLine = {
   hr: 146,
   r: 578,
@@ -14,6 +26,7 @@ const awayLine: MlbSeasonTeamStatLine = {
   era: "3.71",
   so: 1019,
   bb: 350,
+  ...nullRanks,
 };
 
 const homeLine: MlbSeasonTeamStatLine = {
@@ -26,6 +39,7 @@ const homeLine: MlbSeasonTeamStatLine = {
   era: "4.10",
   so: 990,
   bb: 400,
+  ...nullRanks,
 };
 
 const detailWithSeasonStats = {
@@ -64,6 +78,35 @@ describe("MlbSeasonTeamStats", () => {
     expect(section.querySelector('img[src="https://example.com/phi.svg"]')).toBeTruthy();
     expect(screen.getByText("WSH")).toBeInTheDocument();
     expect(screen.getByText("PHI")).toBeInTheDocument();
+  });
+
+  it("shows league rank beside stat value when rank is present", () => {
+    render(
+      <MlbSeasonTeamStats
+        detail={{
+          ...detailWithSeasonStats,
+          seasonTeamStats: {
+            away: { ...awayLine, hrRank: 3 },
+            home: homeLine,
+          },
+        }}
+      />,
+    );
+
+    expect(screen.getByTestId("mlb-season-stat-hr-rank-away")).toHaveTextContent(
+      "#3",
+    );
+  });
+
+  it("omits rank label when rank is null", () => {
+    render(<MlbSeasonTeamStats detail={detailWithSeasonStats} />);
+
+    expect(
+      screen.queryByTestId("mlb-season-stat-hr-rank-away"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("mlb-season-stat-hr-rank-home"),
+    ).not.toBeInTheDocument();
   });
 
   it("hides when seasonTeamStats is null", () => {
