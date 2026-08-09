@@ -113,6 +113,7 @@ export const mlbLiveDetail: MlbGameDetailView = {
       launchAngle: null,
       totalDistance: null,
       scoringTeam: null,
+      batterSummary: null,
     },
     {
       id: "p2",
@@ -127,6 +128,7 @@ export const mlbLiveDetail: MlbGameDetailView = {
       launchAngle: null,
       totalDistance: null,
       scoringTeam: null,
+      batterSummary: null,
     },
     {
       id: "p3",
@@ -141,6 +143,7 @@ export const mlbLiveDetail: MlbGameDetailView = {
       launchAngle: null,
       totalDistance: null,
       scoringTeam: null,
+      batterSummary: null,
     },
   ],
   scoringPlays: [
@@ -157,6 +160,7 @@ export const mlbLiveDetail: MlbGameDetailView = {
       launchAngle: null,
       totalDistance: null,
       scoringTeam: "home",
+      batterSummary: null,
     },
     {
       id: "s2",
@@ -171,6 +175,7 @@ export const mlbLiveDetail: MlbGameDetailView = {
       launchAngle: null,
       totalDistance: null,
       scoringTeam: "away",
+      batterSummary: null,
     },
   ],
   boxScore: {
@@ -346,6 +351,7 @@ export const mlbFinalDetail: MlbGameDetailView = {
       launchAngle: 28.5,
       totalDistance: 412,
       scoringTeam: "home",
+      batterSummary: "2-3 | HR, RBI, 2 R",
     },
   ],
   scoringPlays: [
@@ -362,6 +368,7 @@ export const mlbFinalDetail: MlbGameDetailView = {
       launchAngle: 28.5,
       totalDistance: 412,
       scoringTeam: "home",
+      batterSummary: "2-3 | HR, RBI, 2 R",
     },
   ],
   boxScore: {

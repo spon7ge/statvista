@@ -79,6 +79,7 @@ function buildApiDetail(
         launch_angle: null,
         total_distance: null,
         scoring_team: null,
+        batter_summary: null,
       },
     ],
     scoring_plays: [],
@@ -305,6 +306,7 @@ describe("mapMlbGameDetail", () => {
           launch_angle: 28.5,
           total_distance: 412,
           scoring_team: "home",
+          batter_summary: "2-3 | HR, RBI, 2 R",
         },
       ],
     });
@@ -317,6 +319,7 @@ describe("mapMlbGameDetail", () => {
     expect(view.decisions?.winner).toBe("Brandon Pfaadt");
     expect(view.plays[0].exitVelo).toBe(104.1);
     expect(view.plays[0].scoringTeam).toBe("home");
+    expect(view.plays[0].batterSummary).toBe("2-3 | HR, RBI, 2 R");
     expect(view.teamStats?.home.hr).toBe(1);
   });
 

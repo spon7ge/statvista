@@ -123,6 +123,7 @@ export type MlbPlay = {
   launchAngle: number | null;
   totalDistance: number | null;
   scoringTeam: "away" | "home" | null;
+  batterSummary: string | null;
 };
 
 export type MlbBatterRow = {

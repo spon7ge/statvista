@@ -20,6 +20,7 @@ function mapPlay(play: ApiMlbGameDetail["plays"][number]): MlbPlay {
     launchAngle: play.launch_angle,
     totalDistance: play.total_distance,
     scoringTeam: play.scoring_team,
+    batterSummary: play.batter_summary ?? null,
   };
 }
 
