@@ -384,6 +384,16 @@ def _batter_card_summary(player: dict | None) -> str | None:
     return " · ".join(parts) if parts else None
 
 
+def _batting_game_summary(player: dict | None) -> str | None:
+    if not player:
+        return None
+    batting = _as_dict(_as_dict(player.get("stats")).get("batting"))
+    summary = batting.get("summary")
+    if isinstance(summary, str) and summary.strip():
+        return summary.strip()
+    return None
+
+
 def _pitcher_card_summary(player: dict | None) -> str | None:
     if not player:
         return None
@@ -553,7 +563,9 @@ def _play_id(play: dict, index: int) -> str:
     return f"play-{index}"
 
 
-def _plays(all_plays: list) -> tuple[list[MlbPlay], list[MlbPlay]]:
+def _plays(
+    all_plays: list, box_players: dict[int, dict]
+) -> tuple[list[MlbPlay], list[MlbPlay]]:
     plays: list[MlbPlay] = []
     scoring: list[MlbPlay] = []
     for index, raw in enumerate(all_plays):
@@ -569,6 +581,11 @@ def _plays(all_plays: list) -> tuple[list[MlbPlay], list[MlbPlay]]:
         is_scoring = bool(about.get("isScoringPlay"))
         event = result.get("eventType") or result.get("event")
         exit_velo, launch_angle, total_distance = _hit_metrics(raw)
+        matchup = _as_dict(raw.get("matchup"))
+        batter_id = _person_id(_as_dict(matchup.get("batter")))
+        batter_box = (
+            box_players.get(batter_id) if batter_id is not None else None
+        )
         play = MlbPlay(
             id=_play_id(raw, index),
             inning=inning,
@@ -581,7 +598,10 @@ def _plays(all_plays: list) -> tuple[list[MlbPlay], list[MlbPlay]]:
             exit_velo=exit_velo,
             launch_angle=launch_angle,
             total_distance=total_distance,
-            scoring_team=("away" if half == "top" else "home") if is_scoring else None,
+            scoring_team=("away" if half == "top" else "home")
+            if is_scoring
+            else None,
+            batter_summary=_batting_game_summary(batter_box),
         )
         plays.append(play)
         if is_scoring:
@@ -992,8 +1012,8 @@ def normalize_mlb_live_feed(
     venue = _as_dict(game_data.get("venue")).get("name")
     venue_city, venue_state = _venue_location(game_data)
     weather = _weather(game_data)
-    plays, scoring_plays = _plays(all_plays)
     boxscore = _as_dict(live_data.get("boxscore"))
+    plays, scoring_plays = _plays(all_plays, _boxscore_players(boxscore))
     umpires = _umpires(boxscore)
 
     return MlbGameDetail(

@@ -71,6 +71,31 @@ def test_normalize_situation_player_card_summaries():
     assert "0.1 IP" in situation.pitching.summary
 
 
+def test_normalize_play_batter_summary_from_boxscore():
+    detail = normalize_mlb_live_feed(
+        _payload(), game_pk="776543", fetched_at="2026-08-02T18:00:00+00:00"
+    )
+    rafaela_play = next(
+        (p for p in detail.plays if "Rafaela" in p.text),
+        None,
+    )
+    assert rafaela_play is not None
+    assert rafaela_play.batter_summary == "1-3 | HR, K, RBI"
+
+
+def test_normalize_play_batter_summary_null_when_batter_missing():
+    payload = _payload()
+    for play in payload["liveData"]["plays"]["allPlays"]:
+        matchup = play.get("matchup")
+        if isinstance(matchup, dict):
+            matchup.pop("batter", None)
+    detail = normalize_mlb_live_feed(
+        payload, game_pk="776543", fetched_at="2026-08-02T18:00:00+00:00"
+    )
+    assert detail.plays
+    assert all(p.batter_summary is None for p in detail.plays)
+
+
 def test_normalize_plays_box_and_hits():
     detail = normalize_mlb_live_feed(
         _payload(), game_pk="776543", fetched_at="2026-08-02T18:00:00+00:00"

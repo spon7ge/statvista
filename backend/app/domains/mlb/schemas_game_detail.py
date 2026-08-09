@@ -240,6 +240,7 @@ class MlbPlay(BaseModel):
     launch_angle: float | None = None
     total_distance: float | None = None
     scoring_team: Literal["away", "home"] | None = None
+    batter_summary: str | None = None
 
 
 class MlbBatterRow(BaseModel):
