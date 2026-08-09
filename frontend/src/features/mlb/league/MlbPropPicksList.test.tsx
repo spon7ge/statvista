@@ -5,6 +5,7 @@ import type { ApiMlbPropRow } from "@/shared/lib/api";
 import {
   dfsOddsPayoutLabel,
   formatMlbPropPicksUpdatedAt,
+  MLB_PROP_PICKS_PAGE_SIZE,
   MlbPropPicksList,
   resolveBookLastUpdatedMs,
   splitPropsIntoColumns,
@@ -463,6 +464,36 @@ describe("MlbPropPicksList", () => {
     expect(grid.className).toMatch(/\bflex\b/);
     expect(grid.className).not.toMatch(/columns-/);
     expect(screen.getAllByTestId("mlb-prop-picks-column").length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("paginates to 20 rows with next/previous", async () => {
+    const user = userEvent.setup();
+    const many = Array.from({ length: MLB_PROP_PICKS_PAGE_SIZE + 3 }, (_, i) =>
+      row({
+        player_name: `Player ${i}`,
+        stat: `Hits ${i}`,
+      }),
+    );
+
+    render(
+      <MlbPropPicksList
+        props={many}
+        format="power"
+        legs={4}
+        breakevenPct={54.3}
+      />,
+    );
+
+    expect(screen.getByText("Showing 1–20 of 23")).toBeInTheDocument();
+    expect(screen.getByText("Player 0")).toBeInTheDocument();
+    expect(screen.queryByText("Player 20")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Previous" })).toBeDisabled();
+
+    await user.click(screen.getByRole("button", { name: "Next" }));
+    expect(screen.getByText("Showing 21–23 of 23")).toBeInTheDocument();
+    expect(screen.getByText("Player 20")).toBeInTheDocument();
+    expect(screen.queryByText("Player 0")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Next" })).toBeDisabled();
   });
 });
 

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchMlbProps, type MlbPropsParams } from "@/shared/lib/api";
 
-const REFETCH_MS = 60_000;
+const REFETCH_MS = 15 * 60_000;
 
 export function useMlbProps({ app, format, legs }: MlbPropsParams) {
   return useQuery({

@@ -56,7 +56,7 @@ from app.providers.odds_api.mlb_props import (
 
 logger = logging.getLogger(__name__)
 
-CACHE_TTL_SECONDS = 45.0
+CACHE_TTL_SECONDS = 15 * 60
 FETCH_TIMEOUT_SECONDS = 12.0
 
 # Odds API books merged into assemble (schema keys). Soft books keep

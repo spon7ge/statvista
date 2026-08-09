@@ -7,6 +7,8 @@ import type {
 import { formatAmericanOdds } from "@/features/mlb/lib/mlbOddsBoard";
 import { StatvistaBarsMark } from "@/shared/ui/StatvistaBarsMark";
 
+export const MLB_PROP_PICKS_PAGE_SIZE = 20;
+
 const BOOK_LABELS: Record<string, string> = {
   prophetx: "ProphetX",
   novig: "Novig",
@@ -381,8 +383,25 @@ export function MlbPropPicksList({
   const [expandedKeys, setExpandedKeys] = useState<Set<string>>(
     () => new Set(),
   );
+  const [page, setPage] = useState(0);
   const columnCount = usePropPicksColumnCount();
-  const columns = splitPropsIntoColumns(props, columnCount);
+
+  // Reset when the result set identity changes (not on every new array ref).
+  const listSignature = `${props.length}:${props[0]?.player_name ?? ""}:${props[0]?.stat ?? ""}:${props[0]?.recommended_side ?? ""}:${props[props.length - 1]?.player_name ?? ""}:${props[props.length - 1]?.stat ?? ""}:${props[props.length - 1]?.recommended_side ?? ""}`;
+  useEffect(() => {
+    setPage(0);
+  }, [listSignature]);
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(props.length / MLB_PROP_PICKS_PAGE_SIZE),
+  );
+  const safePage = Math.min(page, totalPages - 1);
+  const start = safePage * MLB_PROP_PICKS_PAGE_SIZE;
+  const pageRows = props.slice(start, start + MLB_PROP_PICKS_PAGE_SIZE);
+  const end = start + pageRows.length;
+  const showPager = props.length > MLB_PROP_PICKS_PAGE_SIZE;
+  const columns = splitPropsIntoColumns(pageRows, columnCount);
 
   function toggleRow(key: string) {
     setExpandedKeys((prev) => {
@@ -419,31 +438,63 @@ export function MlbPropPicksList({
       ) : isError || props.length === 0 ? (
         <p className="px-1 text-[14px] text-white/40">{emptyCopy}</p>
       ) : (
-        <div
-          data-testid="mlb-prop-picks-grid"
-          className="flex gap-3"
-        >
-          {columns.map((colRows, colIdx) => (
-            <div
-              key={colIdx}
-              data-testid="mlb-prop-picks-column"
-              className="flex min-w-0 flex-1 flex-col gap-3"
-            >
-              {colRows.map((row) => {
-                const key = rowKey(row);
-                return (
-                  <PropPickCard
-                    key={key}
-                    row={row}
-                    expanded={expandedKeys.has(key)}
-                    onToggle={() => toggleRow(key)}
-                    lastUpdatedAt={lastUpdatedAt}
-                  />
-                );
-              })}
-            </div>
-          ))}
-        </div>
+        <>
+          <div
+            data-testid="mlb-prop-picks-grid"
+            className="flex gap-3"
+          >
+            {columns.map((colRows, colIdx) => (
+              <div
+                key={colIdx}
+                data-testid="mlb-prop-picks-column"
+                className="flex min-w-0 flex-1 flex-col gap-3"
+              >
+                {colRows.map((row) => {
+                  const key = rowKey(row);
+                  return (
+                    <PropPickCard
+                      key={key}
+                      row={row}
+                      expanded={expandedKeys.has(key)}
+                      onToggle={() => toggleRow(key)}
+                      lastUpdatedAt={lastUpdatedAt}
+                    />
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+          <div className="flex flex-wrap items-center justify-between gap-2 px-1">
+            <p className="text-[14px] text-white/40">
+              Showing {start + 1}–{end} of {props.length}
+            </p>
+            {showPager ? (
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  disabled={safePage <= 0}
+                  onClick={() => setPage((p) => Math.max(0, p - 1))}
+                  className="rounded-md border border-white/10 px-2.5 py-0.5 text-[14px] text-white/55 enabled:hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
+                >
+                  Previous
+                </button>
+                <span className="text-[14px] text-white/35">
+                  Page {safePage + 1} of {totalPages}
+                </span>
+                <button
+                  type="button"
+                  disabled={safePage >= totalPages - 1}
+                  onClick={() =>
+                    setPage((p) => Math.min(totalPages - 1, p + 1))
+                  }
+                  className="rounded-md border border-white/10 px-2.5 py-0.5 text-[14px] text-white/55 enabled:hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
+                >
+                  Next
+                </button>
+              </div>
+            ) : null}
+          </div>
+        </>
       )}
 
       {!isLoading && props.length > 0 ? (

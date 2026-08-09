@@ -14,6 +14,7 @@ describe("MlbLiveCenter", () => {
     expect(screen.getByTestId("mlb-broadcast-header")).toBeInTheDocument();
 
     const summary = screen.getByRole("tabpanel", { name: /summary/i });
+    expect(summary).toHaveClass("lg:grid-cols-2");
     const matchup = within(summary).getByTestId("mlb-live-matchup");
     const pitchZone = within(summary).getByTestId("mlb-pitch-zone");
     const playFeed = within(summary).getByTestId("mlb-final-play-feed");
