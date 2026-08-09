@@ -70,3 +70,11 @@ def test_odds_api_pitcher_strikeouts():
 
 def test_odds_api_unknown_returns_none():
     assert canonical_stat_key_from_odds_api_mlb("h2h") is None
+
+
+def test_game_prop_category_order_includes_core_hitting():
+    from app.domains.mlb.prop_stat_keys import GAME_PROP_CATEGORY_ORDER
+    assert "home_runs" in GAME_PROP_CATEGORY_ORDER
+    assert "hits" in GAME_PROP_CATEGORY_ORDER
+    assert "total_bases" in GAME_PROP_CATEGORY_ORDER
+    assert GAME_PROP_CATEGORY_ORDER.index("home_runs") < GAME_PROP_CATEGORY_ORDER.index("hits")

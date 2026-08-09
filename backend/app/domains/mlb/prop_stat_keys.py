@@ -129,6 +129,30 @@ _LABELS: dict[str, str] = {
     "plate_appearances": "Plate Appearances",
 }
 
+# Display order for game Preview / DFS category cards.
+GAME_PROP_CATEGORY_ORDER: tuple[str, ...] = (
+    "home_runs",
+    "hits",
+    "hits_runs_rbis",
+    "total_bases",
+    "rbis",
+    "runs",
+    "singles",
+    "doubles",
+    "triples",
+    "stolen_bases",
+    "walks",
+    "batter_strikeouts",
+    "pitcher_strikeouts",
+    "hits_allowed",
+    "walks_allowed",
+    "earned_runs_allowed",
+    "runs_allowed",
+    "pitching_outs",
+    "pitches_thrown",
+    "plate_appearances",
+)
+
 
 def _norm(raw: str) -> str:
     return raw.strip().lower().replace(" ", "_").replace("+", "_")

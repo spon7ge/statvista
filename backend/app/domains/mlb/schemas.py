@@ -61,6 +61,12 @@ from app.domains.mlb.schemas_odds import (
     MlbOddsGame,
     MlbOddsResponse,
 )
+from app.domains.mlb.schemas_game_props import (
+    MlbGamePropBestQuote,
+    MlbGamePropCategory,
+    MlbGamePropPlayer,
+    MlbGamePropsResponse,
+)
 from app.domains.mlb.schemas_props import (
     MlbPropBooks,
     MlbPropBookQuote,
@@ -96,6 +102,10 @@ __all__ = [
     "MlbFuturesMarket",
     "MlbFuturesResponse",
     "MlbGame",
+    "MlbGamePropBestQuote",
+    "MlbGamePropCategory",
+    "MlbGamePropPlayer",
+    "MlbGamePropsResponse",
     "MlbGameDetail",
     "MlbGameDetailTeam",
     "MlbGameUmpires",
