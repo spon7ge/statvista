@@ -1,7 +1,7 @@
 # MLB Preview Game Leaders (batters)
 
 Date: 2026-08-08  
-Status: Approved for planning  
+Status: Implemented  
 Supersedes (UI + leaders payload shape): Matchup Leaders portion of [2026-08-08-mlb-preview-team-ranks-matchup-leaders-design.md](./2026-08-08-mlb-preview-team-ranks-matchup-leaders-design.md)  
 Keeps: Team Stats league ranks (unchanged)
 

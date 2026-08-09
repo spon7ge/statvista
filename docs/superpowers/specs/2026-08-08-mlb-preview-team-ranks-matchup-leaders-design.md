@@ -1,7 +1,7 @@
 # MLB Preview Team Ranks & Matchup Leaders
 
 Date: 2026-08-08  
-Status: Implemented
+Status: Implemented (Team Stats ranks only — Matchup Leaders UI superseded by [Game Leaders](./2026-08-08-mlb-preview-game-leaders-design.md))
 
 ## Goal
 
