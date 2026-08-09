@@ -1016,6 +1016,7 @@ export interface components {
             game_date: string | null;
             /** Game Date Label */
             game_date_label: string | null;
+            game_leaders: components["schemas"]["MlbGameLeaders"] | null;
             /**
              * Hit Chart
              * @default []
@@ -1030,7 +1031,6 @@ export interface components {
              */
             league: "mlb";
             linescore: components["schemas"]["MlbLinescore"] | null;
-            matchup_leaders: components["schemas"]["MlbMatchupLeaders"] | null;
             matchup_prediction: components["schemas"]["MlbMatchupPrediction"] | null;
             /** Mlb Game Pk */
             mlb_game_pk: string;
@@ -1084,6 +1084,38 @@ export interface components {
             record: string | null;
             /** Score */
             score: number | null;
+        };
+        /** MlbGameLeaderCard */
+        MlbGameLeaderCard: {
+            /** Headshot Url */
+            headshot_url: string | null;
+            /**
+             * Key
+             * @enum {string}
+             */
+            key: "hr" | "avg" | "ops";
+            /** Label */
+            label: string;
+            /** Last Name */
+            last_name: string;
+            /** Player Id */
+            player_id: string;
+            /** Rank */
+            rank: number | null;
+            /**
+             * Side
+             * @enum {string}
+             */
+            side: "away" | "home";
+            /** Team Abbrev */
+            team_abbrev: string;
+            /** Value */
+            value: string;
+        };
+        /** MlbGameLeaders */
+        MlbGameLeaders: {
+            /** Leaders */
+            leaders: components["schemas"]["MlbGameLeaderCard"][];
         };
         /** MlbGameUmpires */
         MlbGameUmpires: {
@@ -1342,41 +1374,6 @@ export interface components {
              * @default rotowire
              */
             source: string;
-        };
-        /** MlbMatchupLeaderCategory */
-        MlbMatchupLeaderCategory: {
-            /**
-             * Key
-             * @enum {string}
-             */
-            key: "hr" | "avg" | "ops" | "era" | "so" | "whip";
-            /** Label */
-            label: string;
-            /** Leaders */
-            leaders: components["schemas"]["MlbMatchupLeaderEntry"][];
-        };
-        /** MlbMatchupLeaderEntry */
-        MlbMatchupLeaderEntry: {
-            /** Name */
-            name: string;
-            /** Player Id */
-            player_id: string;
-            /** Rank */
-            rank: number;
-            /**
-             * Side
-             * @enum {string}
-             */
-            side: "away" | "home";
-            /** Team Abbrev */
-            team_abbrev: string;
-            /** Value */
-            value: string;
-        };
-        /** MlbMatchupLeaders */
-        MlbMatchupLeaders: {
-            /** Categories */
-            categories: components["schemas"]["MlbMatchupLeaderCategory"][];
         };
         /** MlbMatchupPrediction */
         MlbMatchupPrediction: {

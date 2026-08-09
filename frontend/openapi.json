@@ -1517,6 +1517,16 @@
             ],
             "title": "Game Date Label"
           },
+          "game_leaders": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbGameLeaders"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "hit_chart": {
             "default": [],
             "items": {
@@ -1548,16 +1558,6 @@
             "anyOf": [
               {
                 "$ref": "#/components/schemas/MlbLinescore"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "matchup_leaders": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/MlbMatchupLeaders"
               },
               {
                 "type": "null"
@@ -1734,7 +1734,7 @@
           "decisions",
           "team_stats",
           "season_team_stats",
-          "matchup_leaders",
+          "game_leaders",
           "injuries",
           "sources",
           "fetched_at"
@@ -1816,6 +1816,98 @@
           "last_10"
         ],
         "title": "MlbGameDetailTeam",
+        "type": "object"
+      },
+      "MlbGameLeaderCard": {
+        "properties": {
+          "headshot_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Headshot Url"
+          },
+          "key": {
+            "enum": [
+              "hr",
+              "avg",
+              "ops"
+            ],
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "last_name": {
+            "title": "Last Name",
+            "type": "string"
+          },
+          "player_id": {
+            "title": "Player Id",
+            "type": "string"
+          },
+          "rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rank"
+          },
+          "side": {
+            "enum": [
+              "away",
+              "home"
+            ],
+            "title": "Side",
+            "type": "string"
+          },
+          "team_abbrev": {
+            "title": "Team Abbrev",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "rank",
+          "value",
+          "player_id",
+          "last_name",
+          "team_abbrev",
+          "side",
+          "headshot_url"
+        ],
+        "title": "MlbGameLeaderCard",
+        "type": "object"
+      },
+      "MlbGameLeaders": {
+        "properties": {
+          "leaders": {
+            "items": {
+              "$ref": "#/components/schemas/MlbGameLeaderCard"
+            },
+            "title": "Leaders",
+            "type": "array"
+          }
+        },
+        "required": [
+          "leaders"
+        ],
+        "title": "MlbGameLeaders",
         "type": "object"
       },
       "MlbGameUmpires": {
@@ -2799,98 +2891,6 @@
           "fetched_at"
         ],
         "title": "MlbLineupsResponse",
-        "type": "object"
-      },
-      "MlbMatchupLeaderCategory": {
-        "properties": {
-          "key": {
-            "enum": [
-              "hr",
-              "avg",
-              "ops",
-              "era",
-              "so",
-              "whip"
-            ],
-            "title": "Key",
-            "type": "string"
-          },
-          "label": {
-            "title": "Label",
-            "type": "string"
-          },
-          "leaders": {
-            "items": {
-              "$ref": "#/components/schemas/MlbMatchupLeaderEntry"
-            },
-            "title": "Leaders",
-            "type": "array"
-          }
-        },
-        "required": [
-          "key",
-          "label",
-          "leaders"
-        ],
-        "title": "MlbMatchupLeaderCategory",
-        "type": "object"
-      },
-      "MlbMatchupLeaderEntry": {
-        "properties": {
-          "name": {
-            "title": "Name",
-            "type": "string"
-          },
-          "player_id": {
-            "title": "Player Id",
-            "type": "string"
-          },
-          "rank": {
-            "title": "Rank",
-            "type": "integer"
-          },
-          "side": {
-            "enum": [
-              "away",
-              "home"
-            ],
-            "title": "Side",
-            "type": "string"
-          },
-          "team_abbrev": {
-            "title": "Team Abbrev",
-            "type": "string"
-          },
-          "value": {
-            "title": "Value",
-            "type": "string"
-          }
-        },
-        "required": [
-          "rank",
-          "player_id",
-          "name",
-          "team_abbrev",
-          "side",
-          "value"
-        ],
-        "title": "MlbMatchupLeaderEntry",
-        "type": "object"
-      },
-      "MlbMatchupLeaders": {
-        "properties": {
-          "categories": {
-            "items": {
-              "$ref": "#/components/schemas/MlbMatchupLeaderCategory"
-            },
-            "title": "Categories",
-            "type": "array"
-          }
-        },
-        "required": [
-          "categories"
-        ],
-        "title": "MlbMatchupLeaders",
         "type": "object"
       },
       "MlbMatchupPrediction": {
