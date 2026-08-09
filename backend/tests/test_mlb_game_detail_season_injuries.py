@@ -6,6 +6,7 @@ import pytest
 
 from app.domains.mlb.game_detail import (
     attach_injuries,
+    attach_matchup_leaders,
     attach_matchup_prediction,
     attach_season_team_stats,
     clear_mlb_game_detail_cache,
@@ -19,6 +20,9 @@ from app.domains.mlb.schemas import (
 from app.domains.mlb.schemas_game_detail import (
     MlbInjuries,
     MlbInjury,
+    MlbMatchupLeaderCategory,
+    MlbMatchupLeaderEntry,
+    MlbMatchupLeaders,
     MlbSeasonTeamStatLine,
     MlbSeasonTeamStatsPair,
 )
@@ -96,6 +100,35 @@ def test_attach_matchup_prediction():
 def test_attach_matchup_prediction_none_noop():
     detail = _scheduled_detail()
     assert attach_matchup_prediction(detail, None) is detail
+
+
+def test_attach_matchup_leaders():
+    leaders = MlbMatchupLeaders(
+        categories=[
+            MlbMatchupLeaderCategory(
+                key="hr",
+                label="HR",
+                leaders=[
+                    MlbMatchupLeaderEntry(
+                        rank=2,
+                        player_id="123",
+                        name="Slugger",
+                        team_abbrev="LAD",
+                        side="away",
+                        value="28",
+                    )
+                ],
+            )
+        ]
+    )
+    out = attach_matchup_leaders(_scheduled_detail(), leaders)
+    assert out.matchup_leaders is not None
+    assert out.matchup_leaders.categories[0].leaders[0].name == "Slugger"
+
+
+def test_attach_matchup_leaders_none_noop():
+    detail = _scheduled_detail()
+    assert attach_matchup_leaders(detail, None) is detail
 
 
 @pytest.mark.asyncio

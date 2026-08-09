@@ -24,6 +24,7 @@ from app.domains.mlb.schemas import (
     MlbLinescore,
     MlbLinescoreInning,
     MlbLinescoreTotals,
+    MlbMatchupLeaders,
     MlbMatchupPrediction,
     MlbPitch,
     MlbPitcherRow,
@@ -1093,6 +1094,15 @@ def attach_season_team_stats(
     if pair is None:
         return detail
     return detail.model_copy(update={"season_team_stats": pair})
+
+
+def attach_matchup_leaders(
+    detail: MlbGameDetail,
+    leaders: MlbMatchupLeaders | None,
+) -> MlbGameDetail:
+    if leaders is None:
+        return detail
+    return detail.model_copy(update={"matchup_leaders": leaders})
 
 
 def attach_injuries(

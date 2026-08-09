@@ -21,6 +21,9 @@ __all__ = [
     "MlbLinescore",
     "MlbLinescoreInning",
     "MlbLinescoreTotals",
+    "MlbMatchupLeaderCategory",
+    "MlbMatchupLeaderEntry",
+    "MlbMatchupLeaders",
     "MlbMatchupPrediction",
     "MlbPitch",
     "MlbPitcherRow",
@@ -95,6 +98,40 @@ class MlbSeasonTeamStatLine(BaseModel):
     era: str | None = None
     so: int | None = None
     bb: int | None = None
+    hr_rank: int | None = None
+    r_rank: int | None = None
+    h_rank: int | None = None
+    avg_rank: int | None = None
+    obp_rank: int | None = None
+    slg_rank: int | None = None
+    era_rank: int | None = None
+    so_rank: int | None = None
+    bb_rank: int | None = None
+
+
+class MlbMatchupLeaderEntry(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    rank: int
+    player_id: str
+    name: str
+    team_abbrev: str
+    side: Literal["away", "home"]
+    value: str
+
+
+class MlbMatchupLeaderCategory(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    key: Literal["hr", "avg", "ops", "era", "so", "whip"]
+    label: str
+    leaders: list[MlbMatchupLeaderEntry]
+
+
+class MlbMatchupLeaders(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    categories: list[MlbMatchupLeaderCategory]
 
 
 class MlbSeasonTeamStatsPair(BaseModel):
@@ -373,6 +410,7 @@ class MlbGameDetail(BaseModel):
     decisions: MlbDecisions | None = None
     team_stats: MlbTeamStatsPair | None = None
     season_team_stats: MlbSeasonTeamStatsPair | None = None
+    matchup_leaders: MlbMatchupLeaders | None = None
     injuries: MlbInjuries | None = None
     sources: list[str]
     fetched_at: str
