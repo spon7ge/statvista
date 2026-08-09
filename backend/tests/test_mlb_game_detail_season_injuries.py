@@ -5,8 +5,8 @@ from unittest.mock import AsyncMock, patch
 import pytest
 
 from app.domains.mlb.game_detail import (
+    attach_game_leaders,
     attach_injuries,
-    attach_matchup_leaders,
     attach_matchup_prediction,
     attach_season_team_stats,
     clear_mlb_game_detail_cache,
@@ -18,11 +18,10 @@ from app.domains.mlb.schemas import (
     MlbMatchupPrediction,
 )
 from app.domains.mlb.schemas_game_detail import (
+    MlbGameLeaderCard,
+    MlbGameLeaders,
     MlbInjuries,
     MlbInjury,
-    MlbMatchupLeaderCategory,
-    MlbMatchupLeaderEntry,
-    MlbMatchupLeaders,
     MlbSeasonTeamStatLine,
     MlbSeasonTeamStatsPair,
 )
@@ -102,33 +101,30 @@ def test_attach_matchup_prediction_none_noop():
     assert attach_matchup_prediction(detail, None) is detail
 
 
-def test_attach_matchup_leaders():
-    leaders = MlbMatchupLeaders(
-        categories=[
-            MlbMatchupLeaderCategory(
+def test_attach_game_leaders():
+    leaders = MlbGameLeaders(
+        leaders=[
+            MlbGameLeaderCard(
                 key="hr",
                 label="HR",
-                leaders=[
-                    MlbMatchupLeaderEntry(
-                        rank=2,
-                        player_id="123",
-                        name="Slugger",
-                        team_abbrev="LAD",
-                        side="away",
-                        value="28",
-                    )
-                ],
+                rank=4,
+                value="33",
+                player_id="123",
+                last_name="Olson",
+                team_abbrev="ATL",
+                side="away",
+                headshot_url="https://a.espncdn.com/i/headshots/mlb/players/full/1.png",
             )
         ]
     )
-    out = attach_matchup_leaders(_scheduled_detail(), leaders)
-    assert out.matchup_leaders is not None
-    assert out.matchup_leaders.categories[0].leaders[0].name == "Slugger"
+    out = attach_game_leaders(_scheduled_detail(), leaders)
+    assert out.game_leaders is not None
+    assert out.game_leaders.leaders[0].last_name == "Olson"
 
 
-def test_attach_matchup_leaders_none_noop():
+def test_attach_game_leaders_none_noop():
     detail = _scheduled_detail()
-    assert attach_matchup_leaders(detail, None) is detail
+    assert attach_game_leaders(detail, None) is detail
 
 
 @pytest.mark.asyncio
