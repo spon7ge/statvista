@@ -1,5 +1,5 @@
 import type { ApiMlbGameDetail } from "@/shared/lib/api";
-import type { MlbGameDetailView, MlbMatchupLeaders, MlbPlay } from "./types";
+import type { MlbGameDetailView, MlbGameLeaders, MlbPlay } from "./types";
 
 function mapPlay(play: ApiMlbGameDetail["plays"][number]): MlbPlay {
   return {
@@ -73,22 +73,21 @@ function mapSeasonTeamStatLine(
   };
 }
 
-function mapMatchupLeaders(
-  leaders: ApiMlbGameDetail["matchup_leaders"],
-): MlbMatchupLeaders | null {
+function mapGameLeaders(
+  leaders: ApiMlbGameDetail["game_leaders"],
+): MlbGameLeaders | null {
   if (!leaders) return null;
   return {
-    categories: leaders.categories.map((category) => ({
-      key: category.key,
-      label: category.label,
-      leaders: category.leaders.map((leader) => ({
-        rank: leader.rank,
-        playerId: leader.player_id,
-        name: leader.name,
-        teamAbbrev: leader.team_abbrev,
-        side: leader.side,
-        value: leader.value,
-      })),
+    leaders: leaders.leaders.map((leader) => ({
+      key: leader.key,
+      label: leader.label,
+      rank: leader.rank,
+      value: leader.value,
+      playerId: leader.player_id,
+      lastName: leader.last_name,
+      teamAbbrev: leader.team_abbrev,
+      side: leader.side,
+      headshotUrl: leader.headshot_url,
     })),
   };
 }
@@ -363,7 +362,7 @@ export function mapMlbGameDetail(detail: ApiMlbGameDetail): MlbGameDetailView {
           sourceLabel: detail.matchup_prediction.source_label,
         }
       : null,
-    matchupLeaders: mapMatchupLeaders(detail.matchup_leaders),
+    gameLeaders: mapGameLeaders(detail.game_leaders),
     hitChart: detail.hit_chart.map((point) => ({
       id: point.id,
       team: point.team,

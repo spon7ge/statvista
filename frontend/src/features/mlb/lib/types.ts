@@ -233,23 +233,20 @@ export type MlbMatchupPrediction = {
   sourceLabel: string;
 };
 
-export type MlbMatchupLeaderEntry = {
-  rank: number;
+export type MlbGameLeaderCard = {
+  key: "hr" | "avg" | "ops";
+  label: string;
+  rank: number | null;
+  value: string;
   playerId: string;
-  name: string;
+  lastName: string;
   teamAbbrev: string;
   side: "away" | "home";
-  value: string;
+  headshotUrl: string | null;
 };
 
-export type MlbMatchupLeaderCategory = {
-  key: "hr" | "avg" | "ops" | "era" | "so" | "whip";
-  label: string;
-  leaders: MlbMatchupLeaderEntry[];
-};
-
-export type MlbMatchupLeaders = {
-  categories: MlbMatchupLeaderCategory[];
+export type MlbGameLeaders = {
+  leaders: MlbGameLeaderCard[];
 };
 
 export type MlbGameDetailView = {
@@ -280,7 +277,7 @@ export type MlbGameDetailView = {
   injuries: { away: MlbInjury[]; home: MlbInjury[] } | null;
   winProbability: MlbWinProbability | null;
   matchupPrediction: MlbMatchupPrediction | null;
-  matchupLeaders: MlbMatchupLeaders | null;
+  gameLeaders: MlbGameLeaders | null;
   hitChart: MlbHitPoint[];
   sources: string[];
   fetchedAt: string;

@@ -159,7 +159,7 @@ function buildApiDetail(
     sources: ["statsapi", "espn"],
     fetched_at: "2026-08-02T00:00:00Z",
     matchup_prediction: null,
-    matchup_leaders: null,
+    game_leaders: null,
     ...overrides,
   };
 }
@@ -386,7 +386,7 @@ describe("mapMlbGameDetail", () => {
     expect(mapped.matchupPrediction).toBeNull();
   });
 
-  it("maps season team stat ranks and matchup_leaders", () => {
+  it("maps season team stat ranks and game_leaders", () => {
     const mapped = mapMlbGameDetail(
       buildApiDetail({
         season_team_stats: {
@@ -431,21 +431,19 @@ describe("mapMlbGameDetail", () => {
             bb_rank: 9,
           },
         },
-        matchup_leaders: {
-          categories: [
+        game_leaders: {
+          leaders: [
             {
               key: "hr",
               label: "HR",
-              leaders: [
-                {
-                  rank: 2,
-                  player_id: "123",
-                  name: "Slugger",
-                  team_abbrev: "LAD",
-                  side: "away",
-                  value: "28",
-                },
-              ],
+              rank: 2,
+              value: "28",
+              player_id: "123",
+              last_name: "Slugger",
+              team_abbrev: "LAD",
+              side: "away",
+              headshot_url:
+                "https://a.espncdn.com/i/headshots/mlb/players/full/123.png",
             },
           ],
         },
@@ -454,29 +452,27 @@ describe("mapMlbGameDetail", () => {
 
     expect(mapped.seasonTeamStats?.away.hrRank).toBe(5);
     expect(mapped.seasonTeamStats?.home.bbRank).toBe(9);
-    expect(mapped.matchupLeaders).toEqual({
-      categories: [
+    expect(mapped.gameLeaders).toEqual({
+      leaders: [
         {
           key: "hr",
           label: "HR",
-          leaders: [
-            {
-              rank: 2,
-              playerId: "123",
-              name: "Slugger",
-              teamAbbrev: "LAD",
-              side: "away",
-              value: "28",
-            },
-          ],
+          rank: 2,
+          value: "28",
+          playerId: "123",
+          lastName: "Slugger",
+          teamAbbrev: "LAD",
+          side: "away",
+          headshotUrl:
+            "https://a.espncdn.com/i/headshots/mlb/players/full/123.png",
         },
       ],
     });
   });
 
-  it("maps null matchup_leaders to null", () => {
-    const mapped = mapMlbGameDetail(buildApiDetail({ matchup_leaders: null }));
-    expect(mapped.matchupLeaders).toBeNull();
+  it("maps null game_leaders to null", () => {
+    const mapped = mapMlbGameDetail(buildApiDetail({ game_leaders: null }));
+    expect(mapped.gameLeaders).toBeNull();
   });
 
   it("maps situation headshots and pitch spin", () => {
