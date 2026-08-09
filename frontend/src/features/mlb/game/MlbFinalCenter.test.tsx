@@ -58,4 +58,30 @@ describe("MlbFinalCenter", () => {
     expect(screen.queryByTestId("mlb-hit-chart")).not.toBeInTheDocument();
     expect(screen.queryByTestId("mlb-game-info")).not.toBeInTheDocument();
   });
+
+  it("renders Player of the Game above play feed when present", () => {
+    render(
+      <MlbFinalCenter
+        detail={{
+          ...mlbFinalDetail,
+          playerOfTheGame: {
+            playerId: "592450",
+            fullName: "Aaron Judge",
+            lastName: "Judge",
+            teamAbbrev: "NYY",
+            headshotUrl: "https://example.test/judge.png",
+            stats: [{ label: null, value: "3-4 · 2 HR · 5 RBI" }],
+            source: "mlb_player_of_the_game",
+          },
+        }}
+      />,
+    );
+
+    const potg = screen.getByTestId("mlb-player-of-the-game");
+    const playFeed = screen.getByTestId("mlb-final-play-feed");
+    expect(
+      potg.compareDocumentPosition(playFeed) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
 });

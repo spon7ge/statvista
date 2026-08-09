@@ -9,6 +9,7 @@ import { MlbFinalPlayFeed } from "./MlbFinalPlayFeed";
 import { MlbFinalTeamStats } from "./MlbFinalTeamStats";
 import { MlbHitChart } from "./MlbHitChart";
 import { MlbGameInfo } from "./MlbGameInfo";
+import { MlbPlayerOfTheGame } from "./MlbPlayerOfTheGame";
 import { MlbWinProbability } from "./MlbWinProbability";
 import type { MlbGameDetailView } from "../lib/types";
 
@@ -29,7 +30,10 @@ export function MlbFinalCenter({ detail }: { detail: MlbGameDetailView }) {
           aria-labelledby="mlb-final-summary-tab"
           className="grid items-start gap-4 text-[18px] lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]"
         >
-          <MlbFinalPlayFeed detail={detail} />
+          <div className="space-y-4">
+            <MlbPlayerOfTheGame detail={detail} />
+            <MlbFinalPlayFeed detail={detail} />
+          </div>
           <div className="space-y-4">
             <MlbFinalLinescoreCard detail={detail} />
             <MlbFinalTeamStats detail={detail} />
