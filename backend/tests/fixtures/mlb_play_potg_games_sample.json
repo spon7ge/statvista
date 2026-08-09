@@ -1,0 +1,24 @@
+[
+  {
+    "id": 3661,
+    "name": "Philadelphia Phillies vs Toronto Blue Jays",
+    "startDate": "2026-08-08 20:13:01",
+    "endDate": "2026-08-08 22:12:00",
+    "status": "resulted",
+    "gameId": 1831,
+    "gameFeedId": "823426",
+    "homeSquadId": 11,
+    "awaySquadId": 9,
+    "homeSquadScore": 5,
+    "awaySquadScore": 7,
+    "winnerId": 1091,
+    "opponentWinnerId": 1091,
+    "totalVotes": 1532,
+    "inning": 11,
+    "inningState": "bottom",
+    "gameStatus": "complete",
+    "gameStartTimeTBD": false,
+    "gameStartDate": "2026-08-08T18:05:00-04:00",
+    "roundId": 143
+  }
+]

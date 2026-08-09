@@ -1,0 +1,50 @@
+{
+  "playerId": 1091,
+  "feedId": "664770",
+  "squadId": 9,
+  "name": "Nathan Lukes",
+  "firstName": "Nathan",
+  "lastName": "Lukes",
+  "position": "right_field",
+  "handedness": "left",
+  "winProbability": 51.5,
+  "isFeatured": true,
+  "status": "active",
+  "ineligible": false,
+  "votes": 658,
+  "selectedStats": [],
+  "stats": {
+    "hitting": {
+      "atBats": 6,
+      "hits": 3,
+      "runs": 1,
+      "rbi": 2,
+      "walk": 0,
+      "strikeout": 0,
+      "sacFlies": 0,
+      "double": 0,
+      "triple": 0,
+      "homeRun": 1,
+      "hitByPitch": 0,
+      "caughtStealing": 0,
+      "stolenBases": 0,
+      "leftOnBase": 1,
+      "gidp": 0,
+      "summaryFeed": "3-6 | HR, 2 RBI, R",
+      "summary": "3-6 | HR, 2 RBI, R"
+    },
+    "pitching": {
+      "inningsPitched": 0,
+      "hits": 0,
+      "runs": 0,
+      "earnedRuns": 0,
+      "baseOnBalls": 0,
+      "strikeout": 0,
+      "homeRuns": 0,
+      "era": 0,
+      "summaryFeed": null,
+      "summary": null
+    }
+  },
+  "totalStats": []
+}
