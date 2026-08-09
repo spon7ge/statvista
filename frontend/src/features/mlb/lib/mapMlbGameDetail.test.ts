@@ -159,6 +159,7 @@ function buildApiDetail(
     sources: ["statsapi", "espn"],
     fetched_at: "2026-08-02T00:00:00Z",
     matchup_prediction: null,
+    matchup_leaders: null,
     ...overrides,
   };
 }
@@ -383,6 +384,99 @@ describe("mapMlbGameDetail", () => {
   it("maps null matchup_prediction to null", () => {
     const mapped = mapMlbGameDetail(buildApiDetail({ matchup_prediction: null }));
     expect(mapped.matchupPrediction).toBeNull();
+  });
+
+  it("maps season team stat ranks and matchup_leaders", () => {
+    const mapped = mapMlbGameDetail(
+      buildApiDetail({
+        season_team_stats: {
+          away: {
+            hr: 180,
+            r: 700,
+            h: 1300,
+            avg: ".250",
+            obp: ".320",
+            slg: ".420",
+            era: "4.20",
+            so: 1200,
+            bb: 500,
+            hr_rank: 5,
+            r_rank: 10,
+            h_rank: 8,
+            avg_rank: 12,
+            obp_rank: 11,
+            slg_rank: 9,
+            era_rank: 15,
+            so_rank: 6,
+            bb_rank: 14,
+          },
+          home: {
+            hr: 200,
+            r: 750,
+            h: 1400,
+            avg: ".265",
+            obp: ".335",
+            slg: ".445",
+            era: "3.80",
+            so: 1300,
+            bb: 480,
+            hr_rank: 1,
+            r_rank: 2,
+            h_rank: 3,
+            avg_rank: 4,
+            obp_rank: 5,
+            slg_rank: 6,
+            era_rank: 7,
+            so_rank: 8,
+            bb_rank: 9,
+          },
+        },
+        matchup_leaders: {
+          categories: [
+            {
+              key: "hr",
+              label: "HR",
+              leaders: [
+                {
+                  rank: 2,
+                  player_id: "123",
+                  name: "Slugger",
+                  team_abbrev: "LAD",
+                  side: "away",
+                  value: "28",
+                },
+              ],
+            },
+          ],
+        },
+      }),
+    );
+
+    expect(mapped.seasonTeamStats?.away.hrRank).toBe(5);
+    expect(mapped.seasonTeamStats?.home.bbRank).toBe(9);
+    expect(mapped.matchupLeaders).toEqual({
+      categories: [
+        {
+          key: "hr",
+          label: "HR",
+          leaders: [
+            {
+              rank: 2,
+              playerId: "123",
+              name: "Slugger",
+              teamAbbrev: "LAD",
+              side: "away",
+              value: "28",
+            },
+          ],
+        },
+      ],
+    });
+  });
+
+  it("maps null matchup_leaders to null", () => {
+    const mapped = mapMlbGameDetail(buildApiDetail({ matchup_leaders: null }));
+    expect(mapped.matchupLeaders).toBeNull();
   });
 
   it("maps situation headshots and pitch spin", () => {
