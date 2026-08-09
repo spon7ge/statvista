@@ -5,7 +5,7 @@ import { MlbFinalCenter } from "./MlbFinalCenter";
 import { mlbFinalDetail } from "../lib/testFixtures";
 
 describe("MlbFinalCenter", () => {
-  it("renders Summary with charts under team stats; hides charts on Box", async () => {
+  it("renders Summary with charts under team stats; hides charts on Boxscore", async () => {
     const user = userEvent.setup();
     render(<MlbFinalCenter detail={mlbFinalDetail} />);
     const root = screen.getByTestId("mlb-final-center");
@@ -29,6 +29,7 @@ describe("MlbFinalCenter", () => {
     const summary = screen.getByRole("tabpanel", {
       name: /summary/i,
     });
+    expect(summary).toHaveClass("lg:grid-cols-2");
     const teamStats = within(summary).getByTestId("mlb-final-team-stats");
     const gameFlow = within(summary).getByTestId("mlb-game-flow");
     const hitChart = within(summary).getByTestId("mlb-hit-chart");
@@ -46,7 +47,7 @@ describe("MlbFinalCenter", () => {
         Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
 
-    await user.click(screen.getByRole("tab", { name: /box/i }));
+    await user.click(screen.getByRole("tab", { name: /boxscore/i }));
 
     expect(screen.getByTestId("mlb-box-score")).toBeInTheDocument();
     expect(screen.getByTestId("mlb-box-score-layout")).toHaveClass(

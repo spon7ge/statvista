@@ -89,9 +89,11 @@ function StatcastMetrics({ play }: { play: MlbPlay }) {
 function PlayRow({
   play,
   isFirst,
+  teamColor,
 }: {
   play: MlbPlay;
   isFirst: boolean;
+  teamColor: string;
 }) {
   const event = eventLabel(play.event);
   const batterSummary = play.batterSummary?.trim() || null;
@@ -104,14 +106,10 @@ function PlayRow({
           {event ? (
             <span
               data-testid="mlb-play-event-pill"
-              className="shrink-0 rounded-full bg-black/20 px-2 py-1 text-[14px] font-semibold uppercase tracking-wide text-white/80"
+              className="shrink-0 rounded-full bg-white px-2 py-1 text-[14px] font-semibold uppercase tracking-wide"
+              style={{ color: teamColor }}
             >
               {event}
-            </span>
-          ) : null}
-          {event && batterSummary ? (
-            <span className="text-white/40" aria-hidden>
-              –
             </span>
           ) : null}
           {batterSummary ? (
@@ -137,12 +135,13 @@ function HalfInningCard({
   group: HalfInningGroup;
 }) {
   const title = `${group.half === "top" ? "Top" : "Bottom"} ${ordinal(group.inning)}`;
+  const teamColor = battingTeamColor(detail, group.half);
 
   return (
     <li
       className="overflow-hidden rounded-lg"
       data-testid={`mlb-play-half-${group.half}-${group.inning}`}
-      style={{ backgroundColor: battingTeamColor(detail, group.half) }}
+      style={{ backgroundColor: teamColor }}
     >
       <div className="bg-black/55 p-3">
         <h3 className="text-[18px] font-medium uppercase tracking-wide text-white/60">
@@ -150,7 +149,12 @@ function HalfInningCard({
         </h3>
         <ul className="mt-3 space-y-3">
           {group.plays.map((play, index) => (
-            <PlayRow key={play.id} play={play} isFirst={index === 0} />
+            <PlayRow
+              key={play.id}
+              play={play}
+              isFirst={index === 0}
+              teamColor={teamColor}
+            />
           ))}
         </ul>
       </div>

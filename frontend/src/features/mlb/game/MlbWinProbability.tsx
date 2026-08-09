@@ -5,6 +5,7 @@ import {
   buildSplitSeriesPaths,
   getChartGeometry,
   nearestIndexForClientX,
+  separatePctLabelYs,
   toDisplayPct,
   xForIndex,
   yForPct,
@@ -86,9 +87,12 @@ export function MlbWinProbability({
 
   const homeY = activePoint ? yForPct(activePoint.homeWinPct, geometry) : 0;
   const awayY = activePoint ? yForPct(activePoint.awayWinPct, geometry) : 0;
-  const topSeriesY = Math.min(homeY, awayY);
+  const { homeLabelY, awayLabelY } = activePoint
+    ? separatePctLabelYs(homeY, awayY, undefined, geometry)
+    : { homeLabelY: 0, awayLabelY: 0 };
+  const topLabelY = Math.min(homeLabelY, awayLabelY);
   const clockDefaultY = geometry.padTop + 12;
-  const clockOverlapsPct = Boolean(activePoint) && topSeriesY < clockDefaultY + 22;
+  const clockOverlapsPct = Boolean(activePoint) && topLabelY < clockDefaultY + 22;
   const clockY = clockOverlapsPct ? geometry.padTop - 18 : clockDefaultY;
   const trackerTop = clockOverlapsPct ? clockY + 6 : geometry.padTop;
   const showTracker = Boolean(activePoint) && !atEnd;
@@ -168,7 +172,7 @@ export function MlbWinProbability({
                 />
                 <text
                   x={labelX}
-                  y={homeY}
+                  y={homeLabelY}
                   fill="#FFFFFF"
                   textAnchor={labelAnchor}
                   dominantBaseline="middle"
@@ -179,7 +183,7 @@ export function MlbWinProbability({
                 </text>
                 <text
                   x={labelX}
-                  y={awayY}
+                  y={awayLabelY}
                   fill="#FFFFFF"
                   textAnchor={labelAnchor}
                   dominantBaseline="middle"

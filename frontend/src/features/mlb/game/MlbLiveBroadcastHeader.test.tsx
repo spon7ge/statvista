@@ -31,7 +31,7 @@ describe("MlbLiveBroadcastHeader", () => {
       "aria-selected",
       "true",
     );
-    expect(screen.getByRole("tab", { name: /box/i })).toHaveAttribute(
+    expect(screen.getByRole("tab", { name: /boxscore/i })).toHaveAttribute(
       "aria-selected",
       "false",
     );
@@ -46,7 +46,7 @@ describe("MlbLiveBroadcastHeader", () => {
     );
   });
 
-  it("calls onTabChange when Box is selected", async () => {
+  it("calls onTabChange when Boxscore is selected", async () => {
     const user = userEvent.setup();
     const onTabChange = vi.fn();
     render(
@@ -57,7 +57,7 @@ describe("MlbLiveBroadcastHeader", () => {
       />,
     );
 
-    await user.click(screen.getByRole("tab", { name: /box/i }));
+    await user.click(screen.getByRole("tab", { name: /boxscore/i }));
     expect(onTabChange).toHaveBeenCalledWith("box");
   });
 });

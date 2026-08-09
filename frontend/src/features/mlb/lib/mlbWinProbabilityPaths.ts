@@ -76,6 +76,37 @@ export function yForPct(
   );
 }
 
+/** Keep home/away % labels from stacking when series Ys are too close. */
+export const PCT_LABEL_MIN_GAP = 22;
+
+export function separatePctLabelYs(
+  homeY: number,
+  awayY: number,
+  minGap: number = PCT_LABEL_MIN_GAP,
+  geometry: ChartGeometry = CHART_GEOMETRY,
+): { homeLabelY: number; awayLabelY: number } {
+  const plotTop = geometry.padTop;
+  const plotBottom = geometry.padTop + geometry.plotHeight;
+  const clamp = (y: number) => Math.min(plotBottom, Math.max(plotTop, y));
+
+  if (Math.abs(homeY - awayY) >= minGap) {
+    return { homeLabelY: clamp(homeY), awayLabelY: clamp(awayY) };
+  }
+
+  const mid = (homeY + awayY) / 2;
+  const half = minGap / 2;
+  if (homeY <= awayY) {
+    return {
+      homeLabelY: clamp(mid - half),
+      awayLabelY: clamp(mid + half),
+    };
+  }
+  return {
+    awayLabelY: clamp(mid - half),
+    homeLabelY: clamp(mid + half),
+  };
+}
+
 export function nearestIndexForClientX(
   clientX: number,
   rect: DOMRect,

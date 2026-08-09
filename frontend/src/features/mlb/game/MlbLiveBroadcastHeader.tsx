@@ -151,7 +151,7 @@ export function MlbLiveBroadcastHeader({
             }`}
             onClick={() => onTabChange(tab)}
           >
-            {tab === "summary" ? "Summary" : "Box"}
+            {tab === "summary" ? "Summary" : "Boxscore"}
           </button>
         ))}
       </div>

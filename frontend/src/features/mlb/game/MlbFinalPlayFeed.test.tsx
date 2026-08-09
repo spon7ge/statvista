@@ -23,6 +23,8 @@ describe("MlbFinalPlayFeed", () => {
     const batterStats = screen.getByTestId("mlb-play-batter-summary");
     const ballInfo = screen.getByTestId("mlb-play-ball-info");
     expect(pill).toHaveTextContent("Home Run");
+    expect(pill).toHaveClass("bg-white");
+    expect(pill).toHaveStyle({ color: mlbFinalDetail.home.color });
     expect(batterStats).toHaveTextContent("2-3 | HR, RBI, 2 R");
     expect(screen.queryByTestId("mlb-play-score")).not.toBeInTheDocument();
     expect(

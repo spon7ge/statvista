@@ -50,7 +50,7 @@ describe("MlbLiveCenter", () => {
 
     expect(screen.queryByTestId("mlb-box-score")).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole("tab", { name: /box/i }));
+    await user.click(screen.getByRole("tab", { name: /boxscore/i }));
 
     expect(screen.getByTestId("mlb-box-score")).toBeInTheDocument();
     expect(screen.getByTestId("mlb-box-score-layout")).toHaveClass(

@@ -37,6 +37,29 @@ describe("MlbWinProbability", () => {
     expect(away).toHaveStyle({ fontSize: "18px" });
   });
 
+  it("keeps home and away pct labels vertically separated when lines cross", () => {
+    render(
+      <MlbWinProbability
+        detail={{
+          ...mlbLiveDetail,
+          winProbability: {
+            awayAbbrev: mlbLiveDetail.away.abbrev,
+            homeAbbrev: mlbLiveDetail.home.abbrev,
+            points: [
+              { playId: "cross", label: "Bot 5", homeWinPct: 0.5 },
+            ],
+            stakes: null,
+          },
+        }}
+      />,
+    );
+    const home = screen.getByTestId("mlb-game-flow-home-pct");
+    const away = screen.getByTestId("mlb-game-flow-away-pct");
+    const homeY = Number(home.getAttribute("y"));
+    const awayY = Number(away.getAttribute("y"));
+    expect(Math.abs(homeY - awayY)).toBeGreaterThanOrEqual(22);
+  });
+
   it("uses compact viewBox height when compact is set", () => {
     render(<MlbWinProbability detail={mlbLiveDetail} compact />);
     expect(screen.getByLabelText("Win probability chart")).toHaveAttribute(

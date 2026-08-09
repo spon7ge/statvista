@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { GameSection } from "@/shared/ui/GameSection";
+import { mlbTeamLogoUrl } from "../league/mlbTeamLogos";
 import type { MlbGameDetailView } from "../lib/types";
 
 function PotgHeadshot({
@@ -33,10 +34,26 @@ function PotgHeadshot({
   );
 }
 
+function resolvePotgTeamLogo(
+  detail: MlbGameDetailView,
+  teamAbbrev: string,
+): string | null {
+  const key = teamAbbrev.trim().toUpperCase();
+  for (const team of [detail.away, detail.home]) {
+    if (team.abbrev.trim().toUpperCase() === key) {
+      return team.logoUrl ?? mlbTeamLogoUrl(team.abbrev);
+    }
+  }
+  return mlbTeamLogoUrl(teamAbbrev);
+}
+
 export function MlbPlayerOfTheGame({ detail }: { detail: MlbGameDetailView }) {
   const potg = detail.playerOfTheGame;
   if (!potg) return null;
   const statLine = potg.stats.map((s) => s.value).filter(Boolean).join(" · ");
+  const teamLogoUrl = potg.teamAbbrev
+    ? resolvePotgTeamLogo(detail, potg.teamAbbrev)
+    : null;
 
   return (
     <GameSection data-testid="mlb-player-of-the-game" className="w-full !p-3">
@@ -47,7 +64,18 @@ export function MlbPlayerOfTheGame({ detail }: { detail: MlbGameDetailView }) {
         </div>
         <div className="text-[18px] font-semibold text-white">{potg.fullName}</div>
         {potg.teamAbbrev ? (
-          <div className="text-[14px] text-white/60">{potg.teamAbbrev}</div>
+          <div className="flex items-center justify-center gap-1.5 text-[14px] text-white/60">
+            <span>{potg.teamAbbrev}</span>
+            {teamLogoUrl ? (
+              <img
+                src={teamLogoUrl}
+                alt=""
+                role="presentation"
+                data-testid="mlb-player-of-the-game-team-logo"
+                className="size-5 object-contain"
+              />
+            ) : null}
+          </div>
         ) : null}
         {statLine ? (
           <div

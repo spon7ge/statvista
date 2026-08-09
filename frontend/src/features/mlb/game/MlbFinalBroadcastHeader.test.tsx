@@ -23,7 +23,7 @@ describe("MlbFinalBroadcastHeader", () => {
     expect(screen.getByLabelText(/share/i)).toBeInTheDocument();
   });
 
-  it("renders Summary and Box tabs under the score header", async () => {
+  it("renders Summary and Boxscore tabs under the score header", async () => {
     const user = userEvent.setup();
     const onTabChange = vi.fn();
     render(
@@ -50,7 +50,7 @@ describe("MlbFinalBroadcastHeader", () => {
       "true",
     );
 
-    await user.click(screen.getByRole("tab", { name: /box/i }));
+    await user.click(screen.getByRole("tab", { name: /boxscore/i }));
     expect(onTabChange).toHaveBeenCalledWith("box");
   });
 
