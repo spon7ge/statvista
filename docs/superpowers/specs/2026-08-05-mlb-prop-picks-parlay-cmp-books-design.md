@@ -3,6 +3,8 @@
 Date: 2026-08-05  
 Status: Implemented
 
+> **Note (2026-08-08):** [Soft Consensus](2026-08-08-mlb-prop-picks-soft-consensus-design.md) supersedes “cmp never sets fair” when Tier 1/2 are empty — soft/cmp books (incl. Pinnacle) can drive Tier 3 fair; expand cells still use `role: "comparison"`.
+
 ## Goal
 
 On `/mlb/prop_picks` expand, show five additional sportsbook quotes from ParlayAPI as **comparison-only** cells (same treatment as Pinnacle): Caesars, Kalshi, bet365, BetMGM, Fanatics. They never enter fair %, edge, or source-tier logic.

@@ -1,7 +1,7 @@
 # MLB Prop Picks — Soft Consensus fair + filter cleanup
 
 Date: 2026-08-08  
-Status: Approved for planning  
+Status: Implemented  
 Brand: **statvista**  
 Route: `/mlb/prop_picks`
 

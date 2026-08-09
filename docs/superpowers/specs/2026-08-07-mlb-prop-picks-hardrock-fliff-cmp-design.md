@@ -3,6 +3,8 @@
 Date: 2026-08-07  
 Status: Implemented
 
+> **Note (2026-08-08):** [Soft Consensus](2026-08-08-mlb-prop-picks-soft-consensus-design.md) supersedes “cmp never sets fair” when Tier 1/2 are empty — Hard Rock/Fliff (and other soft books) can contribute to Tier 3 fair; expand cells still use `role: "comparison"`.
+
 ## Goal
 
 On `/mlb/prop_picks` expand, show Hard Rock and Fliff quotes from ParlayAPI as **comparison-only** cells (same treatment as Caesars / Fanatics / Pinnacle). They never enter fair %, edge, or source-tier logic.
