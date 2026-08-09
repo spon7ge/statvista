@@ -246,6 +246,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/mlb/props/game/{game_pk}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Mlb Props Game */
+        get: operations["mlb_props_game_api_mlb_props_game__game_pk__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/mlb/props/today": {
         parameters: {
             query?: never;
@@ -1117,6 +1134,52 @@ export interface components {
         MlbGameLeaders: {
             /** Leaders */
             leaders: components["schemas"]["MlbGameLeaderCard"][];
+        };
+        /** MlbGamePropBestQuote */
+        MlbGamePropBestQuote: {
+            /** American */
+            american: number;
+            /** Book */
+            book: string;
+        };
+        /** MlbGamePropCategory */
+        MlbGamePropCategory: {
+            /** Label */
+            label: string;
+            /** Players */
+            players: components["schemas"]["MlbGamePropPlayer"][];
+            /** Stat */
+            stat: string;
+        };
+        /** MlbGamePropPlayer */
+        MlbGamePropPlayer: {
+            /** Headshot Url */
+            headshot_url: string | null;
+            /** Line */
+            line: number;
+            over: components["schemas"]["MlbGamePropBestQuote"] | null;
+            /** Player Name */
+            player_name: string;
+            /** Team Abbrev */
+            team_abbrev: string | null;
+            under: components["schemas"]["MlbGamePropBestQuote"] | null;
+        };
+        /** MlbGamePropsResponse */
+        MlbGamePropsResponse: {
+            /** App */
+            app: string;
+            /** As Of */
+            as_of: string;
+            /** Away Abbrev */
+            away_abbrev: string;
+            /** Categories */
+            categories: components["schemas"]["MlbGamePropCategory"][];
+            /** Error */
+            error: string | null;
+            /** Game Pk */
+            game_pk: string;
+            /** Home Abbrev */
+            home_abbrev: string;
         };
         /** MlbGameUmpires */
         MlbGameUmpires: {
@@ -2916,6 +2979,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MlbOddsResponse"];
+                };
+            };
+        };
+    };
+    mlb_props_game_api_mlb_props_game__game_pk__get: {
+        parameters: {
+            query: {
+                app: "prizepicks" | "underdog";
+            };
+            header?: never;
+            path: {
+                game_pk: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MlbGamePropsResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

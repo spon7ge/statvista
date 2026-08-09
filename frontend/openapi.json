@@ -1921,6 +1921,167 @@
         "title": "MlbGameLeaders",
         "type": "object"
       },
+      "MlbGamePropBestQuote": {
+        "properties": {
+          "american": {
+            "title": "American",
+            "type": "integer"
+          },
+          "book": {
+            "title": "Book",
+            "type": "string"
+          }
+        },
+        "required": [
+          "american",
+          "book"
+        ],
+        "title": "MlbGamePropBestQuote",
+        "type": "object"
+      },
+      "MlbGamePropCategory": {
+        "properties": {
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "players": {
+            "items": {
+              "$ref": "#/components/schemas/MlbGamePropPlayer"
+            },
+            "title": "Players",
+            "type": "array"
+          },
+          "stat": {
+            "title": "Stat",
+            "type": "string"
+          }
+        },
+        "required": [
+          "stat",
+          "label",
+          "players"
+        ],
+        "title": "MlbGamePropCategory",
+        "type": "object"
+      },
+      "MlbGamePropPlayer": {
+        "properties": {
+          "headshot_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Headshot Url"
+          },
+          "line": {
+            "title": "Line",
+            "type": "number"
+          },
+          "over": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbGamePropBestQuote"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "player_name": {
+            "title": "Player Name",
+            "type": "string"
+          },
+          "team_abbrev": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Team Abbrev"
+          },
+          "under": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbGamePropBestQuote"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "player_name",
+          "team_abbrev",
+          "headshot_url",
+          "line",
+          "over",
+          "under"
+        ],
+        "title": "MlbGamePropPlayer",
+        "type": "object"
+      },
+      "MlbGamePropsResponse": {
+        "properties": {
+          "app": {
+            "title": "App",
+            "type": "string"
+          },
+          "as_of": {
+            "title": "As Of",
+            "type": "string"
+          },
+          "away_abbrev": {
+            "title": "Away Abbrev",
+            "type": "string"
+          },
+          "categories": {
+            "items": {
+              "$ref": "#/components/schemas/MlbGamePropCategory"
+            },
+            "title": "Categories",
+            "type": "array"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "game_pk": {
+            "title": "Game Pk",
+            "type": "string"
+          },
+          "home_abbrev": {
+            "title": "Home Abbrev",
+            "type": "string"
+          }
+        },
+        "required": [
+          "as_of",
+          "app",
+          "game_pk",
+          "away_abbrev",
+          "home_abbrev",
+          "categories",
+          "error"
+        ],
+        "title": "MlbGamePropsResponse",
+        "type": "object"
+      },
       "MlbGameUmpires": {
         "properties": {
           "first_base": {
@@ -8111,6 +8272,61 @@
           }
         },
         "summary": "Mlb Odds Today",
+        "tags": [
+          "mlb"
+        ]
+      }
+    },
+    "/api/mlb/props/game/{game_pk}": {
+      "get": {
+        "operationId": "mlb_props_game_api_mlb_props_game__game_pk__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "game_pk",
+            "required": true,
+            "schema": {
+              "title": "Game Pk",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "app",
+            "required": true,
+            "schema": {
+              "enum": [
+                "prizepicks",
+                "underdog"
+              ],
+              "title": "App",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MlbGamePropsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Mlb Props Game",
         "tags": [
           "mlb"
         ]

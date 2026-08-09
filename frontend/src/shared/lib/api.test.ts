@@ -215,6 +215,52 @@ describe("fetchMlbProps", () => {
   });
 });
 
+describe("fetchMlbGameProps", () => {
+  beforeEach(() => {
+    vi.resetModules();
+    fetchMock.mockReset();
+    vi.stubGlobal("fetch", fetchMock);
+  });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
+  });
+
+  it("calls game props endpoint", async () => {
+    vi.stubEnv("VITE_API_BASE_URL", undefined);
+    fetchMock.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        as_of: "2026-08-09T00:00:00Z",
+        app: "prizepicks",
+        game_pk: "746123",
+        away_abbrev: "NYY",
+        home_abbrev: "BOS",
+        categories: [],
+        error: null,
+      }),
+    });
+
+    const { fetchMlbGameProps } = await import("./api");
+    await fetchMlbGameProps({ gamePk: "746123", app: "prizepicks" });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/mlb/props/game/746123?app=prizepicks",
+      expect.objectContaining({ cache: "no-store" }),
+    );
+  });
+
+  it("throws when the response is not ok", async () => {
+    vi.stubEnv("VITE_API_BASE_URL", undefined);
+    fetchMock.mockResolvedValue({ ok: false, status: 502 });
+
+    const { fetchMlbGameProps } = await import("./api");
+    await expect(
+      fetchMlbGameProps({ gamePk: "746123", app: "underdog" }),
+    ).rejects.toThrow("MLB game props request failed: 502");
+  });
+});
+
 describe("fetchMlbFutures", () => {
   beforeEach(() => {
     vi.resetModules();
