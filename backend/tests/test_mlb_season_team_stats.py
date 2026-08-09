@@ -1,5 +1,13 @@
 import pytest
-from app.providers.mlb_stats.team_season import clear_team_season_cache, fetch_season_team_stats_pair, fetch_team_season_stat_line, parse_hitting_split, parse_pitching_split
+from app.providers.mlb_stats.team_season import (
+    build_season_pair_from_league_splits,
+    clear_team_season_cache,
+    competition_rank,
+    fetch_season_team_stats_pair,
+    fetch_team_season_stat_line,
+    parse_hitting_split,
+    parse_pitching_split,
+)
 
 class FakeResponse:
     def __init__(self, payload): self.payload = payload
@@ -53,3 +61,42 @@ async def test_fetch_team_season_stat_line_does_not_cache_total_failure():
     assert await fetch_team_season_stat_line(client, 119, 2026) == {}
     assert await fetch_team_season_stat_line(client, 119, 2026) == {}
     assert len(client.calls) == 4
+
+
+def test_competition_rank_ties_skip():
+    ranks = competition_rank(
+        [(1, 10.0), (2, 20.0), (3, 20.0), (4, 5.0)],
+        lower_is_better=False,
+    )
+    assert ranks == {2: 1, 3: 1, 1: 3, 4: 4}
+
+
+def test_competition_rank_lower_better():
+    ranks = competition_rank(
+        [(1, 3.50), (2, 2.10), (3, 2.10)],
+        lower_is_better=True,
+    )
+    assert ranks == {2: 1, 3: 1, 1: 3}
+
+
+def test_build_season_pair_from_league_splits_assigns_ranks():
+    hitting = [
+        {"team": {"id": 119}, "stat": {"homeRuns": 100, "runs": 400, "hits": 800, "avg": ".250", "obp": ".320", "slg": ".400"}},
+        {"team": {"id": 147}, "stat": {"homeRuns": 120, "runs": 450, "hits": 850, "avg": ".260", "obp": ".330", "slg": ".420"}},
+        {"team": {"id": 111}, "stat": {"homeRuns": 90, "runs": 380, "hits": 780, "avg": ".240", "obp": ".310", "slg": ".390"}},
+    ]
+    pitching = [
+        {"team": {"id": 119}, "stat": {"era": "3.50", "strikeOuts": 900, "baseOnBalls": 400}},
+        {"team": {"id": 147}, "stat": {"era": "4.00", "strikeOuts": 850, "baseOnBalls": 420}},
+        {"team": {"id": 111}, "stat": {"era": "3.20", "strikeOuts": 950, "baseOnBalls": 380}},
+    ]
+    pair = build_season_pair_from_league_splits(
+        hitting, pitching, away_team_id=119, home_team_id=147
+    )
+    assert pair is not None
+    assert pair.away.hr == 100
+    assert pair.home.hr == 120
+    assert pair.home.hr_rank == 1
+    assert pair.away.hr_rank == 2
+    assert pair.away.era_rank == 2
+    assert pair.home.era_rank == 3
