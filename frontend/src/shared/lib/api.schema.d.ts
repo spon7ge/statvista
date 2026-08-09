@@ -1529,6 +1529,8 @@ export interface components {
         MlbPlay: {
             /** Away Score */
             away_score: number;
+            /** Batter Summary */
+            batter_summary: string | null;
             /** Event */
             event: string | null;
             /** Exit Velo */

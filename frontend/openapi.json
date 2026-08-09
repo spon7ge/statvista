@@ -3589,6 +3589,17 @@
             "title": "Away Score",
             "type": "integer"
           },
+          "batter_summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Batter Summary"
+          },
           "event": {
             "anyOf": [
               {
@@ -3689,7 +3700,8 @@
           "exit_velo",
           "launch_angle",
           "total_distance",
-          "scoring_team"
+          "scoring_team",
+          "batter_summary"
         ],
         "title": "MlbPlay",
         "type": "object"
