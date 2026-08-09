@@ -80,6 +80,66 @@ def test_no_sharp_read():
     assert r.fair_pct is None
 
 
+def test_soft_consensus_single_book():
+    r = compute_fair(
+        {
+            "prophetx": None,
+            "novig": None,
+            "draftkings": None,
+            "fanduel": None,
+            "pinnacle": 55.0,
+        }
+    )
+    assert r.source_tier == "soft_consensus"
+    assert r.fair_pct == 55.0
+    assert "pinnacle" in r.fair_explain.lower()
+
+
+def test_soft_consensus_equal_average():
+    r = compute_fair(
+        {
+            "prophetx": None,
+            "novig": None,
+            "draftkings": None,
+            "fanduel": None,
+            "caesars": 50.0,
+            "pinnacle": 56.0,
+            "betmgm": 53.0,
+        }
+    )
+    assert r.source_tier == "soft_consensus"
+    assert r.fair_pct == 53.0  # (50+56+53)/3
+
+
+def test_tier1_still_beats_soft_books():
+    r = compute_fair(
+        {
+            "prophetx": 58.0,
+            "novig": None,
+            "draftkings": None,
+            "fanduel": None,
+            "pinnacle": 40.0,
+            "caesars": 41.0,
+        }
+    )
+    assert r.source_tier == "sharp_single_source"
+    assert r.fair_pct == 58.0
+
+
+def test_tier2_still_beats_soft_books():
+    r = compute_fair(
+        {
+            "prophetx": None,
+            "novig": None,
+            "draftkings": 55.0,
+            "fanduel": None,
+            "pinnacle": 40.0,
+        }
+    )
+    assert r.source_tier == "mid_tier_fallback"
+    assert r.fair_pct == 55.0
+
+
 def test_recency_fresh_vs_stale():
     now = datetime(2026, 8, 5, 20, 0, tzinfo=timezone.utc)
     chip = recency_chip(

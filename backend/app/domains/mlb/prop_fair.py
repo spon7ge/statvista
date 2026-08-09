@@ -8,11 +8,23 @@ from typing import Literal
 
 AGREE_PP = 2.0
 
+SOFT_FAIR_BOOKS: tuple[str, ...] = (
+    "caesars",
+    "kalshi",
+    "bet365",
+    "betmgm",
+    "fanatics",
+    "hardrock",
+    "fliff",
+    "pinnacle",
+)
+
 SourceTier = Literal[
     "sharp_consensus",
     "sharp_disagreement",
     "sharp_single_source",
     "mid_tier_fallback",
+    "soft_consensus",
     "no_sharp_read",
 ]
 
@@ -143,6 +155,25 @@ def _tier2(side_books: SideBooks) -> FairResult | None:
     return None
 
 
+def _tier3(side_books: SideBooks) -> FairResult | None:
+    present = [
+        (book, side_books[book])
+        for book in SOFT_FAIR_BOOKS
+        if side_books.get(book) is not None
+    ]
+    if not present:
+        return None
+    fair = round(sum(v for _, v in present) / len(present), 1)
+    names = ", ".join(b for b, _ in present)
+    return FairResult(
+        fair_pct=fair,
+        source_tier="soft_consensus",
+        confidence_chips=[],
+        sample_chips=[],
+        fair_explain=f"Soft books avg ({len(present)}): {names}.",
+    )
+
+
 def compute_fair(side_books: SideBooks) -> FairResult:
     """Compute fair % and tier chips for one side's exact-line book fair %s."""
     tier1 = _tier1(side_books)
@@ -153,12 +184,16 @@ def compute_fair(side_books: SideBooks) -> FairResult:
     if tier2 is not None:
         return tier2
 
+    tier3 = _tier3(side_books)
+    if tier3 is not None:
+        return tier3
+
     return FairResult(
         fair_pct=None,
         source_tier="no_sharp_read",
         confidence_chips=[],
         sample_chips=[],
-        fair_explain="No Tier 1/2 books available.",
+        fair_explain="No Tier 1/2/3 books available.",
     )
 
 
