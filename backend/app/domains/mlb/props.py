@@ -1,12 +1,13 @@
 """Assemble GET /api/mlb/props/today: DFS board + fair/edge/tier per row.
 
-Pipeline (see docs/superpowers/specs/2026-08-05-mlb-prop-picks-design.md):
-  1. Load the selected app's DFS lines (PrizePicks standard only; Underdog as
-     stored) and bucket into one board row per (player, stat, line).
-  2. Index ProphetX (Tier 1), Parlay Novig/FanDuel/DraftKings (Tier 1/2),
-     soft Parlay books + Pinnacle (Tier 3 Soft Consensus; expand role
-     ``comparison``) by (player, stat, side, line) — exact line only, no
-     closest-line fallback.
+Pipeline (see docs/superpowers/specs/2026-08-09-mlb-prop-picks-odds-api-design.md):
+  1. Load the selected app's DFS lines from Odds API PrizePicks
+     (app=prizepicks) or Underdog snapshot (app=underdog) and bucket into one
+     board row per (player, stat, line).
+  2. Index ProphetX + Pinnacle scrapers; merge Odds API book indexes (novig,
+     kalshi, draftkings, fanduel, betmgm, betonline) by (player, stat, side,
+     line) — exact line only, no closest-line fallback. Soft books + Pinnacle
+     feed Tier 3 Soft Consensus; expand quotes keep ``role="comparison"``.
   3. For each side offered by the DFS app at that line, compute fair% via
      ``compute_fair`` and edge vs. the format breakeven; the recommended side
      is whichever has the higher edge.
@@ -22,7 +23,6 @@ from typing import Any
 
 from app.core.odds_snapshots import (
     fetch_latest_pinnacle,
-    fetch_latest_prizepicks,
     fetch_latest_prophetx,
     fetch_latest_underdog,
 )
@@ -49,30 +49,26 @@ from app.domains.mlb.schemas_props import (
 )
 from app.providers.espn.mlb_roster import get_mlb_player_index
 from app.providers.espn.wnba_roster import norm_player_name
-from app.providers.parlay.client import parlay_get
+from app.providers.odds_api.mlb_props import (
+    OddsApiMlbNormalized,
+    fetch_mlb_props_normalized,
+)
 
 logger = logging.getLogger(__name__)
 
-SPORT_KEY = "baseball_mlb"
 CACHE_TTL_SECONDS = 45.0
 FETCH_TIMEOUT_SECONDS = 12.0
-PROPS_LIMIT = 10000
 
-# Parlay books that may drive fair% (Tier 1 exchange + Tier 2 fallback).
-# Soft / prediction books (``_PARLAY_CMP_BOOKS``) plus Pinnacle (Selenium
-# snapshots) feed Tier 3 Soft Consensus via ``SOFT_FAIR_BOOKS``; expand quotes
-# keep ``role="comparison"``.
-_PARLAY_FAIR_BOOKS: tuple[str, ...] = ("novig", "fanduel", "draftkings")
-_PARLAY_CMP_BOOKS: tuple[str, ...] = (
-    "caesars",
+# Odds API books merged into assemble (schema keys). Soft books keep
+# ``role="comparison"`` on expand while still feeding Tier 3 Soft Consensus.
+_ODDS_BOOK_KEYS: tuple[str, ...] = (
+    "novig",
     "kalshi",
-    "bet365",
+    "draftkings",
+    "fanduel",
     "betmgm",
-    "fanatics",
-    "hardrock",
-    "fliff",
+    "betonline",
 )
-_PARLAY_KEEP_BOOKS: tuple[str, ...] = _PARLAY_FAIR_BOOKS + _PARLAY_CMP_BOOKS
 _VALID_SIDES: tuple[str, ...] = ("over", "under")
 
 # format is fixed per app in v1 (see prop_formats.py multiplier tables).
@@ -126,14 +122,35 @@ def _parse_payout_multiplier(raw: Any) -> float | None:
     return value
 
 
-def _iso(dt: datetime | None) -> str | None:
+def _as_datetime(raw: Any) -> datetime | None:
+    """Coerce scraper datetimes or Odds API ISO strings to aware UTC datetimes."""
+    if raw is None:
+        return None
+    if isinstance(raw, datetime):
+        if raw.tzinfo is None:
+            return raw.replace(tzinfo=timezone.utc)
+        return raw.astimezone(timezone.utc)
+    if isinstance(raw, str):
+        text = raw.strip()
+        if not text:
+            return None
+        if text.endswith("Z"):
+            text = text[:-1] + "+00:00"
+        try:
+            dt = datetime.fromisoformat(text)
+        except ValueError:
+            return None
+        if dt.tzinfo is None:
+            return dt.replace(tzinfo=timezone.utc)
+        return dt.astimezone(timezone.utc)
+    return None
+
+
+def _iso(raw: Any) -> str | None:
+    dt = _as_datetime(raw)
     if dt is None:
         return None
-    if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=timezone.utc)
-    return dt.astimezone(timezone.utc).replace(microsecond=0).isoformat().replace(
-        "+00:00", "Z"
-    )
+    return dt.replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
 def _utcnow() -> datetime:
@@ -204,7 +221,7 @@ def _build_board(app: str, dfs_rows: list[dict[str, Any]]) -> dict[BoardKey, dic
             }
             for side in sides_offered:
                 bucket["side_quotes"][side] = quote
-        scraped_at = row.get("scraped_at")
+        scraped_at = _as_datetime(row.get("scraped_at"))
         if scraped_at is not None:
             bucket["scraped_at"] = scraped_at
 
@@ -237,60 +254,11 @@ def _index_snapshot_rows(
         except (TypeError, ValueError):
             continue
         key: SideKey = (_norm_player(player), stat_key, side, _line_key(line_f))
-        index[key] = {"american": american, "changed_at": row.get("scraped_at")}
+        index[key] = {
+            "american": american,
+            "changed_at": _as_datetime(row.get("scraped_at")),
+        }
     return index
-
-
-def _index_parlay(
-    rows: list[dict[str, Any]], now: datetime
-) -> dict[str, SideIndex]:
-    """Index Parlay rows by (player, stat, side, line) for fair + cmp books.
-
-    Fair books (Novig/FD/DK) may drive ``compute_fair`` as Tier 1/2. Soft/cmp
-    books (Caesars/Kalshi/bet365/BetMGM/Fanatics/Hard Rock/Fliff) also feed
-    Tier 3 Soft Consensus when Tier 1/2 are empty; expand quotes stay
-    ``role="comparison"``.
-
-    ParlayAPI is fetched live with no persisted per-quote history in v1, so
-    ``changed_at`` for these books is approximated as the current request
-    time — a documented limitation vs. the sharp book's true last-move time
-    (see design doc's "Open implementation notes").
-    """
-    by_book: dict[str, SideIndex] = {book: {} for book in _PARLAY_KEEP_BOOKS}
-    for row in rows:
-        book = str(row.get("bookmaker") or "").lower().strip()
-        if book not in _PARLAY_KEEP_BOOKS:
-            continue
-        player = str(row.get("player") or "").strip()
-        market_key = str(row.get("market_key") or "").strip()
-        line_raw = row.get("line")
-        if not player or not market_key or line_raw is None:
-            continue
-        stat_key = canonical_stat_key_from_sharp_mlb(market_key)
-        if stat_key is None:
-            continue
-        try:
-            line_f = float(line_raw)
-        except (TypeError, ValueError):
-            continue
-        for side, price_field in (("over", "over_price"), ("under", "under_price")):
-            american = _parse_american(row.get(price_field))
-            if american is None:
-                continue
-            key: SideKey = (_norm_player(player), stat_key, side, _line_key(line_f))
-            by_book[book][key] = {"american": american, "changed_at": now}
-    return by_book
-
-
-async def _fetch_parlay_rows() -> list[dict[str, Any]]:
-    payload = await parlay_get(
-        f"/sports/{SPORT_KEY}/props",
-        params={"limit": PROPS_LIMIT},
-        timeout=FETCH_TIMEOUT_SECONDS,
-    )
-    if not isinstance(payload, list):
-        raise RuntimeError("Parlay MLB props response was not a list")
-    return [row for row in payload if isinstance(row, dict)]
 
 
 def _side_fair_books(
@@ -337,30 +305,33 @@ def _fair_driving_changed_at(
     display_key: SideKey,
     prophetx_idx: SideIndex,
     novig_idx: SideIndex,
+    kalshi_idx: SideIndex,
     dk_idx: SideIndex,
     fd_idx: SideIndex,
     soft_indexes: tuple[SideIndex, ...] = (),
 ) -> datetime | None:
     """Return ``changed_at`` for whichever book(s) actually drove ``fair_pct``.
 
-    Tier 1 (consensus/disagreement/single-source) is driven by ProphetX and/or
-    Novig; Tier 2 (``mid_tier_fallback``) by DraftKings and/or FanDuel; Tier 3
-    (``soft_consensus``) by soft Parlay books and/or Pinnacle. Recency chips
-    must reflect the driving book so mid-tier/soft rows aren't silently
-    missing a chip those timestamps would warrant.
+    Tier 1 (consensus/disagreement/single-source) is driven by ProphetX, Novig,
+    and/or Kalshi; Tier 2 (``mid_tier_fallback``) by DraftKings and/or FanDuel;
+    Tier 3 (``soft_consensus``) by soft books (BetMGM/BetOnline) and/or
+    Pinnacle. Recency chips must reflect the driving book so mid-tier/soft
+    rows aren't silently missing a chip those timestamps would warrant.
     """
     if source_tier == "soft_consensus":
         candidates = soft_indexes
     elif source_tier == "mid_tier_fallback":
         candidates = (dk_idx, fd_idx)
     else:
-        candidates = (prophetx_idx, novig_idx)
+        candidates = (prophetx_idx, novig_idx, kalshi_idx)
 
     changed_ats = [
-        hit["changed_at"]
+        dt
         for idx in candidates
         for hit in (idx.get(display_key),)
         if hit is not None
+        for dt in (_as_datetime(hit.get("changed_at")),)
+        if dt is not None
     ]
     # When multiple books contributed (agree-and-blend, disagree-use-one, or
     # soft average), the more recent timestamp best represents freshness.
@@ -372,21 +343,19 @@ def _assemble_rows(
     breakeven: float,
     prophetx_idx: SideIndex,
     pinnacle_idx: SideIndex,
-    parlay_by_book: dict[str, SideIndex],
+    book_indexes: dict[str, SideIndex],
     now: datetime,
 ) -> list[MlbPropRow]:
     fair_book_indexes = {
         "prophetx": prophetx_idx,
-        **{book: parlay_by_book.get(book, {}) for book in _PARLAY_FAIR_BOOKS},
-        **{book: parlay_by_book.get(book, {}) for book in _PARLAY_CMP_BOOKS},
+        **{book: book_indexes.get(book, {}) for book in _ODDS_BOOK_KEYS},
         "pinnacle": pinnacle_idx,
-        # Empty until Task 6 wires Odds API book indexes into assemble.
-        "betonline": parlay_by_book.get("betonline", {}),
     }
-    novig_idx = parlay_by_book.get("novig", {})
-    dk_idx = parlay_by_book.get("draftkings", {})
-    fd_idx = parlay_by_book.get("fanduel", {})
-    # SOFT_FAIR_BOOKS ⊆ fair_book_indexes keys (cmp books + pinnacle).
+    novig_idx = fair_book_indexes["novig"]
+    kalshi_idx = fair_book_indexes["kalshi"]
+    dk_idx = fair_book_indexes["draftkings"]
+    fd_idx = fair_book_indexes["fanduel"]
+    # SOFT_FAIR_BOOKS ⊆ fair_book_indexes keys (soft Odds books + pinnacle).
     soft_indexes = tuple(fair_book_indexes[book] for book in SOFT_FAIR_BOOKS)
 
     rows: list[MlbPropRow] = []
@@ -420,20 +389,19 @@ def _assemble_rows(
 
         display_key: SideKey = (norm_player, stat_key, recommended, _line_key(line_f))
 
-        def _cmp_quote(book: str) -> MlbPropBookQuote | None:
-            return _book_quote(
-                parlay_by_book.get(book, {}), display_key, role="comparison"
-            )
-
         books = MlbPropBooks(
             prophetx=_book_quote(prophetx_idx, display_key),
             novig=_book_quote(novig_idx, display_key),
-            kalshi=_cmp_quote("kalshi"),
+            kalshi=_book_quote(kalshi_idx, display_key),
             draftkings=_book_quote(dk_idx, display_key),
             fanduel=_book_quote(fd_idx, display_key),
             pinnacle=_book_quote(pinnacle_idx, display_key, role="comparison"),
-            betmgm=_cmp_quote("betmgm"),
-            betonline=None,  # Task 6 wires Odds API book indexes
+            betmgm=_book_quote(
+                fair_book_indexes["betmgm"], display_key, role="comparison"
+            ),
+            betonline=_book_quote(
+                fair_book_indexes["betonline"], display_key, role="comparison"
+            ),
         )
 
         driving_changed_at = _fair_driving_changed_at(
@@ -441,6 +409,7 @@ def _assemble_rows(
             display_key,
             prophetx_idx,
             novig_idx,
+            kalshi_idx,
             dk_idx,
             fd_idx,
             soft_indexes,
@@ -511,6 +480,10 @@ def _apply_roster_enrichment(
     return enriched
 
 
+def _empty_odds() -> OddsApiMlbNormalized:
+    return OddsApiMlbNormalized(prizepicks_board=[], book_indexes={}, as_of=None)
+
+
 async def get_mlb_props_today(*, app: str, format: str, legs: int) -> MlbPropsResponse:
     """Assemble the DFS-first, +EV-ranked MLB prop board for one app/format/legs."""
     validate_query(app, format, legs)
@@ -524,8 +497,21 @@ async def get_mlb_props_today(*, app: str, format: str, legs: int) -> MlbPropsRe
     now = _utcnow()
     breakeven = breakeven_pct(app, format, legs)
 
+    odds_error: str | None = None
+    try:
+        odds = await fetch_mlb_props_normalized(timeout=FETCH_TIMEOUT_SECONDS)
+    except Exception as exc:
+        logger.warning("Odds API MLB props unavailable: %s", exc)
+        odds_error = str(exc) or "odds_api_unavailable"
+        odds = _empty_odds()
+    else:
+        # Soft-empty (missing key / fetch failure inside provider) surfaces a
+        # stable token; true empty slate is rare and acceptable to flag the same.
+        if not odds.prizepicks_board and not odds.book_indexes:
+            odds_error = "odds_api_unavailable"
+
     if app == "prizepicks":
-        dfs_rows = fetch_latest_prizepicks("mlb")
+        dfs_rows = odds.prizepicks_board
     else:
         dfs_rows = fetch_latest_underdog("mlb")
     board = _build_board(app, dfs_rows)
@@ -537,16 +523,9 @@ async def get_mlb_props_today(*, app: str, format: str, legs: int) -> MlbPropsRe
         fetch_latest_pinnacle("mlb"), player_field="player_name", stat_field="market_type"
     )
 
-    parlay_error: str | None = None
-    parlay_by_book: dict[str, SideIndex] = {book: {} for book in _PARLAY_KEEP_BOOKS}
-    try:
-        parlay_rows = await _fetch_parlay_rows()
-        parlay_by_book = _index_parlay(parlay_rows, now)
-    except Exception as exc:
-        logger.warning("Parlay MLB props unavailable: %s", exc)
-        parlay_error = str(exc)
-
-    rows = _assemble_rows(board, breakeven, prophetx_idx, pinnacle_idx, parlay_by_book, now)
+    rows = _assemble_rows(
+        board, breakeven, prophetx_idx, pinnacle_idx, odds.book_indexes, now
+    )
 
     try:
         roster_index = await get_mlb_player_index()
@@ -561,7 +540,7 @@ async def get_mlb_props_today(*, app: str, format: str, legs: int) -> MlbPropsRe
         legs=legs,
         breakeven_pct=breakeven,
         props=rows,
-        error=parlay_error,
+        error=odds_error,
     )
     _cache[cache_key] = {"response": response, "expires_at": now_mono + CACHE_TTL_SECONDS}
     return response

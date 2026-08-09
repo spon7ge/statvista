@@ -1,25 +1,54 @@
 from __future__ import annotations
 
-import json
 from datetime import datetime, timedelta, timezone
-from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
 
 from app.domains.mlb import props as svc
+from app.domains.mlb.schemas_props import MlbPropBooks
 from app.main import app
 from app.providers.espn.wnba_roster import norm_player_name
-
-FIXTURE = Path(__file__).parent / "fixtures" / "parlay_mlb_props_minimal.json"
-
-
-def _parlay_rows() -> list[dict]:
-    return json.loads(FIXTURE.read_text())
+from app.providers.odds_api.mlb_props import OddsApiMlbNormalized
 
 
 async def _async_return(value):
     return value
+
+
+def _side(
+    player: str, stat: str, side: str, line: float, american: int, changed_at=None
+) -> tuple[tuple, dict]:
+    key = (player.strip().casefold(), stat, side, round(float(line), 2))
+    return key, {"american": american, "changed_at": changed_at}
+
+
+def _odds(
+    *,
+    board: list[dict] | None = None,
+    book_indexes: dict | None = None,
+    as_of: str | None = None,
+) -> OddsApiMlbNormalized:
+    return OddsApiMlbNormalized(
+        prizepicks_board=board or [],
+        book_indexes=book_indexes or {},
+        as_of=as_of,
+    )
+
+
+def _judge_odds_indexes(now: datetime | None = None) -> dict:
+    """Novig/FD/DK Judge total bases 1.5 — mirrors former Parlay fixture."""
+    novig_o, novig_oq = _side("Aaron Judge", "total_bases", "over", 1.5, -130, now)
+    novig_u, novig_uq = _side("Aaron Judge", "total_bases", "under", 1.5, 110, now)
+    fd_o, fd_oq = _side("Aaron Judge", "total_bases", "over", 1.5, -125, now)
+    fd_u, fd_uq = _side("Aaron Judge", "total_bases", "under", 1.5, 105, now)
+    dk_o, dk_oq = _side("Aaron Judge", "total_bases", "over", 1.5, -128, now)
+    dk_u, dk_uq = _side("Aaron Judge", "total_bases", "under", 1.5, 108, now)
+    return {
+        "novig": {novig_o: novig_oq, novig_u: novig_uq},
+        "fanduel": {fd_o: fd_oq, fd_u: fd_uq},
+        "draftkings": {dk_o: dk_oq, dk_u: dk_uq},
+    }
 
 
 @pytest.fixture(autouse=True)
@@ -41,20 +70,25 @@ def _stub_snapshots(
     dfs_ud: list[dict] | None = None,
     prophetx: list[dict] | None = None,
     pinnacle: list[dict] | None = None,
-    parlay_rows: list[dict] | None = None,
-    parlay_error: Exception | None = None,
+    odds: OddsApiMlbNormalized | None = None,
+    odds_error: Exception | None = None,
+    odds_soft_empty: bool = False,
 ):
-    monkeypatch.setattr(svc, "fetch_latest_prizepicks", lambda league="mlb": dfs_pp or [])
     monkeypatch.setattr(svc, "fetch_latest_underdog", lambda league="mlb": dfs_ud or [])
     monkeypatch.setattr(svc, "fetch_latest_prophetx", lambda league="mlb": prophetx or [])
     monkeypatch.setattr(svc, "fetch_latest_pinnacle", lambda league="mlb": pinnacle or [])
 
-    async def fake_fetch_parlay():
-        if parlay_error is not None:
-            raise parlay_error
-        return parlay_rows or []
+    async def fake_fetch_odds(**_kwargs):
+        if odds_error is not None:
+            raise odds_error
+        if odds_soft_empty:
+            return _odds()
+        if odds is not None:
+            return odds
+        # Default: PP board from dfs_pp + empty book indexes (tests opt into books).
+        return _odds(board=dfs_pp or [])
 
-    monkeypatch.setattr(svc, "_fetch_parlay_rows", fake_fetch_parlay)
+    monkeypatch.setattr(svc, "fetch_mlb_props_normalized", fake_fetch_odds)
 
 
 def test_assemble_ranks_consensus_above_no_read(monkeypatch):
@@ -87,7 +121,25 @@ def test_assemble_ranks_consensus_above_no_read(monkeypatch):
                 "scraped_at": now - timedelta(minutes=4),
             },
         ],
-        parlay_rows=_parlay_rows(),  # Novig/FD/DK Judge TB 1.5 over -125/-128
+        odds=_odds(
+            board=[
+                {
+                    "player_name": "Aaron Judge",
+                    "stat_type": "Total Bases",
+                    "line_score": 1.5,
+                    "odds_type": "standard",
+                    "scraped_at": now - timedelta(minutes=5),
+                },
+                {
+                    "player_name": "Mookie Betts",
+                    "stat_type": "Total Bases",
+                    "line_score": 1.5,
+                    "odds_type": "standard",
+                    "scraped_at": now - timedelta(minutes=5),
+                },
+            ],
+            book_indexes=_judge_odds_indexes(now),
+        ),
     )
 
     import asyncio
@@ -106,6 +158,40 @@ def test_assemble_ranks_consensus_above_no_read(monkeypatch):
     assert response.props[-1].source_tier == "no_sharp_read"
     assert response.props[-1].fair_pct is None
     assert response.props[-1].edge_pct is None
+
+
+def test_betonline_quote_appears_and_caesars_absent_from_schema(monkeypatch):
+    now = datetime.now(timezone.utc)
+    bol_o, bol_oq = _side("Mookie Betts", "total_bases", "over", 1.5, -118, now)
+    _stub_snapshots(
+        monkeypatch,
+        odds=_odds(
+            board=[
+                {
+                    "player_name": "Mookie Betts",
+                    "stat_type": "Total Bases",
+                    "line_score": 1.5,
+                    "odds_type": "standard",
+                    "scraped_at": now,
+                },
+            ],
+            book_indexes={"betonline": {bol_o: bol_oq}},
+        ),
+    )
+
+    import asyncio
+
+    response = asyncio.run(svc.get_mlb_props_today(app="prizepicks", format="power", legs=4))
+
+    assert "caesars" not in MlbPropBooks.model_fields
+    row = response.props[0]
+    assert row.books.betonline is not None
+    assert row.books.betonline.american == -118
+    assert row.books.betonline.role == "comparison"
+    dumped = row.books.model_dump()
+    assert "betonline" in dumped
+    assert "caesars" not in dumped
+    assert row.source_tier == "soft_consensus"
 
 
 def test_exact_line_mismatch_omits_book(monkeypatch):
@@ -203,46 +289,38 @@ def test_exact_line_attaches_prophetx_alt_when_favourite_differs(monkeypatch):
     assert row.source_tier != "no_sharp_read"
 
 
-def test_exact_line_attaches_parlay_alternate_market_key(monkeypatch):
+def test_exact_line_attaches_odds_api_alternate_line(monkeypatch):
     now = datetime.now(timezone.utc)
+    novig_main_o, novig_main_oq = _side(
+        "Mookie Betts", "total_bases", "over", 2.5, -110, now
+    )
+    novig_alt_o, novig_alt_oq = _side(
+        "Mookie Betts", "total_bases", "over", 1.5, -130, now
+    )
+    novig_alt_u, novig_alt_uq = _side(
+        "Mookie Betts", "total_bases", "under", 1.5, 110, now
+    )
     _stub_snapshots(
         monkeypatch,
-        dfs_pp=[
-            {
-                "player_name": "Mookie Betts",
-                "stat_type": "Total Bases",
-                "line_score": 1.5,
-                "odds_type": "standard",
-                "scraped_at": now,
+        odds=_odds(
+            board=[
+                {
+                    "player_name": "Mookie Betts",
+                    "stat_type": "Total Bases",
+                    "line_score": 1.5,
+                    "odds_type": "standard",
+                    "scraped_at": now,
+                },
+            ],
+            book_indexes={
+                "novig": {
+                    novig_main_o: novig_main_oq,
+                    novig_alt_o: novig_alt_oq,
+                    novig_alt_u: novig_alt_uq,
+                }
             },
-        ],
-        prophetx=[],  # force fair via Parlay Novig only
-        parlay_rows=[
-            {
-                "player": "Mookie Betts",
-                "market_key": "player_total_bases",
-                "line": 2.5,
-                "bookmaker": "novig",
-                "over_price": -110,
-                "under_price": -110,
-            },
-            {
-                "player": "Mookie Betts",
-                "market_key": "player_total_bases_alternate",
-                "line": 1.5,
-                "bookmaker": "novig",
-                "over_price": -130,
-                "under_price": 110,
-            },
-            {
-                "player": "Mookie Betts",
-                "market_key": "player_total_bases_alternate",
-                "line": 0.5,
-                "bookmaker": "novig",
-                "over_price": -200,
-                "under_price": 160,
-            },
-        ],
+        ),
+        prophetx=[],
     )
 
     import asyncio
@@ -297,29 +375,24 @@ def test_pinnacle_only_drives_soft_consensus(monkeypatch):
     assert row.edge_pct is not None
 
 
-def test_soft_parlay_cmp_only_drives_soft_consensus(monkeypatch):
+def test_soft_odds_cmp_only_drives_soft_consensus(monkeypatch):
     now = datetime.now(timezone.utc)
+    mgm_o, mgm_oq = _side("Mookie Betts", "total_bases", "over", 1.5, -135, now)
+    mgm_u, mgm_uq = _side("Mookie Betts", "total_bases", "under", 1.5, 110, now)
     _stub_snapshots(
         monkeypatch,
-        dfs_pp=[
-            {
-                "player_name": "Mookie Betts",
-                "stat_type": "Total Bases",
-                "line_score": 1.5,
-                "odds_type": "standard",
-                "scraped_at": now,
-            },
-        ],
-        parlay_rows=[
-            {
-                "bookmaker": "betmgm",
-                "player": "Mookie Betts",
-                "market_key": "player_total_bases",
-                "line": 1.5,
-                "over_price": -135,
-                "under_price": 110,
-            },
-        ],
+        odds=_odds(
+            board=[
+                {
+                    "player_name": "Mookie Betts",
+                    "stat_type": "Total Bases",
+                    "line_score": 1.5,
+                    "odds_type": "standard",
+                    "scraped_at": now,
+                },
+            ],
+            book_indexes={"betmgm": {mgm_o: mgm_oq, mgm_u: mgm_uq}},
+        ),
     )
 
     import asyncio
@@ -336,17 +409,22 @@ def test_soft_parlay_cmp_only_drives_soft_consensus(monkeypatch):
 
 def test_prophetx_beats_soft_books(monkeypatch):
     now = datetime.now(timezone.utc)
+    mgm_o, mgm_oq = _side("Mookie Betts", "total_bases", "over", 1.5, -135, now)
+    mgm_u, mgm_uq = _side("Mookie Betts", "total_bases", "under", 1.5, 110, now)
     _stub_snapshots(
         monkeypatch,
-        dfs_pp=[
-            {
-                "player_name": "Mookie Betts",
-                "stat_type": "Total Bases",
-                "line_score": 1.5,
-                "odds_type": "standard",
-                "scraped_at": now,
-            },
-        ],
+        odds=_odds(
+            board=[
+                {
+                    "player_name": "Mookie Betts",
+                    "stat_type": "Total Bases",
+                    "line_score": 1.5,
+                    "odds_type": "standard",
+                    "scraped_at": now,
+                },
+            ],
+            book_indexes={"betmgm": {mgm_o: mgm_oq, mgm_u: mgm_uq}},
+        ),
         prophetx=[
             {
                 "player_name": "Mookie Betts",
@@ -367,16 +445,6 @@ def test_prophetx_beats_soft_books(monkeypatch):
                 "scraped_at": now,
             },
         ],
-        parlay_rows=[
-            {
-                "bookmaker": "betmgm",
-                "player": "Mookie Betts",
-                "market_key": "player_total_bases",
-                "line": 1.5,
-                "over_price": -135,
-                "under_price": 110,
-            },
-        ],
     )
 
     import asyncio
@@ -389,6 +457,38 @@ def test_prophetx_beats_soft_books(monkeypatch):
     assert row.books.pinnacle.role == "comparison"
     assert row.books.betmgm is not None
     assert row.books.betmgm.role == "comparison"
+
+
+def test_kalshi_drives_tier1_fair_not_comparison_only(monkeypatch):
+    now = datetime.now(timezone.utc)
+    kal_o, kal_oq = _side("Mookie Betts", "total_bases", "over", 1.5, -120, now)
+    kal_u, kal_uq = _side("Mookie Betts", "total_bases", "under", 1.5, 100, now)
+    _stub_snapshots(
+        monkeypatch,
+        odds=_odds(
+            board=[
+                {
+                    "player_name": "Mookie Betts",
+                    "stat_type": "Total Bases",
+                    "line_score": 1.5,
+                    "odds_type": "standard",
+                    "scraped_at": now,
+                },
+            ],
+            book_indexes={"kalshi": {kal_o: kal_oq, kal_u: kal_uq}},
+        ),
+        prophetx=[],
+    )
+
+    import asyncio
+
+    response = asyncio.run(svc.get_mlb_props_today(app="prizepicks", format="power", legs=4))
+
+    row = response.props[0]
+    assert row.source_tier == "sharp_single_source"
+    assert row.books.kalshi is not None
+    assert row.books.kalshi.role is None
+    assert row.fair_pct is not None
 
 
 def test_underdog_uses_stored_side_only(monkeypatch):
@@ -406,6 +506,8 @@ def test_underdog_uses_stored_side_only(monkeypatch):
                 "scraped_at": now,
             },
         ],
+        # Non-empty Odds books so soft-empty error is not set.
+        odds=_odds(book_indexes={"novig": {}}),
     )
 
     import asyncio
@@ -462,6 +564,7 @@ def test_underdog_dfs_quote_matches_recommended_side(monkeypatch):
                 "scraped_at": now,
             },
         ],
+        odds=_odds(book_indexes={"novig": {}}),
     )
 
     import asyncio
@@ -479,13 +582,7 @@ def test_underdog_dfs_quote_matches_recommended_side(monkeypatch):
 
 
 def test_mid_tier_fallback_recency_chip_uses_dk_fd_timestamps():
-    """recency_chip must reflect DK/FD changed_at when fair is DK/FD-driven.
-
-    Regression test: previously ``_assemble_rows`` only looked at
-    ProphetX/Novig ``changed_at`` for the recency chip, so ``mid_tier_fallback``
-    rows (fair driven by DraftKings/FanDuel alone) always got ``recency_chip =
-    None`` even when the DK/FD quotes were fresh and the DFS line was stale.
-    """
+    """recency_chip must reflect DK/FD changed_at when fair is DK/FD-driven."""
     now = datetime.now(timezone.utc)
     board = {
         ("aaron judge", "total_bases", 1.5): {
@@ -498,7 +595,7 @@ def test_mid_tier_fallback_recency_chip_uses_dk_fd_timestamps():
     }
     dk_hit = {"american": -130, "changed_at": now - timedelta(minutes=4)}
     fd_hit = {"american": -125, "changed_at": now - timedelta(minutes=4)}
-    parlay_by_book = {
+    book_indexes = {
         "novig": {},
         "draftkings": {("aaron judge", "total_bases", "over", 1.5): dk_hit},
         "fanduel": {("aaron judge", "total_bases", "over", 1.5): fd_hit},
@@ -509,7 +606,7 @@ def test_mid_tier_fallback_recency_chip_uses_dk_fd_timestamps():
         breakeven=52.4,
         prophetx_idx={},
         pinnacle_idx={},
-        parlay_by_book=parlay_by_book,
+        book_indexes=book_indexes,
         now=now,
     )
 
@@ -519,16 +616,18 @@ def test_mid_tier_fallback_recency_chip_uses_dk_fd_timestamps():
     assert row.recency_chip == "fresh_sharp_vs_stale_dfs"
 
 
-def test_parlay_failure_still_returns_dfs_and_prophetx(monkeypatch):
+def test_odds_api_failure_still_returns_underdog_and_prophetx(monkeypatch):
     now = datetime.now(timezone.utc)
     _stub_snapshots(
         monkeypatch,
-        dfs_pp=[
+        dfs_ud=[
             {
                 "player_name": "Aaron Judge",
-                "stat_type": "Total Bases",
+                "stat_name": "total bases",
                 "line_score": 1.5,
-                "odds_type": "standard",
+                "side": "over",
+                "american_price": -110,
+                "payout_multiplier": 1.0,
                 "scraped_at": now,
             },
         ],
@@ -542,33 +641,61 @@ def test_parlay_failure_still_returns_dfs_and_prophetx(monkeypatch):
                 "scraped_at": now,
             },
         ],
-        parlay_error=RuntimeError("parlay down"),
+        odds_soft_empty=True,
     )
 
     import asyncio
 
-    response = asyncio.run(svc.get_mlb_props_today(app="prizepicks", format="power", legs=4))
+    response = asyncio.run(svc.get_mlb_props_today(app="underdog", format="standard", legs=3))
 
-    assert response.error == "parlay down"
+    assert response.error == "odds_api_unavailable"
     assert len(response.props) == 1
     assert response.props[0].books.novig is None
     assert response.props[0].books.prophetx is not None
     assert response.props[0].source_tier == "sharp_single_source"
 
 
+def test_odds_api_exception_sets_error_string(monkeypatch):
+    now = datetime.now(timezone.utc)
+    _stub_snapshots(
+        monkeypatch,
+        dfs_ud=[
+            {
+                "player_name": "Aaron Judge",
+                "stat_name": "total bases",
+                "line_score": 1.5,
+                "side": "over",
+                "american_price": -110,
+                "scraped_at": now,
+            },
+        ],
+        odds_error=RuntimeError("odds boom"),
+    )
+
+    import asyncio
+
+    response = asyncio.run(svc.get_mlb_props_today(app="underdog", format="standard", legs=3))
+
+    assert response.error == "odds boom"
+    assert len(response.props) == 1
+
+
 def test_prizepicks_ignores_non_standard_odds_type(monkeypatch):
     now = datetime.now(timezone.utc)
     _stub_snapshots(
         monkeypatch,
-        dfs_pp=[
-            {
-                "player_name": "Aaron Judge",
-                "stat_type": "Total Bases",
-                "line_score": 1.5,
-                "odds_type": "demon",
-                "scraped_at": now,
-            },
-        ],
+        odds=_odds(
+            board=[
+                {
+                    "player_name": "Aaron Judge",
+                    "stat_type": "Total Bases",
+                    "line_score": 1.5,
+                    "odds_type": "demon",
+                    "scraped_at": now,
+                },
+            ],
+            book_indexes={"novig": {}},
+        ),
     )
 
     import asyncio
@@ -582,23 +709,25 @@ def test_response_is_cached_within_ttl(monkeypatch):
     now = datetime.now(timezone.utc)
     calls = {"count": 0}
 
-    def fake_pp(league="mlb"):
+    async def fake_odds(**_kwargs):
         calls["count"] += 1
-        return [
-            {
-                "player_name": "Aaron Judge",
-                "stat_type": "Total Bases",
-                "line_score": 1.5,
-                "odds_type": "standard",
-                "scraped_at": now,
-            },
-        ]
+        return _odds(
+            board=[
+                {
+                    "player_name": "Aaron Judge",
+                    "stat_type": "Total Bases",
+                    "line_score": 1.5,
+                    "odds_type": "standard",
+                    "scraped_at": now,
+                },
+            ],
+            book_indexes={"novig": {}},
+        )
 
-    monkeypatch.setattr(svc, "fetch_latest_prizepicks", fake_pp)
+    monkeypatch.setattr(svc, "fetch_mlb_props_normalized", fake_odds)
     monkeypatch.setattr(svc, "fetch_latest_underdog", lambda league="mlb": [])
     monkeypatch.setattr(svc, "fetch_latest_prophetx", lambda league="mlb": [])
     monkeypatch.setattr(svc, "fetch_latest_pinnacle", lambda league="mlb": [])
-    monkeypatch.setattr(svc, "_fetch_parlay_rows", lambda: _async_return([]))
 
     import asyncio
 
@@ -634,15 +763,18 @@ def test_props_attach_roster_enrichment(monkeypatch):
     now = datetime.now(timezone.utc)
     _stub_snapshots(
         monkeypatch,
-        dfs_pp=[
-            {
-                "player_name": "Aaron Judge",
-                "stat_type": "Total Bases",
-                "line_score": 1.5,
-                "odds_type": "standard",
-                "scraped_at": now - timedelta(minutes=5),
-            },
-        ],
+        odds=_odds(
+            board=[
+                {
+                    "player_name": "Aaron Judge",
+                    "stat_type": "Total Bases",
+                    "line_score": 1.5,
+                    "odds_type": "standard",
+                    "scraped_at": now - timedelta(minutes=5),
+                },
+            ],
+            book_indexes=_judge_odds_indexes(now),
+        ),
         prophetx=[
             {
                 "player_name": "Aaron Judge",
@@ -653,7 +785,6 @@ def test_props_attach_roster_enrichment(monkeypatch):
                 "scraped_at": now - timedelta(minutes=4),
             },
         ],
-        parlay_rows=_parlay_rows(),
     )
 
     async def fake_index():
@@ -690,6 +821,18 @@ def test_props_survive_roster_index_failure(monkeypatch):
                 "scraped_at": now,
             },
         ],
+        odds=_odds(
+            board=[
+                {
+                    "player_name": "Aaron Judge",
+                    "stat_type": "Total Bases",
+                    "line_score": 1.5,
+                    "odds_type": "standard",
+                    "scraped_at": now,
+                },
+            ],
+            book_indexes={"novig": {}},
+        ),
     )
 
     async def boom():
@@ -708,15 +851,18 @@ def test_route_success_sets_no_store(client, monkeypatch):
     now = datetime.now(timezone.utc)
     _stub_snapshots(
         monkeypatch,
-        dfs_pp=[
-            {
-                "player_name": "Aaron Judge",
-                "stat_type": "Total Bases",
-                "line_score": 1.5,
-                "odds_type": "standard",
-                "scraped_at": now,
-            },
-        ],
+        odds=_odds(
+            board=[
+                {
+                    "player_name": "Aaron Judge",
+                    "stat_type": "Total Bases",
+                    "line_score": 1.5,
+                    "odds_type": "standard",
+                    "scraped_at": now,
+                },
+            ],
+            book_indexes={"novig": {}},
+        ),
     )
     r = client.get(
         "/api/mlb/props/today", params={"app": "prizepicks", "format": "power", "legs": 4}
@@ -728,3 +874,4 @@ def test_route_success_sets_no_store(client, monkeypatch):
     assert body["legs"] == 4
     assert len(body["props"]) == 1
     assert body["props"][0]["player_name"] == "Aaron Judge"
+    assert "caesars" not in body["props"][0]["books"]
