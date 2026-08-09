@@ -29,13 +29,11 @@ Cookie persistence:
     until the cookie eventually expires and a fresh solve is needed again.
 
 league_id note:
-    PrizePicks doesn't publish stable numeric league_id values, and they can
-    differ between "MLB" and special boards like "MLB LIVE". Rather than
-    hardcode a guessed number, this scraper resolves the id at runtime from
-    the public /leagues endpoint (matching on the league name) and only
-    falls back to _MLB_LEAGUE_ID_FALLBACK — logging a warning when it does —
-    if that lookup fails. Set PRIZEPICKS_MLB_LEAGUE_ID if you've confirmed
-    the correct value from DevTools and want to skip the lookup entirely.
+    MLB defaults to league_id=2 (same convention as NBA=7 / WNBA=3 in
+    wnba_prizepick.py). Set PRIZEPICKS_MLB_LEAGUE_ID to override. Live
+    /leagues lookup is opt-in via PRIZEPICKS_RESOLVE_LEAGUES=1 because that
+    endpoint is usually DataDome-blocked and was poisoning MLB runs with
+    noisy 403s before the real projections fetch.
 
 Default output (one file per league):
     data/props/prizepicks/prizepicks_{league}_YYYY-MM-DD_HHMMSS.json
@@ -77,14 +75,16 @@ _OUTPUT_TZ = ZoneInfo("America/Los_Angeles")
 # var required) so they can often skip the browser fallback entirely.
 _DEFAULT_COOKIE_FILE = os.path.join(_DEFAULT_OUTPUT_DIR, ".session_cookie.txt")
 
-# Only the league name is fixed; the numeric league_id is resolved at
-# runtime (see resolve_leagues()). This tuple is the "requested" set.
+# Hardcoded like wnba_prizepick.py (NBA=7, WNBA=3). Calling /leagues under
+# DataDome usually 403s and only adds noise before the real fetch.
+# Override with PRIZEPICKS_MLB_LEAGUE_ID if PrizePicks renumbers leagues.
+DEFAULT_LEAGUES: tuple[tuple[str, int], ...] = (("MLB", 2),)
 DEFAULT_LEAGUE_NAMES: tuple[str, ...] = ("MLB",)
 
-# Best-effort fallback only — used if the /leagues lookup fails, and only
-# after logging a warning so a bad id doesn't silently return empty/wrong data.
-# Override with PRIZEPICKS_MLB_LEAGUE_ID if you've confirmed the real value.
-_MLB_LEAGUE_ID_FALLBACK = 2
+# Playwright clearance probe: use a small board (NBA) so captcha wait does not
+# have to download the full MLB payload (~thousands of rows) on every poll.
+# wnba_prizepick.py accidentally gets this for free by probing NBA first.
+_CLEARANCE_PROBE_LEAGUE_ID = 7
 
 API_BASE = "https://api.prizepicks.com/projections"
 LEAGUES_API = "https://api.prizepicks.com/leagues"
@@ -517,14 +517,22 @@ def resolve_leagues(
 
     Order of precedence per league:
     1. PRIZEPICKS_{NAME}_LEAGUE_ID env var (e.g. PRIZEPICKS_MLB_LEAGUE_ID)
-    2. Live lookup via the /leagues endpoint (matched by exact name)
-    3. Hardcoded fallback (MLB only) — logged as a warning since it's unverified
+    2. Hardcoded DEFAULT_LEAGUES (MLB=2)
+    3. Optional live /leagues lookup only when PRIZEPICKS_RESOLVE_LEAGUES=1
+       (skipped by default — that endpoint is usually DataDome-blocked)
 
     Returns:
         Tuple of (league_name, league_id) pairs. Leagues that can't be
         resolved are skipped (with an error logged).
     """
-    id_map = fetch_league_id_map(HEADERS_REQUESTS)
+    defaults = {n.upper(): lid for n, lid in DEFAULT_LEAGUES}
+    id_map: dict[str, int] = {}
+    if os.environ.get("PRIZEPICKS_RESOLVE_LEAGUES", "").strip().lower() in (
+        "1",
+        "true",
+        "yes",
+    ):
+        id_map = fetch_league_id_map(HEADERS_REQUESTS)
 
     resolved: list[tuple[str, int]] = []
     for name in names:
@@ -546,15 +554,12 @@ def resolve_leagues(
             resolved.append((name, lid))
             continue
 
-        if upper == "MLB":
-            logger.warning(
-                f"Could not resolve league_id for {name} via /leagues; "
-                f"falling back to unverified league_id={_MLB_LEAGUE_ID_FALLBACK}. "
-                f"Set PRIZEPICKS_MLB_LEAGUE_ID to override."
-            )
-            resolved.append((name, _MLB_LEAGUE_ID_FALLBACK))
-        else:
-            logger.error(f"Could not resolve league_id for {name}; skipping")
+        default_lid = defaults.get(upper)
+        if default_lid is not None:
+            resolved.append((name, default_lid))
+            continue
+
+        logger.error(f"Could not resolve league_id for {name}; skipping")
 
     return tuple(resolved)
 
@@ -773,7 +778,8 @@ def try_fetch_with_playwright(
     captcha_logged = False
     deadline = time.monotonic() + PLAYWRIGHT_WAIT_SECONDS
     league_urls = [(name, projections_api_url(lid)) for name, lid in leagues]
-    probe_url = league_urls[0][1]
+    # Probe a small board during captcha wait — not the full MLB URL.
+    probe_url = projections_api_url(_CLEARANCE_PROBE_LEAGUE_ID)
 
     try:
         with sync_playwright() as p:
@@ -781,6 +787,8 @@ def try_fetch_with_playwright(
             try:
                 context = browser.new_context()
                 page = context.new_page()
+                # MLB payloads are large; default 30s evaluate timeout is too tight.
+                page.set_default_timeout(120_000)
                 page.goto(APP_URL, wait_until="domcontentloaded", timeout=60_000)
 
                 cleared = False

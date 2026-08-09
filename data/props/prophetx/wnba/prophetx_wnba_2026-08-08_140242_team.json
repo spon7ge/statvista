@@ -1,0 +1,117 @@
+{
+  "source": "prophetx",
+  "fetched_at": "2026-08-08T14:02:42-07:00",
+  "league": "wnba",
+  "tournament_id": 1600000176,
+  "snapshot_kind": "team",
+  "games": [
+    {
+      "event_id": 13002464,
+      "name": "Indiana Fever at Chicago Sky",
+      "scheduled": "2026-08-08T19:30:00Z",
+      "status": "live",
+      "competitors": [
+        {
+          "id": 13000002,
+          "name": "Chicago Sky",
+          "abbreviation": "CHI",
+          "seq": 0
+        },
+        {
+          "id": 13000004,
+          "name": "Indiana Fever",
+          "abbreviation": "IND",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "Chicago Sky",
+            "competitor_id": 13000002,
+            "american": 660,
+            "line": null,
+            "stake": 8.3
+          },
+          {
+            "name": "Indiana Fever",
+            "competitor_id": 13000004,
+            "american": -1150,
+            "line": null,
+            "stake": 16.4
+          }
+        ]
+      }
+    },
+    {
+      "event_id": 13002465,
+      "name": "Seattle Storm at Portland Fire",
+      "scheduled": "2026-08-09T00:30:00Z",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": 13000014,
+          "name": "Portland Fire",
+          "abbreviation": "POR",
+          "seq": 0
+        },
+        {
+          "id": 13000012,
+          "name": "Seattle Storm",
+          "abbreviation": "SEA",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "Portland Fire",
+            "competitor_id": 13000014,
+            "american": 108,
+            "line": null,
+            "stake": 871.01
+          },
+          {
+            "name": "Seattle Storm",
+            "competitor_id": 13000012,
+            "american": -111,
+            "line": null,
+            "stake": 588.21
+          }
+        ],
+        "spread": [
+          {
+            "name": "Portland Fire +1.5",
+            "competitor_id": 13000014,
+            "american": -106,
+            "line": 1.5,
+            "stake": 114.97
+          },
+          {
+            "name": "Seattle Storm -1.5",
+            "competitor_id": 13000012,
+            "american": 100,
+            "line": -1.5,
+            "stake": 82.56
+          }
+        ],
+        "total": [
+          {
+            "name": "over 180",
+            "competitor_id": null,
+            "american": 101,
+            "line": 180,
+            "stake": 1032.1
+          },
+          {
+            "name": "under 180",
+            "competitor_id": null,
+            "american": -107,
+            "line": 180,
+            "stake": 851.0
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,3 +1,6 @@
 statvista - todo list
 1. develop loading screen transition 
 2. remove thin border
+
+start backend: PYTHONPATH=..:. uvicorn app.main:app --reload --port 8000
+start frontend: npm run dev
