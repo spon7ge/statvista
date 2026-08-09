@@ -4,21 +4,11 @@ import type {
   ApiMlbPropDfs,
   ApiMlbPropRow,
 } from "@/shared/lib/api";
+import { bookDisplayName } from "@/features/mlb/lib/mlbBookLabels";
 import { formatAmericanOdds } from "@/features/mlb/lib/mlbOddsBoard";
 import { StatvistaBarsMark } from "@/shared/ui/StatvistaBarsMark";
 
 export const MLB_PROP_PICKS_PAGE_SIZE = 20;
-
-const BOOK_LABELS: Record<string, string> = {
-  prophetx: "ProphetX",
-  novig: "Novig",
-  kalshi: "Kalshi",
-  draftkings: "DraftKings",
-  fanduel: "FanDuel",
-  betmgm: "BetMGM",
-  betonline: "BetOnline",
-  pinnacle: "Pinnacle",
-};
 
 function sideLabel(side: string | null): string {
   if (side === "over") return "Over";
@@ -177,7 +167,7 @@ function BookQuoteCell({
       title={title}
     >
       <span className="text-[14px] font-medium tracking-wide text-white uppercase">
-        {BOOK_LABELS[bookKey] ?? bookKey}
+        {bookDisplayName(bookKey)}
       </span>
       {quote ? (
         <span className="font-mono text-[18px] text-white/90">
