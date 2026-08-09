@@ -472,8 +472,9 @@ export function MlbPropPicksList({
 
       {!isLoading && props.length > 0 ? (
         <p className="px-1 text-[14px] text-white/35">
-          Fair from ProphetX/Novig (then DK/FD). DFS lines from
-          PrizePicks/Underdog. Pinnacle comparison only.
+          Fair from ProphetX/Novig (then DK/FD); Soft Consensus
+          (soft books incl. Pinnacle) when Tier 1/2 empty. DFS lines from
+          PrizePicks/Underdog.
         </p>
       ) : null}
     </section>

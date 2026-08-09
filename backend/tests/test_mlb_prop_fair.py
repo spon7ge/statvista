@@ -78,6 +78,7 @@ def test_no_sharp_read():
     r = compute_fair({"prophetx": None, "novig": None, "draftkings": None, "fanduel": None})
     assert r.source_tier == "no_sharp_read"
     assert r.fair_pct is None
+    assert "No Tier 1/2/3 books available." in r.fair_explain
 
 
 def test_soft_consensus_single_book():

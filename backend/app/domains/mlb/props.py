@@ -246,8 +246,10 @@ def _index_parlay(
 ) -> dict[str, SideIndex]:
     """Index Parlay rows by (player, stat, side, line) for fair + cmp books.
 
-    Fair books (Novig/FD/DK) may drive ``compute_fair``. Cmp books
-    (Caesars/Kalshi/bet365/BetMGM/Fanatics) are display-only on expand.
+    Fair books (Novig/FD/DK) may drive ``compute_fair`` as Tier 1/2. Soft/cmp
+    books (Caesars/Kalshi/bet365/BetMGM/Fanatics/Hard Rock/Fliff) also feed
+    Tier 3 Soft Consensus when Tier 1/2 are empty; expand quotes stay
+    ``role="comparison"``.
 
     ParlayAPI is fetched live with no persisted per-quote history in v1, so
     ``changed_at`` for these books is approximated as the current request
@@ -382,11 +384,8 @@ def _assemble_rows(
     novig_idx = parlay_by_book.get("novig", {})
     dk_idx = parlay_by_book.get("draftkings", {})
     fd_idx = parlay_by_book.get("fanduel", {})
-    soft_indexes = tuple(
-        fair_book_indexes[book]
-        for book in SOFT_FAIR_BOOKS
-        if book in fair_book_indexes
-    )
+    # SOFT_FAIR_BOOKS ⊆ fair_book_indexes keys (cmp books + pinnacle).
+    soft_indexes = tuple(fair_book_indexes[book] for book in SOFT_FAIR_BOOKS)
 
     rows: list[MlbPropRow] = []
     for (norm_player, stat_key, _line_rounded), bucket in board.items():

@@ -349,7 +349,7 @@ describe("MlbPropPicksList", () => {
     ).toBeInTheDocument();
   });
 
-  it("shows the fair/DFS/Pinnacle caption when rows are present", () => {
+  it("shows the fair/DFS/Soft Consensus caption when rows are present", () => {
     render(
       <MlbPropPicksList
         props={[judge]}
@@ -360,7 +360,7 @@ describe("MlbPropPicksList", () => {
     );
     expect(
       screen.getByText(
-        "Fair from ProphetX/Novig (then DK/FD). DFS lines from PrizePicks/Underdog. Pinnacle comparison only.",
+        "Fair from ProphetX/Novig (then DK/FD); Soft Consensus (soft books incl. Pinnacle) when Tier 1/2 empty. DFS lines from PrizePicks/Underdog.",
       ),
     ).toBeInTheDocument();
   });
