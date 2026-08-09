@@ -102,21 +102,45 @@ async def fetch_matchup_leaders(
     if not away_ids and not home_ids:
         return None
 
-    team_map, *payloads = await asyncio.gather(
+    team_map_result, *payload_results = await asyncio.gather(
         fetch_team_abbrev_map(client, season),
         *(
             fetch_category_payload(client, sort_stat, group, order, season)
             for (_k, _lab, _st, sort_stat, group, order) in specs
         ),
+        return_exceptions=True,
     )
+    if isinstance(team_map_result, BaseException):
+        if isinstance(team_map_result, asyncio.CancelledError):
+            raise team_map_result
+        logger.warning(
+            "matchup leaders team abbrev map failed: %s", team_map_result
+        )
+        team_map: dict[int, str] = {}
+    else:
+        team_map = team_map_result
 
     categories: list[MlbMatchupLeaderCategory] = []
-    for spec, payload in zip(specs, payloads, strict=True):
+    for spec, payload_result in zip(specs, payload_results, strict=True):
         key, label, stat, sort_stat, _group, _order = spec
         category_key = cast(MatchupLeaderCategoryKey, key)
+        if isinstance(payload_result, BaseException):
+            if isinstance(payload_result, asyncio.CancelledError):
+                raise payload_result
+            logger.warning(
+                "matchup leaders category %s fetch failed: %s", key, payload_result
+            )
+            categories.append(
+                MlbMatchupLeaderCategory(
+                    key=category_key,
+                    label=_LABEL_BY_KEY[category_key],
+                    leaders=[],
+                )
+            )
+            continue
         try:
             board = normalize_category_payload(
-                payload,
+                payload_result,
                 key=key,
                 label=label,
                 stat=stat,
