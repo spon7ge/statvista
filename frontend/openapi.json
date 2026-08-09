@@ -3924,16 +3924,6 @@
       },
       "MlbPropBooks": {
         "properties": {
-          "bet365": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/MlbPropBookQuote"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
           "betmgm": {
             "anyOf": [
               {
@@ -3944,7 +3934,7 @@
               }
             ]
           },
-          "caesars": {
+          "betonline": {
             "anyOf": [
               {
                 "$ref": "#/components/schemas/MlbPropBookQuote"
@@ -3964,37 +3954,7 @@
               }
             ]
           },
-          "fanatics": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/MlbPropBookQuote"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
           "fanduel": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/MlbPropBookQuote"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "fliff": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/MlbPropBookQuote"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "hardrock": {
             "anyOf": [
               {
                 "$ref": "#/components/schemas/MlbPropBookQuote"
@@ -4048,16 +4008,12 @@
         "required": [
           "prophetx",
           "novig",
+          "kalshi",
           "draftkings",
           "fanduel",
           "pinnacle",
-          "caesars",
-          "kalshi",
-          "bet365",
           "betmgm",
-          "fanatics",
-          "hardrock",
-          "fliff"
+          "betonline"
         ],
         "title": "MlbPropBooks",
         "type": "object"

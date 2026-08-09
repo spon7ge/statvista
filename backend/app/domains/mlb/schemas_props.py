@@ -30,16 +30,12 @@ class MlbPropBooks(BaseModel):
 
     prophetx: MlbPropBookQuote | None = None
     novig: MlbPropBookQuote | None = None
+    kalshi: MlbPropBookQuote | None = None
     draftkings: MlbPropBookQuote | None = None
     fanduel: MlbPropBookQuote | None = None
     pinnacle: MlbPropBookQuote | None = None
-    caesars: MlbPropBookQuote | None = None
-    kalshi: MlbPropBookQuote | None = None
-    bet365: MlbPropBookQuote | None = None
     betmgm: MlbPropBookQuote | None = None
-    fanatics: MlbPropBookQuote | None = None
-    hardrock: MlbPropBookQuote | None = None
-    fliff: MlbPropBookQuote | None = None
+    betonline: MlbPropBookQuote | None = None
 
 
 class MlbPropDfs(BaseModel):

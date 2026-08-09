@@ -42,6 +42,7 @@ function row(
         changed_at: "2026-08-05T19:48:00Z",
         role: null,
       },
+      kalshi: null,
       draftkings: null,
       fanduel: null,
       pinnacle: {
@@ -51,13 +52,8 @@ function row(
         changed_at: "2026-08-05T19:30:00Z",
         role: "comparison",
       },
-      caesars: null,
-      kalshi: null,
-      bet365: null,
       betmgm: null,
-      fanatics: null,
-      hardrock: null,
-      fliff: null,
+      betonline: null,
     },
     dfs: {
       line: 1.5,
@@ -89,16 +85,12 @@ const noRead = row({
   books: {
     prophetx: null,
     novig: null,
+    kalshi: null,
     draftkings: null,
     fanduel: null,
     pinnacle: null,
-    caesars: null,
-    kalshi: null,
-    bet365: null,
     betmgm: null,
-    fanatics: null,
-    hardrock: null,
-    fliff: null,
+    betonline: null,
   },
 });
 
@@ -227,25 +219,21 @@ describe("MlbPropPicksList", () => {
     const expanded = screen.getByTestId("mlb-prop-row-expand");
     expect(within(expanded).getByText("ProphetX")).toBeInTheDocument();
     expect(within(expanded).getByText("Pinnacle")).toBeInTheDocument();
-    expect(within(expanded).getByText("Caesars")).toBeInTheDocument();
     expect(within(expanded).getByText("Kalshi")).toBeInTheDocument();
-    expect(within(expanded).getByText("bet365")).toBeInTheDocument();
     expect(within(expanded).getByText("BetMGM")).toBeInTheDocument();
-    expect(within(expanded).getByText("Fanatics")).toBeInTheDocument();
-    expect(within(expanded).getByText("Hard Rock")).toBeInTheDocument();
-    expect(within(expanded).getByText("Fliff")).toBeInTheDocument();
+    expect(within(expanded).getByText("BetOnline")).toBeInTheDocument();
     expect(screen.getByTestId("mlb-prop-row").className).toMatch(
       /ring-\[#059669\]/,
     );
   });
 
-  it("shows Parlay soft book quotes on expand when present", async () => {
+  it("shows soft book quotes on expand when present", async () => {
     const user = userEvent.setup();
     const withCmp = row({
       player_name: "Aaron Judge",
       books: {
         ...judge.books,
-        caesars: {
+        betmgm: {
           side: "over",
           fair_pct: 56.0,
           american: -127,
@@ -257,6 +245,13 @@ describe("MlbPropPicksList", () => {
           fair_pct: 54.0,
           american: -117,
           changed_at: "2026-08-05T19:41:00Z",
+          role: "comparison",
+        },
+        betonline: {
+          side: "over",
+          fair_pct: 55.0,
+          american: -122,
+          changed_at: "2026-08-05T19:42:00Z",
           role: "comparison",
         },
       },
@@ -271,8 +266,9 @@ describe("MlbPropPicksList", () => {
     );
     await user.click(screen.getByRole("button", { name: /Aaron Judge/i }));
     const expanded = screen.getByTestId("mlb-prop-row-expand");
-    expect(within(expanded).getByText("Caesars")).toBeInTheDocument();
+    expect(within(expanded).getByText("BetMGM")).toBeInTheDocument();
     expect(within(expanded).getByText("Kalshi")).toBeInTheDocument();
+    expect(within(expanded).getByText("BetOnline")).toBeInTheDocument();
     expect(within(expanded).queryByText(/\(cmp\)/i)).not.toBeInTheDocument();
   });
 

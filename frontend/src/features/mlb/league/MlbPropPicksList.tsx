@@ -10,16 +10,12 @@ import { StatvistaBarsMark } from "@/shared/ui/StatvistaBarsMark";
 const BOOK_LABELS: Record<string, string> = {
   prophetx: "ProphetX",
   novig: "Novig",
+  kalshi: "Kalshi",
   draftkings: "DraftKings",
   fanduel: "FanDuel",
   pinnacle: "Pinnacle",
-  caesars: "Caesars",
-  kalshi: "Kalshi",
-  bet365: "bet365",
   betmgm: "BetMGM",
-  fanatics: "Fanatics",
-  hardrock: "Hard Rock",
-  fliff: "Fliff",
+  betonline: "BetOnline",
 };
 
 function sideLabel(side: string | null): string {
@@ -218,6 +214,11 @@ function ExpandedPanel({
           lastUpdatedAt={lastUpdatedAt}
         />
         <BookQuoteCell
+          bookKey="kalshi"
+          quote={row.books.kalshi}
+          lastUpdatedAt={lastUpdatedAt}
+        />
+        <BookQuoteCell
           bookKey="draftkings"
           quote={row.books.draftkings}
           lastUpdatedAt={lastUpdatedAt}
@@ -233,38 +234,13 @@ function ExpandedPanel({
           lastUpdatedAt={lastUpdatedAt}
         />
         <BookQuoteCell
-          bookKey="caesars"
-          quote={row.books.caesars}
-          lastUpdatedAt={lastUpdatedAt}
-        />
-        <BookQuoteCell
-          bookKey="kalshi"
-          quote={row.books.kalshi}
-          lastUpdatedAt={lastUpdatedAt}
-        />
-        <BookQuoteCell
-          bookKey="bet365"
-          quote={row.books.bet365}
-          lastUpdatedAt={lastUpdatedAt}
-        />
-        <BookQuoteCell
           bookKey="betmgm"
           quote={row.books.betmgm}
           lastUpdatedAt={lastUpdatedAt}
         />
         <BookQuoteCell
-          bookKey="fanatics"
-          quote={row.books.fanatics}
-          lastUpdatedAt={lastUpdatedAt}
-        />
-        <BookQuoteCell
-          bookKey="hardrock"
-          quote={row.books.hardrock}
-          lastUpdatedAt={lastUpdatedAt}
-        />
-        <BookQuoteCell
-          bookKey="fliff"
-          quote={row.books.fliff}
+          bookKey="betonline"
+          quote={row.books.betonline}
           lastUpdatedAt={lastUpdatedAt}
         />
       </div>

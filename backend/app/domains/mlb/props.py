@@ -380,6 +380,8 @@ def _assemble_rows(
         **{book: parlay_by_book.get(book, {}) for book in _PARLAY_FAIR_BOOKS},
         **{book: parlay_by_book.get(book, {}) for book in _PARLAY_CMP_BOOKS},
         "pinnacle": pinnacle_idx,
+        # Empty until Task 6 wires Odds API book indexes into assemble.
+        "betonline": parlay_by_book.get("betonline", {}),
     }
     novig_idx = parlay_by_book.get("novig", {})
     dk_idx = parlay_by_book.get("draftkings", {})
@@ -426,16 +428,12 @@ def _assemble_rows(
         books = MlbPropBooks(
             prophetx=_book_quote(prophetx_idx, display_key),
             novig=_book_quote(novig_idx, display_key),
+            kalshi=_cmp_quote("kalshi"),
             draftkings=_book_quote(dk_idx, display_key),
             fanduel=_book_quote(fd_idx, display_key),
             pinnacle=_book_quote(pinnacle_idx, display_key, role="comparison"),
-            caesars=_cmp_quote("caesars"),
-            kalshi=_cmp_quote("kalshi"),
-            bet365=_cmp_quote("bet365"),
             betmgm=_cmp_quote("betmgm"),
-            fanatics=_cmp_quote("fanatics"),
-            hardrock=_cmp_quote("hardrock"),
-            fliff=_cmp_quote("fliff"),
+            betonline=None,  # Task 6 wires Odds API book indexes
         )
 
         driving_changed_at = _fair_driving_changed_at(

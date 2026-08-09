@@ -312,7 +312,7 @@ def test_soft_parlay_cmp_only_drives_soft_consensus(monkeypatch):
         ],
         parlay_rows=[
             {
-                "bookmaker": "caesars",
+                "bookmaker": "betmgm",
                 "player": "Mookie Betts",
                 "market_key": "player_total_bases",
                 "line": 1.5,
@@ -330,8 +330,8 @@ def test_soft_parlay_cmp_only_drives_soft_consensus(monkeypatch):
     assert row.source_tier == "soft_consensus"
     assert row.fair_pct is not None
     assert row.edge_pct is not None
-    assert row.books.caesars is not None
-    assert row.books.caesars.role == "comparison"
+    assert row.books.betmgm is not None
+    assert row.books.betmgm.role == "comparison"
 
 
 def test_prophetx_beats_soft_books(monkeypatch):
@@ -369,7 +369,7 @@ def test_prophetx_beats_soft_books(monkeypatch):
         ],
         parlay_rows=[
             {
-                "bookmaker": "caesars",
+                "bookmaker": "betmgm",
                 "player": "Mookie Betts",
                 "market_key": "player_total_bases",
                 "line": 1.5,
@@ -387,8 +387,8 @@ def test_prophetx_beats_soft_books(monkeypatch):
     assert row.source_tier.startswith("sharp_")
     assert row.books.pinnacle is not None
     assert row.books.pinnacle.role == "comparison"
-    assert row.books.caesars is not None
-    assert row.books.caesars.role == "comparison"
+    assert row.books.betmgm is not None
+    assert row.books.betmgm.role == "comparison"
 
 
 def test_underdog_uses_stored_side_only(monkeypatch):
