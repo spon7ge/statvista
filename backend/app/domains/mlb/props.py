@@ -3,13 +3,14 @@
 Pipeline (see docs/superpowers/specs/2026-08-05-mlb-prop-picks-design.md):
   1. Load the selected app's DFS lines (PrizePicks standard only; Underdog as
      stored) and bucket into one board row per (player, stat, line).
-  2. Index ProphetX (Tier 1), Parlay Novig/FanDuel/DraftKings (Tier 1/2), and
-     Pinnacle (comparison-only) by (player, stat, side, line) — exact line
-     only, no closest-line fallback.
+  2. Index ProphetX (Tier 1), Parlay Novig/FanDuel/DraftKings (Tier 1/2),
+     soft Parlay books + Pinnacle (Tier 3 Soft Consensus; expand role
+     ``comparison``) by (player, stat, side, line) — exact line only, no
+     closest-line fallback.
   3. For each side offered by the DFS app at that line, compute fair% via
      ``compute_fair`` and edge vs. the format breakeven; the recommended side
      is whichever has the higher edge.
-  4. Sort rows with a sharp/mid-tier read above ``no_sharp_read`` rows.
+  4. Sort rows with a sharp/mid-tier/soft read above ``no_sharp_read`` rows.
 """
 
 from __future__ import annotations
@@ -26,6 +27,7 @@ from app.core.odds_snapshots import (
     fetch_latest_underdog,
 )
 from app.domains.mlb.prop_fair import (
+    SOFT_FAIR_BOOKS,
     FairResult,
     american_to_fair_pct,
     compute_fair,
@@ -57,8 +59,9 @@ FETCH_TIMEOUT_SECONDS = 12.0
 PROPS_LIMIT = 10000
 
 # Parlay books that may drive fair% (Tier 1 exchange + Tier 2 fallback).
-# Soft / prediction books below are comparison-only on expand — never
-# eligible for compute_fair. Pinnacle comes from Selenium snapshots, not Parlay.
+# Soft / prediction books (``_PARLAY_CMP_BOOKS``) plus Pinnacle (Selenium
+# snapshots) feed Tier 3 Soft Consensus via ``SOFT_FAIR_BOOKS``; expand quotes
+# keep ``role="comparison"``.
 _PARLAY_FAIR_BOOKS: tuple[str, ...] = ("novig", "fanduel", "draftkings")
 _PARLAY_CMP_BOOKS: tuple[str, ...] = (
     "caesars",
@@ -334,15 +337,19 @@ def _fair_driving_changed_at(
     novig_idx: SideIndex,
     dk_idx: SideIndex,
     fd_idx: SideIndex,
+    soft_indexes: tuple[SideIndex, ...] = (),
 ) -> datetime | None:
     """Return ``changed_at`` for whichever book(s) actually drove ``fair_pct``.
 
     Tier 1 (consensus/disagreement/single-source) is driven by ProphetX and/or
-    Novig; Tier 2 (``mid_tier_fallback``) is driven by DraftKings and/or
-    FanDuel. Recency chips must reflect the driving book so mid-tier rows
-    aren't silently missing a chip that DK/FD timestamps would warrant.
+    Novig; Tier 2 (``mid_tier_fallback``) by DraftKings and/or FanDuel; Tier 3
+    (``soft_consensus``) by soft Parlay books and/or Pinnacle. Recency chips
+    must reflect the driving book so mid-tier/soft rows aren't silently
+    missing a chip those timestamps would warrant.
     """
-    if source_tier == "mid_tier_fallback":
+    if source_tier == "soft_consensus":
+        candidates = soft_indexes
+    elif source_tier == "mid_tier_fallback":
         candidates = (dk_idx, fd_idx)
     else:
         candidates = (prophetx_idx, novig_idx)
@@ -353,8 +360,8 @@ def _fair_driving_changed_at(
         for hit in (idx.get(display_key),)
         if hit is not None
     ]
-    # When both books contributed (agree-and-blend or disagree-use-one), the
-    # more recent timestamp best represents how fresh the fair read is.
+    # When multiple books contributed (agree-and-blend, disagree-use-one, or
+    # soft average), the more recent timestamp best represents freshness.
     return max(changed_ats) if changed_ats else None
 
 
@@ -369,10 +376,17 @@ def _assemble_rows(
     fair_book_indexes = {
         "prophetx": prophetx_idx,
         **{book: parlay_by_book.get(book, {}) for book in _PARLAY_FAIR_BOOKS},
+        **{book: parlay_by_book.get(book, {}) for book in _PARLAY_CMP_BOOKS},
+        "pinnacle": pinnacle_idx,
     }
     novig_idx = parlay_by_book.get("novig", {})
     dk_idx = parlay_by_book.get("draftkings", {})
     fd_idx = parlay_by_book.get("fanduel", {})
+    soft_indexes = tuple(
+        fair_book_indexes[book]
+        for book in SOFT_FAIR_BOOKS
+        if book in fair_book_indexes
+    )
 
     rows: list[MlbPropRow] = []
     for (norm_player, stat_key, _line_rounded), bucket in board.items():
@@ -426,7 +440,13 @@ def _assemble_rows(
         )
 
         driving_changed_at = _fair_driving_changed_at(
-            primary.source_tier, display_key, prophetx_idx, novig_idx, dk_idx, fd_idx
+            primary.source_tier,
+            display_key,
+            prophetx_idx,
+            novig_idx,
+            dk_idx,
+            fd_idx,
+            soft_indexes,
         )
 
         dfs_changed_at = bucket.get("scraped_at")

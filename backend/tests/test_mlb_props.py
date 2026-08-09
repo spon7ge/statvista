@@ -260,7 +260,7 @@ def test_exact_line_attaches_parlay_alternate_market_key(monkeypatch):
     assert row.fair_pct is not None
 
 
-def test_pinnacle_is_comparison_only_and_exact_line(monkeypatch):
+def test_pinnacle_only_drives_soft_consensus(monkeypatch):
     now = datetime.now(timezone.utc)
     _stub_snapshots(
         monkeypatch,
@@ -290,14 +290,14 @@ def test_pinnacle_is_comparison_only_and_exact_line(monkeypatch):
     response = asyncio.run(svc.get_mlb_props_today(app="prizepicks", format="power", legs=4))
 
     row = response.props[0]
-    # Pinnacle attaches for display but never drives fair/edge.
     assert row.books.pinnacle is not None
     assert row.books.pinnacle.role == "comparison"
-    assert row.fair_pct is None
-    assert row.source_tier == "no_sharp_read"
+    assert row.source_tier == "soft_consensus"
+    assert row.fair_pct is not None
+    assert row.edge_pct is not None
 
 
-def test_parlay_cmp_books_attach_without_driving_fair(monkeypatch):
+def test_soft_parlay_cmp_only_drives_soft_consensus(monkeypatch):
     now = datetime.now(timezone.utc)
     _stub_snapshots(
         monkeypatch,
@@ -319,53 +319,62 @@ def test_parlay_cmp_books_attach_without_driving_fair(monkeypatch):
                 "over_price": -135,
                 "under_price": 110,
             },
+        ],
+    )
+
+    import asyncio
+
+    response = asyncio.run(svc.get_mlb_props_today(app="prizepicks", format="power", legs=4))
+
+    row = response.props[0]
+    assert row.source_tier == "soft_consensus"
+    assert row.fair_pct is not None
+    assert row.edge_pct is not None
+    assert row.books.caesars is not None
+    assert row.books.caesars.role == "comparison"
+
+
+def test_prophetx_beats_soft_books(monkeypatch):
+    now = datetime.now(timezone.utc)
+    _stub_snapshots(
+        monkeypatch,
+        dfs_pp=[
             {
-                "bookmaker": "kalshi",
-                "player": "Mookie Betts",
-                "market_key": "player_total_bases",
-                "line": 1.5,
-                "over_price": -120,
-                "under_price": 100,
+                "player_name": "Mookie Betts",
+                "stat_type": "Total Bases",
+                "line_score": 1.5,
+                "odds_type": "standard",
+                "scraped_at": now,
             },
+        ],
+        prophetx=[
             {
-                "bookmaker": "bet365",
-                "player": "Mookie Betts",
-                "market_key": "player_total_bases",
-                "line": 1.5,
-                "over_price": -130,
-                "under_price": 105,
+                "player_name": "Mookie Betts",
+                "stat_name": "total_bases",
+                "line_score": 1.5,
+                "side": "over",
+                "american_price": -130,
+                "scraped_at": now,
             },
+        ],
+        pinnacle=[
             {
-                "bookmaker": "betmgm",
-                "player": "Mookie Betts",
-                "market_key": "player_total_bases",
-                "line": 1.5,
-                "over_price": -128,
-                "under_price": 104,
+                "player_name": "Mookie Betts",
+                "market_type": "player_total_bases",
+                "line_score": 1.5,
+                "side": "over",
+                "american_price": -140,
+                "scraped_at": now,
             },
+        ],
+        parlay_rows=[
             {
-                "bookmaker": "fanatics",
+                "bookmaker": "caesars",
                 "player": "Mookie Betts",
                 "market_key": "player_total_bases",
                 "line": 1.5,
-                "over_price": -122,
-                "under_price": 102,
-            },
-            {
-                "bookmaker": "hardrock",
-                "player": "Mookie Betts",
-                "market_key": "player_total_bases",
-                "line": 1.5,
-                "over_price": -125,
-                "under_price": 103,
-            },
-            {
-                "bookmaker": "fliff",
-                "player": "Mookie Betts",
-                "market_key": "player_total_bases",
-                "line": 1.5,
-                "over_price": -118,
-                "under_price": 98,
+                "over_price": -135,
+                "under_price": 110,
             },
         ],
     )
@@ -375,21 +384,11 @@ def test_parlay_cmp_books_attach_without_driving_fair(monkeypatch):
     response = asyncio.run(svc.get_mlb_props_today(app="prizepicks", format="power", legs=4))
 
     row = response.props[0]
-    assert row.source_tier == "no_sharp_read"
-    assert row.fair_pct is None
-    for book_name in (
-        "caesars",
-        "kalshi",
-        "bet365",
-        "betmgm",
-        "fanatics",
-        "hardrock",
-        "fliff",
-    ):
-        quote = getattr(row.books, book_name)
-        assert quote is not None, book_name
-        assert quote.role == "comparison"
-        assert quote.american is not None
+    assert row.source_tier.startswith("sharp_")
+    assert row.books.pinnacle is not None
+    assert row.books.pinnacle.role == "comparison"
+    assert row.books.caesars is not None
+    assert row.books.caesars.role == "comparison"
 
 
 def test_underdog_uses_stored_side_only(monkeypatch):
