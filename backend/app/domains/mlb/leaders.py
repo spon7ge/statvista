@@ -58,13 +58,14 @@ def stats_request_params(
     group: str,
     order: Literal["asc", "desc"],
     season: int,
+    limit: int | None = None,
 ) -> dict[str, str | int]:
     params: dict[str, str | int] = {
         "stats": "season",
         "group": group,
         "season": season,
         "sportIds": 1,
-        "limit": TOP_N,
+        "limit": TOP_N if limit is None else limit,
         "order": order,
         "sortStat": sort_stat,
     }
@@ -102,10 +103,11 @@ async def fetch_category_payload(
     group: str,
     order: Literal["asc", "desc"],
     season: int,
+    limit: int | None = None,
 ) -> dict:
     res = await client.get(
         STATS_URL,
-        params=stats_request_params(sort_stat, group, order, season),
+        params=stats_request_params(sort_stat, group, order, season, limit=limit),
     )
     res.raise_for_status()
     return res.json()
@@ -138,12 +140,14 @@ def normalize_category_payload(
     stat: str,
     sort_stat: str,
     team_id_to_abbrev: dict[int, str],
+    limit: int | None = None,
 ) -> MlbLeaderCategory:
+    max_n = TOP_N if limit is None else limit
     blocks = payload.get("stats") or []
     raw_splits = (blocks[0] or {}).get("splits") or [] if blocks else []
     leaders: list[MlbLeaderRow] = []
     for entry in raw_splits:
-        if len(leaders) >= TOP_N:
+        if len(leaders) >= max_n:
             break
         player = entry.get("player") or {}
         team = entry.get("team") or {}

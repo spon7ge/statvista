@@ -51,6 +51,7 @@ from app.providers.espn.mlb_bridge import (
     normalize_espn_mlb_win_probability,
     resolve_espn_event_id,
 )
+from app.providers.mlb_stats.game_leaders import fetch_game_leaders
 from app.providers.mlb_stats.team_season import fetch_season_team_stats_pair
 from app.domains.mlb.scoreboard import format_tip_label
 
@@ -1329,8 +1330,26 @@ async def _attach_season_team_stats(detail: MlbGameDetail, payload: dict) -> Mlb
 
 
 async def _attach_game_leaders(detail: MlbGameDetail, payload: dict) -> MlbGameDetail:
-    """Placeholder until Task 2; soft no-op."""
-    return detail
+    """Soft-fetch depth-100 hitting boards and pick first roster hit per category."""
+    season = _season_year(detail, payload)
+    if season is None:
+        return detail
+    try:
+        away_id = int(detail.away.id)
+        home_id = int(detail.home.id)
+    except (TypeError, ValueError):
+        return detail
+
+    async with httpx.AsyncClient(timeout=STATS_TIMEOUT_SECONDS) as client:
+        leaders = await fetch_game_leaders(
+            client,
+            away_team_id=away_id,
+            home_team_id=home_id,
+            away_abbrev=detail.away.abbrev,
+            home_abbrev=detail.home.abbrev,
+            season=season,
+        )
+    return attach_game_leaders(detail, leaders)
 
 
 async def _attach_espn_summary_enrichment(
