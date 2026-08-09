@@ -1,7 +1,7 @@
 # MLB Final Player of the Game
 
 Date: 2026-08-08  
-Status: Approved for planning  
+Status: Implemented  
 Route: `/mlb/games/:gamePk` (Final only)  
 Brand: **statvista**
 
