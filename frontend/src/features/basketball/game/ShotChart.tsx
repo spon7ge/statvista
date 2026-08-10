@@ -1,37 +1,198 @@
 import { useMemo, useState } from "react";
 import { GameSection } from "@/shared/ui/GameSection";
-import type { GameDetail } from "../lib/types";
+import type { GameDetail, GameDetailShot, GameDetailTeam } from "../lib/types";
 
-/** Half-court in feet × 10 (ESPN: x 0–50, y 0–47 with y≈0 at the basket). */
-const VIEW_WIDTH = 500;
-const VIEW_HEIGHT = 470;
+/** Full court in feet × 10 (94 × 50). ESPN half-court shots: x 0–50 width, y 0–47 from basket. */
+const COURT_LENGTH = 940;
+const COURT_WIDTH = 500;
 const LINE = "rgba(255,255,255,0.35)";
 const LINE_WIDTH = 1.5;
 
-function toSvgX(x: number): number {
-  return x * 10;
-}
-
-/** Flip Y so the basket sits at the bottom of the chart (matches the mockup). */
-function toSvgY(y: number): number {
-  return VIEW_HEIGHT - y * 10;
-}
-
-type TeamFilter = "both" | string;
 type PeriodFilter = "all" | number;
-
-function periodClockLabel(period: number, clock: string): string {
-  return `Q${period} ${clock}`;
-}
+type BasketSide = "left" | "right";
 
 function quarterLabel(period: number): string {
-  if (period <= 4) return `Q${period}`;
+  if (period <= 4) return `${period}Q`;
   const ot = period - 4;
   return ot === 1 ? "OT" : `${ot}OT`;
 }
 
+/** Map ESPN half-court (x,y) onto one end of a landscape full court. */
+export function toFullCourtPoint(
+  shot: Pick<GameDetailShot, "x" | "y">,
+  side: BasketSide,
+): { cx: number; cy: number } {
+  const cy = shot.x * 10;
+  const along = shot.y * 10;
+  const cx = side === "left" ? along : COURT_LENGTH - along;
+  return { cx, cy };
+}
+
+function TeamLogo({
+  team,
+  x,
+  y,
+}: {
+  team: GameDetailTeam;
+  x: number;
+  y: number;
+}) {
+  if (!team.logoUrl) return null;
+  const size = 48;
+  return (
+    <image
+      href={team.logoUrl}
+      x={x - size / 2}
+      y={y - size / 2}
+      width={size}
+      height={size}
+      opacity={0.9}
+      aria-hidden
+    />
+  );
+}
+
+/** Paint + rim + 3PT for one basket end. */
+function BasketEnd({ side }: { side: BasketSide }) {
+  const mirror = (x: number) => (side === "left" ? x : COURT_LENGTH - x);
+  const paintLeft = mirror(0);
+  const paintRight = mirror(190);
+  const paintX = Math.min(paintLeft, paintRight);
+  const ftX = mirror(190);
+  const rimX = mirror(52.5);
+  const boardX = mirror(40);
+  const restrictY1 = 210;
+  const restrictY2 = 290;
+  const baseline = mirror(0);
+  const cornerDepth = mirror(140);
+  const arcStartY = 33;
+  const arcEndY = 467;
+
+  // 3PT: sideline corners from baseline, then arc around the rim.
+  const threePath =
+    side === "left"
+      ? `M ${baseline} ${arcStartY}
+         L ${cornerDepth} ${arcStartY}
+         A 237 237 0 0 1 ${cornerDepth} ${arcEndY}
+         L ${baseline} ${arcEndY}`
+      : `M ${baseline} ${arcStartY}
+         L ${cornerDepth} ${arcStartY}
+         A 237 237 0 0 0 ${cornerDepth} ${arcEndY}
+         L ${baseline} ${arcEndY}`;
+
+  return (
+    <g>
+      <rect
+        x={paintX}
+        y={170}
+        width={190}
+        height={160}
+        fill="none"
+        stroke={LINE}
+        strokeWidth={LINE_WIDTH}
+      />
+      <line
+        x1={ftX}
+        y1={170}
+        x2={ftX}
+        y2={330}
+        stroke={LINE}
+        strokeWidth={LINE_WIDTH}
+      />
+      {/* Free-throw circle toward midcourt (solid) + back half dashed */}
+      <path
+        d={
+          side === "left"
+            ? `M ${ftX} 190 A 60 60 0 0 1 ${ftX} 310`
+            : `M ${ftX} 190 A 60 60 0 0 0 ${ftX} 310`
+        }
+        fill="none"
+        stroke={LINE}
+        strokeWidth={LINE_WIDTH}
+      />
+      <path
+        d={
+          side === "left"
+            ? `M ${ftX} 190 A 60 60 0 0 0 ${ftX} 310`
+            : `M ${ftX} 190 A 60 60 0 0 1 ${ftX} 310`
+        }
+        fill="none"
+        stroke={LINE}
+        strokeWidth={LINE_WIDTH}
+        strokeDasharray="6 6"
+      />
+      <path
+        d={
+          side === "left"
+            ? `M ${rimX} ${restrictY1} A 40 40 0 0 1 ${rimX} ${restrictY2}`
+            : `M ${rimX} ${restrictY1} A 40 40 0 0 0 ${rimX} ${restrictY2}`
+        }
+        fill="none"
+        stroke={LINE}
+        strokeWidth={LINE_WIDTH}
+      />
+      <line
+        x1={boardX}
+        y1={220}
+        x2={boardX}
+        y2={280}
+        stroke={LINE}
+        strokeWidth={2}
+      />
+      <circle
+        cx={rimX}
+        cy={250}
+        r={7.5}
+        fill="none"
+        stroke={LINE}
+        strokeWidth={LINE_WIDTH}
+      />
+      <path
+        d={threePath}
+        fill="none"
+        stroke={LINE}
+        strokeWidth={LINE_WIDTH}
+      />
+    </g>
+  );
+}
+
+function FullCourtMarkings() {
+  return (
+    <g aria-hidden>
+      <rect
+        x={0}
+        y={0}
+        width={COURT_LENGTH}
+        height={COURT_WIDTH}
+        rx={8}
+        fill="#0c0c0c"
+        stroke={LINE}
+        strokeWidth={LINE_WIDTH}
+      />
+      <line
+        x1={COURT_LENGTH / 2}
+        y1={0}
+        x2={COURT_LENGTH / 2}
+        y2={COURT_WIDTH}
+        stroke={LINE}
+        strokeWidth={LINE_WIDTH}
+      />
+      <circle
+        cx={COURT_LENGTH / 2}
+        cy={COURT_WIDTH / 2}
+        r={60}
+        fill="none"
+        stroke={LINE}
+        strokeWidth={LINE_WIDTH}
+      />
+      <BasketEnd side="left" />
+      <BasketEnd side="right" />
+    </g>
+  );
+}
+
 export function ShotChart({ detail }: { detail: GameDetail }) {
-  const [teamFilter, setTeamFilter] = useState<TeamFilter>("both");
   const [periodFilter, setPeriodFilter] = useState<PeriodFilter>("all");
 
   const periods = useMemo(() => {
@@ -43,13 +204,16 @@ export function ShotChart({ detail }: { detail: GameDetail }) {
   }, [detail.shots, detail.plays]);
 
   const visibleShots = detail.shots.filter((shot) => {
-    if (teamFilter !== "both" && shot.teamId !== teamFilter) return false;
     if (periodFilter !== "all" && shot.period !== periodFilter) return false;
     return true;
   });
 
-  const fgMade = visibleShots.filter((s) => s.made).length;
-  const fgAttempted = visibleShots.length;
+  const awayShots = visibleShots.filter((s) => s.teamId === detail.away.id);
+  const homeShots = visibleShots.filter((s) => s.teamId === detail.home.id);
+  const awayFgm = awayShots.filter((s) => s.made).length;
+  const homeFgm = homeShots.filter((s) => s.made).length;
+  const awayFga = awayShots.length;
+  const homeFga = homeShots.length;
 
   function teamColor(teamId: string): string {
     if (teamId === detail.away.id) return detail.away.color;
@@ -57,25 +221,9 @@ export function ShotChart({ detail }: { detail: GameDetail }) {
     return "#9ca3af";
   }
 
-  const highlightedShotId = (() => {
-    const latest = detail.latestPlay;
-    if (!latest) return null;
-    const byId = visibleShots.find((s) => s.id === latest.id);
-    if (byId) return byId.id;
-    const byClock = visibleShots.find(
-      (s) =>
-        s.period === latest.period &&
-        s.clock === latest.clock &&
-        (!latest.teamId || s.teamId === latest.teamId),
-    );
-    return byClock?.id ?? null;
-  })();
-
-  const teamFilters: { value: TeamFilter; label: string }[] = [
-    { value: "both", label: "Both" },
-    { value: detail.away.id, label: detail.away.abbrev },
-    { value: detail.home.id, label: detail.home.abbrev },
-  ];
+  function sideForTeam(teamId: string): BasketSide {
+    return teamId === detail.home.id ? "right" : "left";
+  }
 
   const periodFilters: { value: PeriodFilter; label: string }[] = [
     { value: "all", label: "All" },
@@ -86,20 +234,25 @@ export function ShotChart({ detail }: { detail: GameDetail }) {
   ];
 
   return (
-    <GameSection className="!p-3">
-      <div className="mb-2 flex items-center justify-between gap-2">
-        <h2 className="text-sm font-semibold text-white">Shot chart</h2>
-        <div className="flex items-center gap-0.5">
-          {teamFilters.map((f) => (
+    <GameSection className="!p-3" data-testid="wnba-shot-chart">
+      <h2 className="sr-only">Shot chart</h2>
+
+      <div className="mb-3 flex justify-center">
+        <div
+          className="flex rounded-full bg-white/10 p-1"
+          role="group"
+          aria-label="Period filter"
+        >
+          {periodFilters.map((f) => (
             <button
-              key={f.value}
+              key={String(f.value)}
               type="button"
-              onClick={() => setTeamFilter(f.value)}
-              aria-pressed={teamFilter === f.value}
-              className={`rounded-full px-2 py-0.5 text-xs font-medium transition-colors ${
-                teamFilter === f.value
-                  ? "bg-white/15 text-white"
-                  : "text-white/50 hover:text-white/80"
+              onClick={() => setPeriodFilter(f.value)}
+              aria-pressed={periodFilter === f.value}
+              className={`rounded-full px-3 py-1.5 text-[13px] font-semibold transition-colors ${
+                periodFilter === f.value
+                  ? "bg-white text-black"
+                  : "text-white/80 hover:text-white"
               }`}
             >
               {f.label}
@@ -108,179 +261,44 @@ export function ShotChart({ detail }: { detail: GameDetail }) {
         </div>
       </div>
 
-      {detail.latestPlay ? (
-        <div className="mb-2 flex items-center gap-2 rounded-lg border border-white/15 px-2.5 py-1.5">
-          <span
-            className="size-1.5 shrink-0 rounded-full bg-emerald-500"
-            aria-hidden
-          />
-          <p className="min-w-0 flex-1 truncate text-xs text-white/90">
-            {detail.latestPlay.text}
-          </p>
-          <span className="shrink-0 text-xs text-white/70">
-            {periodClockLabel(detail.latestPlay.period, detail.latestPlay.clock)}
-          </span>
-        </div>
-      ) : (
-        <p className="mb-2 text-xs text-white/40">Tip-off pending</p>
-      )}
-
       <svg
-        viewBox={`0 0 ${VIEW_WIDTH} ${VIEW_HEIGHT}`}
-        className="mx-auto block max-h-82 w-auto max-w-full"
+        viewBox={`0 0 ${COURT_LENGTH} ${COURT_WIDTH}`}
+        className="mx-auto block w-full max-w-full"
         role="img"
-        aria-label="Half-court shot chart"
+        aria-label="Full-court shot chart"
       >
-        {/* Outer boundary — baseline at bottom */}
-        <rect
-          x={0}
-          y={0}
-          width={VIEW_WIDTH}
-          height={VIEW_HEIGHT}
-          fill="none"
-          stroke={LINE}
-          strokeWidth={LINE_WIDTH}
-        />
+        <FullCourtMarkings />
 
-        {/* Paint / key (16 ft wide × 19 ft deep from baseline) */}
-        <rect
-          x={170}
-          y={VIEW_HEIGHT - 190}
-          width={160}
-          height={190}
-          fill="none"
-          stroke={LINE}
-          strokeWidth={LINE_WIDTH}
-        />
-
-        {/* Free-throw circle — upper half only (top of the key) */}
-        <path
-          d={`M 190 ${VIEW_HEIGHT - 190} A 60 60 0 0 0 310 ${VIEW_HEIGHT - 190}`}
-          fill="none"
-          stroke={LINE}
-          strokeWidth={LINE_WIDTH}
-        />
-        <line
-          x1={170}
-          y1={VIEW_HEIGHT - 190}
-          x2={330}
-          y2={VIEW_HEIGHT - 190}
-          stroke={LINE}
-          strokeWidth={LINE_WIDTH}
-        />
-
-        {/* Restricted-area arc */}
-        <path
-          d={`M 210 ${VIEW_HEIGHT - 52.5} A 40 40 0 0 1 290 ${VIEW_HEIGHT - 52.5}`}
-          fill="none"
-          stroke={LINE}
-          strokeWidth={LINE_WIDTH}
-        />
-
-        {/* Backboard */}
-        <line
-          x1={220}
-          y1={VIEW_HEIGHT - 40}
-          x2={280}
-          y2={VIEW_HEIGHT - 40}
-          stroke={LINE}
-          strokeWidth={2}
-        />
-
-        {/* Rim */}
-        <circle
-          cx={250}
-          cy={VIEW_HEIGHT - 52.5}
-          r={7.5}
-          fill="none"
-          stroke={LINE}
-          strokeWidth={LINE_WIDTH}
-        />
-
-        {/* Three-point line — WNBA-ish corners + arc (basket at bottom) */}
-        <path
-          d={`M 33 ${VIEW_HEIGHT}
-              L 33 ${VIEW_HEIGHT - 140}
-              A 237 237 0 0 1 467 ${VIEW_HEIGHT - 140}
-              L 467 ${VIEW_HEIGHT}`}
-          fill="none"
-          stroke={LINE}
-          strokeWidth={LINE_WIDTH}
-        />
+        <TeamLogo team={detail.away} x={COURT_LENGTH / 2 - 40} y={56} />
+        <TeamLogo team={detail.home} x={COURT_LENGTH / 2 + 40} y={56} />
 
         {visibleShots.map((shot) => {
           const color = teamColor(shot.teamId);
-          const cx = toSvgX(shot.x);
-          const cy = toSvgY(shot.y);
-          const isHighlight = shot.id === highlightedShotId;
+          const { cx, cy } = toFullCourtPoint(shot, sideForTeam(shot.teamId));
           return (
-            <g key={shot.id}>
-              {isHighlight ? (
-                <circle
-                  cx={cx}
-                  cy={cy}
-                  r={14}
-                  fill="none"
-                  stroke={color}
-                  strokeWidth={1.5}
-                  opacity={0.45}
-                  aria-hidden
-                />
-              ) : null}
-              <circle
-                role="img"
-                aria-label={`${shot.playerName} ${shot.made ? "made" : "missed"} shot`}
-                cx={cx}
-                cy={cy}
-                r={6}
-                fill={shot.made ? color : "none"}
-                stroke={color}
-                strokeWidth={1.75}
-              />
-            </g>
+            <circle
+              key={shot.id}
+              role="img"
+              aria-label={`${shot.playerName} ${shot.made ? "made" : "missed"} shot`}
+              cx={cx}
+              cy={cy}
+              r={7}
+              fill={shot.made ? color : "none"}
+              stroke={color}
+              strokeWidth={1.75}
+              opacity={shot.made ? 0.95 : 0.85}
+            />
           );
         })}
       </svg>
 
-      <div className="mt-2 mb-2 flex items-center gap-0.5">
-        {periodFilters.map((f) => (
-          <button
-            key={String(f.value)}
-            type="button"
-            onClick={() => setPeriodFilter(f.value)}
-            aria-pressed={periodFilter === f.value}
-            className={`rounded-full px-2 py-0.5 text-xs font-medium transition-colors ${
-              periodFilter === f.value
-                ? "bg-white/15 text-white"
-                : "text-white/50 hover:text-white/80"
-            }`}
-          >
-            {f.label}
-          </button>
-        ))}
-      </div>
-
-      <div className="flex items-center justify-between text-[11px] text-white/50">
-        <div className="flex items-center gap-2.5">
-          <span className="flex items-center gap-1.5">
-            <span className="size-2 rounded-full bg-white/70" aria-hidden />
-            Made
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span
-              className="size-2 rounded-full border border-white/70"
-              aria-hidden
-            />
-            Missed
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span>
-            {fgMade}/{fgAttempted} FG
-          </span>
-          <span aria-hidden>·</span>
-          <span>Data: ESPN</span>
-        </div>
+      <div className="mt-2 flex items-center justify-between text-[13px] font-medium tabular-nums text-white">
+        <span>
+          {detail.away.abbrev} {awayFgm}/{awayFga}
+        </span>
+        <span>
+          {detail.home.abbrev} {homeFgm}/{homeFga}
+        </span>
       </div>
     </GameSection>
   );

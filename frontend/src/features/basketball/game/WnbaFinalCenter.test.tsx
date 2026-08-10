@@ -51,13 +51,17 @@ describe("WnbaFinalCenter", () => {
     const summary = screen.getByRole("tabpanel", { name: /summary/i });
     expect(summary).toHaveClass("lg:grid-cols-2");
 
+    const shotChart = within(summary).getByTestId("wnba-shot-chart");
     const playFeed = within(summary).getByTestId("wnba-play-feed");
     const quarter = within(summary).getByTestId("wnba-quarter-score-card");
     const teamStats = within(summary).getByTestId("wnba-team-stats-card");
     const winProb = within(summary).getByText("Win probability");
-    const shotChart = within(summary).getByText("Shot chart");
     const gameInfo = within(summary).getByTestId("wnba-game-info");
 
+    expect(
+      shotChart.compareDocumentPosition(playFeed) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
     expect(
       playFeed.compareDocumentPosition(quarter) &
         Node.DOCUMENT_POSITION_FOLLOWING,
@@ -71,11 +75,7 @@ describe("WnbaFinalCenter", () => {
         Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
     expect(
-      winProb.compareDocumentPosition(shotChart) &
-        Node.DOCUMENT_POSITION_FOLLOWING,
-    ).toBeTruthy();
-    expect(
-      shotChart.compareDocumentPosition(gameInfo) &
+      winProb.compareDocumentPosition(gameInfo) &
         Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
 
@@ -87,6 +87,6 @@ describe("WnbaFinalCenter", () => {
 
     expect(screen.getByText("Kayla Thornton")).toBeInTheDocument();
     expect(screen.queryByTestId("wnba-play-feed")).not.toBeInTheDocument();
-    expect(screen.queryByText("Shot chart")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("wnba-shot-chart")).not.toBeInTheDocument();
   });
 });

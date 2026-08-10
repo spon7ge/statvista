@@ -37,13 +37,13 @@ export function WnbaInGameCenter({
           className="grid items-start gap-4 text-[18px] lg:grid-cols-2"
         >
           <div className="space-y-4">
+            <ShotChart detail={detail} />
             <WnbaPlayFeed detail={detail} />
           </div>
           <div className="space-y-4">
             <WnbaQuarterScoreCard detail={detail} />
             <WnbaTeamStatsCard detail={detail} />
             <WinProbabilityPanel detail={detail} />
-            <ShotChart detail={detail} />
             <WnbaGameInfo detail={detail} />
           </div>
         </div>
