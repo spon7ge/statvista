@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from typing import Any
 
 from app.core.odds_snapshots import (
+    fetch_latest_novig,
     fetch_latest_pinnacle,
     fetch_latest_prophetx,
     fetch_latest_underdog,
@@ -24,9 +25,9 @@ from app.domains.mlb.schemas_game_props import (
 )
 from app.providers.espn.mlb_roster import get_mlb_player_index
 from app.providers.espn.wnba_roster import norm_player_name
-from app.providers.odds_api.mlb_props import (
-    OddsApiMlbNormalized,
-    fetch_mlb_props_normalized,
+from app.providers.parlay.mlb_props import (
+    ParlayMlbNormalized,
+    fetch_mlb_parlay_props_normalized,
 )
 
 logger = logging.getLogger(__name__)
@@ -36,12 +37,9 @@ SideIndex = dict[tuple[str, str, str, float], dict[str, Any]]
 BOOK_PRIORITY: tuple[str, ...] = (
     "prophetx",
     "novig",
-    "kalshi",
     "draftkings",
     "fanduel",
     "pinnacle",
-    "betmgm",
-    "betonline",
 )
 
 _PRIORITY_RANK = {book: i for i, book in enumerate(BOOK_PRIORITY)}
@@ -56,7 +54,7 @@ def _iso_now(now: datetime) -> str:
 
 
 def _compose_error(existing: str | None, new: str) -> str:
-    """Append soft-fail codes without duplicating (e.g. odds + roster)."""
+    """Append soft-fail codes without duplicating (e.g. parlay + roster)."""
     if not existing:
         return new
     parts = existing.split(",")
@@ -65,9 +63,9 @@ def _compose_error(existing: str | None, new: str) -> str:
     return f"{existing},{new}"
 
 
-def _empty_odds() -> OddsApiMlbNormalized:
-    return OddsApiMlbNormalized(
-        prizepicks_board=[], book_indexes={}, as_of=None, unavailable=True
+def _empty_parlay(*, unavailable: bool = True) -> ParlayMlbNormalized:
+    return ParlayMlbNormalized(
+        prizepicks_board=[], book_indexes={}, as_of=None, unavailable=unavailable
     )
 
 
@@ -150,17 +148,17 @@ async def get_mlb_props_for_game(*, game_pk: str, app: str) -> MlbGamePropsRespo
     error: str | None = None
 
     try:
-        odds = await fetch_mlb_props_normalized(timeout=FETCH_TIMEOUT_SECONDS)
+        parlay = await fetch_mlb_parlay_props_normalized(timeout=FETCH_TIMEOUT_SECONDS)
     except Exception as exc:
-        logger.warning("Odds API MLB props unavailable: %s", exc)
-        error = "odds_api_unavailable"
-        odds = _empty_odds()
+        logger.warning("Parlay MLB props unavailable: %s", exc)
+        error = "parlay_unavailable"
+        parlay = _empty_parlay()
     else:
-        if odds.unavailable:
-            error = "odds_api_unavailable"
+        if parlay.unavailable:
+            error = "parlay_unavailable"
 
     if app == "prizepicks":
-        dfs_rows = odds.prizepicks_board
+        dfs_rows = parlay.prizepicks_board
     else:
         dfs_rows = fetch_latest_underdog("mlb")
     board = _build_board(app, dfs_rows)
@@ -168,13 +166,17 @@ async def get_mlb_props_for_game(*, game_pk: str, app: str) -> MlbGamePropsRespo
     prophetx_idx = _index_snapshot_rows(
         fetch_latest_prophetx("mlb"), player_field="player_name", stat_field="stat_name"
     )
+    novig_idx = _index_snapshot_rows(
+        fetch_latest_novig("mlb"), player_field="player_name", stat_field="stat_name"
+    )
     pinnacle_idx = _index_snapshot_rows(
         fetch_latest_pinnacle("mlb"), player_field="player_name", stat_field="market_type"
     )
     indexes: dict[str, SideIndex] = {
         "prophetx": prophetx_idx,
+        "novig": novig_idx,
         "pinnacle": pinnacle_idx,
-        **odds.book_indexes,
+        **parlay.book_indexes,
     }
 
     try:

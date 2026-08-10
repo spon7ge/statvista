@@ -1,3 +1,4 @@
+import inspect
 from types import SimpleNamespace
 
 import pytest
@@ -9,7 +10,7 @@ from app.domains.mlb.schemas_game_props import MlbGamePropPlayer
 from app.domains.mlb.prop_stat_keys import display_stat_label
 from app.main import app
 from app.providers.espn.wnba_roster import norm_player_name
-from app.providers.odds_api.mlb_props import OddsApiMlbNormalized
+from app.providers.parlay.mlb_props import ParlayMlbNormalized
 
 
 async def _async_return(value):
@@ -25,11 +26,62 @@ def _side(player, stat, side, line, american):
     return key, {"american": american, "changed_at": None}
 
 
+def _parlay(
+    *,
+    board: list[dict] | None = None,
+    book_indexes: dict | None = None,
+    as_of: str | None = None,
+    unavailable: bool = False,
+) -> ParlayMlbNormalized:
+    return ParlayMlbNormalized(
+        prizepicks_board=board or [],
+        book_indexes=book_indexes or {},
+        as_of=as_of,
+        unavailable=unavailable,
+    )
+
+
 def _fake_detail(away="NYY", home="BOS"):
     return SimpleNamespace(
         away=SimpleNamespace(abbrev=away),
         home=SimpleNamespace(abbrev=home),
     )
+
+
+def _stub_snapshots(
+    monkeypatch,
+    *,
+    parlay: ParlayMlbNormalized | None = None,
+    parlay_error: Exception | None = None,
+    parlay_soft_empty: bool = False,
+    ud_board: list[dict] | None = None,
+):
+    async def fake_parlay(**_k):
+        if parlay_error is not None:
+            raise parlay_error
+        if parlay_soft_empty:
+            return _parlay(unavailable=True)
+        if parlay is not None:
+            return parlay
+        return _parlay()
+
+    monkeypatch.setattr(gp, "fetch_mlb_parlay_props_normalized", fake_parlay)
+    monkeypatch.setattr(gp, "fetch_latest_underdog", lambda league="mlb": ud_board or [])
+    monkeypatch.setattr(gp, "fetch_latest_prophetx", lambda league="mlb": [])
+    monkeypatch.setattr(gp, "fetch_latest_novig", lambda league="mlb": [])
+    monkeypatch.setattr(gp, "fetch_latest_pinnacle", lambda league="mlb": [])
+
+
+def test_game_props_module_does_not_import_odds_api():
+    source = inspect.getsource(gp)
+    assert "odds_api" not in source
+    assert "fetch_mlb_props_normalized" not in source
+    assert "odds_api_unavailable" not in source
+
+
+def test_book_priority_only_five_books():
+    expected = ("prophetx", "novig", "draftkings", "fanduel", "pinnacle")
+    assert gp.BOOK_PRIORITY == expected
 
 
 def test_pick_best_quote_highest_american():
@@ -117,25 +169,11 @@ async def test_get_mlb_props_for_game_filters_teams_and_both_sides(monkeypatch):
     book_indexes = {
         "draftkings": {jo: joq, ju: juq},
         "fanduel": {fo: foq},
-        "novig": {},
-        "kalshi": {},
-        "betmgm": {},
-        "betonline": {},
     }
-    odds = OddsApiMlbNormalized(
-        prizepicks_board=pp_board,
-        book_indexes=book_indexes,
-        as_of=None,
-        unavailable=False,
+    _stub_snapshots(
+        monkeypatch,
+        parlay=_parlay(board=pp_board, book_indexes=book_indexes),
     )
-
-    async def fake_odds(**_k):
-        return odds
-
-    monkeypatch.setattr(gp, "fetch_mlb_props_normalized", fake_odds)
-    monkeypatch.setattr(gp, "fetch_latest_underdog", lambda league="mlb": [])
-    monkeypatch.setattr(gp, "fetch_latest_prophetx", lambda league="mlb": [])
-    monkeypatch.setattr(gp, "fetch_latest_pinnacle", lambda league="mlb": [])
     monkeypatch.setattr(
         gp,
         "get_mlb_player_index",
@@ -219,27 +257,7 @@ async def test_get_mlb_props_for_game_underdog_filters_ud_board(monkeypatch):
             "payout_multiplier": 1.0,
         },
     ]
-    odds = OddsApiMlbNormalized(
-        prizepicks_board=[],
-        book_indexes={
-            "draftkings": {},
-            "fanduel": {},
-            "novig": {},
-            "kalshi": {},
-            "betmgm": {},
-            "betonline": {},
-        },
-        as_of=None,
-        unavailable=False,
-    )
-
-    async def fake_odds(**_k):
-        return odds
-
-    monkeypatch.setattr(gp, "fetch_mlb_props_normalized", fake_odds)
-    monkeypatch.setattr(gp, "fetch_latest_underdog", lambda league="mlb": ud_board)
-    monkeypatch.setattr(gp, "fetch_latest_prophetx", lambda league="mlb": [])
-    monkeypatch.setattr(gp, "fetch_latest_pinnacle", lambda league="mlb": [])
+    _stub_snapshots(monkeypatch, parlay=_parlay(), ud_board=ud_board)
     monkeypatch.setattr(
         gp,
         "get_mlb_player_index",
@@ -269,7 +287,7 @@ async def test_get_mlb_props_for_game_underdog_filters_ud_board(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_get_mlb_props_for_game_odds_api_soft_fail_underdog_still_has_categories(
+async def test_get_mlb_props_for_game_parlay_soft_fail_underdog_still_has_categories(
     monkeypatch,
 ):
     monkeypatch.setattr(gp, "is_valid_mlb_game_pk", lambda pk: True)
@@ -288,13 +306,11 @@ async def test_get_mlb_props_for_game_odds_api_soft_fail_underdog_still_has_cate
         },
     ]
 
-    async def odds_raises(**_k):
-        raise RuntimeError("odds down")
-
-    monkeypatch.setattr(gp, "fetch_mlb_props_normalized", odds_raises)
-    monkeypatch.setattr(gp, "fetch_latest_underdog", lambda league="mlb": ud_board)
-    monkeypatch.setattr(gp, "fetch_latest_prophetx", lambda league="mlb": [])
-    monkeypatch.setattr(gp, "fetch_latest_pinnacle", lambda league="mlb": [])
+    _stub_snapshots(
+        monkeypatch,
+        parlay_error=RuntimeError("parlay down"),
+        ud_board=ud_board,
+    )
     monkeypatch.setattr(
         gp,
         "get_mlb_player_index",
@@ -310,7 +326,7 @@ async def test_get_mlb_props_for_game_odds_api_soft_fail_underdog_still_has_cate
     )
 
     res = await gp.get_mlb_props_for_game(game_pk="746123", app="underdog")
-    assert res.error == "odds_api_unavailable"
+    assert res.error == "parlay_unavailable"
     assert len(res.categories) > 0
     names = {p.player_name for c in res.categories for p in c.players}
     assert "Aaron Judge" in names
@@ -331,30 +347,11 @@ async def test_get_mlb_props_for_game_roster_failure_sets_error(monkeypatch):
             "odds_type": "standard",
         },
     ]
-    odds = OddsApiMlbNormalized(
-        prizepicks_board=pp_board,
-        book_indexes={
-            "draftkings": {},
-            "fanduel": {},
-            "novig": {},
-            "kalshi": {},
-            "betmgm": {},
-            "betonline": {},
-        },
-        as_of=None,
-        unavailable=False,
-    )
-
-    async def fake_odds(**_k):
-        return odds
+    _stub_snapshots(monkeypatch, parlay=_parlay(board=pp_board))
 
     async def roster_raises():
         raise RuntimeError("espn down")
 
-    monkeypatch.setattr(gp, "fetch_mlb_props_normalized", fake_odds)
-    monkeypatch.setattr(gp, "fetch_latest_underdog", lambda league="mlb": [])
-    monkeypatch.setattr(gp, "fetch_latest_prophetx", lambda league="mlb": [])
-    monkeypatch.setattr(gp, "fetch_latest_pinnacle", lambda league="mlb": [])
     monkeypatch.setattr(gp, "get_mlb_player_index", roster_raises)
 
     res = await gp.get_mlb_props_for_game(game_pk="746123", app="prizepicks")
@@ -363,26 +360,21 @@ async def test_get_mlb_props_for_game_roster_failure_sets_error(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_get_mlb_props_for_game_composes_odds_and_roster_errors(monkeypatch):
+async def test_get_mlb_props_for_game_composes_parlay_and_roster_errors(monkeypatch):
     monkeypatch.setattr(gp, "is_valid_mlb_game_pk", lambda pk: True)
     monkeypatch.setattr(
         gp, "get_mlb_game_detail", lambda pk: _async_return(_fake_detail())
     )
 
-    async def odds_raises(**_k):
-        raise RuntimeError("odds down")
+    _stub_snapshots(monkeypatch, parlay_error=RuntimeError("parlay down"))
 
     async def roster_raises():
         raise RuntimeError("espn down")
 
-    monkeypatch.setattr(gp, "fetch_mlb_props_normalized", odds_raises)
-    monkeypatch.setattr(gp, "fetch_latest_underdog", lambda league="mlb": [])
-    monkeypatch.setattr(gp, "fetch_latest_prophetx", lambda league="mlb": [])
-    monkeypatch.setattr(gp, "fetch_latest_pinnacle", lambda league="mlb": [])
     monkeypatch.setattr(gp, "get_mlb_player_index", roster_raises)
 
     res = await gp.get_mlb_props_for_game(game_pk="746123", app="prizepicks")
-    assert res.error == "odds_api_unavailable,roster_unavailable"
+    assert res.error == "parlay_unavailable,roster_unavailable"
     assert res.categories == []
 
 
