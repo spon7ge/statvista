@@ -27,10 +27,12 @@ from app.domains.wnba.schemas_game_detail import (
     GameDetailWinProbability,
     GameDetailWinProbabilityPoint,
     WnbaGameDetail,
+    WnbaSeasonTeamStatsPair,
 )
 from app.domains.wnba.schemas_scoreboard import GameStatus
 from app.domains.wnba.standings import get_wnba_standings
 from app.domains.wnba.team_colors import team_color as palette_team_color
+from app.domains.wnba.team_season_stats import fetch_season_team_stats_pair
 from app.providers.espn.wnba_roster import (
     RosterStarter,
     enrich_starters,
@@ -198,6 +200,14 @@ async def get_game_detail(espn_event_id: str) -> WnbaGameDetail:
                 espn_event_id,
                 exc,
             )
+        try:
+            detail = await _attach_season_team_stats(detail)
+        except Exception as exc:
+            logger.warning(
+                "WNBA season team stats unavailable for game %s: %s",
+                espn_event_id,
+                exc,
+            )
 
     _cache[espn_event_id] = {
         "response": detail,
@@ -233,6 +243,24 @@ def attach_record_last10(
             ),
         }
     )
+
+
+def attach_season_team_stats(
+    detail: WnbaGameDetail,
+    pair: WnbaSeasonTeamStatsPair | None,
+) -> WnbaGameDetail:
+    """Attach ESPN season team stats onto a game detail payload."""
+    if pair is None:
+        return detail
+    return detail.model_copy(update={"season_team_stats": pair})
+
+
+async def _attach_season_team_stats(detail: WnbaGameDetail) -> WnbaGameDetail:
+    """Soft-fetch league team season stats for scheduled games only."""
+    if detail.status != "scheduled":
+        return detail
+    pair = await fetch_season_team_stats_pair(detail.away.id, detail.home.id)
+    return attach_season_team_stats(detail, pair)
 
 
 def _hex_color(raw: str | None, fallback: str) -> str:

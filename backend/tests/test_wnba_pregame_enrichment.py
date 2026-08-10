@@ -1,3 +1,6 @@
+import json
+from pathlib import Path
+
 from app.domains.wnba.game_detail import attach_record_last10
 from app.domains.wnba.schemas_game_detail import (
     GameDetailTeam,
@@ -6,6 +9,11 @@ from app.domains.wnba.schemas_game_detail import (
     WnbaGameLeaders,
     WnbaSeasonTeamStatLine,
     WnbaSeasonTeamStatsPair,
+)
+
+_FIXTURES = Path(__file__).resolve().parent / "fixtures"
+TEAM_SEASON_STATS_FIXTURE = json.loads(
+    (_FIXTURES / "espn_wnba_team_season_stats.json").read_text()
 )
 
 
@@ -78,3 +86,44 @@ def test_attach_record_last10_missing_team_leaves_null():
     out = attach_record_last10(detail, {})
     assert out.away.record is None
     assert out.away.last_10 is None
+
+
+def test_normalize_team_stats_pair_assigns_ranks():
+    from app.domains.wnba.team_season_stats import normalize_season_team_stats_pair
+
+    # fixture: 3 teams including away/home ids
+    pair = normalize_season_team_stats_pair(
+        TEAM_SEASON_STATS_FIXTURE, away_id="17", home_id="9"
+    )
+    assert pair is not None
+    assert pair.away.pts is not None
+    assert pair.away.pts_rank is not None
+    assert pair.home.to_rank is not None  # lower TO → better rank
+    # pts: 17=92.0 (1), 9=90.7 (2), 5=85.0 (3)
+    assert pair.away.pts == 92.0
+    assert pair.away.pts_rank == 1
+    assert pair.home.pts_rank == 2
+    # to: 17=12.1 (1), 9=13.8 (2), 5=16.0 (3) — lower better
+    assert pair.away.to_rank == 1
+    assert pair.home.to_rank == 2
+    assert pair.away.fg_pct == "48.8"
+    assert pair.home.fg_pct == "46.5"
+
+
+def test_attach_season_team_stats():
+    from app.domains.wnba.game_detail import attach_season_team_stats
+
+    pair = WnbaSeasonTeamStatsPair(
+        away=WnbaSeasonTeamStatLine(pts=92.0, pts_rank=1),
+        home=WnbaSeasonTeamStatLine(pts=90.7, pts_rank=2),
+    )
+    out = attach_season_team_stats(_minimal_scheduled_detail(), pair)
+    assert out.season_team_stats is not None
+    assert out.season_team_stats.away.pts == 92.0
+
+
+def test_attach_season_team_stats_none_noop():
+    from app.domains.wnba.game_detail import attach_season_team_stats
+
+    detail = _minimal_scheduled_detail()
+    assert attach_season_team_stats(detail, None) is detail

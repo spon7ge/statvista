@@ -1,0 +1,230 @@
+{
+  "categories": [
+    {
+      "name": "general",
+      "names": [
+        "totalRebounds",
+        "avgRebounds",
+        "avgRebounds",
+        "teamAssistTurnoverRatio",
+        "technicalFouls",
+        "rebounds",
+        "assistTurnoverRatio",
+        "gamesPlayed",
+        "avgFouls",
+        "fouls"
+      ]
+    },
+    { "name": "general" },
+    {
+      "name": "defensive",
+      "names": [
+        "defensiveRebounds",
+        "avgDefensiveRebounds",
+        "avgSteals",
+        "avgBlocks",
+        "blocks",
+        "steals"
+      ]
+    },
+    { "name": "defensive" },
+    {
+      "name": "offensive",
+      "names": [
+        "avgPoints",
+        "fieldGoalPct",
+        "threePointFieldGoalPct",
+        "freeThrowPct",
+        "avgTurnovers",
+        "turnovers",
+        "avgFieldGoalsMade",
+        "avgFieldGoalsAttempted",
+        "avgThreePointFieldGoalsMade",
+        "avgThreePointFieldGoalsAttempted",
+        "avgFreeThrowsMade",
+        "avgFreeThrowsAttempted",
+        "avgOffensiveRebounds",
+        "avgAssists",
+        "points",
+        "fieldGoalsMade",
+        "fieldGoalsAttempted",
+        "threePointFieldGoalsMade",
+        "threePointFieldGoalsAttempted",
+        "freeThrowsMade",
+        "freeThrowsAttempted",
+        "offensiveRebounds",
+        "assists",
+        "offensiveReboundPct",
+        "scoringEfficiency",
+        "shootingEfficiency",
+        "threePointPct"
+      ]
+    },
+    { "name": "offensive" },
+    { "name": "differential" }
+  ],
+  "teams": [
+    {
+      "team": { "id": "5", "abbreviation": "IND", "displayName": "Indiana Fever" },
+      "categories": [
+        {
+          "name": "general",
+          "displayName": "Own General",
+          "values": [1000.0, 30.0, 30.0, 1.0, 0.0, 1000.0, 1.0, 30.0, 20.0, 600.0],
+          "totals": ["1000", "30.0", "30.0", "1.0", "0", "1000", "1.0", "30", "20.0", "600"]
+        },
+        {
+          "name": "general",
+          "displayName": "Opponent General",
+          "values": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+          "totals": ["0", "0.0", "0.0", "0.0", "0", "0", "0.0", "0", "0.0", "0"]
+        },
+        {
+          "name": "defensive",
+          "displayName": "Own Defensive",
+          "values": [600.0, 20.0, 8.0, 3.0, 90.0, 240.0],
+          "totals": ["600", "20.0", "8.0", "3.0", "90", "240"]
+        },
+        {
+          "name": "defensive",
+          "displayName": "Opponent Defensive",
+          "values": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+          "totals": ["0", "0.0", "0.0", "0.0", "0", "0"]
+        },
+        {
+          "name": "offensive",
+          "displayName": "Own Offensive",
+          "values": [
+            85.0, 42.0, 30.0, 75.0, 16.0, 480.0, 30.0, 70.0, 8.0, 25.0, 10.0, 13.0, 8.0, 18.0,
+            2550.0, 900.0, 2100.0, 240.0, 750.0, 300.0, 390.0, 240.0, 540.0, 0.0, 0.0, 0.0, 30.0
+          ],
+          "totals": [
+            "85.0", "42.0", "30.0", "75.0", "16.0", "480", "30.0", "70.0", "8.0", "25.0", "10.0",
+            "13.0", "8.0", "18.0", "2550", "900", "2100", "240", "750", "300", "390", "240",
+            "540", "0.0", "0.0", "0.0", "30.0"
+          ]
+        },
+        {
+          "name": "offensive",
+          "displayName": "Opponent Offensive",
+          "values": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+          "totals": ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        {
+          "name": "differential",
+          "displayName": "Own Differential",
+          "values": [],
+          "totals": []
+        }
+      ]
+    },
+    {
+      "team": { "id": "17", "abbreviation": "LV", "displayName": "Las Vegas Aces" },
+      "categories": [
+        {
+          "name": "general",
+          "displayName": "Own General",
+          "values": [1100.0, 34.0, 34.0, 1.5, 0.0, 1100.0, 1.5, 32.0, 18.0, 576.0],
+          "totals": ["1100", "34.0", "34.0", "1.5", "0", "1100", "1.5", "32", "18.0", "576"]
+        },
+        {
+          "name": "general",
+          "displayName": "Opponent General",
+          "values": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+          "totals": ["0", "0.0", "0.0", "0.0", "0", "0", "0.0", "0", "0.0", "0"]
+        },
+        {
+          "name": "defensive",
+          "displayName": "Own Defensive",
+          "values": [700.0, 22.0, 7.0, 5.0, 160.0, 224.0],
+          "totals": ["700", "22.0", "7.0", "5.0", "160", "224"]
+        },
+        {
+          "name": "defensive",
+          "displayName": "Opponent Defensive",
+          "values": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+          "totals": ["0", "0.0", "0.0", "0.0", "0", "0"]
+        },
+        {
+          "name": "offensive",
+          "displayName": "Own Offensive",
+          "values": [
+            92.0, 48.8, 35.8, 80.0, 12.1, 387.0, 34.0, 70.0, 9.0, 25.0, 12.0, 15.0, 9.0, 22.2,
+            2944.0, 1088.0, 2240.0, 288.0, 800.0, 384.0, 480.0, 288.0, 710.0, 0.0, 0.0, 0.0, 35.8
+          ],
+          "totals": [
+            "92.0", "48.8", "35.8", "80.0", "12.1", "387", "34.0", "70.0", "9.0", "25.0", "12.0",
+            "15.0", "9.0", "22.2", "2944", "1088", "2240", "288", "800", "384", "480", "288",
+            "710", "0.0", "0.0", "0.0", "35.8"
+          ]
+        },
+        {
+          "name": "offensive",
+          "displayName": "Opponent Offensive",
+          "values": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+          "totals": ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        {
+          "name": "differential",
+          "displayName": "Own Differential",
+          "values": [],
+          "totals": []
+        }
+      ]
+    },
+    {
+      "team": { "id": "9", "abbreviation": "NY", "displayName": "New York Liberty" },
+      "categories": [
+        {
+          "name": "general",
+          "displayName": "Own General",
+          "values": [1150.0, 35.0, 35.0, 1.4, 0.0, 1150.0, 1.4, 33.0, 19.0, 627.0],
+          "totals": ["1150", "35.0", "35.0", "1.4", "0", "1150", "1.4", "33", "19.0", "627"]
+        },
+        {
+          "name": "general",
+          "displayName": "Opponent General",
+          "values": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+          "totals": ["0", "0.0", "0.0", "0.0", "0", "0", "0.0", "0", "0.0", "0"]
+        },
+        {
+          "name": "defensive",
+          "displayName": "Own Defensive",
+          "values": [720.0, 22.0, 6.1, 4.2, 139.0, 201.0],
+          "totals": ["720", "22.0", "6.1", "4.2", "139", "201"]
+        },
+        {
+          "name": "defensive",
+          "displayName": "Opponent Defensive",
+          "values": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+          "totals": ["0", "0.0", "0.0", "0.0", "0", "0"]
+        },
+        {
+          "name": "offensive",
+          "displayName": "Own Offensive",
+          "values": [
+            90.7, 46.5, 35.5, 85.3, 13.8, 455.0, 33.0, 71.0, 9.0, 25.0, 11.0, 13.0, 9.0, 20.9,
+            2993.0, 1089.0, 2343.0, 297.0, 825.0, 363.0, 429.0, 297.0, 690.0, 0.0, 0.0, 0.0, 35.5
+          ],
+          "totals": [
+            "90.7", "46.5", "35.5", "85.3", "13.8", "455", "33.0", "71.0", "9.0", "25.0", "11.0",
+            "13.0", "9.0", "20.9", "2993", "1089", "2343", "297", "825", "363", "429", "297",
+            "690", "0.0", "0.0", "0.0", "35.5"
+          ]
+        },
+        {
+          "name": "offensive",
+          "displayName": "Opponent Offensive",
+          "values": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+          "totals": ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        {
+          "name": "differential",
+          "displayName": "Own Differential",
+          "values": [],
+          "totals": []
+        }
+      ]
+    }
+  ]
+}
