@@ -124,7 +124,15 @@ describe("MlbTeamPreview", () => {
     expect(screen.getByRole("heading", { name: "Batting" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Pitching" })).toBeInTheDocument();
 
+    expect(screen.getByTestId("mlb-team-leader-card-hr")).toHaveStyle({
+      backgroundColor: "#AB0003",
+    });
+    expect(screen.getByTestId("mlb-team-leader-card-era")).toHaveStyle({
+      backgroundColor: "#AB0003",
+    });
+
     const battingTable = screen.getByTestId("mlb-team-batting-table");
+    expect(battingTable.className).toContain("overflow-x-auto");
     for (const col of [
       "G",
       "AVG",

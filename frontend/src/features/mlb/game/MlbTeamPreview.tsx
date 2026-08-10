@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { ApiMlbTeamPreviewResponse } from "@/shared/lib/api";
 import { GameSection } from "@/shared/ui/GameSection";
+import { teamColor } from "../league/mlbTeamColors";
 
 type TeamLeaderCard = {
   key: "hr" | "avg" | "ops" | "era" | "so" | "whip";
@@ -179,13 +180,15 @@ function pitcherValues(row: PitcherSeasonRow): Array<string | number> {
 }
 
 function colWidth(col: string): string {
+  // Fixed widths so the row can exceed the panel and scroll horizontally
+  // instead of compressing every stat into the available space.
   if (col === "AVG" || col === "OBP" || col === "SLG" || col === "OPS") {
-    return "w-10";
+    return "w-12 shrink-0";
   }
   if (col === "ERA" || col === "WHIP" || col === "IP" || col === "RBI") {
-    return "w-9";
+    return "w-11 shrink-0";
   }
-  return "w-7";
+  return "w-9 shrink-0";
 }
 
 function TeamLeaderHeadshot({ card }: { card: TeamLeaderCard }) {
@@ -218,9 +221,11 @@ function TeamLeaderHeadshot({ card }: { card: TeamLeaderCard }) {
 function TeamLeadersSection({
   title,
   leaders,
+  accentColor,
 }: {
   title: string;
   leaders: TeamLeaderCard[];
+  accentColor: string;
 }) {
   if (leaders.length === 0) return null;
 
@@ -234,7 +239,8 @@ function TeamLeadersSection({
           <div
             key={card.key}
             data-testid={`mlb-team-leader-card-${card.key}`}
-            className="flex flex-col items-center rounded-lg bg-white/[0.06] p-2 text-center"
+            className="flex flex-col items-center rounded-lg p-2 text-center"
+            style={{ backgroundColor: accentColor }}
           >
             <span className="text-[14px] font-semibold tracking-wide text-white/70">
               {card.label}
@@ -281,10 +287,10 @@ function SeasonTable({
         {rows.length === 0 ? (
           <p className="text-[14px] text-white/55">No season stats available</p>
         ) : (
-          <>
-            <div className="flex items-baseline justify-between gap-2 border-b border-white/[0.08] pb-1.5 text-[14px] tracking-wide text-white/40">
-              <span className="min-w-0 flex-1">PLAYER</span>
-              <div className="flex shrink-0 gap-x-0">
+          <div className="min-w-max">
+            <div className="flex items-baseline gap-3 border-b border-white/[0.08] pb-1.5 text-[14px] tracking-wide text-white/40">
+              <span className="w-28 shrink-0">PLAYER</span>
+              <div className="flex gap-x-2">
                 {columns.map((col) => (
                   <span
                     key={col}
@@ -299,16 +305,16 @@ function SeasonTable({
               {rows.map((row, index) => (
                 <li
                   key={row.playerId}
-                  className="flex items-baseline justify-between gap-2 border-b border-white/[0.06] py-1.5 text-[18px]"
+                  className="flex items-baseline gap-3 border-b border-white/[0.06] py-1.5 text-[18px]"
                 >
-                  <span className="min-w-0 flex-1 whitespace-nowrap text-white">
+                  <span className="w-28 shrink-0 truncate whitespace-nowrap text-white">
                     {row.name}
                   </span>
-                  <div className="flex shrink-0 gap-x-0 font-mono">
+                  <div className="flex gap-x-2 font-mono">
                     {valuesFor(index).map((value, colIndex) => (
                       <span
                         key={`${row.playerId}-${columns[colIndex]}`}
-                        className={`${colWidth(columns[colIndex]!)} text-right tabular-nums text-white/85`}
+                        className={`${colWidth(columns[colIndex]!)} text-right tabular-nums text-white`}
                       >
                         {value}
                       </span>
@@ -317,7 +323,7 @@ function SeasonTable({
                 </li>
               ))}
             </ul>
-          </>
+          </div>
         )}
       </div>
     </GameSection>
@@ -358,6 +364,7 @@ export function MlbTeamPreview({
   }
 
   const view = mapMlbTeamPreview(data);
+  const accentColor = teamColor(data.team.abbrev);
 
   return (
     <div
@@ -368,6 +375,7 @@ export function MlbTeamPreview({
         <TeamLeadersSection
           title="Team Batting Leaders"
           leaders={view.battingLeaders}
+          accentColor={accentColor}
         />
         <SeasonTable
           title="Batting"
@@ -381,6 +389,7 @@ export function MlbTeamPreview({
         <TeamLeadersSection
           title="Team Pitching Leaders"
           leaders={view.pitchingLeaders}
+          accentColor={accentColor}
         />
         <SeasonTable
           title="Pitching"

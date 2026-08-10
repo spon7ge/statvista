@@ -74,6 +74,12 @@ describe("MlbGameLeaders", () => {
     expect(screen.getByTestId("mlb-game-leader-card-hr")).toBeInTheDocument();
     expect(screen.getByTestId("mlb-game-leader-card-avg")).toBeInTheDocument();
     expect(screen.getByTestId("mlb-game-leader-card-ops")).toBeInTheDocument();
+    expect(screen.getByTestId("mlb-game-leader-card-hr")).toHaveStyle({
+      backgroundColor: mlbScheduledDetail.home.color,
+    });
+    expect(screen.getByTestId("mlb-game-leader-card-avg")).toHaveStyle({
+      backgroundColor: mlbScheduledDetail.away.color,
+    });
   });
 
   it("shows value, rank, last name, team logo, and headshot on each card", () => {

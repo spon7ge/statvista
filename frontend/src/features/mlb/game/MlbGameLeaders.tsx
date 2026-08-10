@@ -47,7 +47,8 @@ export function MlbGameLeaders({ detail }: { detail: MlbGameDetailView }) {
             <div
               key={card.key}
               data-testid={`mlb-game-leader-card-${card.key}`}
-              className="flex flex-col items-center rounded-lg bg-white/[0.06] p-2 text-center"
+              className="flex flex-col items-center rounded-lg p-2 text-center"
+              style={{ backgroundColor: team.color }}
             >
               <span className="text-[14px] font-semibold tracking-wide text-white/70">
                 {card.label}
