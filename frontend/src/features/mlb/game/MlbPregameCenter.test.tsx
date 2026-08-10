@@ -9,10 +9,12 @@ import type {
   ApiMlbLineupGame,
   ApiMlbLineupMatchupResponse,
   ApiMlbOddsResponse,
+  ApiMlbTeamPreviewResponse,
 } from "@/shared/lib/api";
 
 const fetchMlbLineups = vi.fn();
 const fetchMlbGameProps = vi.fn();
+const fetchMlbTeamPreview = vi.fn();
 const useMlbLineupMatchup = vi.fn(() => ({
   data: null as ApiMlbLineupMatchupResponse | null,
 }));
@@ -21,6 +23,7 @@ const useMlbOdds = vi.fn(() => ({ data: null as ApiMlbOddsResponse | null }));
 vi.mock("@/shared/lib/api", () => ({
   fetchMlbLineups: (...args: unknown[]) => fetchMlbLineups(...args),
   fetchMlbGameProps: (...args: unknown[]) => fetchMlbGameProps(...args),
+  fetchMlbTeamPreview: (...args: unknown[]) => fetchMlbTeamPreview(...args),
 }));
 
 vi.mock("@/features/mlb/hooks/useMlbLineupMatchup", () => ({
@@ -39,6 +42,20 @@ const emptyGameProps: ApiMlbGamePropsResponse = {
   home_abbrev: null,
   categories: [],
   error: null,
+};
+
+const emptyTeamPreview: ApiMlbTeamPreviewResponse = {
+  side: "away",
+  team: {
+    id: "120",
+    abbrev: "WSH",
+    name: "Washington Nationals",
+    logo_url: null,
+  },
+  batting_leaders: [],
+  pitching_leaders: [],
+  batting_roster: [],
+  pitching_roster: [],
 };
 
 const judgeGameProps: ApiMlbGamePropsResponse = {
@@ -99,6 +116,8 @@ describe("MlbPregameCenter", () => {
     fetchMlbLineups.mockReset();
     fetchMlbGameProps.mockReset();
     fetchMlbGameProps.mockResolvedValue(emptyGameProps);
+    fetchMlbTeamPreview.mockReset();
+    fetchMlbTeamPreview.mockResolvedValue(emptyTeamPreview);
     useMlbLineupMatchup.mockClear();
     useMlbLineupMatchup.mockReturnValue({ data: null });
     useMlbOdds.mockClear();
@@ -297,21 +316,87 @@ describe("MlbPregameCenter", () => {
     ).toBeInTheDocument();
   });
 
-  it("switches stub panels on tab click", async () => {
+  it("does not fetch team preview on Preview tab", async () => {
     fetchMlbLineups.mockResolvedValue({
       date: mlbScheduledDetail.gameDate,
       fetched_at: "2026-08-04T10:00:00-04:00",
       source: "rotowire",
       games: [],
     });
+    renderWithClient(<MlbPregameCenter detail={mlbScheduledDetail} />);
+    expect(screen.getByTestId("mlb-projected-lineups")).toBeInTheDocument();
+    await waitFor(() => expect(fetchMlbTeamPreview).not.toHaveBeenCalled());
+  });
+
+  it("loads team preview on Away tab", async () => {
+    fetchMlbLineups.mockResolvedValue({
+      date: mlbScheduledDetail.gameDate,
+      fetched_at: "2026-08-04T10:00:00-04:00",
+      source: "rotowire",
+      games: [],
+    });
+    fetchMlbTeamPreview.mockResolvedValue({
+      ...emptyTeamPreview,
+      side: "away",
+      batting_leaders: [
+        {
+          key: "hr",
+          label: "HR",
+          rank: 12,
+          value: "28",
+          player_id: "1",
+          last_name: "Smith",
+          headshot_url: null,
+        },
+      ],
+    });
     const user = userEvent.setup();
     renderWithClient(<MlbPregameCenter detail={mlbScheduledDetail} />);
+
     await user.click(
       screen.getByRole("tab", { name: /washington nationals/i }),
     );
+
+    expect(await screen.findByTestId("mlb-team-preview")).toBeInTheDocument();
+    expect(fetchMlbTeamPreview).toHaveBeenCalledWith({
+      gamePk: mlbScheduledDetail.mlbGamePk,
+      side: "away",
+    });
+    expect(useMlbOdds).toHaveBeenLastCalledWith({ enabled: false });
     expect(
-      screen.getByText(/washington nationals preview coming soon/i),
-    ).toBeInTheDocument();
+      screen.queryByText(/preview coming soon/i),
+    ).not.toBeInTheDocument();
+  });
+
+  it("loads team preview on Home tab", async () => {
+    fetchMlbLineups.mockResolvedValue({
+      date: mlbScheduledDetail.gameDate,
+      fetched_at: "2026-08-04T10:00:00-04:00",
+      source: "rotowire",
+      games: [],
+    });
+    fetchMlbTeamPreview.mockResolvedValue({
+      ...emptyTeamPreview,
+      side: "home",
+      team: {
+        id: "143",
+        abbrev: "PHI",
+        name: "Philadelphia Phillies",
+        logo_url: null,
+      },
+    });
+    const user = userEvent.setup();
+    renderWithClient(<MlbPregameCenter detail={mlbScheduledDetail} />);
+
+    await user.click(
+      screen.getByRole("tab", { name: /philadelphia phillies/i }),
+    );
+
+    expect(await screen.findByTestId("mlb-team-preview")).toBeInTheDocument();
+    expect(fetchMlbTeamPreview).toHaveBeenCalledWith({
+      gamePk: mlbScheduledDetail.mlbGamePk,
+      side: "home",
+    });
     expect(useMlbOdds).toHaveBeenLastCalledWith({ enabled: false });
   });
 

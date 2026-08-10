@@ -3,6 +3,7 @@ import { useMlbGameProps } from "@/features/mlb/hooks/useMlbGameProps";
 import { useMlbLineupMatchup } from "@/features/mlb/hooks/useMlbLineupMatchup";
 import { useMlbLineups } from "@/features/mlb/hooks/useMlbLineups";
 import { useMlbOdds } from "@/features/mlb/hooks/useMlbOdds";
+import { useMlbTeamPreview } from "@/features/mlb/hooks/useMlbTeamPreview";
 import type { MlbPropAppTab } from "@/features/mlb/league/MlbPropPicksHeader";
 import type { ApiMlbLineupGame, ApiMlbLineupSide } from "@/shared/lib/api";
 import {
@@ -11,6 +12,7 @@ import {
 } from "./MlbPregameBroadcastHeader";
 import { MlbGamePropsGrid } from "./MlbGamePropsGrid";
 import { MlbProjectedLineups } from "./MlbProjectedLineups";
+import { MlbTeamPreview } from "./MlbTeamPreview";
 import { findMlbOddsGame, toMlbOddsBoardView } from "../lib/mlbOddsBoard";
 import type { MlbGameDetailView } from "../lib/types";
 
@@ -132,10 +134,17 @@ export function MlbPregameCenter({ detail }: { detail: MlbGameDetailView }) {
 
   const propsQuery = propsApp === "underdog" ? underdogQuery : prizeQuery;
 
-  const stub =
-    activeTab === "away"
-      ? `${detail.away.name} preview coming soon`
-      : `${detail.home.name} preview coming soon`;
+  const awayPreview = useMlbTeamPreview({
+    gamePk: detail.mlbGamePk,
+    side: "away",
+    enabled: activeTab === "away",
+  });
+  const homePreview = useMlbTeamPreview({
+    gamePk: detail.mlbGamePk,
+    side: "home",
+    enabled: activeTab === "home",
+  });
+  const teamPreviewQuery = activeTab === "home" ? homePreview : awayPreview;
 
   return (
     <div data-testid="mlb-pregame-center" className="space-y-4">
@@ -180,9 +189,15 @@ export function MlbPregameCenter({ detail }: { detail: MlbGameDetailView }) {
               />
             </div>
           </div>
-        ) : (
-          <p className="text-sm text-white/60">{stub}</p>
-        )}
+        ) : activeTab === "away" || activeTab === "home" ? (
+          <MlbTeamPreview
+            data={teamPreviewQuery.data ?? null}
+            isPending={teamPreviewQuery.isPending}
+            error={
+              teamPreviewQuery.isError ? "Failed to load team preview" : null
+            }
+          />
+        ) : null}
       </div>
     </div>
   );

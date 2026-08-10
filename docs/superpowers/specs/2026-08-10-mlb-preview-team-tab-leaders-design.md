@@ -1,7 +1,7 @@
 # MLB Preview Away/Home Team Leaders & Roster Stats
 
 Date: 2026-08-10  
-Status: Approved  
+Status: Implemented  
 Related: [Game Leaders](./2026-08-08-mlb-preview-game-leaders-design.md) (card chrome / selection pattern)
 
 ## Goal
