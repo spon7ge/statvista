@@ -202,6 +202,8 @@ async def _fetch_group_rows(
         return cached[1]
 
     try:
+        # Omit limit so the API returns every team split; we filter to the active
+        # roster afterward and a default cap would drop bench/IL players.
         response = await client.get(
             f"{STATS_BASE}/stats",
             params={
@@ -210,7 +212,6 @@ async def _fetch_group_rows(
                 "season": season,
                 "sportIds": 1,
                 "teamId": team_id,
-                "limit": 50,
             },
         )
         response.raise_for_status()
