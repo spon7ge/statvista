@@ -261,6 +261,56 @@ describe("fetchMlbGameProps", () => {
   });
 });
 
+describe("fetchMlbTeamPreview", () => {
+  beforeEach(() => {
+    vi.resetModules();
+    fetchMock.mockReset();
+    vi.stubGlobal("fetch", fetchMock);
+  });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
+  });
+
+  it("hits team-preview with side", async () => {
+    vi.stubEnv("VITE_API_BASE_URL", undefined);
+    fetchMock.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        side: "away",
+        team: {
+          id: "147",
+          abbrev: "NYY",
+          name: "New York Yankees",
+          logo_url: null,
+        },
+        batting_leaders: [],
+        pitching_leaders: [],
+        batting_roster: [],
+        pitching_roster: [],
+      }),
+    });
+
+    const { fetchMlbTeamPreview } = await import("./api");
+    await fetchMlbTeamPreview({ gamePk: "1", side: "away" });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/mlb/games/1/team-preview?side=away",
+      expect.objectContaining({ cache: "no-store" }),
+    );
+  });
+
+  it("throws when the response is not ok", async () => {
+    vi.stubEnv("VITE_API_BASE_URL", undefined);
+    fetchMock.mockResolvedValue({ ok: false, status: 502 });
+
+    const { fetchMlbTeamPreview } = await import("./api");
+    await expect(
+      fetchMlbTeamPreview({ gamePk: "1", side: "home" }),
+    ).rejects.toThrow("MLB team preview request failed: 502");
+  });
+});
+
 describe("fetchMlbFutures", () => {
   beforeEach(() => {
     vi.resetModules();

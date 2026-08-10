@@ -4989,6 +4989,495 @@
         "title": "MlbTeam",
         "type": "object"
       },
+      "MlbTeamBatterSeasonRow": {
+        "properties": {
+          "ab": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ab"
+          },
+          "avg": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avg"
+          },
+          "bb": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bb"
+          },
+          "g": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "G"
+          },
+          "h": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "H"
+          },
+          "hr": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hr"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "obp": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Obp"
+          },
+          "ops": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ops"
+          },
+          "player_id": {
+            "title": "Player Id",
+            "type": "string"
+          },
+          "r": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "R"
+          },
+          "rbi": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rbi"
+          },
+          "sb": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sb"
+          },
+          "slg": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Slg"
+          },
+          "so": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "So"
+          }
+        },
+        "required": [
+          "player_id",
+          "name",
+          "g",
+          "avg",
+          "obp",
+          "slg",
+          "ops",
+          "ab",
+          "r",
+          "h",
+          "hr",
+          "rbi",
+          "bb",
+          "so",
+          "sb"
+        ],
+        "title": "MlbTeamBatterSeasonRow",
+        "type": "object"
+      },
+      "MlbTeamLeaderCard": {
+        "properties": {
+          "headshot_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Headshot Url"
+          },
+          "key": {
+            "enum": [
+              "hr",
+              "avg",
+              "ops",
+              "era",
+              "so",
+              "whip"
+            ],
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "last_name": {
+            "title": "Last Name",
+            "type": "string"
+          },
+          "player_id": {
+            "title": "Player Id",
+            "type": "string"
+          },
+          "rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rank"
+          },
+          "value": {
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "rank",
+          "value",
+          "player_id",
+          "last_name",
+          "headshot_url"
+        ],
+        "title": "MlbTeamLeaderCard",
+        "type": "object"
+      },
+      "MlbTeamPitcherSeasonRow": {
+        "properties": {
+          "bb": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bb"
+          },
+          "er": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Er"
+          },
+          "era": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Era"
+          },
+          "g": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "G"
+          },
+          "gs": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gs"
+          },
+          "h": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "H"
+          },
+          "ip": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ip"
+          },
+          "l": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "L"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "player_id": {
+            "title": "Player Id",
+            "type": "string"
+          },
+          "so": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "So"
+          },
+          "sv": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sv"
+          },
+          "w": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "W"
+          },
+          "whip": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Whip"
+          }
+        },
+        "required": [
+          "player_id",
+          "name",
+          "g",
+          "gs",
+          "w",
+          "l",
+          "sv",
+          "ip",
+          "h",
+          "er",
+          "bb",
+          "so",
+          "era",
+          "whip"
+        ],
+        "title": "MlbTeamPitcherSeasonRow",
+        "type": "object"
+      },
+      "MlbTeamPreviewResponse": {
+        "properties": {
+          "batting_leaders": {
+            "items": {
+              "$ref": "#/components/schemas/MlbTeamLeaderCard"
+            },
+            "title": "Batting Leaders",
+            "type": "array"
+          },
+          "batting_roster": {
+            "items": {
+              "$ref": "#/components/schemas/MlbTeamBatterSeasonRow"
+            },
+            "title": "Batting Roster",
+            "type": "array"
+          },
+          "pitching_leaders": {
+            "items": {
+              "$ref": "#/components/schemas/MlbTeamLeaderCard"
+            },
+            "title": "Pitching Leaders",
+            "type": "array"
+          },
+          "pitching_roster": {
+            "items": {
+              "$ref": "#/components/schemas/MlbTeamPitcherSeasonRow"
+            },
+            "title": "Pitching Roster",
+            "type": "array"
+          },
+          "side": {
+            "enum": [
+              "away",
+              "home"
+            ],
+            "title": "Side",
+            "type": "string"
+          },
+          "team": {
+            "$ref": "#/components/schemas/MlbTeamPreviewTeam"
+          }
+        },
+        "required": [
+          "side",
+          "team",
+          "batting_leaders",
+          "pitching_leaders",
+          "batting_roster",
+          "pitching_roster"
+        ],
+        "title": "MlbTeamPreviewResponse",
+        "type": "object"
+      },
+      "MlbTeamPreviewTeam": {
+        "properties": {
+          "abbrev": {
+            "title": "Abbrev",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "logo_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Logo Url"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "abbrev",
+          "name",
+          "logo_url"
+        ],
+        "title": "MlbTeamPreviewTeam",
+        "type": "object"
+      },
       "MlbTeamStatLine": {
         "properties": {
           "avg": {
@@ -8091,6 +8580,61 @@
           }
         },
         "summary": "Mlb Game Detail",
+        "tags": [
+          "mlb"
+        ]
+      }
+    },
+    "/api/mlb/games/{game_pk}/team-preview": {
+      "get": {
+        "operationId": "mlb_team_preview_api_mlb_games__game_pk__team_preview_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "game_pk",
+            "required": true,
+            "schema": {
+              "title": "Game Pk",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "side",
+            "required": true,
+            "schema": {
+              "enum": [
+                "away",
+                "home"
+              ],
+              "title": "Side",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MlbTeamPreviewResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Mlb Team Preview",
         "tags": [
           "mlb"
         ]

@@ -178,6 +178,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/mlb/games/{game_pk}/team-preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Mlb Team Preview */
+        get: operations["mlb_team_preview_api_mlb_games__game_pk__team_preview_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/mlb/leaders": {
         parameters: {
             query?: never;
@@ -1907,6 +1924,118 @@ export interface components {
             /** Score */
             score: number | null;
         };
+        /** MlbTeamBatterSeasonRow */
+        MlbTeamBatterSeasonRow: {
+            /** Ab */
+            ab: number | null;
+            /** Avg */
+            avg: string | null;
+            /** Bb */
+            bb: number | null;
+            /** G */
+            g: number | null;
+            /** H */
+            h: number | null;
+            /** Hr */
+            hr: number | null;
+            /** Name */
+            name: string;
+            /** Obp */
+            obp: string | null;
+            /** Ops */
+            ops: string | null;
+            /** Player Id */
+            player_id: string;
+            /** R */
+            r: number | null;
+            /** Rbi */
+            rbi: number | null;
+            /** Sb */
+            sb: number | null;
+            /** Slg */
+            slg: string | null;
+            /** So */
+            so: number | null;
+        };
+        /** MlbTeamLeaderCard */
+        MlbTeamLeaderCard: {
+            /** Headshot Url */
+            headshot_url: string | null;
+            /**
+             * Key
+             * @enum {string}
+             */
+            key: "hr" | "avg" | "ops" | "era" | "so" | "whip";
+            /** Label */
+            label: string;
+            /** Last Name */
+            last_name: string;
+            /** Player Id */
+            player_id: string;
+            /** Rank */
+            rank: number | null;
+            /** Value */
+            value: string;
+        };
+        /** MlbTeamPitcherSeasonRow */
+        MlbTeamPitcherSeasonRow: {
+            /** Bb */
+            bb: number | null;
+            /** Er */
+            er: number | null;
+            /** Era */
+            era: string | null;
+            /** G */
+            g: number | null;
+            /** Gs */
+            gs: number | null;
+            /** H */
+            h: number | null;
+            /** Ip */
+            ip: string | null;
+            /** L */
+            l: number | null;
+            /** Name */
+            name: string;
+            /** Player Id */
+            player_id: string;
+            /** So */
+            so: number | null;
+            /** Sv */
+            sv: number | null;
+            /** W */
+            w: number | null;
+            /** Whip */
+            whip: string | null;
+        };
+        /** MlbTeamPreviewResponse */
+        MlbTeamPreviewResponse: {
+            /** Batting Leaders */
+            batting_leaders: components["schemas"]["MlbTeamLeaderCard"][];
+            /** Batting Roster */
+            batting_roster: components["schemas"]["MlbTeamBatterSeasonRow"][];
+            /** Pitching Leaders */
+            pitching_leaders: components["schemas"]["MlbTeamLeaderCard"][];
+            /** Pitching Roster */
+            pitching_roster: components["schemas"]["MlbTeamPitcherSeasonRow"][];
+            /**
+             * Side
+             * @enum {string}
+             */
+            side: "away" | "home";
+            team: components["schemas"]["MlbTeamPreviewTeam"];
+        };
+        /** MlbTeamPreviewTeam */
+        MlbTeamPreviewTeam: {
+            /** Abbrev */
+            abbrev: string;
+            /** Id */
+            id: string;
+            /** Logo Url */
+            logo_url: string | null;
+            /** Name */
+            name: string;
+        };
         /** MlbTeamStatLine */
         MlbTeamStatLine: {
             /** Avg */
@@ -2863,6 +2992,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MlbGameDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    mlb_team_preview_api_mlb_games__game_pk__team_preview_get: {
+        parameters: {
+            query: {
+                side: "away" | "home";
+            };
+            header?: never;
+            path: {
+                game_pk: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MlbTeamPreviewResponse"];
                 };
             };
             /** @description Validation Error */

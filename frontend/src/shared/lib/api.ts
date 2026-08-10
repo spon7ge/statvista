@@ -68,6 +68,7 @@ export type ApiMlbPropDfs = Schemas["MlbPropDfs"];
 export type ApiMlbPropRow = Schemas["MlbPropRow"];
 export type ApiMlbPropsResponse = Schemas["MlbPropsResponse"];
 export type ApiMlbGamePropsResponse = Schemas["MlbGamePropsResponse"];
+export type ApiMlbTeamPreviewResponse = Schemas["MlbTeamPreviewResponse"];
 export type ApiMlbLeaderRow = Schemas["MlbLeaderRow"];
 export type ApiMlbLeaderCategory = Schemas["MlbLeaderCategory"];
 export type ApiMlbLeadersResponse = Schemas["MlbLeadersResponse"];
@@ -88,6 +89,11 @@ export type MlbPropsParams = {
 export type MlbGamePropsParams = {
   gamePk: string;
   app: "prizepicks" | "underdog";
+};
+
+export type MlbTeamPreviewParams = {
+  gamePk: string;
+  side: "away" | "home";
 };
 
 /** Shared shape for matchup odds merge (WNBA + MLB). */
@@ -309,6 +315,21 @@ export async function fetchMlbGameProps({
   );
   if (!res.ok) {
     throw new Error(`MLB game props request failed: ${res.status}`);
+  }
+  return res.json();
+}
+
+export async function fetchMlbTeamPreview({
+  gamePk,
+  side,
+}: MlbTeamPreviewParams): Promise<ApiMlbTeamPreviewResponse> {
+  const qs = new URLSearchParams({ side });
+  const res = await fetch(
+    `${API_BASE}/api/mlb/games/${encodeURIComponent(gamePk)}/team-preview?${qs}`,
+    { headers: { Accept: "application/json" }, cache: "no-store" },
+  );
+  if (!res.ok) {
+    throw new Error(`MLB team preview request failed: ${res.status}`);
   }
   return res.json();
 }
