@@ -2,7 +2,6 @@ import type { ApiWnbaLeaderCategory } from "@/shared/lib/api";
 import { LeaderCategoryCard } from "./LeaderCategoryCard";
 
 type LeadersGridProps = {
-  season: number;
   categories: ApiWnbaLeaderCategory[];
   isLoading?: boolean;
   isError?: boolean;
@@ -25,19 +24,12 @@ function Skeletons() {
 }
 
 export function LeadersGrid({
-  season,
   categories,
   isLoading = false,
   isError = false,
 }: LeadersGridProps) {
   return (
-    <section className="mx-auto max-w-6xl space-y-6 px-4 pb-16 sm:px-6 sm:pb-20">
-      <header>
-        <h2 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-          Leaders
-        </h2>
-        <p className="mt-2 text-sm text-white/40">{season} season · per game</p>
-      </header>
+    <div className="space-y-6">
       {isLoading ? (
         <Skeletons />
       ) : isError ? (
@@ -50,6 +42,6 @@ export function LeadersGrid({
         </div>
       )}
       <p className="text-xs text-white/35">Data: stats.wnba.com</p>
-    </section>
+    </div>
   );
 }

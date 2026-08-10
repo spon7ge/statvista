@@ -34,9 +34,8 @@ const categories: ApiWnbaLeaderCategory[] = [
 ];
 
 describe("LeadersGrid", () => {
-  it("renders season label, cards, colors, and attribution", () => {
-    renderGrid(<LeadersGrid season={2026} categories={categories} />);
-    expect(screen.getByText("2026 season · per game")).toBeInTheDocument();
+  it("renders cards, colors, and attribution", () => {
+    renderGrid(<LeadersGrid categories={categories} />);
     expect(screen.getByText("Points")).toBeInTheDocument();
     expect(screen.getByText("A'ja Wilson")).toBeInTheDocument();
     expect(screen.getByText("LVA")).toBeInTheDocument();
@@ -46,12 +45,12 @@ describe("LeadersGrid", () => {
   });
 
   it("shows loading skeletons", () => {
-    renderGrid(<LeadersGrid season={2026} categories={[]} isLoading />);
+    renderGrid(<LeadersGrid categories={[]} isLoading />);
     expect(screen.getByLabelText(/loading leaders/i)).toBeInTheDocument();
   });
 
   it("shows error copy when never loaded", () => {
-    renderGrid(<LeadersGrid season={2026} categories={[]} isError />);
+    renderGrid(<LeadersGrid categories={[]} isError />);
     expect(screen.getByText(/leaders unavailable/i)).toBeInTheDocument();
   });
 });
