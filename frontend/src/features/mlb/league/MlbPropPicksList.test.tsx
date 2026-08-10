@@ -43,7 +43,6 @@ function row(
         changed_at: "2026-08-05T19:48:00Z",
         role: null,
       },
-      kalshi: null,
       draftkings: null,
       fanduel: null,
       pinnacle: {
@@ -53,8 +52,6 @@ function row(
         changed_at: "2026-08-05T19:30:00Z",
         role: "comparison",
       },
-      betmgm: null,
-      betonline: null,
     },
     dfs: {
       line: 1.5,
@@ -86,12 +83,9 @@ const noRead = row({
   books: {
     prophetx: null,
     novig: null,
-    kalshi: null,
     draftkings: null,
     fanduel: null,
     pinnacle: null,
-    betmgm: null,
-    betonline: null,
   },
 });
 
@@ -219,36 +213,30 @@ describe("MlbPropPicksList", () => {
     expect(screen.getByText(/PX\+Novig agree within 2pp/i)).toBeInTheDocument();
     const expanded = screen.getByTestId("mlb-prop-row-expand");
     expect(within(expanded).getByText("ProphetX")).toBeInTheDocument();
+    expect(within(expanded).getByText("Novig")).toBeInTheDocument();
     expect(within(expanded).getByText("Pinnacle")).toBeInTheDocument();
-    expect(within(expanded).getByText("Kalshi")).toBeInTheDocument();
-    expect(within(expanded).getByText("BetMGM")).toBeInTheDocument();
-    expect(within(expanded).getByText("BetOnline")).toBeInTheDocument();
+    expect(within(expanded).queryByText("Kalshi")).not.toBeInTheDocument();
+    expect(within(expanded).queryByText("BetMGM")).not.toBeInTheDocument();
+    expect(within(expanded).queryByText("BetOnline")).not.toBeInTheDocument();
     expect(screen.getByTestId("mlb-prop-row").className).toMatch(
       /ring-\[#059669\]/,
     );
   });
 
-  it("shows soft book quotes on expand when present", async () => {
+  it("shows mid-tier book quotes on expand when present", async () => {
     const user = userEvent.setup();
     const withCmp = row({
       player_name: "Aaron Judge",
       books: {
         ...judge.books,
-        betmgm: {
+        draftkings: {
           side: "over",
           fair_pct: 56.0,
           american: -127,
           changed_at: "2026-08-05T19:40:00Z",
           role: "comparison",
         },
-        kalshi: {
-          side: "over",
-          fair_pct: 54.0,
-          american: -117,
-          changed_at: "2026-08-05T19:41:00Z",
-          role: "comparison",
-        },
-        betonline: {
+        fanduel: {
           side: "over",
           fair_pct: 55.0,
           american: -122,
@@ -267,9 +255,8 @@ describe("MlbPropPicksList", () => {
     );
     await user.click(screen.getByRole("button", { name: /Aaron Judge/i }));
     const expanded = screen.getByTestId("mlb-prop-row-expand");
-    expect(within(expanded).getByText("BetMGM")).toBeInTheDocument();
-    expect(within(expanded).getByText("Kalshi")).toBeInTheDocument();
-    expect(within(expanded).getByText("BetOnline")).toBeInTheDocument();
+    expect(within(expanded).getByText("DraftKings")).toBeInTheDocument();
+    expect(within(expanded).getByText("FanDuel")).toBeInTheDocument();
     expect(within(expanded).queryByText(/\(cmp\)/i)).not.toBeInTheDocument();
   });
 
@@ -357,7 +344,7 @@ describe("MlbPropPicksList", () => {
     );
     expect(
       screen.getByText(
-        "Fair from ProphetX/Novig (then DK/FD); Soft Consensus (soft books incl. Pinnacle) when Tier 1/2 empty. DFS lines from PrizePicks/Underdog.",
+        "Fair from ProphetX/Novig (then DK/FD); Soft Consensus when 2+ soft books (Pinnacle alone does not). DFS lines from PrizePicks/Underdog.",
       ),
     ).toBeInTheDocument();
   });

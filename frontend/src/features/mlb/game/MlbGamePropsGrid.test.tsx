@@ -31,7 +31,7 @@ const sixPlayers: Player[] = [
   }),
   player({
     player_name: "A. Volpe",
-    over: { american: 180, book: "betmgm" },
+    over: { american: 180, book: "draftkings" },
   }),
   player({
     player_name: "A. Verdugo",

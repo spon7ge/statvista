@@ -24,12 +24,9 @@ function row(
     books: {
       prophetx: null,
       novig: null,
-      kalshi: null,
       draftkings: null,
       fanduel: null,
       pinnacle: null,
-      betmgm: null,
-      betonline: null,
     },
     dfs: {
       line: 1.5,

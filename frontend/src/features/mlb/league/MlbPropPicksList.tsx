@@ -206,11 +206,6 @@ function ExpandedPanel({
           lastUpdatedAt={lastUpdatedAt}
         />
         <BookQuoteCell
-          bookKey="kalshi"
-          quote={row.books.kalshi}
-          lastUpdatedAt={lastUpdatedAt}
-        />
-        <BookQuoteCell
           bookKey="draftkings"
           quote={row.books.draftkings}
           lastUpdatedAt={lastUpdatedAt}
@@ -218,16 +213,6 @@ function ExpandedPanel({
         <BookQuoteCell
           bookKey="fanduel"
           quote={row.books.fanduel}
-          lastUpdatedAt={lastUpdatedAt}
-        />
-        <BookQuoteCell
-          bookKey="betmgm"
-          quote={row.books.betmgm}
-          lastUpdatedAt={lastUpdatedAt}
-        />
-        <BookQuoteCell
-          bookKey="betonline"
-          quote={row.books.betonline}
           lastUpdatedAt={lastUpdatedAt}
         />
         <BookQuoteCell
@@ -489,9 +474,8 @@ export function MlbPropPicksList({
 
       {!isLoading && props.length > 0 ? (
         <p className="px-1 text-[14px] text-white/35">
-          Fair from ProphetX/Novig (then DK/FD); Soft Consensus
-          (soft books incl. Pinnacle) when Tier 1/2 empty. DFS lines from
-          PrizePicks/Underdog.
+          Fair from ProphetX/Novig (then DK/FD); Soft Consensus when 2+ soft
+          books (Pinnacle alone does not). DFS lines from PrizePicks/Underdog.
         </p>
       ) : null}
     </section>

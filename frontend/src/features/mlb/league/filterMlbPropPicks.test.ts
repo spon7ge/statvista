@@ -23,12 +23,9 @@ function row(partial: Partial<ApiMlbPropRow> & Pick<ApiMlbPropRow, "player_name"
     books: {
       prophetx: null,
       novig: null,
-      kalshi: null,
       draftkings: null,
       fanduel: null,
       pinnacle: null,
-      betmgm: null,
-      betonline: null,
     },
     dfs: {
       line: 1.5,

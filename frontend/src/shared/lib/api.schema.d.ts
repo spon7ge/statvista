@@ -1685,11 +1685,8 @@ export interface components {
         };
         /** MlbPropBooks */
         MlbPropBooks: {
-            betmgm: components["schemas"]["MlbPropBookQuote"] | null;
-            betonline: components["schemas"]["MlbPropBookQuote"] | null;
             draftkings: components["schemas"]["MlbPropBookQuote"] | null;
             fanduel: components["schemas"]["MlbPropBookQuote"] | null;
-            kalshi: components["schemas"]["MlbPropBookQuote"] | null;
             novig: components["schemas"]["MlbPropBookQuote"] | null;
             pinnacle: components["schemas"]["MlbPropBookQuote"] | null;
             prophetx: components["schemas"]["MlbPropBookQuote"] | null;
