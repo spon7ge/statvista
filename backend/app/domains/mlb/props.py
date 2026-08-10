@@ -1,13 +1,12 @@
 """Assemble GET /api/mlb/props/today: DFS board + fair/edge/tier per row.
 
-Pipeline (see docs/superpowers/specs/2026-08-09-mlb-prop-picks-odds-api-design.md):
-  1. Load the selected app's DFS lines from Odds API PrizePicks
+Pipeline (see docs/superpowers/specs/2026-08-09-mlb-props-parlay-supabase-design.md):
+  1. Load the selected app's DFS lines from Parlay PrizePicks
      (app=prizepicks) or Underdog snapshot (app=underdog) and bucket into one
      board row per (player, stat, line).
-  2. Index ProphetX + Pinnacle scrapers; merge Odds API book indexes (novig,
-     kalshi, draftkings, fanduel, betmgm, betonline) by (player, stat, side,
-     line) — exact line only, no closest-line fallback. Soft books + Pinnacle
-     feed Tier 3 Soft Consensus; expand quotes keep ``role="comparison"``.
+  2. Index ProphetX, Novig, and Pinnacle scrapers; merge Parlay book indexes
+     (draftkings, fanduel) by (player, stat, side, line) — exact line only, no
+     closest-line fallback. Pinnacle expand quotes keep ``role="comparison"``.
   3. For each side offered by the DFS app at that line, compute fair% via
      ``compute_fair`` and edge vs. the format breakeven; the recommended side
      is whichever has the higher edge.
@@ -22,6 +21,7 @@ from datetime import datetime, timezone
 from typing import Any
 
 from app.core.odds_snapshots import (
+    fetch_latest_novig,
     fetch_latest_pinnacle,
     fetch_latest_prophetx,
     fetch_latest_underdog,
@@ -49,9 +49,9 @@ from app.domains.mlb.schemas_props import (
 )
 from app.providers.espn.mlb_roster import get_mlb_player_index
 from app.providers.espn.wnba_roster import norm_player_name
-from app.providers.odds_api.mlb_props import (
-    OddsApiMlbNormalized,
-    fetch_mlb_props_normalized,
+from app.providers.parlay.mlb_props import (
+    ParlayMlbNormalized,
+    fetch_mlb_parlay_props_normalized,
 )
 
 logger = logging.getLogger(__name__)
@@ -59,16 +59,6 @@ logger = logging.getLogger(__name__)
 CACHE_TTL_SECONDS = 15 * 60
 FETCH_TIMEOUT_SECONDS = 12.0
 
-# Odds API books merged into assemble (schema keys). Soft books keep
-# ``role="comparison"`` on expand while still feeding Tier 3 Soft Consensus.
-_ODDS_BOOK_KEYS: tuple[str, ...] = (
-    "novig",
-    "kalshi",
-    "draftkings",
-    "fanduel",
-    "betmgm",
-    "betonline",
-)
 _VALID_SIDES: tuple[str, ...] = ("over", "under")
 
 # format is fixed per app in v1 (see prop_formats.py multiplier tables).
@@ -123,7 +113,7 @@ def _parse_payout_multiplier(raw: Any) -> float | None:
 
 
 def _as_datetime(raw: Any) -> datetime | None:
-    """Coerce scraper datetimes or Odds API ISO strings to aware UTC datetimes."""
+    """Coerce scraper datetimes or Parlay ISO strings to aware UTC datetimes."""
     if raw is None:
         return None
     if isinstance(raw, datetime):
@@ -305,25 +295,24 @@ def _fair_driving_changed_at(
     display_key: SideKey,
     prophetx_idx: SideIndex,
     novig_idx: SideIndex,
-    kalshi_idx: SideIndex,
     dk_idx: SideIndex,
     fd_idx: SideIndex,
     soft_indexes: tuple[SideIndex, ...] = (),
 ) -> datetime | None:
     """Return ``changed_at`` for whichever book(s) actually drove ``fair_pct``.
 
-    Tier 1 (consensus/disagreement/single-source) is driven by ProphetX, Novig,
-    and/or Kalshi; Tier 2 (``mid_tier_fallback``) by DraftKings and/or FanDuel;
-    Tier 3 (``soft_consensus``) by soft books (BetMGM/BetOnline) and/or
-    Pinnacle. Recency chips must reflect the driving book so mid-tier/soft
-    rows aren't silently missing a chip those timestamps would warrant.
+    Tier 1 (consensus/disagreement/single-source) is driven by ProphetX and/or
+    Novig; Tier 2 (``mid_tier_fallback``) by DraftKings and/or FanDuel; Tier 3
+    (``soft_consensus``) by soft books and/or Pinnacle. Recency chips must
+    reflect the driving book so mid-tier/soft rows aren't silently missing a
+    chip those timestamps would warrant.
     """
     if source_tier == "soft_consensus":
         candidates = soft_indexes
     elif source_tier == "mid_tier_fallback":
         candidates = (dk_idx, fd_idx)
     else:
-        candidates = (prophetx_idx, novig_idx, kalshi_idx)
+        candidates = (prophetx_idx, novig_idx)
 
     changed_ats = [
         dt
@@ -342,20 +331,20 @@ def _assemble_rows(
     board: dict[BoardKey, dict[str, Any]],
     breakeven: float,
     prophetx_idx: SideIndex,
+    novig_idx: SideIndex,
     pinnacle_idx: SideIndex,
-    book_indexes: dict[str, SideIndex],
+    parlay_book_indexes: dict[str, SideIndex],
     now: datetime,
 ) -> list[MlbPropRow]:
+    dk_idx = parlay_book_indexes.get("draftkings", {})
+    fd_idx = parlay_book_indexes.get("fanduel", {})
     fair_book_indexes = {
         "prophetx": prophetx_idx,
-        **{book: book_indexes.get(book, {}) for book in _ODDS_BOOK_KEYS},
+        "novig": novig_idx,
+        "draftkings": dk_idx,
+        "fanduel": fd_idx,
         "pinnacle": pinnacle_idx,
     }
-    novig_idx = fair_book_indexes["novig"]
-    kalshi_idx = fair_book_indexes["kalshi"]
-    dk_idx = fair_book_indexes["draftkings"]
-    fd_idx = fair_book_indexes["fanduel"]
-    # SOFT_FAIR_BOOKS ⊆ fair_book_indexes keys (soft Odds books + pinnacle).
     soft_indexes = tuple(fair_book_indexes[book] for book in SOFT_FAIR_BOOKS)
 
     rows: list[MlbPropRow] = []
@@ -392,16 +381,9 @@ def _assemble_rows(
         books = MlbPropBooks(
             prophetx=_book_quote(prophetx_idx, display_key),
             novig=_book_quote(novig_idx, display_key),
-            kalshi=_book_quote(kalshi_idx, display_key),
             draftkings=_book_quote(dk_idx, display_key),
             fanduel=_book_quote(fd_idx, display_key),
             pinnacle=_book_quote(pinnacle_idx, display_key, role="comparison"),
-            betmgm=_book_quote(
-                fair_book_indexes["betmgm"], display_key, role="comparison"
-            ),
-            betonline=_book_quote(
-                fair_book_indexes["betonline"], display_key, role="comparison"
-            ),
         )
 
         driving_changed_at = _fair_driving_changed_at(
@@ -409,7 +391,6 @@ def _assemble_rows(
             display_key,
             prophetx_idx,
             novig_idx,
-            kalshi_idx,
             dk_idx,
             fd_idx,
             soft_indexes,
@@ -480,9 +461,9 @@ def _apply_roster_enrichment(
     return enriched
 
 
-def _empty_odds() -> OddsApiMlbNormalized:
-    return OddsApiMlbNormalized(
-        prizepicks_board=[], book_indexes={}, as_of=None, unavailable=True
+def _empty_parlay(*, unavailable: bool = True) -> ParlayMlbNormalized:
+    return ParlayMlbNormalized(
+        prizepicks_board=[], book_indexes={}, as_of=None, unavailable=unavailable
     )
 
 
@@ -499,20 +480,20 @@ async def get_mlb_props_today(*, app: str, format: str, legs: int) -> MlbPropsRe
     now = _utcnow()
     breakeven = breakeven_pct(app, format, legs)
 
-    odds_error: str | None = None
+    parlay_error: str | None = None
     try:
-        odds = await fetch_mlb_props_normalized(timeout=FETCH_TIMEOUT_SECONDS)
+        parlay = await fetch_mlb_parlay_props_normalized(timeout=FETCH_TIMEOUT_SECONDS)
     except Exception as exc:
-        logger.warning("Odds API MLB props unavailable: %s", exc)
-        odds_error = "odds_api_unavailable"
-        odds = _empty_odds()
+        logger.warning("Parlay MLB props unavailable: %s", exc)
+        parlay_error = "parlay_unavailable"
+        parlay = _empty_parlay()
     else:
         # Only real unavailability (missing key / HTTP failure), not empty slate.
-        if odds.unavailable:
-            odds_error = "odds_api_unavailable"
+        if parlay.unavailable:
+            parlay_error = "parlay_unavailable"
 
     if app == "prizepicks":
-        dfs_rows = odds.prizepicks_board
+        dfs_rows = parlay.prizepicks_board
     else:
         dfs_rows = fetch_latest_underdog("mlb")
     board = _build_board(app, dfs_rows)
@@ -520,12 +501,21 @@ async def get_mlb_props_today(*, app: str, format: str, legs: int) -> MlbPropsRe
     prophetx_idx = _index_snapshot_rows(
         fetch_latest_prophetx("mlb"), player_field="player_name", stat_field="stat_name"
     )
+    novig_idx = _index_snapshot_rows(
+        fetch_latest_novig("mlb"), player_field="player_name", stat_field="stat_name"
+    )
     pinnacle_idx = _index_snapshot_rows(
         fetch_latest_pinnacle("mlb"), player_field="player_name", stat_field="market_type"
     )
 
     rows = _assemble_rows(
-        board, breakeven, prophetx_idx, pinnacle_idx, odds.book_indexes, now
+        board,
+        breakeven,
+        prophetx_idx,
+        novig_idx,
+        pinnacle_idx,
+        parlay.book_indexes,
+        now,
     )
 
     try:
@@ -541,7 +531,7 @@ async def get_mlb_props_today(*, app: str, format: str, legs: int) -> MlbPropsRe
         legs=legs,
         breakeven_pct=breakeven,
         props=rows,
-        error=odds_error,
+        error=parlay_error,
     )
     _cache[cache_key] = {"response": response, "expires_at": now_mono + CACHE_TTL_SECONDS}
     return response
