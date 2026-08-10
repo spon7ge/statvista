@@ -13,7 +13,7 @@ import {
 import { MlbGamePropsGrid } from "./MlbGamePropsGrid";
 import { MlbProjectedLineups } from "./MlbProjectedLineups";
 import { MlbTeamPreview } from "./MlbTeamPreview";
-import { findMlbOddsGame, toMlbOddsBoardView } from "../lib/mlbOddsBoard";
+import { collectMlbOddsBookBoards } from "../lib/mlbOddsBoard";
 import type { MlbGameDetailView } from "../lib/types";
 
 const PROPS_APP_TABS: { id: MlbPropAppTab; label: string }[] = [
@@ -107,19 +107,12 @@ export function MlbPregameCenter({ detail }: { detail: MlbGameDetailView }) {
     home: detail.home.abbrev,
     enabled: activeTab === "preview" && matchedGame !== null,
   });
-  const oddsGame = findMlbOddsGame(
-    oddsQuery.data?.games,
+  const oddsBoards = collectMlbOddsBookBoards(
+    oddsQuery.data,
     detail.away.abbrev,
     detail.home.abbrev,
     detail.gameDate ?? undefined,
   );
-  const oddsView = oddsGame
-    ? toMlbOddsBoardView(
-        oddsGame,
-        oddsQuery.data?.as_of ?? null,
-        oddsQuery.data?.sportsbook ?? null,
-      )
-    : null;
 
   const prizeQuery = useMlbGameProps({
     gamePk: detail.mlbGamePk,
@@ -164,7 +157,7 @@ export function MlbPregameCenter({ detail }: { detail: MlbGameDetailView }) {
             game={matchedGame}
             matchup={matchupQuery.data ?? null}
             isPending={isPending}
-            oddsView={oddsView}
+            oddsBoards={oddsBoards}
             oddsPending={oddsQuery.isPending}
           />
         ) : activeTab === "props" ? (

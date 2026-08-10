@@ -13,7 +13,7 @@ import { MlbGameInfo } from "./MlbGameInfo";
 import { MlbGameLeaders } from "./MlbGameLeaders";
 import { MlbMatchupPrediction } from "./MlbMatchupPrediction";
 import { MlbSeasonTeamStats } from "./MlbSeasonTeamStats";
-import type { MlbOddsBoardView } from "../lib/mlbOddsBoard";
+import type { MlbOddsBookBoardView } from "../lib/mlbOddsBoard";
 
 type TeamSide = "away" | "home";
 type MatchupSide = NonNullable<ApiMlbLineupMatchupResponse["away"]>;
@@ -25,7 +25,7 @@ type Props = {
   matchup?: ApiMlbLineupMatchupResponse | null;
   /** True while the lineups fetch is in flight and has no data yet. */
   isPending?: boolean;
-  oddsView?: MlbOddsBoardView | null;
+  oddsBoards?: MlbOddsBookBoardView[];
   oddsPending?: boolean;
 };
 
@@ -282,7 +282,7 @@ export function MlbProjectedLineups({
   game,
   matchup,
   isPending,
-  oddsView = null,
+  oddsBoards = [],
   oddsPending,
 }: Props) {
   const [side, setSide] = useState<TeamSide>("away");
@@ -341,7 +341,7 @@ export function MlbProjectedLineups({
         >
           <MlbGameOddsBoard
             detail={detail}
-            view={oddsView}
+            boards={oddsBoards}
             isPending={oddsPending}
           />
           <MlbGameInfo detail={detail} />

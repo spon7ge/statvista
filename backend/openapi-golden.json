@@ -3300,6 +3300,13 @@
             "title": "As Of",
             "type": "string"
           },
+          "book_boards": {
+            "items": {
+              "$ref": "#/components/schemas/MlbOddsGame"
+            },
+            "title": "Book Boards",
+            "type": "array"
+          },
           "error": {
             "anyOf": [
               {
@@ -3328,6 +3335,7 @@
           "as_of",
           "sportsbook",
           "games",
+          "book_boards",
           "error"
         ],
         "title": "MlbOddsResponse",

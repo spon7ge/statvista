@@ -185,7 +185,8 @@ describe("MlbPregameCenter", () => {
     renderWithClient(<MlbPregameCenter detail={mlbScheduledDetail} />);
 
     expect(screen.getByTestId("mlb-game-odds-board")).toBeInTheDocument();
-    expect(screen.getByText("+113")).toBeInTheDocument();
+    expect(screen.getByText("Pinnacle")).toBeInTheDocument();
+    expect(screen.getByText("o7.5")).toBeInTheDocument();
   });
 
   it("shows a loading line instead of unavailable while the fetch is pending", () => {

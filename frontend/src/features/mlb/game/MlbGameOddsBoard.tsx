@@ -1,10 +1,14 @@
 import { GameSection } from "@/shared/ui/GameSection";
-import { formatAmericanOdds, type MlbOddsBoardTile, type MlbOddsBoardView } from "../lib/mlbOddsBoard";
+import {
+  formatAmericanOdds,
+  type MlbOddsBoardTile,
+  type MlbOddsBookBoardView,
+} from "../lib/mlbOddsBoard";
 import type { MlbGameDetailTeam, MlbGameDetailView } from "../lib/types";
 
 type Props = {
   detail: Pick<MlbGameDetailView, "away" | "home">;
-  view: MlbOddsBoardView | null;
+  boards: MlbOddsBookBoardView[];
   isPending?: boolean;
 };
 
@@ -25,6 +29,7 @@ function formatAsOf(asOf: string | null): string | null {
 const SPORTSBOOK_LABELS: Record<string, string> = {
   draftkings: "DraftKings",
   fanduel: "FanDuel",
+  novig: "Novig",
   pinnacle: "Pinnacle",
   prophetx: "ProphetX",
 };
@@ -44,11 +49,8 @@ function formatTileLine(tile: MlbOddsBoardTile): string | null {
 function OddsTile({ tile }: { tile: MlbOddsBoardTile }) {
   const line = formatTileLine(tile);
   const price = tile.price == null ? null : formatAmericanOdds(tile.price);
-  // Number on top; American odds underneath (Money has only the price — spacer keeps height).
-  const primary =
-    tile.kind === "money" ? (price ?? "–") : (line ?? "–");
-  const secondary =
-    tile.kind === "money" ? "\u00a0" : (price ?? "–");
+  const primary = line ?? "–";
+  const secondary = price ?? "–";
 
   return (
     <div className="flex min-h-[3.25rem] min-w-0 flex-col items-center justify-center rounded-lg bg-white/10 px-2 py-1.5 text-center">
@@ -62,7 +64,17 @@ function OddsTile({ tile }: { tile: MlbOddsBoardTile }) {
   );
 }
 
-const COLUMN_LABELS = ["Money", "Total", "Spread"] as const;
+function BookmakerCell({ label }: { label: string | null }) {
+  return (
+    <div className="flex min-h-[3.25rem] min-w-0 flex-col items-center justify-center rounded-lg bg-white/10 px-2 py-1.5 text-center">
+      <p className="truncate text-sm font-semibold leading-tight text-white">
+        {label ?? "\u00a0"}
+      </p>
+    </div>
+  );
+}
+
+const COLUMN_LABELS = ["Bookmaker", "Total", "Spread"] as const;
 
 function OddsColumnHeaders() {
   return (
@@ -88,9 +100,11 @@ function OddsColumnHeaders() {
 function TeamOddsRow({
   team,
   row,
+  bookmaker,
 }: {
   team: MlbGameDetailTeam;
-  row: MlbOddsBoardView["rows"][number];
+  row: MlbOddsBookBoardView["rows"][number];
+  bookmaker: string | null;
 }) {
   return (
     <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3">
@@ -101,7 +115,7 @@ function TeamOddsRow({
         <span className="text-sm font-semibold text-white">{team.abbrev}</span>
       </div>
       <div className="grid grid-cols-3 items-stretch gap-1.5">
-        <OddsTile tile={row.money} />
+        <BookmakerCell label={bookmaker} />
         <OddsTile tile={row.total} />
         <OddsTile tile={row.spread} />
       </div>
@@ -109,31 +123,57 @@ function TeamOddsRow({
   );
 }
 
-export function MlbGameOddsBoard({ detail, view, isPending }: Props) {
-  const asOf = formatAsOf(view?.asOf ?? null);
-  const sportsbook = formatSportsbook(view?.sportsbook);
-  const awayRow = view?.rows.find((row) => row.side === "away");
-  const homeRow = view?.rows.find((row) => row.side === "home");
+function BookOddsBlock({
+  detail,
+  board,
+}: {
+  detail: Pick<MlbGameDetailView, "away" | "home">;
+  board: MlbOddsBookBoardView;
+}) {
+  const awayRow = board.rows.find((row) => row.side === "away");
+  const homeRow = board.rows.find((row) => row.side === "home");
+  const bookmaker = formatSportsbook(board.sportsbook);
+
+  if (!awayRow || !homeRow) return null;
+
+  return (
+    <div className="space-y-2">
+      <TeamOddsRow team={detail.away} row={awayRow} bookmaker={bookmaker} />
+      <TeamOddsRow team={detail.home} row={homeRow} bookmaker={null} />
+    </div>
+  );
+}
+
+export function MlbGameOddsBoard({ detail, boards, isPending }: Props) {
+  const asOf = formatAsOf(boards[0]?.asOf ?? null);
+  const completeBoards = boards.filter((board) => {
+    const awayRow = board.rows.find((row) => row.side === "away");
+    const homeRow = board.rows.find((row) => row.side === "home");
+    return Boolean(awayRow && homeRow);
+  });
 
   return (
     <GameSection data-testid="mlb-game-odds-board">
       <div className="mb-3 flex items-baseline justify-between gap-3">
         <h2 className="text-[18px] font-semibold text-white">Odds</h2>
-        {sportsbook || asOf ? (
-          <p className="text-right text-xs text-white/50">
-            {[sportsbook, asOf].filter(Boolean).join(" · ")}
-          </p>
+        {asOf ? (
+          <p className="text-right text-xs text-white/50">{asOf}</p>
         ) : null}
       </div>
       {isPending ? (
         <p className="text-[18px] text-white/50">Loading odds…</p>
-      ) : !view || !awayRow || !homeRow ? (
+      ) : completeBoards.length === 0 ? (
         <p className="text-[18px] text-white/50">Odds unavailable</p>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-4">
           <OddsColumnHeaders />
-          <TeamOddsRow team={detail.away} row={awayRow} />
-          <TeamOddsRow team={detail.home} row={homeRow} />
+          {completeBoards.map((board) => (
+            <BookOddsBlock
+              key={board.sportsbook}
+              detail={detail}
+              board={board}
+            />
+          ))}
         </div>
       )}
     </GameSection>
