@@ -13,6 +13,8 @@ class WnbaOddsGame(BaseModel):
     spread_team_abbrev: str | None = None
     spread_line: float | None = None
     total: float | None = None
+    away_moneyline: int | None = None
+    home_moneyline: int | None = None
     game_date: str | None = None
     sportsbook: str | None = None
 

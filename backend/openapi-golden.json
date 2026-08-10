@@ -7386,6 +7386,17 @@
             "title": "Away Abbrev",
             "type": "string"
           },
+          "away_moneyline": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Away Moneyline"
+          },
           "game_date": {
             "anyOf": [
               {
@@ -7400,6 +7411,17 @@
           "home_abbrev": {
             "title": "Home Abbrev",
             "type": "string"
+          },
+          "home_moneyline": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Home Moneyline"
           },
           "sportsbook": {
             "anyOf": [
@@ -7452,6 +7474,8 @@
           "spread_team_abbrev",
           "spread_line",
           "total",
+          "away_moneyline",
+          "home_moneyline",
           "game_date",
           "sportsbook"
         ],

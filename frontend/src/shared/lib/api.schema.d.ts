@@ -2541,10 +2541,14 @@ export interface components {
         WnbaOddsGame: {
             /** Away Abbrev */
             away_abbrev: string;
+            /** Away Moneyline */
+            away_moneyline: number | null;
             /** Game Date */
             game_date: string | null;
             /** Home Abbrev */
             home_abbrev: string;
+            /** Home Moneyline */
+            home_moneyline: number | null;
             /** Sportsbook */
             sportsbook: string | null;
             /** Spread Line */

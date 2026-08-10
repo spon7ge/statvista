@@ -61,6 +61,56 @@ def test_normalize_spread_and_total():
     assert g.game_date == "2026-08-03"
 
 
+def test_normalize_includes_moneylines():
+    rows = [
+        {
+            "away_team": "Las Vegas Aces",
+            "home_team": "Atlanta Dream",
+            "start_time": "2026-08-03T23:00:00Z",
+            "market_type": "moneyline",
+            "side": "home",
+            "team": "Atlanta Dream",
+            "points": None,
+            "american_price": -145,
+        },
+        {
+            "away_team": "Las Vegas Aces",
+            "home_team": "Atlanta Dream",
+            "start_time": "2026-08-03T23:00:00Z",
+            "market_type": "moneyline",
+            "side": "away",
+            "team": "Las Vegas Aces",
+            "points": None,
+            "american_price": 125,
+        },
+        {
+            "away_team": "Las Vegas Aces",
+            "home_team": "Atlanta Dream",
+            "start_time": "2026-08-03T23:00:00Z",
+            "market_type": "spread",
+            "side": "home",
+            "team": "Atlanta Dream",
+            "points": -1.5,
+            "american_price": -117,
+        },
+        {
+            "away_team": "Las Vegas Aces",
+            "home_team": "Atlanta Dream",
+            "start_time": "2026-08-03T23:00:00Z",
+            "market_type": "total",
+            "side": "over",
+            "team": None,
+            "points": 186.0,
+            "american_price": -104,
+        },
+    ]
+    games = svc.normalize_pinnacle_team_rows(rows)
+    assert len(games) == 1
+    g = games[0]
+    assert g.away_moneyline == 125
+    assert g.home_moneyline == -145
+
+
 def test_merge_falls_back_to_sharp_when_pinnacle_empty_markets():
     pin = [WnbaOddsGame(home_abbrev="ATL", away_abbrev="LVA", sportsbook="pinnacle")]
     sharp = [

@@ -84,6 +84,15 @@ def _spread_side_abbrev(
     return None
 
 
+def _int_price(raw: Any) -> int | None:
+    if raw is None:
+        return None
+    try:
+        return int(raw)
+    except (TypeError, ValueError):
+        return None
+
+
 def normalize_pinnacle_team_rows(rows: list[dict[str, Any]]) -> list[WnbaOddsGame]:
     """Collapse Pinnacle team snapshot rows into one game with favorite spread + total."""
     by_matchup: dict[tuple[str, str, str], dict[str, Any]] = {}
@@ -101,10 +110,18 @@ def normalize_pinnacle_team_rows(rows: list[dict[str, Any]]) -> list[WnbaOddsGam
                 "game_date": _game_date_from_start_time(row.get("start_time")),
                 "spreads": [],
                 "totals": [],
+                "moneylines": [],
             },
         )
 
         market = str(row.get("market_type") or "").lower()
+        if market == "moneyline":
+            team = _spread_side_abbrev(row, home, away)
+            price = _int_price(row.get("american_price"))
+            if team and price is not None:
+                bucket["moneylines"].append((team, price))
+            continue
+
         points_raw = row.get("points")
         if points_raw is None:
             continue
@@ -137,6 +154,16 @@ def normalize_pinnacle_team_rows(rows: list[dict[str, Any]]) -> list[WnbaOddsGam
         if spread_line is None and total is None:
             continue
 
+        moneylines: list[tuple[str, int]] = bucket["moneylines"]
+        away_moneyline = next(
+            (price for team, price in moneylines if team == bucket["away_abbrev"]),
+            None,
+        )
+        home_moneyline = next(
+            (price for team, price in moneylines if team == bucket["home_abbrev"]),
+            None,
+        )
+
         games.append(
             WnbaOddsGame(
                 home_abbrev=bucket["home_abbrev"],
@@ -144,6 +171,8 @@ def normalize_pinnacle_team_rows(rows: list[dict[str, Any]]) -> list[WnbaOddsGam
                 spread_team_abbrev=spread_team,
                 spread_line=spread_line,
                 total=total,
+                away_moneyline=away_moneyline,
+                home_moneyline=home_moneyline,
                 game_date=bucket.get("game_date"),
                 sportsbook="pinnacle",
             )
