@@ -415,6 +415,20 @@ def load_prophetx_team_json_file(path: str, *, scraped_at: datetime | None = Non
     return load_prophetx_team_snapshot(games, league=league, scraped_at=scraped_at)
 
 
+def _novig_props_table(league: str) -> str:
+    key = (league or "").strip().lower()
+    if key == "wnba":
+        return "wnba_novig"
+    return "mlb_novig"
+
+
+def _novig_team_table(league: str) -> str:
+    key = (league or "").strip().lower()
+    if key == "wnba":
+        return "wnba_novig_team"
+    return "mlb_novig_team"
+
+
 def load_novig_props_snapshot(
     games: list[dict],
     *,
@@ -432,7 +446,7 @@ def load_novig_props_snapshot(
     if df.empty:
         return 0
     upsert_df(
-        "mlb_novig",
+        _novig_props_table(league),
         df,
         schema="odds",
         conflict_cols=_NOVIG_PROPS_CONFLICT_COLS,
@@ -458,7 +472,7 @@ def load_novig_team_snapshot(
     if df.empty:
         return 0
     upsert_df(
-        "mlb_novig_team",
+        _novig_team_table(league),
         df,
         schema="odds",
         conflict_cols=_NOVIG_TEAM_CONFLICT_COLS,

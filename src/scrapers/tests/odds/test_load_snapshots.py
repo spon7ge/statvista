@@ -601,3 +601,90 @@ def test_load_novig_team_skip_db(monkeypatch, mock_upsert):
     )
     assert count == 0
     mock_upsert.assert_not_called()
+
+
+def test_load_novig_props_routes_wnba_table(monkeypatch, mock_upsert):
+    monkeypatch.delenv("NOVIG_SKIP_DB", raising=False)
+    games = [
+        {
+            "event_id": "uuid-1",
+            "competitors": [
+                {"name": "Home", "seq": 0},
+                {"name": "Away", "seq": 1},
+            ],
+            "props": [
+                {
+                    "player": "A",
+                    "stat": "points",
+                    "line": 20.5,
+                    "over": {"american": -110, "stake": 10.0},
+                    "under": None,
+                    "market_id": "m1",
+                    "sub_type": "points",
+                    "is_main": True,
+                }
+            ],
+        }
+    ]
+    count = load_snapshots.load_novig_props_snapshot(games, league="wnba")
+    assert count >= 1
+    mock_upsert.assert_called_once()
+    table, df = mock_upsert.call_args[0]
+    assert table == "wnba_novig"
+    assert mock_upsert.call_args[1]["schema"] == "odds"
+    assert len(df) >= 1
+
+
+def test_load_novig_team_routes_wnba_table(monkeypatch, mock_upsert):
+    monkeypatch.delenv("NOVIG_SKIP_DB", raising=False)
+    games = [
+        {
+            "event_id": "uuid-1",
+            "competitors": [
+                {"name": "Home", "seq": 0},
+                {"name": "Away", "seq": 1},
+            ],
+            "team_markets": {
+                "moneyline": [
+                    {"name": "Away", "american": 130, "line": None, "stake": None},
+                    {"name": "Home", "american": -150, "line": None, "stake": None},
+                ]
+            },
+        }
+    ]
+    count = load_snapshots.load_novig_team_snapshot(games, league="wnba")
+    assert count >= 1
+    mock_upsert.assert_called_once()
+    table, df = mock_upsert.call_args[0]
+    assert table == "wnba_novig_team"
+    assert mock_upsert.call_args[1]["schema"] == "odds"
+    assert len(df) >= 1
+
+
+def test_load_novig_props_still_routes_mlb(monkeypatch, mock_upsert):
+    monkeypatch.delenv("NOVIG_SKIP_DB", raising=False)
+    games = [
+        {
+            "event_id": "uuid-1",
+            "competitors": [
+                {"name": "Home", "seq": 0},
+                {"name": "Away", "seq": 1},
+            ],
+            "props": [
+                {
+                    "player": "A",
+                    "stat": "hits",
+                    "line": 0.5,
+                    "over": {"american": -110, "stake": None},
+                    "under": None,
+                    "market_id": "m1",
+                    "sub_type": "hits",
+                    "is_main": True,
+                }
+            ],
+        }
+    ]
+    count = load_snapshots.load_novig_props_snapshot(games, league="mlb")
+    assert count >= 1
+    table, _df = mock_upsert.call_args[0]
+    assert table == "mlb_novig"
