@@ -120,3 +120,15 @@ def test_fetch_latest_prophetx_team_filters_full_game_markets():
     assert "moneyline" in sql
     params = conn.execute.call_args[0][1]
     assert params["league"] == "mlb"
+
+
+def test_fetch_latest_novig_team_filters_full_game_markets():
+    engine, conn = _mock_engine([])
+    with patch("src.utils.db.get_engine", return_value=engine):
+        svc.fetch_latest_novig_team("mlb")
+    sql = str(conn.execute.call_args[0][0])
+    assert "odds.mlb_novig_team" in sql
+    assert "run_line" in sql
+    assert "moneyline" in sql
+    params = conn.execute.call_args[0][1]
+    assert params["league"] == "mlb"
