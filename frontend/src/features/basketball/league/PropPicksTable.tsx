@@ -127,7 +127,7 @@ export function PropPicksTable({
   const showPager = props.length > PROP_PICKS_PAGE_SIZE;
 
   return (
-    <section className="mx-auto max-w-6xl space-y-3 px-4 pb-10 sm:px-6 sm:pb-12">
+    <section className="space-y-3">
       <div className="flex flex-wrap items-baseline gap-2">
         <h2 className="text-xl font-semibold tracking-tight text-white sm:text-2xl">
           Prop Picks
