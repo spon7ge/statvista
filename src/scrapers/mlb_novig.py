@@ -1,4 +1,8 @@
-"""Novig MLB scraper — public GraphQL (team markets + player props)."""
+"""Novig MLB scraper — public GraphQL (team markets + player props).
+
+After writing JSON snapshots, upserts to odds.mlb_novig / odds.mlb_novig_team
+unless NOVIG_SKIP_DB is set.
+"""
 
 from __future__ import annotations
 
@@ -8,7 +12,7 @@ import os
 import re
 import sys
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any
 from zoneinfo import ZoneInfo
 
@@ -814,6 +818,45 @@ def run() -> None:
         props_path,
         team_path,
     )
+    load_supabase_snapshots(
+        props_games,
+        team_games,
+        props_path=props_path,
+        team_path=team_path,
+    )
+
+
+def load_supabase_snapshots(
+    props_games: list[dict[str, Any]],
+    team_games: list[dict[str, Any]],
+    *,
+    scraped_at: datetime | None = None,
+    props_path: str | None = None,
+    team_path: str | None = None,
+) -> None:
+    """Upsert snapshot games to odds.mlb_novig / odds.mlb_novig_team."""
+    try:
+        from src.odds.load_snapshots import (
+            load_novig_props_snapshot,
+            load_novig_team_snapshot,
+        )
+
+        when = scraped_at or datetime.now(timezone.utc)
+        n_props = load_novig_props_snapshot(
+            props_games, league="mlb", scraped_at=when
+        )
+        n_team = load_novig_team_snapshot(
+            team_games, league="mlb", scraped_at=when
+        )
+        logger.info(
+            "Supabase Novig upserted props=%s team=%s%s%s",
+            n_props,
+            n_team,
+            f" props_path={props_path}" if props_path else "",
+            f" team_path={team_path}" if team_path else "",
+        )
+    except Exception as exc:
+        logger.error("Supabase Novig load failed (JSON kept): %s", exc)
 
 
 if __name__ == "__main__":

@@ -7,6 +7,8 @@ from src.odds.snapshot_rows import (
     parlay_props_to_api_odds_rows,
     parlay_props_to_book_rows,
     prizepicks_projections_to_rows,
+    novig_props_to_rows,
+    novig_team_to_rows,
     prophetx_props_to_rows,
     prophetx_team_to_rows,
     sharp_props_to_book_rows,
@@ -436,3 +438,73 @@ def test_prophetx_team_to_rows_moneyline_and_run_line():
     inn = next(r for r in rows if r["market_type"] == "1st_inning_moneyline")
     assert inn["side"] == "home"
     assert inn["team"] == "Baltimore Orioles"
+
+
+def test_novig_props_to_rows_keeps_uuid_event_and_market_ids():
+    scraped = datetime(2026, 8, 9, tzinfo=timezone.utc)
+    games = [
+        {
+            "event_id": "019fe3e5-71e3-7b20-a4c2-3135a9a8007a",
+            "scheduled": "2026-08-10T00:20:00+00:00",
+            "competitors": [
+                {"id": "home-uuid", "name": "San Diego Padres", "seq": 0},
+                {"id": "away-uuid", "name": "Houston Astros", "seq": 1},
+            ],
+            "props": [
+                {
+                    "player": "Cristian Javier",
+                    "stat": "strikeouts",
+                    "line": 3.5,
+                    "over": {"american": -104, "stake": 32.0},
+                    "under": {"american": -102, "stake": 7.4},
+                    "market_id": "019fe4d6-ec15-7910-b919-e8814bcd6187",
+                    "sub_type": "pitcher_strikeouts",
+                    "is_main": True,
+                }
+            ],
+        }
+    ]
+    rows = novig_props_to_rows(games, league="mlb", scraped_at=scraped)
+    assert len(rows) == 2
+    assert rows[0]["event_id"] == "019fe3e5-71e3-7b20-a4c2-3135a9a8007a"
+    assert rows[0]["market_id"] == "019fe4d6-ec15-7910-b919-e8814bcd6187"
+    assert rows[0]["away_team"] == "Houston Astros"
+    assert rows[0]["home_team"] == "San Diego Padres"
+    assert rows[0]["is_main"] is True
+
+
+def test_novig_team_to_rows_moneyline():
+    scraped = datetime(2026, 8, 9, tzinfo=timezone.utc)
+    games = [
+        {
+            "event_id": "evt-uuid",
+            "scheduled": "2026-08-10T00:20:00+00:00",
+            "competitors": [
+                {"id": "h", "name": "San Diego Padres", "seq": 0},
+                {"id": "a", "name": "Houston Astros", "seq": 1},
+            ],
+            "team_markets": {
+                "moneyline": [
+                    {
+                        "name": "HOU",
+                        "competitor_id": None,
+                        "american": 127,
+                        "line": None,
+                        "stake": 3.15,
+                    },
+                    {
+                        "name": "SD",
+                        "competitor_id": None,
+                        "american": -132,
+                        "line": None,
+                        "stake": 100.0,
+                    },
+                ]
+            },
+        }
+    ]
+    rows = novig_team_to_rows(games, league="mlb", scraped_at=scraped)
+    assert len(rows) == 2
+    assert rows[0]["event_id"] == "evt-uuid"
+    assert {r["side"] for r in rows} == {"HOU", "SD"}
+

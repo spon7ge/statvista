@@ -581,3 +581,23 @@ def test_load_prophetx_team_skip_db(monkeypatch, mock_upsert):
     )
     assert count == 0
     mock_upsert.assert_not_called()
+
+
+def test_load_novig_props_skip_db(monkeypatch, mock_upsert):
+    monkeypatch.setenv("NOVIG_SKIP_DB", "1")
+    count = load_snapshots.load_novig_props_snapshot(
+        [{"event_id": "uuid", "competitors": [], "props": []}],
+        league="mlb",
+    )
+    assert count == 0
+    mock_upsert.assert_not_called()
+
+
+def test_load_novig_team_skip_db(monkeypatch, mock_upsert):
+    monkeypatch.setenv("NOVIG_SKIP_DB", "1")
+    count = load_snapshots.load_novig_team_snapshot(
+        [{"event_id": "uuid", "competitors": [], "team_markets": {}}],
+        league="mlb",
+    )
+    assert count == 0
+    mock_upsert.assert_not_called()

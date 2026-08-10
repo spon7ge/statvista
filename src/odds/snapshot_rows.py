@@ -563,3 +563,24 @@ def prophetx_team_to_rows(
                     }
                 )
     return rows
+
+
+def novig_props_to_rows(
+    games: list[dict],
+    *,
+    league: str,
+    scraped_at: datetime,
+) -> list[dict]:
+    """Map Novig props JSON games → odds.mlb_novig rows (UUID event/market ids)."""
+    # Same game shape as ProphetX; keep a named entry point for Novig loaders/tests.
+    return prophetx_props_to_rows(games, league=league, scraped_at=scraped_at)
+
+
+def novig_team_to_rows(
+    games: list[dict],
+    *,
+    league: str,
+    scraped_at: datetime,
+) -> list[dict]:
+    """Map Novig team JSON games → odds.mlb_novig_team rows."""
+    return prophetx_team_to_rows(games, league=league, scraped_at=scraped_at)
