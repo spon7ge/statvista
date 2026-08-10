@@ -1518,6 +1518,8 @@ export interface components {
         MlbOddsResponse: {
             /** As Of */
             as_of: string;
+            /** Book Boards */
+            book_boards: components["schemas"]["MlbOddsGame"][];
             /** Error */
             error: string | null;
             /** Games */
