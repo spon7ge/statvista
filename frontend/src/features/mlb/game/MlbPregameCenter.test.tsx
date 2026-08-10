@@ -315,7 +315,7 @@ describe("MlbPregameCenter", () => {
     expect(useMlbOdds).toHaveBeenLastCalledWith({ enabled: false });
   });
 
-  it("shows props grid under Preview lineups", async () => {
+  it("does not show or fetch player props on Preview", async () => {
     fetchMlbLineups.mockResolvedValue({
       date: mlbScheduledDetail.gameDate,
       fetched_at: "2026-08-04T10:00:00-04:00",
@@ -327,15 +327,11 @@ describe("MlbPregameCenter", () => {
     renderWithClient(<MlbPregameCenter detail={mlbScheduledDetail} />);
 
     expect(screen.getByTestId("mlb-projected-lineups")).toBeInTheDocument();
-    expect(await screen.findByTestId("mlb-game-props-grid")).toBeInTheDocument();
-    expect(await screen.findByText("A. Judge")).toBeInTheDocument();
-    expect(fetchMlbGameProps).toHaveBeenCalledWith({
-      gamePk: mlbScheduledDetail.mlbGamePk,
-      app: "prizepicks",
-    });
+    expect(screen.queryByTestId("mlb-game-props-grid")).not.toBeInTheDocument();
+    await waitFor(() => expect(fetchMlbGameProps).not.toHaveBeenCalled());
   });
 
-  it("switches to Props (PrizePicks) when a Preview prop row is clicked", async () => {
+  it("shows PrizePicks player props when Props tab is selected", async () => {
     fetchMlbLineups.mockResolvedValue({
       date: mlbScheduledDetail.gameDate,
       fetched_at: "2026-08-04T10:00:00-04:00",
@@ -347,9 +343,7 @@ describe("MlbPregameCenter", () => {
 
     renderWithClient(<MlbPregameCenter detail={mlbScheduledDetail} />);
 
-    await user.click(
-      await screen.findByRole("button", { name: /A\. Judge/i }),
-    );
+    await user.click(screen.getByRole("tab", { name: "Props" }));
 
     expect(screen.getByRole("tab", { name: "Props" })).toHaveAttribute(
       "aria-selected",
@@ -360,8 +354,13 @@ describe("MlbPregameCenter", () => {
       "true",
     );
     expect(screen.getByTestId("mlb-pregame-props-panel")).toBeInTheDocument();
-    expect(screen.getByTestId("mlb-game-props-grid")).toBeInTheDocument();
+    expect(await screen.findByTestId("mlb-game-props-grid")).toBeInTheDocument();
+    expect(await screen.findByText("A. Judge")).toBeInTheDocument();
     expect(screen.queryByTestId("mlb-projected-lineups")).not.toBeInTheDocument();
+    expect(fetchMlbGameProps).toHaveBeenCalledWith({
+      gamePk: mlbScheduledDetail.mlbGamePk,
+      app: "prizepicks",
+    });
   });
 
   it("requests underdog props when Underdog sub-tab is selected under Props", async () => {

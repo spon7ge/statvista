@@ -122,9 +122,7 @@ export function MlbPregameCenter({ detail }: { detail: MlbGameDetailView }) {
   const prizeQuery = useMlbGameProps({
     gamePk: detail.mlbGamePk,
     app: "prizepicks",
-    enabled:
-      activeTab === "preview" ||
-      (activeTab === "props" && propsApp === "prizepicks"),
+    enabled: activeTab === "props" && propsApp === "prizepicks",
   });
   const underdogQuery = useMlbGameProps({
     gamePk: detail.mlbGamePk,
@@ -152,29 +150,14 @@ export function MlbPregameCenter({ detail }: { detail: MlbGameDetailView }) {
         aria-labelledby={`mlb-pregame-${activeTab}-tab`}
       >
         {activeTab === "preview" ? (
-          <div className="space-y-4">
-            <MlbProjectedLineups
-              detail={detail}
-              game={matchedGame}
-              matchup={matchupQuery.data ?? null}
-              isPending={isPending}
-              oddsView={oddsView}
-              oddsPending={oddsQuery.isPending}
-            />
-            <MlbGamePropsGrid
-              categories={prizeQuery.data?.categories ?? []}
-              isPending={prizeQuery.isPending}
-              error={
-                prizeQuery.isError
-                  ? "Failed to load props"
-                  : prizeQuery.data?.error
-              }
-              onPlayerClick={() => {
-                setPropsApp("prizepicks");
-                setActiveTab("props");
-              }}
-            />
-          </div>
+          <MlbProjectedLineups
+            detail={detail}
+            game={matchedGame}
+            matchup={matchupQuery.data ?? null}
+            isPending={isPending}
+            oddsView={oddsView}
+            oddsPending={oddsQuery.isPending}
+          />
         ) : activeTab === "props" ? (
           <div className="space-y-4" data-testid="mlb-pregame-props-panel">
             <GamePropsAppTabs
