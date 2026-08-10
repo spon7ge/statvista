@@ -23,7 +23,9 @@ def test_mlb_prop_fetchers_route_to_league_table(fetcher, table):
 
     sql, league = fetch_rows.call_args.args
     assert f"FROM odds.{table}" in sql
-    assert f"SELECT MAX(scraped_at) FROM odds.{table}" in sql
+    assert "DISTINCT ON" in sql
+    assert "scraped_at DESC" in sql
+    assert f"SELECT MAX(scraped_at) FROM odds.{table}" not in sql
     assert league == "mlb"
 
 
@@ -32,12 +34,11 @@ def test_fetch_latest_prophetx_reads_latest_mlb_snapshot():
         svc.fetch_latest_prophetx()
 
     sql, league = fetch_rows.call_args.args
-    assert (
-        "SELECT player_name, stat_name, line_score, side, american_price, scraped_at"
-        in sql
-    )
+    assert "player_name, stat_name, line_score, side, american_price, scraped_at" in sql
     assert "FROM odds.mlb_prophetx" in sql
-    assert "SELECT MAX(scraped_at) FROM odds.mlb_prophetx" in sql
+    assert "DISTINCT ON" in sql
+    assert "scraped_at DESC" in sql
+    assert "SELECT MAX(scraped_at) FROM odds.mlb_prophetx" not in sql
     assert league == "mlb"
 
 
@@ -46,12 +47,11 @@ def test_fetch_latest_novig_reads_latest_mlb_snapshot():
         svc.fetch_latest_novig()
 
     sql, league = fetch_rows.call_args.args
-    assert (
-        "SELECT player_name, stat_name, line_score, side, american_price, scraped_at"
-        in sql
-    )
+    assert "player_name, stat_name, line_score, side, american_price, scraped_at" in sql
     assert "FROM odds.mlb_novig" in sql
-    assert "SELECT MAX(scraped_at) FROM odds.mlb_novig" in sql
+    assert "DISTINCT ON" in sql
+    assert "scraped_at DESC" in sql
+    assert "SELECT MAX(scraped_at) FROM odds.mlb_novig" not in sql
     assert league == "mlb"
 
 
@@ -76,6 +76,11 @@ def test_load_pinnacle_props_snapshot_routes_mlb_to_mlb_table():
             load_snapshots,
             "selenium_pinnacle_props_to_rows",
             return_value=rows,
+        ),
+        patch.object(
+            load_snapshots,
+            "apply_change_filter",
+            side_effect=lambda table, df, league: df,
         ),
         patch.object(load_snapshots, "upsert_df") as upsert_df,
     ):
