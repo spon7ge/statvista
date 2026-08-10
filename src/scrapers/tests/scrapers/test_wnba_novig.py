@@ -6,6 +6,7 @@ import importlib.util
 import sys
 from datetime import datetime
 from pathlib import Path
+from unittest.mock import MagicMock
 from zoneinfo import ZoneInfo
 
 _SCRAPER_PATH = Path(__file__).resolve().parents[2] / "wnba_novig.py"
@@ -241,3 +242,43 @@ def test_extract_props_skips_both_sides_empty() -> None:
         }
     ]
     assert nv.extract_props(markets) == []
+
+
+def test_fetch_wnba_events_parses_data(monkeypatch) -> None:
+    nv = _load_scraper()
+    session = MagicMock()
+    payload = {
+        "data": {
+            "event": [
+                {
+                    "id": "e1",
+                    "description": "NY @ LV",
+                    "status": "OPEN_PREGAME",
+                    "game": {"league": "WNBA"},
+                },
+            ]
+        }
+    }
+    monkeypatch.setattr(nv, "graphql", lambda *_a, **_k: payload)
+    events = nv.fetch_wnba_events(session)
+    assert len(events) == 1
+    assert events[0]["id"] == "e1"
+
+
+def test_fetch_event_markets_parses_nested(monkeypatch) -> None:
+    nv = _load_scraper()
+    session = MagicMock()
+    payload = {
+        "data": {
+            "event": [
+                {
+                    "markets": [
+                        {"id": "m1", "type": "POINTS", "strike": 20.5, "outcomes": []}
+                    ]
+                }
+            ]
+        }
+    }
+    monkeypatch.setattr(nv, "graphql", lambda *_a, **_k: payload)
+    markets = nv.fetch_event_markets(session, "e1")
+    assert markets[0]["id"] == "m1"

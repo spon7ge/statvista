@@ -6,12 +6,100 @@ unless NOVIG_SKIP_DB is set.
 
 from __future__ import annotations
 
+import logging
 import os
 import re
 import sys
+import time
 from datetime import datetime
 from typing import Any
 from zoneinfo import ZoneInfo
+
+import requests
+
+logger = logging.getLogger(__name__)
+
+GRAPHQL_URL = "https://api.novig.us/v1/graphql"
+DEFAULT_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    ),
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
+
+_GET_WNBA_EVENTS_QUERY = """
+query GetWnbaEvents($limit: Int!, $offset: Int!) {
+  event(
+    where: {
+      status: { _in: ["OPEN_PREGAME", "OPEN_INGAME"] }
+      game: { league: { _eq: "WNBA" } }
+    }
+    limit: $limit
+    offset: $offset
+  ) {
+    id
+    description
+    status
+    game {
+      scheduled_start
+      league
+      homeTeam { id name }
+      awayTeam { id name }
+    }
+  }
+}
+"""
+
+_GET_WNBA_EVENTS_INLINE_QUERY = """
+query GetWnbaEvents {
+  event(
+    where: {
+      status: { _in: ["OPEN_PREGAME", "OPEN_INGAME"] }
+      game: { league: { _eq: "WNBA" } }
+    }
+    limit: 500
+  ) {
+    id
+    description
+    status
+    game {
+      scheduled_start
+      league
+      homeTeam { id name }
+      awayTeam { id name }
+    }
+  }
+}
+"""
+
+_GET_EVENT_MARKETS_QUERY = """
+query GetEventMarkets($id: uuid!) {
+  event(where: { id: { _eq: $id } }) {
+    markets {
+      id
+      description
+      type
+      strike
+      player { id name }
+      outcomes {
+        id
+        description
+        available
+        last
+        orders(where: { status: { _eq: "OPEN" }, currency: { _eq: "CASH" } }) {
+          qty
+          price
+          status
+        }
+      }
+    }
+  }
+}
+"""
+
+_EVENTS_PAGE_SIZE = 100
 
 _ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 if _ROOT not in sys.path:
@@ -422,3 +510,150 @@ def extract_props(markets: list[dict[str, Any]]) -> list[dict[str, Any]]:
         best_row["is_main"] = True
 
     return rows
+
+
+def _max_events_cap() -> int | None:
+    raw = os.environ.get("NOVIG_MAX_EVENTS", "").strip()
+    if raw.isdigit():
+        return int(raw)
+    return None
+
+
+def _graphql_post(
+    session: requests.Session,
+    query: str,
+    variables: dict[str, Any] | None = None,
+    *,
+    retries: int = 3,
+) -> Any:
+    payload: dict[str, Any] = {"query": query}
+    if variables is not None:
+        payload["variables"] = variables
+    last_err: Exception | None = None
+    for attempt in range(retries):
+        try:
+            resp = session.post(
+                GRAPHQL_URL,
+                json=payload,
+                headers=DEFAULT_HEADERS,
+                timeout=60,
+            )
+            if resp.status_code in (429, 500, 502, 503, 504) and attempt + 1 < retries:
+                time.sleep(0.5 * (attempt + 1))
+                continue
+            resp.raise_for_status()
+            return resp.json()
+        except (requests.RequestException, ValueError) as exc:
+            last_err = exc
+            if attempt + 1 >= retries:
+                break
+            time.sleep(0.5 * (attempt + 1))
+    assert last_err is not None
+    raise last_err
+
+
+def graphql(
+    session: requests.Session,
+    query: str,
+    variables: dict[str, Any] | None = None,
+    *,
+    retries: int = 3,
+) -> Any:
+    body = _graphql_post(session, query, variables, retries=retries)
+    if body.get("errors"):
+        messages = [
+            str(err.get("message") or err)
+            for err in body["errors"]
+            if isinstance(err, dict)
+        ]
+        if body.get("data"):
+            logger.warning(
+                "GraphQL partial errors: %s",
+                "; ".join(messages or ["unknown error"]),
+            )
+        else:
+            raise RuntimeError(
+                "GraphQL errors: " + "; ".join(messages or ["unknown error"])
+            )
+    return body
+
+
+def _events_from_graphql_payload(payload: Any) -> list[dict[str, Any]]:
+    if not isinstance(payload, dict):
+        return []
+    data = payload.get("data")
+    if not isinstance(data, dict):
+        return []
+    events = data.get("event") or []
+    if not isinstance(events, list):
+        return []
+    return [event for event in events if isinstance(event, dict)]
+
+
+def fetch_wnba_events(session: requests.Session) -> list[dict[str, Any]]:
+    cap = _max_events_cap()
+    events: list[dict[str, Any]] = []
+    offset = 0
+    use_inline_query = False
+
+    while True:
+        if use_inline_query:
+            payload = graphql(session, _GET_WNBA_EVENTS_INLINE_QUERY)
+            events.extend(_events_from_graphql_payload(payload))
+            break
+
+        limit = _EVENTS_PAGE_SIZE
+        if cap is not None:
+            remaining = cap - len(events)
+            if remaining <= 0:
+                break
+            limit = min(limit, remaining)
+
+        try:
+            payload = graphql(
+                session,
+                _GET_WNBA_EVENTS_QUERY,
+                {"limit": limit, "offset": offset},
+            )
+        except RuntimeError as exc:
+            if any(
+                token in str(exc).lower()
+                for token in ("limit", "offset", "variable")
+            ):
+                use_inline_query = True
+                events.clear()
+                continue
+            raise
+
+        chunk = _events_from_graphql_payload(payload)
+        if not chunk:
+            break
+        events.extend(chunk)
+        if cap is not None and len(events) >= cap:
+            events = events[:cap]
+            break
+        if len(chunk) < limit:
+            break
+        offset += len(chunk)
+
+    if cap is not None:
+        events = events[:cap]
+    return events
+
+
+def fetch_event_markets(
+    session: requests.Session,
+    event_id: str,
+) -> list[dict[str, Any]]:
+    payload = graphql(
+        session,
+        _GET_EVENT_MARKETS_QUERY,
+        {"id": event_id},
+    )
+    events = _events_from_graphql_payload(payload)
+    if not events:
+        return []
+    markets = events[0].get("markets") or []
+    if not isinstance(markets, list):
+        return []
+    return [market for market in markets if isinstance(market, dict)]
