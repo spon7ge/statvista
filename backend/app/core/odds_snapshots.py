@@ -1,4 +1,4 @@
-"""Read latest PrizePicks / Underdog / Pinnacle / ProphetX odds snapshots from Supabase.
+"""Read latest PrizePicks / Underdog / Pinnacle / ProphetX / Novig odds snapshots from Supabase.
 
 DB-only reads (no vendor HTTP), so this does not belong under ``providers/``.
 It lives in ``core`` rather than a single domain because both the MLB and
@@ -33,6 +33,7 @@ _PINNACLE_TABLE = {
 }
 _PROPHETX_TABLE = {"mlb": "mlb_prophetx"}
 _PROPHETX_TEAM_TABLE = {"mlb": "mlb_prophetx_team"}
+_NOVIG_TABLE = {"mlb": "mlb_novig"}
 
 _PINNACLE_TEAM_TABLE = {
     "mlb": "mlb_pinnacle_team",
@@ -132,6 +133,17 @@ def fetch_latest_prophetx(league: str = "mlb") -> list[dict]:
     """Return rows from the latest ProphetX player snapshot for *league*."""
     lg = _normalized_league(league, "mlb")
     table = _PROPHETX_TABLE.get(lg, "mlb_prophetx")
+    sql = _latest_snapshot_sql(
+        table,
+        "player_name, stat_name, line_score, side, american_price, scraped_at",
+    )
+    return _fetch_rows(sql, lg)
+
+
+def fetch_latest_novig(league: str = "mlb") -> list[dict]:
+    """Return rows from the latest Novig player snapshot for *league*."""
+    lg = _normalized_league(league, "mlb")
+    table = _NOVIG_TABLE.get(lg, "mlb_novig")
     sql = _latest_snapshot_sql(
         table,
         "player_name, stat_name, line_score, side, american_price, scraped_at",

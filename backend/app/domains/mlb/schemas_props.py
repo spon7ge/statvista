@@ -30,12 +30,9 @@ class MlbPropBooks(BaseModel):
 
     prophetx: MlbPropBookQuote | None = None
     novig: MlbPropBookQuote | None = None
-    kalshi: MlbPropBookQuote | None = None
     draftkings: MlbPropBookQuote | None = None
     fanduel: MlbPropBookQuote | None = None
     pinnacle: MlbPropBookQuote | None = None
-    betmgm: MlbPropBookQuote | None = None
-    betonline: MlbPropBookQuote | None = None
 
 
 class MlbPropDfs(BaseModel):

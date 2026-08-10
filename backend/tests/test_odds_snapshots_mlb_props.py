@@ -41,6 +41,20 @@ def test_fetch_latest_prophetx_reads_latest_mlb_snapshot():
     assert league == "mlb"
 
 
+def test_fetch_latest_novig_reads_latest_mlb_snapshot():
+    with patch.object(svc, "_fetch_rows", return_value=[]) as fetch_rows:
+        svc.fetch_latest_novig()
+
+    sql, league = fetch_rows.call_args.args
+    assert (
+        "SELECT player_name, stat_name, line_score, side, american_price, scraped_at"
+        in sql
+    )
+    assert "FROM odds.mlb_novig" in sql
+    assert "SELECT MAX(scraped_at) FROM odds.mlb_novig" in sql
+    assert league == "mlb"
+
+
 def test_load_pinnacle_props_snapshot_routes_mlb_to_mlb_table():
     scraped_at = datetime(2026, 8, 5, tzinfo=timezone.utc)
     rows = [
