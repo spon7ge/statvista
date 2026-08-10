@@ -14,8 +14,9 @@ vi.mock("@/features/basketball/hooks/useWnbaScoreboard", () => ({
   }),
 }));
 
+const useWnbaOdds = vi.fn(() => ({ data: undefined }));
 vi.mock("@/features/basketball/hooks/useWnbaOdds", () => ({
-  useWnbaOdds: () => ({ data: undefined }),
+  useWnbaOdds: (...args: unknown[]) => useWnbaOdds(...args),
 }));
 
 vi.mock("@/shared/lib/matchupSlateDate", async (importOriginal) => {
@@ -49,5 +50,11 @@ describe("LeagueMatchupsPage date nav", () => {
     expect(screen.getByRole("button", { name: "Jul 31" })).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Jul 31" }));
     expect(screen.getByRole("button", { name: "Today" })).toBeInTheDocument();
+  });
+
+  it("does not fetch WNBA odds for matchups cards", () => {
+    useWnbaOdds.mockClear();
+    renderAt("/wnba/matchups");
+    expect(useWnbaOdds).not.toHaveBeenCalled();
   });
 });
