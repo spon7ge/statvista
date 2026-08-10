@@ -1,0 +1,688 @@
+{
+  "source": "novig",
+  "fetched_at": "2026-08-09T17:43:44-07:00",
+  "league": "mlb",
+  "snapshot_kind": "team",
+  "games": [
+    {
+      "event_id": "019fe3e5-71e3-7b20-a4c2-3135a9a8007a",
+      "name": "Houston Astros @ San Diego Padres",
+      "scheduled": "2026-08-10T00:20:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "9c8758e5-b5d9-41e5-8852-dc0bd3c49fc0",
+          "name": "San Diego Padres",
+          "seq": 0
+        },
+        {
+          "id": "a3865dd0-0b29-4196-b8b9-b076f4fee96e",
+          "name": "Houston Astros",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "HOU",
+            "competitor_id": null,
+            "american": 113,
+            "line": null,
+            "stake": 8432.24
+          },
+          {
+            "name": "SD",
+            "competitor_id": null,
+            "american": -130,
+            "line": null,
+            "stake": 11449.59
+          }
+        ],
+        "run_line": [
+          {
+            "name": "SD +1.5",
+            "competitor_id": null,
+            "american": -223,
+            "line": 1.5,
+            "stake": 8700.0
+          },
+          {
+            "name": "HOU -1.5",
+            "competitor_id": null,
+            "american": 186,
+            "line": -1.5,
+            "stake": 7950.0
+          }
+        ],
+        "total": [
+          {
+            "name": "Over 7.5",
+            "competitor_id": null,
+            "american": -9900,
+            "line": 7.5,
+            "stake": 2000.0
+          },
+          {
+            "name": "Under 7.5",
+            "competitor_id": null,
+            "american": -120,
+            "line": 7.5,
+            "stake": 2083.42
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "019fe7a6-d203-7d70-b9a9-cf73dd79295a",
+      "name": "Boston Red Sox @ Toronto Blue Jays",
+      "scheduled": "2026-08-10T23:07:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "1ffe4749-9868-4bdd-b460-1c8b378affc7",
+          "name": "Toronto Blue Jays",
+          "seq": 0
+        },
+        {
+          "id": "9b28411a-0dab-40a3-86ed-860e03fef019",
+          "name": "Boston Red Sox",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "TOR",
+            "competitor_id": null,
+            "american": 147,
+            "line": null,
+            "stake": 10237.849999999999
+          },
+          {
+            "name": "BOS",
+            "competitor_id": null,
+            "american": -153,
+            "line": null,
+            "stake": 11655.35
+          }
+        ],
+        "run_line": [
+          {
+            "name": "TOR +1.5",
+            "competitor_id": null,
+            "american": -117,
+            "line": 1.5,
+            "stake": 5301.59
+          },
+          {
+            "name": "BOS -1.5",
+            "competitor_id": null,
+            "american": 115,
+            "line": -1.5,
+            "stake": 5364.1900000000005
+          }
+        ],
+        "total": [
+          {
+            "name": "Over 8.5",
+            "competitor_id": null,
+            "american": 106,
+            "line": 8.5,
+            "stake": 5336.8
+          },
+          {
+            "name": "Under 8.5",
+            "competitor_id": null,
+            "american": -111,
+            "line": 8.5,
+            "stake": 5836.1900000000005
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "019fe7a6-d260-7510-9f0e-528cde140eab",
+      "name": "New York Mets @ Atlanta Braves",
+      "scheduled": "2026-08-10T23:15:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "bdad0d95-3eae-45a9-b6c3-8484253cb330",
+          "name": "Atlanta Braves",
+          "seq": 0
+        },
+        {
+          "id": "cd349610-9846-4b61-8f11-8792eaa18759",
+          "name": "New York Mets",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "ATL",
+            "competitor_id": null,
+            "american": -147,
+            "line": null,
+            "stake": 9776.5
+          },
+          {
+            "name": "NYM",
+            "competitor_id": null,
+            "american": 135,
+            "line": null,
+            "stake": 7895.169999999999
+          }
+        ],
+        "run_line": [
+          {
+            "name": "ATL -1.5",
+            "competitor_id": null,
+            "american": 147,
+            "line": -1.5,
+            "stake": 5113.820000000001
+          },
+          {
+            "name": "NYM +1.5",
+            "competitor_id": null,
+            "american": -160,
+            "line": 1.5,
+            "stake": 5875.99
+          }
+        ],
+        "total": [
+          {
+            "name": "Over 8.5",
+            "competitor_id": null,
+            "american": 104,
+            "line": 8.5,
+            "stake": 5611.14
+          },
+          {
+            "name": "Under 8.5",
+            "competitor_id": null,
+            "american": -120,
+            "line": 8.5,
+            "stake": 5104.0
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "019fe7a6-d29c-7100-a1b4-1a39d683cd46",
+      "name": "Baltimore Orioles @ Minnesota Twins",
+      "scheduled": "2026-08-10T23:40:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "afd88f63-fb49-455b-9671-fbd3b6ae98b8",
+          "name": "Minnesota Twins",
+          "seq": 0
+        },
+        {
+          "id": "82c244e9-9a6f-4a0b-9b0d-9bb2f714aa8a",
+          "name": "Baltimore Orioles",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "BAL",
+            "competitor_id": null,
+            "american": -106,
+            "line": null,
+            "stake": 7898.450000000001
+          },
+          {
+            "name": "MIN",
+            "competitor_id": null,
+            "american": 102,
+            "line": null,
+            "stake": 9763.380000000003
+          }
+        ],
+        "run_line": [
+          {
+            "name": "MIN +1.5",
+            "competitor_id": null,
+            "american": -167,
+            "line": 1.5,
+            "stake": 6352.2
+          },
+          {
+            "name": "BAL -1.5",
+            "competitor_id": null,
+            "american": 156,
+            "line": -1.5,
+            "stake": 5979.379999999999
+          }
+        ],
+        "total": [
+          {
+            "name": "Over 8.5",
+            "competitor_id": null,
+            "american": -111,
+            "line": 8.5,
+            "stake": 4666.91
+          },
+          {
+            "name": "Under 8.5",
+            "competitor_id": null,
+            "american": -115,
+            "line": 8.5,
+            "stake": 4501.0
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "019fe7a6-d377-7c73-afd6-8c7af0de0e1f",
+      "name": "Kansas City Royals @ Los Angeles Dodgers",
+      "scheduled": "2026-08-11T02:10:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "27c001ab-1b6e-4a67-9b10-db41a0770f24",
+          "name": "Los Angeles Dodgers",
+          "seq": 0
+        },
+        {
+          "id": "1dc0a479-72c7-478a-a41e-f8e0bedb1fca",
+          "name": "Kansas City Royals",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "LAD",
+            "competitor_id": null,
+            "american": -285,
+            "line": null,
+            "stake": 9649.869999999999
+          },
+          {
+            "name": "KAN",
+            "competitor_id": null,
+            "american": 270,
+            "line": null,
+            "stake": 13422.529999999999
+          }
+        ],
+        "run_line": [
+          {
+            "name": "LAD -1.5",
+            "competitor_id": null,
+            "american": -122,
+            "line": -1.5,
+            "stake": 4939.3
+          },
+          {
+            "name": "KAN +1.5",
+            "competitor_id": null,
+            "american": 117,
+            "line": 1.5,
+            "stake": 5927.16
+          }
+        ],
+        "total": [
+          {
+            "name": "Under 7.5",
+            "competitor_id": null,
+            "american": 104,
+            "line": 7.5,
+            "stake": 5010.13
+          },
+          {
+            "name": "Over 7.5",
+            "competitor_id": null,
+            "american": -106,
+            "line": 7.5,
+            "stake": 5347.74
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "019fe7a6-d2e0-7d90-afc6-1dabfee02429",
+      "name": "Philadelphia Phillies @ St. Louis Cardinals",
+      "scheduled": "2026-08-10T23:45:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "56efe53d-3dfc-4892-8f46-98441fd95427",
+          "name": "St. Louis Cardinals",
+          "seq": 0
+        },
+        {
+          "id": "fadcf8c8-f612-459c-a291-b2774aadcb48",
+          "name": "Philadelphia Phillies",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "STL",
+            "competitor_id": null,
+            "american": -102,
+            "line": null,
+            "stake": 6556.03
+          },
+          {
+            "name": "PHI",
+            "competitor_id": null,
+            "american": -102,
+            "line": null,
+            "stake": 11728.880000000001
+          }
+        ],
+        "run_line": [
+          {
+            "name": "STL -1.5",
+            "competitor_id": null,
+            "american": 194,
+            "line": -1.5,
+            "stake": 4379.27
+          },
+          {
+            "name": "PHI +1.5",
+            "competitor_id": null,
+            "american": -213,
+            "line": 1.5,
+            "stake": 4361.75
+          }
+        ],
+        "total": [
+          {
+            "name": "Under 9.5",
+            "competitor_id": null,
+            "american": -127,
+            "line": 9.5,
+            "stake": 4666.429999999999
+          },
+          {
+            "name": "Over 9.5",
+            "competitor_id": null,
+            "american": 117,
+            "line": 9.5,
+            "stake": 4578.790000000001
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "019fe7a6-d332-70e0-96a8-cd29bf084aba",
+      "name": "Texas Rangers @ Los Angeles Angels",
+      "scheduled": "2026-08-11T01:38:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "d09c395d-4df0-4859-be9a-a11422d6367d",
+          "name": "Los Angeles Angels",
+          "seq": 0
+        },
+        {
+          "id": "c700a31c-e05f-47ca-b05b-b8ce13c8db17",
+          "name": "Texas Rangers",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "TEX",
+            "competitor_id": null,
+            "american": -113,
+            "line": null,
+            "stake": 8431.02
+          },
+          {
+            "name": "LAA",
+            "competitor_id": null,
+            "american": 111,
+            "line": null,
+            "stake": 7903.820000000001
+          }
+        ],
+        "run_line": [
+          {
+            "name": "TEX -1.5",
+            "competitor_id": null,
+            "american": 141,
+            "line": -1.5,
+            "stake": 5208.72
+          },
+          {
+            "name": "LAA +1.5",
+            "competitor_id": null,
+            "american": -156,
+            "line": 1.5,
+            "stake": 5184.62
+          }
+        ],
+        "total": [
+          {
+            "name": "Over 8.5",
+            "competitor_id": null,
+            "american": -111,
+            "line": 8.5,
+            "stake": 5539.56
+          },
+          {
+            "name": "Under 8.5",
+            "competitor_id": null,
+            "american": -100,
+            "line": 8.5,
+            "stake": 5177.11
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "019fe882-98ce-7923-9007-8592a36f87d6",
+      "name": "Tampa Bay Rays @ Oakland Athletics",
+      "scheduled": "2026-08-11T01:40:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "5dc6e5ff-6823-4669-9e5a-93cf78b4004d",
+          "name": "Oakland Athletics",
+          "seq": 0
+        },
+        {
+          "id": "ed06a009-1c69-427b-ab44-81ffb7f1f751",
+          "name": "Tampa Bay Rays",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "OAK",
+            "competitor_id": null,
+            "american": 144,
+            "line": null,
+            "stake": 8040.120000000001
+          },
+          {
+            "name": "TB",
+            "competitor_id": null,
+            "american": -153,
+            "line": null,
+            "stake": 11242.249999999998
+          }
+        ],
+        "run_line": [
+          {
+            "name": "TB -1.5",
+            "competitor_id": null,
+            "american": 104,
+            "line": -1.5,
+            "stake": 5228.0199999999995
+          },
+          {
+            "name": "OAK +1.5",
+            "competitor_id": null,
+            "american": -111,
+            "line": 1.5,
+            "stake": 4554.0599999999995
+          }
+        ],
+        "total": [
+          {
+            "name": "Over 9.5",
+            "competitor_id": null,
+            "american": -111,
+            "line": 9.5,
+            "stake": 3839.56
+          },
+          {
+            "name": "Under 9.5",
+            "competitor_id": null,
+            "american": 107,
+            "line": 9.5,
+            "stake": 4207.82
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "019fe8f0-3066-7ea1-bce6-471bb5221a1d",
+      "name": "Colorado Rockies @ Arizona Diamondbacks",
+      "scheduled": "2026-08-11T01:40:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "136294b5-d1cd-4fc0-964c-87ade0368132",
+          "name": "Arizona Diamondbacks",
+          "seq": 0
+        },
+        {
+          "id": "63d07ea8-8cab-4d81-9616-a35d586f0b63",
+          "name": "Colorado Rockies",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "COL",
+            "competitor_id": null,
+            "american": 150,
+            "line": null,
+            "stake": 1972.41
+          },
+          {
+            "name": "ARI",
+            "competitor_id": null,
+            "american": -163,
+            "line": null,
+            "stake": 2441.98
+          }
+        ],
+        "run_line": [
+          {
+            "name": "ARI -1.5",
+            "competitor_id": null,
+            "american": 122,
+            "line": -1.5,
+            "stake": 928.7199999999999
+          },
+          {
+            "name": "COL +1.5",
+            "competitor_id": null,
+            "american": -138,
+            "line": 1.5,
+            "stake": 581.52
+          }
+        ],
+        "total": [
+          {
+            "name": "Over 8.5",
+            "competitor_id": null,
+            "american": -125,
+            "line": 8.5,
+            "stake": 706.18
+          },
+          {
+            "name": "Under 8.5",
+            "competitor_id": null,
+            "american": -115,
+            "line": 8.5,
+            "stake": 703.78
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "019fe8f0-314f-7063-bb12-af5cb4aa8272",
+      "name": "Milwaukee Brewers @ San Diego Padres",
+      "scheduled": "2026-08-11T01:40:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "9c8758e5-b5d9-41e5-8852-dc0bd3c49fc0",
+          "name": "San Diego Padres",
+          "seq": 0
+        },
+        {
+          "id": "eb0c9d78-6082-4527-9b70-44f68de884a1",
+          "name": "Milwaukee Brewers",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "SD",
+            "competitor_id": null,
+            "american": -102,
+            "line": null,
+            "stake": 1815.4099999999999
+          },
+          {
+            "name": "MIL",
+            "competitor_id": null,
+            "american": -106,
+            "line": null,
+            "stake": 1809.27
+          }
+        ],
+        "run_line": [
+          {
+            "name": "SD -1.5",
+            "competitor_id": null,
+            "american": 186,
+            "line": -1.5,
+            "stake": 892.86
+          },
+          {
+            "name": "MIL +1.5",
+            "competitor_id": null,
+            "american": -270,
+            "line": 1.5,
+            "stake": 400.0
+          }
+        ],
+        "total": [
+          {
+            "name": "Over 7.5",
+            "competitor_id": null,
+            "american": -111,
+            "line": 7.5,
+            "stake": 752.63
+          },
+          {
+            "name": "Under 7.5",
+            "competitor_id": null,
+            "american": -127,
+            "line": 7.5,
+            "stake": 814.27
+          }
+        ]
+      }
+    }
+  ]
+}

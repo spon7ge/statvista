@@ -1,0 +1,290 @@
+{
+  "fetched_at": "2026-08-09T15:42:26-07:00",
+  "source": "pinnacle_selenium",
+  "sport": "baseball",
+  "league": "mlb",
+  "list_page": "https://www.pinnacle.com/en/baseball/mlb/matchups/#all",
+  "parallel_workers_configured": 5,
+  "parallel_workers_effective": 4,
+  "games_per_worker_target": 2,
+  "arcadia_timeout_s": 90.0,
+  "arcadia_poll_s": 0.22,
+  "snapshot_kind": "props",
+  "games": [
+    {
+      "matchup_id": 1633334099,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/baltimore-orioles-vs-minnesota-twins/1633334099/#all",
+      "path": "/en/baseball/mlb/baltimore-orioles-vs-minnesota-twins/1633334099/",
+      "league": "MLB",
+      "start_time": "2026-08-10T23:40:00Z",
+      "label": "Baltimore Orioles vs Minnesota Twins",
+      "participants": [
+        "Baltimore Orioles",
+        "Minnesota Twins"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1633332339,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/boston-red-sox-vs-toronto-blue-jays/1633332339/#all",
+      "path": "/en/baseball/mlb/boston-red-sox-vs-toronto-blue-jays/1633332339/",
+      "league": "MLB",
+      "start_time": "2026-08-10T23:07:00Z",
+      "label": "Boston Red Sox vs Toronto Blue Jays",
+      "participants": [
+        "Boston Red Sox",
+        "Toronto Blue Jays"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1633304549,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/houston-astros-vs-san-diego-padres/1633304549/#all",
+      "path": "/en/baseball/mlb/houston-astros-vs-san-diego-padres/1633304549/",
+      "league": "MLB",
+      "start_time": "2026-08-10T00:20:00Z",
+      "label": "Houston Astros vs San Diego Padres",
+      "participants": [
+        "Houston Astros",
+        "San Diego Padres"
+      ],
+      "props": [
+        {
+          "stat": "home_runs",
+          "player": "Christian Walker",
+          "line": 0.5,
+          "market_id": 1633712431,
+          "decimal_over": 5.0,
+          "decimal_under": 1.15,
+          "american_over": 400,
+          "american_under": -668
+        },
+        {
+          "stat": "hits_allowed",
+          "player": "Cristian Javier",
+          "line": 4.5,
+          "market_id": 1633712434,
+          "decimal_over": 1.909,
+          "decimal_under": 1.833,
+          "american_over": -110,
+          "american_under": -120
+        },
+        {
+          "stat": "runs",
+          "player": "Cristian Javier",
+          "line": 2.5,
+          "market_id": 1633712440,
+          "decimal_over": 1.971,
+          "decimal_under": 1.781,
+          "american_over": -103,
+          "american_under": -128
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Cristian Javier",
+          "line": 3.5,
+          "market_id": 1633712443,
+          "decimal_over": 1.917,
+          "decimal_under": 1.826,
+          "american_over": -109,
+          "american_under": -121
+        },
+        {
+          "stat": "home_runs",
+          "player": "Daulton Varsho",
+          "line": 0.5,
+          "market_id": 1633712446,
+          "decimal_over": 5.9,
+          "decimal_under": 1.111,
+          "american_over": 490,
+          "american_under": -903
+        },
+        {
+          "stat": "home_runs",
+          "player": "Fernando Tatis Jr.",
+          "line": 0.5,
+          "market_id": 1633712449,
+          "decimal_over": 4.4,
+          "decimal_under": 1.187,
+          "american_over": 340,
+          "american_under": -535
+        },
+        {
+          "stat": "home_runs",
+          "player": "Gavin Sheets",
+          "line": 0.5,
+          "market_id": 1633712452,
+          "decimal_over": 6.0,
+          "decimal_under": 1.107,
+          "american_over": 500,
+          "american_under": -932
+        },
+        {
+          "stat": "home_runs",
+          "player": "Isaac Paredes",
+          "line": 0.5,
+          "market_id": 1633712455,
+          "decimal_over": 6.1,
+          "decimal_under": 1.104,
+          "american_over": 510,
+          "american_under": -962
+        },
+        {
+          "stat": "home_runs",
+          "player": "Jackson Merrill",
+          "line": 0.5,
+          "market_id": 1633712458,
+          "decimal_over": 5.5,
+          "decimal_under": 1.126,
+          "american_over": 450,
+          "american_under": -792
+        },
+        {
+          "stat": "home_runs",
+          "player": "Jake Cronenworth",
+          "line": 0.5,
+          "market_id": 1633712461,
+          "decimal_over": 6.0,
+          "decimal_under": 1.107,
+          "american_over": 500,
+          "american_under": -932
+        },
+        {
+          "stat": "home_runs",
+          "player": "Jeremy Pena",
+          "line": 0.5,
+          "market_id": 1633712464,
+          "decimal_over": 6.8,
+          "decimal_under": 1.084,
+          "american_over": 580,
+          "american_under": -1194
+        },
+        {
+          "stat": "home_runs",
+          "player": "Manny Machado",
+          "line": 0.5,
+          "market_id": 1633712467,
+          "decimal_over": 4.45,
+          "decimal_under": 1.183,
+          "american_over": 345,
+          "american_under": -546
+        },
+        {
+          "stat": "hits_allowed",
+          "player": "Randy Vasquez",
+          "line": 4.5,
+          "market_id": 1633712470,
+          "decimal_over": 1.775,
+          "decimal_under": 1.98,
+          "american_over": -129,
+          "american_under": -102
+        },
+        {
+          "stat": "runs",
+          "player": "Randy Vasquez",
+          "line": 2.5,
+          "market_id": 1633712476,
+          "decimal_over": 2.2,
+          "decimal_under": 1.625,
+          "american_over": 120,
+          "american_under": -160
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Randy Vasquez",
+          "line": 2.5,
+          "market_id": 1633712479,
+          "decimal_over": 1.629,
+          "decimal_under": 2.19,
+          "american_over": -159,
+          "american_under": 119
+        },
+        {
+          "stat": "home_runs",
+          "player": "Ty France",
+          "line": 0.5,
+          "market_id": 1633712482,
+          "decimal_over": 6.0,
+          "decimal_under": 1.107,
+          "american_over": 500,
+          "american_under": -932
+        },
+        {
+          "stat": "home_runs",
+          "player": "Yordan Alvarez",
+          "line": 0.5,
+          "market_id": 1633712485,
+          "decimal_over": 3.45,
+          "decimal_under": 1.282,
+          "american_over": 245,
+          "american_under": -354
+        }
+      ]
+    },
+    {
+      "matchup_id": 1633332366,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/kansas-city-royals-vs-los-angeles-dodgers/1633332366/#all",
+      "path": "/en/baseball/mlb/kansas-city-royals-vs-los-angeles-dodgers/1633332366/",
+      "league": "MLB",
+      "start_time": "2026-08-11T02:10:00Z",
+      "label": "Kansas City Royals vs Los Angeles Dodgers",
+      "participants": [
+        "Kansas City Royals",
+        "Los Angeles Dodgers"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1633328658,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/new-york-mets-vs-atlanta-braves/1633328658/#all",
+      "path": "/en/baseball/mlb/new-york-mets-vs-atlanta-braves/1633328658/",
+      "league": "MLB",
+      "start_time": "2026-08-10T23:15:00Z",
+      "label": "New York Mets vs Atlanta Braves",
+      "participants": [
+        "New York Mets",
+        "Atlanta Braves"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1633334100,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/philadelphia-phillies-vs-st-louis-cardinals/1633334100/#all",
+      "path": "/en/baseball/mlb/philadelphia-phillies-vs-st-louis-cardinals/1633334100/",
+      "league": "MLB",
+      "start_time": "2026-08-10T23:45:00Z",
+      "label": "Philadelphia Phillies vs St. Louis Cardinals",
+      "participants": [
+        "Philadelphia Phillies",
+        "St. Louis Cardinals"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1633328673,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/tampa-bay-rays-vs-athletics/1633328673/#all",
+      "path": "/en/baseball/mlb/tampa-bay-rays-vs-athletics/1633328673/",
+      "league": "MLB",
+      "start_time": "2026-08-11T01:40:00Z",
+      "label": "Tampa Bay Rays vs Athletics",
+      "participants": [
+        "Tampa Bay Rays",
+        "Athletics"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1633328672,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/texas-rangers-vs-los-angeles-angels/1633328672/#all",
+      "path": "/en/baseball/mlb/texas-rangers-vs-los-angeles-angels/1633328672/",
+      "league": "MLB",
+      "start_time": "2026-08-11T01:38:00Z",
+      "label": "Texas Rangers vs Los Angeles Angels",
+      "participants": [
+        "Texas Rangers",
+        "Los Angeles Angels"
+      ],
+      "props": []
+    }
+  ]
+}

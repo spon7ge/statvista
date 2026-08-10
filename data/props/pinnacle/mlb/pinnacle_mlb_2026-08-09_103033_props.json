@@ -1,0 +1,2014 @@
+{
+  "fetched_at": "2026-08-09T10:30:47-07:00",
+  "source": "pinnacle_selenium",
+  "sport": "baseball",
+  "league": "mlb",
+  "list_page": "https://www.pinnacle.com/en/baseball/mlb/matchups/#all",
+  "parallel_workers_configured": 5,
+  "parallel_workers_effective": 5,
+  "games_per_worker_target": 2,
+  "arcadia_timeout_s": 90.0,
+  "arcadia_poll_s": 0.22,
+  "snapshot_kind": "props",
+  "games": [
+    {
+      "matchup_id": 1633294687,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/athletics-vs-boston-red-sox/1633294687/#all",
+      "path": "/en/baseball/mlb/athletics-vs-boston-red-sox/1633294687/",
+      "league": "MLB",
+      "start_time": "2026-08-09T17:35:00Z",
+      "label": "Athletics vs Boston Red Sox",
+      "participants": [
+        "Athletics",
+        "Boston Red Sox"
+      ],
+      "props": [
+        {
+          "stat": "hits_allowed",
+          "player": "J.T. Ginn",
+          "line": 5.5,
+          "market_id": 1633712033,
+          "decimal_over": 1.758,
+          "decimal_under": 2.0,
+          "american_over": -132,
+          "american_under": -100
+        },
+        {
+          "stat": "runs",
+          "player": "J.T. Ginn",
+          "line": 3.5,
+          "market_id": 1633712057,
+          "decimal_over": 2.12,
+          "decimal_under": 1.671,
+          "american_over": 112,
+          "american_under": -149
+        },
+        {
+          "stat": "strikeouts",
+          "player": "J.T. Ginn",
+          "line": 4.5,
+          "market_id": 1633712061,
+          "decimal_over": 1.926,
+          "decimal_under": 1.82,
+          "american_over": -108,
+          "american_under": -122
+        },
+        {
+          "stat": "home_runs",
+          "player": "Jarren Duran",
+          "line": 0.5,
+          "market_id": 1633712081,
+          "decimal_over": 5.5,
+          "decimal_under": 1.126,
+          "american_over": 450,
+          "american_under": -792
+        },
+        {
+          "stat": "home_runs",
+          "player": "Jonah Heim",
+          "line": 0.5,
+          "market_id": 1633712093,
+          "decimal_over": 6.08,
+          "decimal_under": 1.105,
+          "american_over": 508,
+          "american_under": -955
+        },
+        {
+          "stat": "home_runs",
+          "player": "Willson Contreras",
+          "line": 0.5,
+          "market_id": 1633712099,
+          "decimal_over": 5.11,
+          "decimal_under": 1.144,
+          "american_over": 411,
+          "american_under": -695
+        },
+        {
+          "stat": "home_runs",
+          "player": "Wilyer Abreu",
+          "line": 0.5,
+          "market_id": 1633712105,
+          "decimal_over": 4.2,
+          "decimal_under": 1.202,
+          "american_over": 320,
+          "american_under": -494
+        }
+      ]
+    },
+    {
+      "matchup_id": 1633294688,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/atlanta-braves-vs-new-york-yankees/1633294688/#all",
+      "path": "/en/baseball/mlb/atlanta-braves-vs-new-york-yankees/1633294688/",
+      "league": "MLB",
+      "start_time": "2026-08-09T17:35:00Z",
+      "label": "Atlanta Braves vs New York Yankees",
+      "participants": [
+        "Atlanta Braves",
+        "New York Yankees"
+      ],
+      "props": [
+        {
+          "stat": "home_runs",
+          "player": "Ben Rice",
+          "line": 0.5,
+          "market_id": 1633705601,
+          "decimal_over": 3.64,
+          "decimal_under": 1.258,
+          "american_over": 264,
+          "american_under": -388
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Cam Schlittler",
+          "line": 6.5,
+          "market_id": 1633705604,
+          "decimal_over": 1.662,
+          "decimal_under": 2.14,
+          "american_over": -151,
+          "american_under": 114
+        },
+        {
+          "stat": "home_runs",
+          "player": "Drake Baldwin",
+          "line": 0.5,
+          "market_id": 1633705607,
+          "decimal_over": 4.65,
+          "decimal_under": 1.17,
+          "american_over": 365,
+          "american_under": -588
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Grant Holmes",
+          "line": 4.5,
+          "market_id": 1633705610,
+          "decimal_over": 1.658,
+          "decimal_under": 2.14,
+          "american_over": -152,
+          "american_under": 114
+        },
+        {
+          "stat": "home_runs",
+          "player": "Heliot Ramos",
+          "line": 0.5,
+          "market_id": 1633705613,
+          "decimal_over": 4.8,
+          "decimal_under": 1.161,
+          "american_over": 380,
+          "american_under": -622
+        },
+        {
+          "stat": "home_runs",
+          "player": "Jazz Chisholm Jr.",
+          "line": 0.5,
+          "market_id": 1633705616,
+          "decimal_over": 4.55,
+          "decimal_under": 1.176,
+          "american_over": 355,
+          "american_under": -567
+        },
+        {
+          "stat": "home_runs",
+          "player": "Luis Garcia Jr.",
+          "line": 0.5,
+          "market_id": 1633705619,
+          "decimal_over": 4.35,
+          "decimal_under": 1.191,
+          "american_over": 335,
+          "american_under": -524
+        },
+        {
+          "stat": "home_runs",
+          "player": "Matt Olson",
+          "line": 0.5,
+          "market_id": 1633705622,
+          "decimal_over": 3.66,
+          "decimal_under": 1.255,
+          "american_over": 266,
+          "american_under": -392
+        },
+        {
+          "stat": "home_runs",
+          "player": "Michael Harris II",
+          "line": 0.5,
+          "market_id": 1633705625,
+          "decimal_over": 4.45,
+          "decimal_under": 1.183,
+          "american_over": 345,
+          "american_under": -545
+        },
+        {
+          "stat": "home_runs",
+          "player": "Ronald Acuna Jr.",
+          "line": 0.5,
+          "market_id": 1633705628,
+          "decimal_over": 5.0,
+          "decimal_under": 1.15,
+          "american_over": 400,
+          "american_under": -668
+        },
+        {
+          "stat": "home_runs",
+          "player": "Ryan McMahon",
+          "line": 0.5,
+          "market_id": 1633705631,
+          "decimal_over": 5.5,
+          "decimal_under": 1.126,
+          "american_over": 450,
+          "american_under": -792
+        },
+        {
+          "stat": "home_runs",
+          "player": "Spencer Jones",
+          "line": 0.5,
+          "market_id": 1633705634,
+          "decimal_over": 5.2,
+          "decimal_under": 1.14,
+          "american_over": 420,
+          "american_under": -716
+        },
+        {
+          "stat": "home_runs",
+          "player": "Trent Grisham",
+          "line": 0.5,
+          "market_id": 1633705637,
+          "decimal_over": 4.07,
+          "decimal_under": 1.213,
+          "american_over": 307,
+          "american_under": -469
+        },
+        {
+          "stat": "home_runs",
+          "player": "Austin Riley",
+          "line": 0.5,
+          "market_id": 1633712003,
+          "decimal_over": 5.7,
+          "decimal_under": 1.118,
+          "american_over": 470,
+          "american_under": -846
+        },
+        {
+          "stat": "home_runs",
+          "player": "Austin Wells",
+          "line": 0.5,
+          "market_id": 1633712006,
+          "decimal_over": 6.0,
+          "decimal_under": 1.107,
+          "american_over": 500,
+          "american_under": -932
+        },
+        {
+          "stat": "hits_allowed",
+          "player": "Cam Schlittler",
+          "line": 4.5,
+          "market_id": 1633712012,
+          "decimal_over": 1.685,
+          "decimal_under": 2.1,
+          "american_over": -146,
+          "american_under": 110
+        },
+        {
+          "stat": "runs",
+          "player": "Cam Schlittler",
+          "line": 2.5,
+          "market_id": 1633712024,
+          "decimal_over": 2.27,
+          "decimal_under": 1.588,
+          "american_over": 127,
+          "american_under": -170
+        },
+        {
+          "stat": "hits_allowed",
+          "player": "Grant Holmes",
+          "line": 4.5,
+          "market_id": 1633712036,
+          "decimal_over": 1.787,
+          "decimal_under": 1.962,
+          "american_over": -127,
+          "american_under": -104
+        },
+        {
+          "stat": "runs",
+          "player": "Grant Holmes",
+          "line": 2.5,
+          "market_id": 1633712051,
+          "decimal_over": 1.787,
+          "decimal_under": 1.962,
+          "american_over": -127,
+          "american_under": -104
+        },
+        {
+          "stat": "home_runs",
+          "player": "Mike Yastrzemski",
+          "line": 0.5,
+          "market_id": 1633712066,
+          "decimal_over": 5.9,
+          "decimal_under": 1.111,
+          "american_over": 490,
+          "american_under": -903
+        },
+        {
+          "stat": "home_runs",
+          "player": "Ozzie Albies",
+          "line": 0.5,
+          "market_id": 1633712075,
+          "decimal_over": 6.0,
+          "decimal_under": 1.107,
+          "american_over": 500,
+          "american_under": -932
+        }
+      ]
+    },
+    {
+      "matchup_id": 1633697316,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/away-runs-15-games-vs-home-runs-15-games/1633697316/#all",
+      "path": "/en/baseball/mlb/away-runs-15-games-vs-home-runs-15-games/1633697316/",
+      "league": "MLB",
+      "start_time": "2026-08-09T16:14:00Z",
+      "label": "Away Runs (15 Games) vs Home Runs (15 Games)",
+      "participants": [
+        "Away Runs (15 Games)",
+        "Home Runs (15 Games)"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1633295681,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/baltimore-orioles-vs-texas-rangers/1633295681/#all",
+      "path": "/en/baseball/mlb/baltimore-orioles-vs-texas-rangers/1633295681/",
+      "league": "MLB",
+      "start_time": "2026-08-09T18:35:00Z",
+      "label": "Baltimore Orioles vs Texas Rangers",
+      "participants": [
+        "Baltimore Orioles",
+        "Texas Rangers"
+      ],
+      "props": [
+        {
+          "stat": "home_runs",
+          "player": "Brandon Nimmo",
+          "line": 0.5,
+          "market_id": 1633705715,
+          "decimal_over": 5.4,
+          "decimal_under": 1.131,
+          "american_over": 440,
+          "american_under": -766
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Cade Povich",
+          "line": 4.5,
+          "market_id": 1633705718,
+          "decimal_over": 1.87,
+          "decimal_under": 1.87,
+          "american_over": -115,
+          "american_under": -115
+        },
+        {
+          "stat": "home_runs",
+          "player": "Gunnar Henderson",
+          "line": 0.5,
+          "market_id": 1633705721,
+          "decimal_over": 5.0,
+          "decimal_under": 1.15,
+          "american_over": 400,
+          "american_under": -668
+        },
+        {
+          "stat": "home_runs",
+          "player": "Jake Burger",
+          "line": 0.5,
+          "market_id": 1633705724,
+          "decimal_over": 4.2,
+          "decimal_under": 1.202,
+          "american_over": 320,
+          "american_under": -494
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Kumar Rocker",
+          "line": 5.5,
+          "market_id": 1633705727,
+          "decimal_over": 2.1,
+          "decimal_under": 1.685,
+          "american_over": 110,
+          "american_under": -146
+        },
+        {
+          "stat": "home_runs",
+          "player": "Pete Alonso",
+          "line": 0.5,
+          "market_id": 1633705730,
+          "decimal_over": 4.29,
+          "decimal_under": 1.195,
+          "american_over": 329,
+          "american_under": -512
+        },
+        {
+          "stat": "home_runs",
+          "player": "Tyler O'Neill",
+          "line": 0.5,
+          "market_id": 1633705733,
+          "decimal_over": 5.0,
+          "decimal_under": 1.15,
+          "american_over": 400,
+          "american_under": -668
+        },
+        {
+          "stat": "home_runs",
+          "player": "Wyatt Langford",
+          "line": 0.5,
+          "market_id": 1633705736,
+          "decimal_over": 4.6,
+          "decimal_under": 1.173,
+          "american_over": 360,
+          "american_under": -577
+        },
+        {
+          "stat": "home_runs",
+          "player": "Corey Seager",
+          "line": 0.5,
+          "market_id": 1633705739,
+          "decimal_over": 4.65,
+          "decimal_under": 1.17,
+          "american_over": 365,
+          "american_under": -588
+        },
+        {
+          "stat": "hits_allowed",
+          "player": "Cade Povich",
+          "line": 4.5,
+          "market_id": 1633712249,
+          "decimal_over": 1.671,
+          "decimal_under": 2.12,
+          "american_over": -149,
+          "american_under": 112
+        },
+        {
+          "stat": "runs",
+          "player": "Cade Povich",
+          "line": 2.5,
+          "market_id": 1633712255,
+          "decimal_over": 1.917,
+          "decimal_under": 1.826,
+          "american_over": -109,
+          "american_under": -121
+        },
+        {
+          "stat": "home_runs",
+          "player": "Christian Encarnacion-Strand",
+          "line": 0.5,
+          "market_id": 1633712258,
+          "decimal_over": 5.8,
+          "decimal_under": 1.114,
+          "american_over": 480,
+          "american_under": -874
+        },
+        {
+          "stat": "home_runs",
+          "player": "Colton Cowser",
+          "line": 0.5,
+          "market_id": 1633712261,
+          "decimal_over": 6.2,
+          "decimal_under": 1.101,
+          "american_over": 520,
+          "american_under": -993
+        },
+        {
+          "stat": "hits_allowed",
+          "player": "Kumar Rocker",
+          "line": 4.5,
+          "market_id": 1633712264,
+          "decimal_over": 1.943,
+          "decimal_under": 1.8,
+          "american_over": -106,
+          "american_under": -125
+        },
+        {
+          "stat": "runs",
+          "player": "Kumar Rocker",
+          "line": 2.5,
+          "market_id": 1633712270,
+          "decimal_over": 2.21,
+          "decimal_under": 1.621,
+          "american_over": 121,
+          "american_under": -161
+        }
+      ]
+    },
+    {
+      "matchup_id": 1633294704,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/chicago-cubs-vs-kansas-city-royals/1633294704/#all",
+      "path": "/en/baseball/mlb/chicago-cubs-vs-kansas-city-royals/1633294704/",
+      "league": "MLB",
+      "start_time": "2026-08-09T18:10:00Z",
+      "label": "Chicago Cubs vs Kansas City Royals",
+      "participants": [
+        "Chicago Cubs",
+        "Kansas City Royals"
+      ],
+      "props": [
+        {
+          "stat": "home_runs",
+          "player": "Bobby Witt Jr.",
+          "line": 0.5,
+          "market_id": 1633705655,
+          "decimal_over": 3.76,
+          "decimal_under": 1.244,
+          "american_over": 276,
+          "american_under": -409
+        },
+        {
+          "stat": "home_runs",
+          "player": "Ian Happ",
+          "line": 0.5,
+          "market_id": 1633705658,
+          "decimal_over": 5.35,
+          "decimal_under": 1.133,
+          "american_over": 435,
+          "american_under": -754
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Matthew Boyd",
+          "line": 4.5,
+          "market_id": 1633705661,
+          "decimal_over": 2.02,
+          "decimal_under": 1.741,
+          "american_over": 102,
+          "american_under": -135
+        },
+        {
+          "stat": "home_runs",
+          "player": "Michael Busch",
+          "line": 0.5,
+          "market_id": 1633705664,
+          "decimal_over": 5.3,
+          "decimal_under": 1.135,
+          "american_over": 430,
+          "american_under": -741
+        },
+        {
+          "stat": "home_runs",
+          "player": "Pete Crow-Armstrong",
+          "line": 0.5,
+          "market_id": 1633705667,
+          "decimal_over": 3.99,
+          "decimal_under": 1.221,
+          "american_over": 299,
+          "american_under": -452
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Randy Dobnak",
+          "line": 2.5,
+          "market_id": 1633705670,
+          "decimal_over": 1.704,
+          "decimal_under": 2.07,
+          "american_over": -142,
+          "american_under": 107
+        },
+        {
+          "stat": "home_runs",
+          "player": "Salvador Perez",
+          "line": 0.5,
+          "market_id": 1633705673,
+          "decimal_over": 4.4,
+          "decimal_under": 1.187,
+          "american_over": 340,
+          "american_under": -535
+        },
+        {
+          "stat": "home_runs",
+          "player": "Dansby Swanson",
+          "line": 0.5,
+          "market_id": 1633712126,
+          "decimal_over": 6.64,
+          "decimal_under": 1.088,
+          "american_over": 564,
+          "american_under": -1136
+        },
+        {
+          "stat": "home_runs",
+          "player": "Jac Caglianone",
+          "line": 0.5,
+          "market_id": 1633712129,
+          "decimal_over": 5.58,
+          "decimal_under": 1.123,
+          "american_over": 458,
+          "american_under": -813
+        },
+        {
+          "stat": "hits_allowed",
+          "player": "Matthew Boyd",
+          "line": 5.5,
+          "market_id": 1633712132,
+          "decimal_over": 1.763,
+          "decimal_under": 1.99,
+          "american_over": -131,
+          "american_under": -101
+        },
+        {
+          "stat": "runs",
+          "player": "Matthew Boyd",
+          "line": 2.5,
+          "market_id": 1633712138,
+          "decimal_over": 1.855,
+          "decimal_under": 1.885,
+          "american_over": -117,
+          "american_under": -113
+        },
+        {
+          "stat": "hits_allowed",
+          "player": "Randy Dobnak",
+          "line": 5.5,
+          "market_id": 1633712141,
+          "decimal_over": 1.69,
+          "decimal_under": 2.09,
+          "american_over": -145,
+          "american_under": 109
+        },
+        {
+          "stat": "runs",
+          "player": "Randy Dobnak",
+          "line": 3.5,
+          "market_id": 1633712147,
+          "decimal_over": 2.14,
+          "decimal_under": 1.658,
+          "american_over": 114,
+          "american_under": -152
+        },
+        {
+          "stat": "home_runs",
+          "player": "Starling Marte",
+          "line": 0.5,
+          "market_id": 1633712150,
+          "decimal_over": 6.5,
+          "decimal_under": 1.092,
+          "american_over": 550,
+          "american_under": -1089
+        },
+        {
+          "stat": "home_runs",
+          "player": "Alex Bregman",
+          "line": 0.5,
+          "market_id": 1633712153,
+          "decimal_over": 6.0,
+          "decimal_under": 1.107,
+          "american_over": 500,
+          "american_under": -932
+        }
+      ]
+    },
+    {
+      "matchup_id": 1633295674,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/cleveland-guardians-vs-chicago-white-sox/1633295674/#all",
+      "path": "/en/baseball/mlb/cleveland-guardians-vs-chicago-white-sox/1633295674/",
+      "league": "MLB",
+      "start_time": "2026-08-09T18:10:00Z",
+      "label": "Cleveland Guardians vs Chicago White Sox",
+      "participants": [
+        "Cleveland Guardians",
+        "Chicago White Sox"
+      ],
+      "props": [
+        {
+          "stat": "home_runs",
+          "player": "Colson Montgomery",
+          "line": 0.5,
+          "market_id": 1633705697,
+          "decimal_over": 4.5,
+          "decimal_under": 1.18,
+          "american_over": 350,
+          "american_under": -556
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Davis Martin",
+          "line": 3.5,
+          "market_id": 1633705700,
+          "decimal_over": 1.847,
+          "decimal_under": 1.885,
+          "american_over": -118,
+          "american_under": -113
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Joey Cantillo",
+          "line": 5.5,
+          "market_id": 1633705703,
+          "decimal_over": 1.8,
+          "decimal_under": 1.943,
+          "american_over": -125,
+          "american_under": -106
+        },
+        {
+          "stat": "home_runs",
+          "player": "Jose Ramirez",
+          "line": 0.5,
+          "market_id": 1633705706,
+          "decimal_over": 5.25,
+          "decimal_under": 1.137,
+          "american_over": 425,
+          "american_under": -728
+        },
+        {
+          "stat": "home_runs",
+          "player": "Miguel Vargas",
+          "line": 0.5,
+          "market_id": 1633705709,
+          "decimal_over": 5.0,
+          "decimal_under": 1.15,
+          "american_over": 400,
+          "american_under": -668
+        },
+        {
+          "stat": "home_runs",
+          "player": "Munetaka Murakami",
+          "line": 0.5,
+          "market_id": 1633705712,
+          "decimal_over": 4.2,
+          "decimal_under": 1.202,
+          "american_over": 320,
+          "american_under": -494
+        },
+        {
+          "stat": "home_runs",
+          "player": "Nathaniel Lowe",
+          "line": 0.5,
+          "market_id": 1633712168,
+          "decimal_over": 6.0,
+          "decimal_under": 1.107,
+          "american_over": 500,
+          "american_under": -932
+        },
+        {
+          "stat": "home_runs",
+          "player": "Randal Grichuk",
+          "line": 0.5,
+          "market_id": 1633712177,
+          "decimal_over": 6.0,
+          "decimal_under": 1.107,
+          "american_over": 500,
+          "american_under": -932
+        },
+        {
+          "stat": "home_runs",
+          "player": "Chase DeLauter",
+          "line": 0.5,
+          "market_id": 1633712189,
+          "decimal_over": 5.9,
+          "decimal_under": 1.111,
+          "american_over": 490,
+          "american_under": -903
+        }
+      ]
+    },
+    {
+      "matchup_id": 1633294707,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/colorado-rockies-vs-st-louis-cardinals/1633294707/#all",
+      "path": "/en/baseball/mlb/colorado-rockies-vs-st-louis-cardinals/1633294707/",
+      "league": "MLB",
+      "start_time": "2026-08-09T18:15:00Z",
+      "label": "Colorado Rockies vs St. Louis Cardinals",
+      "participants": [
+        "Colorado Rockies",
+        "St. Louis Cardinals"
+      ],
+      "props": [
+        {
+          "stat": "home_runs",
+          "player": "Alec Burleson",
+          "line": 0.5,
+          "market_id": 1633705679,
+          "decimal_over": 4.6,
+          "decimal_under": 1.173,
+          "american_over": 360,
+          "american_under": -577
+        },
+        {
+          "stat": "home_runs",
+          "player": "Hunter Goodman",
+          "line": 0.5,
+          "market_id": 1633705682,
+          "decimal_over": 3.83,
+          "decimal_under": 1.236,
+          "american_over": 283,
+          "american_under": -423
+        },
+        {
+          "stat": "home_runs",
+          "player": "Jordan Walker",
+          "line": 0.5,
+          "market_id": 1633705685,
+          "decimal_over": 4.64,
+          "decimal_under": 1.171,
+          "american_over": 364,
+          "american_under": -586
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Michael Lorenzen",
+          "line": 3.5,
+          "market_id": 1633705688,
+          "decimal_over": 2.35,
+          "decimal_under": 1.552,
+          "american_over": 135,
+          "american_under": -181
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Michael McGreevy",
+          "line": 3.5,
+          "market_id": 1633705691,
+          "decimal_over": 1.741,
+          "decimal_under": 2.02,
+          "american_over": -135,
+          "american_under": 102
+        },
+        {
+          "stat": "home_runs",
+          "player": "Mickey Moniak",
+          "line": 0.5,
+          "market_id": 1633705694,
+          "decimal_over": 5.2,
+          "decimal_under": 1.14,
+          "american_over": 420,
+          "american_under": -716
+        },
+        {
+          "stat": "home_runs",
+          "player": "Ivan Herrera",
+          "line": 0.5,
+          "market_id": 1633712174,
+          "decimal_over": 6.5,
+          "decimal_under": 1.092,
+          "american_over": 550,
+          "american_under": -1089
+        },
+        {
+          "stat": "home_runs",
+          "player": "JJ Wetherholt",
+          "line": 0.5,
+          "market_id": 1633712186,
+          "decimal_over": 6.4,
+          "decimal_under": 1.095,
+          "american_over": 540,
+          "american_under": -1056
+        },
+        {
+          "stat": "home_runs",
+          "player": "Jimmy Crooks",
+          "line": 0.5,
+          "market_id": 1633712195,
+          "decimal_over": 6.0,
+          "decimal_under": 1.107,
+          "american_over": 500,
+          "american_under": -932
+        },
+        {
+          "stat": "hits_allowed",
+          "player": "Michael Lorenzen",
+          "line": 6.5,
+          "market_id": 1633712201,
+          "decimal_over": 2.16,
+          "decimal_under": 1.649,
+          "american_over": 116,
+          "american_under": -154
+        },
+        {
+          "stat": "runs",
+          "player": "Michael Lorenzen",
+          "line": 3.5,
+          "market_id": 1633712210,
+          "decimal_over": 2.21,
+          "decimal_under": 1.621,
+          "american_over": 121,
+          "american_under": -161
+        },
+        {
+          "stat": "hits_allowed",
+          "player": "Michael McGreevy",
+          "line": 5.5,
+          "market_id": 1633712219,
+          "decimal_over": 1.84,
+          "decimal_under": 1.901,
+          "american_over": -119,
+          "american_under": -111
+        },
+        {
+          "stat": "runs",
+          "player": "Michael McGreevy",
+          "line": 2.5,
+          "market_id": 1633712231,
+          "decimal_over": 2.01,
+          "decimal_under": 1.746,
+          "american_over": 101,
+          "american_under": -134
+        }
+      ]
+    },
+    {
+      "matchup_id": 1633304503,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/detroit-tigers-vs-san-francisco-giants/1633304503/#all",
+      "path": "/en/baseball/mlb/detroit-tigers-vs-san-francisco-giants/1633304503/",
+      "league": "MLB",
+      "start_time": "2026-08-09T20:05:00Z",
+      "label": "Detroit Tigers vs San Francisco Giants",
+      "participants": [
+        "Detroit Tigers",
+        "San Francisco Giants"
+      ],
+      "props": [
+        {
+          "stat": "home_runs",
+          "player": "Bryce Eldridge",
+          "line": 0.5,
+          "market_id": 1633705790,
+          "decimal_over": 5.5,
+          "decimal_under": 1.126,
+          "american_over": 450,
+          "american_under": -792
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Logan Webb",
+          "line": 4.5,
+          "market_id": 1633705793,
+          "decimal_over": 1.581,
+          "decimal_under": 2.29,
+          "american_over": -172,
+          "american_under": 129
+        },
+        {
+          "stat": "home_runs",
+          "player": "Rafael Devers",
+          "line": 0.5,
+          "market_id": 1633705796,
+          "decimal_over": 5.0,
+          "decimal_under": 1.15,
+          "american_over": 400,
+          "american_under": -668
+        },
+        {
+          "stat": "home_runs",
+          "player": "Riley Greene",
+          "line": 0.5,
+          "market_id": 1633705799,
+          "decimal_over": 5.45,
+          "decimal_under": 1.128,
+          "american_over": 445,
+          "american_under": -779
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Troy Melton",
+          "line": 5.5,
+          "market_id": 1633705802,
+          "decimal_over": 2.36,
+          "decimal_under": 1.549,
+          "american_over": 136,
+          "american_under": -182
+        },
+        {
+          "stat": "hits_allowed",
+          "player": "Logan Webb",
+          "line": 5.5,
+          "market_id": 1633712401,
+          "decimal_over": 1.752,
+          "decimal_under": 2.01,
+          "american_over": -133,
+          "american_under": 101
+        },
+        {
+          "stat": "runs",
+          "player": "Logan Webb",
+          "line": 2.5,
+          "market_id": 1633712407,
+          "decimal_over": 2.03,
+          "decimal_under": 1.735,
+          "american_over": 103,
+          "american_under": -136
+        },
+        {
+          "stat": "home_runs",
+          "player": "Spencer Torkelson",
+          "line": 0.5,
+          "market_id": 1633712410,
+          "decimal_over": 6.0,
+          "decimal_under": 1.107,
+          "american_over": 500,
+          "american_under": -932
+        },
+        {
+          "stat": "hits_allowed",
+          "player": "Troy Melton",
+          "line": 4.5,
+          "market_id": 1633712413,
+          "decimal_over": 1.676,
+          "decimal_under": 2.12,
+          "american_over": -148,
+          "american_under": 112
+        },
+        {
+          "stat": "runs",
+          "player": "Troy Melton",
+          "line": 2.5,
+          "market_id": 1633712419,
+          "decimal_over": 2.47,
+          "decimal_under": 1.505,
+          "american_over": 147,
+          "american_under": -198
+        },
+        {
+          "stat": "home_runs",
+          "player": "Willy Adames",
+          "line": 0.5,
+          "market_id": 1633712425,
+          "decimal_over": 5.8,
+          "decimal_under": 1.114,
+          "american_over": 480,
+          "american_under": -874
+        }
+      ]
+    },
+    {
+      "matchup_id": 1633304549,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/houston-astros-vs-san-diego-padres/1633304549/#all",
+      "path": "/en/baseball/mlb/houston-astros-vs-san-diego-padres/1633304549/",
+      "league": "MLB",
+      "start_time": "2026-08-10T00:20:00Z",
+      "label": "Houston Astros vs San Diego Padres",
+      "participants": [
+        "Houston Astros",
+        "San Diego Padres"
+      ],
+      "props": [
+        {
+          "stat": "home_runs",
+          "player": "Cam Smith",
+          "line": 0.5,
+          "market_id": 1633712428,
+          "decimal_over": 6.0,
+          "decimal_under": 1.107,
+          "american_over": 500,
+          "american_under": -932
+        },
+        {
+          "stat": "home_runs",
+          "player": "Christian Walker",
+          "line": 0.5,
+          "market_id": 1633712431,
+          "decimal_over": 5.0,
+          "decimal_under": 1.15,
+          "american_over": 400,
+          "american_under": -668
+        },
+        {
+          "stat": "hits_allowed",
+          "player": "Cristian Javier",
+          "line": 4.5,
+          "market_id": 1633712434,
+          "decimal_over": 1.909,
+          "decimal_under": 1.833,
+          "american_over": -110,
+          "american_under": -120
+        },
+        {
+          "stat": "runs",
+          "player": "Cristian Javier",
+          "line": 2.5,
+          "market_id": 1633712440,
+          "decimal_over": 1.971,
+          "decimal_under": 1.781,
+          "american_over": -103,
+          "american_under": -128
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Cristian Javier",
+          "line": 3.5,
+          "market_id": 1633712443,
+          "decimal_over": 1.943,
+          "decimal_under": 1.806,
+          "american_over": -106,
+          "american_under": -124
+        },
+        {
+          "stat": "home_runs",
+          "player": "Daulton Varsho",
+          "line": 0.5,
+          "market_id": 1633712446,
+          "decimal_over": 5.9,
+          "decimal_under": 1.111,
+          "american_over": 490,
+          "american_under": -903
+        },
+        {
+          "stat": "home_runs",
+          "player": "Fernando Tatis Jr.",
+          "line": 0.5,
+          "market_id": 1633712449,
+          "decimal_over": 4.34,
+          "decimal_under": 1.192,
+          "american_over": 334,
+          "american_under": -522
+        },
+        {
+          "stat": "home_runs",
+          "player": "Gavin Sheets",
+          "line": 0.5,
+          "market_id": 1633712452,
+          "decimal_over": 6.0,
+          "decimal_under": 1.107,
+          "american_over": 500,
+          "american_under": -932
+        },
+        {
+          "stat": "home_runs",
+          "player": "Isaac Paredes",
+          "line": 0.5,
+          "market_id": 1633712455,
+          "decimal_over": 6.1,
+          "decimal_under": 1.104,
+          "american_over": 510,
+          "american_under": -962
+        },
+        {
+          "stat": "home_runs",
+          "player": "Jackson Merrill",
+          "line": 0.5,
+          "market_id": 1633712458,
+          "decimal_over": 5.5,
+          "decimal_under": 1.126,
+          "american_over": 450,
+          "american_under": -792
+        },
+        {
+          "stat": "home_runs",
+          "player": "Jake Cronenworth",
+          "line": 0.5,
+          "market_id": 1633712461,
+          "decimal_over": 6.0,
+          "decimal_under": 1.107,
+          "american_over": 500,
+          "american_under": -932
+        },
+        {
+          "stat": "home_runs",
+          "player": "Jeremy Pena",
+          "line": 0.5,
+          "market_id": 1633712464,
+          "decimal_over": 6.8,
+          "decimal_under": 1.084,
+          "american_over": 580,
+          "american_under": -1194
+        },
+        {
+          "stat": "home_runs",
+          "player": "Manny Machado",
+          "line": 0.5,
+          "market_id": 1633712467,
+          "decimal_over": 4.11,
+          "decimal_under": 1.21,
+          "american_over": 311,
+          "american_under": -476
+        },
+        {
+          "stat": "hits_allowed",
+          "player": "Randy Vasquez",
+          "line": 4.5,
+          "market_id": 1633712470,
+          "decimal_over": 1.741,
+          "decimal_under": 2.02,
+          "american_over": -135,
+          "american_under": 102
+        },
+        {
+          "stat": "runs",
+          "player": "Randy Vasquez",
+          "line": 2.5,
+          "market_id": 1633712476,
+          "decimal_over": 2.2,
+          "decimal_under": 1.625,
+          "american_over": 120,
+          "american_under": -160
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Randy Vasquez",
+          "line": 2.5,
+          "market_id": 1633712479,
+          "decimal_over": 1.629,
+          "decimal_under": 2.19,
+          "american_over": -159,
+          "american_under": 119
+        },
+        {
+          "stat": "home_runs",
+          "player": "Ty France",
+          "line": 0.5,
+          "market_id": 1633712482,
+          "decimal_over": 6.0,
+          "decimal_under": 1.107,
+          "american_over": 500,
+          "american_under": -932
+        },
+        {
+          "stat": "home_runs",
+          "player": "Yordan Alvarez",
+          "line": 0.5,
+          "market_id": 1633712485,
+          "decimal_over": 3.43,
+          "decimal_under": 1.285,
+          "american_over": 243,
+          "american_under": -351
+        }
+      ]
+    },
+    {
+      "matchup_id": 1633295663,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/los-angeles-angels-vs-miami-marlins/1633295663/#all",
+      "path": "/en/baseball/mlb/los-angeles-angels-vs-miami-marlins/1633295663/",
+      "league": "MLB",
+      "start_time": "2026-08-09T17:40:00Z",
+      "label": "Los Angeles Angels vs Miami Marlins",
+      "participants": [
+        "Los Angeles Angels",
+        "Miami Marlins"
+      ],
+      "props": [
+        {
+          "stat": "hits_allowed",
+          "player": "Grayson Rodriguez",
+          "line": 5.5,
+          "market_id": 1633712171,
+          "decimal_over": 1.775,
+          "decimal_under": 1.971,
+          "american_over": -129,
+          "american_under": -103
+        },
+        {
+          "stat": "runs",
+          "player": "Grayson Rodriguez",
+          "line": 2.5,
+          "market_id": 1633712183,
+          "decimal_over": 1.704,
+          "decimal_under": 2.07,
+          "american_over": -142,
+          "american_under": 107
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Grayson Rodriguez",
+          "line": 5.5,
+          "market_id": 1633712192,
+          "decimal_over": 2.25,
+          "decimal_under": 1.599,
+          "american_over": 125,
+          "american_under": -167
+        },
+        {
+          "stat": "home_runs",
+          "player": "Griffin Conine",
+          "line": 0.5,
+          "market_id": 1633712198,
+          "decimal_over": 5.0,
+          "decimal_under": 1.15,
+          "american_over": 400,
+          "american_under": -668
+        },
+        {
+          "stat": "home_runs",
+          "player": "Heriberto Hernández",
+          "line": 0.5,
+          "market_id": 1633712204,
+          "decimal_over": 5.5,
+          "decimal_under": 1.126,
+          "american_over": 450,
+          "american_under": -792
+        },
+        {
+          "stat": "home_runs",
+          "player": "Kyle Stowers",
+          "line": 0.5,
+          "market_id": 1633712216,
+          "decimal_over": 4.1,
+          "decimal_under": 1.211,
+          "american_over": 310,
+          "american_under": -474
+        },
+        {
+          "stat": "home_runs",
+          "player": "Mike Trout",
+          "line": 0.5,
+          "market_id": 1633712225,
+          "decimal_over": 4.99,
+          "decimal_under": 1.15,
+          "american_over": 399,
+          "american_under": -666
+        },
+        {
+          "stat": "home_runs",
+          "player": "Owen Caissie",
+          "line": 0.5,
+          "market_id": 1633712228,
+          "decimal_over": 5.5,
+          "decimal_under": 1.126,
+          "american_over": 450,
+          "american_under": -792
+        },
+        {
+          "stat": "hits_allowed",
+          "player": "Ryan Gusto",
+          "line": 4.5,
+          "market_id": 1633712234,
+          "decimal_over": 1.769,
+          "decimal_under": 1.99,
+          "american_over": -130,
+          "american_under": -101
+        },
+        {
+          "stat": "runs",
+          "player": "Ryan Gusto",
+          "line": 1.5,
+          "market_id": 1633712240,
+          "decimal_over": 1.625,
+          "decimal_under": 2.2,
+          "american_over": -160,
+          "american_under": 120
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Ryan Gusto",
+          "line": 4.5,
+          "market_id": 1633712243,
+          "decimal_over": 1.84,
+          "decimal_under": 1.901,
+          "american_over": -119,
+          "american_under": -111
+        },
+        {
+          "stat": "home_runs",
+          "player": "Zach Neto",
+          "line": 0.5,
+          "market_id": 1633712246,
+          "decimal_over": 5.99,
+          "decimal_under": 1.108,
+          "american_over": 499,
+          "american_under": -930
+        }
+      ]
+    },
+    {
+      "matchup_id": 1633295703,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/los-angeles-dodgers-vs-arizona-diamondbacks/1633295703/#all",
+      "path": "/en/baseball/mlb/los-angeles-dodgers-vs-arizona-diamondbacks/1633295703/",
+      "league": "MLB",
+      "start_time": "2026-08-09T20:10:00Z",
+      "label": "Los Angeles Dodgers vs Arizona Diamondbacks",
+      "participants": [
+        "Los Angeles Dodgers",
+        "Arizona Diamondbacks"
+      ],
+      "props": [
+        {
+          "stat": "home_runs",
+          "player": "Andy Pages",
+          "line": 0.5,
+          "market_id": 1633705742,
+          "decimal_over": 5.5,
+          "decimal_under": 1.126,
+          "american_over": 450,
+          "american_under": -792
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Eduardo Rodriguez",
+          "line": 3.5,
+          "market_id": 1633705745,
+          "decimal_over": 1.699,
+          "decimal_under": 2.08,
+          "american_over": -143,
+          "american_under": 108
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Justin Wrobleski",
+          "line": 4.5,
+          "market_id": 1633705748,
+          "decimal_over": 2.28,
+          "decimal_under": 1.585,
+          "american_over": 128,
+          "american_under": -171
+        },
+        {
+          "stat": "home_runs",
+          "player": "Ketel Marte",
+          "line": 0.5,
+          "market_id": 1633705751,
+          "decimal_over": 4.81,
+          "decimal_under": 1.161,
+          "american_over": 381,
+          "american_under": -623
+        },
+        {
+          "stat": "home_runs",
+          "player": "Shohei Ohtani",
+          "line": 0.5,
+          "market_id": 1633705754,
+          "decimal_over": 4.07,
+          "decimal_under": 1.214,
+          "american_over": 307,
+          "american_under": -468
+        },
+        {
+          "stat": "hits_allowed",
+          "player": "Eduardo Rodriguez",
+          "line": 5.5,
+          "market_id": 1633712306,
+          "decimal_over": 1.662,
+          "decimal_under": 2.14,
+          "american_over": -151,
+          "american_under": 114
+        },
+        {
+          "stat": "runs",
+          "player": "Eduardo Rodriguez",
+          "line": 2.5,
+          "market_id": 1633712312,
+          "decimal_over": 1.69,
+          "decimal_under": 2.09,
+          "american_over": -145,
+          "american_under": 109
+        },
+        {
+          "stat": "hits_allowed",
+          "player": "Justin Wrobleski",
+          "line": 5.5,
+          "market_id": 1633712315,
+          "decimal_over": 1.775,
+          "decimal_under": 1.971,
+          "american_over": -129,
+          "american_under": -103
+        },
+        {
+          "stat": "runs",
+          "player": "Justin Wrobleski",
+          "line": 2.5,
+          "market_id": 1633712321,
+          "decimal_over": 2.03,
+          "decimal_under": 1.73,
+          "american_over": 103,
+          "american_under": -137
+        },
+        {
+          "stat": "home_runs",
+          "player": "Mookie Betts",
+          "line": 0.5,
+          "market_id": 1633712327,
+          "decimal_over": 6.0,
+          "decimal_under": 1.107,
+          "american_over": 500,
+          "american_under": -932
+        },
+        {
+          "stat": "home_runs",
+          "player": "Nolan Arenado",
+          "line": 0.5,
+          "market_id": 1633712330,
+          "decimal_over": 6.0,
+          "decimal_under": 1.107,
+          "american_over": 500,
+          "american_under": -932
+        },
+        {
+          "stat": "home_runs",
+          "player": "Teoscar Hernandez",
+          "line": 0.5,
+          "market_id": 1633712333,
+          "decimal_over": 6.0,
+          "decimal_under": 1.107,
+          "american_over": 500,
+          "american_under": -932
+        },
+        {
+          "stat": "home_runs",
+          "player": "Tim Tawa",
+          "line": 0.5,
+          "market_id": 1633712336,
+          "decimal_over": 6.15,
+          "decimal_under": 1.102,
+          "american_over": 515,
+          "american_under": -978
+        },
+        {
+          "stat": "home_runs",
+          "player": "Tommy Edman",
+          "line": 0.5,
+          "market_id": 1633712339,
+          "decimal_over": 6.15,
+          "decimal_under": 1.102,
+          "american_over": 515,
+          "american_under": -977
+        },
+        {
+          "stat": "home_runs",
+          "player": "Corbin Carroll",
+          "line": 0.5,
+          "market_id": 1633712342,
+          "decimal_over": 6.0,
+          "decimal_under": 1.107,
+          "american_over": 500,
+          "american_under": -932
+        }
+      ]
+    },
+    {
+      "matchup_id": 1633296938,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/minnesota-twins-vs-milwaukee-brewers/1633296938/#all",
+      "path": "/en/baseball/mlb/minnesota-twins-vs-milwaukee-brewers/1633296938/",
+      "league": "MLB",
+      "start_time": "2026-08-09T18:10:00Z",
+      "label": "Minnesota Twins vs Milwaukee Brewers",
+      "participants": [
+        "Minnesota Twins",
+        "Milwaukee Brewers"
+      ],
+      "props": [
+        {
+          "stat": "home_runs",
+          "player": "Jackson Chourio",
+          "line": 0.5,
+          "market_id": 1633705778,
+          "decimal_over": 5.4,
+          "decimal_under": 1.131,
+          "american_over": 440,
+          "american_under": -766
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Jacob Misiorowski",
+          "line": 8.5,
+          "market_id": 1633705781,
+          "decimal_over": 1.781,
+          "decimal_under": 1.971,
+          "american_over": -128,
+          "american_under": -103
+        },
+        {
+          "stat": "home_runs",
+          "player": "Jake Bauers",
+          "line": 0.5,
+          "market_id": 1633705784,
+          "decimal_over": 5.65,
+          "decimal_under": 1.12,
+          "american_over": 465,
+          "american_under": -833
+        },
+        {
+          "stat": "home_runs",
+          "player": "Kody Clemens",
+          "line": 0.5,
+          "market_id": 1633705787,
+          "decimal_over": 5.5,
+          "decimal_under": 1.126,
+          "american_over": 450,
+          "american_under": -792
+        },
+        {
+          "stat": "hits_allowed",
+          "player": "Connor Prielipp",
+          "line": 4.5,
+          "market_id": 1633712369,
+          "decimal_over": 1.806,
+          "decimal_under": 1.935,
+          "american_over": -124,
+          "american_under": -107
+        },
+        {
+          "stat": "runs",
+          "player": "Connor Prielipp",
+          "line": 2.5,
+          "market_id": 1633712375,
+          "decimal_over": 2.17,
+          "decimal_under": 1.641,
+          "american_over": 117,
+          "american_under": -156
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Connor Prielipp",
+          "line": 5.5,
+          "market_id": 1633712378,
+          "decimal_over": 2.08,
+          "decimal_under": 1.699,
+          "american_over": 108,
+          "american_under": -143
+        },
+        {
+          "stat": "hits_allowed",
+          "player": "Jacob Misiorowski",
+          "line": 3.5,
+          "market_id": 1633712383,
+          "decimal_over": 2.21,
+          "decimal_under": 1.621,
+          "american_over": 121,
+          "american_under": -161
+        },
+        {
+          "stat": "runs",
+          "player": "Jacob Misiorowski",
+          "line": 1.5,
+          "market_id": 1633712389,
+          "decimal_over": 2.45,
+          "decimal_under": 1.513,
+          "american_over": 145,
+          "american_under": -195
+        },
+        {
+          "stat": "home_runs",
+          "player": "Josh Bell",
+          "line": 0.5,
+          "market_id": 1633712392,
+          "decimal_over": 6.0,
+          "decimal_under": 1.107,
+          "american_over": 500,
+          "american_under": -932
+        },
+        {
+          "stat": "home_runs",
+          "player": "Royce Lewis",
+          "line": 0.5,
+          "market_id": 1633712395,
+          "decimal_over": 5.85,
+          "decimal_under": 1.113,
+          "american_over": 485,
+          "american_under": -888
+        },
+        {
+          "stat": "home_runs",
+          "player": "William Contreras",
+          "line": 0.5,
+          "market_id": 1633712398,
+          "decimal_over": 6.1,
+          "decimal_under": 1.104,
+          "american_over": 510,
+          "american_under": -962
+        }
+      ]
+    },
+    {
+      "matchup_id": 1633296932,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/new-york-mets-vs-pittsburgh-pirates/1633296932/#all",
+      "path": "/en/baseball/mlb/new-york-mets-vs-pittsburgh-pirates/1633296932/",
+      "league": "MLB",
+      "start_time": "2026-08-09T17:35:00Z",
+      "label": "New York Mets vs Pittsburgh Pirates",
+      "participants": [
+        "New York Mets",
+        "Pittsburgh Pirates"
+      ],
+      "props": [
+        {
+          "stat": "home_runs",
+          "player": "Brandon Lowe",
+          "line": 0.5,
+          "market_id": 1633705757,
+          "decimal_over": 4.83,
+          "decimal_under": 1.159,
+          "american_over": 383,
+          "american_under": -627
+        },
+        {
+          "stat": "home_runs",
+          "player": "Bryan Reynolds",
+          "line": 0.5,
+          "market_id": 1633705760,
+          "decimal_over": 5.5,
+          "decimal_under": 1.126,
+          "american_over": 450,
+          "american_under": -792
+        },
+        {
+          "stat": "home_runs",
+          "player": "Esmerlyn Valdez",
+          "line": 0.5,
+          "market_id": 1633705763,
+          "decimal_over": 4.31,
+          "decimal_under": 1.193,
+          "american_over": 331,
+          "american_under": -517
+        },
+        {
+          "stat": "home_runs",
+          "player": "Francisco Alvarez",
+          "line": 0.5,
+          "market_id": 1633705766,
+          "decimal_over": 5.6,
+          "decimal_under": 1.122,
+          "american_over": 460,
+          "american_under": -819
+        },
+        {
+          "stat": "home_runs",
+          "player": "Francisco Lindor",
+          "line": 0.5,
+          "market_id": 1633705769,
+          "decimal_over": 5.45,
+          "decimal_under": 1.128,
+          "american_over": 445,
+          "american_under": -779
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Jared Jones",
+          "line": 5.5,
+          "market_id": 1633705772,
+          "decimal_over": 2.05,
+          "decimal_under": 1.719,
+          "american_over": 105,
+          "american_under": -139
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Sean Manaea",
+          "line": 5.5,
+          "market_id": 1633705775,
+          "decimal_over": 2.15,
+          "decimal_under": 1.658,
+          "american_over": 115,
+          "american_under": -152
+        },
+        {
+          "stat": "hits_allowed",
+          "player": "Jared Jones",
+          "line": 4.5,
+          "market_id": 1633712345,
+          "decimal_over": 2.12,
+          "decimal_under": 1.671,
+          "american_over": 112,
+          "american_under": -149
+        },
+        {
+          "stat": "runs",
+          "player": "Jared Jones",
+          "line": 1.5,
+          "market_id": 1633712351,
+          "decimal_over": 1.694,
+          "decimal_under": 2.09,
+          "american_over": -144,
+          "american_under": 109
+        },
+        {
+          "stat": "home_runs",
+          "player": "Jared Young",
+          "line": 0.5,
+          "market_id": 1633712354,
+          "decimal_over": 6.2,
+          "decimal_under": 1.101,
+          "american_over": 520,
+          "american_under": -993
+        },
+        {
+          "stat": "hits_allowed",
+          "player": "Sean Manaea",
+          "line": 5.5,
+          "market_id": 1633712360,
+          "decimal_over": 1.658,
+          "decimal_under": 2.14,
+          "american_over": -152,
+          "american_under": 114
+        },
+        {
+          "stat": "runs",
+          "player": "Sean Manaea",
+          "line": 2.5,
+          "market_id": 1633712366,
+          "decimal_over": 1.752,
+          "decimal_under": 2.0,
+          "american_over": -133,
+          "american_under": 100
+        }
+      ]
+    },
+    {
+      "matchup_id": 1633295702,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/tampa-bay-rays-vs-seattle-mariners/1633295702/#all",
+      "path": "/en/baseball/mlb/tampa-bay-rays-vs-seattle-mariners/1633295702/",
+      "league": "MLB",
+      "start_time": "2026-08-09T20:10:00Z",
+      "label": "Tampa Bay Rays vs Seattle Mariners",
+      "participants": [
+        "Tampa Bay Rays",
+        "Seattle Mariners"
+      ],
+      "props": [
+        {
+          "stat": "home_runs",
+          "player": "Cal Raleigh",
+          "line": 0.5,
+          "market_id": 1633712273,
+          "decimal_over": 4.0,
+          "decimal_under": 1.22,
+          "american_over": 300,
+          "american_under": -455
+        },
+        {
+          "stat": "home_runs",
+          "player": "Cedric Mullins",
+          "line": 0.5,
+          "market_id": 1633712276,
+          "decimal_over": 5.87,
+          "decimal_under": 1.112,
+          "american_over": 487,
+          "american_under": -893
+        },
+        {
+          "stat": "home_runs",
+          "player": "Dominic Canzone",
+          "line": 0.5,
+          "market_id": 1633712279,
+          "decimal_over": 5.1,
+          "decimal_under": 1.145,
+          "american_over": 410,
+          "american_under": -692
+        },
+        {
+          "stat": "hits_allowed",
+          "player": "Emerson Hancock",
+          "line": 5.5,
+          "market_id": 1633712282,
+          "decimal_over": 1.885,
+          "decimal_under": 1.855,
+          "american_over": -113,
+          "american_under": -117
+        },
+        {
+          "stat": "runs",
+          "player": "Emerson Hancock",
+          "line": 2.5,
+          "market_id": 1633712288,
+          "decimal_over": 2.06,
+          "decimal_under": 1.709,
+          "american_over": 106,
+          "american_under": -141
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Emerson Hancock",
+          "line": 4.5,
+          "market_id": 1633712291,
+          "decimal_over": 1.962,
+          "decimal_under": 1.787,
+          "american_over": -104,
+          "american_under": -127
+        },
+        {
+          "stat": "home_runs",
+          "player": "Julio Rodriguez",
+          "line": 0.5,
+          "market_id": 1633712294,
+          "decimal_over": 5.3,
+          "decimal_under": 1.135,
+          "american_over": 430,
+          "american_under": -741
+        },
+        {
+          "stat": "home_runs",
+          "player": "Junior Caminero",
+          "line": 0.5,
+          "market_id": 1633712297,
+          "decimal_over": 4.0,
+          "decimal_under": 1.22,
+          "american_over": 300,
+          "american_under": -455
+        },
+        {
+          "stat": "home_runs",
+          "player": "Randy Arozarena",
+          "line": 0.5,
+          "market_id": 1633712300,
+          "decimal_over": 5.75,
+          "decimal_under": 1.116,
+          "american_over": 475,
+          "american_under": -860
+        },
+        {
+          "stat": "home_runs",
+          "player": "Victor Mesa Jr.",
+          "line": 0.5,
+          "market_id": 1633712303,
+          "decimal_over": 6.0,
+          "decimal_under": 1.107,
+          "american_over": 500,
+          "american_under": -932
+        }
+      ]
+    },
+    {
+      "matchup_id": 1633294689,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/toronto-blue-jays-vs-philadelphia-phillies/1633294689/#all",
+      "path": "/en/baseball/mlb/toronto-blue-jays-vs-philadelphia-phillies/1633294689/",
+      "league": "MLB",
+      "start_time": "2026-08-09T17:35:00Z",
+      "label": "Toronto Blue Jays vs Philadelphia Phillies",
+      "participants": [
+        "Toronto Blue Jays",
+        "Philadelphia Phillies"
+      ],
+      "props": [
+        {
+          "stat": "home_runs",
+          "player": "Bryce Harper",
+          "line": 0.5,
+          "market_id": 1633705640,
+          "decimal_over": 4.46,
+          "decimal_under": 1.182,
+          "american_over": 346,
+          "american_under": -548
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Jesus Luzardo",
+          "line": 6.5,
+          "market_id": 1633705643,
+          "decimal_over": 2.1,
+          "decimal_under": 1.685,
+          "american_over": 110,
+          "american_under": -146
+        },
+        {
+          "stat": "home_runs",
+          "player": "Kazuma Okamoto",
+          "line": 0.5,
+          "market_id": 1633705646,
+          "decimal_over": 5.89,
+          "decimal_under": 1.111,
+          "american_over": 489,
+          "american_under": -900
+        },
+        {
+          "stat": "home_runs",
+          "player": "Kyle Schwarber",
+          "line": 0.5,
+          "market_id": 1633705649,
+          "decimal_over": 2.99,
+          "decimal_under": 1.358,
+          "american_over": 199,
+          "american_under": -279
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Shane Bieber",
+          "line": 3.5,
+          "market_id": 1633705652,
+          "decimal_over": 1.667,
+          "decimal_under": 2.13,
+          "american_over": -150,
+          "american_under": 113
+        },
+        {
+          "stat": "hits_allowed",
+          "player": "Jesus Luzardo",
+          "line": 5.5,
+          "market_id": 1633713357,
+          "decimal_over": 2.3,
+          "decimal_under": 1.575,
+          "american_over": 130,
+          "american_under": -174
+        },
+        {
+          "stat": "runs",
+          "player": "Jesus Luzardo",
+          "line": 1.5,
+          "market_id": 1633713363,
+          "decimal_over": 1.602,
+          "decimal_under": 2.24,
+          "american_over": -166,
+          "american_under": 124
+        },
+        {
+          "stat": "hits_allowed",
+          "player": "Shane Bieber",
+          "line": 5.5,
+          "market_id": 1633713366,
+          "decimal_over": 1.806,
+          "decimal_under": 1.935,
+          "american_over": -124,
+          "american_under": -107
+        },
+        {
+          "stat": "runs",
+          "player": "Shane Bieber",
+          "line": 2.5,
+          "market_id": 1633713372,
+          "decimal_over": 1.595,
+          "decimal_under": 2.25,
+          "american_over": -168,
+          "american_under": 125
+        }
+      ]
+    }
+  ]
+}
