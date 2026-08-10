@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import os
 import re
 import sys
@@ -11,6 +12,8 @@ from typing import Any
 from zoneinfo import ZoneInfo
 
 import requests
+
+logger = logging.getLogger(__name__)
 
 GRAPHQL_URL = "https://api.novig.us/v1/graphql"
 DEFAULT_HEADERS = {
@@ -556,15 +559,21 @@ def graphql(
     retries: int = 3,
 ) -> Any:
     body = _graphql_post(session, query, variables, retries=retries)
-    if body.get("errors") and not body.get("data"):
+    if body.get("errors"):
         messages = [
             str(err.get("message") or err)
             for err in body["errors"]
             if isinstance(err, dict)
         ]
-        raise RuntimeError(
-            "GraphQL errors: " + "; ".join(messages or ["unknown error"])
-        )
+        if body.get("data"):
+            logger.warning(
+                "GraphQL partial errors: %s",
+                "; ".join(messages or ["unknown error"]),
+            )
+        else:
+            raise RuntimeError(
+                "GraphQL errors: " + "; ".join(messages or ["unknown error"])
+            )
     return body
 
 

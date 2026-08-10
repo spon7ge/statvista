@@ -5,6 +5,7 @@ from __future__ import annotations
 import importlib.util
 import sys
 import time
+from typing import Any
 from datetime import datetime
 from pathlib import Path
 from unittest.mock import MagicMock
@@ -239,6 +240,33 @@ def test_fetch_mlb_events_parses_data(monkeypatch) -> None:
     assert events[0]["id"] == "e1"
 
 
+def test_fetch_mlb_events_inline_limit_offset_fallback(monkeypatch) -> None:
+    nv = _load_scraper()
+    session = MagicMock()
+    inline_payload = {
+        "data": {
+            "event": [
+                {"id": "e1", "description": "A @ B", "status": "OPEN_PREGAME", "game": {}},
+            ]
+        }
+    }
+    calls: list[tuple[str, dict[str, Any] | None]] = []
+
+    def fake_graphql(_session, query, variables=None, **_k):
+        calls.append((query, variables))
+        if variables is not None:
+            raise RuntimeError("GraphQL errors: unknown variable limit")
+        return inline_payload
+
+    monkeypatch.setattr(nv, "graphql", fake_graphql)
+    events = nv.fetch_mlb_events(session)
+    assert len(events) == 1
+    assert events[0]["id"] == "e1"
+    assert len(calls) == 2
+    assert calls[0][1] is not None
+    assert calls[1][1] is None
+
+
 def test_fetch_mlb_events_honors_max_events(monkeypatch) -> None:
     nv = _load_scraper()
     session = MagicMock()
@@ -286,6 +314,30 @@ def test_graphql_raises_after_http_500_retries(monkeypatch) -> None:
     monkeypatch.setattr(time, "sleep", lambda *_a, **_k: None)
     with pytest.raises(requests.HTTPError):
         nv.graphql(session, "query { event { id } }")
+    assert session.post.call_count == 3
+
+
+def test_graphql_partial_errors_returns_data(monkeypatch) -> None:
+    nv = _load_scraper()
+    session = MagicMock()
+    response = MagicMock()
+    response.status_code = 200
+    body = {
+        "errors": [{"message": "field X unavailable"}],
+        "data": {"event": [{"id": "e1"}]},
+    }
+    response.json.return_value = body
+    session.post.return_value = response
+    warnings: list[tuple] = []
+    monkeypatch.setattr(
+        nv.logger,
+        "warning",
+        lambda *args, **kwargs: warnings.append((args, kwargs)),
+    )
+    result = nv.graphql(session, "query { event { id } }")
+    assert result == body
+    assert len(warnings) == 1
+    assert "field X unavailable" in str(warnings[0])
 
 
 def test_graphql_raises_on_graphql_errors(monkeypatch) -> None:
