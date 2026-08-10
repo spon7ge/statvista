@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import logging
 import os
 import re
@@ -656,3 +657,164 @@ def fetch_event_markets(
     if not isinstance(markets, list):
         return []
     return [market for market in markets if isinstance(market, dict)]
+
+
+def build_game_snapshots(
+    events: list[dict[str, Any]],
+    markets_by_event_id: dict[str, list[dict[str, Any]]],
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    props_games: list[dict[str, Any]] = []
+    team_games: list[dict[str, Any]] = []
+    for event in events:
+        base = normalize_event(event)
+        event_id = base.get("event_id")
+        if event_id is None:
+            continue
+        markets = markets_by_event_id.get(str(event_id), [])
+        props_games.append({**base, "props": extract_props(markets)})
+        team_games.append(
+            {**base, "team_markets": extract_team_markets(markets)}
+        )
+    return props_games, team_games
+
+
+def _payload_base(*, fetched_at: str) -> dict[str, Any]:
+    return {
+        "source": "novig",
+        "fetched_at": fetched_at,
+        "league": "mlb",
+    }
+
+
+def write_snapshots(
+    props_games: list[dict[str, Any]],
+    team_games: list[dict[str, Any]],
+    *,
+    props_path: str,
+) -> tuple[str, str]:
+    fetched_at = datetime.now(_OUTPUT_TZ).isoformat(timespec="seconds")
+    base = _payload_base(fetched_at=fetched_at)
+    props_payload = {**base, "snapshot_kind": "props", "games": props_games}
+    team_payload = {**base, "snapshot_kind": "team", "games": team_games}
+    team_path = team_output_path(props_path)
+    for path, payload in ((props_path, props_payload), (team_path, team_payload)):
+        os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
+        with open(path, "w", encoding="utf-8") as output_file:
+            json.dump(payload, output_file, ensure_ascii=False, indent=2)
+    return props_path, team_path
+
+
+def _count_usable_quotes(
+    props_games: list[dict[str, Any]],
+    team_games: list[dict[str, Any]],
+) -> tuple[int, int]:
+    n_props = sum(len(g.get("props") or []) for g in props_games)
+    n_team = sum(len(g.get("team_markets") or {}) for g in team_games)
+    return n_props, n_team
+
+
+def selenium_fallback_enabled() -> bool:
+    return os.environ.get("NOVIG_ALLOW_SELENIUM", "").strip().lower() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
+
+
+def fetch_via_selenium() -> tuple[list[dict[str, Any]], dict[str, list[dict[str, Any]]]]:
+    raise RuntimeError(
+        "Novig Selenium fallback is not implemented yet; "
+        "GraphQL at api.novig.us/v1/graphql should work without auth. "
+        "Set NOVIG_ALLOW_SELENIUM only after implementing CDP capture."
+    )
+
+
+def _fetch_graphql_snapshots(
+    session: requests.Session,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
+    events = fetch_mlb_events(session)
+    markets_by_event_id: dict[str, list[dict[str, Any]]] = {}
+    for event in events:
+        event_id = event.get("id")
+        if event_id is None:
+            continue
+        markets_by_event_id[str(event_id)] = fetch_event_markets(
+            session, str(event_id)
+        )
+    props_games, team_games = build_game_snapshots(events, markets_by_event_id)
+    return events, props_games, team_games
+
+
+def run() -> None:
+    logging.basicConfig(
+        level=getattr(
+            logging,
+            os.environ.get("LOG_LEVEL", "INFO").upper(),
+            logging.INFO,
+        ),
+        format="[%(levelname)-8s] %(name)s: %(message)s",
+    )
+    session = requests.Session()
+    events: list[dict[str, Any]] = []
+    props_games: list[dict[str, Any]] = []
+    team_games: list[dict[str, Any]] = []
+    graphql_failed = False
+
+    try:
+        events, props_games, team_games = _fetch_graphql_snapshots(session)
+    except Exception as exc:
+        graphql_failed = True
+        logger.error("GraphQL fetch failed: %s", exc)
+
+    n_props, n_team = _count_usable_quotes(props_games, team_games)
+    needs_fallback = graphql_failed or (
+        bool(events) and n_props == 0 and n_team == 0
+    )
+
+    if needs_fallback:
+        if selenium_fallback_enabled():
+            logger.warning("Attempting Selenium fallback for Novig MLB...")
+            try:
+                events, markets_by_event_id = fetch_via_selenium()
+                props_games, team_games = build_game_snapshots(
+                    events, markets_by_event_id
+                )
+                n_props, n_team = _count_usable_quotes(props_games, team_games)
+            except Exception as exc:
+                logger.error("Selenium fallback failed: %s", exc)
+                sys.exit(1)
+            if events and n_props == 0 and n_team == 0:
+                logger.error("Selenium fallback returned no usable quotes")
+                sys.exit(1)
+        else:
+            if graphql_failed:
+                logger.error(
+                    "Novig GraphQL fetch failed and NOVIG_ALLOW_SELENIUM is not set"
+                )
+            else:
+                logger.error(
+                    "Novig GraphQL returned %s events but zero usable quotes; "
+                    "set NOVIG_ALLOW_SELENIUM to attempt browser fallback",
+                    len(events),
+                )
+            sys.exit(1)
+
+    props_path = resolve_props_output_path()
+    props_path, team_path = write_snapshots(
+        props_games, team_games, props_path=props_path
+    )
+    logger.info(
+        "Wrote Novig snapshots: props_games=%s team_games=%s props_quotes=%s "
+        "team_markets=%s props=%s team=%s",
+        len(props_games),
+        len(team_games),
+        n_props,
+        n_team,
+        props_path,
+        team_path,
+    )
+
+
+if __name__ == "__main__":
+    run()
