@@ -155,3 +155,64 @@ def test_extract_team_markets_money_spread_total() -> None:
     assert "moneyline" in tm and len(tm["moneyline"]) == 2
     assert "run_line" in tm and len(tm["run_line"]) == 2
     assert tm["total"][0]["line"] == 8.5  # closest to even, not 3.5
+
+
+def test_extract_props_allowlist_and_is_main() -> None:
+    nv = _load_scraper()
+    markets = [
+        {
+            "id": "p1",
+            "type": "HITS",
+            "strike": 0.5,
+            "player": {"id": "pl1", "name": "Yordan Alvarez"},
+            "outcomes": [
+                {"description": "Over 0.5", "available": 0.73, "orders": []},
+                {"description": "Under 0.5", "available": 0.27, "orders": []},
+            ],
+        },
+        {
+            "id": "p2",
+            "type": "HITS",
+            "strike": 1.5,
+            "player": {"id": "pl1", "name": "Yordan Alvarez"},
+            "outcomes": [
+                {"description": "Over 1.5", "available": 0.51, "orders": []},
+                {"description": "Under 1.5", "available": 0.505, "orders": []},
+            ],
+        },
+        {
+            "id": "skip",
+            "type": "BATTING_WALKS",
+            "strike": 0.5,
+            "player": {"id": "pl1", "name": "Yordan Alvarez"},
+            "outcomes": [
+                {"description": "Over 0.5", "available": 0.5, "orders": []},
+                {"description": "Under 0.5", "available": 0.5, "orders": []},
+            ],
+        },
+    ]
+    rows = nv.extract_props(markets)
+    assert len(rows) == 2
+    by_line = {r["line"]: r for r in rows}
+    assert by_line[1.5]["is_main"] is True
+    assert by_line[0.5]["is_main"] is False
+    assert by_line[1.5]["stat"] == "hits"
+    assert by_line[1.5]["player"] == "Yordan Alvarez"
+    assert by_line[1.5]["sub_type"] == "hits"
+
+
+def test_extract_props_skips_both_sides_empty() -> None:
+    nv = _load_scraper()
+    markets = [
+        {
+            "id": "empty",
+            "type": "HITS",
+            "strike": 0.5,
+            "player": {"id": "pl1", "name": "A"},
+            "outcomes": [
+                {"description": "Over 0.5", "available": None, "last": 0.5, "orders": []},
+                {"description": "Under 0.5", "available": None, "last": 0.5, "orders": []},
+            ],
+        }
+    ]
+    assert nv.extract_props(markets) == []
