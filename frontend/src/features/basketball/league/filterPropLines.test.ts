@@ -5,6 +5,7 @@ import {
   collectTeamOptions,
   excludePropsFromFinalGames,
   excludePastGameProps,
+  expandWnbaTeamAbbrevs,
   filterPropLines,
   nextEtDate,
   tipEtDate,
@@ -76,6 +77,15 @@ const empty: PropFilterSelection = {
   teams: new Set(),
   books: new Set(),
 };
+
+describe("expandWnbaTeamAbbrevs", () => {
+  it("includes canonical and alias spellings both ways", () => {
+    expect(expandWnbaTeamAbbrevs(["PHO", "NYL"])).toEqual(
+      new Set(["PHO", "PHX", "NYL", "NY"]),
+    );
+    expect(expandWnbaTeamAbbrevs(["PHX"])).toEqual(new Set(["PHX", "PHO"]));
+  });
+});
 
 describe("filterPropLines", () => {
   it("returns all rows when all filters are empty", () => {

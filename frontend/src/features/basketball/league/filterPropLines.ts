@@ -29,6 +29,40 @@ export type TeamFilterOption = {
   logoUrl: string | null;
 };
 
+/** Align ESPN tricodes with odds/props spellings (same map as wnbaOddsBoard). */
+const WNBA_ABBREV_ALIASES: Record<string, string> = {
+  GS: "GSV",
+  LA: "LAS",
+  LV: "LVA",
+  NY: "NYL",
+  PHX: "PHO",
+  POR: "PDX",
+  CONN: "CON",
+  WSH: "WAS",
+};
+
+/**
+ * Expand team abbrevs so filters match both ESPN and DFS spellings
+ * (e.g. PHO ↔ PHX, NYL ↔ NY).
+ */
+export function expandWnbaTeamAbbrevs(abbrevs: string[]): Set<string> {
+  const out = new Set<string>();
+  for (const raw of abbrevs) {
+    const upper = raw.trim().toUpperCase();
+    if (!upper) continue;
+    out.add(upper);
+    const canonical = WNBA_ABBREV_ALIASES[upper] ?? upper;
+    out.add(canonical);
+    for (const [alias, canon] of Object.entries(WNBA_ABBREV_ALIASES)) {
+      if (canon === canonical || canon === upper || alias === upper) {
+        out.add(alias);
+        out.add(canon);
+      }
+    }
+  }
+  return out;
+}
+
 function rowHasBook(row: ApiWnbaPropLine, book: string): boolean {
   const quote = row[book as PropBookKey];
   return quote != null;

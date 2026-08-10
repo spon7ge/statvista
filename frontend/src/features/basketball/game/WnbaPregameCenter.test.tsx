@@ -4,6 +4,8 @@ import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type {
   ApiWnbaOddsResponse,
+  ApiWnbaPropLine,
+  ApiWnbaPropsResponse,
   ApiWnbaTeamPreviewResponse,
 } from "@/shared/lib/api";
 import { buildScheduledDetail } from "../lib/testFixtures";
@@ -15,10 +17,20 @@ const useWnbaOdds = vi.fn(() => ({
   isPending: false,
 }));
 
+const useWnbaProps = vi.fn(() => ({
+  data: null as ApiWnbaPropsResponse | null,
+  isPending: false,
+  isError: false,
+}));
+
 const fetchWnbaTeamPreview = vi.fn();
 
 vi.mock("@/features/basketball/hooks/useWnbaOdds", () => ({
   useWnbaOdds: (...args: unknown[]) => useWnbaOdds(...args),
+}));
+
+vi.mock("@/features/basketball/hooks/useWnbaProps", () => ({
+  useWnbaProps: (...args: unknown[]) => useWnbaProps(...args),
 }));
 
 vi.mock("@/shared/lib/api", async (importOriginal) => {
@@ -28,6 +40,35 @@ vi.mock("@/shared/lib/api", async (importOriginal) => {
     fetchWnbaTeamPreview: (...args: unknown[]) => fetchWnbaTeamPreview(...args),
   };
 });
+
+function propLine(
+  partial: Partial<ApiWnbaPropLine> &
+    Pick<ApiWnbaPropLine, "player_name" | "stat" | "side">,
+): ApiWnbaPropLine {
+  return {
+    team_abbrev: null,
+    logo_url: null,
+    market_type: "player_points",
+    game_date: null,
+    commence_time: null,
+    model_prediction: null,
+    over_under_pct: null,
+    ev: null,
+    fanduel: null,
+    draftkings: null,
+    caesars: null,
+    betmgm: null,
+    pinnacle: null,
+    bet365: null,
+    prizepicks: null,
+    underdog: null,
+    betr: null,
+    novig: null,
+    sleeper: null,
+    betrivers: null,
+    ...partial,
+  };
+}
 
 const emptyTeamPreview: ApiWnbaTeamPreviewResponse = {
   side: "away",
@@ -167,6 +208,8 @@ describe("WnbaPregameCenter", () => {
   beforeEach(() => {
     useWnbaOdds.mockReset();
     useWnbaOdds.mockReturnValue({ data: null, isPending: false });
+    useWnbaProps.mockReset();
+    useWnbaProps.mockReturnValue({ data: null, isPending: false, isError: false });
     fetchWnbaTeamPreview.mockReset();
     fetchWnbaTeamPreview.mockResolvedValue(emptyTeamPreview);
   });
@@ -293,14 +336,125 @@ describe("WnbaPregameCenter", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("shows Props placeholder and does not fetch team preview", async () => {
+  it("does not enable props fetch outside Props tab", async () => {
+    renderWithClient(<WnbaPregameCenter detail={scheduledWithPreview} />);
+    expect(useWnbaProps).toHaveBeenCalledWith(
+      expect.objectContaining({ enabled: false }),
+    );
+    await waitFor(() => expect(fetchWnbaTeamPreview).not.toHaveBeenCalled());
+  });
+
+  it("filters Props tab to this game's teams and shows empty copy", async () => {
+    useWnbaProps.mockReturnValue({
+      data: {
+        as_of: "now",
+        error: null,
+        sportsbooks: ["prizepicks", "underdog"],
+        props: [
+          propLine({
+            player_name: "N. Collier",
+            team_abbrev: "MIN",
+            stat: "Points",
+            side: "over",
+            prizepicks: { line: 22.5, odds_american: null },
+          }),
+          propLine({
+            player_name: "J. Loyd",
+            team_abbrev: "SEA",
+            stat: "Points",
+            side: "over",
+            prizepicks: { line: 18.5, odds_american: null },
+          }),
+        ],
+      },
+      isPending: false,
+      isError: false,
+    });
     const user = userEvent.setup();
     renderWithClient(<WnbaPregameCenter detail={scheduledWithPreview} />);
 
     await user.click(screen.getByRole("tab", { name: "Props" }));
+
+    expect(useWnbaProps).toHaveBeenCalledWith(
+      expect.objectContaining({ enabled: true }),
+    );
+    expect(screen.getByTestId("wnba-pregame-props-panel")).toBeInTheDocument();
     expect(
-      screen.getByTestId("wnba-pregame-props-placeholder"),
-    ).toBeInTheDocument();
+      screen.getByRole("tab", { name: "PrizePicks" }),
+    ).toHaveAttribute("aria-selected", "true");
+    expect(screen.getByText("N. Collier")).toBeInTheDocument();
+    expect(screen.queryByText("J. Loyd")).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("wnba-pregame-props-placeholder"),
+    ).not.toBeInTheDocument();
     await waitFor(() => expect(fetchWnbaTeamPreview).not.toHaveBeenCalled());
+  });
+
+  it("shows No props for this game when filtered list is empty", async () => {
+    useWnbaProps.mockReturnValue({
+      data: {
+        as_of: "now",
+        error: null,
+        sportsbooks: ["prizepicks"],
+        props: [
+          propLine({
+            player_name: "J. Loyd",
+            team_abbrev: "SEA",
+            stat: "Points",
+            side: "over",
+            prizepicks: { line: 18.5, odds_american: null },
+          }),
+        ],
+      },
+      isPending: false,
+      isError: false,
+    });
+    const user = userEvent.setup();
+    renderWithClient(<WnbaPregameCenter detail={scheduledWithPreview} />);
+
+    await user.click(screen.getByRole("tab", { name: "Props" }));
+    expect(screen.getByText("No props for this game")).toBeInTheDocument();
+  });
+
+  it("switches to Underdog book filter under Props", async () => {
+    useWnbaProps.mockReturnValue({
+      data: {
+        as_of: "now",
+        error: null,
+        sportsbooks: ["prizepicks", "underdog"],
+        props: [
+          propLine({
+            player_name: "N. Collier",
+            team_abbrev: "MIN",
+            stat: "Points",
+            side: "over",
+            prizepicks: { line: 22.5, odds_american: null },
+          }),
+          propLine({
+            player_name: "C. Williams",
+            team_abbrev: "MIN",
+            stat: "Assists",
+            side: "over",
+            underdog: { line: 5.5, odds_american: null },
+          }),
+        ],
+      },
+      isPending: false,
+      isError: false,
+    });
+    const user = userEvent.setup();
+    renderWithClient(<WnbaPregameCenter detail={scheduledWithPreview} />);
+
+    await user.click(screen.getByRole("tab", { name: "Props" }));
+    expect(screen.getByText("N. Collier")).toBeInTheDocument();
+    expect(screen.queryByText("C. Williams")).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("tab", { name: "Underdog" }));
+    expect(screen.getByRole("tab", { name: "Underdog" })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    expect(screen.getByText("C. Williams")).toBeInTheDocument();
+    expect(screen.queryByText("N. Collier")).not.toBeInTheDocument();
   });
 });
