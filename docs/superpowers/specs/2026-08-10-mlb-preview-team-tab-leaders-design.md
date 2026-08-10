@@ -127,7 +127,7 @@ OpenAPI: add schemas + path; regenerate client types if the project does so for 
 ### Roster tables
 
 1. Fetch season hitting / pitching player splits for `teamId` + season (Stats `stats=season` + `group` + `teamId`; prefer one call per group).
-2. Prefer rows for active-roster players; if Stats already returns team season player rows, filter to active roster when ids are available, else show returned team season rows.
+2. Start from the **active roster**: every non-pitcher appears on the batting table and every pitcher on the pitching table. Overlay season hitting/pitching splits when present; otherwise emit a name-only row (null stats). If the roster fetch fails, fall back to season split rows alone.
 3. Map to season-core columns:
    - **Batting:** G · AVG · OBP · SLG · OPS · AB · R · H · HR · RBI · BB · SO · SB
    - **Pitching:** G · GS · W · L · SV · IP · H · ER · BB · SO · ERA · WHIP

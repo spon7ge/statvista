@@ -12,6 +12,7 @@ from app.domains.mlb.schemas_team_preview import (
     MlbTeamBatterSeasonRow,
     MlbTeamPitcherSeasonRow,
 )
+from app.providers.mlb_stats.roster import ActiveRosterEntry
 
 logger = logging.getLogger(__name__)
 
@@ -149,6 +150,97 @@ def filter_rows_to_roster(rows: list[_RowT], roster_ids: set[str]) -> list[_RowT
     if not roster_ids:
         return rows
     return [row for row in rows if row.player_id in roster_ids]
+
+
+def _empty_batter_row(player_id: str, name: str) -> MlbTeamBatterSeasonRow:
+    return MlbTeamBatterSeasonRow(
+        player_id=player_id,
+        name=name,
+        g=None,
+        avg=None,
+        obp=None,
+        slg=None,
+        ops=None,
+        ab=None,
+        r=None,
+        h=None,
+        hr=None,
+        rbi=None,
+        bb=None,
+        so=None,
+        sb=None,
+    )
+
+
+def _empty_pitcher_row(player_id: str, name: str) -> MlbTeamPitcherSeasonRow:
+    return MlbTeamPitcherSeasonRow(
+        player_id=player_id,
+        name=name,
+        g=None,
+        gs=None,
+        w=None,
+        l=None,
+        sv=None,
+        ip=None,
+        h=None,
+        er=None,
+        bb=None,
+        so=None,
+        era=None,
+        whip=None,
+    )
+
+
+def merge_batter_rows_for_roster(
+    entries: list[ActiveRosterEntry],
+    season_rows: list[MlbTeamBatterSeasonRow],
+) -> list[MlbTeamBatterSeasonRow]:
+    """One batting row per non-pitcher on the active roster (season stats when present).
+
+    Empty ``entries`` falls back to ``season_rows`` (roster soft-fail).
+    """
+    if not entries:
+        return sort_batter_rows(list(season_rows))
+    by_id = {row.player_id: row for row in season_rows}
+    merged: list[MlbTeamBatterSeasonRow] = []
+    for entry in entries:
+        if entry.position_type == "Pitcher":
+            continue
+        season = by_id.get(entry.player_id)
+        if season is not None:
+            if not season.name and entry.name:
+                merged.append(season.model_copy(update={"name": entry.name}))
+            else:
+                merged.append(season)
+        else:
+            merged.append(_empty_batter_row(entry.player_id, entry.name))
+    return sort_batter_rows(merged)
+
+
+def merge_pitcher_rows_for_roster(
+    entries: list[ActiveRosterEntry],
+    season_rows: list[MlbTeamPitcherSeasonRow],
+) -> list[MlbTeamPitcherSeasonRow]:
+    """One pitching row per pitcher on the active roster (season stats when present).
+
+    Empty ``entries`` falls back to ``season_rows`` (roster soft-fail).
+    """
+    if not entries:
+        return sort_pitcher_rows(list(season_rows))
+    by_id = {row.player_id: row for row in season_rows}
+    merged: list[MlbTeamPitcherSeasonRow] = []
+    for entry in entries:
+        if entry.position_type != "Pitcher":
+            continue
+        season = by_id.get(entry.player_id)
+        if season is not None:
+            if not season.name and entry.name:
+                merged.append(season.model_copy(update={"name": entry.name}))
+            else:
+                merged.append(season)
+        else:
+            merged.append(_empty_pitcher_row(entry.player_id, entry.name))
+    return sort_pitcher_rows(merged)
 
 
 def _parse_splits(

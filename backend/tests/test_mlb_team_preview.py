@@ -13,8 +13,11 @@ from app.domains.mlb.schemas_team_preview import (
 )
 from app.domains.mlb.team_preview import get_mlb_team_preview
 from app.main import app
+from app.providers.mlb_stats.roster import ActiveRosterEntry
 from app.providers.mlb_stats.team_player_season import (
     filter_rows_to_roster,
+    merge_batter_rows_for_roster,
+    merge_pitcher_rows_for_roster,
     parse_batter_season_row,
     parse_pitcher_season_row,
     sort_batter_rows,
@@ -141,6 +144,67 @@ def test_filter_rows_to_roster():
     assert [r.player_id for r in filter_rows_to_roster([a, b], {"2"})] == ["2"]
 
 
+def test_merge_batter_rows_includes_roster_hitters_without_season_stats():
+    entries = [
+        ActiveRosterEntry("1", "C. Smith", "Infielder"),
+        ActiveRosterEntry("2", "A. Rookie", "Outfielder"),
+        ActiveRosterEntry("3", "J. Gray", "Pitcher"),
+    ]
+    season = [
+        parse_batter_season_row(
+            "1", {"boxscoreName": "C. Smith"}, {"ops": ".900", "gamesPlayed": 50}
+        )
+    ]
+    rows = merge_batter_rows_for_roster(entries, season)
+    assert [r.player_id for r in rows] == ["1", "2"]
+    assert rows[0].ops == ".900"
+    assert rows[1].name == "A. Rookie"
+    assert rows[1].ops is None
+
+
+def test_merge_pitcher_rows_includes_roster_pitchers_without_season_stats():
+    entries = [
+        ActiveRosterEntry("1", "C. Smith", "Infielder"),
+        ActiveRosterEntry("3", "J. Gray", "Pitcher"),
+        ActiveRosterEntry("4", "B. Bullpen", "Pitcher"),
+    ]
+    season = [
+        parse_pitcher_season_row(
+            "3",
+            {"boxscoreName": "J. Gray"},
+            {
+                "gamesPlayed": 20,
+                "gamesStarted": 20,
+                "wins": 5,
+                "losses": 2,
+                "saves": 0,
+                "inningsPitched": "130.1",
+                "hits": 100,
+                "earnedRuns": 35,
+                "baseOnBalls": 30,
+                "strikeOuts": 142,
+                "era": "2.41",
+                "whip": "0.98",
+            },
+        )
+    ]
+    rows = merge_pitcher_rows_for_roster(entries, season)
+    assert [r.player_id for r in rows] == ["3", "4"]
+    assert rows[0].ip == "130.1"
+    assert rows[1].name == "B. Bullpen"
+    assert rows[1].ip is None
+
+
+def test_merge_batter_rows_falls_back_to_season_when_roster_empty():
+    season = [
+        parse_batter_season_row(
+            "9", {"boxscoreName": "X"}, {"ops": ".800", "gamesPlayed": 10}
+        )
+    ]
+    rows = merge_batter_rows_for_roster([], season)
+    assert [r.player_id for r in rows] == ["9"]
+
+
 def _preview() -> MlbTeamPreviewResponse:
     return MlbTeamPreviewResponse(
         side="away",
@@ -238,8 +302,10 @@ async def test_get_mlb_team_preview_soft_fails_leaders():
             new=AsyncMock(side_effect=RuntimeError("board down")),
         ),
         patch(
-            "app.domains.mlb.team_preview.fetch_active_roster_player_ids",
-            new=AsyncMock(return_value={"1"}),
+            "app.domains.mlb.team_preview.fetch_active_roster_entries",
+            new=AsyncMock(
+                return_value=[ActiveRosterEntry("1", "C. Smith", "Infielder")]
+            ),
         ),
         patch(
             "app.domains.mlb.team_preview.fetch_team_batter_season_rows",
@@ -248,10 +314,6 @@ async def test_get_mlb_team_preview_soft_fails_leaders():
         patch(
             "app.domains.mlb.team_preview.fetch_team_pitcher_season_rows",
             new=AsyncMock(return_value=[]),
-        ),
-        patch(
-            "app.domains.mlb.team_preview.filter_rows_to_roster",
-            side_effect=lambda rows, _ids: rows,
         ),
     ):
         result = await get_mlb_team_preview("776543", "away")
@@ -262,7 +324,7 @@ async def test_get_mlb_team_preview_soft_fails_leaders():
 
 
 @pytest.mark.asyncio
-async def test_get_mlb_team_preview_soft_fails_roster_ids():
+async def test_get_mlb_team_preview_soft_fails_roster_entries():
     batter = MlbTeamBatterSeasonRow(
         player_id="1",
         name="C. Smith",
@@ -290,7 +352,7 @@ async def test_get_mlb_team_preview_soft_fails_roster_ids():
             new=AsyncMock(return_value=[]),
         ),
         patch(
-            "app.domains.mlb.team_preview.fetch_active_roster_player_ids",
+            "app.domains.mlb.team_preview.fetch_active_roster_entries",
             new=AsyncMock(side_effect=RuntimeError("roster down")),
         ),
         patch(

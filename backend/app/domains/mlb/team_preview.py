@@ -20,7 +20,7 @@ from app.domains.mlb.schemas_team_preview import (
     MlbTeamPreviewResponse,
     MlbTeamPreviewTeam,
 )
-from app.providers.mlb_stats.roster import fetch_active_roster_player_ids
+from app.providers.mlb_stats.roster import fetch_active_roster_entries
 from app.providers.mlb_stats.team_leaders import (
     BATTING_LEADER_KEYS,
     PITCHING_LEADER_KEYS,
@@ -29,7 +29,8 @@ from app.providers.mlb_stats.team_leaders import (
 from app.providers.mlb_stats.team_player_season import (
     fetch_team_batter_season_rows,
     fetch_team_pitcher_season_rows,
-    filter_rows_to_roster,
+    merge_batter_rows_for_roster,
+    merge_pitcher_rows_for_roster,
 )
 
 logger = logging.getLogger(__name__)
@@ -93,24 +94,24 @@ async def get_mlb_team_preview(
         except Exception as exc:
             logger.warning("team pitching leaders failed: %s", exc)
 
-        roster_ids: set[str] = set()
+        roster_entries = []
         try:
-            roster_ids = await fetch_active_roster_player_ids(client, team_id, season)
+            roster_entries = await fetch_active_roster_entries(client, team_id, season)
         except Exception as exc:
-            logger.warning("team roster ids failed: %s", exc)
+            logger.warning("team roster entries failed: %s", exc)
 
         try:
-            batting_roster = filter_rows_to_roster(
+            batting_roster = merge_batter_rows_for_roster(
+                roster_entries,
                 await fetch_team_batter_season_rows(client, team_id, season),
-                roster_ids,
             )
         except Exception as exc:
             logger.warning("team batting roster failed: %s", exc)
 
         try:
-            pitching_roster = filter_rows_to_roster(
+            pitching_roster = merge_pitcher_rows_for_roster(
+                roster_entries,
                 await fetch_team_pitcher_season_rows(client, team_id, season),
-                roster_ids,
             )
         except Exception as exc:
             logger.warning("team pitching roster failed: %s", exc)
