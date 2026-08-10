@@ -8,8 +8,8 @@ from typing import Literal
 
 AGREE_PP = 2.0
 
-SOFT_FAIR_BOOKS: tuple[str, ...] = ("betmgm", "betonline", "pinnacle")
-_TIER1_BOOKS: tuple[str, ...] = ("prophetx", "novig", "kalshi")
+SOFT_FAIR_BOOKS: tuple[str, ...] = ("pinnacle",)
+_TIER1_BOOKS: tuple[str, ...] = ("prophetx", "novig")
 
 SourceTier = Literal[
     "sharp_consensus",
@@ -135,7 +135,7 @@ def _tier3(side_books: SideBooks) -> FairResult | None:
         for book in SOFT_FAIR_BOOKS
         if side_books.get(book) is not None
     ]
-    if not present:
+    if len(present) < 2:
         return None
     fair = round(sum(v for _, v in present) / len(present), 1)
     names = ", ".join(b for b, _ in present)

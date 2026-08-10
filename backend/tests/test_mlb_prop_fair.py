@@ -30,14 +30,10 @@ def test_breakeven_rejects_bad_app_format_legs():
         breakeven_pct("prizepicks", "power", 7)
 
 
-def test_tier1_equal_avg_three_sources():
-    r = compute_fair({
-        "prophetx": 60.0, "novig": 54.0, "kalshi": 57.0,
-        "draftkings": None, "fanduel": None,
-    })
+def test_tier1_equal_avg_px_novig_no_kalshi():
+    r = compute_fair({"prophetx": 60.0, "novig": 54.0, "kalshi": 57.0})
+    assert r.fair_pct == 57.0  # (60+54)/2 — kalshi ignored
     assert r.source_tier == "sharp_consensus"
-    assert r.fair_pct == 57.0  # (60+54+57)/3
-    assert "equal avg" in r.fair_explain.lower() or "equal" in r.fair_explain.lower()
 
 
 def test_tier1_equal_avg_two_sources():
@@ -59,14 +55,13 @@ def test_tier1_single_prophetx():
     assert "prophetx_only" in r.sample_chips
 
 
-def test_tier1_single_kalshi():
+def test_kalshi_not_tier1():
     r = compute_fair({
         "prophetx": None, "novig": None, "kalshi": 52.0,
         "draftkings": None, "fanduel": None,
     })
-    assert r.source_tier == "sharp_single_source"
-    assert r.fair_pct == 52.0
-    assert "kalshi_only" in r.sample_chips
+    assert r.source_tier == "no_sharp_read"
+    assert r.fair_pct is None
 
 
 def test_single_source_dk_agree_chip_does_not_move_fair():
@@ -108,29 +103,19 @@ def test_no_sharp_read():
     assert "No Tier 1/2/3 books available." in r.fair_explain
 
 
-def test_soft_consensus_single_book():
-    r = compute_fair(
-        {
-            "prophetx": None,
-            "novig": None,
-            "draftkings": None,
-            "fanduel": None,
-            "pinnacle": 55.0,
-        }
-    )
-    assert r.source_tier == "soft_consensus"
-    assert r.fair_pct == 55.0
-    assert "pinnacle" in r.fair_explain.lower()
+def test_soft_consensus_requires_two_books():
+    r = compute_fair({"prophetx": None, "novig": None, "draftkings": None, "fanduel": None, "pinnacle": 55.0})
+    assert r.source_tier == "no_sharp_read"
+    assert r.fair_pct is None
 
 
-def test_soft_consensus_betmgm_betonline_pinnacle():
-    r = compute_fair({
-        "prophetx": None, "novig": None, "kalshi": None,
-        "draftkings": None, "fanduel": None,
-        "betmgm": 50.0, "betonline": 52.0, "pinnacle": 54.0,
-    })
+def test_soft_consensus_two_soft_books_when_configured(monkeypatch):
+    import app.domains.mlb.prop_fair as pf
+
+    monkeypatch.setattr(pf, "SOFT_FAIR_BOOKS", ("pinnacle", "betmgm"))
+    r = compute_fair({"pinnacle": 55.0, "betmgm": 53.0})
     assert r.source_tier == "soft_consensus"
-    assert r.fair_pct == 52.0
+    assert r.fair_pct == 54.0
 
 
 def test_soft_ignores_removed_books():
