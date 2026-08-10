@@ -1,7 +1,7 @@
 # WNBA Preview multi-book odds + remove matchups odds
 
 Date: 2026-08-10  
-Status: Approved for planning  
+Status: Implemented  
 Product: **statvista**
 
 Related:
