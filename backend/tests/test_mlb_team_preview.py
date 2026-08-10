@@ -205,6 +205,40 @@ def test_merge_batter_rows_falls_back_to_season_when_roster_empty():
     assert [r.player_id for r in rows] == ["9"]
 
 
+@pytest.mark.asyncio
+async def test_fetch_team_batter_season_rows_requests_player_pool_all():
+    from app.providers.mlb_stats.team_player_season import (
+        clear_team_player_season_cache,
+        fetch_team_batter_season_rows,
+    )
+
+    clear_team_player_season_cache()
+    client = AsyncMock()
+    response = AsyncMock()
+    response.raise_for_status = lambda: None
+    response.json = lambda: {
+        "stats": [
+            {
+                "splits": [
+                    {
+                        "player": {"id": 1, "boxscoreName": "A"},
+                        "stat": {"gamesPlayed": 10, "ops": ".800"},
+                    }
+                ]
+            }
+        ]
+    }
+    client.get = AsyncMock(return_value=response)
+
+    rows = await fetch_team_batter_season_rows(client, team_id=120, season=2026)
+    assert len(rows) == 1
+    kwargs = client.get.await_args.kwargs["params"]
+    assert kwargs["playerPool"] == "all"
+    assert kwargs["group"] == "hitting"
+    assert kwargs["teamId"] == 120
+
+
+
 def _preview() -> MlbTeamPreviewResponse:
     return MlbTeamPreviewResponse(
         side="away",

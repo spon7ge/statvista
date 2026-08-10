@@ -288,14 +288,14 @@ async def _fetch_group_rows(
     season: int,
     group: str,
 ) -> list[MlbTeamBatterSeasonRow] | list[MlbTeamPitcherSeasonRow]:
-    cache_key = f"{team_id}|{season}|{group}"
+    cache_key = f"{team_id}|{season}|{group}|all"
     cached = _team_player_season_cache.get(cache_key)
     if cached and time.monotonic() - cached[0] < TEAM_PLAYER_SEASON_TTL_SECONDS:
         return cached[1]
 
     try:
-        # Omit limit so the API returns every team split; we filter to the active
-        # roster afterward and a default cap would drop bench/IL players.
+        # playerPool=all: default Stats pool is qualified-only (~top handful).
+        # Omit limit so deep benches still return after we merge onto the roster.
         response = await client.get(
             f"{STATS_BASE}/stats",
             params={
@@ -304,6 +304,7 @@ async def _fetch_group_rows(
                 "season": season,
                 "sportIds": 1,
                 "teamId": team_id,
+                "playerPool": "all",
             },
         )
         response.raise_for_status()
