@@ -25,9 +25,9 @@ Matchups page behavior stays preference-merge (one book per game) unless explici
 | Total / Spread | Unchanged tile shape: line on top, American price under |
 | Total sides | Away = Over; home = Under |
 | Books shown | Every source that has FG team markets for this away@home (+ game date) |
-| Book order | ProphetX → Novig → Pinnacle → FanDuel → DraftKings |
+| Book order | ProphetX → Novig → Pinnacle (FanDuel / DraftKings are matchups `games[]` fallback only, not Preview boards) |
 | Period filter | Full game only (same as today: Pinnacle `period=0` / non-alt; PX/Novig market_type ∈ moneyline/run_line/spread/total/total_runs) |
-| Moneyline data | Still may exist on API `board` for other consumers; Preview UI does not render it |
+| Moneyline data | Rendered in Preview Money column; book name sits as subtle text under each book pair |
 | Matchups API consumers | Keep existing `merge_odds_by_priority` for flat `games[]` used by matchups **or** add a parallel list — see API |
 | Out of scope | Live/final centers, Open lines, Refresh control, period markets, WNBA board |
 

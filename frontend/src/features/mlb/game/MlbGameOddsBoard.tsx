@@ -49,40 +49,39 @@ function formatTileLine(tile: MlbOddsBoardTile): string | null {
 function OddsTile({ tile }: { tile: MlbOddsBoardTile }) {
   const line = formatTileLine(tile);
   const price = tile.price == null ? null : formatAmericanOdds(tile.price);
-  const primary = line ?? "–";
-  const secondary = price ?? "–";
+
+  if (tile.kind === "money") {
+    return (
+      <div className="flex min-h-[3.25rem] min-w-0 items-center justify-center rounded-lg bg-white/10 px-2 py-1.5 text-center">
+        <p className="truncate text-sm font-semibold leading-tight text-white">
+          {price ?? "–"}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-[3.25rem] min-w-0 flex-col items-center justify-center rounded-lg bg-white/10 px-2 py-1.5 text-center">
       <p className="truncate text-sm font-semibold leading-tight text-white">
-        {primary}
+        {line ?? "–"}
       </p>
       <p className="mt-0.5 truncate text-[11px] font-medium leading-tight text-white/45">
-        {secondary}
+        {price ?? "–"}
       </p>
     </div>
   );
 }
 
-function BookmakerCell({ label }: { label: string | null }) {
-  return (
-    <div className="flex min-h-[3.25rem] min-w-0 flex-col items-center justify-center rounded-lg bg-white/10 px-2 py-1.5 text-center">
-      <p className="truncate text-sm font-semibold leading-tight text-white">
-        {label ?? "\u00a0"}
-      </p>
-    </div>
-  );
-}
+const COLUMN_LABELS = ["Money", "Total", "Spread"] as const;
 
-const COLUMN_LABELS = ["Bookmaker", "Total", "Spread"] as const;
+/** Fixed team column so Money / Total / Spread tiles align across rows. */
+const ODDS_ROW_GRID =
+  "grid grid-cols-[4.5rem_minmax(0,1fr)] items-center gap-3";
 
 function OddsColumnHeaders() {
   return (
-    <div
-      className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3"
-      aria-hidden="true"
-    >
-      <div className="min-w-12" />
+    <div className={ODDS_ROW_GRID} aria-hidden="true">
+      <div />
       <div className="grid grid-cols-3 gap-1.5">
         {COLUMN_LABELS.map((label) => (
           <p
@@ -100,22 +99,22 @@ function OddsColumnHeaders() {
 function TeamOddsRow({
   team,
   row,
-  bookmaker,
 }: {
   team: MlbGameDetailTeam;
   row: MlbOddsBookBoardView["rows"][number];
-  bookmaker: string | null;
 }) {
   return (
-    <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3">
-      <div className="flex min-w-12 items-center gap-1.5">
+    <div className={ODDS_ROW_GRID}>
+      <div className="flex min-w-0 items-center gap-1.5">
         {team.logoUrl ? (
-          <img src={team.logoUrl} alt="" className="size-5 object-contain" />
+          <img src={team.logoUrl} alt="" className="size-5 shrink-0 object-contain" />
         ) : null}
-        <span className="text-sm font-semibold text-white">{team.abbrev}</span>
+        <span className="truncate text-sm font-semibold text-white">
+          {team.abbrev}
+        </span>
       </div>
       <div className="grid grid-cols-3 items-stretch gap-1.5">
-        <BookmakerCell label={bookmaker} />
+        <OddsTile tile={row.money} />
         <OddsTile tile={row.total} />
         <OddsTile tile={row.spread} />
       </div>
@@ -138,8 +137,19 @@ function BookOddsBlock({
 
   return (
     <div className="space-y-2">
-      <TeamOddsRow team={detail.away} row={awayRow} bookmaker={bookmaker} />
-      <TeamOddsRow team={detail.home} row={homeRow} bookmaker={null} />
+      <TeamOddsRow team={detail.away} row={awayRow} />
+      <TeamOddsRow team={detail.home} row={homeRow} />
+      {bookmaker ? (
+        <div className={ODDS_ROW_GRID}>
+          <div />
+          <p
+            data-testid={`mlb-odds-book-${board.sportsbook}`}
+            className="text-left text-[11px] text-white/35"
+          >
+            {bookmaker}
+          </p>
+        </div>
+      ) : null}
     </div>
   );
 }

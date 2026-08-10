@@ -222,6 +222,11 @@ def _upsert_df_supabase(
             print(f"    … {done:,}/{total:,} rows", flush=True)
 
 
+# Conflict columns that may be NULL in snapshot unique indexes (NULLS NOT DISTINCT).
+# Moneyline team rows use points=NULL; dropping them would strip all ML quotes.
+_NULLABLE_UPSERT_CONFLICT_COLS = frozenset({"points", "line_score", "event_id"})
+
+
 def upsert_df(
     table: str,
     df: pd.DataFrame,
@@ -266,10 +271,16 @@ def upsert_df(
     pk_cols = [c for c in conflict_cols if c in df.columns]
     if pk_cols:
         before = len(df)
-        df = df.dropna(subset=pk_cols)
+        # Conflict keys may be NULL under NULLS NOT DISTINCT (e.g. moneyline
+        # ``points``). Only drop rows missing required non-null identity cols.
+        required_pk = [
+            c for c in pk_cols if c not in _NULLABLE_UPSERT_CONFLICT_COLS
+        ]
+        if required_pk:
+            df = df.dropna(subset=required_pk)
         dropped = before - len(df)
         if dropped:
-            print(f"  → dropped {dropped} row(s) with null PK ({', '.join(pk_cols)})")
+            print(f"  → dropped {dropped} row(s) with null PK ({', '.join(required_pk)})")
 
     # Prefer direct Postgres (faster for large frames). Fall back to supabase-py
     # when SUPABASE_DB_URL is missing or the wire connection fails. Column

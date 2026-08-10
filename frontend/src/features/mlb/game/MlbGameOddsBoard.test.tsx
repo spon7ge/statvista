@@ -46,7 +46,7 @@ describe("MlbGameOddsBoard", () => {
     expect(screen.queryByText("Odds unavailable")).not.toBeInTheDocument();
   });
 
-  it("labels Bookmaker Total Spread and omits Money", () => {
+  it("labels Money Total Spread and shows bookmaker under each pair", () => {
     render(
       <MlbGameOddsBoard
         detail={mlbScheduledDetail}
@@ -54,14 +54,18 @@ describe("MlbGameOddsBoard", () => {
       />,
     );
 
-    expect(screen.getByText("Bookmaker")).toBeInTheDocument();
+    expect(screen.getByText("Money")).toBeInTheDocument();
     expect(screen.getByText("Total")).toBeInTheDocument();
     expect(screen.getByText("Spread")).toBeInTheDocument();
-    expect(screen.queryByText("Money")).not.toBeInTheDocument();
-    expect(screen.getAllByText("Pinnacle").length).toBeGreaterThanOrEqual(1);
+    expect(screen.queryByText("Bookmaker")).not.toBeInTheDocument();
+    expect(screen.getByTestId("mlb-odds-book-pinnacle")).toHaveTextContent(
+      "Pinnacle",
+    );
+    expect(screen.getByText("+113")).toBeInTheDocument();
+    expect(screen.getByText("-115")).toBeInTheDocument();
   });
 
-  it("stacks multiple books", () => {
+  it("stacks multiple books with a subtle book label under each pair", () => {
     render(
       <MlbGameOddsBoard
         detail={mlbScheduledDetail}
@@ -69,11 +73,15 @@ describe("MlbGameOddsBoard", () => {
       />,
     );
 
-    expect(screen.getAllByText("ProphetX").length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText("Novig").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByTestId("mlb-odds-book-prophetx")).toHaveTextContent(
+      "ProphetX",
+    );
+    expect(screen.getByTestId("mlb-odds-book-novig")).toHaveTextContent(
+      "Novig",
+    );
   });
 
-  it("renders total and spread tiles from the board", () => {
+  it("renders money, total, and spread tiles from the board", () => {
     render(
       <MlbGameOddsBoard
         detail={mlbScheduledDetail}
@@ -81,6 +89,7 @@ describe("MlbGameOddsBoard", () => {
       />,
     );
 
+    expect(screen.getByText("+113")).toBeInTheDocument();
     expect(screen.getByText("o7.5")).toBeInTheDocument();
     expect(screen.getByText("u7.5")).toBeInTheDocument();
     expect(screen.getByText("+1.5")).toBeInTheDocument();
@@ -91,7 +100,7 @@ describe("MlbGameOddsBoard", () => {
     expect(screen.getByText("PHI")).toBeInTheDocument();
   });
 
-  it("shows asOf in the header without a single sportsbook label", () => {
+  it("shows asOf in the header without a sportsbook label", () => {
     render(
       <MlbGameOddsBoard
         detail={mlbScheduledDetail}
@@ -102,7 +111,7 @@ describe("MlbGameOddsBoard", () => {
     const header = screen.getByRole("heading", { name: "Odds" }).parentElement;
     expect(header?.textContent).toMatch(/\d/);
     expect(header?.textContent).not.toMatch(/Pinnacle/);
-    expect(screen.getByText("Pinnacle")).toBeInTheDocument();
+    expect(screen.getByTestId("mlb-odds-book-pinnacle")).toBeInTheDocument();
   });
 
   it("shows the line and dashes only the price when the price is missing", () => {
@@ -110,7 +119,7 @@ describe("MlbGameOddsBoard", () => {
       <MlbGameOddsBoard
         detail={mlbScheduledDetail}
         boards={[
-          makeBoard("draftkings", {
+          makeBoard("pinnacle", {
             rows: [
               {
                 side: "away",
@@ -134,8 +143,11 @@ describe("MlbGameOddsBoard", () => {
     expect(screen.getByText("u8.5")).toBeInTheDocument();
     expect(screen.getByText("-1.5")).toBeInTheDocument();
     expect(screen.getByText("+1.5")).toBeInTheDocument();
-    expect(screen.getAllByText("–")).toHaveLength(4);
-    expect(screen.getByText("DraftKings")).toBeInTheDocument();
+    // 2 money primary dashes + 4 total/spread secondary price dashes
+    expect(screen.getAllByText("–")).toHaveLength(6);
+    expect(screen.getByTestId("mlb-odds-book-pinnacle")).toHaveTextContent(
+      "Pinnacle",
+    );
   });
 
   it("renders a dash for missing odds", () => {
@@ -164,7 +176,7 @@ describe("MlbGameOddsBoard", () => {
       />,
     );
 
-    // Each of 4 market tiles shows a primary dash; total/spread also dash the secondary price.
-    expect(screen.getAllByText("–")).toHaveLength(8);
+    // 2 money primary + 4 total/spread primary + 4 total/spread secondary
+    expect(screen.getAllByText("–")).toHaveLength(10);
   });
 });

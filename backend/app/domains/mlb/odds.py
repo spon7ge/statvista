@@ -1,4 +1,8 @@
-"""MLB matchup odds: Pinnacle → ProphetX → Novig → FanDuel → DraftKings."""
+"""MLB matchup odds: Pinnacle → ProphetX → Novig → FanDuel → DraftKings.
+
+Preview ``book_boards`` show ProphetX / Novig / Pinnacle only; Sharp FD/DK
+remain a matchups ``games[]`` fallback when snapshots are empty.
+"""
 
 from __future__ import annotations
 
@@ -36,7 +40,7 @@ LA = ZoneInfo("America/Los_Angeles")
 CACHE_TTL_SECONDS = 45.0
 MLB_MARKETS = "run_line,total_runs"
 
-_BOOK_BOARD_ORDER = ("prophetx", "novig", "pinnacle", "fanduel", "draftkings")
+_BOOK_BOARD_ORDER = ("prophetx", "novig", "pinnacle")
 
 # Snapshot + Sharp market_type aliases → board buckets.
 _MARKET_KIND = {
@@ -423,13 +427,11 @@ async def get_today_odds() -> MlbOddsResponse:
         px_games = normalize_team_odds_rows(px_rows, sportsbook="prophetx")
         novig_rows = fetch_latest_novig_team("mlb")
         novig_games = normalize_team_odds_rows(novig_rows, sportsbook="novig")
-        fd_games, dk_games, sharp_merged, sharp_errors = await _fetch_sharp_games()
+        _fd_games, _dk_games, sharp_merged, sharp_errors = await _fetch_sharp_games()
         games = merge_odds_by_priority(
             pin_games, px_games, novig_games, sharp_merged
         )
-        book_boards = collect_book_boards(
-            px_games, novig_games, pin_games, fd_games, dk_games
-        )
+        book_boards = collect_book_boards(px_games, novig_games, pin_games)
 
         error = "; ".join(sharp_errors) if sharp_errors else None
         if not games and sharp_errors:

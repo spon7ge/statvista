@@ -463,7 +463,7 @@ def test_get_today_odds_includes_novig_in_book_boards(monkeypatch):
     assert chc.total == 8.0
 
 
-def test_get_today_odds_book_boards_includes_fd_and_dk(monkeypatch):
+def test_get_today_odds_book_boards_excludes_fd_and_dk(monkeypatch):
     fd_games = [
         MlbOddsGame(
             home_abbrev="BOS",
@@ -508,7 +508,7 @@ def test_get_today_odds_book_boards_includes_fd_and_dk(monkeypatch):
     ):
         body = asyncio.run(svc.get_today_odds())
 
-    assert [g.sportsbook for g in body.book_boards] == ["fanduel", "draftkings"]
+    assert body.book_boards == []
     assert len(body.games) == 1
     assert body.games[0].sportsbook == "fanduel"
 
