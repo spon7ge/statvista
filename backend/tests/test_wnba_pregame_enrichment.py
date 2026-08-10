@@ -15,6 +15,9 @@ _FIXTURES = Path(__file__).resolve().parent / "fixtures"
 TEAM_SEASON_STATS_FIXTURE = json.loads(
     (_FIXTURES / "espn_wnba_team_season_stats.json").read_text()
 )
+SUMMARY_FIXTURE = json.loads(
+    (_FIXTURES / "espn_wnba_summary_scheduled_preview.json").read_text()
+)
 
 
 def _minimal_scheduled_detail() -> WnbaGameDetail:
@@ -127,3 +130,74 @@ def test_attach_season_team_stats_none_noop():
 
     detail = _minimal_scheduled_detail()
     assert attach_season_team_stats(detail, None) is detail
+
+
+def _fixture_away_home() -> tuple[GameDetailTeam, GameDetailTeam]:
+    return (
+        GameDetailTeam(
+            id="away1",
+            abbrev="MIN",
+            name="Minnesota Lynx",
+            score=None,
+            color="#266092",
+        ),
+        GameDetailTeam(
+            id="home1",
+            abbrev="TOR",
+            name="Toronto Tempo",
+            score=None,
+            color="#CE1141",
+        ),
+    )
+
+
+def test_build_game_leaders_picks_best_per_category():
+    from app.domains.wnba.game_leaders import build_game_leaders_from_summary
+
+    away_team, home_team = _fixture_away_home()
+    leaders = build_game_leaders_from_summary(SUMMARY_FIXTURE, away_team, home_team)
+    assert leaders is not None
+    keys = [c.key for c in leaders.leaders]
+    assert keys == ["ppg", "rpg", "apg"]
+    by_key = {c.key: c for c in leaders.leaders}
+    assert by_key["ppg"].last_name == "Mabrey"
+    assert by_key["ppg"].side == "home"
+    assert by_key["ppg"].team_abbrev == "TOR"
+    assert by_key["ppg"].value == "21.1"
+    assert by_key["ppg"].label == "PPG"
+    assert by_key["rpg"].last_name == "Howard"
+    assert by_key["rpg"].side == "away"
+    assert by_key["rpg"].value == "7.9"
+    assert by_key["apg"].last_name == "Miles"
+    assert by_key["apg"].side == "away"
+    assert by_key["apg"].value == "6.0"
+
+
+def test_attach_game_leaders():
+    from app.domains.wnba.game_detail import attach_game_leaders
+
+    leaders = WnbaGameLeaders(
+        leaders=[
+            WnbaGameLeaderCard(
+                key="ppg",
+                label="PPG",
+                rank=None,
+                value="21.1",
+                player_id="4066387",
+                last_name="Mabrey",
+                team_abbrev="TOR",
+                side="home",
+                headshot_url=None,
+            )
+        ]
+    )
+    out = attach_game_leaders(_minimal_scheduled_detail(), leaders)
+    assert out.game_leaders is not None
+    assert out.game_leaders.leaders[0].last_name == "Mabrey"
+
+
+def test_attach_game_leaders_none_noop():
+    from app.domains.wnba.game_detail import attach_game_leaders
+
+    detail = _minimal_scheduled_detail()
+    assert attach_game_leaders(detail, None) is detail

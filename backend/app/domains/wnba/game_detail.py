@@ -9,6 +9,7 @@ from zoneinfo import ZoneInfo
 
 import httpx
 
+from app.domains.wnba.game_leaders import build_game_leaders_from_summary
 from app.domains.wnba.schemas_game_detail import (
     GameDetailBoxScore,
     GameDetailBoxScorePlayer,
@@ -27,6 +28,7 @@ from app.domains.wnba.schemas_game_detail import (
     GameDetailWinProbability,
     GameDetailWinProbabilityPoint,
     WnbaGameDetail,
+    WnbaGameLeaders,
     WnbaSeasonTeamStatsPair,
 )
 from app.domains.wnba.schemas_scoreboard import GameStatus
@@ -208,6 +210,14 @@ async def get_game_detail(espn_event_id: str) -> WnbaGameDetail:
                 espn_event_id,
                 exc,
             )
+        try:
+            detail = _attach_game_leaders(detail, payload)
+        except Exception as exc:
+            logger.warning(
+                "WNBA game leaders unavailable for game %s: %s",
+                espn_event_id,
+                exc,
+            )
 
     _cache[espn_event_id] = {
         "response": detail,
@@ -261,6 +271,24 @@ async def _attach_season_team_stats(detail: WnbaGameDetail) -> WnbaGameDetail:
         return detail
     pair = await fetch_season_team_stats_pair(detail.away.id, detail.home.id)
     return attach_season_team_stats(detail, pair)
+
+
+def attach_game_leaders(
+    detail: WnbaGameDetail,
+    leaders: WnbaGameLeaders | None,
+) -> WnbaGameDetail:
+    """Attach PPG/RPG/APG game-leader cards onto a game detail payload."""
+    if leaders is None:
+        return detail
+    return detail.model_copy(update={"game_leaders": leaders})
+
+
+def _attach_game_leaders(detail: WnbaGameDetail, payload: dict) -> WnbaGameDetail:
+    """Soft-build game leaders from ESPN summary for scheduled games only."""
+    if detail.status != "scheduled":
+        return detail
+    leaders = build_game_leaders_from_summary(payload, detail.away, detail.home)
+    return attach_game_leaders(detail, leaders)
 
 
 def _hex_color(raw: str | None, fallback: str) -> str:
