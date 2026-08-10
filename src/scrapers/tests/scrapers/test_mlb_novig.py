@@ -78,3 +78,80 @@ def test_outcome_quote_uses_available_not_last() -> None:
 def test_outcome_quote_skips_missing_available() -> None:
     nv = _load_scraper()
     assert nv.outcome_quote({"available": None, "last": 0.5, "orders": []}, None) is None
+
+
+def test_normalize_event() -> None:
+    nv = _load_scraper()
+    event = {
+        "id": "evt-1",
+        "description": "Houston Astros @ San Diego Padres",
+        "status": "OPEN_PREGAME",
+        "game": {
+            "scheduled_start": "2026-08-10T00:20:00+00:00",
+            "homeTeam": {"id": "home-1", "name": "San Diego Padres"},
+            "awayTeam": {"id": "away-1", "name": "Houston Astros"},
+        },
+    }
+    out = nv.normalize_event(event)
+    assert out["event_id"] == "evt-1"
+    assert out["name"] == "Houston Astros @ San Diego Padres"
+    assert out["scheduled"] == "2026-08-10T00:20:00+00:00"
+    assert out["status"] == "not_started"
+    assert out["competitors"][0]["name"] == "San Diego Padres"
+    assert out["competitors"][0]["seq"] == 0
+    assert out["competitors"][1]["name"] == "Houston Astros"
+    assert out["competitors"][1]["seq"] == 1
+
+
+def test_extract_team_markets_money_spread_total() -> None:
+    nv = _load_scraper()
+    markets = [
+        {
+            "id": "m-money",
+            "type": "MONEY",
+            "strike": 0.0,
+            "description": "SD",
+            "outcomes": [
+                {"description": "HOU", "available": 0.44, "orders": []},
+                {
+                    "description": "SD",
+                    "available": 0.57,
+                    "orders": [{"qty": 10000, "status": "OPEN"}],
+                },
+            ],
+        },
+        {
+            "id": "m-rl",
+            "type": "SPREAD",
+            "strike": -1.5,
+            "description": "SD -1.5",
+            "outcomes": [
+                {"description": "HOU +1.5", "available": 0.61, "orders": []},
+                {"description": "SD -1.5", "available": 0.41, "orders": []},
+            ],
+        },
+        {
+            "id": "m-tot",
+            "type": "TOTAL",
+            "strike": 8.5,
+            "description": "HOU @ SD t8.5",
+            "outcomes": [
+                {"description": "Over 8.5", "available": 0.505, "orders": []},
+                {"description": "Under 8.5", "available": 0.5, "orders": []},
+            ],
+        },
+        {
+            "id": "m-tot-alt",
+            "type": "TOTAL",
+            "strike": 3.5,
+            "description": "HOU @ SD t3.5",
+            "outcomes": [
+                {"description": "Over 3.5", "available": 0.93, "orders": []},
+                {"description": "Under 3.5", "available": 0.11, "orders": []},
+            ],
+        },
+    ]
+    tm = nv.extract_team_markets(markets)
+    assert "moneyline" in tm and len(tm["moneyline"]) == 2
+    assert "run_line" in tm and len(tm["run_line"]) == 2
+    assert tm["total"][0]["line"] == 8.5  # closest to even, not 3.5
