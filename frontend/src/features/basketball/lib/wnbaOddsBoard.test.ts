@@ -137,6 +137,7 @@ describe("wnbaOddsBoard", () => {
           game({ sportsbook: "pinnacle" }),
           game({ sportsbook: "draftkings", away_moneyline: null, home_moneyline: null }),
         ],
+        book_boards: [],
       },
       "SEA",
       "ATL",
@@ -144,6 +145,29 @@ describe("wnbaOddsBoard", () => {
     expect(views.map((v) => v.sportsbook)).toEqual(["pinnacle", "draftkings"]);
     expect(views[0].asOf).toBe("2026-08-10T15:00:00Z");
     expect(views[0].rows[0].money).toEqual({ kind: "money", price: 165 });
+  });
+
+  it("prefers book_boards over games when present", () => {
+    const views = collectWnbaOddsBookBoards(
+      {
+        as_of: "2026-08-10T15:00:00Z",
+        sportsbook: "pinnacle",
+        error: null,
+        games: [game({ sportsbook: "draftkings" })],
+        book_boards: [
+          game({ sportsbook: "prophetx" }),
+          game({ sportsbook: "novig" }),
+          game({ sportsbook: "pinnacle" }),
+        ],
+      },
+      "SEA",
+      "ATL",
+    );
+    expect(views.map((v) => v.sportsbook)).toEqual([
+      "prophetx",
+      "novig",
+      "pinnacle",
+    ]);
   });
 
   it("returns empty when no matchup games", () => {

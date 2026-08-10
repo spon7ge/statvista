@@ -155,8 +155,10 @@ export function collectWnbaOddsBookBoards(
   if (!response) return [];
 
   const asOf = response.as_of ?? null;
+  const source =
+    response.book_boards?.length ? response.book_boards : response.games;
   const games = findWnbaOddsGamesForMatchup(
-    response.games,
+    source,
     awayAbbrev,
     homeAbbrev,
     opts,
