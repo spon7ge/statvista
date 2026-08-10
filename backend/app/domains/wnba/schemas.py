@@ -23,6 +23,10 @@ from app.domains.wnba.schemas_game_detail import (
     GameDetailWinProbability,
     GameDetailWinProbabilityPoint,
     WnbaGameDetail,
+    WnbaGameLeaderCard,
+    WnbaGameLeaders,
+    WnbaSeasonTeamStatLine,
+    WnbaSeasonTeamStatsPair,
 )
 from app.domains.wnba.schemas_leaders import (
     WnbaLeaderCategory,
@@ -70,6 +74,8 @@ __all__ = [
     "WnbaFuturesResponse",
     "WnbaGame",
     "WnbaGameDetail",
+    "WnbaGameLeaderCard",
+    "WnbaGameLeaders",
     "WnbaLeaderCategory",
     "WnbaLeaderRow",
     "WnbaLeadersResponse",
@@ -82,6 +88,8 @@ __all__ = [
     "WnbaPropLine",
     "WnbaPropsResponse",
     "WnbaScoreboardResponse",
+    "WnbaSeasonTeamStatLine",
+    "WnbaSeasonTeamStatsPair",
     "WnbaStandingsConference",
     "WnbaStandingsResponse",
     "WnbaStandingsRow",

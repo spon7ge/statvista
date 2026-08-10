@@ -27,6 +27,10 @@ __all__ = [
     "GameDetailWinProbabilityPoint",
     "GameStatus",
     "WnbaGameDetail",
+    "WnbaGameLeaderCard",
+    "WnbaGameLeaders",
+    "WnbaSeasonTeamStatLine",
+    "WnbaSeasonTeamStatsPair",
 ]
 
 
@@ -39,6 +43,58 @@ class GameDetailTeam(BaseModel):
     score: int | None
     color: str
     logo_url: str | None = None
+    record: str | None = None
+    last_10: str | None = None
+
+
+class WnbaSeasonTeamStatLine(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    pts: float | None = None
+    fg_pct: str | None = None
+    fg3_pct: str | None = None
+    ft_pct: str | None = None
+    reb: float | None = None
+    ast: float | None = None
+    stl: float | None = None
+    blk: float | None = None
+    to: float | None = None
+    pts_rank: int | None = None
+    fg_pct_rank: int | None = None
+    fg3_pct_rank: int | None = None
+    ft_pct_rank: int | None = None
+    reb_rank: int | None = None
+    ast_rank: int | None = None
+    stl_rank: int | None = None
+    blk_rank: int | None = None
+    to_rank: int | None = None
+
+
+class WnbaSeasonTeamStatsPair(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    away: WnbaSeasonTeamStatLine
+    home: WnbaSeasonTeamStatLine
+
+
+class WnbaGameLeaderCard(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    key: Literal["ppg", "rpg", "apg"]
+    label: str
+    rank: int | None = None
+    value: str
+    player_id: str
+    last_name: str
+    team_abbrev: str
+    side: Literal["away", "home"]
+    headshot_url: str | None = None
+
+
+class WnbaGameLeaders(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    leaders: list[WnbaGameLeaderCard]
 
 
 class GameDetailShot(BaseModel):
@@ -168,6 +224,8 @@ class WnbaGameDetail(BaseModel):
     matchup_prediction: GameDetailMatchupPrediction | None
     projected_starters: GameDetailProjectedStarters | None
     season_leaders: GameDetailSeasonLeaders | None
+    season_team_stats: WnbaSeasonTeamStatsPair | None = None
+    game_leaders: WnbaGameLeaders | None = None
     injuries: GameDetailInjuries | None
     box_score: GameDetailBoxScore | None
     fetched_at: str
