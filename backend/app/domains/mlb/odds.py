@@ -25,6 +25,7 @@ from app.domains.mlb.schemas import (
 from app.schemas.odds import WnbaOddsGame
 from app.domains.mlb.team_names import abbrev_from_team_name, canonical_mlb_abbrev
 from app.core.odds_snapshots import (
+    fetch_latest_novig_team,
     fetch_latest_pinnacle_team,
     fetch_latest_prophetx_team,
 )
@@ -34,6 +35,8 @@ logger = logging.getLogger(__name__)
 LA = ZoneInfo("America/Los_Angeles")
 CACHE_TTL_SECONDS = 45.0
 MLB_MARKETS = "run_line,total_runs"
+
+_BOOK_BOARD_ORDER = ("prophetx", "novig", "pinnacle", "fanduel", "draftkings")
 
 # Snapshot + Sharp market_type aliases → board buckets.
 _MARKET_KIND = {
@@ -325,6 +328,33 @@ def merge_odds_by_priority(*sources: list[MlbOddsGame]) -> list[MlbOddsGame]:
     return games
 
 
+def collect_book_boards(*sources: list[MlbOddsGame]) -> list[MlbOddsGame]:
+    """All FG team games that have markets, ordered for Preview display."""
+    order_index = {book: i for i, book in enumerate(_BOOK_BOARD_ORDER)}
+    out: list[MlbOddsGame] = []
+    seen: set[tuple[str, str, str, str | None]] = set()
+    for source in sources:
+        for game in source:
+            game = _canonicalize_game(game)
+            if not _has_markets(game):
+                continue
+            book = (game.sportsbook or "").lower()
+            key = (book, *_team_merge_key(game), game.game_date)
+            if key in seen:
+                continue
+            seen.add(key)
+            out.append(game)
+    out.sort(
+        key=lambda g: (
+            order_index.get((g.sportsbook or "").lower(), 99),
+            g.game_date or "",
+            g.home_abbrev,
+            g.away_abbrev,
+        )
+    )
+    return out
+
+
 def merge_pinnacle_prefer_sharp(
     pinnacle: list[MlbOddsGame],
     sharp: list[MlbOddsGame],
@@ -366,7 +396,7 @@ async def _fetch_sharp_games() -> tuple[list[MlbOddsGame], list[str]]:
 
 
 def _response_sportsbook(games: list[MlbOddsGame]) -> str:
-    for book in ("pinnacle", "prophetx", "fanduel", "draftkings"):
+    for book in ("pinnacle", "prophetx", "novig", "fanduel", "draftkings"):
         if any(g.sportsbook == book for g in games):
             return book
     if games and games[0].sportsbook:
@@ -386,8 +416,11 @@ async def get_today_odds() -> MlbOddsResponse:
         pin_games = normalize_pinnacle_team_rows(pin_rows)
         px_rows = fetch_latest_prophetx_team("mlb")
         px_games = normalize_team_odds_rows(px_rows, sportsbook="prophetx")
+        novig_rows = fetch_latest_novig_team("mlb")
+        novig_games = normalize_team_odds_rows(novig_rows, sportsbook="novig")
         sharp_games, sharp_errors = await _fetch_sharp_games()
-        games = merge_odds_by_priority(pin_games, px_games, sharp_games)
+        games = merge_odds_by_priority(pin_games, px_games, novig_games, sharp_games)
+        book_boards = collect_book_boards(px_games, novig_games, pin_games, sharp_games)
 
         error = "; ".join(sharp_errors) if sharp_errors else None
         if not games and sharp_errors:
@@ -397,6 +430,7 @@ async def get_today_odds() -> MlbOddsResponse:
             as_of=_utcnow_iso(),
             sportsbook=_response_sportsbook(games),
             games=games,
+            book_boards=book_boards,
             error=error,
         )
         _cache["response"] = response
@@ -409,10 +443,12 @@ async def get_today_odds() -> MlbOddsResponse:
                 as_of=cached.as_of,
                 sportsbook=cached.sportsbook,
                 games=cached.games,
+                book_boards=cached.book_boards,
                 error=str(exc),
             )
         return MlbOddsResponse(
             as_of=_utcnow_iso(),
             games=[],
+            book_boards=[],
             error=str(exc),
         )

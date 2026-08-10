@@ -373,6 +373,96 @@ def test_normalize_prophetx_run_line_as_spread():
     assert g.total == 8.5
 
 
+def test_collect_book_boards_keeps_all_books_in_display_order():
+    px = [
+        MlbOddsGame(
+            home_abbrev="CHC",
+            away_abbrev="LAD",
+            spread_team_abbrev="LAD",
+            spread_line=-1.5,
+            total=8.5,
+            sportsbook="prophetx",
+            game_date="2026-08-10",
+        )
+    ]
+    novig = [
+        MlbOddsGame(
+            home_abbrev="CHC",
+            away_abbrev="LAD",
+            spread_team_abbrev="LAD",
+            spread_line=-1.5,
+            total=8.0,
+            sportsbook="novig",
+            game_date="2026-08-10",
+        )
+    ]
+    pin = [
+        MlbOddsGame(
+            home_abbrev="CHC",
+            away_abbrev="LAD",
+            spread_team_abbrev="LAD",
+            spread_line=-1.5,
+            total=8.5,
+            sportsbook="pinnacle",
+            game_date="2026-08-10",
+        )
+    ]
+    boards = svc.collect_book_boards(px, novig, pin, [])
+    assert [g.sportsbook for g in boards] == ["prophetx", "novig", "pinnacle"]
+
+
+def test_get_today_odds_includes_novig_in_book_boards(monkeypatch):
+    novig_rows = [
+        {
+            "away_team": "Los Angeles Dodgers",
+            "home_team": "Chicago Cubs",
+            "start_time": "2026-08-03T23:00:00Z",
+            "market_type": "run_line",
+            "side": "away",
+            "team": "Los Angeles Dodgers",
+            "points": -1.5,
+            "american_price": -115,
+        },
+        {
+            "away_team": "Los Angeles Dodgers",
+            "home_team": "Chicago Cubs",
+            "start_time": "2026-08-03T23:00:00Z",
+            "market_type": "total",
+            "side": "over",
+            "points": 8.0,
+            "american_price": -110,
+        },
+    ]
+
+    with (
+        patch(
+            "app.domains.mlb.odds.fetch_latest_prophetx_team",
+            return_value=[],
+        ),
+        patch(
+            "app.domains.mlb.odds.fetch_latest_pinnacle_team",
+            return_value=[],
+        ),
+        patch(
+            "app.domains.mlb.odds.fetch_latest_novig_team",
+            return_value=novig_rows,
+        ),
+        patch.object(
+            svc, "_fetch_sharp_games", return_value=([], [])
+        ),
+    ):
+        body = asyncio.run(svc.get_today_odds())
+
+    assert len(body.book_boards) == 1
+    assert body.book_boards[0].sportsbook == "novig"
+    assert len(body.games) == 1
+    chc = body.games[0]
+    assert chc.home_abbrev == "CHC"
+    assert chc.sportsbook == "novig"
+    assert chc.spread_line == -1.5
+    assert chc.total == 8.0
+
+
 def test_merge_odds_by_priority_pinnacle_over_prophetx():
     pin = [
         MlbOddsGame(
@@ -474,6 +564,10 @@ def test_get_today_odds_prefers_pinnacle(monkeypatch):
             "app.domains.mlb.odds.fetch_latest_pinnacle_team",
             return_value=pin_rows,
         ),
+        patch(
+            "app.domains.mlb.odds.fetch_latest_novig_team",
+            return_value=[],
+        ),
         patch.object(
             svc, "_fetch_sharp_games", return_value=(sharp_games, [])
         ),
@@ -533,6 +627,10 @@ def test_get_today_odds_prefers_prophetx_when_pinnacle_empty(monkeypatch):
             "app.domains.mlb.odds.fetch_latest_pinnacle_team",
             return_value=[],
         ),
+        patch(
+            "app.domains.mlb.odds.fetch_latest_novig_team",
+            return_value=[],
+        ),
         patch.object(
             svc, "_fetch_sharp_games", return_value=(sharp_games, [])
         ),
@@ -568,6 +666,10 @@ def test_get_today_odds_sharp_only_when_snapshots_empty(monkeypatch):
         ),
         patch(
             "app.domains.mlb.odds.fetch_latest_pinnacle_team",
+            return_value=[],
+        ),
+        patch(
+            "app.domains.mlb.odds.fetch_latest_novig_team",
             return_value=[],
         ),
         patch.object(

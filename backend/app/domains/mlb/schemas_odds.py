@@ -56,4 +56,5 @@ class MlbOddsResponse(BaseModel):
     as_of: str
     sportsbook: str = "draftkings"
     games: list[MlbOddsGame] = Field(default_factory=list)
+    book_boards: list[MlbOddsGame] = Field(default_factory=list)
     error: str | None = None
