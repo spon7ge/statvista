@@ -155,6 +155,22 @@ function CategoryCard({
   );
 }
 
+function softErrorBannerText(error: string): string {
+  if (error === "odds_api_unavailable") {
+    return "Some book quotes may be incomplete";
+  }
+  if (error === "roster_unavailable") {
+    return "Player details may be incomplete";
+  }
+  if (
+    error.includes("odds_api_unavailable") &&
+    error.includes("roster_unavailable")
+  ) {
+    return "Some data sources unavailable";
+  }
+  return error;
+}
+
 export function MlbGamePropsGrid({
   categories,
   isPending = false,
@@ -169,26 +185,35 @@ export function MlbGamePropsGrid({
     );
   }
 
-  if (error || categories.length === 0) {
+  // Only blank the grid when there is nothing to show. Soft service `error`
+  // (and hard query failures) must not hide categories that already loaded.
+  if (categories.length === 0) {
     return (
       <p className="text-[18px] text-white/50" data-testid="mlb-game-props-grid">
-        No props available for this matchup
+        {error || "No props available for this matchup"}
       </p>
     );
   }
 
   return (
-    <div
-      className="grid grid-cols-1 gap-4 lg:grid-cols-2"
-      data-testid="mlb-game-props-grid"
-    >
-      {categories.map((category) => (
-        <CategoryCard
-          key={category.stat}
-          category={category}
-          onPlayerClick={onPlayerClick}
-        />
-      ))}
+    <div className="space-y-3" data-testid="mlb-game-props-grid">
+      {error ? (
+        <p
+          className="text-sm text-white/40"
+          data-testid="mlb-game-props-soft-error"
+        >
+          {softErrorBannerText(error)}
+        </p>
+      ) : null}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        {categories.map((category) => (
+          <CategoryCard
+            key={category.stat}
+            category={category}
+            onPlayerClick={onPlayerClick}
+          />
+        ))}
+      </div>
     </div>
   );
 }

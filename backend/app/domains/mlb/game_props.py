@@ -55,6 +55,16 @@ def _iso_now(now: datetime) -> str:
     return now.replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
+def _compose_error(existing: str | None, new: str) -> str:
+    """Append soft-fail codes without duplicating (e.g. odds + roster)."""
+    if not existing:
+        return new
+    parts = existing.split(",")
+    if new in parts:
+        return existing
+    return f"{existing},{new}"
+
+
 def _empty_odds() -> OddsApiMlbNormalized:
     return OddsApiMlbNormalized(
         prizepicks_board=[], book_indexes={}, as_of=None, unavailable=True
@@ -172,6 +182,9 @@ async def get_mlb_props_for_game(*, game_pk: str, app: str) -> MlbGamePropsRespo
     except Exception as exc:
         logger.warning("MLB game props roster index unavailable: %s", exc)
         roster_index = {}
+        # Empty categories after a roster failure should not look like a
+        # silent no-props success — surface the soft error to the client.
+        error = _compose_error(error, "roster_unavailable")
 
     game_teams = {away, home}
     players_by_stat: dict[str, list[MlbGamePropPlayer]] = {}

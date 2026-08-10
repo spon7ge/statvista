@@ -98,6 +98,33 @@ describe("MlbGamePropsGrid", () => {
     ).toBeInTheDocument();
   });
 
+  it("shows short error when categories are empty and error is set", () => {
+    render(
+      <MlbGamePropsGrid categories={[]} error="Failed to load props" />,
+    );
+    expect(screen.getByText("Failed to load props")).toBeInTheDocument();
+    expect(
+      screen.queryByText("No props available for this matchup"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("still renders categories when soft error is set", () => {
+    render(
+      <MlbGamePropsGrid
+        categories={categories}
+        error="odds_api_unavailable"
+      />,
+    );
+    expect(screen.getByText("Home Runs")).toBeInTheDocument();
+    expect(screen.getByText("A. Judge")).toBeInTheDocument();
+    expect(screen.getByTestId("mlb-game-props-soft-error")).toHaveTextContent(
+      "Some book quotes may be incomplete",
+    );
+    expect(
+      screen.queryByText("No props available for this matchup"),
+    ).not.toBeInTheDocument();
+  });
+
   it("shows loading copy while pending", () => {
     render(<MlbGamePropsGrid categories={[]} isPending />);
     expect(screen.getByText("Loading props…")).toBeInTheDocument();
