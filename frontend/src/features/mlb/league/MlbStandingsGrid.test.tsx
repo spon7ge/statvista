@@ -60,7 +60,7 @@ const sample: ApiMlbStandingsLeague[] = [
 
 describe("MlbStandingsGrid", () => {
   it("renders league sections, division titles, rows, and attribution", () => {
-    render(<MlbStandingsGrid leagues={sample} />);
+    render(<MlbStandingsGrid leagues={sample} view="division" />);
 
     expect(
       screen.getByRole("heading", { name: "American League" }),
@@ -90,7 +90,7 @@ describe("MlbStandingsGrid", () => {
   });
 
   it("shows loading skeletons under AL and NL section titles", () => {
-    render(<MlbStandingsGrid leagues={[]} isLoading />);
+    render(<MlbStandingsGrid leagues={[]} view="division" isLoading />);
 
     expect(screen.getByRole("heading", { name: "American League" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "National League" })).toBeInTheDocument();
@@ -99,13 +99,13 @@ describe("MlbStandingsGrid", () => {
   });
 
   it("shows error copy when standings have never loaded", () => {
-    render(<MlbStandingsGrid leagues={[]} isError />);
+    render(<MlbStandingsGrid leagues={[]} view="division" isError />);
 
     expect(screen.getByText("Standings unavailable")).toBeInTheDocument();
   });
 
   it("shows empty-state copy when leagues are empty", () => {
-    render(<MlbStandingsGrid leagues={[]} />);
+    render(<MlbStandingsGrid leagues={[]} view="division" />);
 
     expect(
       screen.getByText("Standings not yet available for this season"),
@@ -123,8 +123,20 @@ describe("MlbStandingsGrid", () => {
             divisions: [{ key: "al-east", label: "AL East", teams: [] }],
           },
         ]}
+        view="division"
       />,
     );
     expect(screen.getByText("No data")).toBeInTheDocument();
+  });
+
+  it("renders conference league tables when view is conference", () => {
+    render(<MlbStandingsGrid leagues={sample} view="conference" />);
+
+    expect(screen.getByText("American League")).toBeInTheDocument();
+    expect(screen.getByText("National League")).toBeInTheDocument();
+    expect(screen.queryByText("AL East")).not.toBeInTheDocument();
+    expect(screen.queryByText("NL West")).not.toBeInTheDocument();
+    expect(screen.getByText("NYY")).toBeInTheDocument();
+    expect(screen.getByText("LAD")).toBeInTheDocument();
   });
 });

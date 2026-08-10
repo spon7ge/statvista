@@ -1,9 +1,13 @@
-import type { ApiMlbStandingsDivision } from "@/shared/lib/api";
+import type { ApiMlbStandingsRow } from "@/shared/lib/api";
 import { TeamAbbrevAvatar } from "@/shared/ui/TeamAbbrevAvatar";
 import { mlbTeamLogoUrl } from "./mlbTeamLogos";
 
 type MlbStandingsDivisionCardProps = {
-  division: ApiMlbStandingsDivision;
+  section: {
+    key: string;
+    label: string;
+    teams: ApiMlbStandingsRow[];
+  };
 };
 
 function streakClass(streak: string): string {
@@ -13,12 +17,12 @@ function streakClass(streak: string): string {
 }
 
 export function MlbStandingsDivisionCard({
-  division,
+  section,
 }: MlbStandingsDivisionCardProps) {
   return (
     <section className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
       <h3 className="mb-3 text-[18px] font-semibold tracking-tight text-white">
-        {division.label}
+        {section.label}
       </h3>
       <div className="overflow-x-auto">
         <table className="w-full min-w-max text-left text-[18px]">
@@ -34,18 +38,18 @@ export function MlbStandingsDivisionCard({
             </tr>
           </thead>
           <tbody>
-            {division.teams.length === 0 ? (
+            {section.teams.length === 0 ? (
               <tr>
                 <td colSpan={7} className="py-3 text-white/40">
                   No data
                 </td>
               </tr>
             ) : (
-              division.teams.map((row) => {
+              section.teams.map((row) => {
                 const logoUrl = row.logo_url ?? mlbTeamLogoUrl(row.abbrev);
                 return (
                   <tr
-                    key={`${division.key}-${row.team_id}`}
+                    key={`${section.key}-${row.team_id}`}
                     className="whitespace-nowrap"
                   >
                     <td className="py-1 pr-1.5 text-white/50">{row.rank}</td>

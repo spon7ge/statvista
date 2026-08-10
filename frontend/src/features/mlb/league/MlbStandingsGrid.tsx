@@ -1,8 +1,11 @@
 import type { ApiMlbStandingsLeague } from "@/shared/lib/api";
+import { buildMlbConferenceStandings } from "./buildMlbConferenceStandings";
+import type { MlbStandingsView } from "./MlbStandingsHeader";
 import { MlbStandingsDivisionCard } from "./MlbStandingsDivisionCard";
 
 type MlbStandingsGridProps = {
   leagues: ApiMlbStandingsLeague[];
+  view: MlbStandingsView;
   isLoading?: boolean;
   isError?: boolean;
 };
@@ -39,7 +42,7 @@ function LeagueSection({
       </h2>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {divisions.map((division) => (
-          <MlbStandingsDivisionCard key={division.key} division={division} />
+          <MlbStandingsDivisionCard key={division.key} section={division} />
         ))}
       </div>
     </div>
@@ -48,6 +51,7 @@ function LeagueSection({
 
 export function MlbStandingsGrid({
   leagues,
+  view,
   isLoading = false,
   isError = false,
 }: MlbStandingsGridProps) {
@@ -80,8 +84,24 @@ export function MlbStandingsGrid({
         <p className="text-[14px] text-white/40">
           Standings not yet available for this season
         </p>
+      ) : view === "conference" ? (
+        <div
+          id="mlb-standings-conference-panel"
+          role="tabpanel"
+          aria-labelledby="mlb-standings-conference-tab"
+          className="grid grid-cols-1 gap-4 lg:grid-cols-2"
+        >
+          {buildMlbConferenceStandings(leagues).map((section) => (
+            <MlbStandingsDivisionCard key={section.key} section={section} />
+          ))}
+        </div>
       ) : (
-        <>
+        <div
+          id="mlb-standings-division-panel"
+          role="tabpanel"
+          aria-labelledby="mlb-standings-division-tab"
+          className="space-y-10"
+        >
           {americanLeague ? (
             <LeagueSection
               title={americanLeague.label}
@@ -94,7 +114,7 @@ export function MlbStandingsGrid({
               divisions={nationalLeague.divisions}
             />
           ) : null}
-        </>
+        </div>
       )}
       <p className="text-[14px] text-white/35">Data: statsapi.mlb.com</p>
     </div>

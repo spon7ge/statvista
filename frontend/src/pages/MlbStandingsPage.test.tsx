@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import userEvent from "@testing-library/user-event";
 import { render, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router-dom";
@@ -80,6 +81,55 @@ describe("MlbStandingsPage", () => {
     expect(fetchMock).toHaveBeenCalledWith(
       expect.stringContaining("/api/mlb/standings"),
       expect.any(Object),
+    );
+  });
+
+  it("switches to conference league tables when Conference tab is clicked", async () => {
+    const user = userEvent.setup();
+    fetchMock.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        season: 2026,
+        leagues: [
+          {
+            key: "al",
+            label: "American League",
+            divisions: [
+              {
+                key: "al_east",
+                label: "AL East",
+                teams: [
+                  {
+                    rank: 1,
+                    team_id: "139",
+                    abbrev: "TB",
+                    name: "Rays",
+                    logo_url: null,
+                    wins: 69,
+                    losses: 46,
+                    wl: "69-46",
+                    pct: ".600",
+                    gb: "-",
+                    l10: "7-3",
+                    streak: "W4",
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      }),
+    });
+
+    renderPage();
+
+    expect(await screen.findByText("AL East")).toBeInTheDocument();
+    await user.click(screen.getByRole("tab", { name: "Conference" }));
+    expect(screen.queryByText("AL East")).not.toBeInTheDocument();
+    expect(screen.getByText("American League")).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: "Conference" })).toHaveAttribute(
+      "aria-selected",
+      "true",
     );
   });
 });
