@@ -68,7 +68,7 @@ describe("MlbPregameBroadcastHeader", () => {
     expect(onTabChange).toHaveBeenCalledWith("home");
   });
 
-  it("calls onTabChange for PrizePicks and Underdog tabs", async () => {
+  it("calls onTabChange for Props tab", async () => {
     const user = userEvent.setup();
     const onTabChange = vi.fn();
     render(
@@ -79,11 +79,8 @@ describe("MlbPregameBroadcastHeader", () => {
       />,
     );
 
-    await user.click(screen.getByRole("tab", { name: "PrizePicks" }));
-    expect(onTabChange).toHaveBeenCalledWith("prizepicks");
-
-    await user.click(screen.getByRole("tab", { name: "Underdog" }));
-    expect(onTabChange).toHaveBeenCalledWith("underdog");
+    await user.click(screen.getByRole("tab", { name: "Props" }));
+    expect(onTabChange).toHaveBeenCalledWith("props");
   });
 
   it("omits record and last-10 lines when null", () => {

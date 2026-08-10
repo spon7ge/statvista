@@ -73,7 +73,7 @@ function PlayerRowContent({ player }: { player: MlbGamePropPlayer }) {
           ) : null}
         </div>
       </div>
-      <span className="text-center font-mono text-sm text-white/80">
+      <span className="text-center font-mono text-sm text-white">
         {player.line}
       </span>
       <OddsPill quote={player.over} />

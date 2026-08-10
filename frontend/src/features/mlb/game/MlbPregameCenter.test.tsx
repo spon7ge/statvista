@@ -335,7 +335,7 @@ describe("MlbPregameCenter", () => {
     });
   });
 
-  it("switches to PrizePicks when a Preview prop row is clicked", async () => {
+  it("switches to Props (PrizePicks) when a Preview prop row is clicked", async () => {
     fetchMlbLineups.mockResolvedValue({
       date: mlbScheduledDetail.gameDate,
       fetched_at: "2026-08-04T10:00:00-04:00",
@@ -351,15 +351,20 @@ describe("MlbPregameCenter", () => {
       await screen.findByRole("button", { name: /A\. Judge/i }),
     );
 
+    expect(screen.getByRole("tab", { name: "Props" })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
     expect(screen.getByRole("tab", { name: "PrizePicks" })).toHaveAttribute(
       "aria-selected",
       "true",
     );
+    expect(screen.getByTestId("mlb-pregame-props-panel")).toBeInTheDocument();
     expect(screen.getByTestId("mlb-game-props-grid")).toBeInTheDocument();
     expect(screen.queryByTestId("mlb-projected-lineups")).not.toBeInTheDocument();
   });
 
-  it("requests underdog props when Underdog tab is selected", async () => {
+  it("requests underdog props when Underdog sub-tab is selected under Props", async () => {
     fetchMlbLineups.mockResolvedValue({
       date: mlbScheduledDetail.gameDate,
       fetched_at: "2026-08-04T10:00:00-04:00",
@@ -395,6 +400,7 @@ describe("MlbPregameCenter", () => {
 
     renderWithClient(<MlbPregameCenter detail={mlbScheduledDetail} />);
 
+    await user.click(screen.getByRole("tab", { name: "Props" }));
     await user.click(screen.getByRole("tab", { name: "Underdog" }));
 
     await waitFor(() =>

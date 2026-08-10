@@ -2,9 +2,12 @@ import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {
+  gamedayNormToPolar,
   genericWallRadiusFt,
+  hitPointToSvg,
   hitPointTooltip,
   MlbHitChart,
+  polarToSvg,
 } from "./MlbHitChart";
 import { mlbLiveDetail } from "../lib/testFixtures";
 import type { MlbHitPoint } from "../lib/types";
@@ -16,8 +19,9 @@ const hitPoints: MlbHitPoint[] = [
     playerName: "Betts",
     result: "hit",
     outcome: "Single",
-    x: 0.4,
-    y: 0.5,
+    // Gameday ~ (100, 160) — shallow LF/CF
+    x: 100 / 250,
+    y: 160 / 250,
   },
   {
     id: "h2",
@@ -25,8 +29,9 @@ const hitPoints: MlbHitPoint[] = [
     playerName: "Freeman",
     result: "hr",
     outcome: "HR",
-    x: 0.6,
-    y: 0.3,
+    // Gameday ~ (150, 40) — deep RF
+    x: 150 / 250,
+    y: 40 / 250,
   },
   {
     id: "h3",
@@ -34,8 +39,9 @@ const hitPoints: MlbHitPoint[] = [
     playerName: "Devers",
     result: "out",
     outcome: "Flyout",
-    x: 0.5,
-    y: 0.7,
+    // Gameday ~ (125, 120) — CF mid-outfield
+    x: 125 / 250,
+    y: 120 / 250,
   },
 ];
 
@@ -46,6 +52,38 @@ describe("genericWallRadiusFt", () => {
     expect(genericWallRadiusFt(45)).toBeLessThan(340);
     expect(genericWallRadiusFt(135)).toBeGreaterThan(320);
     expect(genericWallRadiusFt(135)).toBeLessThan(340);
+  });
+});
+
+describe("gamedayNormToPolar / hitPointToSvg", () => {
+  it("places Gameday home plate on the polar home point", () => {
+    const { rFt } = gamedayNormToPolar(125 / 250, 199 / 250);
+    expect(rFt).toBeCloseTo(0, 5);
+    const svg = hitPointToSvg(125 / 250, 199 / 250);
+    const home = polarToSvg(0, 90);
+    expect(svg.x).toBeCloseTo(home.x, 5);
+    expect(svg.y).toBeCloseTo(home.y, 5);
+  });
+
+  it("maps straight CF to ~90° and distance in feet", () => {
+    // 400 ft CF: y_ft = 400 → coordY = 199 - 400/2.495671
+    const coordY = 199 - 400 / 2.495671;
+    const { rFt, thetaDeg } = gamedayNormToPolar(125 / 250, coordY / 250);
+    expect(thetaDeg).toBeCloseTo(90, 5);
+    expect(rFt).toBeCloseTo(400, 3);
+    const svg = hitPointToSvg(125 / 250, coordY / 250);
+    const expected = polarToSvg(400, 90);
+    expect(svg.x).toBeCloseTo(expected.x, 5);
+    expect(svg.y).toBeCloseTo(expected.y, 5);
+  });
+
+  it("maps RF / LF foul directions to ~45° / ~135°", () => {
+    const rf = gamedayNormToPolar(170 / 250, 160 / 250);
+    const lf = gamedayNormToPolar(80 / 250, 160 / 250);
+    expect(rf.thetaDeg).toBeGreaterThan(30);
+    expect(rf.thetaDeg).toBeLessThan(70);
+    expect(lf.thetaDeg).toBeGreaterThan(110);
+    expect(lf.thetaDeg).toBeLessThan(150);
   });
 });
 
@@ -103,7 +141,18 @@ describe("MlbHitChart infield visual scale", () => {
     expect(tip).toHaveTextContent("Betts");
     expect(tip).toHaveTextContent("Single · BOS");
   });
+
+  it("renders hit markers at polar-projected SVG positions", () => {
+    render(
+      <MlbHitChart detail={{ ...mlbLiveDetail, hitChart: hitPoints }} />,
+    );
+    const expected = hitPointToSvg(hitPoints[0]!.x, hitPoints[0]!.y);
+    const marker = screen.getByTestId("mlb-hit-point-h1");
+    expect(Number(marker.getAttribute("cx"))).toBeCloseTo(expected.x, 5);
+    expect(Number(marker.getAttribute("cy"))).toBeCloseTo(expected.y, 5);
+  });
 });
+
 describe("MlbHitChart", () => {
   it("shows empty copy, legend, wall caption, and team-abbrev filters", () => {
     render(<MlbHitChart detail={{ ...mlbLiveDetail, hitChart: [] }} />);

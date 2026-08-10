@@ -32,6 +32,15 @@ const SCALE = (HOME_Y - 28) / MAX_FT;
 const INFIELD_VISUAL_SCALE = 1.7;
 
 /**
+ * MLBAM Gameday spray-chart constants (GeomMLBStadiums / common Savant mapping).
+ * API `x`/`y` are coordX/250 and coordY/250 — convert back before projecting.
+ */
+const GAMEDAY_SIZE = 250;
+const GAMEDAY_HOME_X = 125;
+const GAMEDAY_HOME_Y = 199;
+const GAMEDAY_FT_PER_PX = 2.495671;
+
+/**
  * Generic modern park fence distance (ft) vs spray angle.
  * Piecewise linear/constant segments for a polished, non-circular outline.
  */
@@ -46,12 +55,32 @@ export function genericWallRadiusFt(thetaDeg: number): number {
   return 330 + (45 - fromCf) * 0.15; // foul poles ~330
 }
 
-function polarToSvg(rFt: number, thetaDeg: number): { x: number; y: number } {
+export function polarToSvg(rFt: number, thetaDeg: number): { x: number; y: number } {
   const th = (thetaDeg * Math.PI) / 180;
   return {
     x: CX + rFt * SCALE * Math.cos(th),
     y: HOME_Y - rFt * SCALE * Math.sin(th),
   };
+}
+
+/** Map API Gameday-normalized hit coords into the same polar frame as the wall. */
+export function gamedayNormToPolar(
+  xNorm: number,
+  yNorm: number,
+): { rFt: number; thetaDeg: number } {
+  const coordX = xNorm * GAMEDAY_SIZE;
+  const coordY = yNorm * GAMEDAY_SIZE;
+  const xFt = GAMEDAY_FT_PER_PX * (coordX - GAMEDAY_HOME_X);
+  const yFt = GAMEDAY_FT_PER_PX * (GAMEDAY_HOME_Y - coordY);
+  return {
+    rFt: Math.hypot(xFt, yFt),
+    thetaDeg: (Math.atan2(yFt, xFt) * 180) / Math.PI,
+  };
+}
+
+export function hitPointToSvg(xNorm: number, yNorm: number): { x: number; y: number } {
+  const { rFt, thetaDeg } = gamedayNormToPolar(xNorm, yNorm);
+  return polarToSvg(rFt, thetaDeg);
 }
 
 function sampleWall(
@@ -224,12 +253,13 @@ function FieldDiagram({
 
         {points.map((point) => {
           const style = RESULT_STYLE[point.result];
+          const { x, y } = hitPointToSvg(point.x, point.y);
           return (
             <circle
               key={point.id}
               data-testid={`mlb-hit-point-${point.id}`}
-              cx={point.x * W}
-              cy={point.y * H}
+              cx={x}
+              cy={y}
               r={point.result === "hr" ? 4.25 : 3.4}
               fill={style.fill}
               stroke="rgba(0,0,0,0.45)"
@@ -251,8 +281,8 @@ function FieldDiagram({
           data-testid="mlb-hit-chart-tooltip"
           className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full rounded-md bg-black/90 px-2.5 py-1.5 text-left shadow-lg"
           style={{
-            left: `${hovered.x * 100}%`,
-            top: `${hovered.y * 100}%`,
+            left: `${(hitPointToSvg(hovered.x, hovered.y).x / W) * 100}%`,
+            top: `${(hitPointToSvg(hovered.x, hovered.y).y / H) * 100}%`,
             marginTop: "-10px",
           }}
         >

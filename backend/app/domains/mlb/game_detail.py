@@ -864,7 +864,9 @@ def _hit_outcome(event_type: str | None, event: object | None) -> str | None:
 
 
 def _normalize_hit_coords(coord_x: float, coord_y: float) -> tuple[float, float]:
-    # Field diagram is typically ~250×250 with home near the bottom center.
+    # Preserve MLBAM Gameday spray-chart pixels as fractions of the 250×250 board.
+    # Frontend maps these through the standard home-origin feet transform onto the
+    # polar field diagram (do not treat as already-aligned SVG fractions).
     return coord_x / 250.0, coord_y / 250.0
 
 

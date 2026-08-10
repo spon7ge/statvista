@@ -2,12 +2,7 @@ import { useState } from "react";
 import { Share2 } from "lucide-react";
 import type { MlbGameDetailTeam, MlbGameDetailView } from "../lib/types";
 
-export type PregameTab =
-  | "preview"
-  | "away"
-  | "home"
-  | "prizepicks"
-  | "underdog";
+export type PregameTab = "preview" | "away" | "home" | "props";
 
 function TeamLogo({ url, className }: { url: string; className?: string }) {
   const [failed, setFailed] = useState(false);
@@ -89,8 +84,7 @@ export function MlbPregameBroadcastHeader({
     { id: "preview", label: "Preview" },
     { id: "away", label: detail.away.name },
     { id: "home", label: detail.home.name },
-    { id: "prizepicks", label: "PrizePicks" },
-    { id: "underdog", label: "Underdog" },
+    { id: "props", label: "Props" },
   ];
 
   return (

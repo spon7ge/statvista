@@ -3,6 +3,7 @@ import { useMlbGameProps } from "@/features/mlb/hooks/useMlbGameProps";
 import { useMlbLineupMatchup } from "@/features/mlb/hooks/useMlbLineupMatchup";
 import { useMlbLineups } from "@/features/mlb/hooks/useMlbLineups";
 import { useMlbOdds } from "@/features/mlb/hooks/useMlbOdds";
+import type { MlbPropAppTab } from "@/features/mlb/league/MlbPropPicksHeader";
 import type { ApiMlbLineupGame, ApiMlbLineupSide } from "@/shared/lib/api";
 import {
   MlbPregameBroadcastHeader,
@@ -12,6 +13,11 @@ import { MlbGamePropsGrid } from "./MlbGamePropsGrid";
 import { MlbProjectedLineups } from "./MlbProjectedLineups";
 import { findMlbOddsGame, toMlbOddsBoardView } from "../lib/mlbOddsBoard";
 import type { MlbGameDetailView } from "../lib/types";
+
+const PROPS_APP_TABS: { id: MlbPropAppTab; label: string }[] = [
+  { id: "prizepicks", label: "PrizePicks" },
+  { id: "underdog", label: "Underdog" },
+];
 
 function sideComplete(side: ApiMlbLineupSide | undefined | null): boolean {
   return Boolean(side?.pitcher?.name) && side?.batters?.length === 9;
@@ -45,8 +51,44 @@ function findCompleteMatch(
   );
 }
 
+function GamePropsAppTabs({
+  activeApp,
+  onAppChange,
+}: {
+  activeApp: MlbPropAppTab;
+  onAppChange: (app: MlbPropAppTab) => void;
+}) {
+  return (
+    <div
+      role="tablist"
+      aria-label="DFS app"
+      className="flex items-center justify-center gap-1 border-b border-white/10"
+    >
+      {PROPS_APP_TABS.map((tab) => (
+        <button
+          key={tab.id}
+          id={`mlb-game-props-${tab.id}-tab`}
+          type="button"
+          role="tab"
+          aria-selected={activeApp === tab.id}
+          aria-controls={`mlb-game-props-${tab.id}-panel`}
+          className={`border-b-2 px-5 py-2 text-[18px] font-medium transition-colors ${
+            activeApp === tab.id
+              ? "border-white text-white"
+              : "border-transparent text-white/50 hover:text-white/80"
+          }`}
+          onClick={() => onAppChange(tab.id)}
+        >
+          {tab.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export function MlbPregameCenter({ detail }: { detail: MlbGameDetailView }) {
   const [activeTab, setActiveTab] = useState<PregameTab>("preview");
+  const [propsApp, setPropsApp] = useState<MlbPropAppTab>("prizepicks");
 
   const { data, isPending } = useMlbLineups(
     activeTab === "preview" ? detail.gameDate : undefined,
@@ -80,13 +122,17 @@ export function MlbPregameCenter({ detail }: { detail: MlbGameDetailView }) {
   const prizeQuery = useMlbGameProps({
     gamePk: detail.mlbGamePk,
     app: "prizepicks",
-    enabled: activeTab === "preview" || activeTab === "prizepicks",
+    enabled:
+      activeTab === "preview" ||
+      (activeTab === "props" && propsApp === "prizepicks"),
   });
   const underdogQuery = useMlbGameProps({
     gamePk: detail.mlbGamePk,
     app: "underdog",
-    enabled: activeTab === "underdog",
+    enabled: activeTab === "props" && propsApp === "underdog",
   });
+
+  const propsQuery = propsApp === "underdog" ? underdogQuery : prizeQuery;
 
   const stub =
     activeTab === "away"
@@ -123,29 +169,34 @@ export function MlbPregameCenter({ detail }: { detail: MlbGameDetailView }) {
                   ? "Failed to load props"
                   : prizeQuery.data?.error
               }
-              onPlayerClick={() => setActiveTab("prizepicks")}
+              onPlayerClick={() => {
+                setPropsApp("prizepicks");
+                setActiveTab("props");
+              }}
             />
           </div>
-        ) : activeTab === "prizepicks" ? (
-          <MlbGamePropsGrid
-            categories={prizeQuery.data?.categories ?? []}
-            isPending={prizeQuery.isPending}
-            error={
-              prizeQuery.isError
-                ? "Failed to load props"
-                : prizeQuery.data?.error
-            }
-          />
-        ) : activeTab === "underdog" ? (
-          <MlbGamePropsGrid
-            categories={underdogQuery.data?.categories ?? []}
-            isPending={underdogQuery.isPending}
-            error={
-              underdogQuery.isError
-                ? "Failed to load props"
-                : underdogQuery.data?.error
-            }
-          />
+        ) : activeTab === "props" ? (
+          <div className="space-y-4" data-testid="mlb-pregame-props-panel">
+            <GamePropsAppTabs
+              activeApp={propsApp}
+              onAppChange={setPropsApp}
+            />
+            <div
+              id={`mlb-game-props-${propsApp}-panel`}
+              role="tabpanel"
+              aria-labelledby={`mlb-game-props-${propsApp}-tab`}
+            >
+              <MlbGamePropsGrid
+                categories={propsQuery.data?.categories ?? []}
+                isPending={propsQuery.isPending}
+                error={
+                  propsQuery.isError
+                    ? "Failed to load props"
+                    : propsQuery.data?.error
+                }
+              />
+            </div>
+          </div>
         ) : (
           <p className="text-sm text-white/60">{stub}</p>
         )}
