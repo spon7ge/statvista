@@ -77,3 +77,94 @@ def test_outcome_quote_uses_available_not_last() -> None:
 def test_outcome_quote_skips_missing_available() -> None:
     nv = _load_scraper()
     assert nv.outcome_quote({"available": None, "last": 0.5, "orders": []}, None) is None
+
+
+def test_normalize_event() -> None:
+    nv = _load_scraper()
+    event = {
+        "id": "evt-1",
+        "description": "New York Liberty @ Las Vegas Aces",
+        "status": "OPEN_PREGAME",
+        "game": {
+            "scheduled_start": "2026-08-10T00:00:00+00:00",
+            "homeTeam": {"id": "home-1", "name": "Las Vegas Aces"},
+            "awayTeam": {"id": "away-1", "name": "New York Liberty"},
+        },
+    }
+    out = nv.normalize_event(event)
+    assert out["event_id"] == "evt-1"
+    assert out["name"] == "New York Liberty @ Las Vegas Aces"
+    assert out["scheduled"] == "2026-08-10T00:00:00+00:00"
+    assert out["status"] == "not_started"
+    assert out["competitors"][0]["name"] == "Las Vegas Aces"
+    assert out["competitors"][0]["seq"] == 0
+    assert out["competitors"][1]["name"] == "New York Liberty"
+    assert out["competitors"][1]["seq"] == 1
+
+
+def test_extract_team_markets_money_spread_total() -> None:
+    nv = _load_scraper()
+    markets = [
+        {
+            "id": "m-money",
+            "type": "MONEY",
+            "strike": 0.0,
+            "description": "LV",
+            "outcomes": [
+                {"description": "NY", "available": 0.44, "orders": []},
+                {
+                    "description": "LV",
+                    "available": 0.57,
+                    "orders": [{"qty": 10000, "status": "OPEN"}],
+                },
+            ],
+        },
+        {
+            "id": "m-sp",
+            "type": "SPREAD",
+            "strike": -4.5,
+            "description": "LV -4.5",
+            "outcomes": [
+                {"description": "NY +4.5", "available": 0.51, "orders": []},
+                {"description": "LV -4.5", "available": 0.505, "orders": []},
+            ],
+        },
+        {
+            "id": "m-sp-alt",
+            "type": "SPREAD",
+            "strike": -12.5,
+            "description": "LV -12.5",
+            "outcomes": [
+                {"description": "NY +12.5", "available": 0.90, "orders": []},
+                {"description": "LV -12.5", "available": 0.12, "orders": []},
+            ],
+        },
+        {
+            "id": "m-tot",
+            "type": "TOTAL",
+            "strike": 162.5,
+            "description": "NY @ LV t162.5",
+            "outcomes": [
+                {"description": "Over 162.5", "available": 0.505, "orders": []},
+                {"description": "Under 162.5", "available": 0.5, "orders": []},
+            ],
+        },
+        {
+            "id": "m-tot-alt",
+            "type": "TOTAL",
+            "strike": 140.5,
+            "description": "NY @ LV t140.5",
+            "outcomes": [
+                {"description": "Over 140.5", "available": 0.93, "orders": []},
+                {"description": "Under 140.5", "available": 0.11, "orders": []},
+            ],
+        },
+    ]
+    tm = nv.extract_team_markets(markets)
+    assert "moneyline" in tm and len(tm["moneyline"]) == 2
+    assert "spread" in tm and len(tm["spread"]) == 2
+    assert "run_line" not in tm
+    assert tm["spread"][0]["line"] in (4.5, -4.5, 4.5) or abs(
+        float(tm["spread"][0]["line"])
+    ) == 4.5
+    assert tm["total"][0]["line"] == 162.5
