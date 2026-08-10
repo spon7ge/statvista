@@ -72,7 +72,7 @@ query GetMlbEvents {
 """
 
 _GET_EVENT_MARKETS_QUERY = """
-query GetEventMarkets($id: String!) {
+query GetEventMarkets($id: uuid!) {
   event(where: { id: { _eq: $id } }) {
     markets {
       id

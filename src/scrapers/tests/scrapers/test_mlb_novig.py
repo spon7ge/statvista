@@ -285,6 +285,13 @@ def test_fetch_mlb_events_honors_max_events(monkeypatch) -> None:
     assert events[0]["id"] == "e1"
 
 
+def test_event_markets_query_uses_uuid_variable() -> None:
+    nv = _load_scraper()
+    query = nv._GET_EVENT_MARKETS_QUERY
+    assert "$id: uuid!" in query
+    assert "$id: String!" not in query
+
+
 def test_fetch_event_markets_parses_nested(monkeypatch) -> None:
     nv = _load_scraper()
     session = MagicMock()
