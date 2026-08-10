@@ -2579,6 +2579,8 @@ export interface components {
         WnbaOddsResponse: {
             /** As Of */
             as_of: string;
+            /** Book Boards */
+            book_boards: components["schemas"]["WnbaOddsGame"][];
             /** Error */
             error: string | null;
             /** Games */
