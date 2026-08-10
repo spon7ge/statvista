@@ -10,6 +10,8 @@ from pathlib import Path
 from unittest.mock import MagicMock
 from zoneinfo import ZoneInfo
 
+import pytest
+
 _SCRAPER_PATH = Path(__file__).resolve().parents[2] / "wnba_novig.py"
 
 
@@ -357,3 +359,173 @@ def test_fetch_event_markets_parses_nested(monkeypatch) -> None:
     monkeypatch.setattr(nv, "graphql", lambda *_a, **_k: payload)
     markets = nv.fetch_event_markets(session, "e1")
     assert markets[0]["id"] == "m1"
+
+
+def test_write_snapshots_roundtrip(tmp_path) -> None:
+    import json
+
+    nv = _load_scraper()
+    props_path = str(tmp_path / "novig_wnba_2026-08-09_120000_props.json")
+    props_games = [{"event_id": "e1", "name": "A @ B", "props": []}]
+    team_games = [{"event_id": "e1", "name": "A @ B", "team_markets": {}}]
+    p, t = nv.write_snapshots(props_games, team_games, props_path=props_path)
+    assert p.endswith("_props.json")
+    assert t.endswith("_team.json")
+    props_payload = json.loads(Path(p).read_text())
+    assert props_payload["source"] == "novig"
+    assert props_payload["snapshot_kind"] == "props"
+    assert props_payload["league"] == "wnba"
+    assert "tournament_id" not in props_payload
+
+
+def test_build_game_snapshots_merges() -> None:
+    nv = _load_scraper()
+    events = [
+        {
+            "id": "e1",
+            "description": "A @ B",
+            "status": "OPEN_PREGAME",
+            "game": {
+                "scheduled_start": "2026-08-10T00:00:00+00:00",
+                "homeTeam": {"id": "h", "name": "B"},
+                "awayTeam": {"id": "a", "name": "A"},
+            },
+        }
+    ]
+    markets_by_id = {
+        "e1": [
+            {
+                "id": "m1",
+                "type": "MONEY",
+                "strike": 0,
+                "description": "B",
+                "player": None,
+                "outcomes": [
+                    {"description": "A", "available": 0.45, "orders": []},
+                    {"description": "B", "available": 0.55, "orders": []},
+                ],
+            }
+        ]
+    }
+    props_games, team_games = nv.build_game_snapshots(events, markets_by_id)
+    assert props_games[0]["props"] == []
+    assert "moneyline" in team_games[0]["team_markets"]
+    assert "run_line" not in team_games[0]["team_markets"]
+    assert "spread" not in team_games[0]["team_markets"]
+
+
+def test_selenium_fallback_enabled(monkeypatch) -> None:
+    nv = _load_scraper()
+    monkeypatch.setenv("NOVIG_ALLOW_SELENIUM", "1")
+    assert nv.selenium_fallback_enabled() is True
+    monkeypatch.setenv("NOVIG_ALLOW_SELENIUM", "yes")
+    assert nv.selenium_fallback_enabled() is True
+    monkeypatch.setenv("NOVIG_ALLOW_SELENIUM", "0")
+    assert nv.selenium_fallback_enabled() is False
+
+
+def test_fetch_via_selenium_raises() -> None:
+    nv = _load_scraper()
+    with pytest.raises(RuntimeError, match="Selenium fallback is not implemented"):
+        nv.fetch_via_selenium()
+
+
+def test_run_exits_when_events_have_no_usable_quotes(monkeypatch) -> None:
+    nv = _load_scraper()
+    events = [{"id": "e1", "description": "A @ B", "status": "OPEN_PREGAME", "game": {}}]
+
+    def fake_fetch_events(_session):
+        return events
+
+    def fake_fetch_markets(_session, _event_id):
+        return []
+
+    monkeypatch.setattr(nv, "fetch_wnba_events", fake_fetch_events)
+    monkeypatch.setattr(nv, "fetch_event_markets", fake_fetch_markets)
+    monkeypatch.delenv("NOVIG_ALLOW_SELENIUM", raising=False)
+
+    with pytest.raises(SystemExit) as exc:
+        nv.run()
+    assert exc.value.code == 1
+
+
+def test_run_exits_when_selenium_fallback_returns_empty(monkeypatch, tmp_path) -> None:
+    nv = _load_scraper()
+
+    def fail_graphql(_session):
+        raise RuntimeError("GraphQL unavailable")
+
+    monkeypatch.setattr(nv, "_fetch_graphql_snapshots", fail_graphql)
+    monkeypatch.setattr(nv, "fetch_via_selenium", lambda: ([], {}))
+    monkeypatch.setenv("NOVIG_ALLOW_SELENIUM", "1")
+    write_called = False
+
+    def track_write(*_args, **_kwargs):
+        nonlocal write_called
+        write_called = True
+        return ("props.json", "team.json")
+
+    monkeypatch.setattr(nv, "write_snapshots", track_write)
+    monkeypatch.setattr(nv, "_DEFAULT_OUTPUT_DIR", str(tmp_path))
+
+    with pytest.raises(SystemExit) as exc:
+        nv.run()
+    assert exc.value.code == 1
+    assert write_called is False
+    assert list(tmp_path.iterdir()) == []
+
+
+def test_run_writes_snapshots_on_success(monkeypatch, tmp_path) -> None:
+    import json
+
+    nv = _load_scraper()
+    events = [
+        {
+            "id": "e1",
+            "description": "A @ B",
+            "status": "OPEN_PREGAME",
+            "game": {
+                "scheduled_start": "2026-08-10T00:00:00+00:00",
+                "homeTeam": {"id": "h", "name": "B"},
+                "awayTeam": {"id": "a", "name": "A"},
+            },
+        }
+    ]
+    markets = [
+        {
+            "id": "m1",
+            "type": "MONEY",
+            "strike": 0,
+            "description": "B",
+            "player": None,
+            "outcomes": [
+                {"description": "A", "available": 0.45, "orders": []},
+                {"description": "B", "available": 0.55, "orders": []},
+            ],
+        }
+    ]
+
+    monkeypatch.setattr(nv, "fetch_wnba_events", lambda _s: events)
+    monkeypatch.setattr(nv, "fetch_event_markets", lambda _s, _e: markets)
+    monkeypatch.setattr(nv, "_DEFAULT_OUTPUT_DIR", str(tmp_path))
+    monkeypatch.setattr(nv, "load_supabase_snapshots", lambda *a, **k: None)
+    monkeypatch.delenv("NOVIG_OUTPUT", raising=False)
+    monkeypatch.delenv("NOVIG_OUTPUT_DIR", raising=False)
+    now = datetime(2026, 8, 9, 12, 0, 0, tzinfo=ZoneInfo("America/Los_Angeles"))
+    monkeypatch.setattr(
+        nv,
+        "resolve_props_output_path",
+        lambda: str(tmp_path / nv.output_filename("wnba", now, kind="props")),
+    )
+
+    nv.run()
+
+    props_path = tmp_path / "novig_wnba_2026-08-09_120000_props.json"
+    team_path = tmp_path / "novig_wnba_2026-08-09_120000_team.json"
+    assert props_path.is_file()
+    assert team_path.is_file()
+    props_payload = json.loads(props_path.read_text())
+    assert props_payload["source"] == "novig"
+    assert props_payload["league"] == "wnba"
+    assert len(props_payload["games"]) == 1
+
