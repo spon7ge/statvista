@@ -448,7 +448,7 @@ def test_get_today_odds_includes_novig_in_book_boards(monkeypatch):
             return_value=novig_rows,
         ),
         patch.object(
-            svc, "_fetch_sharp_games", return_value=([], [])
+            svc, "_fetch_sharp_games", return_value=([], [], [], [])
         ),
     ):
         body = asyncio.run(svc.get_today_odds())
@@ -461,6 +461,56 @@ def test_get_today_odds_includes_novig_in_book_boards(monkeypatch):
     assert chc.sportsbook == "novig"
     assert chc.spread_line == -1.5
     assert chc.total == 8.0
+
+
+def test_get_today_odds_book_boards_includes_fd_and_dk(monkeypatch):
+    fd_games = [
+        MlbOddsGame(
+            home_abbrev="BOS",
+            away_abbrev="NYY",
+            spread_team_abbrev="NYY",
+            spread_line=-1.5,
+            total=8.5,
+            game_date="2026-08-03",
+            sportsbook="fanduel",
+        )
+    ]
+    dk_games = [
+        MlbOddsGame(
+            home_abbrev="BOS",
+            away_abbrev="NYY",
+            spread_team_abbrev="NYY",
+            spread_line=-1.5,
+            total=9.0,
+            game_date="2026-08-03",
+            sportsbook="draftkings",
+        )
+    ]
+
+    with (
+        patch(
+            "app.domains.mlb.odds.fetch_latest_prophetx_team",
+            return_value=[],
+        ),
+        patch(
+            "app.domains.mlb.odds.fetch_latest_pinnacle_team",
+            return_value=[],
+        ),
+        patch(
+            "app.domains.mlb.odds.fetch_latest_novig_team",
+            return_value=[],
+        ),
+        patch.object(
+            svc,
+            "_fetch_sharp_games",
+            return_value=(fd_games, dk_games, fd_games, []),
+        ),
+    ):
+        body = asyncio.run(svc.get_today_odds())
+
+    assert [g.sportsbook for g in body.book_boards] == ["fanduel", "draftkings"]
+    assert len(body.games) == 1
+    assert body.games[0].sportsbook == "fanduel"
 
 
 def test_merge_odds_by_priority_pinnacle_over_prophetx():
@@ -569,7 +619,7 @@ def test_get_today_odds_prefers_pinnacle(monkeypatch):
             return_value=[],
         ),
         patch.object(
-            svc, "_fetch_sharp_games", return_value=(sharp_games, [])
+            svc, "_fetch_sharp_games", return_value=(sharp_games, [], sharp_games, [])
         ),
     ):
         body = asyncio.run(svc.get_today_odds())
@@ -632,7 +682,7 @@ def test_get_today_odds_prefers_prophetx_when_pinnacle_empty(monkeypatch):
             return_value=[],
         ),
         patch.object(
-            svc, "_fetch_sharp_games", return_value=(sharp_games, [])
+            svc, "_fetch_sharp_games", return_value=(sharp_games, [], sharp_games, [])
         ),
     ):
         body = asyncio.run(svc.get_today_odds())
@@ -673,7 +723,7 @@ def test_get_today_odds_sharp_only_when_snapshots_empty(monkeypatch):
             return_value=[],
         ),
         patch.object(
-            svc, "_fetch_sharp_games", return_value=(sharp_games, [])
+            svc, "_fetch_sharp_games", return_value=(sharp_games, [], sharp_games, [])
         ),
     ):
         body = asyncio.run(svc.get_today_odds())

@@ -1,4 +1,4 @@
-"""MLB matchup odds: Pinnacle → ProphetX → FanDuel → DraftKings."""
+"""MLB matchup odds: Pinnacle → ProphetX → Novig → FanDuel → DraftKings."""
 
 from __future__ import annotations
 
@@ -363,8 +363,10 @@ def merge_pinnacle_prefer_sharp(
     return merge_odds_by_priority(pinnacle, sharp)
 
 
-async def _fetch_sharp_games() -> tuple[list[MlbOddsGame], list[str]]:
-    """Load Sharp DK+FD games; return (games, partial errors)."""
+async def _fetch_sharp_games() -> tuple[
+    list[MlbOddsGame], list[MlbOddsGame], list[MlbOddsGame], list[str]
+]:
+    """Load Sharp FD+DK games; return (fd, dk, merged, partial errors)."""
     dk_result, fd_result = await asyncio.gather(
         fetch_sharp_odds_rows(
             "draftkings", league="mlb", market=MLB_MARKETS
@@ -375,24 +377,27 @@ async def _fetch_sharp_games() -> tuple[list[MlbOddsGame], list[str]]:
         return_exceptions=True,
     )
     errors: list[str] = []
-    dk_games: list[WnbaOddsGame] = []
-    fd_games: list[WnbaOddsGame] = []
+    dk_sharp: list[WnbaOddsGame] = []
+    fd_sharp: list[WnbaOddsGame] = []
     if isinstance(dk_result, BaseException):
         errors.append(f"draftkings: {dk_result}")
     else:
-        dk_games = normalize_sharp_odds(
+        dk_sharp = normalize_sharp_odds(
             dk_result, sportsbook="draftkings", wnba_aliases=False
         )
     if isinstance(fd_result, BaseException):
         errors.append(f"fanduel: {fd_result}")
     else:
-        fd_games = normalize_sharp_odds(
+        fd_sharp = normalize_sharp_odds(
             fd_result, sportsbook="fanduel", wnba_aliases=False
         )
 
-    if not dk_games and not fd_games:
-        return [], errors
-    return _to_mlb_games(merge_odds_prefer_primary(fd_games, dk_games)), errors
+    fd_games = _to_mlb_games(fd_sharp)
+    dk_games = _to_mlb_games(dk_sharp)
+    if not fd_games and not dk_games:
+        return [], [], [], errors
+    sharp_merged = _to_mlb_games(merge_odds_prefer_primary(fd_sharp, dk_sharp))
+    return fd_games, dk_games, sharp_merged, errors
 
 
 def _response_sportsbook(games: list[MlbOddsGame]) -> str:
@@ -418,9 +423,13 @@ async def get_today_odds() -> MlbOddsResponse:
         px_games = normalize_team_odds_rows(px_rows, sportsbook="prophetx")
         novig_rows = fetch_latest_novig_team("mlb")
         novig_games = normalize_team_odds_rows(novig_rows, sportsbook="novig")
-        sharp_games, sharp_errors = await _fetch_sharp_games()
-        games = merge_odds_by_priority(pin_games, px_games, novig_games, sharp_games)
-        book_boards = collect_book_boards(px_games, novig_games, pin_games, sharp_games)
+        fd_games, dk_games, sharp_merged, sharp_errors = await _fetch_sharp_games()
+        games = merge_odds_by_priority(
+            pin_games, px_games, novig_games, sharp_merged
+        )
+        book_boards = collect_book_boards(
+            px_games, novig_games, pin_games, fd_games, dk_games
+        )
 
         error = "; ".join(sharp_errors) if sharp_errors else None
         if not games and sharp_errors:
