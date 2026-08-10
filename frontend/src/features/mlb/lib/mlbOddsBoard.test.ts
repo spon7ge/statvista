@@ -160,6 +160,22 @@ describe("mlbOddsBoard", () => {
     ]);
   });
 
+  it("returns empty when book_boards has no matching matchup", () => {
+    const views = collectMlbOddsBookBoards(
+      {
+        as_of: "2026-08-10T15:00:00Z",
+        sportsbook: "pinnacle",
+        error: null,
+        games: [game({ sportsbook: "pinnacle", total: 7.5 })],
+        book_boards: [game({ away_abbrev: "NYY", home_abbrev: "BOS", total: 8.0 })],
+      },
+      "LAD",
+      "CHC",
+      "2026-08-10",
+    );
+    expect(views).toEqual([]);
+  });
+
   it("falls back to games[] when book_boards empty", () => {
     const views = collectMlbOddsBookBoards(
       {

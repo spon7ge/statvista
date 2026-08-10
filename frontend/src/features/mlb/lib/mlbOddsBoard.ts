@@ -197,17 +197,12 @@ export function collectMlbOddsBookBoards(
   if (!response) return [];
 
   const asOf = response.as_of ?? null;
-  const matchedGames = response.book_boards?.length
+  const games = response.book_boards?.length
     ? filterMlbOddsGamesForMatchup(response.book_boards, awayAbbrev, homeAbbrev, gameDate)
-    : [];
-
-  const games =
-    matchedGames.length > 0
-      ? matchedGames
-      : (() => {
-          const game = findMlbOddsGame(response.games, awayAbbrev, homeAbbrev, gameDate);
-          return game ? [game] : [];
-        })();
+    : (() => {
+        const game = findMlbOddsGame(response.games, awayAbbrev, homeAbbrev, gameDate);
+        return game ? [game] : [];
+      })();
 
   const views: MlbOddsBookBoardView[] = [];
   for (const game of games) {
