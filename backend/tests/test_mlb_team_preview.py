@@ -1,3 +1,9 @@
+from unittest.mock import AsyncMock, patch
+
+import pytest
+from fastapi.testclient import TestClient
+
+from app.domains.mlb.schemas import MlbGameDetail, MlbGameDetailTeam
 from app.domains.mlb.schemas_team_preview import (
     MlbTeamBatterSeasonRow,
     MlbTeamLeaderCard,
@@ -5,6 +11,8 @@ from app.domains.mlb.schemas_team_preview import (
     MlbTeamPreviewResponse,
     MlbTeamPreviewTeam,
 )
+from app.domains.mlb.team_preview import get_mlb_team_preview
+from app.main import app
 from app.providers.mlb_stats.team_player_season import (
     filter_rows_to_roster,
     parse_batter_season_row,
@@ -12,6 +20,8 @@ from app.providers.mlb_stats.team_player_season import (
     sort_batter_rows,
     sort_pitcher_rows,
 )
+
+client = TestClient(app)
 
 
 def test_team_preview_response_constructs():
@@ -129,3 +139,113 @@ def test_filter_rows_to_roster():
     a = parse_batter_season_row("1", {"boxscoreName": "A"}, {"ops": ".8", "gamesPlayed": 1})
     b = parse_batter_season_row("2", {"boxscoreName": "B"}, {"ops": ".9", "gamesPlayed": 1})
     assert [r.player_id for r in filter_rows_to_roster([a, b], {"2"})] == ["2"]
+
+
+def _preview() -> MlbTeamPreviewResponse:
+    return MlbTeamPreviewResponse(
+        side="away",
+        team=MlbTeamPreviewTeam(
+            id="120", abbrev="WSH", name="Washington Nationals", logo_url=None
+        ),
+        batting_leaders=[],
+        pitching_leaders=[],
+        batting_roster=[],
+        pitching_roster=[],
+    )
+
+
+def test_team_preview_ok_no_store():
+    with patch(
+        "app.domains.mlb.routes.get_mlb_team_preview",
+        new=AsyncMock(return_value=_preview()),
+    ):
+        res = client.get("/api/mlb/games/776543/team-preview?side=away")
+    assert res.status_code == 200
+    assert res.headers.get("cache-control") == "no-store"
+    assert res.json()["side"] == "away"
+
+
+def test_team_preview_invalid_side_422():
+    res = client.get("/api/mlb/games/776543/team-preview?side=midwest")
+    assert res.status_code == 422
+
+
+def test_team_preview_lookup_error_404():
+    with patch(
+        "app.domains.mlb.routes.get_mlb_team_preview",
+        new=AsyncMock(side_effect=LookupError("missing")),
+    ):
+        res = client.get("/api/mlb/games/776543/team-preview?side=home")
+    assert res.status_code == 404
+
+
+def _scheduled_detail() -> MlbGameDetail:
+    away = MlbGameDetailTeam(
+        id="120", abbrev="WSH", name="Washington Nationals", score=None, color="#AB0003"
+    )
+    home = MlbGameDetailTeam(
+        id="143", abbrev="PHI", name="Philadelphia Phillies", score=None, color="#E81828"
+    )
+    return MlbGameDetail(
+        mlb_game_pk="776543",
+        status="scheduled",
+        status_label="8:00 PM ET",
+        venue="Nationals Park",
+        away=away,
+        home=home,
+        game_date="2026-08-10",
+        sources=["mlb_stats_api"],
+        fetched_at="2026-08-10T12:00:00+00:00",
+    )
+
+
+@pytest.mark.asyncio
+async def test_get_mlb_team_preview_soft_fails_leaders():
+    batter = MlbTeamBatterSeasonRow(
+        player_id="1",
+        name="C. Smith",
+        g=1,
+        ops=".900",
+        avg=None,
+        obp=None,
+        slg=None,
+        ab=None,
+        r=None,
+        h=None,
+        hr=None,
+        rbi=None,
+        bb=None,
+        so=None,
+        sb=None,
+    )
+    with (
+        patch(
+            "app.domains.mlb.team_preview.get_mlb_game_detail",
+            new=AsyncMock(return_value=_scheduled_detail()),
+        ),
+        patch(
+            "app.domains.mlb.team_preview.fetch_team_leaders",
+            new=AsyncMock(side_effect=RuntimeError("board down")),
+        ),
+        patch(
+            "app.domains.mlb.team_preview.fetch_active_roster_player_ids",
+            new=AsyncMock(return_value={"1"}),
+        ),
+        patch(
+            "app.domains.mlb.team_preview.fetch_team_batter_season_rows",
+            new=AsyncMock(return_value=[batter]),
+        ),
+        patch(
+            "app.domains.mlb.team_preview.fetch_team_pitcher_season_rows",
+            new=AsyncMock(return_value=[]),
+        ),
+        patch(
+            "app.domains.mlb.team_preview.filter_rows_to_roster",
+            side_effect=lambda rows, _ids: rows,
+        ),
+    ):
+        result = await get_mlb_team_preview("776543", "away")
+    assert result.batting_leaders == []
+    assert result.pitching_leaders == []
+    assert len(result.batting_roster) == 1
+    assert result.team.abbrev == "WSH"

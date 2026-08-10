@@ -24,10 +24,12 @@ from app.domains.mlb.schemas import (
     MlbOddsResponse,
     MlbPropsResponse,
     MlbScoreboardResponse,
+    MlbTeamPreviewResponse,
 )
 from app.domains.mlb.schemas_leaders import MlbLeadersResponse
 from app.domains.mlb.schemas_standings import MlbStandingsResponse
 from app.domains.mlb.scoreboard import get_scoreboard_for_date, get_today_scoreboard
+from app.domains.mlb.team_preview import get_mlb_team_preview
 
 logger = logging.getLogger(__name__)
 
@@ -184,6 +186,26 @@ async def mlb_game_detail(game_pk: str, response: Response) -> MlbGameDetail:
         raise HTTPException(
             status_code=502,
             detail="MLB game detail is temporarily unavailable",
+            headers=_NO_STORE,
+        ) from exc
+
+
+@router.get(
+    "/mlb/games/{game_pk}/team-preview",
+    response_model=MlbTeamPreviewResponse,
+)
+async def mlb_team_preview(
+    game_pk: str,
+    response: Response,
+    side: Literal["away", "home"] = Query(...),
+) -> MlbTeamPreviewResponse:
+    response.headers["Cache-Control"] = "no-store"
+    try:
+        return await get_mlb_team_preview(game_pk, side)
+    except LookupError as exc:
+        raise HTTPException(
+            status_code=404,
+            detail="Game not found",
             headers=_NO_STORE,
         ) from exc
 
