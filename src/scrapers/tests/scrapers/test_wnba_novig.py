@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import importlib.util
 import sys
+from typing import Any
 from datetime import datetime
 from pathlib import Path
 from unittest.mock import MagicMock
@@ -244,6 +245,13 @@ def test_extract_props_skips_both_sides_empty() -> None:
     assert nv.extract_props(markets) == []
 
 
+def test_wnba_events_queries_filter_wnba_league() -> None:
+    nv = _load_scraper()
+    for query in (nv._GET_WNBA_EVENTS_QUERY, nv._GET_WNBA_EVENTS_INLINE_QUERY):
+        assert '_eq: "WNBA"' in query
+        assert '_eq: "MLB"' not in query
+
+
 def test_fetch_wnba_events_parses_data(monkeypatch) -> None:
     nv = _load_scraper()
     session = MagicMock()
@@ -263,6 +271,73 @@ def test_fetch_wnba_events_parses_data(monkeypatch) -> None:
     events = nv.fetch_wnba_events(session)
     assert len(events) == 1
     assert events[0]["id"] == "e1"
+
+
+def test_fetch_wnba_events_inline_limit_offset_fallback(monkeypatch) -> None:
+    nv = _load_scraper()
+    session = MagicMock()
+    inline_payload = {
+        "data": {
+            "event": [
+                {
+                    "id": "e1",
+                    "description": "NY @ LV",
+                    "status": "OPEN_PREGAME",
+                    "game": {"league": "WNBA"},
+                },
+            ]
+        }
+    }
+    calls: list[tuple[str, dict[str, Any] | None]] = []
+
+    def fake_graphql(_session, query, variables=None, **_k):
+        calls.append((query, variables))
+        if variables is not None:
+            raise RuntimeError("GraphQL errors: unknown variable limit")
+        return inline_payload
+
+    monkeypatch.setattr(nv, "graphql", fake_graphql)
+    events = nv.fetch_wnba_events(session)
+    assert len(events) == 1
+    assert events[0]["id"] == "e1"
+    assert len(calls) == 2
+    assert calls[0][1] is not None
+    assert calls[1][1] is None
+
+
+def test_fetch_wnba_events_honors_max_events(monkeypatch) -> None:
+    nv = _load_scraper()
+    session = MagicMock()
+    payload = {
+        "data": {
+            "event": [
+                {
+                    "id": "e1",
+                    "description": "NY @ LV",
+                    "status": "OPEN_PREGAME",
+                    "game": {"league": "WNBA"},
+                },
+                {
+                    "id": "e2",
+                    "description": "SEA @ MIN",
+                    "status": "OPEN_INGAME",
+                    "game": {"league": "WNBA"},
+                },
+            ]
+        }
+    }
+    monkeypatch.setattr(nv, "graphql", lambda *_a, **_k: payload)
+    monkeypatch.setenv("NOVIG_MAX_EVENTS", "1")
+    events = nv.fetch_wnba_events(session)
+    assert len(events) == 1
+    assert events[0]["id"] == "e1"
+
+
+def test_event_markets_query_uses_uuid_variable() -> None:
+    nv = _load_scraper()
+    query = nv._GET_EVENT_MARKETS_QUERY
+    assert "$id: uuid!" in query
+    assert "$id: String!" not in query
 
 
 def test_fetch_event_markets_parses_nested(monkeypatch) -> None:
