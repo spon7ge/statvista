@@ -784,7 +784,7 @@ def run() -> None:
             except Exception as exc:
                 logger.error("Selenium fallback failed: %s", exc)
                 sys.exit(1)
-            if events and n_props == 0 and n_team == 0:
+            if n_props == 0 and n_team == 0:
                 logger.error("Selenium fallback returned no usable quotes")
                 sys.exit(1)
         else:

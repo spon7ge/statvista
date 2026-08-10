@@ -444,6 +444,32 @@ def test_run_exits_when_events_have_no_usable_quotes(monkeypatch) -> None:
     assert exc.value.code == 1
 
 
+def test_run_exits_when_selenium_fallback_returns_empty(monkeypatch, tmp_path) -> None:
+    nv = _load_scraper()
+
+    def fail_graphql(_session):
+        raise RuntimeError("GraphQL unavailable")
+
+    monkeypatch.setattr(nv, "_fetch_graphql_snapshots", fail_graphql)
+    monkeypatch.setattr(nv, "fetch_via_selenium", lambda: ([], {}))
+    monkeypatch.setenv("NOVIG_ALLOW_SELENIUM", "1")
+    write_called = False
+
+    def track_write(*_args, **_kwargs):
+        nonlocal write_called
+        write_called = True
+        return ("props.json", "team.json")
+
+    monkeypatch.setattr(nv, "write_snapshots", track_write)
+    monkeypatch.setattr(nv, "_DEFAULT_OUTPUT_DIR", str(tmp_path))
+
+    with pytest.raises(SystemExit) as exc:
+        nv.run()
+    assert exc.value.code == 1
+    assert write_called is False
+    assert list(tmp_path.iterdir()) == []
+
+
 def test_run_writes_snapshots_on_success(monkeypatch, tmp_path) -> None:
     import json
 
