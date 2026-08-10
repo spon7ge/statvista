@@ -45,6 +45,8 @@ export const detail: GameDetail = {
     abbrev: "GS",
     name: "Golden State Valkyries",
     score: 10,
+    record: null,
+    last10: null,
     color: "#37004D",
     logoUrl: null,
   },
@@ -53,6 +55,8 @@ export const detail: GameDetail = {
     abbrev: "PHX",
     name: "Phoenix Mercury",
     score: 9,
+    record: null,
+    last10: null,
     color: "#201747",
     logoUrl: null,
   },
@@ -129,6 +133,8 @@ export const detail: GameDetail = {
   seasonLeaders: null,
   injuries: null,
   boxScore: null,
+  seasonTeamStats: null,
+  gameLeaders: null,
 };
 
 export function buildGameDetailFixture(
@@ -153,6 +159,8 @@ export function buildScheduledDetail(
       abbrev: "MIN",
       name: "Minnesota Lynx",
       score: null,
+      record: null,
+      last10: null,
       color: "#236192",
       logoUrl: null,
     },
@@ -161,6 +169,8 @@ export function buildScheduledDetail(
       abbrev: "TOR",
       name: "Toronto Tempo",
       score: null,
+      record: null,
+      last10: null,
       color: "#B4975A",
       logoUrl: null,
     },
@@ -175,6 +185,8 @@ export function buildScheduledDetail(
     seasonLeaders: null,
     injuries: null,
     boxScore: null,
+    seasonTeamStats: null,
+    gameLeaders: null,
     ...overrides,
   });
 }

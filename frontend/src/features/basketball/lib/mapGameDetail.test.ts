@@ -18,6 +18,8 @@ function buildApiDetail(
       score: 10,
       color: "#37004D",
       logo_url: "https://a.espncdn.com/i/teamlogos/wnba/500-dark/gs.png",
+      record: null,
+      last_10: null,
     },
     home: {
       id: "home1",
@@ -26,7 +28,11 @@ function buildApiDetail(
       score: 9,
       color: "#201747",
       logo_url: "https://a.espncdn.com/i/teamlogos/wnba/500-dark/phx.png",
+      record: null,
+      last_10: null,
     },
+    season_team_stats: null,
+    game_leaders: null,
     fg_made: 6,
     fg_attempted: 16,
     latest_play: {
@@ -85,6 +91,8 @@ describe("mapGameDetail", () => {
         abbrev: "GS",
         name: "Golden State Valkyries",
         score: 10,
+        record: null,
+        last10: null,
         color: "#37004D",
         logoUrl: "https://a.espncdn.com/i/teamlogos/wnba/500-dark/gs.png",
       },
@@ -93,6 +101,8 @@ describe("mapGameDetail", () => {
         abbrev: "PHX",
         name: "Phoenix Mercury",
         score: 9,
+        record: null,
+        last10: null,
         color: "#201747",
         logoUrl: "https://a.espncdn.com/i/teamlogos/wnba/500-dark/phx.png",
       },
@@ -136,6 +146,8 @@ describe("mapGameDetail", () => {
       seasonLeaders: null,
       injuries: null,
       boxScore: null,
+      seasonTeamStats: null,
+      gameLeaders: null,
     });
   });
 
@@ -279,6 +291,8 @@ describe("mapGameDetail", () => {
           score: 10,
           color: "#553987",
           logo_url: null,
+          record: null,
+          last_10: null,
         },
         home: {
           id: "home1",
@@ -287,6 +301,8 @@ describe("mapGameDetail", () => {
           score: 9,
           color: "#E56020",
           logo_url: null,
+          record: null,
+          last_10: null,
         },
       }),
     );
@@ -304,9 +320,108 @@ describe("mapGameDetail", () => {
           score: 10,
           color: "#37004D",
           logo_url: null,
+          record: null,
+          last_10: null,
         },
       }),
     );
     expect(mapped.away.logoUrl).toBeNull();
+  });
+
+  it("maps record, last10, seasonTeamStats, and gameLeaders", () => {
+    const view = mapGameDetail(
+      buildApiDetail({
+        away: {
+          id: "away1",
+          abbrev: "LVA",
+          name: "Las Vegas Aces",
+          score: null,
+          color: "#000000",
+          logo_url: null,
+          record: "22-8",
+          last_10: "7-3",
+        },
+        home: {
+          id: "home1",
+          abbrev: "NY",
+          name: "New York Liberty",
+          score: null,
+          color: "#86CEBC",
+          logo_url: null,
+          record: "20-10",
+          last_10: "6-4",
+        },
+        season_team_stats: {
+          away: {
+            pts: 92,
+            pts_rank: 3,
+            fg_pct: ".460",
+            fg_pct_rank: 4,
+            fg3_pct: ".350",
+            fg3_pct_rank: 5,
+            ft_pct: ".820",
+            ft_pct_rank: 2,
+            reb: 34,
+            reb_rank: 6,
+            ast: 22,
+            ast_rank: 7,
+            stl: 8,
+            stl_rank: 8,
+            blk: 4,
+            blk_rank: 9,
+            to: 13,
+            to_rank: 10,
+          },
+          home: {
+            pts: 88,
+            pts_rank: 5,
+            fg_pct: ".440",
+            fg_pct_rank: 8,
+            fg3_pct: ".330",
+            fg3_pct_rank: 9,
+            ft_pct: ".790",
+            ft_pct_rank: 6,
+            reb: 36,
+            reb_rank: 3,
+            ast: 20,
+            ast_rank: 10,
+            stl: 7,
+            stl_rank: 11,
+            blk: 5,
+            blk_rank: 4,
+            to: 14,
+            to_rank: 12,
+          },
+        },
+        game_leaders: {
+          leaders: [
+            {
+              key: "ppg",
+              label: "PPG",
+              rank: 1,
+              value: "26.6",
+              player_id: "9",
+              last_name: "Wilson",
+              team_abbrev: "LVA",
+              side: "away",
+              headshot_url: null,
+            },
+          ],
+        },
+      }),
+    );
+
+    expect(view.away.record).toBe("22-8");
+    expect(view.away.last10).toBe("7-3");
+    expect(view.seasonTeamStats?.away.pts).toBe(92);
+    expect(view.gameLeaders?.leaders[0].key).toBe("ppg");
+  });
+
+  it("maps null season_team_stats and game_leaders to null", () => {
+    const mapped = mapGameDetail(buildApiDetail());
+    expect(mapped.seasonTeamStats).toBeNull();
+    expect(mapped.gameLeaders).toBeNull();
+    expect(mapped.away.record).toBeNull();
+    expect(mapped.away.last10).toBeNull();
   });
 });

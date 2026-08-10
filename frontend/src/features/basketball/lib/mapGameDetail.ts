@@ -1,6 +1,67 @@
 import type { ApiWnbaGameDetail } from "@/shared/lib/api";
 import { resolveWnbaTeamColor } from "../league/wnbaTeamColors";
-import type { GameDetail } from "./types";
+import type {
+  GameDetail,
+  GameDetailGameLeaders,
+  GameDetailSeasonTeamStatLine,
+} from "./types";
+
+function mapTeam(team: ApiWnbaGameDetail["away"]) {
+  return {
+    id: team.id,
+    abbrev: team.abbrev,
+    name: team.name,
+    score: team.score,
+    record: team.record ?? null,
+    last10: team.last_10 ?? null,
+    color: resolveWnbaTeamColor(team.abbrev, team.color),
+    logoUrl: team.logo_url,
+  };
+}
+
+function mapSeasonTeamStatLine(
+  line: NonNullable<ApiWnbaGameDetail["season_team_stats"]>["away"],
+): GameDetailSeasonTeamStatLine {
+  return {
+    pts: line.pts ?? null,
+    ptsRank: line.pts_rank ?? null,
+    fgPct: line.fg_pct ?? null,
+    fgPctRank: line.fg_pct_rank ?? null,
+    fg3Pct: line.fg3_pct ?? null,
+    fg3PctRank: line.fg3_pct_rank ?? null,
+    ftPct: line.ft_pct ?? null,
+    ftPctRank: line.ft_pct_rank ?? null,
+    reb: line.reb ?? null,
+    rebRank: line.reb_rank ?? null,
+    ast: line.ast ?? null,
+    astRank: line.ast_rank ?? null,
+    stl: line.stl ?? null,
+    stlRank: line.stl_rank ?? null,
+    blk: line.blk ?? null,
+    blkRank: line.blk_rank ?? null,
+    to: line.to ?? null,
+    toRank: line.to_rank ?? null,
+  };
+}
+
+function mapGameLeaders(
+  leaders: ApiWnbaGameDetail["game_leaders"],
+): GameDetailGameLeaders | null {
+  if (!leaders) return null;
+  return {
+    leaders: leaders.leaders.map((leader) => ({
+      key: leader.key,
+      label: leader.label,
+      rank: leader.rank,
+      value: leader.value,
+      playerId: leader.player_id,
+      lastName: leader.last_name,
+      teamAbbrev: leader.team_abbrev,
+      side: leader.side,
+      headshotUrl: leader.headshot_url,
+    })),
+  };
+}
 
 export function mapGameDetail(detail: ApiWnbaGameDetail): GameDetail {
   return {
@@ -9,22 +70,8 @@ export function mapGameDetail(detail: ApiWnbaGameDetail): GameDetail {
     status: detail.status,
     statusLabel: detail.status_label,
     venue: detail.venue,
-    away: {
-      id: detail.away.id,
-      abbrev: detail.away.abbrev,
-      name: detail.away.name,
-      score: detail.away.score,
-      color: resolveWnbaTeamColor(detail.away.abbrev, detail.away.color),
-      logoUrl: detail.away.logo_url,
-    },
-    home: {
-      id: detail.home.id,
-      abbrev: detail.home.abbrev,
-      name: detail.home.name,
-      score: detail.home.score,
-      color: resolveWnbaTeamColor(detail.home.abbrev, detail.home.color),
-      logoUrl: detail.home.logo_url,
-    },
+    away: mapTeam(detail.away),
+    home: mapTeam(detail.home),
     fgMade: detail.fg_made,
     fgAttempted: detail.fg_attempted,
     latestPlay: detail.latest_play
@@ -149,5 +196,12 @@ export function mapGameDetail(detail: ApiWnbaGameDetail): GameDetail {
           })),
         }
       : null,
+    seasonTeamStats: detail.season_team_stats
+      ? {
+          away: mapSeasonTeamStatLine(detail.season_team_stats.away),
+          home: mapSeasonTeamStatLine(detail.season_team_stats.home),
+        }
+      : null,
+    gameLeaders: mapGameLeaders(detail.game_leaders),
   };
 }

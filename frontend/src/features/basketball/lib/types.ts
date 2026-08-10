@@ -5,8 +5,52 @@ export type GameDetailTeam = {
   abbrev: string;
   name: string;
   score: number | null;
+  record: string | null;
+  last10: string | null;
   color: string;
   logoUrl: string | null;
+};
+
+export type GameDetailSeasonTeamStatLine = {
+  pts: number | null;
+  ptsRank: number | null;
+  fgPct: string | null;
+  fgPctRank: number | null;
+  fg3Pct: string | null;
+  fg3PctRank: number | null;
+  ftPct: string | null;
+  ftPctRank: number | null;
+  reb: number | null;
+  rebRank: number | null;
+  ast: number | null;
+  astRank: number | null;
+  stl: number | null;
+  stlRank: number | null;
+  blk: number | null;
+  blkRank: number | null;
+  to: number | null;
+  toRank: number | null;
+};
+
+export type GameDetailSeasonTeamStats = {
+  away: GameDetailSeasonTeamStatLine;
+  home: GameDetailSeasonTeamStatLine;
+};
+
+export type GameDetailGameLeaderCard = {
+  key: "ppg" | "rpg" | "apg";
+  label: string;
+  rank: number | null;
+  value: string;
+  playerId: string;
+  lastName: string;
+  teamAbbrev: string;
+  side: "away" | "home";
+  headshotUrl: string | null;
+};
+
+export type GameDetailGameLeaders = {
+  leaders: GameDetailGameLeaderCard[];
 };
 
 export type GameDetailShot = {
@@ -138,4 +182,6 @@ export type GameDetail = {
   seasonLeaders: GameDetailSeasonLeaders | null;
   injuries: GameDetailInjuries | null;
   boxScore: GameDetailBoxScore | null;
+  seasonTeamStats: GameDetailSeasonTeamStats | null;
+  gameLeaders: GameDetailGameLeaders | null;
 };
