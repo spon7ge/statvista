@@ -100,6 +100,15 @@ function TeamMark({
   );
 }
 
+function formatStatDisplay(value: string | number | null): string {
+  if (value === null || value === "") return "–";
+  if (typeof value === "number") {
+    if (!Number.isFinite(value)) return "–";
+    return Number.isInteger(value) ? String(value) : value.toFixed(1);
+  }
+  return value;
+}
+
 function StatValue({
   side,
   statKey,
@@ -115,7 +124,7 @@ function StatValue({
   isLeader: boolean;
   color: string;
 }) {
-  const display = value ?? "–";
+  const display = formatStatDisplay(value);
 
   return (
     <div

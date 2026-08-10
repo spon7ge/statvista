@@ -125,7 +125,8 @@ def _parse_team_values(
             totals = cat.get("totals") if isinstance(cat.get("totals"), list) else None
             out[field] = _pct_display(totals, value_index, numeric)
         else:
-            out[field] = numeric
+            # Per-game averages (PPG etc.) — one decimal matches ESPN display.
+            out[field] = round(numeric, 1)
     return out
 
 

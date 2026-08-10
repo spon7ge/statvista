@@ -116,6 +116,34 @@ def test_normalize_team_stats_pair_assigns_ranks():
     assert pair.home.fg_pct == "46.5"
 
 
+def test_normalize_team_stats_pair_rounds_averages_to_one_decimal():
+    from app.domains.wnba.team_season_stats import normalize_season_team_stats_pair
+
+    payload = {
+        "categories": [
+            {"names": ["avgPoints", "avgRebounds", "avgAssists"]},
+        ],
+        "teams": [
+            {
+                "team": {"id": "1"},
+                "categories": [{"values": [88.21875, 32.78125, 21.6875]}],
+            },
+            {
+                "team": {"id": "2"},
+                "categories": [{"values": [82.97059, 33.32353, 19.235294]}],
+            },
+        ],
+    }
+    pair = normalize_season_team_stats_pair(payload, away_id="1", home_id="2")
+    assert pair is not None
+    assert pair.away.pts == 88.2
+    assert pair.away.reb == 32.8
+    assert pair.away.ast == 21.7
+    assert pair.home.pts == 83.0
+    assert pair.home.reb == 33.3
+    assert pair.home.ast == 19.2
+
+
 def test_attach_season_team_stats():
     from app.domains.wnba.game_detail import attach_season_team_stats
 

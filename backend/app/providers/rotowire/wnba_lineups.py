@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 ET = ZoneInfo("America/New_York")
 ROTOWIRE_TTL_SECONDS = 180
 
-_ROOT = Path(__file__).resolve().parents[3]
+_ROOT = Path(__file__).resolve().parents[4]
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 

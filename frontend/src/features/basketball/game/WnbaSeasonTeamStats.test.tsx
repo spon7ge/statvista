@@ -134,6 +134,22 @@ describe("WnbaSeasonTeamStats", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("formats fractional averages to one decimal", () => {
+    render(
+      <WnbaSeasonTeamStats
+        detail={{
+          ...detailWithSeasonStats,
+          seasonTeamStats: {
+            away: { ...awayLine, pts: 88.21875, reb: 32.78125 },
+            home: homeLine,
+          },
+        }}
+      />,
+    );
+    expect(screen.getByText("88.2")).toBeInTheDocument();
+    expect(screen.getByText("32.8")).toBeInTheDocument();
+  });
+
   it("hides when seasonTeamStats is null", () => {
     render(
       <WnbaSeasonTeamStats
