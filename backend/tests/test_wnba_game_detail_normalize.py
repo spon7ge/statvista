@@ -208,9 +208,10 @@ def test_normalize_espn_summary_header_shots_plays():
     assert detail.venue == "Mortgage Matchup Center"
     assert detail.away.abbrev == "GS"
     assert detail.away.score == 10
-    assert detail.away.color.startswith("#")
+    assert detail.away.color == "#37004D"
     assert detail.home.abbrev == "PHX"
     assert detail.home.score == 9
+    assert detail.home.color == "#201747"
     assert detail.fg_attempted == 2
     assert detail.fg_made == 1
     assert len(detail.shots) == 2

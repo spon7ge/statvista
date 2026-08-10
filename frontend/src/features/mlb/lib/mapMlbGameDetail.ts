@@ -1,4 +1,5 @@
 import type { ApiMlbGameDetail } from "@/shared/lib/api";
+import { resolveMlbTeamColor } from "../league/mlbTeamColors";
 import type {
   MlbGameDetailView,
   MlbGameLeaders,
@@ -32,7 +33,7 @@ function mapTeam(team: ApiMlbGameDetail["away"]) {
     score: team.score,
     record: team.record,
     last10: team.last_10 ?? null,
-    color: team.color,
+    color: resolveMlbTeamColor(team.abbrev, team.color),
     logoUrl: team.logo_url,
   };
 }

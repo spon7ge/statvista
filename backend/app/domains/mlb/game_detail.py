@@ -42,6 +42,7 @@ from app.domains.mlb.schemas import (
     MlbWinProbabilityStakes,
 )
 from app.domains.mlb.schemas import GameStatus
+from app.domains.mlb.team_colors import team_color as palette_team_color
 from app.providers.espn.mlb_bridge import (
     ESPN_TIMEOUT_SECONDS,
     EspnInjuries,
@@ -112,6 +113,10 @@ def _headshot_url(person_id: int | None) -> str | None:
 
 
 def _team_color(team: dict, *, side: Literal["away", "home"]) -> str:
+    # Stats API feed/live usually omits colors; prefer our primary palette.
+    mapped = palette_team_color(str(team.get("abbreviation") or ""))
+    if mapped:
+        return mapped
     for key in ("primaryColor", "color", "teamColor"):
         raw = team.get(key)
         if isinstance(raw, str) and raw.strip():

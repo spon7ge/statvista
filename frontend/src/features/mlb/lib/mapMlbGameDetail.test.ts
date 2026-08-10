@@ -198,6 +198,35 @@ describe("mapMlbGameDetail", () => {
     expect(mapped.injuries).toBeNull();
   });
 
+  it("resolves team colors to official primaries by abbrev", () => {
+    const mapped = mapMlbGameDetail(
+      buildApiDetail({
+        away: {
+          id: "121",
+          abbrev: "NYM",
+          name: "New York Mets",
+          score: 2,
+          color: "#FF5910",
+          logo_url: null,
+          record: null,
+          last_10: null,
+        },
+        home: {
+          id: "119",
+          abbrev: "LAD",
+          name: "Los Angeles Dodgers",
+          score: 1,
+          color: "#1D4ED8",
+          logo_url: null,
+          record: null,
+          last_10: null,
+        },
+      }),
+    );
+    expect(mapped.away.color).toBe("#002D72");
+    expect(mapped.home.color).toBe("#005A9C");
+  });
+
   it("maps season_team_stats and injuries", () => {
     const view = mapMlbGameDetail(
       buildApiDetail({

@@ -53,8 +53,8 @@ describe("WnbaBroadcastHeader", () => {
 
     const awaySlab = screen.getByTestId("wnba-score-slab-away");
     const homeSlab = screen.getByTestId("wnba-score-slab-home");
-    expect(awaySlab).toHaveStyle({ backgroundColor: "rgb(91, 44, 111)" });
-    expect(homeSlab).toHaveStyle({ backgroundColor: "rgb(229, 96, 32)" });
+    expect(awaySlab).toHaveStyle({ backgroundColor: "rgb(55, 0, 77)" });
+    expect(homeSlab).toHaveStyle({ backgroundColor: "rgb(32, 23, 71)" });
   });
 
   it("calls onTabChange when Box tab is clicked", async () => {

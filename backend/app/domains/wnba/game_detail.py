@@ -29,6 +29,7 @@ from app.domains.wnba.schemas_game_detail import (
     WnbaGameDetail,
 )
 from app.domains.wnba.schemas_scoreboard import GameStatus
+from app.domains.wnba.team_colors import team_color as palette_team_color
 from app.providers.espn.wnba_roster import (
     RosterStarter,
     enrich_starters,
@@ -779,12 +780,17 @@ def normalize_espn_summary(
         t = c.get("team") or {}
         raw = c.get("score")
         score = int(raw) if raw not in (None, "") else None
+        abbrev = str(t.get("abbreviation") or "")
+        # Prefer official primary palette over ESPN secondary accents.
+        color = palette_team_color(abbrev) or _hex_color(
+            t.get("color"), fallback_color
+        )
         return GameDetailTeam(
             id=str(t.get("id") or ""),
-            abbrev=str(t.get("abbreviation") or ""),
+            abbrev=abbrev,
             name=str(t.get("displayName") or ""),
             score=score if status != "scheduled" else None,
-            color=_hex_color(t.get("color"), fallback_color),
+            color=color,
             logo_url=_team_logo_url(t.get("logos")),
         )
 

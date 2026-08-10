@@ -1,4 +1,5 @@
 import type { ApiWnbaGameDetail } from "@/shared/lib/api";
+import { resolveWnbaTeamColor } from "../league/wnbaTeamColors";
 import type { GameDetail } from "./types";
 
 export function mapGameDetail(detail: ApiWnbaGameDetail): GameDetail {
@@ -13,7 +14,7 @@ export function mapGameDetail(detail: ApiWnbaGameDetail): GameDetail {
       abbrev: detail.away.abbrev,
       name: detail.away.name,
       score: detail.away.score,
-      color: detail.away.color,
+      color: resolveWnbaTeamColor(detail.away.abbrev, detail.away.color),
       logoUrl: detail.away.logo_url,
     },
     home: {
@@ -21,7 +22,7 @@ export function mapGameDetail(detail: ApiWnbaGameDetail): GameDetail {
       abbrev: detail.home.abbrev,
       name: detail.home.name,
       score: detail.home.score,
-      color: detail.home.color,
+      color: resolveWnbaTeamColor(detail.home.abbrev, detail.home.color),
       logoUrl: detail.home.logo_url,
     },
     fgMade: detail.fg_made,

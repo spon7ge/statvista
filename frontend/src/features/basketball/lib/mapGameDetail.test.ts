@@ -16,7 +16,7 @@ function buildApiDetail(
       abbrev: "GS",
       name: "Golden State Valkyries",
       score: 10,
-      color: "#5B2C6F",
+      color: "#37004D",
       logo_url: "https://a.espncdn.com/i/teamlogos/wnba/500-dark/gs.png",
     },
     home: {
@@ -24,7 +24,7 @@ function buildApiDetail(
       abbrev: "PHX",
       name: "Phoenix Mercury",
       score: 9,
-      color: "#E56020",
+      color: "#201747",
       logo_url: "https://a.espncdn.com/i/teamlogos/wnba/500-dark/phx.png",
     },
     fg_made: 6,
@@ -85,7 +85,7 @@ describe("mapGameDetail", () => {
         abbrev: "GS",
         name: "Golden State Valkyries",
         score: 10,
-        color: "#5B2C6F",
+        color: "#37004D",
         logoUrl: "https://a.espncdn.com/i/teamlogos/wnba/500-dark/gs.png",
       },
       home: {
@@ -93,7 +93,7 @@ describe("mapGameDetail", () => {
         abbrev: "PHX",
         name: "Phoenix Mercury",
         score: 9,
-        color: "#E56020",
+        color: "#201747",
         logoUrl: "https://a.espncdn.com/i/teamlogos/wnba/500-dark/phx.png",
       },
       fgMade: 6,
@@ -269,6 +269,31 @@ describe("mapGameDetail", () => {
     expect(mapped.injuries).toBeNull();
   });
 
+  it("resolves team colors to official primaries by abbrev", () => {
+    const mapped = mapGameDetail(
+      buildApiDetail({
+        away: {
+          id: "away1",
+          abbrev: "GS",
+          name: "Golden State Valkyries",
+          score: 10,
+          color: "#553987",
+          logo_url: null,
+        },
+        home: {
+          id: "home1",
+          abbrev: "PHX",
+          name: "Phoenix Mercury",
+          score: 9,
+          color: "#E56020",
+          logo_url: null,
+        },
+      }),
+    );
+    expect(mapped.away.color).toBe("#37004D");
+    expect(mapped.home.color).toBe("#201747");
+  });
+
   it("maps null logo_url to null logoUrl", () => {
     const mapped = mapGameDetail(
       buildApiDetail({
@@ -277,7 +302,7 @@ describe("mapGameDetail", () => {
           abbrev: "GS",
           name: "Golden State Valkyries",
           score: 10,
-          color: "#5B2C6F",
+          color: "#37004D",
           logo_url: null,
         },
       }),

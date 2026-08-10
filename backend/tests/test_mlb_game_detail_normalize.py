@@ -128,6 +128,15 @@ def test_normalize_plays_box_and_hits():
     assert outcomes & {"Single", "Double", "Triple", "HR", "Lineout", "Flyout", "Groundout", "Pop Out"}
 
 
+def test_normalize_uses_official_primary_team_colors():
+    detail = normalize_mlb_live_feed(
+        _payload(), game_pk="776543", fetched_at="2026-08-02T18:00:00+00:00"
+    )
+    assert detail.away.abbrev == "BOS"
+    assert detail.away.color == "#BD3039"
+    assert detail.home.abbrev == "LAD"
+    assert detail.home.color == "#005A9C"
+
 def test_normalize_final_additions_from_mutated_payload():
     payload = _payload()
     payload["gameData"].setdefault("datetime", {})
