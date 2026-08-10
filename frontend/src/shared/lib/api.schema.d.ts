@@ -755,10 +755,14 @@ export interface components {
             color: string;
             /** Id */
             id: string;
+            /** Last 10 */
+            last_10: string | null;
             /** Logo Url */
             logo_url: string | null;
             /** Name */
             name: string;
+            /** Record */
+            record: string | null;
             /** Score */
             score: number | null;
         };
@@ -2430,6 +2434,7 @@ export interface components {
             fg_attempted: number;
             /** Fg Made */
             fg_made: number;
+            game_leaders?: components["schemas"]["WnbaGameLeaders"] | null;
             home: components["schemas"]["GameDetailTeam"];
             injuries: components["schemas"]["GameDetailInjuries"] | null;
             latest_play: components["schemas"]["GameDetailLatestPlay"] | null;
@@ -2444,6 +2449,7 @@ export interface components {
             plays: components["schemas"]["GameDetailPlay"][];
             projected_starters: components["schemas"]["GameDetailProjectedStarters"] | null;
             season_leaders: components["schemas"]["GameDetailSeasonLeaders"] | null;
+            season_team_stats?: components["schemas"]["WnbaSeasonTeamStatsPair"] | null;
             /** Shots */
             shots: components["schemas"]["GameDetailShot"][];
             /**
@@ -2456,6 +2462,38 @@ export interface components {
             /** Venue */
             venue: string | null;
             win_probability: components["schemas"]["GameDetailWinProbability"] | null;
+        };
+        /** WnbaGameLeaderCard */
+        WnbaGameLeaderCard: {
+            /** Headshot Url */
+            headshot_url: string | null;
+            /**
+             * Key
+             * @enum {string}
+             */
+            key: "ppg" | "rpg" | "apg";
+            /** Label */
+            label: string;
+            /** Last Name */
+            last_name: string;
+            /** Player Id */
+            player_id: string;
+            /** Rank */
+            rank: number | null;
+            /**
+             * Side
+             * @enum {string}
+             */
+            side: "away" | "home";
+            /** Team Abbrev */
+            team_abbrev: string;
+            /** Value */
+            value: string;
+        };
+        /** WnbaGameLeaders */
+        WnbaGameLeaders: {
+            /** Leaders */
+            leaders: components["schemas"]["WnbaGameLeaderCard"][];
         };
         /** WnbaLeaderCategory */
         WnbaLeaderCategory: {
@@ -2673,6 +2711,50 @@ export interface components {
             fetched_at: string;
             /** Games */
             games: components["schemas"]["WnbaGame"][];
+        };
+        /** WnbaSeasonTeamStatLine */
+        WnbaSeasonTeamStatLine: {
+            /** Ast */
+            ast: number | null;
+            /** Ast Rank */
+            ast_rank: number | null;
+            /** Blk */
+            blk: number | null;
+            /** Blk Rank */
+            blk_rank: number | null;
+            /** Fg3 Pct */
+            fg3_pct: string | null;
+            /** Fg3 Pct Rank */
+            fg3_pct_rank: number | null;
+            /** Fg Pct */
+            fg_pct: string | null;
+            /** Fg Pct Rank */
+            fg_pct_rank: number | null;
+            /** Ft Pct */
+            ft_pct: string | null;
+            /** Ft Pct Rank */
+            ft_pct_rank: number | null;
+            /** Pts */
+            pts: number | null;
+            /** Pts Rank */
+            pts_rank: number | null;
+            /** Reb */
+            reb: number | null;
+            /** Reb Rank */
+            reb_rank: number | null;
+            /** Stl */
+            stl: number | null;
+            /** Stl Rank */
+            stl_rank: number | null;
+            /** To */
+            to: number | null;
+            /** To Rank */
+            to_rank: number | null;
+        };
+        /** WnbaSeasonTeamStatsPair */
+        WnbaSeasonTeamStatsPair: {
+            away: components["schemas"]["WnbaSeasonTeamStatLine"];
+            home: components["schemas"]["WnbaSeasonTeamStatLine"];
         };
         /** WnbaStandingsConference */
         WnbaStandingsConference: {

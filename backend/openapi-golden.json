@@ -506,6 +506,17 @@
             "title": "Id",
             "type": "string"
           },
+          "last_10": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last 10"
+          },
           "logo_url": {
             "anyOf": [
               {
@@ -520,6 +531,17 @@
           "name": {
             "title": "Name",
             "type": "string"
+          },
+          "record": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Record"
           },
           "score": {
             "anyOf": [
@@ -539,7 +561,9 @@
           "name",
           "score",
           "color",
-          "logo_url"
+          "logo_url",
+          "record",
+          "last_10"
         ],
         "title": "GameDetailTeam",
         "type": "object"
@@ -7008,6 +7032,16 @@
             "title": "Fg Made",
             "type": "integer"
           },
+          "game_leaders": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WnbaGameLeaders"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "home": {
             "$ref": "#/components/schemas/GameDetailTeam"
           },
@@ -7068,6 +7102,16 @@
             "anyOf": [
               {
                 "$ref": "#/components/schemas/GameDetailSeasonLeaders"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "season_team_stats": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WnbaSeasonTeamStatsPair"
               },
               {
                 "type": "null"
@@ -7138,6 +7182,98 @@
           "fetched_at"
         ],
         "title": "WnbaGameDetail",
+        "type": "object"
+      },
+      "WnbaGameLeaderCard": {
+        "properties": {
+          "headshot_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Headshot Url"
+          },
+          "key": {
+            "enum": [
+              "ppg",
+              "rpg",
+              "apg"
+            ],
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "last_name": {
+            "title": "Last Name",
+            "type": "string"
+          },
+          "player_id": {
+            "title": "Player Id",
+            "type": "string"
+          },
+          "rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rank"
+          },
+          "side": {
+            "enum": [
+              "away",
+              "home"
+            ],
+            "title": "Side",
+            "type": "string"
+          },
+          "team_abbrev": {
+            "title": "Team Abbrev",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "rank",
+          "value",
+          "player_id",
+          "last_name",
+          "team_abbrev",
+          "side",
+          "headshot_url"
+        ],
+        "title": "WnbaGameLeaderCard",
+        "type": "object"
+      },
+      "WnbaGameLeaders": {
+        "properties": {
+          "leaders": {
+            "items": {
+              "$ref": "#/components/schemas/WnbaGameLeaderCard"
+            },
+            "title": "Leaders",
+            "type": "array"
+          }
+        },
+        "required": [
+          "leaders"
+        ],
+        "title": "WnbaGameLeaders",
         "type": "object"
       },
       "WnbaLeaderCategory": {
@@ -7931,6 +8067,246 @@
           "fetched_at"
         ],
         "title": "WnbaScoreboardResponse",
+        "type": "object"
+      },
+      "WnbaSeasonTeamStatLine": {
+        "properties": {
+          "ast": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ast"
+          },
+          "ast_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ast Rank"
+          },
+          "blk": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Blk"
+          },
+          "blk_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Blk Rank"
+          },
+          "fg3_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fg3 Pct"
+          },
+          "fg3_pct_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fg3 Pct Rank"
+          },
+          "fg_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fg Pct"
+          },
+          "fg_pct_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fg Pct Rank"
+          },
+          "ft_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ft Pct"
+          },
+          "ft_pct_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ft Pct Rank"
+          },
+          "pts": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pts"
+          },
+          "pts_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pts Rank"
+          },
+          "reb": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reb"
+          },
+          "reb_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reb Rank"
+          },
+          "stl": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stl"
+          },
+          "stl_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stl Rank"
+          },
+          "to": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "To"
+          },
+          "to_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "To Rank"
+          }
+        },
+        "required": [
+          "pts",
+          "fg_pct",
+          "fg3_pct",
+          "ft_pct",
+          "reb",
+          "ast",
+          "stl",
+          "blk",
+          "to",
+          "pts_rank",
+          "fg_pct_rank",
+          "fg3_pct_rank",
+          "ft_pct_rank",
+          "reb_rank",
+          "ast_rank",
+          "stl_rank",
+          "blk_rank",
+          "to_rank"
+        ],
+        "title": "WnbaSeasonTeamStatLine",
+        "type": "object"
+      },
+      "WnbaSeasonTeamStatsPair": {
+        "properties": {
+          "away": {
+            "$ref": "#/components/schemas/WnbaSeasonTeamStatLine"
+          },
+          "home": {
+            "$ref": "#/components/schemas/WnbaSeasonTeamStatLine"
+          }
+        },
+        "required": [
+          "away",
+          "home"
+        ],
+        "title": "WnbaSeasonTeamStatsPair",
         "type": "object"
       },
       "WnbaStandingsConference": {
