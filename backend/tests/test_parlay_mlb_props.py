@@ -21,6 +21,13 @@ _FIXTURE = (
 )
 
 
+@pytest.fixture(autouse=True)
+def _clear_parlay_mlb_cache(monkeypatch):
+    from app.providers.parlay import mlb_props as mod
+
+    monkeypatch.setattr(mod, "_cache", {"expires_at": 0.0, "value": None})
+
+
 def _fixture_rows() -> list[dict]:
     return json.loads(_FIXTURE.read_text(encoding="utf-8"))
 
@@ -101,12 +108,22 @@ async def test_fetch_empty_list_is_available_empty():
 
 @pytest.mark.asyncio
 async def test_fetch_calls_normalize_after_client():
-    with patch(
-        "app.providers.parlay.mlb_props.parlay_get",
-        new=AsyncMock(return_value=_fixture_rows()),
-    ):
+    mock_get = AsyncMock(return_value=_fixture_rows())
+    with patch("app.providers.parlay.mlb_props.parlay_get", new=mock_get):
         out = await fetch_mlb_parlay_props_normalized()
 
     assert out.unavailable is False
     assert "draftkings" in out.book_indexes
     assert any(r["player_name"] == "Shohei Ohtani" for r in out.prizepicks_board)
+    assert mock_get.await_args.kwargs["timeout"] == 45.0
+
+
+@pytest.mark.asyncio
+async def test_fetch_caches_successful_normalize():
+    mock_get = AsyncMock(return_value=_fixture_rows())
+    with patch("app.providers.parlay.mlb_props.parlay_get", new=mock_get):
+        first = await fetch_mlb_parlay_props_normalized()
+        second = await fetch_mlb_parlay_props_normalized()
+
+    assert first is second
+    assert mock_get.await_count == 1

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import time
 from dataclasses import dataclass
 from typing import Any
 
@@ -21,6 +22,12 @@ SideIndex = dict[SideKey, dict[str, Any]]
 
 SPORT_KEY = "baseball_mlb"
 PROPS_LIMIT = 10000
+# Full-slate MLB props (58 markets × up to 10k rows) routinely takes 8–15s;
+# 12s was racing ReadTimeout under normal Parlay latency.
+FETCH_TIMEOUT_SECONDS = 45.0
+CACHE_TTL_SECONDS = 60.0
+
+_cache: dict[str, Any] = {"expires_at": 0.0, "value": None}
 
 _ALLOWED_BOOKS = frozenset({"prizepicks", "draftkings", "fanduel"})
 _SCHEMA_BOOK_KEYS: tuple[str, ...] = ("draftkings", "fanduel")
@@ -216,9 +223,15 @@ def normalize_parlay_mlb_props(rows: list[dict[str, Any]]) -> ParlayMlbNormalize
 
 
 async def fetch_mlb_parlay_props_normalized(
-    *, timeout: float = 12.0
+    *, timeout: float = FETCH_TIMEOUT_SECONDS
 ) -> ParlayMlbNormalized:
     """Fetch Parlay MLB props and normalize. Soft-fails to empty on error."""
+    now = time.monotonic()
+    cached = _cache.get("value")
+    expires_at = float(_cache.get("expires_at") or 0.0)
+    if isinstance(cached, ParlayMlbNormalized) and now < expires_at:
+        return cached
+
     try:
         payload = await parlay_get(
             f"/sports/{SPORT_KEY}/props",
@@ -241,4 +254,8 @@ async def fetch_mlb_parlay_props_normalized(
     ]
     if not rows:
         return _empty(unavailable=False)
-    return normalize_parlay_mlb_props(rows)
+
+    out = normalize_parlay_mlb_props(rows)
+    _cache["value"] = out
+    _cache["expires_at"] = time.monotonic() + CACHE_TTL_SECONDS
+    return out

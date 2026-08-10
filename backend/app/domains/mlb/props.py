@@ -50,6 +50,7 @@ from app.domains.mlb.schemas_props import (
 from app.providers.espn.mlb_roster import get_mlb_player_index
 from app.providers.espn.wnba_roster import norm_player_name
 from app.providers.parlay.mlb_props import (
+    FETCH_TIMEOUT_SECONDS,
     ParlayMlbNormalized,
     fetch_mlb_parlay_props_normalized,
 )
@@ -57,7 +58,6 @@ from app.providers.parlay.mlb_props import (
 logger = logging.getLogger(__name__)
 
 CACHE_TTL_SECONDS = 15 * 60
-FETCH_TIMEOUT_SECONDS = 12.0
 
 _VALID_SIDES: tuple[str, ...] = ("over", "under")
 
