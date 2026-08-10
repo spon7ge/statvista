@@ -311,6 +311,54 @@ describe("fetchMlbTeamPreview", () => {
   });
 });
 
+describe("fetchWnbaTeamPreview", () => {
+  beforeEach(() => {
+    vi.resetModules();
+    fetchMock.mockReset();
+    vi.stubGlobal("fetch", fetchMock);
+  });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
+  });
+
+  it("hits team-preview with side", async () => {
+    vi.stubEnv("VITE_API_BASE_URL", undefined);
+    fetchMock.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        side: "away",
+        team: {
+          id: "16",
+          abbrev: "MIN",
+          name: "Minnesota Lynx",
+          logo_url: null,
+        },
+        leaders: [],
+        roster: [],
+      }),
+    });
+
+    const { fetchWnbaTeamPreview } = await import("./api");
+    await fetchWnbaTeamPreview({ espnEventId: "401734891", side: "away" });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/wnba/games/401734891/team-preview?side=away",
+      expect.objectContaining({ cache: "no-store" }),
+    );
+  });
+
+  it("throws when the response is not ok", async () => {
+    vi.stubEnv("VITE_API_BASE_URL", undefined);
+    fetchMock.mockResolvedValue({ ok: false, status: 502 });
+
+    const { fetchWnbaTeamPreview } = await import("./api");
+    await expect(
+      fetchWnbaTeamPreview({ espnEventId: "401734891", side: "home" }),
+    ).rejects.toThrow("WNBA team preview request failed: 502");
+  });
+});
+
 describe("fetchMlbFutures", () => {
   beforeEach(() => {
     vi.resetModules();

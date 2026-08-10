@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useWnbaOdds } from "@/features/basketball/hooks/useWnbaOdds";
+import { useWnbaTeamPreview } from "@/features/basketball/hooks/useWnbaTeamPreview";
 import { collectWnbaOddsBookBoards } from "../lib/wnbaOddsBoard";
 import type { GameDetail } from "../lib/types";
 import { InjuryReport } from "./InjuryReport";
@@ -13,6 +14,7 @@ import { WnbaGameInfo } from "./WnbaGameInfo";
 import { WnbaGameLeaders } from "./WnbaGameLeaders";
 import { WnbaGameOddsBoard } from "./WnbaGameOddsBoard";
 import { WnbaSeasonTeamStats } from "./WnbaSeasonTeamStats";
+import { WnbaTeamPreview } from "./WnbaTeamPreview";
 
 function PlaceholderPanel({
   testId,
@@ -28,7 +30,7 @@ function PlaceholderPanel({
   );
 }
 
-/** Scheduled game: pregame tabs + two-column Preview (Away/Home/Props placeholders). */
+/** Scheduled game: pregame tabs + two-column Preview; Away/Home team preview. */
 export function WnbaPregameCenter({ detail }: { detail: GameDetail }) {
   const [activeTab, setActiveTab] = useState<PregameTab>("preview");
   const oddsQuery = useWnbaOdds();
@@ -37,6 +39,18 @@ export function WnbaPregameCenter({ detail }: { detail: GameDetail }) {
     detail.away.abbrev,
     detail.home.abbrev,
   );
+
+  const awayPreview = useWnbaTeamPreview({
+    espnEventId: detail.espnEventId,
+    side: "away",
+    enabled: activeTab === "away",
+  });
+  const homePreview = useWnbaTeamPreview({
+    espnEventId: detail.espnEventId,
+    side: "home",
+    enabled: activeTab === "home",
+  });
+  const teamPreviewQuery = activeTab === "home" ? homePreview : awayPreview;
 
   return (
     <div data-testid="wnba-pregame-center" className="space-y-4">
@@ -77,15 +91,13 @@ export function WnbaPregameCenter({ detail }: { detail: GameDetail }) {
               <InjuryReport detail={detail} />
             </div>
           </div>
-        ) : activeTab === "away" ? (
-          <PlaceholderPanel
-            testId="wnba-pregame-away-placeholder"
-            label="Away preview coming soon"
-          />
-        ) : activeTab === "home" ? (
-          <PlaceholderPanel
-            testId="wnba-pregame-home-placeholder"
-            label="Home preview coming soon"
+        ) : activeTab === "away" || activeTab === "home" ? (
+          <WnbaTeamPreview
+            data={teamPreviewQuery.data ?? null}
+            isPending={teamPreviewQuery.isPending}
+            error={
+              teamPreviewQuery.isError ? "Failed to load team preview" : null
+            }
           />
         ) : (
           <PlaceholderPanel

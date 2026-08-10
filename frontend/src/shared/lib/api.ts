@@ -49,6 +49,12 @@ export type ApiWnbaFuturesResponse = Schemas["WnbaFuturesResponse"];
 export type ApiWnbaPlayerAverages = Schemas["WnbaPlayerAverages"];
 export type ApiWnbaPlayerGame = Schemas["WnbaPlayerGame"];
 export type ApiWnbaPlayerResponse = Schemas["WnbaPlayerResponse"];
+export type ApiWnbaTeamPreviewResponse = Schemas["WnbaTeamPreviewResponse"];
+
+export type WnbaTeamPreviewParams = {
+  espnEventId: string;
+  side: "away" | "home";
+};
 
 export type ApiMlbTeam = Schemas["MlbTeam"];
 export type ApiMlbGame = Schemas["MlbGame"];
@@ -209,6 +215,21 @@ export async function fetchWnbaPlayer(
   });
   if (!res.ok) {
     throw new Error(`Player request failed: ${res.status}`);
+  }
+  return res.json();
+}
+
+export async function fetchWnbaTeamPreview({
+  espnEventId,
+  side,
+}: WnbaTeamPreviewParams): Promise<ApiWnbaTeamPreviewResponse> {
+  const qs = new URLSearchParams({ side });
+  const res = await fetch(
+    `${API_BASE}/api/wnba/games/${encodeURIComponent(espnEventId)}/team-preview?${qs}`,
+    { headers: { Accept: "application/json" }, cache: "no-store" },
+  );
+  if (!res.ok) {
+    throw new Error(`WNBA team preview request failed: ${res.status}`);
   }
   return res.json();
 }

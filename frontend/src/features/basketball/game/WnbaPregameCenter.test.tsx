@@ -1,8 +1,11 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import type { ApiWnbaOddsResponse } from "@/shared/lib/api";
+import type {
+  ApiWnbaOddsResponse,
+  ApiWnbaTeamPreviewResponse,
+} from "@/shared/lib/api";
 import { buildScheduledDetail } from "../lib/testFixtures";
 import type { GameDetailGameLeaders, GameDetailSeasonTeamStatLine } from "../lib/types";
 import { WnbaPregameCenter } from "./WnbaPregameCenter";
@@ -12,9 +15,31 @@ const useWnbaOdds = vi.fn(() => ({
   isPending: false,
 }));
 
+const fetchWnbaTeamPreview = vi.fn();
+
 vi.mock("@/features/basketball/hooks/useWnbaOdds", () => ({
   useWnbaOdds: (...args: unknown[]) => useWnbaOdds(...args),
 }));
+
+vi.mock("@/shared/lib/api", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/shared/lib/api")>();
+  return {
+    ...actual,
+    fetchWnbaTeamPreview: (...args: unknown[]) => fetchWnbaTeamPreview(...args),
+  };
+});
+
+const emptyTeamPreview: ApiWnbaTeamPreviewResponse = {
+  side: "away",
+  team: {
+    id: "16",
+    abbrev: "MIN",
+    name: "Minnesota Lynx",
+    logo_url: null,
+  },
+  leaders: [],
+  roster: [],
+};
 
 const nullRanks = {
   ptsRank: null,
@@ -142,6 +167,8 @@ describe("WnbaPregameCenter", () => {
   beforeEach(() => {
     useWnbaOdds.mockReset();
     useWnbaOdds.mockReturnValue({ data: null, isPending: false });
+    fetchWnbaTeamPreview.mockReset();
+    fetchWnbaTeamPreview.mockResolvedValue(emptyTeamPreview);
   });
 
   it("uses pregame broadcast header with Preview tab selected by default", () => {
@@ -196,26 +223,84 @@ describe("WnbaPregameCenter", () => {
     expect(screen.queryByText(/Shot chart/i)).not.toBeInTheDocument();
   });
 
-  it("shows placeholder panels for Away, Home, and Props tabs", async () => {
+  it("does not fetch team preview on Preview tab", async () => {
+    renderWithClient(<WnbaPregameCenter detail={scheduledWithPreview} />);
+    expect(screen.getByTestId("wnba-preview-left-column")).toBeInTheDocument();
+    await waitFor(() => expect(fetchWnbaTeamPreview).not.toHaveBeenCalled());
+  });
+
+  it("loads team preview on Away tab", async () => {
+    fetchWnbaTeamPreview.mockResolvedValue({
+      ...emptyTeamPreview,
+      side: "away",
+      leaders: [
+        {
+          key: "ppg",
+          label: "PPG",
+          rank: 1,
+          value: "26.6",
+          player_id: "1",
+          last_name: "Collier",
+          headshot_url: null,
+        },
+      ],
+    });
     const user = userEvent.setup();
     renderWithClient(<WnbaPregameCenter detail={scheduledWithPreview} />);
 
     await user.click(
       screen.getByRole("tab", { name: scheduledWithPreview.away.name }),
     );
-    expect(screen.getByTestId("wnba-pregame-away-placeholder")).toBeInTheDocument();
+
+    expect(await screen.findByTestId("wnba-team-preview")).toBeInTheDocument();
+    expect(fetchWnbaTeamPreview).toHaveBeenCalledWith({
+      espnEventId: scheduledWithPreview.espnEventId,
+      side: "away",
+    });
+    expect(
+      screen.queryByTestId("wnba-pregame-away-placeholder"),
+    ).not.toBeInTheDocument();
     expect(
       screen.queryByTestId("wnba-preview-left-column"),
     ).not.toBeInTheDocument();
+  });
+
+  it("loads team preview on Home tab", async () => {
+    fetchWnbaTeamPreview.mockResolvedValue({
+      ...emptyTeamPreview,
+      side: "home",
+      team: {
+        id: "5",
+        abbrev: "NYL",
+        name: "New York Liberty",
+        logo_url: null,
+      },
+    });
+    const user = userEvent.setup();
+    renderWithClient(<WnbaPregameCenter detail={scheduledWithPreview} />);
 
     await user.click(
       screen.getByRole("tab", { name: scheduledWithPreview.home.name }),
     );
-    expect(screen.getByTestId("wnba-pregame-home-placeholder")).toBeInTheDocument();
+
+    expect(await screen.findByTestId("wnba-team-preview")).toBeInTheDocument();
+    expect(fetchWnbaTeamPreview).toHaveBeenCalledWith({
+      espnEventId: scheduledWithPreview.espnEventId,
+      side: "home",
+    });
+    expect(
+      screen.queryByTestId("wnba-pregame-home-placeholder"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("shows Props placeholder and does not fetch team preview", async () => {
+    const user = userEvent.setup();
+    renderWithClient(<WnbaPregameCenter detail={scheduledWithPreview} />);
 
     await user.click(screen.getByRole("tab", { name: "Props" }));
     expect(
       screen.getByTestId("wnba-pregame-props-placeholder"),
     ).toBeInTheDocument();
+    await waitFor(() => expect(fetchWnbaTeamPreview).not.toHaveBeenCalled());
   });
 });
