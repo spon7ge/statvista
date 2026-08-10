@@ -185,7 +185,12 @@ function colWidth(col: string): string {
   if (col === "AVG" || col === "OBP" || col === "SLG" || col === "OPS") {
     return "w-12 shrink-0";
   }
-  if (col === "ERA" || col === "WHIP" || col === "IP" || col === "RBI") {
+  // IP needs room for triple-digit values ("130.1"); w-11 overflows into Hits
+  // and reads like extra decimal places.
+  if (col === "IP") {
+    return "w-14 shrink-0";
+  }
+  if (col === "ERA" || col === "WHIP" || col === "RBI") {
     return "w-11 shrink-0";
   }
   return "w-9 shrink-0";
