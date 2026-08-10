@@ -230,3 +230,115 @@ def test_get_today_odds_merges_pinnacle_and_sharp():
     assert atl.spread_line == -1.5
     was = next(g for g in body.games if g.home_abbrev == "WAS")
     assert was.sportsbook == "draftkings"
+
+
+def test_get_today_odds_book_boards_order_px_novig_pin():
+    pin_rows = [
+        {
+            "away_team": "Seattle Storm",
+            "home_team": "Atlanta Dream",
+            "start_time": "2026-08-10T23:00:00Z",
+            "market_type": "spread",
+            "side": "home",
+            "team": "Atlanta Dream",
+            "points": -2.5,
+            "american_price": -110,
+        },
+    ]
+    px_rows = [
+        {
+            "away_team": "Seattle Storm",
+            "home_team": "Atlanta Dream",
+            "start_time": "2026-08-10T23:00:00Z",
+            "market_type": "total",
+            "side": "over",
+            "team": None,
+            "points": 160.5,
+            "american_price": -105,
+        },
+    ]
+    novig_rows = [
+        {
+            "away_team": "Seattle Storm",
+            "home_team": "Atlanta Dream",
+            "start_time": "2026-08-10T23:00:00Z",
+            "market_type": "spread",
+            "side": "away",
+            "team": "Seattle Storm",
+            "points": 3.0,
+            "american_price": -108,
+        },
+    ]
+
+    with (
+        patch(
+            "app.providers.pinnacle.team_odds.fetch_latest_pinnacle_team",
+            return_value=pin_rows,
+        ),
+        patch(
+            "app.providers.pinnacle.team_odds.fetch_latest_prophetx_team",
+            return_value=px_rows,
+        ),
+        patch(
+            "app.providers.pinnacle.team_odds.fetch_latest_novig_team",
+            return_value=novig_rows,
+        ),
+        patch.object(svc, "_fetch_sharp_games", return_value=([], [])),
+    ):
+        body = __import__("asyncio").run(svc.get_today_odds())
+
+    assert [g.sportsbook for g in body.book_boards] == [
+        "prophetx",
+        "novig",
+        "pinnacle",
+    ]
+    assert all(
+        g.sportsbook not in {"draftkings", "fanduel"} for g in body.book_boards
+    )
+
+
+def test_get_today_odds_book_boards_omits_failed_source():
+    pin_rows = [
+        {
+            "away_team": "Seattle Storm",
+            "home_team": "Atlanta Dream",
+            "start_time": "2026-08-10T23:00:00Z",
+            "market_type": "total",
+            "side": "over",
+            "team": None,
+            "points": 161.0,
+            "american_price": -110,
+        },
+    ]
+    novig_rows = [
+        {
+            "away_team": "Seattle Storm",
+            "home_team": "Atlanta Dream",
+            "start_time": "2026-08-10T23:00:00Z",
+            "market_type": "total",
+            "side": "over",
+            "team": None,
+            "points": 160.5,
+            "american_price": -105,
+        },
+    ]
+
+    with (
+        patch(
+            "app.providers.pinnacle.team_odds.fetch_latest_pinnacle_team",
+            return_value=pin_rows,
+        ),
+        patch(
+            "app.providers.pinnacle.team_odds.fetch_latest_prophetx_team",
+            side_effect=RuntimeError("px down"),
+        ),
+        patch(
+            "app.providers.pinnacle.team_odds.fetch_latest_novig_team",
+            return_value=novig_rows,
+        ),
+        patch.object(svc, "_fetch_sharp_games", return_value=([], [])),
+    ):
+        body = __import__("asyncio").run(svc.get_today_odds())
+
+    assert [g.sportsbook for g in body.book_boards] == ["novig", "pinnacle"]
+

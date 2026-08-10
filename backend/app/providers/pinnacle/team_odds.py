@@ -15,13 +15,25 @@ from app.providers.sharp.odds import (
     merge_odds_prefer_primary,
     normalize_sharp_odds,
 )
-from app.core.odds_snapshots import fetch_latest_pinnacle_team
+from app.core.odds_snapshots import (
+    fetch_latest_novig_team,
+    fetch_latest_pinnacle_team,
+    fetch_latest_prophetx_team,
+)
 from app.core.wnba_abbrevs import abbrev_from_team_name, canonical_abbrev
 
 logger = logging.getLogger(__name__)
 
 LA = ZoneInfo("America/Los_Angeles")
 CACHE_TTL_SECONDS = 45.0
+_BOOK_BOARD_ORDER = ("prophetx", "novig", "pinnacle")
+_MARKET_KIND = {
+    "moneyline": "moneyline",
+    "spread": "spread",
+    "run_line": "spread",
+    "total": "total",
+    "total_runs": "total",
+}
 
 _cache: dict[str, Any] = {}
 
@@ -93,8 +105,12 @@ def _int_price(raw: Any) -> int | None:
         return None
 
 
-def normalize_pinnacle_team_rows(rows: list[dict[str, Any]]) -> list[WnbaOddsGame]:
-    """Collapse Pinnacle team snapshot rows into one game with favorite spread + total."""
+def normalize_team_odds_rows(
+    rows: list[dict[str, Any]],
+    *,
+    sportsbook: str,
+) -> list[WnbaOddsGame]:
+    """Collapse team snapshot rows into one game with favorite spread + total."""
     by_matchup: dict[tuple[str, str, str], dict[str, Any]] = {}
 
     for row in rows:
@@ -114,7 +130,9 @@ def normalize_pinnacle_team_rows(rows: list[dict[str, Any]]) -> list[WnbaOddsGam
             },
         )
 
-        market = str(row.get("market_type") or "").lower()
+        market = _MARKET_KIND.get(str(row.get("market_type") or "").lower())
+        if market is None:
+            continue
         if market == "moneyline":
             team = _spread_side_abbrev(row, home, away)
             price = _int_price(row.get("american_price"))
@@ -174,12 +192,17 @@ def normalize_pinnacle_team_rows(rows: list[dict[str, Any]]) -> list[WnbaOddsGam
                 away_moneyline=away_moneyline,
                 home_moneyline=home_moneyline,
                 game_date=bucket.get("game_date"),
-                sportsbook="pinnacle",
+                sportsbook=sportsbook,
             )
         )
 
     games.sort(key=lambda g: (g.game_date or "", g.home_abbrev, g.away_abbrev))
     return games
+
+
+def normalize_pinnacle_team_rows(rows: list[dict[str, Any]]) -> list[WnbaOddsGame]:
+    """Collapse Pinnacle team snapshot rows into one game with favorite spread + total."""
+    return normalize_team_odds_rows(rows, sportsbook="pinnacle")
 
 
 def _odds_merge_key(game: WnbaOddsGame) -> tuple[str, str, str]:
@@ -199,6 +222,47 @@ def _team_merge_key(game: WnbaOddsGame) -> tuple[str, str]:
 
 def _has_markets(game: WnbaOddsGame) -> bool:
     return game.spread_line is not None or game.total is not None
+
+
+def _canonicalize_game(game: WnbaOddsGame) -> WnbaOddsGame:
+    return game.model_copy(
+        update={
+            "away_abbrev": canonical_abbrev(game.away_abbrev),
+            "home_abbrev": canonical_abbrev(game.home_abbrev),
+            "spread_team_abbrev": (
+                canonical_abbrev(game.spread_team_abbrev)
+                if game.spread_team_abbrev
+                else None
+            ),
+        }
+    )
+
+
+def collect_book_boards(*sources: list[WnbaOddsGame]) -> list[WnbaOddsGame]:
+    """All FG team games that have markets, ordered for Preview display."""
+    order_index = {book: i for i, book in enumerate(_BOOK_BOARD_ORDER)}
+    out: list[WnbaOddsGame] = []
+    seen: set[tuple[str, str, str, str | None]] = set()
+    for source in sources:
+        for game in source:
+            game = _canonicalize_game(game)
+            if not _has_markets(game):
+                continue
+            book = (game.sportsbook or "").lower()
+            key = (book, *_team_merge_key(game), game.game_date)
+            if key in seen:
+                continue
+            seen.add(key)
+            out.append(game)
+    out.sort(
+        key=lambda g: (
+            order_index.get((g.sportsbook or "").lower(), 99),
+            g.game_date or "",
+            g.home_abbrev,
+            g.away_abbrev,
+        )
+    )
+    return out
 
 
 def merge_pinnacle_prefer_sharp(
@@ -261,13 +325,28 @@ async def _fetch_sharp_games() -> tuple[list[WnbaOddsGame], list[str]]:
 
 
 def _response_sportsbook(games: list[WnbaOddsGame]) -> str:
-    if any(g.sportsbook == "pinnacle" for g in games):
-        return "pinnacle"
-    if any(g.sportsbook == "draftkings" for g in games):
-        return "draftkings"
+    for book in ("pinnacle", "prophetx", "novig", "fanduel", "draftkings"):
+        if any(g.sportsbook == book for g in games):
+            return book
     if games and games[0].sportsbook:
         return games[0].sportsbook
     return "draftkings"
+
+
+def _safe_normalize_source(
+    fetch_fn,
+    *,
+    league: str,
+    sportsbook: str,
+) -> list[WnbaOddsGame]:
+    try:
+        rows = fetch_fn(league)
+        return normalize_team_odds_rows(rows, sportsbook=sportsbook)
+    except Exception:
+        logger.warning(
+            "WNBA %s team odds unavailable", sportsbook, exc_info=True
+        )
+        return []
 
 
 async def get_today_odds() -> WnbaOddsResponse:
@@ -278,10 +357,23 @@ async def get_today_odds() -> WnbaOddsResponse:
         return cached
 
     try:
-        pin_rows = fetch_latest_pinnacle_team("wnba")
-        pin_games = normalize_pinnacle_team_rows(pin_rows)
+        try:
+            pin_rows = fetch_latest_pinnacle_team("wnba")
+            pin_games = normalize_pinnacle_team_rows(pin_rows)
+        except Exception:
+            logger.warning("WNBA pinnacle team odds unavailable", exc_info=True)
+            pin_games = []
+
+        px_games = _safe_normalize_source(
+            fetch_latest_prophetx_team, league="wnba", sportsbook="prophetx"
+        )
+        novig_games = _safe_normalize_source(
+            fetch_latest_novig_team, league="wnba", sportsbook="novig"
+        )
+
         sharp_games, sharp_errors = await _fetch_sharp_games()
         games = merge_pinnacle_prefer_sharp(pin_games, sharp_games)
+        book_boards = collect_book_boards(px_games, novig_games, pin_games)
 
         error = "; ".join(sharp_errors) if sharp_errors else None
         if not games and sharp_errors:
@@ -291,6 +383,7 @@ async def get_today_odds() -> WnbaOddsResponse:
             as_of=_utcnow_iso(),
             sportsbook=_response_sportsbook(games),
             games=games,
+            book_boards=book_boards,
             error=error,
         )
         _cache["response"] = response
@@ -303,10 +396,12 @@ async def get_today_odds() -> WnbaOddsResponse:
                 as_of=cached.as_of,
                 sportsbook=cached.sportsbook,
                 games=cached.games,
+                book_boards=getattr(cached, "book_boards", []) or [],
                 error=str(exc),
             )
         return WnbaOddsResponse(
             as_of=_utcnow_iso(),
             games=[],
+            book_boards=[],
             error=str(exc),
         )
