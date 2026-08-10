@@ -464,14 +464,35 @@ def test_write_snapshots(tmp_path) -> None:
     assert props_payload["source"] == "prophetx"
 
 
-def test_load_supabase_snapshots_is_stub(caplog) -> None:
+def test_load_supabase_snapshots_upserts_wnba_team(monkeypatch, caplog) -> None:
     px = _load_scraper()
+    calls: list[tuple] = []
+
+    def fake_load(games, *, league, scraped_at=None):
+        calls.append((games, league, scraped_at))
+        return 2
+
+    monkeypatch.setattr(
+        "src.odds.load_snapshots.load_prophetx_team_snapshot",
+        fake_load,
+        raising=False,
+    )
+    # Path used inside load_supabase after dynamic import
+    import src.odds.load_snapshots as load_mod
+
+    monkeypatch.setattr(load_mod, "load_prophetx_team_snapshot", fake_load)
+
+    team_games = [{"event_id": 1, "team_markets": {}}]
     with caplog.at_level(logging.INFO):
         px.load_supabase_snapshots(
             [{"event_id": 1, "props": []}],
-            [{"event_id": 1, "team_markets": {}}],
+            team_games,
             props_path="/tmp/props.json",
             team_path="/tmp/team.json",
         )
-    assert "Supabase" in caplog.text or "skip" in caplog.text.lower()
-    assert "upserted" not in caplog.text.lower()
+
+    assert len(calls) == 1
+    assert calls[0][0] is team_games
+    assert calls[0][1] == "wnba"
+    assert "upserted team=2" in caplog.text.lower() or "team=2" in caplog.text
+

@@ -7,7 +7,7 @@ import logging
 import os
 import sys
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, TypeVar
 from zoneinfo import ZoneInfo
 
@@ -434,13 +434,22 @@ def load_supabase_snapshots(
     props_path: str | None = None,
     team_path: str | None = None,
 ) -> None:
-    """v1 stub — WNBA ProphetX Supabase tables are out of scope."""
-    del props_games, team_games, scraped_at  # unused in stub
-    logger.info(
-        "Supabase ProphetX WNBA load skipped (v1 JSON-only)%s%s",
-        f" props_path={props_path}" if props_path else "",
-        f" team_path={team_path}" if team_path else "",
-    )
+    """Upsert team snapshot games to odds.wnba_prophetx_team (props table out of scope)."""
+    try:
+        from src.odds.load_snapshots import load_prophetx_team_snapshot
+
+        when = scraped_at or datetime.now(timezone.utc)
+        n_team = load_prophetx_team_snapshot(
+            team_games, league="wnba", scraped_at=when
+        )
+        logger.info(
+            "Supabase ProphetX WNBA upserted team=%s%s",
+            n_team,
+            f" team_path={team_path}" if team_path else "",
+        )
+        del props_games, props_path  # props table out of scope this pass
+    except Exception as exc:
+        logger.error("Supabase ProphetX WNBA load failed (JSON kept): %s", exc)
 
 
 def run() -> None:
