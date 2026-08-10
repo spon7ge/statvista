@@ -29,6 +29,7 @@ from app.domains.wnba.schemas_game_detail import (
     WnbaGameDetail,
 )
 from app.domains.wnba.schemas_scoreboard import GameStatus
+from app.domains.wnba.standings import get_wnba_standings
 from app.domains.wnba.team_colors import team_color as palette_team_color
 from app.providers.espn.wnba_roster import (
     RosterStarter,
@@ -187,11 +188,51 @@ async def get_game_detail(espn_event_id: str) -> WnbaGameDetail:
             return stale_fallback["response"]
         raise
 
+    if detail.status == "scheduled":
+        # Pregame header only; skip standings round-trip for live/final.
+        try:
+            detail = attach_record_last10(detail, await standings_record_last10_map())
+        except Exception as exc:
+            logger.warning(
+                "WNBA standings record/last10 unavailable for game %s: %s",
+                espn_event_id,
+                exc,
+            )
+
     _cache[espn_event_id] = {
         "response": detail,
         "expires_at": now + cache_ttl_seconds(detail),
     }
     return detail
+
+
+async def standings_record_last10_map() -> dict[str, tuple[str | None, str | None]]:
+    """Build team_id → (record, last_10) from cached WNBA standings rows."""
+    standings = await get_wnba_standings()
+    mapping: dict[str, tuple[str | None, str | None]] = {}
+    for conference in standings.conferences:
+        for row in conference.teams:
+            mapping[row.team_id] = (row.wl, row.l10)
+    return mapping
+
+
+def attach_record_last10(
+    detail: WnbaGameDetail,
+    mapping: dict[str, tuple[str | None, str | None]],
+) -> WnbaGameDetail:
+    """Soft-merge standings record + last-10 onto scheduled game detail teams."""
+    away_rec, away_l10 = mapping.get(detail.away.id, (None, None))
+    home_rec, home_l10 = mapping.get(detail.home.id, (None, None))
+    return detail.model_copy(
+        update={
+            "away": detail.away.model_copy(
+                update={"record": away_rec, "last_10": away_l10}
+            ),
+            "home": detail.home.model_copy(
+                update={"record": home_rec, "last_10": home_l10}
+            ),
+        }
+    )
 
 
 def _hex_color(raw: str | None, fallback: str) -> str:
