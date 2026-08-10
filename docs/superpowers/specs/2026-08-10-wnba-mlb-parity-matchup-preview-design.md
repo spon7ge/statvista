@@ -1,7 +1,7 @@
 # WNBA MLB-parity matchup preview
 
 Date: 2026-08-10  
-Status: Approved for planning  
+Status: Implemented  
 Product: **statvista**
 
 Supersedes (pregame layout + scope):

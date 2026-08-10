@@ -31,6 +31,8 @@ Make the WNBA experience look and feel like MLB where data already exists: color
 | Pregame | Broadcast header chrome wrapping existing stack: MatchupPrediction → ProjectedStarters → SeasonLeaders → InjuryReport |
 | Pregame Props tab | **Not** in this pass |
 | Backend | **No new API routes** — existing WNBA game + league endpoints |
+
+> **Superseded (pregame only):** Scheduled matchup preview layout, Away/Home team-preview, Props tab, and related game-detail enrichment are implemented in [2026-08-10-wnba-mlb-parity-matchup-preview-design.md](./2026-08-10-wnba-mlb-parity-matchup-preview-design.md). Live/final Summary\|Box chrome from this doc remains in force.
 | NBA | Unchanged |
 
 ## Non-goals
