@@ -79,10 +79,12 @@ function WnbaGamePropsList({
   props,
   app,
   isPending,
+  error = null,
 }: {
   props: ApiWnbaPropLine[];
   app: PropsAppTab;
   isPending: boolean;
+  error?: string | null;
 }) {
   if (isPending) {
     return (
@@ -95,7 +97,7 @@ function WnbaGamePropsList({
   if (props.length === 0) {
     return (
       <p className="text-[18px] text-white/50" data-testid="wnba-game-props-list">
-        No props for this game
+        {error || "No props for this game"}
       </p>
     );
   }
@@ -213,6 +215,11 @@ export function WnbaPregameCenter({ detail }: { detail: GameDetail }) {
                 props={filteredProps}
                 app={propsApp}
                 isPending={propsQuery.isPending}
+                error={
+                  propsQuery.isError
+                    ? "Failed to load props"
+                    : propsQuery.data?.error
+                }
               />
             </div>
           </div>

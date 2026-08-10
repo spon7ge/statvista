@@ -20,6 +20,7 @@ ESPN_BYATHLETE_URL = (
     "https://sports.core.api.espn.com/v2/sports/basketball/leagues/wnba"
     "/seasons/{season}/types/2/statistics/0/byathlete"
 )
+_ESPN_HEADERS = {"User-Agent": "Mozilla/5.0"}
 
 _LEADER_KEYS: tuple[TeamLeaderKey, ...] = ("ppg", "rpg", "apg")
 _LABEL: dict[TeamLeaderKey, str] = {"ppg": "PPG", "rpg": "RPG", "apg": "APG"}
@@ -295,7 +296,7 @@ def build_team_leaders(
 async def fetch_team_roster_athletes(team_id: str) -> list[RosterAthlete]:
     url = ESPN_ROSTER_URL.format(team_id=team_id)
     async with httpx.AsyncClient(timeout=ESPN_TIMEOUT_SECONDS) as client:
-        response = await client.get(url)
+        response = await client.get(url, headers=_ESPN_HEADERS)
         response.raise_for_status()
         return parse_roster_athletes(response.json())
 
@@ -306,6 +307,7 @@ async def fetch_league_player_stat_map(season: int) -> dict[str, PlayerSeasonSta
         response = await client.get(
             url,
             params={"lang": "en", "region": "us", "limit": 300},
+            headers=_ESPN_HEADERS,
         )
         response.raise_for_status()
         return parse_byathlete_stat_map(response.json())

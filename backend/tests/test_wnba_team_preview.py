@@ -20,6 +20,8 @@ from app.domains.wnba.team_preview import get_wnba_team_preview
 from app.main import app
 from app.providers.espn.wnba_team_player_stats import (
     build_team_leaders,
+    fetch_league_player_stat_map,
+    fetch_team_roster_athletes,
     merge_roster_rows,
     parse_byathlete_stat_map,
     parse_roster_athletes,
@@ -249,3 +251,49 @@ async def test_get_wnba_team_preview_soft_fails_roster():
     assert result.leaders == []
     assert result.roster == []
     assert result.team.abbrev == "ATL"
+
+
+@pytest.mark.asyncio
+async def test_fetch_team_roster_athletes_sends_mozilla_user_agent(monkeypatch):
+    import httpx
+
+    seen: dict[str, str | None] = {"ua": None}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen["ua"] = request.headers.get("User-Agent")
+        return httpx.Response(200, json=_roster_fixture())
+
+    transport = httpx.MockTransport(handler)
+
+    class _Client(httpx.AsyncClient):
+        def __init__(self, *args, **kwargs):
+            kwargs["transport"] = transport
+            super().__init__(*args, **kwargs)
+
+    monkeypatch.setattr(httpx, "AsyncClient", _Client)
+    athletes = await fetch_team_roster_athletes("20")
+    assert athletes
+    assert seen["ua"] == "Mozilla/5.0"
+
+
+@pytest.mark.asyncio
+async def test_fetch_league_player_stat_map_sends_mozilla_user_agent(monkeypatch):
+    import httpx
+
+    seen: dict[str, str | None] = {"ua": None}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen["ua"] = request.headers.get("User-Agent")
+        return httpx.Response(200, json=_byathlete_fixture())
+
+    transport = httpx.MockTransport(handler)
+
+    class _Client(httpx.AsyncClient):
+        def __init__(self, *args, **kwargs):
+            kwargs["transport"] = transport
+            super().__init__(*args, **kwargs)
+
+    monkeypatch.setattr(httpx, "AsyncClient", _Client)
+    stats = await fetch_league_player_stat_map(2026)
+    assert stats
+    assert seen["ua"] == "Mozilla/5.0"

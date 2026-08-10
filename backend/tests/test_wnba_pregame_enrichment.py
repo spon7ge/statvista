@@ -1,6 +1,9 @@
 import json
 from pathlib import Path
 
+import httpx
+import pytest
+
 from app.domains.wnba.game_detail import attach_record_last10
 from app.domains.wnba.schemas_game_detail import (
     GameDetailTeam,
@@ -201,3 +204,30 @@ def test_attach_game_leaders_none_noop():
 
     detail = _minimal_scheduled_detail()
     assert attach_game_leaders(detail, None) is detail
+
+
+@pytest.mark.asyncio
+async def test_fetch_season_team_stats_sends_mozilla_user_agent(monkeypatch):
+    from app.domains.wnba.team_season_stats import (
+        clear_team_season_stats_cache,
+        fetch_season_team_stats_pair,
+    )
+
+    clear_team_season_stats_cache()
+    seen: dict[str, str | None] = {"ua": None}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen["ua"] = request.headers.get("User-Agent")
+        return httpx.Response(200, json=TEAM_SEASON_STATS_FIXTURE)
+
+    transport = httpx.MockTransport(handler)
+
+    class _Client(httpx.AsyncClient):
+        def __init__(self, *args, **kwargs):
+            kwargs["transport"] = transport
+            super().__init__(*args, **kwargs)
+
+    monkeypatch.setattr(httpx, "AsyncClient", _Client)
+    pair = await fetch_season_team_stats_pair("17", "9")
+    assert pair is not None
+    assert seen["ua"] == "Mozilla/5.0"

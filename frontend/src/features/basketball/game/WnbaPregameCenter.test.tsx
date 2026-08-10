@@ -416,6 +416,20 @@ describe("WnbaPregameCenter", () => {
     expect(screen.getByText("No props for this game")).toBeInTheDocument();
   });
 
+  it("shows Failed to load props when props query errors", async () => {
+    useWnbaProps.mockReturnValue({
+      data: undefined,
+      isPending: false,
+      isError: true,
+    });
+    const user = userEvent.setup();
+    renderWithClient(<WnbaPregameCenter detail={scheduledWithPreview} />);
+
+    await user.click(screen.getByRole("tab", { name: "Props" }));
+    expect(screen.getByText("Failed to load props")).toBeInTheDocument();
+    expect(screen.queryByText("No props for this game")).not.toBeInTheDocument();
+  });
+
   it("switches to Underdog book filter under Props", async () => {
     useWnbaProps.mockReturnValue({
       data: {

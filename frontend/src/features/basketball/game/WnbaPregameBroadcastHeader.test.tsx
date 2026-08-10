@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { WnbaPregameBroadcastHeader } from "./WnbaPregameBroadcastHeader";
 import { buildScheduledDetail } from "../lib/testFixtures";
@@ -91,5 +91,24 @@ describe("WnbaPregameBroadcastHeader", () => {
     );
     expect(screen.queryByText(/in Last 10/i)).not.toBeInTheDocument();
     expect(screen.queryByText("22-8")).not.toBeInTheDocument();
+  });
+
+  it("meta row is statusLabel + Share without empty date placeholder", () => {
+    render(
+      <WnbaPregameBroadcastHeader
+        detail={detail}
+        activeTab="preview"
+        onTabChange={() => {}}
+      />,
+    );
+    const header = screen.getByTestId("wnba-pregame-broadcast-header");
+    const meta = header.firstElementChild as HTMLElement;
+    expect(meta).toHaveClass(/justify-between/);
+    expect(within(meta).getByText(detail.statusLabel)).toBeInTheDocument();
+    expect(within(meta).getByRole("button", { name: "Share" })).toBeInTheDocument();
+    const emptyPlaceholders = Array.from(meta.querySelectorAll("span")).filter(
+      (el) => el.textContent?.trim() === "" && !el.querySelector("svg"),
+    );
+    expect(emptyPlaceholders).toHaveLength(0);
   });
 });

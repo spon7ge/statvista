@@ -18,6 +18,7 @@ ESPN_TEAM_STATS_URL = (
 )
 ESPN_TIMEOUT_SECONDS = 8.0
 CACHE_TTL_SECONDS = 15 * 60.0
+_ESPN_HEADERS = {"User-Agent": "Mozilla/5.0"}
 
 # Curated response field → ESPN byteam `names` entry (first match wins).
 _STAT_SPECS: tuple[tuple[str, str, bool, bool], ...] = (
@@ -170,6 +171,8 @@ def normalize_season_team_stats_pair(
 
     away = WnbaSeasonTeamStatLine(**away_values)
     home = WnbaSeasonTeamStatLine(**home_values)
+    away_rank_updates: dict[str, int] = {}
+    home_rank_updates: dict[str, int] = {}
 
     for field, _espn_name, lower_is_better, _is_pct in _STAT_SPECS:
         league_values: list[tuple[str, float]] = []
@@ -187,9 +190,14 @@ def normalize_season_team_stats_pair(
         away_rank = ranks.get(away_key)
         home_rank = ranks.get(home_key)
         if away_rank is not None:
-            setattr(away, f"{field}_rank", away_rank)
+            away_rank_updates[f"{field}_rank"] = away_rank
         if home_rank is not None:
-            setattr(home, f"{field}_rank", home_rank)
+            home_rank_updates[f"{field}_rank"] = home_rank
+
+    if away_rank_updates:
+        away = away.model_copy(update=away_rank_updates)
+    if home_rank_updates:
+        home = home.model_copy(update=home_rank_updates)
 
     return WnbaSeasonTeamStatsPair(away=away, home=home)
 
@@ -209,6 +217,7 @@ async def fetch_season_team_stats_pair(
             response = await client.get(
                 ESPN_TEAM_STATS_URL,
                 params={"limit": 50},
+                headers=_ESPN_HEADERS,
             )
             response.raise_for_status()
             payload = response.json()

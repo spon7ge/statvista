@@ -88,8 +88,8 @@ export function WnbaPregameBroadcastHeader({
 
   return (
     <div data-testid="wnba-pregame-broadcast-header" className="space-y-3">
+      {/* statusLabel already carries tip date/time for scheduled games — no empty date slot */}
       <div className="flex items-center justify-between px-1 text-[14px]">
-        <span className="text-white/80" />
         <span className="font-medium text-white/80">{detail.statusLabel}</span>
         <button
           type="button"
