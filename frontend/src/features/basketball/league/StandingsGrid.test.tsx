@@ -53,11 +53,8 @@ const sample: ApiWnbaStandingsConference[] = [
 ];
 
 describe("StandingsGrid", () => {
-  it("renders season, conferences, rows, and attribution", () => {
-    render(
-      <StandingsGrid season={2026} conferences={sample} />,
-    );
-    expect(screen.getByText("2026 regular season")).toBeInTheDocument();
+  it("renders conferences, rows, and attribution", () => {
+    render(<StandingsGrid conferences={sample} />);
     expect(screen.getByText("Eastern Conference")).toBeInTheDocument();
     expect(screen.getByText("Western Conference")).toBeInTheDocument();
     expect(screen.getByText("Indiana Fever")).toBeInTheDocument();
@@ -78,7 +75,7 @@ describe("StandingsGrid", () => {
 
   it("uses a compact table without a forced min width", () => {
     const { container } = render(
-      <StandingsGrid season={2026} conferences={sample} />,
+      <StandingsGrid conferences={sample} />,
     );
     const table = container.querySelector("table");
     expect(table).not.toBeNull();
@@ -88,14 +85,14 @@ describe("StandingsGrid", () => {
 
   it("shows loading skeletons", () => {
     render(
-      <StandingsGrid season={2026} conferences={[]} isLoading />,
+      <StandingsGrid conferences={[]} isLoading />,
     );
     expect(screen.getByLabelText("Loading standings")).toBeInTheDocument();
   });
 
   it("shows error copy when never loaded", () => {
     render(
-      <StandingsGrid season={2026} conferences={[]} isError />,
+      <StandingsGrid conferences={[]} isError />,
     );
     expect(screen.getByText("Standings unavailable")).toBeInTheDocument();
   });
@@ -103,7 +100,6 @@ describe("StandingsGrid", () => {
   it("shows No data for empty conference", () => {
     render(
       <StandingsGrid
-        season={2026}
         conferences={[
           { key: "east", label: "Eastern Conference", teams: [] },
         ]}

@@ -2,7 +2,6 @@ import type { ApiWnbaFuturesMarket } from "@/shared/lib/api";
 import { TeamAbbrevAvatar } from "@/shared/ui/TeamAbbrevAvatar";
 
 type FuturesBoardProps = {
-  season: number;
   markets: ApiWnbaFuturesMarket[];
   isLoading?: boolean;
   isError?: boolean;
@@ -58,19 +57,12 @@ function MarketBlock({ market }: { market: ApiWnbaFuturesMarket }) {
 }
 
 export function FuturesBoard({
-  season,
   markets,
   isLoading = false,
   isError = false,
 }: FuturesBoardProps) {
   return (
-    <section className="mx-auto max-w-6xl space-y-4 px-4 pb-12 sm:space-y-5 sm:px-6 sm:pb-16">
-      <header>
-        <h2 className="text-xl font-semibold tracking-tight text-white sm:text-2xl">
-          Futures
-        </h2>
-        <p className="mt-1 text-xs text-white/40 sm:text-sm">{season} season</p>
-      </header>
+    <div className="space-y-4 sm:space-y-5">
       {isLoading ? (
         <Skeletons />
       ) : isError ? (
@@ -84,6 +76,6 @@ export function FuturesBoard({
           ))}
         </div>
       )}
-    </section>
+    </div>
   );
 }

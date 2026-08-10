@@ -2,7 +2,6 @@ import type { ApiWnbaStandingsConference } from "@/shared/lib/api";
 import { StandingsConferenceCard } from "./StandingsConferenceCard";
 
 type StandingsGridProps = {
-  season: number;
   conferences: ApiWnbaStandingsConference[];
   isLoading?: boolean;
   isError?: boolean;
@@ -25,19 +24,12 @@ function Skeletons() {
 }
 
 export function StandingsGrid({
-  season,
   conferences,
   isLoading = false,
   isError = false,
 }: StandingsGridProps) {
   return (
-    <section className="mx-auto max-w-6xl space-y-6 px-4 pb-16 sm:px-6 sm:pb-20">
-      <header>
-        <h2 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-          Standings
-        </h2>
-        <p className="mt-2 text-sm text-white/40">{season} regular season</p>
-      </header>
+    <div className="space-y-6">
       {isLoading ? (
         <Skeletons />
       ) : isError ? (
@@ -53,6 +45,6 @@ export function StandingsGrid({
         </div>
       )}
       <p className="text-xs text-white/35">Data: ESPN</p>
-    </section>
+    </div>
   );
 }

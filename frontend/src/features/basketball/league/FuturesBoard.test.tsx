@@ -25,7 +25,6 @@ describe("FuturesBoard", () => {
   it("renders Finals Winner rows with odds and provider", () => {
     const { container } = render(
       <FuturesBoard
-        season={2026}
         markets={sampleMarkets}
         isLoading={false}
         isError={false}
@@ -39,30 +38,21 @@ describe("FuturesBoard", () => {
     expect(container.querySelector("ul")?.className).toContain("sm:grid-cols-2");
   });
 
-  it("shows season in the header", () => {
-    render(
-      <FuturesBoard season={2026} markets={sampleMarkets} />,
-    );
-    expect(screen.getByText(/2026/)).toBeInTheDocument();
-  });
-
   it("shows loading skeletons", () => {
-    render(
-      <FuturesBoard season={2026} markets={[]} isLoading />,
-    );
+    render(<FuturesBoard markets={[]} isLoading />);
     expect(screen.getByLabelText("Loading futures")).toBeInTheDocument();
   });
 
   it("shows error copy when never loaded", () => {
     render(
-      <FuturesBoard season={2026} markets={[]} isError />,
+      <FuturesBoard markets={[]} isError />,
     );
     expect(screen.getByText("Unable to load futures")).toBeInTheDocument();
   });
 
   it("shows empty copy when no markets", () => {
     render(
-      <FuturesBoard season={2026} markets={[]} />,
+      <FuturesBoard markets={[]} />,
     );
     expect(screen.getByText("No futures listed")).toBeInTheDocument();
   });
