@@ -4,9 +4,14 @@ from __future__ import annotations
 
 import importlib.util
 import sys
+import time
 from datetime import datetime
 from pathlib import Path
+from unittest.mock import MagicMock
 from zoneinfo import ZoneInfo
+
+import pytest
+import requests
 
 _SCRAPER_PATH = Path(__file__).resolve().parents[2] / "mlb_novig.py"
 
@@ -216,3 +221,79 @@ def test_extract_props_skips_both_sides_empty() -> None:
         }
     ]
     assert nv.extract_props(markets) == []
+
+
+def test_fetch_mlb_events_parses_data(monkeypatch) -> None:
+    nv = _load_scraper()
+    session = MagicMock()
+    payload = {
+        "data": {
+            "event": [
+                {"id": "e1", "description": "A @ B", "status": "OPEN_PREGAME", "game": {}},
+            ]
+        }
+    }
+    monkeypatch.setattr(nv, "graphql", lambda *_a, **_k: payload)
+    events = nv.fetch_mlb_events(session)
+    assert len(events) == 1
+    assert events[0]["id"] == "e1"
+
+
+def test_fetch_mlb_events_honors_max_events(monkeypatch) -> None:
+    nv = _load_scraper()
+    session = MagicMock()
+    payload = {
+        "data": {
+            "event": [
+                {"id": "e1", "description": "A @ B", "status": "OPEN_PREGAME", "game": {}},
+                {"id": "e2", "description": "C @ D", "status": "OPEN_INGAME", "game": {}},
+            ]
+        }
+    }
+    monkeypatch.setattr(nv, "graphql", lambda *_a, **_k: payload)
+    monkeypatch.setenv("NOVIG_MAX_EVENTS", "1")
+    events = nv.fetch_mlb_events(session)
+    assert len(events) == 1
+    assert events[0]["id"] == "e1"
+
+
+def test_fetch_event_markets_parses_nested(monkeypatch) -> None:
+    nv = _load_scraper()
+    session = MagicMock()
+    payload = {
+        "data": {
+            "event": [
+                {
+                    "markets": [
+                        {"id": "m1", "type": "HITS", "strike": 0.5, "outcomes": []}
+                    ]
+                }
+            ]
+        }
+    }
+    monkeypatch.setattr(nv, "graphql", lambda *_a, **_k: payload)
+    markets = nv.fetch_event_markets(session, "e1")
+    assert markets[0]["id"] == "m1"
+
+
+def test_graphql_raises_after_http_500_retries(monkeypatch) -> None:
+    nv = _load_scraper()
+    session = MagicMock()
+    response = MagicMock()
+    response.status_code = 500
+    response.raise_for_status.side_effect = requests.HTTPError(response=response)
+    session.post.return_value = response
+    monkeypatch.setattr(time, "sleep", lambda *_a, **_k: None)
+    with pytest.raises(requests.HTTPError):
+        nv.graphql(session, "query { event { id } }")
+
+
+def test_graphql_raises_on_graphql_errors(monkeypatch) -> None:
+    nv = _load_scraper()
+    session = MagicMock()
+    response = MagicMock()
+    response.status_code = 200
+    response.json.return_value = {"errors": [{"message": "bad query"}]}
+    session.post.return_value = response
+    with pytest.raises(RuntimeError, match="GraphQL"):
+        nv.graphql(session, "query { event { id } }")
