@@ -49,3 +49,32 @@ def test_resolve_props_output_path_default(tmp_path, monkeypatch) -> None:
     now = datetime(2026, 8, 9, 14, 30, 0, tzinfo=ZoneInfo("America/Los_Angeles"))
     path = nv.resolve_props_output_path(now=now)
     assert path == str(tmp_path / "novig_mlb_2026-08-09_143000_props.json")
+
+
+def test_probability_to_american() -> None:
+    nv = _load_scraper()
+    assert nv.probability_to_american(0.5) == -100
+    assert nv.probability_to_american(0.6) == -150
+    assert nv.probability_to_american(0.4) == 150
+    assert nv.probability_to_american(0.0) is None
+    assert nv.probability_to_american(1.0) is None
+
+
+def test_outcome_quote_uses_available_not_last() -> None:
+    nv = _load_scraper()
+    over = {"available": 0.51, "last": 0.40, "orders": []}
+    under = {
+        "available": 0.505,
+        "last": 0.60,
+        "orders": [{"qty": 3200, "price": 0.495, "status": "OPEN"}],
+    }
+    q = nv.outcome_quote(over, under)
+    assert q is not None
+    assert q["american"] == nv.probability_to_american(0.51)
+    # opposite bid qty 3200 cents → $32.00 stake on the available side
+    assert q["stake"] == 32.0
+
+
+def test_outcome_quote_skips_missing_available() -> None:
+    nv = _load_scraper()
+    assert nv.outcome_quote({"available": None, "last": 0.5, "orders": []}, None) is None
