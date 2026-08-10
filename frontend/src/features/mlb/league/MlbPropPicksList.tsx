@@ -135,7 +135,7 @@ function Skeletons({ columnCount }: { columnCount: number }) {
           {Array.from({ length: perCol }, (_, i) => (
             <div
               key={i}
-              className="h-28 animate-pulse rounded-xl bg-[#3a3d42]"
+              className="h-28 animate-pulse rounded-xl bg-[#1c1e22]"
             />
           ))}
         </div>
@@ -262,7 +262,7 @@ function PropPickCard({
   return (
     <article
       data-testid="mlb-prop-row"
-      className={`relative rounded-xl bg-[#3a3d42] p-4 ring-2 transition-[box-shadow,opacity] ${
+      className={`relative rounded-xl bg-[#1c1e22] p-4 ring-2 transition-[box-shadow,opacity] ${
         expanded
           ? "ring-[#059669]"
           : "ring-transparent hover:ring-[#059669]"

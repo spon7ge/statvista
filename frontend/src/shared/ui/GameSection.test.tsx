@@ -12,12 +12,12 @@ describe("GameSection", () => {
     const section = screen.getByRole("heading", { name: "Shot chart" }).closest(
       "section",
     );
-    expect(section).toHaveClass("rounded-xl", "bg-[#3a3d42]", "p-4");
+    expect(section).toHaveClass("rounded-xl", "bg-[#1c1e22]", "p-4");
     expect(section).not.toHaveClass("border", "border-white/10");
   });
 
   it("exports GAME_SECTION_SURFACE matching the Live-now card treatment", () => {
-    expect(GAME_SECTION_SURFACE).toBe("rounded-xl bg-[#3a3d42] p-4");
+    expect(GAME_SECTION_SURFACE).toBe("rounded-xl bg-[#1c1e22] p-4");
   });
 
   it("merges an optional className", () => {

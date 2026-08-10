@@ -151,7 +151,7 @@ function BatterTable({
 }) {
   if (batters.length === 0) return null;
   return (
-    <div className="w-full overflow-x-auto rounded-xl bg-[#3a3d42] p-3">
+    <div className="w-full overflow-x-auto rounded-xl bg-[#1c1e22] p-3">
       <div className="mb-2">
         <TeamHeader team={team} />
       </div>
@@ -205,7 +205,7 @@ function PitcherTable({
 }) {
   if (pitchers.length === 0) return null;
   return (
-    <div className="w-full overflow-x-auto rounded-xl bg-[#3a3d42] p-3">
+    <div className="w-full overflow-x-auto rounded-xl bg-[#1c1e22] p-3">
       <div className="flex items-baseline justify-between gap-2 border-b border-white/[0.08] pb-1.5 text-[14px] tracking-wide text-white/40">
         <span className="min-w-0 flex-1">Pitchers</span>
         <div className="flex shrink-0 gap-x-0">

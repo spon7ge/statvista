@@ -149,7 +149,7 @@ describe("GameDetailPage", () => {
     expect(await screen.findByText("Matchup prediction")).toBeInTheDocument();
     expect(document.querySelector(".bg-\\[\\#141414\\]")).toBeNull();
     expect(screen.getByText("Matchup prediction").closest("section")).toHaveClass(
-      "bg-[#3a3d42]",
+      "bg-[#1c1e22]",
     );
     expect(
       screen.getByText("Matchup prediction").closest("section"),

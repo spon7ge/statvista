@@ -26,7 +26,7 @@ export function LeagueCtaSection() {
             key={league.id}
             to={league.href}
             aria-label={league.label}
-            className="rounded-xl bg-[#3a3d42] px-6 py-8 text-center no-underline transition-colors hover:bg-[#45484d] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            className="rounded-xl bg-[#1c1e22] px-6 py-8 text-center no-underline transition-colors hover:bg-[#45484d] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           >
             <span className="block text-lg font-semibold tracking-tight text-white">
               {league.label}

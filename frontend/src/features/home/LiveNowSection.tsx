@@ -20,7 +20,7 @@ type LiveNowSectionProps = {
 function SkeletonGameCard() {
   return (
     <article
-      className="rounded-xl bg-[#3a3d42] p-4"
+      className="rounded-xl bg-[#1c1e22] p-4"
       aria-hidden
     >
       <div className="mb-4 flex items-center justify-between">
@@ -80,7 +80,7 @@ function LiveGameCard({ game }: { game: LiveGame }) {
   );
 
   const baseCardClassName =
-    "rounded-xl bg-[#3a3d42] p-4";
+    "rounded-xl bg-[#1c1e22] p-4";
 
   const href = gameDetailHref(game);
   if (href) {

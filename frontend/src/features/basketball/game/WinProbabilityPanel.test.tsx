@@ -238,7 +238,7 @@ describe("WinProbabilityPanel", () => {
     const heading = screen.getByRole("heading", { name: /win probability/i });
     expect(heading.closest("section")).toHaveClass(
       "rounded-xl",
-      "bg-[#3a3d42]",
+      "bg-[#1c1e22]",
       "!p-3",
     );
     expect(heading.closest("section")).not.toHaveClass("border-white/10");

@@ -33,7 +33,7 @@ describe("MlbMatchupPrediction", () => {
     expect(screen.getByText(`${homeWinPct}%`)).toBeInTheDocument();
     expect(screen.queryByText("ESPN game projection")).not.toBeInTheDocument();
     expect(screen.getByText("Matchup prediction").closest("section")).toHaveClass(
-      "bg-[#3a3d42]",
+      "bg-[#1c1e22]",
     );
 
     const pill = screen.getByTestId("mlb-matchup-prediction-pill");

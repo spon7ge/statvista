@@ -129,4 +129,37 @@ describe("MlbGamePropsGrid", () => {
     render(<MlbGamePropsGrid categories={[]} isPending />);
     expect(screen.getByText("Loading props…")).toBeInTheDocument();
   });
+
+  it("packs category cards into independent columns so short cards do not leave a gap", () => {
+    render(
+      <MlbGamePropsGrid
+        categories={[
+          {
+            stat: "home_runs",
+            label: "Home Runs",
+            players: sixPlayers,
+          },
+          {
+            stat: "hits",
+            label: "Hits",
+            players: [
+              player({ player_name: "Short A" }),
+              player({ player_name: "Short B" }),
+            ],
+          },
+          {
+            stat: "stolen_bases",
+            label: "Stolen Bases",
+            players: [player({ player_name: "Below Short" })],
+          },
+        ]}
+      />,
+    );
+
+    const columns = screen.getByTestId("mlb-game-props-columns");
+    expect(columns.className).toMatch(/lg:columns-2/);
+    expect(screen.getByText("Short A")).toBeInTheDocument();
+    expect(screen.getByText("Below Short")).toBeInTheDocument();
+    expect(screen.queryByText("G. Stanton")).not.toBeInTheDocument();
+  });
 });

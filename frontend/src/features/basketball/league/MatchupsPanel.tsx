@@ -24,7 +24,7 @@ function MatchupSkeletons() {
       {Array.from({ length: 3 }, (_, index) => (
         <div
           key={index}
-          className="h-36 animate-pulse rounded-xl bg-[#3a3d42]"
+          className="h-36 animate-pulse rounded-xl bg-[#1c1e22]"
         />
       ))}
     </div>

@@ -51,7 +51,12 @@ describe("MlbSeasonTeamStats", () => {
   it("highlights ERA leader as lower-better", () => {
     render(<MlbSeasonTeamStats detail={detailWithSeasonStats} />);
     expect(screen.getByTestId("mlb-season-team-stats")).toBeInTheDocument();
-    expect(screen.getByTestId("mlb-season-stat-era-away")).toBeInTheDocument();
+    const eraPill = screen.getByTestId("mlb-season-stat-era-away");
+    expect(eraPill).toBeInTheDocument();
+    expect(eraPill).toHaveTextContent("3.71");
+    expect(eraPill).toHaveStyle({
+      backgroundColor: detailWithSeasonStats.away.color,
+    });
     expect(screen.getByTestId("mlb-season-stat-bb-away")).toBeInTheDocument();
     expect(screen.getByTestId("mlb-season-stat-so-away")).toBeInTheDocument();
   });

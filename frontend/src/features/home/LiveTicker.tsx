@@ -125,7 +125,7 @@ export function LiveTicker({ games = [], isError = false }: LiveTickerProps) {
   return (
     <div className="bg-background">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="ticker-marquee overflow-hidden bg-[#3a3d42]">
+        <div className="ticker-marquee overflow-hidden bg-[#1c1e22]">
           <div className="flex items-center gap-4 overflow-hidden py-2">
             <div className="flex shrink-0 items-center gap-2">
               <span

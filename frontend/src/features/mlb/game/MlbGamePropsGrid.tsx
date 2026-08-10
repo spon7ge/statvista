@@ -205,13 +205,21 @@ export function MlbGamePropsGrid({
           {softErrorBannerText(error)}
         </p>
       ) : null}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      {/* CSS columns pack vertically so a short card lets the next one sit flush. */}
+      <div
+        className="columns-1 gap-4 lg:columns-2"
+        data-testid="mlb-game-props-columns"
+      >
         {categories.map((category) => (
-          <CategoryCard
+          <div
             key={category.stat}
-            category={category}
-            onPlayerClick={onPlayerClick}
-          />
+            className="mb-4 break-inside-avoid last:mb-0"
+          >
+            <CategoryCard
+              category={category}
+              onPlayerClick={onPlayerClick}
+            />
+          </div>
         ))}
       </div>
     </div>

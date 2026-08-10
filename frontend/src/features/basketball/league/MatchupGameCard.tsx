@@ -92,7 +92,7 @@ export function MatchupGameCard({ game }: { game: MatchupGame }) {
   const venueLabel = game.venue
     ? [game.venue, game.venueCity].filter(Boolean).join(" · ")
     : null;
-  const baseClassName = "block rounded-xl bg-[#3a3d42] p-4";
+  const baseClassName = "block rounded-xl bg-[#1c1e22] p-4";
   const odds: MatchupOdds | null | undefined = game.odds;
   const oddsLabel = odds ? formatOddsPill(odds) : null;
 

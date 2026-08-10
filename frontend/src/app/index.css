@@ -19,7 +19,7 @@
 /* Tokens used by the home landing and NotFound page */
 :root {
   --radius: 0.5rem;
-  --background: #333;
+  --background: #161616;
   --foreground: oklch(0.98 0 0);
   --muted-foreground: oklch(0.7 0 0);
   --border: oklch(1 0 0 / 10%);
