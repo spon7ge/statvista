@@ -1,5 +1,8 @@
 """Read latest PrizePicks / Underdog / Pinnacle / ProphetX / Novig odds snapshots from Supabase.
 
+Board queries return the latest row per quote identity (``DISTINCT ON``), not a
+single ``MAX(scraped_at)`` batch.
+
 DB-only reads (no vendor HTTP), so this does not belong under ``providers/``.
 It lives in ``core`` rather than a single domain because both the MLB and
 betting domains read team-odds snapshots for their own leagues
@@ -14,6 +17,8 @@ import logging
 from typing import Any
 
 from sqlalchemy import text
+
+from src.odds.quote_specs import get_quote_spec
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +38,10 @@ _PINNACLE_TABLE = {
     "nba": "wnba_pinnacle",
 }
 _PROPHETX_TABLE = {"mlb": "mlb_prophetx"}
-_PROPHETX_TEAM_TABLE = {"mlb": "mlb_prophetx_team"}
+_PROPHETX_TEAM_TABLE = {
+    "mlb": "mlb_prophetx_team",
+    "wnba": "wnba_prophetx_team",
+}
 _NOVIG_TABLE = {"mlb": "mlb_novig"}
 _NOVIG_TEAM_TABLE = {
     "mlb": "mlb_novig_team",
@@ -47,14 +55,22 @@ _PINNACLE_TEAM_TABLE = {
 }
 
 
-def _latest_snapshot_sql(table: str, columns: str) -> str:
+def _latest_snapshot_sql(
+    table: str,
+    columns: str,
+    *,
+    identity_cols: tuple[str, ...] | None = None,
+    extra_where: str = "",
+) -> str:
+    identity = identity_cols or get_quote_spec(table).identity_cols
+    identity_sql = ", ".join(identity)
+    order_sql = f"{identity_sql}, scraped_at DESC"
+    where_extra = f"\n  {extra_where}" if extra_where else ""
     return f"""
-SELECT {columns}
+SELECT DISTINCT ON ({identity_sql}) {columns}
 FROM odds.{table}
-WHERE league = :league
-  AND scraped_at = (
-    SELECT MAX(scraped_at) FROM odds.{table} WHERE league = :league
-  )
+WHERE league = :league{where_extra}
+ORDER BY {order_sql}
 """
 
 
@@ -160,17 +176,12 @@ def fetch_latest_pinnacle_team(league: str = "wnba") -> list[dict]:
     """Return full-game (period=0, non-alternate) team rows from latest snapshot."""
     lg = _normalized_league(league, "wnba")
     table = _PINNACLE_TEAM_TABLE.get(lg, "wnba_pinnacle_team")
-    sql = f"""
-SELECT away_team, home_team, start_time, market_type, period, is_alternate,
-       side, team, points, american_price, matchup_id
-FROM odds.{table}
-WHERE league = :league
-  AND scraped_at = (
-    SELECT MAX(scraped_at) FROM odds.{table} WHERE league = :league
-  )
-  AND period = 0
-  AND is_alternate = false
-"""
+    sql = _latest_snapshot_sql(
+        table,
+        "away_team, home_team, start_time, market_type, period, is_alternate, "
+        "side, team, points, american_price, matchup_id",
+        extra_where="AND period = 0\n  AND is_alternate = false",
+    )
     return _fetch_rows(sql, lg)
 
 
@@ -182,16 +193,15 @@ def fetch_latest_prophetx_team(league: str = "mlb") -> list[dict]:
     """
     lg = _normalized_league(league, "mlb")
     table = _PROPHETX_TEAM_TABLE.get(lg, "mlb_prophetx_team")
-    sql = f"""
-SELECT away_team, home_team, start_time, market_type, side, team, points,
-       american_price, event_id
-FROM odds.{table}
-WHERE league = :league
-  AND scraped_at = (
-    SELECT MAX(scraped_at) FROM odds.{table} WHERE league = :league
-  )
-  AND market_type IN ('moneyline', 'run_line', 'spread', 'total', 'total_runs')
-"""
+    sql = _latest_snapshot_sql(
+        table,
+        "away_team, home_team, start_time, market_type, side, team, points, "
+        "american_price, event_id",
+        extra_where=(
+            "AND market_type IN "
+            "('moneyline', 'run_line', 'spread', 'total', 'total_runs')"
+        ),
+    )
     return _fetch_rows(sql, lg)
 
 
@@ -199,14 +209,13 @@ def fetch_latest_novig_team(league: str = "mlb") -> list[dict]:
     """Return full-game team market rows from the latest Novig snapshot."""
     lg = _normalized_league(league, "mlb")
     table = _NOVIG_TEAM_TABLE.get(lg, "mlb_novig_team")
-    sql = f"""
-SELECT away_team, home_team, start_time, market_type, side, team, points,
-       american_price, event_id
-FROM odds.{table}
-WHERE league = :league
-  AND scraped_at = (
-    SELECT MAX(scraped_at) FROM odds.{table} WHERE league = :league
-  )
-  AND market_type IN ('moneyline', 'run_line', 'spread', 'total', 'total_runs')
-"""
+    sql = _latest_snapshot_sql(
+        table,
+        "away_team, home_team, start_time, market_type, side, team, points, "
+        "american_price, event_id",
+        extra_where=(
+            "AND market_type IN "
+            "('moneyline', 'run_line', 'spread', 'total', 'total_runs')"
+        ),
+    )
     return _fetch_rows(sql, lg)

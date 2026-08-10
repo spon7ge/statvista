@@ -23,6 +23,7 @@ from src.odds.snapshot_rows import (
     sharp_props_to_book_rows,
     underdog_picks_to_rows,
 )
+from src.odds.change_filter import apply_change_filter
 from src.utils.db import upsert_df
 
 logger = logging.getLogger(__name__)
@@ -211,8 +212,13 @@ def load_prizepicks_snapshot(
     df = _dedupe_conflict_rows(df, _PRIZEPICKS_CONFLICT_COLS)
     if df.empty:
         return 0
+    table_name = _prizepicks_table(league)
+    league_norm = (league or "").strip().lower()
+    df = apply_change_filter(table_name, df, league=league_norm)
+    if df.empty:
+        return 0
     upsert_df(
-        _prizepicks_table(league),
+        table_name,
         df,
         schema="odds",
         conflict_cols=_PRIZEPICKS_CONFLICT_COLS,
@@ -253,8 +259,13 @@ def load_underdog_snapshot(
     df = _dedupe_conflict_rows(df, _UNDERDOG_CONFLICT_COLS)
     if df.empty:
         return 0
+    table_name = _underdog_table(league)
+    league_norm = (league or "").strip().lower()
+    df = apply_change_filter(table_name, df, league=league_norm)
+    if df.empty:
+        return 0
     upsert_df(
-        _underdog_table(league),
+        table_name,
         df,
         schema="odds",
         conflict_cols=_UNDERDOG_CONFLICT_COLS,
@@ -283,8 +294,13 @@ def load_pinnacle_props_snapshot(
     df = _dedupe_conflict_rows(df, _PARLAY_BOOK_CONFLICT_COLS)
     if df.empty:
         return 0
+    table_name = _pinnacle_props_table(league)
+    league_norm = (league or "").strip().lower()
+    df = apply_change_filter(table_name, df, league=league_norm)
+    if df.empty:
+        return 0
     upsert_df(
-        _pinnacle_props_table(league),
+        table_name,
         df,
         schema="odds",
         conflict_cols=_PARLAY_BOOK_CONFLICT_COLS,
@@ -320,8 +336,13 @@ def load_pinnacle_team_snapshot(
     df = _dedupe_conflict_rows(df, _PINNACLE_TEAM_CONFLICT_COLS)
     if df.empty:
         return 0
+    table_name = _pinnacle_team_table(league)
+    league_norm = (league or "").strip().lower()
+    df = apply_change_filter(table_name, df, league=league_norm)
+    if df.empty:
+        return 0
     upsert_df(
-        _pinnacle_team_table(league),
+        table_name,
         df,
         schema="odds",
         conflict_cols=_PINNACLE_TEAM_CONFLICT_COLS,
@@ -359,6 +380,10 @@ def load_prophetx_props_snapshot(
     df = _dedupe_conflict_rows(df, _PROPHETX_PROPS_CONFLICT_COLS)
     if df.empty:
         return 0
+    league_norm = (league or "").strip().lower()
+    df = apply_change_filter("mlb_prophetx", df, league=league_norm)
+    if df.empty:
+        return 0
     upsert_df(
         "mlb_prophetx",
         df,
@@ -367,6 +392,13 @@ def load_prophetx_props_snapshot(
         lineage_col="fetched_at",
     )
     return len(df)
+
+
+def _prophetx_team_table(league: str) -> str:
+    key = (league or "").strip().lower()
+    if key == "wnba":
+        return "wnba_prophetx_team"
+    return "mlb_prophetx_team"
 
 
 def load_prophetx_team_snapshot(
@@ -385,8 +417,13 @@ def load_prophetx_team_snapshot(
     df = _dedupe_conflict_rows(df, _PROPHETX_TEAM_CONFLICT_COLS)
     if df.empty:
         return 0
+    table_name = _prophetx_team_table(league)
+    league_norm = (league or "").strip().lower()
+    df = apply_change_filter(table_name, df, league=league_norm)
+    if df.empty:
+        return 0
     upsert_df(
-        "mlb_prophetx_team",
+        table_name,
         df,
         schema="odds",
         conflict_cols=_PROPHETX_TEAM_CONFLICT_COLS,
@@ -445,8 +482,13 @@ def load_novig_props_snapshot(
     df = _dedupe_conflict_rows(df, _NOVIG_PROPS_CONFLICT_COLS)
     if df.empty:
         return 0
+    table_name = _novig_props_table(league)
+    league_norm = (league or "").strip().lower()
+    df = apply_change_filter(table_name, df, league=league_norm)
+    if df.empty:
+        return 0
     upsert_df(
-        _novig_props_table(league),
+        table_name,
         df,
         schema="odds",
         conflict_cols=_NOVIG_PROPS_CONFLICT_COLS,
@@ -471,8 +513,13 @@ def load_novig_team_snapshot(
     df = _dedupe_conflict_rows(df, _NOVIG_TEAM_CONFLICT_COLS)
     if df.empty:
         return 0
+    table_name = _novig_team_table(league)
+    league_norm = (league or "").strip().lower()
+    df = apply_change_filter(table_name, df, league=league_norm)
+    if df.empty:
+        return 0
     upsert_df(
-        _novig_team_table(league),
+        table_name,
         df,
         schema="odds",
         conflict_cols=_NOVIG_TEAM_CONFLICT_COLS,
@@ -620,6 +667,10 @@ def load_sharp_book_snapshot(
         return 0
 
     df = _coerce_float_columns(pd.DataFrame(rows), ["line_score"])
+    league_norm = (league or "").strip().lower()
+    df = apply_change_filter(table, df, league=league_norm)
+    if df.empty:
+        return 0
     upsert_df(
         table,
         df,
@@ -627,7 +678,7 @@ def load_sharp_book_snapshot(
         conflict_cols=_SHARP_BOOK_CONFLICT_COLS,
         lineage_col="fetched_at",
     )
-    return len(rows)
+    return len(df)
 
 
 def load_parlay_api_odds_snapshot(
@@ -651,6 +702,10 @@ def load_parlay_api_odds_snapshot(
 
     df = _coerce_float_columns(pd.DataFrame(rows), ["line_score"])
     df = _dedupe_conflict_rows(df, _PARLAY_API_ODDS_CONFLICT_COLS)
+    if df.empty:
+        return empty
+    league_norm = (league or "").strip().lower()
+    df = apply_change_filter(_PARLAY_API_ODDS_TABLE, df, league=league_norm)
     if df.empty:
         return empty
     upsert_df(

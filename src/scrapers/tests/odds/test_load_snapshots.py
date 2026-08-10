@@ -38,6 +38,11 @@ UNDERDOG_PICKS = [
 def mock_upsert(monkeypatch):
     mock = MagicMock()
     monkeypatch.setattr(load_snapshots, "upsert_df", mock)
+    monkeypatch.setattr(
+        load_snapshots,
+        "apply_change_filter",
+        lambda table, df, league: df,
+    )
     return mock
 
 
@@ -84,6 +89,31 @@ def test_load_prizepicks_snapshot_empty_returns_zero(mock_upsert):
     count = load_snapshots.load_prizepicks_snapshot([], league="wnba", scraped_at=SCRAPED)
     assert count == 0
     mock_upsert.assert_not_called()
+
+
+def test_load_prizepicks_skips_unchanged_quotes(mock_upsert, monkeypatch):
+    monkeypatch.setattr(
+        load_snapshots,
+        "apply_change_filter",
+        lambda table, df, league: df.iloc[0:0],
+    )
+    count = load_snapshots.load_prizepicks_snapshot(
+        PRIZEPICKS_PROJECTIONS, league="wnba", scraped_at=SCRAPED
+    )
+    assert count == 0
+    mock_upsert.assert_not_called()
+
+
+def test_load_prizepicks_upserts_when_filter_keeps_rows(mock_upsert, monkeypatch):
+    def keep_all(table, df, league):
+        return df
+
+    monkeypatch.setattr(load_snapshots, "apply_change_filter", keep_all)
+    count = load_snapshots.load_prizepicks_snapshot(
+        PRIZEPICKS_PROJECTIONS, league="wnba", scraped_at=SCRAPED
+    )
+    assert count == 1
+    mock_upsert.assert_called_once()
 
 
 def test_load_prizepicks_snapshot_skip_db(monkeypatch, mock_upsert):
@@ -581,6 +611,44 @@ def test_load_prophetx_team_skip_db(monkeypatch, mock_upsert):
     )
     assert count == 0
     mock_upsert.assert_not_called()
+
+
+def test_load_prophetx_team_routes_wnba_table(monkeypatch, mock_upsert):
+    monkeypatch.delenv("PROPHETX_SKIP_DB", raising=False)
+    games = [
+        {
+            "event_id": 42,
+            "competitors": [
+                {"name": "Home", "seq": 0, "id": 1},
+                {"name": "Away", "seq": 1, "id": 2},
+            ],
+            "team_markets": {
+                "moneyline": [
+                    {
+                        "name": "Away",
+                        "american": 130,
+                        "line": None,
+                        "stake": None,
+                        "competitor_id": 2,
+                    },
+                    {
+                        "name": "Home",
+                        "american": -150,
+                        "line": None,
+                        "stake": None,
+                        "competitor_id": 1,
+                    },
+                ]
+            },
+        }
+    ]
+    count = load_snapshots.load_prophetx_team_snapshot(games, league="wnba")
+    assert count >= 1
+    mock_upsert.assert_called_once()
+    table, df = mock_upsert.call_args[0]
+    assert table == "wnba_prophetx_team"
+    assert mock_upsert.call_args[1]["schema"] == "odds"
+    assert len(df) >= 1
 
 
 def test_load_novig_props_skip_db(monkeypatch, mock_upsert):

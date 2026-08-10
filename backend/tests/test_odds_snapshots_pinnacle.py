@@ -122,6 +122,17 @@ def test_fetch_latest_prophetx_team_filters_full_game_markets():
     assert params["league"] == "mlb"
 
 
+def test_fetch_latest_prophetx_team_wnba_uses_wnba_table():
+    engine, conn = _mock_engine([])
+    with patch("src.utils.db.get_engine", return_value=engine):
+        svc.fetch_latest_prophetx_team("wnba")
+    sql = str(conn.execute.call_args[0][0])
+    assert "odds.wnba_prophetx_team" in sql
+    assert "moneyline" in sql
+    params = conn.execute.call_args[0][1]
+    assert params["league"] == "wnba"
+
+
 def test_fetch_latest_novig_team_filters_full_game_markets():
     engine, conn = _mock_engine([])
     with patch("src.utils.db.get_engine", return_value=engine):
