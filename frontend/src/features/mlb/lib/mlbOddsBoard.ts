@@ -23,12 +23,47 @@ export type MlbOddsBoardView = {
   rows: [MlbOddsBoardRowView, MlbOddsBoardRowView];
 };
 
+export type MlbOddsBookBoardView = {
+  sportsbook: string;
+  asOf: string | null;
+  rows: [MlbOddsBoardRowView, MlbOddsBoardRowView];
+};
+
 function canonicalAbbrev(abbrev: string): string {
   return abbrev.trim().toUpperCase();
 }
 
 function matchupKey(awayAbbrev: string, homeAbbrev: string): string {
   return `${canonicalAbbrev(awayAbbrev)}@${canonicalAbbrev(homeAbbrev)}`;
+}
+
+function matchesMlbOddsMatchup(
+  game: ApiMlbOddsGame,
+  awayAbbrev: string,
+  homeAbbrev: string,
+): boolean {
+  return matchupKey(game.away_abbrev, game.home_abbrev) === matchupKey(awayAbbrev, homeAbbrev);
+}
+
+function isMlbOddsGameDateMatch(game: ApiMlbOddsGame, gameDate?: string): boolean {
+  if (!gameDate) return true;
+  if (game.game_date === gameDate) return true;
+  if (!game.game_date) return true;
+  return false;
+}
+
+function filterMlbOddsGamesForMatchup(
+  games: ApiMlbOddsGame[] | undefined,
+  awayAbbrev: string,
+  homeAbbrev: string,
+  gameDate?: string,
+): ApiMlbOddsGame[] {
+  if (!games?.length) return [];
+  return games.filter(
+    (game) =>
+      matchesMlbOddsMatchup(game, awayAbbrev, homeAbbrev) &&
+      isMlbOddsGameDateMatch(game, gameDate),
+  );
 }
 
 export function formatAmericanOdds(odds: number): string {
@@ -43,12 +78,11 @@ export function findMlbOddsGame(
 ): ApiMlbOddsGame | null {
   if (!games?.length) return null;
 
-  const key = matchupKey(awayAbbrev, homeAbbrev);
   let undated: ApiMlbOddsGame | null = null;
   let dated: ApiMlbOddsGame | null = null;
 
   for (const game of games) {
-    if (matchupKey(game.away_abbrev, game.home_abbrev) !== key) continue;
+    if (!matchesMlbOddsMatchup(game, awayAbbrev, homeAbbrev)) continue;
     if (gameDate && game.game_date === gameDate) return game;
     if (!game.game_date) {
       undated ??= game;
@@ -152,4 +186,38 @@ export function toMlbOddsBoardView(
       },
     ],
   };
+}
+
+export function collectMlbOddsBookBoards(
+  response: ApiMlbOddsResponse | null | undefined,
+  awayAbbrev: string,
+  homeAbbrev: string,
+  gameDate?: string,
+): MlbOddsBookBoardView[] {
+  if (!response) return [];
+
+  const asOf = response.as_of ?? null;
+  const matchedGames = response.book_boards?.length
+    ? filterMlbOddsGamesForMatchup(response.book_boards, awayAbbrev, homeAbbrev, gameDate)
+    : [];
+
+  const games =
+    matchedGames.length > 0
+      ? matchedGames
+      : (() => {
+          const game = findMlbOddsGame(response.games, awayAbbrev, homeAbbrev, gameDate);
+          return game ? [game] : [];
+        })();
+
+  const views: MlbOddsBookBoardView[] = [];
+  for (const game of games) {
+    const view = toMlbOddsBoardView(game, asOf, game.sportsbook);
+    if (!view?.sportsbook) continue;
+    views.push({
+      sportsbook: view.sportsbook,
+      asOf: view.asOf,
+      rows: view.rows,
+    });
+  }
+  return views;
 }
