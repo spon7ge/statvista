@@ -462,6 +462,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/wnba/games/{espn_event_id}/team-preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Wnba Team Preview */
+        get: operations["wnba_team_preview_api_wnba_games__espn_event_id__team_preview_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/wnba/leaders": {
         parameters: {
             query?: never;
@@ -2825,6 +2842,85 @@ export interface components {
             /** Score */
             score: number | null;
         };
+        /** WnbaTeamLeaderCard */
+        WnbaTeamLeaderCard: {
+            /** Headshot Url */
+            headshot_url: string | null;
+            /**
+             * Key
+             * @enum {string}
+             */
+            key: "ppg" | "rpg" | "apg";
+            /** Label */
+            label: string;
+            /** Last Name */
+            last_name: string;
+            /** Player Id */
+            player_id: string;
+            /** Rank */
+            rank: number | null;
+            /** Value */
+            value: string;
+        };
+        /** WnbaTeamPreviewResponse */
+        WnbaTeamPreviewResponse: {
+            /** Leaders */
+            leaders: components["schemas"]["WnbaTeamLeaderCard"][];
+            /** Roster */
+            roster: components["schemas"]["WnbaTeamRosterRow"][];
+            /**
+             * Side
+             * @enum {string}
+             */
+            side: "away" | "home";
+            team: components["schemas"]["WnbaTeamPreviewTeam"];
+        };
+        /** WnbaTeamPreviewTeam */
+        WnbaTeamPreviewTeam: {
+            /** Abbrev */
+            abbrev: string;
+            /** Id */
+            id: string;
+            /** Logo Url */
+            logo_url: string | null;
+            /** Name */
+            name: string;
+        };
+        /** WnbaTeamRosterRow */
+        WnbaTeamRosterRow: {
+            /** Ast */
+            ast: string | null;
+            /** Blk */
+            blk: string | null;
+            /** Fg3 Pct */
+            fg3_pct: string | null;
+            /** Fg Pct */
+            fg_pct: string | null;
+            /** Ft Pct */
+            ft_pct: string | null;
+            /** Gp */
+            gp: number | null;
+            /** Headshot Url */
+            headshot_url: string | null;
+            /** Jersey */
+            jersey: string | null;
+            /** Min */
+            min: string | null;
+            /** Name */
+            name: string;
+            /** Player Id */
+            player_id: string;
+            /** Position */
+            position: string | null;
+            /** Pts */
+            pts: string | null;
+            /** Reb */
+            reb: string | null;
+            /** Stl */
+            stl: string | null;
+            /** To */
+            to: string | null;
+        };
     };
     responses: never;
     parameters: never;
@@ -3551,6 +3647,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["WnbaGameDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    wnba_team_preview_api_wnba_games__espn_event_id__team_preview_get: {
+        parameters: {
+            query: {
+                side: "away" | "home";
+            };
+            header?: never;
+            path: {
+                espn_event_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WnbaTeamPreviewResponse"];
                 };
             };
             /** @description Validation Error */

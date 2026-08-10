@@ -1,0 +1,177 @@
+{
+  "athletes": [
+    {
+      "id": "5208983",
+      "displayName": "Isobel Borlase",
+      "jersey": "20",
+      "position": {
+        "abbreviation": "G"
+      },
+      "headshot": {
+        "href": "https://a.espncdn.com/i/headshots/wnba/players/full/5208983.png"
+      },
+      "lastName": "Borlase"
+    },
+    {
+      "id": "3142250",
+      "displayName": "Jordin Canada",
+      "jersey": "3",
+      "position": {
+        "abbreviation": "G"
+      },
+      "headshot": {
+        "href": "https://a.espncdn.com/i/headshots/wnba/players/full/3142250.png"
+      },
+      "lastName": "Canada"
+    },
+    {
+      "id": "3058901",
+      "displayName": "Allisha Gray",
+      "jersey": "15",
+      "position": {
+        "abbreviation": "G"
+      },
+      "headshot": {
+        "href": "https://a.espncdn.com/i/headshots/wnba/players/full/3058901.png"
+      },
+      "lastName": "Gray"
+    },
+    {
+      "id": "4398915",
+      "displayName": "Naz Hillmon",
+      "jersey": "00",
+      "position": {
+        "abbreviation": "F"
+      },
+      "headshot": {
+        "href": "https://a.espncdn.com/i/headshots/wnba/players/full/4398915.png"
+      },
+      "lastName": "Hillmon"
+    },
+    {
+      "id": "4398674",
+      "displayName": "Rhyne Howard",
+      "jersey": "10",
+      "position": {
+        "abbreviation": "G"
+      },
+      "headshot": {
+        "href": "https://a.espncdn.com/i/headshots/wnba/players/full/4398674.png"
+      },
+      "lastName": "Howard"
+    },
+    {
+      "id": "3058895",
+      "displayName": "Brionna Jones",
+      "jersey": "42",
+      "position": {
+        "abbreviation": "F"
+      },
+      "headshot": {
+        "href": "https://a.espncdn.com/i/headshots/wnba/players/full/3058895.png"
+      },
+      "lastName": "Jones"
+    },
+    {
+      "id": "5017721",
+      "displayName": "Sika Kone",
+      "jersey": "23",
+      "position": {
+        "abbreviation": "F"
+      },
+      "headshot": {
+        "href": "https://a.espncdn.com/i/headshots/wnba/players/full/5017721.png"
+      },
+      "lastName": "Kone"
+    },
+    {
+      "id": "5105740",
+      "displayName": "Indya Nivar",
+      "jersey": "21",
+      "position": {
+        "abbreviation": "G"
+      },
+      "headshot": {
+        "href": "https://a.espncdn.com/i/headshots/wnba/players/full/5105740.png"
+      },
+      "lastName": "Nivar"
+    },
+    {
+      "id": "4597509",
+      "displayName": "Aaliyah Nye",
+      "jersey": "32",
+      "position": {
+        "abbreviation": "G"
+      },
+      "headshot": {
+        "href": "https://a.espncdn.com/i/headshots/wnba/players/full/4597509.png"
+      },
+      "lastName": "Nye"
+    },
+    {
+      "id": "5108587",
+      "displayName": "Madina Okot",
+      "jersey": "11",
+      "position": {
+        "abbreviation": "C"
+      },
+      "headshot": {
+        "href": "https://a.espncdn.com/i/headshots/wnba/players/full/5108587.png"
+      },
+      "lastName": "Okot"
+    },
+    {
+      "id": "4433431",
+      "displayName": "Te-Hina Paopao",
+      "jersey": "2",
+      "position": {
+        "abbreviation": "G"
+      },
+      "headshot": {
+        "href": "https://a.espncdn.com/i/headshots/wnba/players/full/4433431.png"
+      },
+      "lastName": "Paopao"
+    },
+    {
+      "id": "4433402",
+      "displayName": "Angel Reese",
+      "jersey": "5",
+      "position": {
+        "abbreviation": "F"
+      },
+      "headshot": {
+        "href": "https://a.espncdn.com/i/headshots/wnba/players/full/4433402.png"
+      },
+      "lastName": "Reese"
+    },
+    {
+      "id": "4433386",
+      "displayName": "Jaylyn Sherrod",
+      "jersey": "4",
+      "position": {
+        "abbreviation": "G"
+      },
+      "headshot": {
+        "href": "https://a.espncdn.com/i/headshots/wnba/players/full/4433386.png"
+      },
+      "lastName": "Sherrod"
+    },
+    {
+      "id": "3058893",
+      "displayName": "Shatori Walker-Kimbrough",
+      "jersey": "33",
+      "position": {
+        "abbreviation": "G"
+      },
+      "headshot": {
+        "href": "https://a.espncdn.com/i/headshots/wnba/players/full/3058893.png"
+      },
+      "lastName": "Walker-Kimbrough"
+    }
+  ],
+  "team": {
+    "id": "20",
+    "abbreviation": "ATL",
+    "displayName": "Atlanta Dream"
+  }
+}

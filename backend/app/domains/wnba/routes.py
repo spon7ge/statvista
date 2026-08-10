@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from typing import Literal
 
 from fastapi import APIRouter, HTTPException, Query, Response
 
@@ -16,8 +17,10 @@ from app.domains.wnba.schemas import (
     WnbaScoreboardResponse,
     WnbaStandingsResponse,
 )
+from app.domains.wnba.schemas_team_preview import WnbaTeamPreviewResponse
 from app.domains.wnba.scoreboard import get_scoreboard_for_date, get_today_scoreboard
 from app.domains.wnba.standings import get_wnba_standings
+from app.domains.wnba.team_preview import get_wnba_team_preview
 
 logger = logging.getLogger(__name__)
 
@@ -149,5 +152,32 @@ async def wnba_game_detail(
         raise HTTPException(
             status_code=502,
             detail="WNBA game detail is temporarily unavailable",
+            headers=_NO_STORE,
+        ) from exc
+
+
+@router.get(
+    "/wnba/games/{espn_event_id}/team-preview",
+    response_model=WnbaTeamPreviewResponse,
+)
+async def wnba_team_preview(
+    espn_event_id: str,
+    response: Response,
+    side: Literal["away", "home"] = Query(...),
+) -> WnbaTeamPreviewResponse:
+    response.headers["Cache-Control"] = "no-store"
+    try:
+        return await get_wnba_team_preview(espn_event_id, side)
+    except LookupError as exc:
+        raise HTTPException(
+            status_code=404,
+            detail="Game not found",
+            headers=_NO_STORE,
+        ) from exc
+    except Exception as exc:
+        logger.warning("WNBA team preview unavailable: %s", exc)
+        raise HTTPException(
+            status_code=502,
+            detail="WNBA team preview is temporarily unavailable",
             headers=_NO_STORE,
         ) from exc

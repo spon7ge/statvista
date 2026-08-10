@@ -8527,6 +8527,326 @@
         ],
         "title": "WnbaTeam",
         "type": "object"
+      },
+      "WnbaTeamLeaderCard": {
+        "properties": {
+          "headshot_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Headshot Url"
+          },
+          "key": {
+            "enum": [
+              "ppg",
+              "rpg",
+              "apg"
+            ],
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "last_name": {
+            "title": "Last Name",
+            "type": "string"
+          },
+          "player_id": {
+            "title": "Player Id",
+            "type": "string"
+          },
+          "rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rank"
+          },
+          "value": {
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "rank",
+          "value",
+          "player_id",
+          "last_name",
+          "headshot_url"
+        ],
+        "title": "WnbaTeamLeaderCard",
+        "type": "object"
+      },
+      "WnbaTeamPreviewResponse": {
+        "properties": {
+          "leaders": {
+            "items": {
+              "$ref": "#/components/schemas/WnbaTeamLeaderCard"
+            },
+            "title": "Leaders",
+            "type": "array"
+          },
+          "roster": {
+            "items": {
+              "$ref": "#/components/schemas/WnbaTeamRosterRow"
+            },
+            "title": "Roster",
+            "type": "array"
+          },
+          "side": {
+            "enum": [
+              "away",
+              "home"
+            ],
+            "title": "Side",
+            "type": "string"
+          },
+          "team": {
+            "$ref": "#/components/schemas/WnbaTeamPreviewTeam"
+          }
+        },
+        "required": [
+          "side",
+          "team",
+          "leaders",
+          "roster"
+        ],
+        "title": "WnbaTeamPreviewResponse",
+        "type": "object"
+      },
+      "WnbaTeamPreviewTeam": {
+        "properties": {
+          "abbrev": {
+            "title": "Abbrev",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "logo_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Logo Url"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "abbrev",
+          "name",
+          "logo_url"
+        ],
+        "title": "WnbaTeamPreviewTeam",
+        "type": "object"
+      },
+      "WnbaTeamRosterRow": {
+        "properties": {
+          "ast": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ast"
+          },
+          "blk": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Blk"
+          },
+          "fg3_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fg3 Pct"
+          },
+          "fg_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fg Pct"
+          },
+          "ft_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ft Pct"
+          },
+          "gp": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gp"
+          },
+          "headshot_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Headshot Url"
+          },
+          "jersey": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Jersey"
+          },
+          "min": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "player_id": {
+            "title": "Player Id",
+            "type": "string"
+          },
+          "position": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Position"
+          },
+          "pts": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pts"
+          },
+          "reb": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reb"
+          },
+          "stl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stl"
+          },
+          "to": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "To"
+          }
+        },
+        "required": [
+          "player_id",
+          "name",
+          "jersey",
+          "position",
+          "gp",
+          "min",
+          "pts",
+          "reb",
+          "ast",
+          "stl",
+          "blk",
+          "to",
+          "fg_pct",
+          "fg3_pct",
+          "ft_pct",
+          "headshot_url"
+        ],
+        "title": "WnbaTeamRosterRow",
+        "type": "object"
       }
     }
   },
@@ -9829,6 +10149,61 @@
           }
         },
         "summary": "Wnba Game Detail",
+        "tags": [
+          "wnba"
+        ]
+      }
+    },
+    "/api/wnba/games/{espn_event_id}/team-preview": {
+      "get": {
+        "operationId": "wnba_team_preview_api_wnba_games__espn_event_id__team_preview_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "espn_event_id",
+            "required": true,
+            "schema": {
+              "title": "Espn Event Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "side",
+            "required": true,
+            "schema": {
+              "enum": [
+                "away",
+                "home"
+              ],
+              "title": "Side",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WnbaTeamPreviewResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Wnba Team Preview",
         "tags": [
           "wnba"
         ]

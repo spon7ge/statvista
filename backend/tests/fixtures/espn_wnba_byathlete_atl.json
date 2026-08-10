@@ -1,0 +1,938 @@
+{
+  "items": [
+    {
+      "athlete": {
+        "$ref": "http://sports.core.api.espn.com/v2/sports/basketball/leagues/wnba/seasons/2026/athletes/3058901?lang=en&region=us"
+      },
+      "splits": {
+        "categories": [
+          {
+            "name": "defensive",
+            "stats": [
+              {
+                "name": "avgBlocks",
+                "displayValue": "0.4",
+                "value": 0.41935483
+              },
+              {
+                "name": "avgSteals",
+                "displayValue": "1.4",
+                "value": 1.3870968
+              }
+            ]
+          },
+          {
+            "name": "general",
+            "stats": [
+              {
+                "name": "avgMinutes",
+                "displayValue": "32.9",
+                "value": 32.903225
+              },
+              {
+                "name": "avgRebounds",
+                "displayValue": "3.1",
+                "value": 3.1290324
+              },
+              {
+                "name": "gamesPlayed",
+                "displayValue": "31",
+                "value": 31.0
+              }
+            ]
+          },
+          {
+            "name": "offensive",
+            "stats": [
+              {
+                "name": "fieldGoalPct",
+                "displayValue": "45.6",
+                "value": 45.578
+              },
+              {
+                "name": "freeThrowPct",
+                "displayValue": "76.7",
+                "value": 76.667
+              },
+              {
+                "name": "threePointPct",
+                "displayValue": "30.2",
+                "value": 30.178
+              },
+              {
+                "name": "avgPoints",
+                "displayValue": "19.1",
+                "value": 19.064516,
+                "rank": 9
+              },
+              {
+                "name": "avgAssists",
+                "displayValue": "2.3",
+                "value": 2.2580645
+              },
+              {
+                "name": "avgTurnovers",
+                "displayValue": "1.5",
+                "value": 1.548387
+              },
+              {
+                "name": "threePointFieldGoalPct",
+                "displayValue": "30.2",
+                "value": 30.177515745162964
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "athlete": {
+        "$ref": "http://sports.core.api.espn.com/v2/sports/basketball/leagues/wnba/seasons/2026/athletes/4398674?lang=en&region=us"
+      },
+      "splits": {
+        "categories": [
+          {
+            "name": "defensive",
+            "stats": [
+              {
+                "name": "avgBlocks",
+                "displayValue": "0.9",
+                "value": 0.93333334
+              },
+              {
+                "name": "avgSteals",
+                "displayValue": "2.3",
+                "value": 2.3333333
+              }
+            ]
+          },
+          {
+            "name": "general",
+            "stats": [
+              {
+                "name": "avgMinutes",
+                "displayValue": "34.5",
+                "value": 34.466667
+              },
+              {
+                "name": "avgRebounds",
+                "displayValue": "3.8",
+                "value": 3.8333333
+              },
+              {
+                "name": "gamesPlayed",
+                "displayValue": "30",
+                "value": 30.0
+              }
+            ]
+          },
+          {
+            "name": "offensive",
+            "stats": [
+              {
+                "name": "fieldGoalPct",
+                "displayValue": "40.2",
+                "value": 40.238
+              },
+              {
+                "name": "freeThrowPct",
+                "displayValue": "86.7",
+                "value": 86.735
+              },
+              {
+                "name": "threePointPct",
+                "displayValue": "36.4",
+                "value": 36.398
+              },
+              {
+                "name": "avgPoints",
+                "displayValue": "17.3",
+                "value": 17.266666,
+                "rank": 12
+              },
+              {
+                "name": "avgAssists",
+                "displayValue": "3.5",
+                "value": 3.5
+              },
+              {
+                "name": "avgTurnovers",
+                "displayValue": "1.3",
+                "value": 1.3333334
+              },
+              {
+                "name": "threePointFieldGoalPct",
+                "displayValue": "36.4",
+                "value": 36.39846742153168
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "athlete": {
+        "$ref": "http://sports.core.api.espn.com/v2/sports/basketball/leagues/wnba/seasons/2026/athletes/4433402?lang=en&region=us"
+      },
+      "splits": {
+        "categories": [
+          {
+            "name": "defensive",
+            "stats": [
+              {
+                "name": "avgBlocks",
+                "displayValue": "0.7",
+                "value": 0.6666667
+              },
+              {
+                "name": "avgSteals",
+                "displayValue": "1.7",
+                "value": 1.6666666
+              }
+            ]
+          },
+          {
+            "name": "general",
+            "stats": [
+              {
+                "name": "avgMinutes",
+                "displayValue": "30.7",
+                "value": 30.733334
+              },
+              {
+                "name": "avgRebounds",
+                "displayValue": "11.8",
+                "value": 11.833333
+              },
+              {
+                "name": "gamesPlayed",
+                "displayValue": "30",
+                "value": 30.0
+              }
+            ]
+          },
+          {
+            "name": "offensive",
+            "stats": [
+              {
+                "name": "fieldGoalPct",
+                "displayValue": "42.6",
+                "value": 42.559
+              },
+              {
+                "name": "freeThrowPct",
+                "displayValue": "73.3",
+                "value": 73.298
+              },
+              {
+                "name": "threePointPct",
+                "displayValue": "13.9",
+                "value": 13.889
+              },
+              {
+                "name": "avgPoints",
+                "displayValue": "15.7",
+                "value": 15.7,
+                "rank": 18
+              },
+              {
+                "name": "avgAssists",
+                "displayValue": "2.5",
+                "value": 2.4666667
+              },
+              {
+                "name": "avgTurnovers",
+                "displayValue": "3.3",
+                "value": 3.3
+              },
+              {
+                "name": "threePointFieldGoalPct",
+                "displayValue": "13.9",
+                "value": 13.88888955116272
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "athlete": {
+        "$ref": "http://sports.core.api.espn.com/v2/sports/basketball/leagues/wnba/seasons/2026/athletes/3142250?lang=en&region=us"
+      },
+      "splits": {
+        "categories": [
+          {
+            "name": "defensive",
+            "stats": [
+              {
+                "name": "avgBlocks",
+                "displayValue": "0.2",
+                "value": 0.19354838
+              },
+              {
+                "name": "avgSteals",
+                "displayValue": "2.1",
+                "value": 2.064516
+              }
+            ]
+          },
+          {
+            "name": "general",
+            "stats": [
+              {
+                "name": "avgMinutes",
+                "displayValue": "31.6",
+                "value": 31.580645
+              },
+              {
+                "name": "avgRebounds",
+                "displayValue": "3.7",
+                "value": 3.6774194
+              },
+              {
+                "name": "gamesPlayed",
+                "displayValue": "31",
+                "value": 31.0
+              }
+            ]
+          },
+          {
+            "name": "offensive",
+            "stats": [
+              {
+                "name": "fieldGoalPct",
+                "displayValue": "42.8",
+                "value": 42.751
+              },
+              {
+                "name": "freeThrowPct",
+                "displayValue": "78.9",
+                "value": 78.862
+              },
+              {
+                "name": "threePointPct",
+                "displayValue": "25.9",
+                "value": 25.882
+              },
+              {
+                "name": "avgPoints",
+                "displayValue": "11.3",
+                "value": 11.258064,
+                "rank": 45
+              },
+              {
+                "name": "avgAssists",
+                "displayValue": "7.5",
+                "value": 7.548387
+              },
+              {
+                "name": "avgTurnovers",
+                "displayValue": "2.7",
+                "value": 2.7419355
+              },
+              {
+                "name": "threePointFieldGoalPct",
+                "displayValue": "25.9",
+                "value": 25.882354378700256
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "athlete": {
+        "$ref": "http://sports.core.api.espn.com/v2/sports/basketball/leagues/wnba/seasons/2026/athletes/4398915?lang=en&region=us"
+      },
+      "splits": {
+        "categories": [
+          {
+            "name": "defensive",
+            "stats": [
+              {
+                "name": "avgBlocks",
+                "displayValue": "0.2",
+                "value": 0.23333333
+              },
+              {
+                "name": "avgSteals",
+                "displayValue": "0.7",
+                "value": 0.6666667
+              }
+            ]
+          },
+          {
+            "name": "general",
+            "stats": [
+              {
+                "name": "avgMinutes",
+                "displayValue": "28.9",
+                "value": 28.933332
+              },
+              {
+                "name": "avgRebounds",
+                "displayValue": "4.3",
+                "value": 4.3
+              },
+              {
+                "name": "gamesPlayed",
+                "displayValue": "30",
+                "value": 30.0
+              }
+            ]
+          },
+          {
+            "name": "offensive",
+            "stats": [
+              {
+                "name": "fieldGoalPct",
+                "displayValue": "47.2",
+                "value": 47.196
+              },
+              {
+                "name": "freeThrowPct",
+                "displayValue": "80.9",
+                "value": 80.851
+              },
+              {
+                "name": "threePointPct",
+                "displayValue": "30.0",
+                "value": 30.0
+              },
+              {
+                "name": "avgPoints",
+                "displayValue": "9.1",
+                "value": 9.1,
+                "rank": 60
+              },
+              {
+                "name": "avgAssists",
+                "displayValue": "1.4",
+                "value": 1.4333333
+              },
+              {
+                "name": "avgTurnovers",
+                "displayValue": "1.3",
+                "value": 1.2666667
+              },
+              {
+                "name": "threePointFieldGoalPct",
+                "displayValue": "30.0",
+                "value": 30.000001192092896
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "athlete": {
+        "$ref": "http://sports.core.api.espn.com/v2/sports/basketball/leagues/wnba/seasons/2026/athletes/3058895?lang=en&region=us"
+      },
+      "splits": {
+        "categories": [
+          {
+            "name": "defensive",
+            "stats": [
+              {
+                "name": "avgBlocks",
+                "displayValue": "0.7",
+                "value": 0.71428573
+              },
+              {
+                "name": "avgSteals",
+                "displayValue": "0.3",
+                "value": 0.2857143
+              }
+            ]
+          },
+          {
+            "name": "general",
+            "stats": [
+              {
+                "name": "avgMinutes",
+                "displayValue": "18.3",
+                "value": 18.285715
+              },
+              {
+                "name": "avgRebounds",
+                "displayValue": "6.6",
+                "value": 6.571429
+              },
+              {
+                "name": "gamesPlayed",
+                "displayValue": "7",
+                "value": 7.0
+              }
+            ]
+          },
+          {
+            "name": "offensive",
+            "stats": [
+              {
+                "name": "fieldGoalPct",
+                "displayValue": "47.8",
+                "value": 47.826
+              },
+              {
+                "name": "freeThrowPct",
+                "displayValue": "93.3",
+                "value": 93.333
+              },
+              {
+                "name": "threePointPct",
+                "displayValue": "16.7",
+                "value": 16.667
+              },
+              {
+                "name": "avgPoints",
+                "displayValue": "8.4",
+                "value": 8.428572
+              },
+              {
+                "name": "avgAssists",
+                "displayValue": "2.1",
+                "value": 2.142857
+              },
+              {
+                "name": "avgTurnovers",
+                "displayValue": "0.9",
+                "value": 0.85714287
+              },
+              {
+                "name": "threePointFieldGoalPct",
+                "displayValue": "16.7",
+                "value": 16.66666716337204
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "athlete": {
+        "$ref": "http://sports.core.api.espn.com/v2/sports/basketball/leagues/wnba/seasons/2026/athletes/5108587?lang=en&region=us"
+      },
+      "splits": {
+        "categories": [
+          {
+            "name": "defensive",
+            "stats": [
+              {
+                "name": "avgBlocks",
+                "displayValue": "0.3",
+                "value": 0.3
+              },
+              {
+                "name": "avgSteals",
+                "displayValue": "0.3",
+                "value": 0.26666668
+              }
+            ]
+          },
+          {
+            "name": "general",
+            "stats": [
+              {
+                "name": "avgMinutes",
+                "displayValue": "9.0",
+                "value": 9.033334
+              },
+              {
+                "name": "avgRebounds",
+                "displayValue": "3.4",
+                "value": 3.4333334
+              },
+              {
+                "name": "gamesPlayed",
+                "displayValue": "30",
+                "value": 30.0
+              }
+            ]
+          },
+          {
+            "name": "offensive",
+            "stats": [
+              {
+                "name": "fieldGoalPct",
+                "displayValue": "59.6",
+                "value": 59.649
+              },
+              {
+                "name": "freeThrowPct",
+                "displayValue": "76.1",
+                "value": 76.087
+              },
+              {
+                "name": "threePointPct",
+                "displayValue": "12.5",
+                "value": 12.5
+              },
+              {
+                "name": "avgPoints",
+                "displayValue": "5.7",
+                "value": 5.733333,
+                "rank": 89
+              },
+              {
+                "name": "avgAssists",
+                "displayValue": "0.2",
+                "value": 0.2
+              },
+              {
+                "name": "avgTurnovers",
+                "displayValue": "1.2",
+                "value": 1.2
+              },
+              {
+                "name": "threePointFieldGoalPct",
+                "displayValue": "12.5",
+                "value": 12.5
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "athlete": {
+        "$ref": "http://sports.core.api.espn.com/v2/sports/basketball/leagues/wnba/seasons/2026/athletes/5208983?lang=en&region=us"
+      },
+      "splits": {
+        "categories": [
+          {
+            "name": "defensive",
+            "stats": [
+              {
+                "name": "avgBlocks",
+                "displayValue": "0.1",
+                "value": 0.12903225
+              },
+              {
+                "name": "avgSteals",
+                "displayValue": "0.2",
+                "value": 0.22580644
+              }
+            ]
+          },
+          {
+            "name": "general",
+            "stats": [
+              {
+                "name": "avgMinutes",
+                "displayValue": "12.6",
+                "value": 12.612904
+              },
+              {
+                "name": "avgRebounds",
+                "displayValue": "1.5",
+                "value": 1.451613
+              },
+              {
+                "name": "gamesPlayed",
+                "displayValue": "31",
+                "value": 31.0
+              }
+            ]
+          },
+          {
+            "name": "offensive",
+            "stats": [
+              {
+                "name": "fieldGoalPct",
+                "displayValue": "42.7",
+                "value": 42.742
+              },
+              {
+                "name": "freeThrowPct",
+                "displayValue": "95.0",
+                "value": 95.0
+              },
+              {
+                "name": "threePointPct",
+                "displayValue": "28.3",
+                "value": 28.261
+              },
+              {
+                "name": "avgPoints",
+                "displayValue": "4.5",
+                "value": 4.451613,
+                "rank": 101
+              },
+              {
+                "name": "avgAssists",
+                "displayValue": "0.9",
+                "value": 0.9354839
+              },
+              {
+                "name": "avgTurnovers",
+                "displayValue": "0.7",
+                "value": 0.7096774
+              },
+              {
+                "name": "threePointFieldGoalPct",
+                "displayValue": "28.3",
+                "value": 28.260868787765503
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "athlete": {
+        "$ref": "http://sports.core.api.espn.com/v2/sports/basketball/leagues/wnba/seasons/2026/athletes/4433431?lang=en&region=us"
+      },
+      "splits": {
+        "categories": [
+          {
+            "name": "defensive",
+            "stats": [
+              {
+                "name": "avgBlocks",
+                "displayValue": "0.1",
+                "value": 0.125
+              },
+              {
+                "name": "avgSteals",
+                "displayValue": "0.2",
+                "value": 0.20833333
+              }
+            ]
+          },
+          {
+            "name": "general",
+            "stats": [
+              {
+                "name": "avgMinutes",
+                "displayValue": "12.5",
+                "value": 12.541667
+              },
+              {
+                "name": "avgRebounds",
+                "displayValue": "0.9",
+                "value": 0.9166667
+              },
+              {
+                "name": "gamesPlayed",
+                "displayValue": "24",
+                "value": 24.0
+              }
+            ]
+          },
+          {
+            "name": "offensive",
+            "stats": [
+              {
+                "name": "fieldGoalPct",
+                "displayValue": "34.4",
+                "value": 34.409
+              },
+              {
+                "name": "freeThrowPct",
+                "displayValue": "87.5",
+                "value": 87.5
+              },
+              {
+                "name": "threePointPct",
+                "displayValue": "36.7",
+                "value": 36.667
+              },
+              {
+                "name": "avgPoints",
+                "displayValue": "3.9",
+                "value": 3.875,
+                "rank": 111
+              },
+              {
+                "name": "avgAssists",
+                "displayValue": "1.6",
+                "value": 1.5833334
+              },
+              {
+                "name": "avgTurnovers",
+                "displayValue": "0.7",
+                "value": 0.6666667
+              },
+              {
+                "name": "threePointFieldGoalPct",
+                "displayValue": "36.7",
+                "value": 36.666667461395264
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "athlete": {
+        "$ref": "http://sports.core.api.espn.com/v2/sports/basketball/leagues/wnba/seasons/2026/athletes/4433386?lang=en&region=us"
+      },
+      "splits": {
+        "categories": [
+          {
+            "name": "defensive",
+            "stats": [
+              {
+                "name": "avgBlocks",
+                "displayValue": "0.1",
+                "value": 0.14285715
+              },
+              {
+                "name": "avgSteals",
+                "displayValue": "0.7",
+                "value": 0.71428573
+              }
+            ]
+          },
+          {
+            "name": "general",
+            "stats": [
+              {
+                "name": "avgMinutes",
+                "displayValue": "6.7",
+                "value": 6.714286
+              },
+              {
+                "name": "avgRebounds",
+                "displayValue": "0.7",
+                "value": 0.71428573
+              },
+              {
+                "name": "gamesPlayed",
+                "displayValue": "7",
+                "value": 7.0
+              }
+            ]
+          },
+          {
+            "name": "offensive",
+            "stats": [
+              {
+                "name": "fieldGoalPct",
+                "displayValue": "33.3",
+                "value": 33.333
+              },
+              {
+                "name": "freeThrowPct",
+                "displayValue": "100.0",
+                "value": 100.0
+              },
+              {
+                "name": "threePointPct",
+                "displayValue": "50.0",
+                "value": 50.0
+              },
+              {
+                "name": "avgPoints",
+                "displayValue": "2.7",
+                "value": 2.7142856
+              },
+              {
+                "name": "avgAssists",
+                "displayValue": "1.1",
+                "value": 1.1428572
+              },
+              {
+                "name": "avgTurnovers",
+                "displayValue": "0.3",
+                "value": 0.2857143
+              },
+              {
+                "name": "threePointFieldGoalPct",
+                "displayValue": "50.0",
+                "value": 50.0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "athlete": {
+        "$ref": "http://sports.core.api.espn.com/v2/sports/basketball/leagues/wnba/seasons/2026/athletes/5017721?lang=en&region=us"
+      },
+      "splits": {
+        "categories": [
+          {
+            "name": "defensive",
+            "stats": [
+              {
+                "name": "avgBlocks",
+                "displayValue": "0.0",
+                "value": 0.0
+              },
+              {
+                "name": "avgSteals",
+                "displayValue": "0.1",
+                "value": 0.07692308
+              }
+            ]
+          },
+          {
+            "name": "general",
+            "stats": [
+              {
+                "name": "avgMinutes",
+                "displayValue": "5.5",
+                "value": 5.5
+              },
+              {
+                "name": "avgRebounds",
+                "displayValue": "1.2",
+                "value": 1.1538461
+              },
+              {
+                "name": "gamesPlayed",
+                "displayValue": "26",
+                "value": 26.0
+              }
+            ]
+          },
+          {
+            "name": "offensive",
+            "stats": [
+              {
+                "name": "fieldGoalPct",
+                "displayValue": "30.6",
+                "value": 30.612
+              },
+              {
+                "name": "freeThrowPct",
+                "displayValue": "73.7",
+                "value": 73.684
+              },
+              {
+                "name": "threePointPct",
+                "displayValue": "16.0",
+                "value": 16.0
+              },
+              {
+                "name": "avgPoints",
+                "displayValue": "1.8",
+                "value": 1.8461539,
+                "rank": 127
+              },
+              {
+                "name": "avgAssists",
+                "displayValue": "0.2",
+                "value": 0.23076923
+              },
+              {
+                "name": "avgTurnovers",
+                "displayValue": "0.3",
+                "value": 0.30769232
+              },
+              {
+                "name": "threePointFieldGoalPct",
+                "displayValue": "16.0",
+                "value": 15.999999642372131
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "count": 11
+}

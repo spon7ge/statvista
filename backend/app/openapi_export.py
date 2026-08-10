@@ -14,6 +14,7 @@ DEFAULT_OUT = REPO_ROOT / "frontend" / "openapi.json"
 REQUIRED_WNBA_PATHS = (
     "/api/wnba/scoreboard/today",
     "/api/wnba/games/{espn_event_id}",
+    "/api/wnba/games/{espn_event_id}/team-preview",
     "/api/wnba/leaders",
     "/api/wnba/standings",
     "/api/wnba/odds/today",

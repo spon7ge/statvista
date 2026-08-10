@@ -49,6 +49,12 @@ from app.domains.wnba.schemas_standings import (
     WnbaStandingsResponse,
     WnbaStandingsRow,
 )
+from app.domains.wnba.schemas_team_preview import (
+    WnbaTeamLeaderCard,
+    WnbaTeamPreviewResponse,
+    WnbaTeamPreviewTeam,
+    WnbaTeamRosterRow,
+)
 
 __all__ = [
     "GameDetailBoxScore",
@@ -94,4 +100,8 @@ __all__ = [
     "WnbaStandingsResponse",
     "WnbaStandingsRow",
     "WnbaTeam",
+    "WnbaTeamLeaderCard",
+    "WnbaTeamPreviewResponse",
+    "WnbaTeamPreviewTeam",
+    "WnbaTeamRosterRow",
 ]
