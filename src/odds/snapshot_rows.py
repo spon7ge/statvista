@@ -258,10 +258,24 @@ def parlay_props_to_api_odds_rows(
 
 
 _SELENIUM_STAT_TO_MARKET = {
+    # Basketball (WNBA / NBA)
     "points": "player_points",
     "assists": "player_assists",
     "rebounds": "player_rebounds",
     "points_rebounds_assists": "player_pts_rebs_asts",
+    # Baseball (MLB) — selenium JSON ``stat`` → odds.mlb_pinnacle.market_type
+    "hits": "player_hits",
+    "home_runs": "player_home_runs",
+    "total_bases": "player_total_bases",
+    "rbis": "player_rbis",
+    "runs": "player_runs",
+    "stolen_bases": "player_stolen_bases",
+    "strikeouts": "player_strikeouts",
+    "hits_allowed": "player_hits_allowed",
+    "walks": "player_walks",
+    "earned_runs": "player_earned_runs",
+    "outs_recorded": "player_outs",
+    "pitcher_outs": "player_outs",
 }
 
 

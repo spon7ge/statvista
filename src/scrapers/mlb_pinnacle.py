@@ -1238,8 +1238,21 @@ class PinnacleScraper:
         scraped_at = dt.datetime.now(dt.timezone.utc)
         db_ok = True
         try:
-            from src.odds.load_snapshots import load_pinnacle_team_snapshot
+            from src.odds.load_snapshots import (
+                load_pinnacle_props_snapshot,
+                load_pinnacle_team_snapshot,
+            )
 
+            n_props_db = load_pinnacle_props_snapshot(
+                games_out,
+                league=self.league,
+                scraped_at=scraped_at,
+            )
+            logger.info(
+                "Supabase odds.mlb_pinnacle upserted %s rows (%s)",
+                n_props_db,
+                self.league,
+            )
             n_team_db = load_pinnacle_team_snapshot(
                 games_out,
                 league=self.league,
@@ -1252,7 +1265,7 @@ class PinnacleScraper:
             )
         except Exception as exc:
             db_ok = False
-            logger.warning("Supabase mlb pinnacle team load failed (JSON kept): %s", exc)
+            logger.warning("Supabase mlb pinnacle load failed (JSON kept): %s", exc)
 
         n_props = sum(len(g.get("props") or []) for g in games_out)
         print(

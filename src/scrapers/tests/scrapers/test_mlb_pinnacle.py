@@ -20,6 +20,75 @@ def _load_scraper():
     return mod
 
 
+def test_run_upserts_props_and_team_snapshots(monkeypatch, tmp_path) -> None:
+    pin = _load_scraper()
+    scraper = pin.PinnacleScraper("mlb")
+    scraper.output_path = str(tmp_path / "pinnacle_mlb_test_props.json")
+
+    class _FakeDriver:
+        def quit(self) -> None:
+            return None
+
+    monkeypatch.setattr(scraper, "_build_driver", lambda discovery=False: _FakeDriver())
+    monkeypatch.setattr(scraper, "discover_game_urls", lambda driver: [])
+
+    calls: list[str] = []
+
+    def _fake_props(games, *, league, scraped_at=None):
+        calls.append("props")
+        assert league == "mlb"
+        assert isinstance(games, list)
+        return 7
+
+    def _fake_team(games, *, league, scraped_at=None):
+        calls.append("team")
+        assert league == "mlb"
+        assert isinstance(games, list)
+        return 3
+
+    monkeypatch.setattr(
+        "src.odds.load_snapshots.load_pinnacle_props_snapshot",
+        _fake_props,
+    )
+    monkeypatch.setattr(
+        "src.odds.load_snapshots.load_pinnacle_team_snapshot",
+        _fake_team,
+    )
+
+    payload, db_ok = scraper.run()
+    assert db_ok is True
+    assert payload.get("league") == "mlb"
+    assert calls == ["props", "team"]
+    assert (tmp_path / "pinnacle_mlb_test_props.json").is_file()
+    assert (tmp_path / "pinnacle_mlb_test_team.json").is_file()
+
+
+def test_run_db_ok_false_when_props_upsert_fails(monkeypatch, tmp_path) -> None:
+    pin = _load_scraper()
+    scraper = pin.PinnacleScraper("mlb")
+    scraper.output_path = str(tmp_path / "pinnacle_mlb_test_props.json")
+
+    class _FakeDriver:
+        def quit(self) -> None:
+            return None
+
+    monkeypatch.setattr(scraper, "_build_driver", lambda discovery=False: _FakeDriver())
+    monkeypatch.setattr(scraper, "discover_game_urls", lambda driver: [])
+
+    def _fail_props(*_args, **_kwargs):
+        raise RuntimeError("supabase down")
+
+    monkeypatch.setattr(
+        "src.odds.load_snapshots.load_pinnacle_props_snapshot",
+        _fail_props,
+    )
+
+    payload, db_ok = scraper.run()
+    assert isinstance(payload, dict)
+    assert db_ok is False
+    assert (tmp_path / "pinnacle_mlb_test_props.json").is_file()
+
+
 def test_output_filenames() -> None:
     pin = _load_scraper()
     now = datetime(2026, 8, 3, 12, 0, 0, tzinfo=ZoneInfo("America/Los_Angeles"))

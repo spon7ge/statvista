@@ -28,6 +28,49 @@ def test_props_emit_over_under_player_points():
     assert by_side["under"]["american_price"] == -130
 
 
+def test_mlb_props_map_baseball_stats_to_player_markets():
+    games = [{
+        "participants": ["Baltimore Orioles", "Minnesota Twins"],
+        "props": [
+            {
+                "stat": "strikeouts",
+                "player": "Dean Kremer",
+                "line": 5.5,
+                "american_over": 108,
+                "american_under": -143,
+            },
+            {
+                "stat": "home_runs",
+                "player": "Aaron Judge",
+                "line": 0.5,
+                "american_over": -120,
+                "american_under": 100,
+            },
+            {
+                "stat": "hits_allowed",
+                "player": "Trevor Rogers",
+                "line": 5.5,
+                "american_over": -110,
+                "american_under": -110,
+            },
+            {
+                "stat": "runs",
+                "player": "Juan Soto",
+                "line": 0.5,
+                "american_over": -105,
+                "american_under": -115,
+            },
+        ],
+    }]
+    rows = selenium_pinnacle_props_to_rows(games, league="mlb", scraped_at=SCRAPED)
+    assert len(rows) == 8
+    by_key = {(r["player_name"], r["market_type"], r["side"]): r for r in rows}
+    assert by_key[("Dean Kremer", "player_strikeouts", "over")]["american_price"] == 108
+    assert by_key[("Aaron Judge", "player_home_runs", "under")]["line_score"] == 0.5
+    assert by_key[("Trevor Rogers", "player_hits_allowed", "over")]["american_price"] == -110
+    assert by_key[("Juan Soto", "player_runs", "under")]["american_price"] == -115
+
+
 def test_team_mains_and_alts():
     games = [{
         "matchup_id": 1,
