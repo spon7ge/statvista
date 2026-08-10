@@ -168,3 +168,76 @@ def test_extract_team_markets_money_spread_total() -> None:
         float(tm["spread"][0]["line"])
     ) == 4.5
     assert tm["total"][0]["line"] == 162.5
+
+
+def test_extract_props_allowlist_and_is_main() -> None:
+    nv = _load_scraper()
+    markets = [
+        {
+            "id": "p1",
+            "type": "POINTS",
+            "strike": 18.5,
+            "player": {"id": "pl1", "name": "A'ja Wilson"},
+            "outcomes": [
+                {"description": "Over 18.5", "available": 0.73, "orders": []},
+                {"description": "Under 18.5", "available": 0.27, "orders": []},
+            ],
+        },
+        {
+            "id": "p2",
+            "type": "POINTS",
+            "strike": 22.5,
+            "player": {"id": "pl1", "name": "A'ja Wilson"},
+            "outcomes": [
+                {"description": "Over 22.5", "available": 0.51, "orders": []},
+                {"description": "Under 22.5", "available": 0.505, "orders": []},
+            ],
+        },
+        {
+            "id": "extra",
+            "type": "STEALS",
+            "strike": 1.5,
+            "player": {"id": "pl1", "name": "A'ja Wilson"},
+            "outcomes": [
+                {"description": "Over 1.5", "available": 0.48, "orders": []},
+                {"description": "Under 1.5", "available": 0.52, "orders": []},
+            ],
+        },
+        {
+            "id": "skip",
+            "type": "FIRST_BASKET",
+            "strike": 0.5,
+            "player": {"id": "pl1", "name": "A'ja Wilson"},
+            "outcomes": [
+                {"description": "Over 0.5", "available": 0.5, "orders": []},
+                {"description": "Under 0.5", "available": 0.5, "orders": []},
+            ],
+        },
+    ]
+    rows = nv.extract_props(markets)
+    assert len(rows) == 3
+    points = [r for r in rows if r["stat"] == "points"]
+    by_line = {r["line"]: r for r in points}
+    assert by_line[22.5]["is_main"] is True
+    assert by_line[18.5]["is_main"] is False
+    assert by_line[22.5]["player"] == "A'ja Wilson"
+    assert by_line[22.5]["sub_type"] == "points"
+    steals = [r for r in rows if r["stat"] == "steals"]
+    assert len(steals) == 1 and steals[0]["is_main"] is True
+
+
+def test_extract_props_skips_both_sides_empty() -> None:
+    nv = _load_scraper()
+    markets = [
+        {
+            "id": "empty",
+            "type": "POINTS",
+            "strike": 20.5,
+            "player": {"id": "pl1", "name": "A"},
+            "outcomes": [
+                {"description": "Over 20.5", "available": None, "last": 0.5, "orders": []},
+                {"description": "Under 20.5", "available": None, "last": 0.5, "orders": []},
+            ],
+        }
+    ]
+    assert nv.extract_props(markets) == []

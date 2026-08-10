@@ -322,3 +322,103 @@ def extract_team_markets(markets: list[dict[str, Any]]) -> dict[str, Any]:
             out["total"] = rows
 
     return out
+
+
+PROP_TYPE_TO_STAT: dict[str, str] = {
+    "POINTS": "points",
+    "REBOUNDS": "rebounds",
+    "ASSISTS": "assists",
+    "POINTS_REBOUNDS_ASSISTS": "points_rebounds_assists",
+    "POINTS_REBOUNDS": "points_rebounds",
+    "POINTS_ASSISTS": "points_assists",
+    "REBOUNDS_ASSISTS": "rebounds_assists",
+    "THREES": "threes",
+    "THREE_POINTERS": "threes",
+    "STEALS": "steals",
+    "BLOCKS": "blocks",
+    "STEALS_BLOCKS": "steals_blocks",
+    "TURNOVERS": "turnovers",
+}
+
+
+def _outcome_side(description: str) -> str | None:
+    lower = str(description).strip().lower()
+    if lower.startswith("over"):
+        return "over"
+    if lower.startswith("under"):
+        return "under"
+    return None
+
+
+def _prop_evenness_score(
+    over_outcome: dict[str, Any] | None,
+    under_outcome: dict[str, Any] | None,
+) -> float:
+    over_avail = _outcome_available(over_outcome) if over_outcome else None
+    under_avail = _outcome_available(under_outcome) if under_outcome else None
+    if over_avail is None:
+        over_avail = 1.0
+    if under_avail is None:
+        under_avail = 1.0
+    return abs(over_avail - 0.5) + abs(under_avail - 0.5)
+
+
+def extract_props(markets: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    grouped: dict[tuple[Any, str], list[tuple[dict[str, Any], float]]] = {}
+
+    for market in markets:
+        if not isinstance(market, dict):
+            continue
+        player = market.get("player")
+        if not isinstance(player, dict):
+            continue
+        stat = PROP_TYPE_TO_STAT.get(str(market.get("type") or ""))
+        if stat is None:
+            continue
+        try:
+            line = float(market.get("strike"))
+        except (TypeError, ValueError):
+            continue
+
+        over_outcome: dict[str, Any] | None = None
+        under_outcome: dict[str, Any] | None = None
+        for outcome in _market_outcomes(market):
+            side = _outcome_side(str(outcome.get("description") or ""))
+            if side == "over":
+                over_outcome = outcome
+            elif side == "under":
+                under_outcome = outcome
+
+        over_quote = (
+            outcome_quote(over_outcome, under_outcome) if over_outcome else None
+        )
+        under_quote = (
+            outcome_quote(under_outcome, over_outcome) if under_outcome else None
+        )
+        if over_quote is None and under_quote is None:
+            continue
+
+        player_key = player.get("id") or player.get("name")
+        row: dict[str, Any] = {
+            "player": str(player.get("name") or ""),
+            "stat": stat,
+            "line": line,
+            "over": over_quote,
+            "under": under_quote,
+            "market_id": str(market.get("id") or ""),
+            "sub_type": str(market.get("type") or "").lower(),
+            "is_main": False,
+        }
+        rows.append(row)
+        score = _prop_evenness_score(over_outcome, under_outcome)
+        grouped.setdefault((player_key, stat), []).append((row, score))
+
+    for group in grouped.values():
+        if len(group) == 1:
+            group[0][0]["is_main"] = True
+            continue
+        best_row, _ = min(group, key=lambda item: item[1])
+        best_row["is_main"] = True
+
+    return rows
