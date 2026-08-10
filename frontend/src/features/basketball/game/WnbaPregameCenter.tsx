@@ -1,8 +1,11 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useWnbaOdds } from "@/features/basketball/hooks/useWnbaOdds";
 import { useWnbaProps } from "@/features/basketball/hooks/useWnbaProps";
 import { useWnbaTeamPreview } from "@/features/basketball/hooks/useWnbaTeamPreview";
-import { filterPropLines } from "@/features/basketball/league/filterPropLines";
+import {
+  expandWnbaTeamAbbrevs,
+  filterPropLines,
+} from "@/features/basketball/league/filterPropLines";
 import type { ApiWnbaPropLine } from "@/shared/lib/api";
 import { collectWnbaOddsBookBoards } from "../lib/wnbaOddsBoard";
 import type { GameDetail } from "../lib/types";
@@ -25,37 +28,6 @@ const PROPS_APP_TABS: { id: PropsAppTab; label: string }[] = [
   { id: "prizepicks", label: "PrizePicks" },
   { id: "underdog", label: "Underdog" },
 ];
-
-/** Align ESPN tricodes with props/odds spellings — same map as wnbaOddsBoard. */
-const ABBREV_ALIASES: Record<string, string> = {
-  GS: "GSV",
-  LA: "LAS",
-  LV: "LVA",
-  NY: "NYL",
-  PHX: "PHO",
-  POR: "PDX",
-  CONN: "CON",
-  WSH: "WAS",
-};
-
-/** Expand game abbrevs so filterPropLines matches ESPN or odds/props spellings. */
-export function gameTeamAbbrevSet(awayAbbrev: string, homeAbbrev: string): Set<string> {
-  const out = new Set<string>();
-  for (const raw of [awayAbbrev, homeAbbrev]) {
-    const upper = raw.trim().toUpperCase();
-    if (!upper) continue;
-    out.add(upper);
-    const canonical = ABBREV_ALIASES[upper] ?? upper;
-    out.add(canonical);
-    for (const [alias, canon] of Object.entries(ABBREV_ALIASES)) {
-      if (canon === upper || canon === canonical) {
-        out.add(alias);
-        out.add(canon);
-      }
-    }
-  }
-  return out;
-}
 
 function GamePropsAppTabs({
   activeApp,
@@ -175,20 +147,12 @@ export function WnbaPregameCenter({ detail }: { detail: GameDetail }) {
   });
   const teamPreviewQuery = activeTab === "home" ? homePreview : awayPreview;
 
-  const gameTeams = useMemo(
-    () => gameTeamAbbrevSet(detail.away.abbrev, detail.home.abbrev),
-    [detail.away.abbrev, detail.home.abbrev],
-  );
-
-  const filteredProps = useMemo(() => {
-    const rows = propsQuery.data?.props ?? [];
-    return filterPropLines(rows, {
-      stats: new Set(),
-      sides: new Set(),
-      teams: gameTeams,
-      books: new Set([propsApp]),
-    });
-  }, [propsQuery.data?.props, gameTeams, propsApp]);
+  const filteredProps = filterPropLines(propsQuery.data?.props ?? [], {
+    stats: new Set(),
+    sides: new Set(),
+    teams: expandWnbaTeamAbbrevs([detail.away.abbrev, detail.home.abbrev]),
+    books: new Set([propsApp]),
+  });
 
   return (
     <div data-testid="wnba-pregame-center" className="space-y-4">
