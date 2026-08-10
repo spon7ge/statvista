@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { LeagueSubnav } from "@/features/basketball/league/LeagueSubnav";
+import { WnbaPropPicksHeader } from "@/features/basketball/league/WnbaPropPicksHeader";
 import { PropPicksFilters } from "@/features/basketball/league/PropPicksFilters";
 import { PropPicksTable } from "@/features/basketball/league/PropPicksTable";
 import {
@@ -50,36 +51,39 @@ export function LeaguePropPicksPage() {
   return (
     <div className="space-y-0">
       <LeagueSubnav league="wnba" />
-      <PropPicksTable
-        props={filtered}
-        isLoading={showLoading}
-        isError={apiEmpty}
-        visibleBooks={selectedBooks}
-        lastUpdatedAt={dataUpdatedAt || undefined}
-        filtersActive={filtersActive && !apiEmpty && activeProps.length > 0}
-        toolbar={
-          !showLoading && !apiEmpty && activeProps.length > 0 ? (
-            <PropPicksFilters
-              stats={collectStatOptions(activeProps)}
-              teams={collectTeamOptions(activeProps)}
-              selectedStats={selectedStats}
-              selectedSides={selectedSides}
-              selectedTeams={selectedTeams}
-              selectedBooks={selectedBooks}
-              onStatsChange={setSelectedStats}
-              onSidesChange={setSelectedSides}
-              onTeamsChange={setSelectedTeams}
-              onBooksChange={setSelectedBooks}
-              onClear={() => {
-                setSelectedStats(new Set());
-                setSelectedSides(new Set());
-                setSelectedTeams(new Set());
-                setSelectedBooks(new Set());
-              }}
-            />
-          ) : null
-        }
-      />
+      <section className="mx-auto max-w-6xl space-y-6 px-4 pb-16 sm:px-6 sm:pb-20">
+        <WnbaPropPicksHeader />
+        <PropPicksTable
+          props={filtered}
+          isLoading={showLoading}
+          isError={apiEmpty}
+          visibleBooks={selectedBooks}
+          lastUpdatedAt={dataUpdatedAt || undefined}
+          filtersActive={filtersActive && !apiEmpty && activeProps.length > 0}
+          toolbar={
+            !showLoading && !apiEmpty && activeProps.length > 0 ? (
+              <PropPicksFilters
+                stats={collectStatOptions(activeProps)}
+                teams={collectTeamOptions(activeProps)}
+                selectedStats={selectedStats}
+                selectedSides={selectedSides}
+                selectedTeams={selectedTeams}
+                selectedBooks={selectedBooks}
+                onStatsChange={setSelectedStats}
+                onSidesChange={setSelectedSides}
+                onTeamsChange={setSelectedTeams}
+                onBooksChange={setSelectedBooks}
+                onClear={() => {
+                  setSelectedStats(new Set());
+                  setSelectedSides(new Set());
+                  setSelectedTeams(new Set());
+                  setSelectedBooks(new Set());
+                }}
+              />
+            ) : null
+          }
+        />
+      </section>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { useParams } from "react-router-dom";
 import { LeagueSubnav } from "@/features/basketball/league/LeagueSubnav";
+import { WnbaPlayerHeaderBanner } from "@/features/basketball/league/WnbaPlayerHeaderBanner";
 import { PlayerHeader } from "@/features/basketball/league/PlayerHeader";
 import { PlayerRecentGames } from "@/features/basketball/league/PlayerRecentGames";
 import { useWnbaPlayer } from "@/features/basketball/hooks/useWnbaPlayer";
@@ -42,7 +43,8 @@ export function LeaguePlayerPage() {
     );
   } else {
     body = (
-      <div className="mx-auto max-w-6xl space-y-4 px-4 pb-16 sm:px-6 sm:pb-20">
+      <div className="mx-auto max-w-6xl space-y-6 px-4 pb-16 sm:px-6 sm:pb-20">
+        <WnbaPlayerHeaderBanner title={data.name} />
         <PlayerHeader player={data} />
         <PlayerRecentGames games={data.games} />
         <p className="text-xs text-white/35">Data: stats.wnba.com</p>

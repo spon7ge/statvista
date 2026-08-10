@@ -74,7 +74,13 @@ describe("LeaguePlayerPage", () => {
 
     renderPage();
 
-    expect(await screen.findByText("A'ja Wilson")).toBeInTheDocument();
+    expect(await screen.findByTestId("wnba-player-header-banner")).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { level: 1, name: "A'ja Wilson" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { level: 2, name: "A'ja Wilson" }),
+    ).toBeInTheDocument();
     expect(screen.getByText("Recent games")).toBeInTheDocument();
     expect(screen.getByText("Data: stats.wnba.com")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Leaders" })).toBeInTheDocument();
