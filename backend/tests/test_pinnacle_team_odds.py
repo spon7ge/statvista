@@ -59,6 +59,20 @@ def test_normalize_spread_and_total():
     assert g.total == 186.0
     assert g.sportsbook == "pinnacle"
     assert g.game_date == "2026-08-03"
+    assert g.board is not None
+    assert g.board.away.spread is not None
+    assert g.board.away.spread.line == 1.5
+    assert g.board.away.spread.price == -103
+    assert g.board.home.spread is not None
+    assert g.board.home.spread.line == -1.5
+    assert g.board.home.spread.price == -117
+    assert g.board.away.total is not None
+    assert g.board.away.total.side == "over"
+    assert g.board.away.total.line == 186.0
+    assert g.board.away.total.price == -104
+    assert g.board.home.total is not None
+    assert g.board.home.total.side == "under"
+    assert g.board.home.total.price == -120
 
 
 def test_normalize_includes_moneylines():
@@ -109,6 +123,9 @@ def test_normalize_includes_moneylines():
     g = games[0]
     assert g.away_moneyline == 125
     assert g.home_moneyline == -145
+    assert g.board is not None
+    assert g.board.away.moneyline == 125
+    assert g.board.home.moneyline == -145
 
 
 def test_merge_falls_back_to_sharp_when_pinnacle_empty_markets():

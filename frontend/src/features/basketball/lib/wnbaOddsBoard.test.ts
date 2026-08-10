@@ -90,6 +90,7 @@ describe("wnbaOddsBoard", () => {
         total: 162.5,
         away_moneyline: 165,
         home_moneyline: -195,
+        board: null,
       }),
       "2026-08-10T18:00:00Z",
     );
@@ -115,6 +116,46 @@ describe("wnbaOddsBoard", () => {
       kind: "total",
       side: "under",
       line: 162.5,
+    });
+  });
+
+  it("prefers nested board juice prices when present", () => {
+    const view = toWnbaOddsBoardView(
+      game({
+        away_moneyline: null,
+        home_moneyline: null,
+        board: {
+          away: {
+            moneyline: 165,
+            spread: { line: 4.5, price: -105 },
+            total: { side: "over", line: 162.5, price: -110 },
+          },
+          home: {
+            moneyline: -195,
+            spread: { line: -4.5, price: -115 },
+            total: { side: "under", line: 162.5, price: -110 },
+          },
+        },
+      }),
+      null,
+    );
+    expect(view?.rows[0].money).toEqual({ kind: "money", price: 165 });
+    expect(view?.rows[0].spread).toEqual({
+      kind: "spread",
+      line: 4.5,
+      price: -105,
+    });
+    expect(view?.rows[0].total).toEqual({
+      kind: "total",
+      side: "over",
+      line: 162.5,
+      price: -110,
+    });
+    expect(view?.rows[1].total).toEqual({
+      kind: "total",
+      side: "under",
+      line: 162.5,
+      price: -110,
     });
   });
 

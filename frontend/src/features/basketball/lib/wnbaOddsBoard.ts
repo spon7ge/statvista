@@ -116,6 +116,36 @@ export function toWnbaOddsBoardView(
   const sportsbook = game.sportsbook?.trim() || null;
   if (!sportsbook) return null;
 
+  if (game.board) {
+    const { away, home } = game.board;
+    return {
+      sportsbook,
+      asOf,
+      rows: [
+        {
+          side: "away",
+          money: moneyTile(away.moneyline),
+          spread: spreadTile(away.spread?.line ?? null, away.spread?.price ?? null),
+          total: totalTile(
+            away.total?.side ?? "over",
+            away.total?.line ?? null,
+            away.total?.price ?? null,
+          ),
+        },
+        {
+          side: "home",
+          money: moneyTile(home.moneyline),
+          spread: spreadTile(home.spread?.line ?? null, home.spread?.price ?? null),
+          total: totalTile(
+            home.total?.side ?? "under",
+            home.total?.line ?? null,
+            home.total?.price ?? null,
+          ),
+        },
+      ],
+    };
+  }
+
   const [awaySpread, homeSpread] = flatSpreadLines(game);
   if (
     awaySpread == null &&

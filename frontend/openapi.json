@@ -7380,6 +7380,123 @@
         "title": "WnbaLeadersResponse",
         "type": "object"
       },
+      "WnbaOddsBoard": {
+        "properties": {
+          "away": {
+            "$ref": "#/components/schemas/WnbaOddsBoardSide"
+          },
+          "home": {
+            "$ref": "#/components/schemas/WnbaOddsBoardSide"
+          }
+        },
+        "required": [
+          "away",
+          "home"
+        ],
+        "title": "WnbaOddsBoard",
+        "type": "object"
+      },
+      "WnbaOddsBoardLine": {
+        "properties": {
+          "line": {
+            "title": "Line",
+            "type": "number"
+          },
+          "price": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price"
+          }
+        },
+        "required": [
+          "line",
+          "price"
+        ],
+        "title": "WnbaOddsBoardLine",
+        "type": "object"
+      },
+      "WnbaOddsBoardSide": {
+        "properties": {
+          "moneyline": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Moneyline"
+          },
+          "spread": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WnbaOddsBoardLine"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "total": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WnbaOddsBoardTotal"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "moneyline",
+          "spread",
+          "total"
+        ],
+        "title": "WnbaOddsBoardSide",
+        "type": "object"
+      },
+      "WnbaOddsBoardTotal": {
+        "properties": {
+          "line": {
+            "title": "Line",
+            "type": "number"
+          },
+          "price": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price"
+          },
+          "side": {
+            "enum": [
+              "over",
+              "under"
+            ],
+            "title": "Side",
+            "type": "string"
+          }
+        },
+        "required": [
+          "side",
+          "line",
+          "price"
+        ],
+        "title": "WnbaOddsBoardTotal",
+        "type": "object"
+      },
       "WnbaOddsGame": {
         "properties": {
           "away_abbrev": {
@@ -7396,6 +7513,16 @@
               }
             ],
             "title": "Away Moneyline"
+          },
+          "board": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WnbaOddsBoard"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "game_date": {
             "anyOf": [
@@ -7477,7 +7604,8 @@
           "away_moneyline",
           "home_moneyline",
           "game_date",
-          "sportsbook"
+          "sportsbook",
+          "board"
         ],
         "title": "WnbaOddsGame",
         "type": "object"

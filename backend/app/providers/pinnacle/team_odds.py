@@ -9,7 +9,14 @@ from datetime import datetime, timezone
 from typing import Any
 from zoneinfo import ZoneInfo
 
-from app.schemas.odds import WnbaOddsGame, WnbaOddsResponse
+from app.schemas.odds import (
+    WnbaOddsBoard,
+    WnbaOddsBoardLine,
+    WnbaOddsBoardSide,
+    WnbaOddsBoardTotal,
+    WnbaOddsGame,
+    WnbaOddsResponse,
+)
 from app.providers.sharp.odds import (
     fetch_sharp_odds_rows,
     merge_odds_prefer_primary,
@@ -102,7 +109,10 @@ def _int_price(raw: Any) -> int | None:
     try:
         return int(raw)
     except (TypeError, ValueError):
-        return None
+        try:
+            return int(float(raw))
+        except (TypeError, ValueError):
+            return None
 
 
 def normalize_team_odds_rows(
@@ -127,15 +137,17 @@ def normalize_team_odds_rows(
                 "spreads": [],
                 "totals": [],
                 "moneylines": [],
+                "board_spreads": [],
+                "board_totals": [],
             },
         )
 
         market = _MARKET_KIND.get(str(row.get("market_type") or "").lower())
         if market is None:
             continue
+        price = _int_price(row.get("american_price"))
         if market == "moneyline":
             team = _spread_side_abbrev(row, home, away)
-            price = _int_price(row.get("american_price"))
             if team and price is not None:
                 bucket["moneylines"].append((team, price))
             continue
@@ -148,12 +160,18 @@ def normalize_team_odds_rows(
         except (TypeError, ValueError):
             continue
 
+        # Books occasionally publish a line before (or without) a price;
+        # the line alone is still worth showing, so keep it with a null price.
         if market == "spread":
             team = _spread_side_abbrev(row, home, away)
             if team:
                 bucket["spreads"].append((team, points_f))
+                bucket["board_spreads"].append((team, points_f, price))
         elif market == "total":
             bucket["totals"].append(points_f)
+            side = str(row.get("side") or "").lower()
+            if side in {"over", "under"}:
+                bucket["board_totals"].append((side, points_f, price))
 
     games: list[WnbaOddsGame] = []
     for bucket in by_matchup.values():
@@ -173,6 +191,8 @@ def normalize_team_odds_rows(
             continue
 
         moneylines: list[tuple[str, int]] = bucket["moneylines"]
+        board_spreads: list[tuple[str, float, int | None]] = bucket["board_spreads"]
+        board_totals: list[tuple[str, float, int | None]] = bucket["board_totals"]
         away_moneyline = next(
             (price for team, price in moneylines if team == bucket["away_abbrev"]),
             None,
@@ -181,6 +201,62 @@ def normalize_team_odds_rows(
             (price for team, price in moneylines if team == bucket["home_abbrev"]),
             None,
         )
+        away_spread = next(
+            (
+                WnbaOddsBoardLine(line=line, price=price)
+                for team, line, price in board_spreads
+                if team == bucket["away_abbrev"]
+            ),
+            None,
+        )
+        home_spread = next(
+            (
+                WnbaOddsBoardLine(line=line, price=price)
+                for team, line, price in board_spreads
+                if team == bucket["home_abbrev"]
+            ),
+            None,
+        )
+        away_total = next(
+            (
+                WnbaOddsBoardTotal(side="over", line=line, price=price)
+                for side, line, price in board_totals
+                if side == "over"
+            ),
+            None,
+        )
+        home_total = next(
+            (
+                WnbaOddsBoardTotal(side="under", line=line, price=price)
+                for side, line, price in board_totals
+                if side == "under"
+            ),
+            None,
+        )
+        board = None
+        if any(
+            value is not None
+            for value in (
+                away_moneyline,
+                home_moneyline,
+                away_spread,
+                home_spread,
+                away_total,
+                home_total,
+            )
+        ):
+            board = WnbaOddsBoard(
+                away=WnbaOddsBoardSide(
+                    moneyline=away_moneyline,
+                    spread=away_spread,
+                    total=away_total,
+                ),
+                home=WnbaOddsBoardSide(
+                    moneyline=home_moneyline,
+                    spread=home_spread,
+                    total=home_total,
+                ),
+            )
 
         games.append(
             WnbaOddsGame(
@@ -193,6 +269,7 @@ def normalize_team_odds_rows(
                 home_moneyline=home_moneyline,
                 game_date=bucket.get("game_date"),
                 sportsbook=sportsbook,
+                board=board,
             )
         )
 

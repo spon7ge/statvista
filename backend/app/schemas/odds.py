@@ -1,8 +1,40 @@
 from __future__ import annotations
 
+from typing import Literal
+
 from pydantic import BaseModel, ConfigDict, Field
 
 _RESPONSE_CONFIG = ConfigDict(json_schema_serialization_defaults_required=True)
+
+
+class WnbaOddsBoardLine(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    line: float
+    price: int | None = None
+
+
+class WnbaOddsBoardTotal(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    side: Literal["over", "under"]
+    line: float
+    price: int | None = None
+
+
+class WnbaOddsBoardSide(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    moneyline: int | None = None
+    spread: WnbaOddsBoardLine | None = None
+    total: WnbaOddsBoardTotal | None = None
+
+
+class WnbaOddsBoard(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    away: WnbaOddsBoardSide
+    home: WnbaOddsBoardSide
 
 
 class WnbaOddsGame(BaseModel):
@@ -17,6 +49,7 @@ class WnbaOddsGame(BaseModel):
     home_moneyline: int | None = None
     game_date: str | None = None
     sportsbook: str | None = None
+    board: WnbaOddsBoard | None = None
 
 
 class WnbaOddsResponse(BaseModel):

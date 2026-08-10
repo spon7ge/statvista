@@ -2554,12 +2554,44 @@ export interface components {
             /** Season */
             season: number;
         };
+        /** WnbaOddsBoard */
+        WnbaOddsBoard: {
+            away: components["schemas"]["WnbaOddsBoardSide"];
+            home: components["schemas"]["WnbaOddsBoardSide"];
+        };
+        /** WnbaOddsBoardLine */
+        WnbaOddsBoardLine: {
+            /** Line */
+            line: number;
+            /** Price */
+            price: number | null;
+        };
+        /** WnbaOddsBoardSide */
+        WnbaOddsBoardSide: {
+            /** Moneyline */
+            moneyline: number | null;
+            spread: components["schemas"]["WnbaOddsBoardLine"] | null;
+            total: components["schemas"]["WnbaOddsBoardTotal"] | null;
+        };
+        /** WnbaOddsBoardTotal */
+        WnbaOddsBoardTotal: {
+            /** Line */
+            line: number;
+            /** Price */
+            price: number | null;
+            /**
+             * Side
+             * @enum {string}
+             */
+            side: "over" | "under";
+        };
         /** WnbaOddsGame */
         WnbaOddsGame: {
             /** Away Abbrev */
             away_abbrev: string;
             /** Away Moneyline */
             away_moneyline: number | null;
+            board: components["schemas"]["WnbaOddsBoard"] | null;
             /** Game Date */
             game_date: string | null;
             /** Home Abbrev */
