@@ -1,0 +1,250 @@
+{
+  "fetched_at": "2026-08-10T06:45:22-07:00",
+  "source": "pinnacle_selenium",
+  "sport": "baseball",
+  "league": "mlb",
+  "list_page": "https://www.pinnacle.com/en/baseball/mlb/matchups/#all",
+  "parallel_workers_configured": 5,
+  "parallel_workers_effective": 5,
+  "games_per_worker_target": 2,
+  "arcadia_timeout_s": 90.0,
+  "arcadia_poll_s": 0.22,
+  "snapshot_kind": "props",
+  "games": [
+    {
+      "matchup_id": 1633334099,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/baltimore-orioles-vs-minnesota-twins/1633334099/#all",
+      "path": "/en/baseball/mlb/baltimore-orioles-vs-minnesota-twins/1633334099/",
+      "league": "MLB",
+      "start_time": "2026-08-10T23:40:00Z",
+      "label": "Baltimore Orioles vs Minnesota Twins",
+      "participants": [
+        "Baltimore Orioles",
+        "Minnesota Twins"
+      ],
+      "props": [
+        {
+          "stat": "strikeouts",
+          "player": "Dean Kremer",
+          "line": 5.5,
+          "market_id": 1633726193,
+          "decimal_over": 2.08,
+          "decimal_under": 1.699,
+          "american_over": 108,
+          "american_under": -143
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Trevor Rogers",
+          "line": 4.5,
+          "market_id": 1633726202,
+          "decimal_over": 1.69,
+          "decimal_under": 2.1,
+          "american_over": -145,
+          "american_under": 110
+        }
+      ]
+    },
+    {
+      "matchup_id": 1633332339,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/boston-red-sox-vs-toronto-blue-jays/1633332339/#all",
+      "path": "/en/baseball/mlb/boston-red-sox-vs-toronto-blue-jays/1633332339/",
+      "league": "MLB",
+      "start_time": "2026-08-10T23:07:00Z",
+      "label": "Boston Red Sox vs Toronto Blue Jays",
+      "participants": [
+        "Boston Red Sox",
+        "Toronto Blue Jays"
+      ],
+      "props": [
+        {
+          "stat": "strikeouts",
+          "player": "Jameson Taillon",
+          "line": 4.5,
+          "market_id": 1633726181,
+          "decimal_over": 2.12,
+          "decimal_under": 1.671,
+          "american_over": 112,
+          "american_under": -149
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Sonny Gray",
+          "line": 4.5,
+          "market_id": 1633726184,
+          "decimal_over": 1.775,
+          "decimal_under": 1.98,
+          "american_over": -129,
+          "american_under": -102
+        }
+      ]
+    },
+    {
+      "matchup_id": 1633332356,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/colorado-rockies-vs-arizona-diamondbacks/1633332356/#all",
+      "path": "/en/baseball/mlb/colorado-rockies-vs-arizona-diamondbacks/1633332356/",
+      "league": "MLB",
+      "start_time": "2026-08-11T01:40:00Z",
+      "label": "Colorado Rockies vs Arizona Diamondbacks",
+      "participants": [
+        "Colorado Rockies",
+        "Arizona Diamondbacks"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1633334114,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/houston-astros-vs-san-francisco-giants/1633334114/#all",
+      "path": "/en/baseball/mlb/houston-astros-vs-san-francisco-giants/1633334114/",
+      "league": "MLB",
+      "start_time": "2026-08-11T01:45:00Z",
+      "label": "Houston Astros vs San Francisco Giants",
+      "participants": [
+        "Houston Astros",
+        "San Francisco Giants"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1633332366,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/kansas-city-royals-vs-los-angeles-dodgers/1633332366/#all",
+      "path": "/en/baseball/mlb/kansas-city-royals-vs-los-angeles-dodgers/1633332366/",
+      "league": "MLB",
+      "start_time": "2026-08-11T02:10:00Z",
+      "label": "Kansas City Royals vs Los Angeles Dodgers",
+      "participants": [
+        "Kansas City Royals",
+        "Los Angeles Dodgers"
+      ],
+      "props": [
+        {
+          "stat": "strikeouts",
+          "player": "Noah Cameron",
+          "line": 4.5,
+          "market_id": 1633726190,
+          "decimal_over": 1.741,
+          "decimal_under": 2.02,
+          "american_over": -135,
+          "american_under": 102
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Tarik Skubal",
+          "line": 8.5,
+          "market_id": 1633726199,
+          "decimal_over": 2.13,
+          "decimal_under": 1.667,
+          "american_over": 113,
+          "american_under": -150
+        }
+      ]
+    },
+    {
+      "matchup_id": 1633332355,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/milwaukee-brewers-vs-san-diego-padres/1633332355/#all",
+      "path": "/en/baseball/mlb/milwaukee-brewers-vs-san-diego-padres/1633332355/",
+      "league": "MLB",
+      "start_time": "2026-08-11T01:40:00Z",
+      "label": "Milwaukee Brewers vs San Diego Padres",
+      "participants": [
+        "Milwaukee Brewers",
+        "San Diego Padres"
+      ],
+      "props": [
+        {
+          "stat": "strikeouts",
+          "player": "Casey Mize",
+          "line": 4.5,
+          "market_id": 1633726185,
+          "decimal_over": 1.625,
+          "decimal_under": 2.2,
+          "american_over": -160,
+          "american_under": 120
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Logan Henderson",
+          "line": 4.5,
+          "market_id": 1633726196,
+          "decimal_over": 1.532,
+          "decimal_under": 2.4,
+          "american_over": -188,
+          "american_under": 140
+        }
+      ]
+    },
+    {
+      "matchup_id": 1633328658,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/new-york-mets-vs-atlanta-braves/1633328658/#all",
+      "path": "/en/baseball/mlb/new-york-mets-vs-atlanta-braves/1633328658/",
+      "league": "MLB",
+      "start_time": "2026-08-10T23:15:00Z",
+      "label": "New York Mets vs Atlanta Braves",
+      "participants": [
+        "New York Mets",
+        "Atlanta Braves"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1633334100,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/philadelphia-phillies-vs-st-louis-cardinals/1633334100/#all",
+      "path": "/en/baseball/mlb/philadelphia-phillies-vs-st-louis-cardinals/1633334100/",
+      "league": "MLB",
+      "start_time": "2026-08-10T23:45:00Z",
+      "label": "Philadelphia Phillies vs St. Louis Cardinals",
+      "participants": [
+        "Philadelphia Phillies",
+        "St. Louis Cardinals"
+      ],
+      "props": [
+        {
+          "stat": "strikeouts",
+          "player": "Andrew Painter",
+          "line": 3.5,
+          "market_id": 1633726205,
+          "decimal_over": 2.31,
+          "decimal_under": 1.571,
+          "american_over": 131,
+          "american_under": -175
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Hunter Dobbins",
+          "line": 3.5,
+          "market_id": 1633726208,
+          "decimal_over": 2.29,
+          "decimal_under": 1.581,
+          "american_over": 129,
+          "american_under": -172
+        }
+      ]
+    },
+    {
+      "matchup_id": 1633328673,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/tampa-bay-rays-vs-athletics/1633328673/#all",
+      "path": "/en/baseball/mlb/tampa-bay-rays-vs-athletics/1633328673/",
+      "league": "MLB",
+      "start_time": "2026-08-11T01:40:00Z",
+      "label": "Tampa Bay Rays vs Athletics",
+      "participants": [
+        "Tampa Bay Rays",
+        "Athletics"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1633328672,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/texas-rangers-vs-los-angeles-angels/1633328672/#all",
+      "path": "/en/baseball/mlb/texas-rangers-vs-los-angeles-angels/1633328672/",
+      "league": "MLB",
+      "start_time": "2026-08-11T01:38:00Z",
+      "label": "Texas Rangers vs Los Angeles Angels",
+      "participants": [
+        "Texas Rangers",
+        "Los Angeles Angels"
+      ],
+      "props": []
+    }
+  ]
+}

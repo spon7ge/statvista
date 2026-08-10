@@ -1,0 +1,128 @@
+{
+  "source": "novig",
+  "fetched_at": "2026-08-09T20:17:54-07:00",
+  "league": "wnba",
+  "snapshot_kind": "team",
+  "games": [
+    {
+      "event_id": "019fe678-b953-77d1-b98a-ee73b1e02e24",
+      "name": "Toronto Tempo @ Atlanta Dream",
+      "scheduled": "2026-08-11T00:00:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "c0d35807-1cb1-4f33-8a85-9cc14596945c",
+          "name": "Atlanta Dream",
+          "seq": 0
+        },
+        {
+          "id": "c4d8e78a-6b00-4cd8-94f0-3635c40fa3ab",
+          "name": "Toronto Tempo",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "ATL",
+            "competitor_id": null,
+            "american": -641,
+            "line": null,
+            "stake": 4924.79
+          },
+          {
+            "name": "TOR",
+            "competitor_id": null,
+            "american": 614,
+            "line": null,
+            "stake": 4730.589999999999
+          }
+        ],
+        "spread": [
+          {
+            "name": "TOR +12.5",
+            "competitor_id": null,
+            "american": -113,
+            "line": 12.5,
+            "stake": 1716.7699999999998
+          },
+          {
+            "name": "ATL -12.5",
+            "competitor_id": null,
+            "american": -100,
+            "line": -12.5,
+            "stake": 3383.9800000000005
+          }
+        ],
+        "total": [
+          {
+            "name": "Over 186.5",
+            "competitor_id": null,
+            "american": -113,
+            "line": 186.5,
+            "stake": 721.64
+          },
+          {
+            "name": "Under 186.5",
+            "competitor_id": null,
+            "american": -106,
+            "line": 186.5,
+            "stake": 398.2
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "019fe6af-82bf-7403-9aeb-e7235c81cdab",
+      "name": "Chicago Sky @ Seattle Storm",
+      "scheduled": "2026-08-11T02:00:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "e0afa035-12f0-41c8-820e-cda3e167fc36",
+          "name": "Seattle Storm",
+          "seq": 0
+        },
+        {
+          "id": "d62d8226-1f08-4b08-9738-8945acbc8238",
+          "name": "Chicago Sky",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "CHI",
+            "competitor_id": null,
+            "american": -100,
+            "line": null,
+            "stake": 5189.1900000000005
+          },
+          {
+            "name": "SEA",
+            "competitor_id": null,
+            "american": -108,
+            "line": null,
+            "stake": 3340.4700000000003
+          }
+        ],
+        "spread": [
+          {
+            "name": "CHI +1.5",
+            "competitor_id": null,
+            "american": -115,
+            "line": 1.5,
+            "stake": 2166.34
+          },
+          {
+            "name": "SEA -1.5",
+            "competitor_id": null,
+            "american": -100,
+            "line": -1.5,
+            "stake": 1636.1299999999999
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,1920 @@
+{
+  "source": "prophetx",
+  "fetched_at": "2026-08-10T06:46:50-07:00",
+  "league": "wnba",
+  "tournament_id": 1600000176,
+  "snapshot_kind": "props",
+  "games": [
+    {
+      "event_id": 13002470,
+      "name": "Toronto Tempo at Atlanta Dream",
+      "scheduled": "2026-08-11T00:00:00Z",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": 13000001,
+          "name": "Atlanta Dream",
+          "abbreviation": "ATL",
+          "seq": 0
+        },
+        {
+          "id": 13000015,
+          "name": "Toronto Tempo",
+          "abbreviation": "TOR",
+          "seq": 1
+        }
+      ],
+      "props": [
+        {
+          "player": "Marina Mabrey",
+          "stat": "rebounds",
+          "line": 2.5,
+          "over": {
+            "american": -154,
+            "stake": 1.0
+          },
+          "under": {
+            "american": 121,
+            "stake": 30.3
+          },
+          "market_id": 140000016,
+          "sub_type": "player_total_rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Marina Mabrey",
+          "stat": "rebounds",
+          "line": 3.5,
+          "over": {
+            "american": 132,
+            "stake": 227.59
+          },
+          "under": {
+            "american": -285,
+            "stake": 39.74
+          },
+          "market_id": 140000016,
+          "sub_type": "player_total_rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Jordin Canada",
+          "stat": "rebounds",
+          "line": 3.5,
+          "over": {
+            "american": 116,
+            "stake": 1.0
+          },
+          "under": {
+            "american": -156,
+            "stake": 19.23
+          },
+          "market_id": 140000039,
+          "sub_type": "player_total_rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Angel Reese",
+          "stat": "rebounds",
+          "line": 11.5,
+          "over": {
+            "american": -144,
+            "stake": 20.83
+          },
+          "under": {
+            "american": 104,
+            "stake": 297.41
+          },
+          "market_id": 140000099,
+          "sub_type": "player_total_rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Angel Reese",
+          "stat": "rebounds",
+          "line": 12.5,
+          "over": {
+            "american": 101,
+            "stake": 201.0
+          },
+          "under": null,
+          "market_id": 140000099,
+          "sub_type": "player_total_rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Nyara Sabally",
+          "stat": "rebounds",
+          "line": 4.5,
+          "over": {
+            "american": -118,
+            "stake": 490.3
+          },
+          "under": {
+            "american": -103,
+            "stake": 197.04
+          },
+          "market_id": 140000102,
+          "sub_type": "player_total_rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Nyara Sabally",
+          "stat": "rebounds",
+          "line": 5.5,
+          "over": {
+            "american": 130,
+            "stake": 226.09
+          },
+          "under": null,
+          "market_id": 140000102,
+          "sub_type": "player_total_rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Allisha Gray",
+          "stat": "rebounds",
+          "line": 2.5,
+          "over": {
+            "american": -154,
+            "stake": 1.0
+          },
+          "under": {
+            "american": 117,
+            "stake": 2.57
+          },
+          "market_id": 140000112,
+          "sub_type": "player_total_rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Naz Hillmon",
+          "stat": "rebounds",
+          "line": 3.5,
+          "over": {
+            "american": -111,
+            "stake": 27.03
+          },
+          "under": {
+            "american": -122,
+            "stake": 281.82
+          },
+          "market_id": 140000125,
+          "sub_type": "player_total_rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Rhyne Howard",
+          "stat": "rebounds",
+          "line": 3.5,
+          "over": {
+            "american": 104,
+            "stake": 1.0
+          },
+          "under": {
+            "american": -121,
+            "stake": 181.0
+          },
+          "market_id": 140000129,
+          "sub_type": "player_total_rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Brionna Jones",
+          "stat": "rebounds",
+          "line": 5.5,
+          "over": {
+            "american": -156,
+            "stake": 19.23
+          },
+          "under": null,
+          "market_id": 140000134,
+          "sub_type": "player_total_rebounds",
+          "is_main": true
+        },
+        {
+          "player": "María Conde",
+          "stat": "rebounds",
+          "line": 4.5,
+          "over": {
+            "american": 109,
+            "stake": 208.61
+          },
+          "under": {
+            "american": -146,
+            "stake": 6.46
+          },
+          "market_id": 140000170,
+          "sub_type": "player_total_rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Aneesah Morrow",
+          "stat": "rebounds",
+          "line": 6.5,
+          "over": {
+            "american": -215,
+            "stake": 39.37
+          },
+          "under": {
+            "american": -101,
+            "stake": 1.0
+          },
+          "market_id": 140000230,
+          "sub_type": "player_total_rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Laura Juskaite",
+          "stat": "rebounds",
+          "line": 3.5,
+          "over": {
+            "american": -120,
+            "stake": 1.0
+          },
+          "under": {
+            "american": -110,
+            "stake": 13.38
+          },
+          "market_id": 140000337,
+          "sub_type": "player_total_rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Marina Mabrey",
+          "stat": "points",
+          "line": 16.5,
+          "over": {
+            "american": -117,
+            "stake": 25.64
+          },
+          "under": {
+            "american": -104,
+            "stake": 2.24
+          },
+          "market_id": 150000016,
+          "sub_type": "player_total_points",
+          "is_main": true
+        },
+        {
+          "player": "Jordin Canada",
+          "stat": "points",
+          "line": 10.5,
+          "over": {
+            "american": -122,
+            "stake": 1.0
+          },
+          "under": {
+            "american": -101,
+            "stake": 4.48
+          },
+          "market_id": 150000039,
+          "sub_type": "player_total_points",
+          "is_main": true
+        },
+        {
+          "player": "Angel Reese",
+          "stat": "points",
+          "line": 14.5,
+          "over": {
+            "american": -160,
+            "stake": 300.0
+          },
+          "under": {
+            "american": 120,
+            "stake": 120.0
+          },
+          "market_id": 150000099,
+          "sub_type": "player_total_points",
+          "is_main": false
+        },
+        {
+          "player": "Angel Reese",
+          "stat": "points",
+          "line": 15.5,
+          "over": {
+            "american": -130,
+            "stake": 25.0
+          },
+          "under": {
+            "american": 114,
+            "stake": 13.65
+          },
+          "market_id": 150000099,
+          "sub_type": "player_total_points",
+          "is_main": true
+        },
+        {
+          "player": "Nyara Sabally",
+          "stat": "points",
+          "line": 13.5,
+          "over": {
+            "american": -114,
+            "stake": 1.0
+          },
+          "under": {
+            "american": -106,
+            "stake": 25.67
+          },
+          "market_id": 150000102,
+          "sub_type": "player_total_points",
+          "is_main": true
+        },
+        {
+          "player": "Nyara Sabally",
+          "stat": "points",
+          "line": 14.5,
+          "over": {
+            "american": 111,
+            "stake": 210.43
+          },
+          "under": null,
+          "market_id": 150000102,
+          "sub_type": "player_total_points",
+          "is_main": false
+        },
+        {
+          "player": "Allisha Gray",
+          "stat": "points",
+          "line": 17.5,
+          "over": {
+            "american": -178,
+            "stake": 100.0
+          },
+          "under": {
+            "american": 126,
+            "stake": 14.4
+          },
+          "market_id": 150000112,
+          "sub_type": "player_total_points",
+          "is_main": false
+        },
+        {
+          "player": "Allisha Gray",
+          "stat": "points",
+          "line": 18.5,
+          "over": {
+            "american": -113,
+            "stake": 1.0
+          },
+          "under": {
+            "american": -106,
+            "stake": 366.2
+          },
+          "market_id": 150000112,
+          "sub_type": "player_total_points",
+          "is_main": true
+        },
+        {
+          "player": "Naz Hillmon",
+          "stat": "points",
+          "line": 7.5,
+          "over": {
+            "american": -118,
+            "stake": 1.0
+          },
+          "under": {
+            "american": -102,
+            "stake": 24.82
+          },
+          "market_id": 150000125,
+          "sub_type": "player_total_points",
+          "is_main": true
+        },
+        {
+          "player": "Rhyne Howard",
+          "stat": "points",
+          "line": 17.5,
+          "over": {
+            "american": -115,
+            "stake": 42.43
+          },
+          "under": {
+            "american": -117,
+            "stake": 184.33
+          },
+          "market_id": 150000129,
+          "sub_type": "player_total_points",
+          "is_main": true
+        },
+        {
+          "player": "Brionna Jones",
+          "stat": "points",
+          "line": 10.5,
+          "over": {
+            "american": -102,
+            "stake": 9.0
+          },
+          "under": {
+            "american": -117,
+            "stake": 184.33
+          },
+          "market_id": 150000134,
+          "sub_type": "player_total_points",
+          "is_main": true
+        },
+        {
+          "player": "María Conde",
+          "stat": "points",
+          "line": 9.5,
+          "over": {
+            "american": -123,
+            "stake": 179.37
+          },
+          "under": {
+            "american": -123,
+            "stake": 179.37
+          },
+          "market_id": 150000170,
+          "sub_type": "player_total_points",
+          "is_main": true
+        },
+        {
+          "player": "Aneesah Morrow",
+          "stat": "points",
+          "line": 10.5,
+          "over": {
+            "american": -114,
+            "stake": 1.0
+          },
+          "under": null,
+          "market_id": 150000230,
+          "sub_type": "player_total_points",
+          "is_main": true
+        },
+        {
+          "player": "Julie Allemand",
+          "stat": "points",
+          "line": 7.5,
+          "over": {
+            "american": -106,
+            "stake": 1.0
+          },
+          "under": {
+            "american": -140,
+            "stake": 166.67
+          },
+          "market_id": 150000280,
+          "sub_type": "player_total_points",
+          "is_main": true
+        },
+        {
+          "player": "Laura Juskaite",
+          "stat": "points",
+          "line": 9.5,
+          "over": {
+            "american": -113,
+            "stake": 1.0
+          },
+          "under": {
+            "american": -106,
+            "stake": 7.24
+          },
+          "market_id": 150000337,
+          "sub_type": "player_total_points",
+          "is_main": true
+        },
+        {
+          "player": "Marina Mabrey",
+          "stat": "assists",
+          "line": 3.5,
+          "over": {
+            "american": -108,
+            "stake": 27.78
+          },
+          "under": {
+            "american": -105,
+            "stake": 7.65
+          },
+          "market_id": 160000016,
+          "sub_type": "player_total_assists",
+          "is_main": true
+        },
+        {
+          "player": "Jordin Canada",
+          "stat": "assists",
+          "line": 6.5,
+          "over": null,
+          "under": {
+            "american": 182,
+            "stake": 390.0
+          },
+          "market_id": 160000039,
+          "sub_type": "player_total_assists",
+          "is_main": false
+        },
+        {
+          "player": "Jordin Canada",
+          "stat": "assists",
+          "line": 7.5,
+          "over": {
+            "american": -172,
+            "stake": 39.71
+          },
+          "under": {
+            "american": 146,
+            "stake": 10.0
+          },
+          "market_id": 160000039,
+          "sub_type": "player_total_assists",
+          "is_main": false
+        },
+        {
+          "player": "Jordin Canada",
+          "stat": "assists",
+          "line": 8.5,
+          "over": {
+            "american": -108,
+            "stake": 27.78
+          },
+          "under": {
+            "american": -124,
+            "stake": 101.67
+          },
+          "market_id": 160000039,
+          "sub_type": "player_total_assists",
+          "is_main": true
+        },
+        {
+          "player": "Jordin Canada",
+          "stat": "assists",
+          "line": 9.5,
+          "over": {
+            "american": 150,
+            "stake": 39.6
+          },
+          "under": {
+            "american": -194,
+            "stake": 15.46
+          },
+          "market_id": 160000039,
+          "sub_type": "player_total_assists",
+          "is_main": false
+        },
+        {
+          "player": "Angel Reese",
+          "stat": "assists",
+          "line": 2.5,
+          "over": {
+            "american": 102,
+            "stake": 1.0
+          },
+          "under": {
+            "american": -121,
+            "stake": 1.0
+          },
+          "market_id": 160000099,
+          "sub_type": "player_total_assists",
+          "is_main": true
+        },
+        {
+          "player": "Allisha Gray",
+          "stat": "assists",
+          "line": 2.5,
+          "over": null,
+          "under": {
+            "american": -142,
+            "stake": 21.13
+          },
+          "market_id": 160000112,
+          "sub_type": "player_total_assists",
+          "is_main": true
+        },
+        {
+          "player": "Rhyne Howard",
+          "stat": "assists",
+          "line": 3.5,
+          "over": {
+            "american": -108,
+            "stake": 27.78
+          },
+          "under": {
+            "american": -117,
+            "stake": 359.21
+          },
+          "market_id": 160000129,
+          "sub_type": "player_total_assists",
+          "is_main": true
+        },
+        {
+          "player": "Julie Allemand",
+          "stat": "assists",
+          "line": 6.5,
+          "over": {
+            "american": -102,
+            "stake": 40.0
+          },
+          "under": {
+            "american": -105,
+            "stake": 1.0
+          },
+          "market_id": 160000280,
+          "sub_type": "player_total_assists",
+          "is_main": true
+        },
+        {
+          "player": "Julie Allemand",
+          "stat": "assists",
+          "line": 7.0,
+          "over": {
+            "american": -113,
+            "stake": 1.0
+          },
+          "under": {
+            "american": -105,
+            "stake": 1.0
+          },
+          "market_id": 160000280,
+          "sub_type": "player_total_assists",
+          "is_main": false
+        },
+        {
+          "player": "Marina Mabrey",
+          "stat": "points_rebounds_assists",
+          "line": 23.5,
+          "over": {
+            "american": -114,
+            "stake": 1.0
+          },
+          "under": {
+            "american": -124,
+            "stake": 178.57
+          },
+          "market_id": 230000016,
+          "sub_type": "player_total_points_rebounds_assists",
+          "is_main": true
+        },
+        {
+          "player": "Jordin Canada",
+          "stat": "points_rebounds_assists",
+          "line": 22.5,
+          "over": {
+            "american": -132,
+            "stake": 172.41
+          },
+          "under": {
+            "american": -104,
+            "stake": 109.33
+          },
+          "market_id": 230000039,
+          "sub_type": "player_total_points_rebounds_assists",
+          "is_main": true
+        },
+        {
+          "player": "Angel Reese",
+          "stat": "points_rebounds_assists",
+          "line": 28.5,
+          "over": null,
+          "under": {
+            "american": 125,
+            "stake": 261.0
+          },
+          "market_id": 230000099,
+          "sub_type": "player_total_points_rebounds_assists",
+          "is_main": false
+        },
+        {
+          "player": "Angel Reese",
+          "stat": "points_rebounds_assists",
+          "line": 29.5,
+          "over": null,
+          "under": {
+            "american": 128,
+            "stake": 40.0
+          },
+          "market_id": 230000099,
+          "sub_type": "player_total_points_rebounds_assists",
+          "is_main": false
+        },
+        {
+          "player": "Angel Reese",
+          "stat": "points_rebounds_assists",
+          "line": 30.5,
+          "over": {
+            "american": -140,
+            "stake": 166.67
+          },
+          "under": {
+            "american": 104,
+            "stake": 6.22
+          },
+          "market_id": 230000099,
+          "sub_type": "player_total_points_rebounds_assists",
+          "is_main": true
+        },
+        {
+          "player": "Nyara Sabally",
+          "stat": "points_rebounds_assists",
+          "line": 20.5,
+          "over": {
+            "american": -106,
+            "stake": 1.0
+          },
+          "under": null,
+          "market_id": 230000102,
+          "sub_type": "player_total_points_rebounds_assists",
+          "is_main": true
+        },
+        {
+          "player": "Allisha Gray",
+          "stat": "points_rebounds_assists",
+          "line": 24.5,
+          "over": {
+            "american": -102,
+            "stake": 1.0
+          },
+          "under": null,
+          "market_id": 230000112,
+          "sub_type": "player_total_points_rebounds_assists",
+          "is_main": true
+        },
+        {
+          "player": "Rhyne Howard",
+          "stat": "points_rebounds_assists",
+          "line": 25.5,
+          "over": {
+            "american": -102,
+            "stake": 1.75
+          },
+          "under": {
+            "american": -132,
+            "stake": 173.93
+          },
+          "market_id": 230000129,
+          "sub_type": "player_total_points_rebounds_assists",
+          "is_main": true
+        },
+        {
+          "player": "María Conde",
+          "stat": "points_rebounds_assists",
+          "line": 16.5,
+          "over": {
+            "american": -128,
+            "stake": 39.47
+          },
+          "under": {
+            "american": -103,
+            "stake": 15.41
+          },
+          "market_id": 230000170,
+          "sub_type": "player_total_points_rebounds_assists",
+          "is_main": true
+        },
+        {
+          "player": "Julie Allemand",
+          "stat": "points_rebounds_assists",
+          "line": 16.5,
+          "over": {
+            "american": -136,
+            "stake": 169.49
+          },
+          "under": {
+            "american": -111,
+            "stake": 189.57
+          },
+          "market_id": 230000280,
+          "sub_type": "player_total_points_rebounds_assists",
+          "is_main": true
+        },
+        {
+          "player": "Marina Mabrey",
+          "stat": "points_rebounds",
+          "line": 19.5,
+          "over": {
+            "american": -122,
+            "stake": 1.0
+          },
+          "under": {
+            "american": -122,
+            "stake": 180.18
+          },
+          "market_id": 290000016,
+          "sub_type": "player_total_points_rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Jordin Canada",
+          "stat": "points_rebounds",
+          "line": 14.5,
+          "over": {
+            "american": 100,
+            "stake": 1.0
+          },
+          "under": {
+            "american": -115,
+            "stake": 86.96
+          },
+          "market_id": 290000039,
+          "sub_type": "player_total_points_rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Angel Reese",
+          "stat": "points_rebounds",
+          "line": 28.5,
+          "over": {
+            "american": -116,
+            "stake": 185.19
+          },
+          "under": {
+            "american": -130,
+            "stake": 173.91
+          },
+          "market_id": 290000099,
+          "sub_type": "player_total_points_rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Allisha Gray",
+          "stat": "points_rebounds",
+          "line": 21.5,
+          "over": {
+            "american": -114,
+            "stake": 1.0
+          },
+          "under": {
+            "american": -118,
+            "stake": 39.45
+          },
+          "market_id": 290000112,
+          "sub_type": "player_total_points_rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Naz Hillmon",
+          "stat": "points_rebounds",
+          "line": 11.5,
+          "over": {
+            "american": -110,
+            "stake": 1.0
+          },
+          "under": {
+            "american": -129,
+            "stake": 174.67
+          },
+          "market_id": 290000125,
+          "sub_type": "player_total_points_rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Rhyne Howard",
+          "stat": "points_rebounds",
+          "line": 21.5,
+          "over": {
+            "american": -110,
+            "stake": 90.91
+          },
+          "under": {
+            "american": -123,
+            "stake": 179.37
+          },
+          "market_id": 290000129,
+          "sub_type": "player_total_points_rebounds",
+          "is_main": true
+        },
+        {
+          "player": "María Conde",
+          "stat": "points_rebounds",
+          "line": 13.5,
+          "over": {
+            "american": -128,
+            "stake": 39.47
+          },
+          "under": {
+            "american": -113,
+            "stake": 187.79
+          },
+          "market_id": 290000170,
+          "sub_type": "player_total_points_rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Laura Juskaite",
+          "stat": "points_rebounds",
+          "line": 13.5,
+          "over": {
+            "american": -102,
+            "stake": 1.0
+          },
+          "under": null,
+          "market_id": 290000337,
+          "sub_type": "player_total_points_rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Marina Mabrey",
+          "stat": "points_assists",
+          "line": 20.5,
+          "over": {
+            "american": -114,
+            "stake": 1.0
+          },
+          "under": {
+            "american": -126,
+            "stake": 176.99
+          },
+          "market_id": 300000016,
+          "sub_type": "player_total_points_assists",
+          "is_main": true
+        },
+        {
+          "player": "Angel Reese",
+          "stat": "points_assists",
+          "line": 18.5,
+          "over": {
+            "american": -118,
+            "stake": 1.0
+          },
+          "under": {
+            "american": -113,
+            "stake": 39.91
+          },
+          "market_id": 300000099,
+          "sub_type": "player_total_points_assists",
+          "is_main": true
+        },
+        {
+          "player": "Allisha Gray",
+          "stat": "points_assists",
+          "line": 21.5,
+          "over": {
+            "american": -102,
+            "stake": 1.0
+          },
+          "under": null,
+          "market_id": 300000112,
+          "sub_type": "player_total_points_assists",
+          "is_main": true
+        },
+        {
+          "player": "Rhyne Howard",
+          "stat": "points_assists",
+          "line": 21.5,
+          "over": {
+            "american": -120,
+            "stake": 1.0
+          },
+          "under": {
+            "american": -122,
+            "stake": 180.18
+          },
+          "market_id": 300000129,
+          "sub_type": "player_total_points_assists",
+          "is_main": true
+        },
+        {
+          "player": "Julie Allemand",
+          "stat": "points_assists",
+          "line": 14.5,
+          "over": {
+            "american": -106,
+            "stake": 194.17
+          },
+          "under": null,
+          "market_id": 300000280,
+          "sub_type": "player_total_points_assists",
+          "is_main": true
+        },
+        {
+          "player": "Marina Mabrey",
+          "stat": "rebounds_assists",
+          "line": 6.5,
+          "over": {
+            "american": -125,
+            "stake": 177.78
+          },
+          "under": {
+            "american": -121,
+            "stake": 181.0
+          },
+          "market_id": 310000016,
+          "sub_type": "player_total_rebounds_assists",
+          "is_main": true
+        },
+        {
+          "player": "Jordin Canada",
+          "stat": "rebounds_assists",
+          "line": 11.5,
+          "over": {
+            "american": -134,
+            "stake": 170.94
+          },
+          "under": {
+            "american": -112,
+            "stake": 188.68
+          },
+          "market_id": 310000039,
+          "sub_type": "player_total_rebounds_assists",
+          "is_main": true
+        },
+        {
+          "player": "Angel Reese",
+          "stat": "rebounds_assists",
+          "line": 14.5,
+          "over": {
+            "american": -122,
+            "stake": 180.18
+          },
+          "under": {
+            "american": -124,
+            "stake": 178.57
+          },
+          "market_id": 310000099,
+          "sub_type": "player_total_rebounds_assists",
+          "is_main": true
+        },
+        {
+          "player": "Allisha Gray",
+          "stat": "rebounds_assists",
+          "line": 5.5,
+          "over": null,
+          "under": {
+            "american": -134,
+            "stake": 30.77
+          },
+          "market_id": 310000112,
+          "sub_type": "player_total_rebounds_assists",
+          "is_main": true
+        },
+        {
+          "player": "Rhyne Howard",
+          "stat": "rebounds_assists",
+          "line": 6.5,
+          "over": null,
+          "under": {
+            "american": 120,
+            "stake": 420.0
+          },
+          "market_id": 310000129,
+          "sub_type": "player_total_rebounds_assists",
+          "is_main": true
+        },
+        {
+          "player": "Rhyne Howard",
+          "stat": "rebounds_assists",
+          "line": 7.0,
+          "over": null,
+          "under": {
+            "american": -122,
+            "stake": 166.0
+          },
+          "market_id": 310000129,
+          "sub_type": "player_total_rebounds_assists",
+          "is_main": false
+        }
+      ]
+    },
+    {
+      "event_id": 13002471,
+      "name": "Chicago Sky at Seattle Storm",
+      "scheduled": "2026-08-11T02:00:00Z",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": 13000012,
+          "name": "Seattle Storm",
+          "abbreviation": "SEA",
+          "seq": 0
+        },
+        {
+          "id": 13000002,
+          "name": "Chicago Sky",
+          "abbreviation": "CHI",
+          "seq": 1
+        }
+      ],
+      "props": [
+        {
+          "player": "Kamilla Cardoso",
+          "stat": "rebounds",
+          "line": 8.5,
+          "over": {
+            "american": -114,
+            "stake": 26.0
+          },
+          "under": {
+            "american": -128,
+            "stake": 175.44
+          },
+          "market_id": 140000041,
+          "sub_type": "player_total_rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Natasha Cloud",
+          "stat": "rebounds",
+          "line": 2.5,
+          "over": {
+            "american": -225,
+            "stake": 31.08
+          },
+          "under": null,
+          "market_id": 140000058,
+          "sub_type": "player_total_rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Natasha Cloud",
+          "stat": "rebounds",
+          "line": 3.5,
+          "over": {
+            "american": 105,
+            "stake": 10.5
+          },
+          "under": {
+            "american": -130,
+            "stake": 23.08
+          },
+          "market_id": 140000058,
+          "sub_type": "player_total_rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Courtney Vandersloot",
+          "stat": "rebounds",
+          "line": 3.5,
+          "over": {
+            "american": 100,
+            "stake": 200.0
+          },
+          "under": {
+            "american": -138,
+            "stake": 21.74
+          },
+          "market_id": 140000064,
+          "sub_type": "player_total_rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Azurá Stevens",
+          "stat": "rebounds",
+          "line": 6.5,
+          "over": {
+            "american": -156,
+            "stake": 19.23
+          },
+          "under": {
+            "american": 108,
+            "stake": 39.46
+          },
+          "market_id": 140000080,
+          "sub_type": "player_total_rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Azurá Stevens",
+          "stat": "rebounds",
+          "line": 7.5,
+          "over": {
+            "american": 113,
+            "stake": 212.21
+          },
+          "under": {
+            "american": -196,
+            "stake": 39.53
+          },
+          "market_id": 140000080,
+          "sub_type": "player_total_rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Natisha Hiedeman",
+          "stat": "rebounds",
+          "line": 2.5,
+          "over": {
+            "american": -150,
+            "stake": 20.0
+          },
+          "under": {
+            "american": -172,
+            "stake": 30.15
+          },
+          "market_id": 140000122,
+          "sub_type": "player_total_rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Ezi Magbegor",
+          "stat": "rebounds",
+          "line": 4.5,
+          "over": {
+            "american": -178,
+            "stake": 143.88
+          },
+          "under": null,
+          "market_id": 140000157,
+          "sub_type": "player_total_rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Ezi Magbegor",
+          "stat": "rebounds",
+          "line": 5.5,
+          "over": {
+            "american": 144,
+            "stake": 236.07
+          },
+          "under": null,
+          "market_id": 140000157,
+          "sub_type": "player_total_rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Dominique Malonga",
+          "stat": "rebounds",
+          "line": 9.5,
+          "over": {
+            "american": 110,
+            "stake": 1.0
+          },
+          "under": {
+            "american": -138,
+            "stake": 168.07
+          },
+          "market_id": 140000225,
+          "sub_type": "player_total_rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Flau'jae Johnson",
+          "stat": "rebounds",
+          "line": 4.5,
+          "over": {
+            "american": -128,
+            "stake": 39.47
+          },
+          "under": {
+            "american": -109,
+            "stake": 191.39
+          },
+          "market_id": 140000316,
+          "sub_type": "player_total_rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Flau'jae Johnson",
+          "stat": "rebounds",
+          "line": 5.5,
+          "over": {
+            "american": 132,
+            "stake": 227.59
+          },
+          "under": null,
+          "market_id": 140000316,
+          "sub_type": "player_total_rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Kamilla Cardoso",
+          "stat": "points",
+          "line": 14.5,
+          "over": {
+            "american": -114,
+            "stake": 1.0
+          },
+          "under": {
+            "american": -110,
+            "stake": 190.48
+          },
+          "market_id": 150000041,
+          "sub_type": "player_total_points",
+          "is_main": true
+        },
+        {
+          "player": "Natasha Cloud",
+          "stat": "points",
+          "line": 12.5,
+          "over": {
+            "american": -124,
+            "stake": 24.19
+          },
+          "under": {
+            "american": -104,
+            "stake": 264.07
+          },
+          "market_id": 150000058,
+          "sub_type": "player_total_points",
+          "is_main": true
+        },
+        {
+          "player": "Courtney Vandersloot",
+          "stat": "points",
+          "line": 10.5,
+          "over": {
+            "american": -122,
+            "stake": 1.0
+          },
+          "under": {
+            "american": -108,
+            "stake": 52.74
+          },
+          "market_id": 150000064,
+          "sub_type": "player_total_points",
+          "is_main": true
+        },
+        {
+          "player": "Azurá Stevens",
+          "stat": "points",
+          "line": 11.5,
+          "over": null,
+          "under": {
+            "american": -164,
+            "stake": 39.39
+          },
+          "market_id": 150000080,
+          "sub_type": "player_total_points",
+          "is_main": false
+        },
+        {
+          "player": "Azurá Stevens",
+          "stat": "points",
+          "line": 12.5,
+          "over": {
+            "american": -118,
+            "stake": 183.49
+          },
+          "under": {
+            "american": -114,
+            "stake": 61.29
+          },
+          "market_id": 150000080,
+          "sub_type": "player_total_points",
+          "is_main": true
+        },
+        {
+          "player": "Natisha Hiedeman",
+          "stat": "points",
+          "line": 14.5,
+          "over": {
+            "american": -114,
+            "stake": 1.0
+          },
+          "under": {
+            "american": -106,
+            "stake": 95.85
+          },
+          "market_id": 150000122,
+          "sub_type": "player_total_points",
+          "is_main": true
+        },
+        {
+          "player": "Jade Melbourne",
+          "stat": "points",
+          "line": 9.5,
+          "over": {
+            "american": -118,
+            "stake": 183.49
+          },
+          "under": {
+            "american": -113,
+            "stake": 2.53
+          },
+          "market_id": 150000152,
+          "sub_type": "player_total_points",
+          "is_main": true
+        },
+        {
+          "player": "Ezi Magbegor",
+          "stat": "points",
+          "line": 7.5,
+          "over": null,
+          "under": {
+            "american": -130,
+            "stake": 23.08
+          },
+          "market_id": 150000157,
+          "sub_type": "player_total_points",
+          "is_main": false
+        },
+        {
+          "player": "Ezi Magbegor",
+          "stat": "points",
+          "line": 9.5,
+          "over": {
+            "american": 230,
+            "stake": 278.79
+          },
+          "under": null,
+          "market_id": 150000157,
+          "sub_type": "player_total_points",
+          "is_main": true
+        },
+        {
+          "player": "Dominique Malonga",
+          "stat": "points",
+          "line": 18.5,
+          "over": {
+            "american": -113,
+            "stake": 30.99
+          },
+          "under": null,
+          "market_id": 150000225,
+          "sub_type": "player_total_points",
+          "is_main": false
+        },
+        {
+          "player": "Dominique Malonga",
+          "stat": "points",
+          "line": 19.5,
+          "over": {
+            "american": -105,
+            "stake": 28.57
+          },
+          "under": {
+            "american": -136,
+            "stake": 169.49
+          },
+          "market_id": 150000225,
+          "sub_type": "player_total_points",
+          "is_main": true
+        },
+        {
+          "player": "Flau'jae Johnson",
+          "stat": "points",
+          "line": 12.5,
+          "over": {
+            "american": -114,
+            "stake": 1.0
+          },
+          "under": null,
+          "market_id": 150000316,
+          "sub_type": "player_total_points",
+          "is_main": false
+        },
+        {
+          "player": "Flau'jae Johnson",
+          "stat": "points",
+          "line": 13.5,
+          "over": {
+            "american": -113,
+            "stake": 26.55
+          },
+          "under": {
+            "american": -114,
+            "stake": 12.53
+          },
+          "market_id": 150000316,
+          "sub_type": "player_total_points",
+          "is_main": true
+        },
+        {
+          "player": "Kamilla Cardoso",
+          "stat": "assists",
+          "line": 2.5,
+          "over": {
+            "american": -128,
+            "stake": 39.47
+          },
+          "under": null,
+          "market_id": 160000041,
+          "sub_type": "player_total_assists",
+          "is_main": true
+        },
+        {
+          "player": "Natasha Cloud",
+          "stat": "assists",
+          "line": 5.5,
+          "over": {
+            "american": -150,
+            "stake": 30.8
+          },
+          "under": {
+            "american": 106,
+            "stake": 205.83
+          },
+          "market_id": 160000058,
+          "sub_type": "player_total_assists",
+          "is_main": true
+        },
+        {
+          "player": "Natasha Cloud",
+          "stat": "assists",
+          "line": 6.5,
+          "over": {
+            "american": 138,
+            "stake": 39.43
+          },
+          "under": null,
+          "market_id": 160000058,
+          "sub_type": "player_total_assists",
+          "is_main": false
+        },
+        {
+          "player": "Courtney Vandersloot",
+          "stat": "assists",
+          "line": 6.5,
+          "over": {
+            "american": 123,
+            "stake": 26.68
+          },
+          "under": {
+            "american": -164,
+            "stake": 18.29
+          },
+          "market_id": 160000064,
+          "sub_type": "player_total_assists",
+          "is_main": true
+        },
+        {
+          "player": "Natisha Hiedeman",
+          "stat": "assists",
+          "line": 5.5,
+          "over": {
+            "american": 117,
+            "stake": 39.9
+          },
+          "under": {
+            "american": -176,
+            "stake": 144.93
+          },
+          "market_id": 160000122,
+          "sub_type": "player_total_assists",
+          "is_main": true
+        },
+        {
+          "player": "Jade Melbourne",
+          "stat": "assists",
+          "line": 4.5,
+          "over": {
+            "american": 100,
+            "stake": 40.0
+          },
+          "under": {
+            "american": -144,
+            "stake": 163.93
+          },
+          "market_id": 160000152,
+          "sub_type": "player_total_assists",
+          "is_main": true
+        },
+        {
+          "player": "Flau'jae Johnson",
+          "stat": "assists",
+          "line": 3.5,
+          "over": {
+            "american": 158,
+            "stake": 244.96
+          },
+          "under": null,
+          "market_id": 160000316,
+          "sub_type": "player_total_assists",
+          "is_main": true
+        },
+        {
+          "player": "Kamilla Cardoso",
+          "stat": "points_rebounds_assists",
+          "line": 25.5,
+          "over": {
+            "american": -123,
+            "stake": 179.37
+          },
+          "under": {
+            "american": -109,
+            "stake": 4.27
+          },
+          "market_id": 230000041,
+          "sub_type": "player_total_points_rebounds_assists",
+          "is_main": true
+        },
+        {
+          "player": "Kamilla Cardoso",
+          "stat": "points_rebounds_assists",
+          "line": 26.5,
+          "over": {
+            "american": -104,
+            "stake": 1.0
+          },
+          "under": null,
+          "market_id": 230000041,
+          "sub_type": "player_total_points_rebounds_assists",
+          "is_main": false
+        },
+        {
+          "player": "Natasha Cloud",
+          "stat": "points_rebounds_assists",
+          "line": 21.5,
+          "over": null,
+          "under": {
+            "american": 130,
+            "stake": 50.0
+          },
+          "market_id": 230000058,
+          "sub_type": "player_total_points_rebounds_assists",
+          "is_main": false
+        },
+        {
+          "player": "Natasha Cloud",
+          "stat": "points_rebounds_assists",
+          "line": 22.5,
+          "over": {
+            "american": -111,
+            "stake": 93.23
+          },
+          "under": {
+            "american": -123,
+            "stake": 179.37
+          },
+          "market_id": 230000058,
+          "sub_type": "player_total_points_rebounds_assists",
+          "is_main": true
+        },
+        {
+          "player": "Courtney Vandersloot",
+          "stat": "points_rebounds_assists",
+          "line": 20.5,
+          "over": {
+            "american": -106,
+            "stake": 3.65
+          },
+          "under": {
+            "american": -118,
+            "stake": 39.45
+          },
+          "market_id": 230000064,
+          "sub_type": "player_total_points_rebounds_assists",
+          "is_main": true
+        },
+        {
+          "player": "Azurá Stevens",
+          "stat": "points_rebounds_assists",
+          "line": 21.5,
+          "over": null,
+          "under": {
+            "american": 105,
+            "stake": 1.0
+          },
+          "market_id": 230000080,
+          "sub_type": "player_total_points_rebounds_assists",
+          "is_main": true
+        },
+        {
+          "player": "Natisha Hiedeman",
+          "stat": "points_rebounds_assists",
+          "line": 22.5,
+          "over": {
+            "american": -122,
+            "stake": 1.0
+          },
+          "under": {
+            "american": -102,
+            "stake": 10.15
+          },
+          "market_id": 230000122,
+          "sub_type": "player_total_points_rebounds_assists",
+          "is_main": true
+        },
+        {
+          "player": "Dominique Malonga",
+          "stat": "points_rebounds_assists",
+          "line": 30.5,
+          "over": {
+            "american": 100,
+            "stake": 40.0
+          },
+          "under": {
+            "american": -129,
+            "stake": 174.67
+          },
+          "market_id": 230000225,
+          "sub_type": "player_total_points_rebounds_assists",
+          "is_main": true
+        },
+        {
+          "player": "Flau'jae Johnson",
+          "stat": "points_rebounds_assists",
+          "line": 20.5,
+          "over": null,
+          "under": {
+            "american": -172,
+            "stake": 31.25
+          },
+          "market_id": 230000316,
+          "sub_type": "player_total_points_rebounds_assists",
+          "is_main": true
+        },
+        {
+          "player": "Kamilla Cardoso",
+          "stat": "points_rebounds",
+          "line": 23.5,
+          "over": {
+            "american": -114,
+            "stake": 1.0
+          },
+          "under": {
+            "american": -127,
+            "stake": 176.21
+          },
+          "market_id": 290000041,
+          "sub_type": "player_total_points_rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Courtney Vandersloot",
+          "stat": "points_rebounds",
+          "line": 14.5,
+          "over": {
+            "american": -108,
+            "stake": 192.31
+          },
+          "under": null,
+          "market_id": 290000064,
+          "sub_type": "player_total_points_rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Azurá Stevens",
+          "stat": "points_rebounds",
+          "line": 19.5,
+          "over": {
+            "american": -121,
+            "stake": 181.0
+          },
+          "under": {
+            "american": -124,
+            "stake": 178.57
+          },
+          "market_id": 290000080,
+          "sub_type": "player_total_points_rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Natisha Hiedeman",
+          "stat": "points_rebounds",
+          "line": 17.5,
+          "over": {
+            "american": -110,
+            "stake": 1.0
+          },
+          "under": {
+            "american": -124,
+            "stake": 178.57
+          },
+          "market_id": 290000122,
+          "sub_type": "player_total_points_rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Dominique Malonga",
+          "stat": "points_rebounds",
+          "line": 28.5,
+          "over": {
+            "american": 103,
+            "stake": 103.0
+          },
+          "under": {
+            "american": -130,
+            "stake": 173.91
+          },
+          "market_id": 290000225,
+          "sub_type": "player_total_points_rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Flau'jae Johnson",
+          "stat": "points_rebounds",
+          "line": 17.5,
+          "over": {
+            "american": -108,
+            "stake": 1.0
+          },
+          "under": null,
+          "market_id": 290000316,
+          "sub_type": "player_total_points_rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Natasha Cloud",
+          "stat": "points_assists",
+          "line": 18.5,
+          "over": null,
+          "under": {
+            "american": 115,
+            "stake": 100.0
+          },
+          "market_id": 300000058,
+          "sub_type": "player_total_points_assists",
+          "is_main": true
+        },
+        {
+          "player": "Natasha Cloud",
+          "stat": "points_assists",
+          "line": 19.5,
+          "over": {
+            "american": 100,
+            "stake": 1.0
+          },
+          "under": null,
+          "market_id": 300000058,
+          "sub_type": "player_total_points_assists",
+          "is_main": false
+        },
+        {
+          "player": "Natisha Hiedeman",
+          "stat": "points_assists",
+          "line": 19.5,
+          "over": {
+            "american": -132,
+            "stake": 172.41
+          },
+          "under": {
+            "american": -114,
+            "stake": 186.92
+          },
+          "market_id": 300000122,
+          "sub_type": "player_total_points_assists",
+          "is_main": true
+        },
+        {
+          "player": "Jade Melbourne",
+          "stat": "points_assists",
+          "line": 14.5,
+          "over": {
+            "american": -106,
+            "stake": 1.0
+          },
+          "under": {
+            "american": -134,
+            "stake": 170.94
+          },
+          "market_id": 300000152,
+          "sub_type": "player_total_points_assists",
+          "is_main": true
+        },
+        {
+          "player": "Dominique Malonga",
+          "stat": "points_assists",
+          "line": 21.5,
+          "over": {
+            "american": -110,
+            "stake": 1.0
+          },
+          "under": null,
+          "market_id": 300000225,
+          "sub_type": "player_total_points_assists",
+          "is_main": true
+        },
+        {
+          "player": "Kamilla Cardoso",
+          "stat": "rebounds_assists",
+          "line": 10.5,
+          "over": null,
+          "under": {
+            "american": -150,
+            "stake": 40.0
+          },
+          "market_id": 310000041,
+          "sub_type": "player_total_rebounds_assists",
+          "is_main": true
+        },
+        {
+          "player": "Natasha Cloud",
+          "stat": "rebounds_assists",
+          "line": 9.5,
+          "over": {
+            "american": -113,
+            "stake": 39.91
+          },
+          "under": {
+            "american": -126,
+            "stake": 176.99
+          },
+          "market_id": 310000058,
+          "sub_type": "player_total_rebounds_assists",
+          "is_main": true
+        },
+        {
+          "player": "Courtney Vandersloot",
+          "stat": "rebounds_assists",
+          "line": 9.5,
+          "over": {
+            "american": -122,
+            "stake": 180.18
+          },
+          "under": {
+            "american": -113,
+            "stake": 39.91
+          },
+          "market_id": 310000064,
+          "sub_type": "player_total_rebounds_assists",
+          "is_main": true
+        },
+        {
+          "player": "Natisha Hiedeman",
+          "stat": "rebounds_assists",
+          "line": 7.5,
+          "over": {
+            "american": -150,
+            "stake": 40.0
+          },
+          "under": {
+            "american": 103,
+            "stake": 202.96
+          },
+          "market_id": 310000122,
+          "sub_type": "player_total_rebounds_assists",
+          "is_main": true
+        }
+      ]
+    }
+  ]
+}
