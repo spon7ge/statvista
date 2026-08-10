@@ -179,6 +179,16 @@ def test_team_preview_lookup_error_404():
     assert res.status_code == 404
 
 
+def test_team_preview_upstream_502():
+    with patch(
+        "app.domains.mlb.routes.get_mlb_team_preview",
+        new=AsyncMock(side_effect=RuntimeError("up")),
+    ):
+        res = client.get("/api/mlb/games/776543/team-preview?side=away")
+    assert res.status_code == 502
+    assert res.headers.get("cache-control") == "no-store"
+
+
 def _scheduled_detail() -> MlbGameDetail:
     away = MlbGameDetailTeam(
         id="120", abbrev="WSH", name="Washington Nationals", score=None, color="#AB0003"
@@ -248,4 +258,52 @@ async def test_get_mlb_team_preview_soft_fails_leaders():
     assert result.batting_leaders == []
     assert result.pitching_leaders == []
     assert len(result.batting_roster) == 1
+    assert result.team.abbrev == "WSH"
+
+
+@pytest.mark.asyncio
+async def test_get_mlb_team_preview_soft_fails_roster_ids():
+    batter = MlbTeamBatterSeasonRow(
+        player_id="1",
+        name="C. Smith",
+        g=1,
+        ops=".900",
+        avg=None,
+        obp=None,
+        slg=None,
+        ab=None,
+        r=None,
+        h=None,
+        hr=None,
+        rbi=None,
+        bb=None,
+        so=None,
+        sb=None,
+    )
+    with (
+        patch(
+            "app.domains.mlb.team_preview.get_mlb_game_detail",
+            new=AsyncMock(return_value=_scheduled_detail()),
+        ),
+        patch(
+            "app.domains.mlb.team_preview.fetch_team_leaders",
+            new=AsyncMock(return_value=[]),
+        ),
+        patch(
+            "app.domains.mlb.team_preview.fetch_active_roster_player_ids",
+            new=AsyncMock(side_effect=RuntimeError("roster down")),
+        ),
+        patch(
+            "app.domains.mlb.team_preview.fetch_team_batter_season_rows",
+            new=AsyncMock(return_value=[batter]),
+        ),
+        patch(
+            "app.domains.mlb.team_preview.fetch_team_pitcher_season_rows",
+            new=AsyncMock(return_value=[]),
+        ),
+    ):
+        result = await get_mlb_team_preview("776543", "away")
+    assert len(result.batting_roster) == 1
+    assert result.batting_roster[0].player_id == "1"
+    assert result.pitching_roster == []
     assert result.team.abbrev == "WSH"

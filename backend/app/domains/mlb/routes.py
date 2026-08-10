@@ -208,6 +208,13 @@ async def mlb_team_preview(
             detail="Game not found",
             headers=_NO_STORE,
         ) from exc
+    except Exception as exc:
+        logger.warning("MLB team preview unavailable: %s", exc)
+        raise HTTPException(
+            status_code=502,
+            detail="MLB team preview is temporarily unavailable",
+            headers=_NO_STORE,
+        ) from exc
 
 
 @router.get("/mlb/lineups/matchup", response_model=MlbLineupMatchupResponse)

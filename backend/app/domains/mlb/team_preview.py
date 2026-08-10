@@ -93,7 +93,11 @@ async def get_mlb_team_preview(
         except Exception as exc:
             logger.warning("team pitching leaders failed: %s", exc)
 
-        roster_ids = await fetch_active_roster_player_ids(client, team_id, season)
+        roster_ids: set[str] = set()
+        try:
+            roster_ids = await fetch_active_roster_player_ids(client, team_id, season)
+        except Exception as exc:
+            logger.warning("team roster ids failed: %s", exc)
 
         try:
             batting_roster = filter_rows_to_roster(
