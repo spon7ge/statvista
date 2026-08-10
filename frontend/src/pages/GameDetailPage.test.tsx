@@ -79,6 +79,38 @@ function baseGameDetail(overrides: Record<string, unknown> = {}) {
   };
 }
 
+function liveGameDetail(overrides: Record<string, unknown> = {}) {
+  return baseGameDetail({
+    espn_event_id: "401857098",
+    status: "live",
+    status_label: "4:13 - 1st",
+    away: {
+      id: "129153",
+      abbrev: "GS",
+      name: "Golden State Valkyries",
+      score: 10,
+      color: "#553987",
+      logo_url: null,
+    },
+    home: {
+      id: "21",
+      abbrev: "PHX",
+      name: "Phoenix Mercury",
+      score: 9,
+      color: "#E56020",
+      logo_url: null,
+    },
+    fg_made: 1,
+    fg_attempted: 2,
+    matchup_prediction: null,
+    projected_starters: null,
+    season_leaders: null,
+    injuries: null,
+    box_score: null,
+    ...overrides,
+  });
+}
+
 describe("GameDetailPage", () => {
   const fetchMock = vi.fn();
 
@@ -91,7 +123,7 @@ describe("GameDetailPage", () => {
     vi.unstubAllGlobals();
   });
 
-  it("shows matchup preview sections for scheduled games", async () => {
+  it("routes scheduled games to WnbaPregameCenter with starters", async () => {
     fetchMock.mockResolvedValue({
       ok: true,
       json: async () => baseGameDetail(),
@@ -99,11 +131,11 @@ describe("GameDetailPage", () => {
 
     renderGameDetail("401857099");
 
-    expect(await screen.findByText(/Matchup prediction/i)).toBeInTheDocument();
+    expect(await screen.findByTestId("wnba-pregame-center")).toBeInTheDocument();
     expect(screen.getByText(/Projected starters/i)).toBeInTheDocument();
-    expect(screen.getByText(/Season leaders/i)).toBeInTheDocument();
-    expect(screen.queryByText(/Shot chart/i)).not.toBeInTheDocument();
-    expect(screen.queryByText(/Play-by-play/i)).not.toBeInTheDocument();
+    expect(screen.getByText("Natasha Howard")).toBeInTheDocument();
+    expect(screen.queryByRole("tablist")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("wnba-live-center")).not.toBeInTheDocument();
   });
 
   it("scheduled panels use quiet surfaces instead of #141414", async () => {
@@ -124,84 +156,64 @@ describe("GameDetailPage", () => {
     ).not.toHaveClass("border-white/10");
   });
 
-  it("shows live panels for live games", async () => {
+  it("routes live games to WnbaLiveCenter", async () => {
     fetchMock.mockResolvedValue({
       ok: true,
-      json: async () =>
-        baseGameDetail({
-          espn_event_id: "401857098",
-          status: "live",
-          status_label: "4:13 - 1st",
-          away: {
-            id: "129153",
-            abbrev: "GS",
-            name: "Golden State Valkyries",
-            score: 10,
-            color: "#553987",
-            logo_url: null,
-          },
-          home: {
-            id: "21",
-            abbrev: "PHX",
-            name: "Phoenix Mercury",
-            score: 9,
-            color: "#E56020",
-            logo_url: null,
-          },
-          fg_made: 1,
-          fg_attempted: 2,
-          matchup_prediction: null,
-          projected_starters: null,
-          season_leaders: null,
-          injuries: null,
-          box_score: null,
-        }),
+      json: async () => liveGameDetail(),
     });
 
     renderGameDetail("401857098");
 
-    expect(await screen.findByText(/Shot chart/i)).toBeInTheDocument();
-    expect(screen.getByText(/Play-by-play/i)).toBeInTheDocument();
+    expect(await screen.findByTestId("wnba-live-center")).toBeInTheDocument();
+    expect(screen.getByTestId("wnba-broadcast-header")).toBeInTheDocument();
+    expect(screen.getByText(/Shot chart/i)).toBeInTheDocument();
     expect(screen.queryByText(/Matchup prediction/i)).not.toBeInTheDocument();
+    expect(screen.queryByTestId("wnba-pregame-center")).not.toBeInTheDocument();
+  });
+
+  it("routes final games to WnbaFinalCenter", async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      json: async () =>
+        liveGameDetail({
+          status: "final",
+          status_label: "Final",
+          espn_event_id: "401857100",
+        }),
+    });
+
+    renderGameDetail("401857100");
+
+    expect(await screen.findByTestId("wnba-final-center")).toBeInTheDocument();
+    expect(screen.queryByTestId("wnba-live-center")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("wnba-pregame-center")).not.toBeInTheDocument();
+  });
+
+  it("routes halftime games to WnbaLiveCenter", async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      json: async () =>
+        liveGameDetail({
+          status: "halftime",
+          status_label: "Halftime",
+          espn_event_id: "401857101",
+        }),
+    });
+
+    renderGameDetail("401857101");
+
+    expect(await screen.findByTestId("wnba-live-center")).toBeInTheDocument();
   });
 
   it("live detail page has no legacy #141414, amber, or violet chrome", async () => {
     fetchMock.mockResolvedValue({
       ok: true,
-      json: async () =>
-        baseGameDetail({
-          espn_event_id: "401857098",
-          status: "live",
-          status_label: "4:13 - 1st",
-          away: {
-            id: "129153",
-            abbrev: "GS",
-            name: "Golden State Valkyries",
-            score: 10,
-            color: "#553987",
-            logo_url: null,
-          },
-          home: {
-            id: "21",
-            abbrev: "PHX",
-            name: "Phoenix Mercury",
-            score: 9,
-            color: "#E56020",
-            logo_url: null,
-          },
-          fg_made: 1,
-          fg_attempted: 2,
-          matchup_prediction: null,
-          projected_starters: null,
-          season_leaders: null,
-          injuries: null,
-          box_score: null,
-        }),
+      json: async () => liveGameDetail(),
     });
 
     renderGameDetail("401857098");
 
-    expect(await screen.findByText(/Shot chart/i)).toBeInTheDocument();
+    expect(await screen.findByTestId("wnba-live-center")).toBeInTheDocument();
     expect(document.body.innerHTML).not.toMatch(/#141414/);
     expect(document.querySelector(".text-amber-300")).toBeNull();
     expect(document.querySelector(".bg-violet-500")).toBeNull();

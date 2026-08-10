@@ -90,12 +90,14 @@ export function WnbaBroadcastHeader({
   onTabChange,
 }: {
   detail: GameDetail;
-  activeTab: WnbaGameTab;
-  onTabChange: (tab: WnbaGameTab) => void;
+  /** Omit for pregame: status + slabs only, no Summary|Box tabs. */
+  activeTab?: WnbaGameTab;
+  onTabChange?: (tab: WnbaGameTab) => void;
 }) {
   const winner = resolveWinner(detail.away, detail.home);
   const inProgress =
     detail.status === "live" || detail.status === "halftime";
+  const showTabs = activeTab != null && onTabChange != null;
 
   return (
     <div data-testid="wnba-broadcast-header" className="space-y-3">
@@ -129,30 +131,32 @@ export function WnbaBroadcastHeader({
         />
       </div>
 
-      <div
-        role="tablist"
-        aria-label="Game details"
-        className="flex items-center justify-center gap-1 border-b border-white/10"
-      >
-        {(["summary", "box"] as const).map((tab) => (
-          <button
-            key={tab}
-            id={`wnba-${tab}-tab`}
-            type="button"
-            role="tab"
-            aria-selected={activeTab === tab}
-            aria-controls={`wnba-${tab}-panel`}
-            className={`border-b-2 px-5 py-2 text-sm font-medium capitalize transition-colors ${
-              activeTab === tab
-                ? "border-white text-white"
-                : "border-transparent text-white/50 hover:text-white/80"
-            }`}
-            onClick={() => onTabChange(tab)}
-          >
-            {tab === "summary" ? "Summary" : "Box"}
-          </button>
-        ))}
-      </div>
+      {showTabs ? (
+        <div
+          role="tablist"
+          aria-label="Game details"
+          className="flex items-center justify-center gap-1 border-b border-white/10"
+        >
+          {(["summary", "box"] as const).map((tab) => (
+            <button
+              key={tab}
+              id={`wnba-${tab}-tab`}
+              type="button"
+              role="tab"
+              aria-selected={activeTab === tab}
+              aria-controls={`wnba-${tab}-panel`}
+              className={`border-b-2 px-5 py-2 text-sm font-medium capitalize transition-colors ${
+                activeTab === tab
+                  ? "border-white text-white"
+                  : "border-transparent text-white/50 hover:text-white/80"
+              }`}
+              onClick={() => onTabChange(tab)}
+            >
+              {tab === "summary" ? "Summary" : "Box"}
+            </button>
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 }

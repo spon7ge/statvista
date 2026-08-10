@@ -71,4 +71,11 @@ describe("WnbaBroadcastHeader", () => {
     await user.click(screen.getByRole("tab", { name: /box/i }));
     expect(onTabChange).toHaveBeenCalledWith("box");
   });
+
+  it("omits Summary|Box tabs when tab props are not provided", () => {
+    render(<WnbaBroadcastHeader detail={detail} />);
+
+    expect(screen.getByTestId("wnba-broadcast-header")).toBeInTheDocument();
+    expect(screen.queryByRole("tablist")).not.toBeInTheDocument();
+  });
 });

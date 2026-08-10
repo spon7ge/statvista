@@ -1,15 +1,9 @@
 import { Link, useParams } from "react-router-dom";
 import { useGameDetail } from "@/features/basketball/hooks/useGameDetail";
 import { mapGameDetail } from "@/features/basketball/lib/mapGameDetail";
-import { GameHeader } from "@/features/basketball/game/GameHeader";
-import { InjuryReport } from "@/features/basketball/game/InjuryReport";
-import { MatchupPrediction } from "@/features/basketball/game/MatchupPrediction";
-import { ProjectedStarters } from "@/features/basketball/game/ProjectedStarters";
-import { SeasonLeaders } from "@/features/basketball/game/SeasonLeaders";
-import { ShotChart } from "@/features/basketball/game/ShotChart";
-import { PlayByPlay } from "@/features/basketball/game/PlayByPlay";
-import { WinProbabilityPanel } from "@/features/basketball/game/WinProbabilityPanel";
-import { BoxScore } from "@/features/basketball/game/BoxScore";
+import { WnbaFinalCenter } from "@/features/basketball/game/WnbaFinalCenter";
+import { WnbaLiveCenter } from "@/features/basketball/game/WnbaLiveCenter";
+import { WnbaPregameCenter } from "@/features/basketball/game/WnbaPregameCenter";
 import { GAME_SECTION_SURFACE } from "@/shared/ui/GameSection";
 
 function GameDetailSkeleton() {
@@ -54,6 +48,17 @@ function UnableToLoadGame() {
   );
 }
 
+function BackLink() {
+  return (
+    <Link
+      to="/"
+      className="inline-flex items-center gap-1 text-sm font-medium text-white/70 no-underline transition-colors hover:text-white"
+    >
+      ← Back
+    </Link>
+  );
+}
+
 export function GameDetailPage() {
   const { espnEventId } = useParams<{ espnEventId: string }>();
   const { data, isLoading, hasNeverLoaded } = useGameDetail(espnEventId);
@@ -71,28 +76,21 @@ export function GameDetailPage() {
   }
 
   const detail = mapGameDetail(data);
-  const isScheduled = detail.status === "scheduled";
+
+  let center;
+  if (detail.status === "scheduled") {
+    center = <WnbaPregameCenter detail={detail} />;
+  } else if (detail.status === "final") {
+    center = <WnbaFinalCenter detail={detail} />;
+  } else {
+    // live + halftime
+    center = <WnbaLiveCenter detail={detail} />;
+  }
 
   return (
     <div className="mx-auto max-w-6xl space-y-4 px-4 py-6 sm:px-6">
-      <GameHeader detail={detail} />
-      {isScheduled ? (
-        <>
-          <MatchupPrediction detail={detail} />
-          <ProjectedStarters detail={detail} />
-          <SeasonLeaders detail={detail} />
-          <InjuryReport detail={detail} />
-        </>
-      ) : (
-        <>
-          <div className="grid items-start gap-3 lg:grid-cols-2">
-            <ShotChart detail={detail} />
-            <PlayByPlay detail={detail} />
-          </div>
-          <WinProbabilityPanel detail={detail} />
-          <BoxScore detail={detail} />
-        </>
-      )}
+      <BackLink />
+      {center}
     </div>
   );
 }
