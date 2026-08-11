@@ -7352,6 +7352,167 @@
         "title": "WnbaGameLeaders",
         "type": "object"
       },
+      "WnbaGamePropBestQuote": {
+        "properties": {
+          "american": {
+            "title": "American",
+            "type": "integer"
+          },
+          "book": {
+            "title": "Book",
+            "type": "string"
+          }
+        },
+        "required": [
+          "american",
+          "book"
+        ],
+        "title": "WnbaGamePropBestQuote",
+        "type": "object"
+      },
+      "WnbaGamePropCategory": {
+        "properties": {
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "players": {
+            "items": {
+              "$ref": "#/components/schemas/WnbaGamePropPlayer"
+            },
+            "title": "Players",
+            "type": "array"
+          },
+          "stat": {
+            "title": "Stat",
+            "type": "string"
+          }
+        },
+        "required": [
+          "stat",
+          "label",
+          "players"
+        ],
+        "title": "WnbaGamePropCategory",
+        "type": "object"
+      },
+      "WnbaGamePropPlayer": {
+        "properties": {
+          "headshot_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Headshot Url"
+          },
+          "line": {
+            "title": "Line",
+            "type": "number"
+          },
+          "over": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WnbaGamePropBestQuote"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "player_name": {
+            "title": "Player Name",
+            "type": "string"
+          },
+          "team_abbrev": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Team Abbrev"
+          },
+          "under": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WnbaGamePropBestQuote"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "player_name",
+          "team_abbrev",
+          "headshot_url",
+          "line",
+          "over",
+          "under"
+        ],
+        "title": "WnbaGamePropPlayer",
+        "type": "object"
+      },
+      "WnbaGamePropsResponse": {
+        "properties": {
+          "app": {
+            "title": "App",
+            "type": "string"
+          },
+          "as_of": {
+            "title": "As Of",
+            "type": "string"
+          },
+          "away_abbrev": {
+            "title": "Away Abbrev",
+            "type": "string"
+          },
+          "categories": {
+            "items": {
+              "$ref": "#/components/schemas/WnbaGamePropCategory"
+            },
+            "title": "Categories",
+            "type": "array"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "espn_event_id": {
+            "title": "Espn Event Id",
+            "type": "string"
+          },
+          "home_abbrev": {
+            "title": "Home Abbrev",
+            "type": "string"
+          }
+        },
+        "required": [
+          "as_of",
+          "app",
+          "espn_event_id",
+          "away_abbrev",
+          "home_abbrev",
+          "categories",
+          "error"
+        ],
+        "title": "WnbaGamePropsResponse",
+        "type": "object"
+      },
       "WnbaLeaderCategory": {
         "properties": {
           "key": {
@@ -10502,6 +10663,61 @@
           }
         },
         "summary": "Wnba Player",
+        "tags": [
+          "wnba"
+        ]
+      }
+    },
+    "/api/wnba/props/game/{espn_event_id}": {
+      "get": {
+        "operationId": "wnba_props_game_api_wnba_props_game__espn_event_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "espn_event_id",
+            "required": true,
+            "schema": {
+              "title": "Espn Event Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "app",
+            "required": true,
+            "schema": {
+              "enum": [
+                "prizepicks",
+                "underdog"
+              ],
+              "title": "App",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WnbaGamePropsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Wnba Props Game",
         "tags": [
           "wnba"
         ]

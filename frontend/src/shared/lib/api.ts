@@ -41,6 +41,7 @@ export type ApiWnbaOddsResponse = Schemas["WnbaOddsResponse"];
 export type ApiWnbaPropBookQuote = Schemas["WnbaPropBookQuote"];
 export type ApiWnbaPropLine = Schemas["WnbaPropLine"];
 export type ApiWnbaPropsResponse = Schemas["WnbaPropsResponse"];
+export type ApiWnbaGamePropsResponse = Schemas["WnbaGamePropsResponse"];
 
 export type ApiWnbaFuturesEntry = Schemas["WnbaFuturesEntry"];
 export type ApiWnbaFuturesMarket = Schemas["WnbaFuturesMarket"];
@@ -54,6 +55,11 @@ export type ApiWnbaTeamPreviewResponse = Schemas["WnbaTeamPreviewResponse"];
 export type WnbaTeamPreviewParams = {
   espnEventId: string;
   side: "away" | "home";
+};
+
+export type WnbaGamePropsParams = {
+  espnEventId: string;
+  app: "prizepicks" | "underdog";
 };
 
 export type ApiMlbTeam = Schemas["MlbTeam"];
@@ -191,6 +197,24 @@ export async function fetchWnbaProps(): Promise<ApiWnbaPropsResponse> {
   });
   if (!res.ok) {
     throw new Error(`Props request failed: ${res.status}`);
+  }
+  return res.json();
+}
+
+export async function fetchWnbaGameProps({
+  espnEventId,
+  app,
+}: WnbaGamePropsParams): Promise<ApiWnbaGamePropsResponse> {
+  const qs = new URLSearchParams({ app });
+  const res = await fetch(
+    `${API_BASE}/api/wnba/props/game/${encodeURIComponent(espnEventId)}?${qs}`,
+    {
+      headers: { Accept: "application/json" },
+      cache: "no-store",
+    },
+  );
+  if (!res.ok) {
+    throw new Error(`WNBA game props request failed: ${res.status}`);
   }
   return res.json();
 }

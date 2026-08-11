@@ -215,6 +215,52 @@ describe("fetchMlbProps", () => {
   });
 });
 
+describe("fetchWnbaGameProps", () => {
+  beforeEach(() => {
+    vi.resetModules();
+    fetchMock.mockReset();
+    vi.stubGlobal("fetch", fetchMock);
+  });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
+  });
+
+  it("requests game props with app query", async () => {
+    vi.stubEnv("VITE_API_BASE_URL", undefined);
+    fetchMock.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        as_of: "2026-08-10T00:00:00Z",
+        app: "prizepicks",
+        espn_event_id: "401770001",
+        away_abbrev: "LVA",
+        home_abbrev: "NYL",
+        categories: [],
+        error: null,
+      }),
+    });
+
+    const { fetchWnbaGameProps } = await import("./api");
+    await fetchWnbaGameProps({ espnEventId: "401770001", app: "prizepicks" });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/wnba/props/game/401770001?app=prizepicks",
+      expect.objectContaining({ cache: "no-store" }),
+    );
+  });
+
+  it("throws on non-OK", async () => {
+    vi.stubEnv("VITE_API_BASE_URL", undefined);
+    fetchMock.mockResolvedValue({ ok: false, status: 500 });
+
+    const { fetchWnbaGameProps } = await import("./api");
+    await expect(
+      fetchWnbaGameProps({ espnEventId: "401770001", app: "underdog" }),
+    ).rejects.toThrow("WNBA game props request failed: 500");
+  });
+});
+
 describe("fetchMlbGameProps", () => {
   beforeEach(() => {
     vi.resetModules();

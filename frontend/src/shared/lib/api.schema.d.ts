@@ -530,6 +530,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/wnba/props/game/{espn_event_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Wnba Props Game */
+        get: operations["wnba_props_game_api_wnba_props_game__espn_event_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/wnba/props/today": {
         parameters: {
             query?: never;
@@ -2529,6 +2546,52 @@ export interface components {
             /** Leaders */
             leaders: components["schemas"]["WnbaGameLeaderCard"][];
         };
+        /** WnbaGamePropBestQuote */
+        WnbaGamePropBestQuote: {
+            /** American */
+            american: number;
+            /** Book */
+            book: string;
+        };
+        /** WnbaGamePropCategory */
+        WnbaGamePropCategory: {
+            /** Label */
+            label: string;
+            /** Players */
+            players: components["schemas"]["WnbaGamePropPlayer"][];
+            /** Stat */
+            stat: string;
+        };
+        /** WnbaGamePropPlayer */
+        WnbaGamePropPlayer: {
+            /** Headshot Url */
+            headshot_url: string | null;
+            /** Line */
+            line: number;
+            over: components["schemas"]["WnbaGamePropBestQuote"] | null;
+            /** Player Name */
+            player_name: string;
+            /** Team Abbrev */
+            team_abbrev: string | null;
+            under: components["schemas"]["WnbaGamePropBestQuote"] | null;
+        };
+        /** WnbaGamePropsResponse */
+        WnbaGamePropsResponse: {
+            /** App */
+            app: string;
+            /** As Of */
+            as_of: string;
+            /** Away Abbrev */
+            away_abbrev: string;
+            /** Categories */
+            categories: components["schemas"]["WnbaGamePropCategory"][];
+            /** Error */
+            error: string | null;
+            /** Espn Event Id */
+            espn_event_id: string;
+            /** Home Abbrev */
+            home_abbrev: string;
+        };
         /** WnbaLeaderCategory */
         WnbaLeaderCategory: {
             /**
@@ -3802,6 +3865,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["WnbaPlayerResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    wnba_props_game_api_wnba_props_game__espn_event_id__get: {
+        parameters: {
+            query: {
+                app: "prizepicks" | "underdog";
+            };
+            header?: never;
+            path: {
+                espn_event_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WnbaGamePropsResponse"];
                 };
             };
             /** @description Validation Error */
