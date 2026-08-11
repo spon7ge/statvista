@@ -3,6 +3,15 @@
     "id": "401857098",
     "competitions": [
       {
+        "date": "2026-08-10T02:00Z",
+        "broadcasts": [
+          {
+            "isNational": true,
+            "market": { "type": "National" },
+            "type": { "shortName": "TV" },
+            "media": { "shortName": "USA" }
+          }
+        ],
         "status": {
           "period": 1,
           "displayClock": "4:13",
@@ -62,7 +71,19 @@
     ]
   },
   "gameInfo": {
-    "venue": { "fullName": "Mortgage Matchup Center" }
+    "venue": {
+      "fullName": "Mortgage Matchup Center",
+      "address": { "city": "Phoenix", "state": "AZ" }
+    },
+    "officials": [
+      {
+        "displayName": "Fatou Cissoko-Stephens",
+        "fullName": "Fatou Cissoko-Stephens",
+        "order": 1
+      },
+      { "displayName": "Ken Jones", "fullName": "Ken Jones", "order": 2 },
+      { "displayName": "Marcy Williams", "fullName": "Marcy Williams", "order": 3 }
+    ]
   },
   "plays": [
     {

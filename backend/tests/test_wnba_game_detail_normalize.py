@@ -385,6 +385,50 @@ def test_normalize_ignores_priors_when_not_scheduled():
     assert detail.projected_starters is None
 
 
+def test_normalize_game_info_date_broadcast_venue_officials():
+    payload = load_fixture("espn_wnba_summary.json")
+    detail = normalize_espn_summary(
+        payload,
+        espn_event_id="401857098",
+        fetched_at="2026-07-30T00:00:00-04:00",
+    )
+    assert detail.game_date == "2026-08-10"
+    assert detail.broadcast == "USA"
+    assert detail.venue == "Mortgage Matchup Center"
+    assert detail.venue_city == "Phoenix"
+    assert detail.venue_state == "AZ"
+    assert detail.officials is not None
+    assert [o.model_dump() for o in detail.officials] == [
+        {"name": "Fatou Cissoko-Stephens", "order": 1},
+        {"name": "Ken Jones", "order": 2},
+        {"name": "Marcy Williams", "order": 3},
+    ]
+
+
+def test_pick_broadcast_prefers_national_tv_over_streaming():
+    payload = load_fixture("espn_wnba_summary.json")
+    payload["header"]["competitions"][0]["broadcasts"] = [
+        {
+            "isNational": True,
+            "market": {"type": "National"},
+            "type": {"shortName": "Streaming"},
+            "media": {"shortName": "Prime Video"},
+        },
+        {
+            "isNational": True,
+            "market": {"type": "National"},
+            "type": {"shortName": "TV"},
+            "media": {"shortName": "ESPN2"},
+        },
+    ]
+    detail = normalize_espn_summary(
+        payload,
+        espn_event_id="401857098",
+        fetched_at="2026-07-30T00:00:00-04:00",
+    )
+    assert detail.broadcast == "ESPN2"
+
+
 def test_normalize_excludes_null_coordinates_from_shots():
     payload = json.loads((FIXTURES / "espn_wnba_summary.json").read_text())
     payload["plays"].append(

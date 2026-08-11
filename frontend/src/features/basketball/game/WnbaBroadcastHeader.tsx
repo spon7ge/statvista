@@ -90,7 +90,7 @@ export function WnbaBroadcastHeader({
   onTabChange,
 }: {
   detail: GameDetail;
-  /** Omit for pregame: status + slabs only, no Summary|Box tabs. */
+  /** Omit for pregame: status + slabs only, no Summary|Boxscore tabs. */
   activeTab?: WnbaGameTab;
   onTabChange?: (tab: WnbaGameTab) => void;
 }) {
@@ -152,7 +152,7 @@ export function WnbaBroadcastHeader({
               }`}
               onClick={() => onTabChange(tab)}
             >
-              {tab === "summary" ? "Summary" : "Box"}
+              {tab === "summary" ? "Summary" : "Boxscore"}
             </button>
           ))}
         </div>

@@ -680,6 +680,13 @@ export interface components {
             /** Source Label */
             source_label: string;
         };
+        /** GameDetailOfficial */
+        GameDetailOfficial: {
+            /** Name */
+            name: string;
+            /** Order */
+            order: number;
+        };
         /** GameDetailPlay */
         GameDetailPlay: {
             /** Away Score */
@@ -2443,6 +2450,8 @@ export interface components {
         WnbaGameDetail: {
             away: components["schemas"]["GameDetailTeam"];
             box_score: components["schemas"]["GameDetailBoxScore"] | null;
+            /** Broadcast */
+            broadcast?: string | null;
             /** Espn Event Id */
             espn_event_id: string;
             /** Fetched At */
@@ -2451,6 +2460,8 @@ export interface components {
             fg_attempted: number;
             /** Fg Made */
             fg_made: number;
+            /** Game Date */
+            game_date?: string | null;
             game_leaders?: components["schemas"]["WnbaGameLeaders"] | null;
             home: components["schemas"]["GameDetailTeam"];
             injuries: components["schemas"]["GameDetailInjuries"] | null;
@@ -2462,6 +2473,8 @@ export interface components {
              */
             league: "wnba";
             matchup_prediction: components["schemas"]["GameDetailMatchupPrediction"] | null;
+            /** Officials */
+            officials?: components["schemas"]["GameDetailOfficial"][] | null;
             /** Plays */
             plays: components["schemas"]["GameDetailPlay"][];
             projected_starters: components["schemas"]["GameDetailProjectedStarters"] | null;
@@ -2478,6 +2491,10 @@ export interface components {
             status_label: string;
             /** Venue */
             venue: string | null;
+            /** Venue City */
+            venue_city?: string | null;
+            /** Venue State */
+            venue_state?: string | null;
             win_probability: components["schemas"]["GameDetailWinProbability"] | null;
         };
         /** WnbaGameLeaderCard */

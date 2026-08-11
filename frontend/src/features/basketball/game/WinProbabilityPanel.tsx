@@ -5,6 +5,7 @@ import {
   buildSplitSeriesPaths,
   CHART_GEOMETRY,
   nearestIndexForClientX,
+  separatePctLabelYs,
   xForIndex,
   yForPct,
 } from "../lib/winProbabilityPaths";
@@ -22,10 +23,10 @@ export function WinProbabilityPanel({ detail }: { detail: GameDetail }) {
 
   if (!data) {
     return (
-      <GameSection className="!p-3">
-        <h2 className="text-sm font-semibold text-white">Win probability</h2>
-        <p className="mt-1.5 text-xs text-white/50">
-          Win probability unavailable for this game yet.
+      <GameSection className="!p-3" data-testid="wnba-game-flow">
+        <h2 className="text-[18px] font-semibold text-white">Game flow</h2>
+        <p className="mt-1.5 text-[18px] text-white/50">
+          Win probability unavailable
         </p>
       </GameSection>
     );
@@ -70,19 +71,23 @@ export function WinProbabilityPanel({ detail }: { detail: GameDetail }) {
 
   const homeY = activePoint ? yForPct(activePoint.homeWinPct) : 0;
   const awayY = activePoint ? yForPct(activePoint.awayWinPct) : 0;
-  const topSeriesY = Math.min(homeY, awayY);
+  const { homeLabelY, awayLabelY } = activePoint
+    ? separatePctLabelYs(homeY, awayY)
+    : { homeLabelY: 0, awayLabelY: 0 };
+  const topLabelY = Math.min(homeLabelY, awayLabelY);
   const clockDefaultY = CHART_GEOMETRY.padTop + 10;
   // When a high win-% label sits near the clock, lift the clock and extend
   // the tracker upward so time and % don't stack on the same spot.
-  const clockOverlapsPct = Boolean(activePoint) && topSeriesY < clockDefaultY + 18;
+  const clockOverlapsPct =
+    Boolean(activePoint) && topLabelY < clockDefaultY + 22;
   const clockY = clockOverlapsPct ? CHART_GEOMETRY.padTop - 16 : clockDefaultY;
   const trackerTop = clockOverlapsPct ? clockY + 6 : CHART_GEOMETRY.padTop;
   // No full-height guide on the right edge — it reads as a Y-axis.
   const showTracker = Boolean(activePoint) && !atEnd;
 
   return (
-    <GameSection className="!p-3">
-      <h2 className="text-sm font-semibold text-white">Win probability</h2>
+    <GameSection className="!p-3" data-testid="wnba-game-flow">
+      <h2 className="text-[18px] font-semibold text-white">Game flow</h2>
 
       {points.length > 0 ? (
         <div className="relative mt-2">
@@ -138,7 +143,7 @@ export function WinProbabilityPanel({ detail }: { detail: GameDetail }) {
                 <circle
                   cx={scrubX}
                   cy={awayY}
-                  r={3.5}
+                  r={4}
                   fill={detail.away.color}
                   stroke="#FFFFFF"
                   strokeWidth={1.5}
@@ -147,7 +152,7 @@ export function WinProbabilityPanel({ detail }: { detail: GameDetail }) {
                 <circle
                   cx={scrubX}
                   cy={homeY}
-                  r={3.5}
+                  r={4}
                   fill={detail.home.color}
                   stroke="#FFFFFF"
                   strokeWidth={1.5}
@@ -155,21 +160,23 @@ export function WinProbabilityPanel({ detail }: { detail: GameDetail }) {
                 />
                 <text
                   x={labelX}
-                  y={homeY}
-                  fill={detail.home.color}
+                  y={homeLabelY}
+                  fill="#FFFFFF"
                   textAnchor={labelAnchor}
                   dominantBaseline="middle"
-                  style={{ fontSize: "11px", fontWeight: 600 }}
+                  data-testid="wnba-game-flow-home-pct"
+                  style={{ fontSize: "18px", fontWeight: 600 }}
                 >
                   {detail.home.abbrev} {activePoint.homeWinPct}%
                 </text>
                 <text
                   x={labelX}
-                  y={awayY}
-                  fill={detail.away.color}
+                  y={awayLabelY}
+                  fill="#FFFFFF"
                   textAnchor={labelAnchor}
                   dominantBaseline="middle"
-                  style={{ fontSize: "11px", fontWeight: 600 }}
+                  data-testid="wnba-game-flow-away-pct"
+                  style={{ fontSize: "18px", fontWeight: 600 }}
                 >
                   {detail.away.abbrev} {activePoint.awayWinPct}%
                 </text>
@@ -205,73 +212,11 @@ export function WinProbabilityPanel({ detail }: { detail: GameDetail }) {
             }}
           />
         </div>
-      ) : null}
-
-      {data.teamStats.length > 0 ? (
-        <div className="mt-3">
-          <div className="mb-2 flex items-center justify-between gap-2">
-            <h3 className="text-sm font-semibold text-white">Team stats</h3>
-            <div className="flex items-center gap-2.5 text-[10px] text-white/70">
-              <span className="flex items-center gap-1.5">
-                <span
-                  className="size-1.5 rounded-full"
-                  style={{ backgroundColor: detail.away.color }}
-                />
-                {detail.away.abbrev}
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span
-                  className="size-1.5 rounded-full"
-                  style={{ backgroundColor: detail.home.color }}
-                />
-                {detail.home.abbrev}
-              </span>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            {data.teamStats.map((stat) => {
-              const total = stat.awayValue + stat.homeValue;
-              const awayShare =
-                total === 0 ? 50 : (stat.awayValue / total) * 100;
-              const homeShare =
-                total === 0 ? 50 : (stat.homeValue / total) * 100;
-
-              return (
-                <div key={stat.key} className="space-y-1">
-                  <p className="text-center text-[10px] font-medium uppercase tracking-wide text-white/80">
-                    {stat.label}
-                  </p>
-                  <div className="grid grid-cols-[1.75rem_1fr_1.75rem] items-center gap-1.5">
-                    <span className="text-right font-mono text-[10px] text-white">
-                      {stat.awayValue}
-                    </span>
-                    <div className="flex h-1 overflow-hidden rounded-sm">
-                      <div
-                        className="h-full"
-                        style={{
-                          width: `${awayShare}%`,
-                          backgroundColor: detail.away.color,
-                        }}
-                      />
-                      <div
-                        className="h-full"
-                        style={{
-                          width: `${homeShare}%`,
-                          backgroundColor: detail.home.color,
-                        }}
-                      />
-                    </div>
-                    <span className="font-mono text-[10px] text-white">
-                      {stat.homeValue}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      ) : null}
+      ) : (
+        <p className="mt-1.5 text-[18px] text-white/50">
+          Win probability unavailable
+        </p>
+      )}
     </GameSection>
   );
 }

@@ -163,12 +163,22 @@ export type GameDetailBoxScore = {
   home: GameDetailBoxScorePlayer[];
 };
 
+export type GameDetailOfficial = {
+  name: string;
+  order: number;
+};
+
 export type GameDetail = {
   espnEventId: string;
   league: "wnba";
   status: GameStatus;
   statusLabel: string;
   venue: string | null;
+  gameDate: string | null;
+  broadcast: string | null;
+  venueCity: string | null;
+  venueState: string | null;
+  officials: GameDetailOfficial[] | null;
   away: GameDetailTeam;
   home: GameDetailTeam;
   fgMade: number;

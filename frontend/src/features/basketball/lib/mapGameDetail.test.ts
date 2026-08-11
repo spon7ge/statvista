@@ -73,6 +73,11 @@ function buildApiDetail(
     season_leaders: null,
     injuries: null,
     box_score: null,
+    game_date: null,
+    broadcast: null,
+    venue_city: null,
+    venue_state: null,
+    officials: null,
     fetched_at: "2026-07-29T00:00:00Z",
     ...overrides,
   };
@@ -86,6 +91,11 @@ describe("mapGameDetail", () => {
       status: "live",
       statusLabel: "4:13 - 1st",
       venue: "Mortgage Matchup Center",
+      gameDate: null,
+      broadcast: null,
+      venueCity: null,
+      venueState: null,
+      officials: null,
       away: {
         id: "away1",
         abbrev: "GS",
@@ -423,5 +433,28 @@ describe("mapGameDetail", () => {
     expect(mapped.gameLeaders).toBeNull();
     expect(mapped.away.record).toBeNull();
     expect(mapped.away.last10).toBeNull();
+  });
+
+  it("maps game info date, broadcast, venue location, and officials", () => {
+    const mapped = mapGameDetail({
+      ...buildApiDetail(),
+      game_date: "2026-08-10",
+      broadcast: "USA",
+      venue: "Climate Pledge Arena",
+      venue_city: "Seattle",
+      venue_state: "WA",
+      officials: [
+        { name: "Fatou Cissoko-Stephens", order: 1 },
+        { name: "Ken Jones", order: 2 },
+      ],
+    });
+    expect(mapped.gameDate).toBe("2026-08-10");
+    expect(mapped.broadcast).toBe("USA");
+    expect(mapped.venueCity).toBe("Seattle");
+    expect(mapped.venueState).toBe("WA");
+    expect(mapped.officials).toEqual([
+      { name: "Fatou Cissoko-Stephens", order: 1 },
+      { name: "Ken Jones", order: 2 },
+    ]);
   });
 });

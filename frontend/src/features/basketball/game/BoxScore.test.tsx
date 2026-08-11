@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { BoxScore } from "./BoxScore";
 import { buildGameDetailFixture } from "../lib/testFixtures";
@@ -90,6 +90,59 @@ describe("BoxScore", () => {
     expect(screen.getAllByText("+/-").length).toBeGreaterThan(0);
   });
 
+  it("renders away and home in separate stacked GameSections", () => {
+    render(
+      <BoxScore
+        detail={buildGameDetailFixture({
+          boxScore: {
+            columns: ["MIN", "PTS"],
+            away: [
+              { name: "Kayla Thornton", didNotPlay: false, values: ["25", "6"] },
+            ],
+            home: [
+              { name: "Alyssa Thomas", didNotPlay: false, values: ["30", "12"] },
+            ],
+          },
+        })}
+      />,
+    );
+
+    const root = screen.getByTestId("wnba-box-score");
+    expect(root).toHaveClass("space-y-4");
+
+    const away = screen.getByTestId("wnba-box-team-away");
+    const home = screen.getByTestId("wnba-box-team-home");
+    expect(away.tagName.toLowerCase()).toBe("section");
+    expect(home.tagName.toLowerCase()).toBe("section");
+    expect(away).toHaveClass("rounded-xl", "bg-[#1c1e22]", "!p-3");
+    expect(home).toHaveClass("rounded-xl", "bg-[#1c1e22]", "!p-3");
+    expect(away).not.toBe(home);
+    expect(
+      away.compareDocumentPosition(home) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+
+    expect(within(away).getByText("Kayla Thornton")).toBeInTheDocument();
+    expect(within(home).getByText("Alyssa Thomas")).toBeInTheDocument();
+  });
+
+  it("omits empty team card and still wraps the other", () => {
+    render(
+      <BoxScore
+        detail={buildGameDetailFixture({
+          boxScore: {
+            columns: ["MIN", "PTS"],
+            away: [
+              { name: "Kayla Thornton", didNotPlay: false, values: ["25", "6"] },
+            ],
+            home: [],
+          },
+        })}
+      />,
+    );
+    expect(screen.getByTestId("wnba-box-team-away")).toBeInTheDocument();
+    expect(screen.queryByTestId("wnba-box-team-home")).not.toBeInTheDocument();
+  });
+
   it("renders nothing without box score data", () => {
     const { container } = render(
       <BoxScore detail={buildGameDetailFixture({ boxScore: null })} />,
@@ -98,21 +151,24 @@ describe("BoxScore", () => {
   });
 
   it("wraps content in the quiet GameSection surface", () => {
-    const fixture = buildGameDetailFixture({
-      boxScore: {
-        columns: ["MIN", "PTS"],
-        away: [
-          {
-            name: "Kayla Thornton",
-            didNotPlay: false,
-            values: ["25", "6"],
+    render(
+      <BoxScore
+        detail={buildGameDetailFixture({
+          boxScore: {
+            columns: ["MIN", "PTS"],
+            away: [
+              {
+                name: "Kayla Thornton",
+                didNotPlay: false,
+                values: ["25", "6"],
+              },
+            ],
+            home: [],
           },
-        ],
-        home: [],
-      },
-    });
-    render(<BoxScore detail={fixture} />);
-    const section = screen.getByText(fixture.away.abbrev).closest("section");
+        })}
+      />,
+    );
+    const section = screen.getByTestId("wnba-box-team-away");
     expect(section).toHaveClass("rounded-xl", "bg-[#1c1e22]", "!p-3");
     expect(section).not.toHaveClass("border-white/10");
   });

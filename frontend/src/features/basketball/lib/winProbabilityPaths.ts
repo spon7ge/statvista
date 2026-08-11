@@ -32,6 +32,36 @@ export function yForPct(pct: number): number {
   return CHART_PAD_TOP + PLOT_HEIGHT - (pct / 100) * PLOT_HEIGHT;
 }
 
+/** Keep home/away % labels from stacking when series Ys are too close. */
+export const PCT_LABEL_MIN_GAP = 22;
+
+/**
+ * Nudge label Ys apart when win-%s are close. Does not clamp into the plot —
+ * the chart SVG uses overflow-visible so slight overrun is preferred over overlap.
+ */
+export function separatePctLabelYs(
+  homeY: number,
+  awayY: number,
+  minGap: number = PCT_LABEL_MIN_GAP,
+): { homeLabelY: number; awayLabelY: number } {
+  if (Math.abs(homeY - awayY) >= minGap) {
+    return { homeLabelY: homeY, awayLabelY: awayY };
+  }
+
+  const mid = (homeY + awayY) / 2;
+  const half = minGap / 2;
+  if (homeY <= awayY) {
+    return {
+      homeLabelY: mid - half,
+      awayLabelY: mid + half,
+    };
+  }
+  return {
+    awayLabelY: mid - half,
+    homeLabelY: mid + half,
+  };
+}
+
 export function nearestIndexForClientX(
   clientX: number,
   rect: DOMRect,

@@ -22,14 +22,15 @@ function buildDenseTimeline(count: number): GameDetailWinProbabilityPoint[] {
 }
 
 describe("WinProbabilityPanel", () => {
-  it("renders a larger chart-first win probability module", () => {
+  it("renders a chart-first Game flow module without nested team stats", () => {
     render(<WinProbabilityPanel detail={buildGameDetailFixture()} />);
 
-    expect(screen.getByText("Win probability")).toBeInTheDocument();
+    expect(screen.getByTestId("wnba-game-flow")).toBeInTheDocument();
+    expect(screen.getByText("Game flow")).toBeInTheDocument();
     expect(screen.getByLabelText("Win probability chart")).toBeInTheDocument();
     expect(screen.queryByText("100%")).not.toBeInTheDocument();
-    expect(screen.getByText("Team stats")).toBeInTheDocument();
-    expect(screen.getByText("Field goal %")).toBeInTheDocument();
+    expect(screen.queryByText("Team stats")).not.toBeInTheDocument();
+    expect(screen.queryByText("Field goal %")).not.toBeInTheDocument();
   });
 
   it("renders dual on-chart labels for the latest point", () => {
@@ -44,7 +45,37 @@ describe("WinProbabilityPanel", () => {
     expect(chart).toHaveTextContent("GS");
     expect(chart).toHaveTextContent("46%");
     expect(chart).toHaveTextContent("Q1 4:29");
-    expect(screen.getByText("Field goal %")).toBeInTheDocument();
+  });
+
+  it("keeps home and away % labels vertically separated when win pcts are close", () => {
+    const winProbability: GameDetailWinProbability = {
+      summary: null,
+      timeline: [
+        {
+          id: "wp-close",
+          period: 2,
+          clock: "5:00",
+          awayScore: 40,
+          homeScore: 41,
+          awayWinPct: 49,
+          homeWinPct: 51,
+          teamId: "home1",
+        },
+      ],
+      teamStats: [],
+    };
+
+    render(
+      <WinProbabilityPanel
+        detail={buildGameDetailFixture({ winProbability })}
+      />,
+    );
+
+    const home = screen.getByTestId("wnba-game-flow-home-pct");
+    const away = screen.getByTestId("wnba-game-flow-away-pct");
+    const homeY = Number(home.getAttribute("y"));
+    const awayY = Number(away.getAttribute("y"));
+    expect(Math.abs(homeY - awayY)).toBeGreaterThanOrEqual(22);
   });
 
   it("updates on-chart labels when pointer moves near an earlier timeline point", () => {
@@ -164,35 +195,6 @@ describe("WinProbabilityPanel", () => {
     expect(screen.queryByText("Field goal %")).not.toBeInTheDocument();
   });
 
-  it("renders stats-only data with away/home legend cues", () => {
-    const winProbability: GameDetailWinProbability = {
-      summary: null,
-      timeline: [],
-      teamStats: [
-        {
-          key: "field_goal_pct",
-          label: "Field goal %",
-          awayValue: 41,
-          homeValue: 49,
-        },
-      ],
-    };
-
-    render(
-      <WinProbabilityPanel
-        detail={buildGameDetailFixture({ winProbability })}
-      />,
-    );
-
-    expect(screen.getByText("Field goal %")).toBeInTheDocument();
-    expect(screen.getByText("41")).toBeInTheDocument();
-    expect(screen.getByText("49")).toBeInTheDocument();
-    expect(screen.getAllByText("GS").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("PHX").length).toBeGreaterThan(0);
-    expect(screen.queryByRole("slider")).not.toBeInTheDocument();
-    expect(screen.queryByRole("button")).not.toBeInTheDocument();
-  });
-
   it("shows an unavailable message when win probability data is missing", () => {
     render(
       <WinProbabilityPanel
@@ -200,26 +202,11 @@ describe("WinProbabilityPanel", () => {
       />,
     );
 
-    expect(
-      screen.getByText("Win probability unavailable for this game yet."),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Win probability unavailable")).toBeInTheDocument();
   });
 
-  it("keeps timeline-only and stats-only states renderable", () => {
-    const { rerender } = render(
-      <WinProbabilityPanel
-        detail={buildGameDetailFixture({
-          winProbability: {
-            ...buildGameDetailFixture().winProbability!,
-            teamStats: [],
-          },
-        })}
-      />,
-    );
-
-    expect(screen.getByLabelText("Win probability chart")).toBeInTheDocument();
-
-    rerender(
+  it("shows unavailable when timeline is empty even if teamStats exist", () => {
+    render(
       <WinProbabilityPanel
         detail={buildGameDetailFixture({
           winProbability: {
@@ -230,12 +217,17 @@ describe("WinProbabilityPanel", () => {
       />,
     );
 
-    expect(screen.getByText("Field goal %")).toBeInTheDocument();
+    expect(screen.getByText("Game flow")).toBeInTheDocument();
+    expect(screen.getByText("Win probability unavailable")).toBeInTheDocument();
+    expect(
+      screen.queryByLabelText("Win probability chart"),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText("Field goal %")).not.toBeInTheDocument();
   });
 
   it("wraps content in the quiet GameSection surface", () => {
     render(<WinProbabilityPanel detail={buildGameDetailFixture()} />);
-    const heading = screen.getByRole("heading", { name: /win probability/i });
+    const heading = screen.getByRole("heading", { name: /game flow/i });
     expect(heading.closest("section")).toHaveClass(
       "rounded-xl",
       "bg-[#1c1e22]",

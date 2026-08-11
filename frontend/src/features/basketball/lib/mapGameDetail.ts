@@ -70,6 +70,13 @@ export function mapGameDetail(detail: ApiWnbaGameDetail): GameDetail {
     status: detail.status,
     statusLabel: detail.status_label,
     venue: detail.venue,
+    gameDate: detail.game_date ?? null,
+    broadcast: detail.broadcast ?? null,
+    venueCity: detail.venue_city ?? null,
+    venueState: detail.venue_state ?? null,
+    officials: detail.officials
+      ? detail.officials.map((o) => ({ name: o.name, order: o.order }))
+      : null,
     away: mapTeam(detail.away),
     home: mapTeam(detail.home),
     fgMade: detail.fg_made,

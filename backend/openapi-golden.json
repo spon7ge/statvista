@@ -256,6 +256,24 @@
         "title": "GameDetailMatchupPrediction",
         "type": "object"
       },
+      "GameDetailOfficial": {
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "order": {
+            "title": "Order",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "name",
+          "order"
+        ],
+        "title": "GameDetailOfficial",
+        "type": "object"
+      },
       "GameDetailPlay": {
         "properties": {
           "away_score": {
@@ -7016,6 +7034,17 @@
               }
             ]
           },
+          "broadcast": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Broadcast"
+          },
           "espn_event_id": {
             "title": "Espn Event Id",
             "type": "string"
@@ -7031,6 +7060,17 @@
           "fg_made": {
             "title": "Fg Made",
             "type": "integer"
+          },
+          "game_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Game Date"
           },
           "game_leaders": {
             "anyOf": [
@@ -7080,6 +7120,20 @@
                 "type": "null"
               }
             ]
+          },
+          "officials": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/GameDetailOfficial"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Officials"
           },
           "plays": {
             "items": {
@@ -7149,6 +7203,28 @@
               }
             ],
             "title": "Venue"
+          },
+          "venue_city": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Venue City"
+          },
+          "venue_state": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Venue State"
           },
           "win_probability": {
             "anyOf": [

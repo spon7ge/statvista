@@ -641,8 +641,8 @@ describe("AppRouter", () => {
     renderWithProviders(["/games/401857098"]);
 
     expect(await screen.findByText("Shot chart")).toBeInTheDocument();
-    expect(await screen.findByText("Play-by-play")).toBeInTheDocument();
-    expect(await screen.findByText("Win probability")).toBeInTheDocument();
+    expect(await screen.findByText("Scoring Plays")).toBeInTheDocument();
+    expect(await screen.findByText("Game flow")).toBeInTheDocument();
     expect(screen.getByText("Field goal %")).toBeInTheDocument();
   });
 });

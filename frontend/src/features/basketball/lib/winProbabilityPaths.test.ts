@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   buildSeriesPathD,
   buildSplitSeriesPaths,
+  PCT_LABEL_MIN_GAP,
+  separatePctLabelYs,
   xForIndex,
   yForPct,
 } from "./winProbabilityPaths";
@@ -41,5 +43,32 @@ describe("winProbabilityPaths", () => {
     expect(split.homeMuted).toBe("");
     expect(split.awayMuted).toBe("");
     expect(split.homeVivid).toBe(buildSeriesPathD(points, "home", 0, 2));
+  });
+
+  it("leaves pct label Ys alone when already far enough apart", () => {
+    const homeY = yForPct(70);
+    const awayY = yForPct(30);
+    const { homeLabelY, awayLabelY } = separatePctLabelYs(homeY, awayY);
+    expect(homeLabelY).toBe(homeY);
+    expect(awayLabelY).toBe(awayY);
+  });
+
+  it("separates overlapping pct label Ys when series are near 50%", () => {
+    const homeY = yForPct(51);
+    const awayY = yForPct(49);
+    const { homeLabelY, awayLabelY } = separatePctLabelYs(homeY, awayY);
+    expect(Math.abs(homeLabelY - awayLabelY)).toBeGreaterThanOrEqual(
+      PCT_LABEL_MIN_GAP,
+    );
+    expect(homeLabelY).toBeLessThan(awayLabelY);
+  });
+
+  it("keeps pct labels apart when both series sit at the top of the chart", () => {
+    const homeY = yForPct(96);
+    const awayY = yForPct(94);
+    const { homeLabelY, awayLabelY } = separatePctLabelYs(homeY, awayY);
+    expect(Math.abs(homeLabelY - awayLabelY)).toBeGreaterThanOrEqual(
+      PCT_LABEL_MIN_GAP,
+    );
   });
 });

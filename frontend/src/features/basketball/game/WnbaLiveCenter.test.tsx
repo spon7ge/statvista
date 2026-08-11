@@ -14,7 +14,7 @@ describe("WnbaLiveCenter", () => {
     expect(screen.getByText("Shot chart")).toBeInTheDocument();
   });
 
-  it("uses a two-column summary grid and hides summary on Box tab", async () => {
+  it("uses a two-column summary grid and hides summary on Boxscore tab", async () => {
     const user = userEvent.setup();
     render(
       <WnbaLiveCenter
@@ -39,7 +39,7 @@ describe("WnbaLiveCenter", () => {
     expect(within(summary).getByTestId("wnba-play-feed")).toBeInTheDocument();
     expect(screen.queryByTestId("mlb-pitch-zone")).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole("tab", { name: /^box$/i }));
+    await user.click(screen.getByRole("tab", { name: /boxscore/i }));
 
     expect(screen.getByText("Kayla Thornton")).toBeInTheDocument();
     expect(screen.queryByTestId("wnba-play-feed")).not.toBeInTheDocument();

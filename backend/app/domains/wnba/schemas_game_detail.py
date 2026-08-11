@@ -15,6 +15,7 @@ __all__ = [
     "GameDetailInjury",
     "GameDetailLatestPlay",
     "GameDetailMatchupPrediction",
+    "GameDetailOfficial",
     "GameDetailPlay",
     "GameDetailProjectedStarters",
     "GameDetailSeasonLeader",
@@ -195,6 +196,13 @@ class GameDetailInjuries(BaseModel):
     home: list[GameDetailInjury]
 
 
+class GameDetailOfficial(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    name: str
+    order: int
+
+
 class GameDetailBoxScorePlayer(BaseModel):
     name: str
     did_not_play: bool
@@ -213,6 +221,11 @@ class WnbaGameDetail(BaseModel):
     status: GameStatus
     status_label: str
     venue: str | None
+    game_date: str | None = None
+    broadcast: str | None = None
+    venue_city: str | None = None
+    venue_state: str | None = None
+    officials: list[GameDetailOfficial] | None = None
     away: GameDetailTeam
     home: GameDetailTeam
     fg_made: int

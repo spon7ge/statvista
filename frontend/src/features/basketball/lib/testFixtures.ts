@@ -40,6 +40,11 @@ export const detail: GameDetail = {
   status: "live",
   statusLabel: "4:13 - 1st",
   venue: "Mortgage Matchup Center",
+  gameDate: null,
+  broadcast: null,
+  venueCity: null,
+  venueState: null,
+  officials: null,
   away: {
     id: "away1",
     abbrev: "GS",

@@ -4,7 +4,7 @@ import asyncio
 import logging
 import re
 import time
-from datetime import datetime
+from datetime import date, datetime
 from zoneinfo import ZoneInfo
 
 import httpx
@@ -17,6 +17,7 @@ from app.domains.wnba.schemas_game_detail import (
     GameDetailInjury,
     GameDetailLatestPlay,
     GameDetailMatchupPrediction,
+    GameDetailOfficial,
     GameDetailPlay,
     GameDetailProjectedStarters,
     GameDetailSeasonLeader,
@@ -833,6 +834,88 @@ def _normalize_box_score(
     )
 
 
+def _competition_game_date(comp: dict) -> str | None:
+    raw = comp.get("date")
+    if not isinstance(raw, str) or len(raw) < 10:
+        return None
+    candidate = raw[:10]
+    try:
+        date.fromisoformat(candidate)
+    except ValueError:
+        return None
+    return candidate
+
+
+def _pick_broadcast(comp: dict) -> str | None:
+    broadcasts = comp.get("broadcasts") or []
+    if not isinstance(broadcasts, list):
+        return None
+
+    def short_name(entry: dict) -> str | None:
+        media = entry.get("media") or {}
+        name = media.get("shortName") if isinstance(media, dict) else None
+        return str(name).strip() or None if name else None
+
+    nationals = [
+        b for b in broadcasts
+        if isinstance(b, dict)
+        and (
+            b.get("isNational") is True
+            or str((b.get("market") or {}).get("type") or "").lower() == "national"
+        )
+    ]
+    pool = nationals or [b for b in broadcasts if isinstance(b, dict)]
+
+    def is_tv(entry: dict) -> bool:
+        t = entry.get("type") or {}
+        return str((t.get("shortName") if isinstance(t, dict) else "") or "").lower() == "tv"
+
+    for entry in pool:
+        if is_tv(entry):
+            name = short_name(entry)
+            if name:
+                return name
+    for entry in pool:
+        name = short_name(entry)
+        if name:
+            return name
+    return None
+
+
+def _venue_city_state(game_info: dict) -> tuple[str | None, str | None]:
+    venue = game_info.get("venue") or {}
+    if not isinstance(venue, dict):
+        return None, None
+    address = venue.get("address") or {}
+    if not isinstance(address, dict):
+        return None, None
+    city = str(address.get("city") or "").strip() or None
+    state = str(address.get("state") or "").strip() or None
+    return city, state
+
+
+def _normalize_officials(game_info: dict) -> list[GameDetailOfficial] | None:
+    raw = game_info.get("officials") or []
+    if not isinstance(raw, list) or not raw:
+        return None
+    out: list[GameDetailOfficial] = []
+    for entry in raw:
+        if not isinstance(entry, dict):
+            continue
+        name = str(entry.get("displayName") or entry.get("fullName") or "").strip()
+        if not name:
+            continue
+        try:
+            order = int(entry.get("order") or 0)
+        except (TypeError, ValueError):
+            order = 0
+        out.append(GameDetailOfficial(name=name, order=order))
+    if not out:
+        return None
+    out.sort(key=lambda o: o.order)
+    return out
+
+
 def _normalize_projected_starters(
     *,
     status: GameStatus,
@@ -870,7 +953,11 @@ def normalize_espn_summary(
     status_block = comp.get("status") or {}
     teams = {c.get("homeAway"): c for c in (comp.get("competitors") or [])}
     away_c, home_c = teams.get("away") or {}, teams.get("home") or {}
-    venue = ((payload.get("gameInfo") or {}).get("venue") or {}).get("fullName")
+    game_info = payload.get("gameInfo") or {}
+    if not isinstance(game_info, dict):
+        game_info = {}
+    venue = (game_info.get("venue") or {}).get("fullName")
+    venue_city, venue_state = _venue_city_state(game_info)
     status, status_label = _detail_status(status_block)
 
     def team(c: dict, fallback_color: str) -> GameDetailTeam:
@@ -977,6 +1064,11 @@ def normalize_espn_summary(
         status=status,
         status_label=status_label,
         venue=str(venue) if venue else None,
+        game_date=_competition_game_date(comp if isinstance(comp, dict) else {}),
+        broadcast=_pick_broadcast(comp if isinstance(comp, dict) else {}),
+        venue_city=venue_city,
+        venue_state=venue_state,
+        officials=_normalize_officials(game_info),
         away=team(away_c, FALLBACK_AWAY_COLOR),
         home=team(home_c, FALLBACK_HOME_COLOR),
         fg_made=sum(1 for s in shots if s.made),

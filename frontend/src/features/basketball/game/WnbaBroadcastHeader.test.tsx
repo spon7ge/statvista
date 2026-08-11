@@ -5,7 +5,7 @@ import { detail } from "../lib/testFixtures";
 import { WnbaBroadcastHeader } from "./WnbaBroadcastHeader";
 
 describe("WnbaBroadcastHeader", () => {
-  it("renders status above score slabs with Summary|Box tabs and no venue", () => {
+  it("renders status above score slabs with Summary|Boxscore tabs and no venue", () => {
     render(
       <WnbaBroadcastHeader
         detail={detail}
@@ -16,7 +16,7 @@ describe("WnbaBroadcastHeader", () => {
 
     expect(screen.getByText(detail.statusLabel)).toBeInTheDocument();
     expect(screen.getByRole("tab", { name: /summary/i })).toBeInTheDocument();
-    expect(screen.getByRole("tab", { name: /box/i })).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: /^boxscore$/i })).toBeInTheDocument();
     expect(screen.queryByText(detail.venue!)).not.toBeInTheDocument();
 
     const header = screen.getByTestId("wnba-broadcast-header");
@@ -57,7 +57,7 @@ describe("WnbaBroadcastHeader", () => {
     expect(homeSlab).toHaveStyle({ backgroundColor: "rgb(32, 23, 71)" });
   });
 
-  it("calls onTabChange when Box tab is clicked", async () => {
+  it("calls onTabChange when Boxscore tab is clicked", async () => {
     const user = userEvent.setup();
     const onTabChange = vi.fn();
     render(
@@ -68,11 +68,11 @@ describe("WnbaBroadcastHeader", () => {
       />,
     );
 
-    await user.click(screen.getByRole("tab", { name: /box/i }));
+    await user.click(screen.getByRole("tab", { name: /boxscore/i }));
     expect(onTabChange).toHaveBeenCalledWith("box");
   });
 
-  it("omits Summary|Box tabs when tab props are not provided", () => {
+  it("omits Summary|Boxscore tabs when tab props are not provided", () => {
     render(<WnbaBroadcastHeader detail={detail} />);
 
     expect(screen.getByTestId("wnba-broadcast-header")).toBeInTheDocument();

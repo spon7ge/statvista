@@ -36,7 +36,7 @@ describe("WnbaFinalCenter", () => {
     expect(screen.getByText("Shot chart")).toBeInTheDocument();
   });
 
-  it("orders the summary rail and switches to BoxScore on Box tab", async () => {
+  it("orders the summary rail and switches to BoxScore on Boxscore tab", async () => {
     const user = userEvent.setup();
     render(
       <WnbaFinalCenter
@@ -55,7 +55,7 @@ describe("WnbaFinalCenter", () => {
     const playFeed = within(summary).getByTestId("wnba-play-feed");
     const quarter = within(summary).getByTestId("wnba-quarter-score-card");
     const teamStats = within(summary).getByTestId("wnba-team-stats-card");
-    const winProb = within(summary).getByText("Win probability");
+    const winProb = within(summary).getByTestId("wnba-game-flow");
     const gameInfo = within(summary).getByTestId("wnba-game-info");
 
     expect(
@@ -83,7 +83,7 @@ describe("WnbaFinalCenter", () => {
     expect(screen.queryByTestId("mlb-player-of-the-game")).not.toBeInTheDocument();
     expect(screen.queryByTestId("mlb-pitch-zone")).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole("tab", { name: /^box$/i }));
+    await user.click(screen.getByRole("tab", { name: /boxscore/i }));
 
     expect(screen.getByText("Kayla Thornton")).toBeInTheDocument();
     expect(screen.queryByTestId("wnba-play-feed")).not.toBeInTheDocument();
