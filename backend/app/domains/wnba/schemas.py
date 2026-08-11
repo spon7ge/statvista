@@ -1,5 +1,11 @@
 """Public response schemas for the WNBA domain."""
 
+from app.domains.wnba.schemas_game_props import (
+    WnbaGamePropBestQuote,
+    WnbaGamePropCategory,
+    WnbaGamePropPlayer,
+    WnbaGamePropsResponse,
+)
 from app.domains.wnba.schemas_futures import (
     WnbaFuturesEntry,
     WnbaFuturesMarket,
@@ -80,6 +86,10 @@ __all__ = [
     "WnbaFuturesResponse",
     "WnbaGame",
     "WnbaGameDetail",
+    "WnbaGamePropBestQuote",
+    "WnbaGamePropCategory",
+    "WnbaGamePropPlayer",
+    "WnbaGamePropsResponse",
     "WnbaGameLeaderCard",
     "WnbaGameLeaders",
     "WnbaLeaderCategory",

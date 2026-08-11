@@ -52,6 +52,17 @@ _LABELS: dict[str, str] = {
     "pts_rebs_asts": "Pts+Rebs+Asts",
 }
 
+GAME_PROP_CATEGORY_ORDER: tuple[str, ...] = (
+    "points",
+    "rebounds",
+    "assists",
+    "threes",
+    "pts_rebs",
+    "pts_asts",
+    "rebs_asts",
+    "pts_rebs_asts",
+)
+
 
 def _norm_pp(stat_type: str) -> str:
     return stat_type.strip().lower().replace(" ", "_").replace("+", "_")
