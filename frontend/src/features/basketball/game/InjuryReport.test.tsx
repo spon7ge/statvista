@@ -22,10 +22,64 @@ describe("InjuryReport", () => {
         })}
       />,
     );
-    expect(screen.getByText(/Injury report/i)).toBeInTheDocument();
+    const heading = screen.getByRole("heading", { name: /Injury report/i });
+    expect(heading).toBeInTheDocument();
+    expect(heading).toHaveClass("text-[18px]");
     expect(screen.getByText("Nyara Sabally")).toBeInTheDocument();
     expect(screen.getByText(/Out/)).toBeInTheDocument();
     expect(screen.getByText(/Ribs/)).toBeInTheDocument();
+  });
+
+  it("shows team logo and white abbrev headers", () => {
+    render(
+      <InjuryReport
+        detail={buildScheduledDetail({
+          away: {
+            id: "16",
+            abbrev: "MIN",
+            name: "Minnesota Lynx",
+            score: null,
+            record: null,
+            last10: null,
+            color: "#0C2340",
+            logoUrl: "https://example.com/min.png",
+          },
+          home: {
+            id: "129154",
+            abbrev: "TOR",
+            name: "Toronto Tempo",
+            score: null,
+            record: null,
+            last10: null,
+            color: "#CE1141",
+            logoUrl: "https://example.com/tor.png",
+          },
+          injuries: {
+            away: [],
+            home: [
+              {
+                name: "Nyara Sabally",
+                position: "F",
+                status: "Out",
+                detail: "Ribs",
+              },
+            ],
+          },
+        })}
+      />,
+    );
+
+    const minHeader = screen.getByText("MIN").closest("h3");
+    const torHeader = screen.getByText("TOR").closest("h3");
+    expect(minHeader).toHaveClass("text-white", "text-[18px]");
+    expect(torHeader).toHaveClass("text-white", "text-[18px]");
+    expect(
+      document.querySelector('img[src="https://example.com/min.png"]'),
+    ).toBeTruthy();
+    expect(
+      document.querySelector('img[src="https://example.com/tor.png"]'),
+    ).toBeTruthy();
+    expect(minHeader).not.toHaveAttribute("style");
   });
 
   it("shows None listed for empty side when other side has injuries", () => {

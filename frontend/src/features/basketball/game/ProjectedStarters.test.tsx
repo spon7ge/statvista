@@ -53,7 +53,7 @@ describe("ProjectedStarters", () => {
     expect(screen.getByText("GTD")).toBeInTheDocument();
   });
 
-  it("shows team logo, abbrev, and name as column headers", () => {
+  it("shows team logo and full name as column headers", () => {
     render(
       <ProjectedStarters
         detail={buildScheduledDetail({
@@ -85,9 +85,9 @@ describe("ProjectedStarters", () => {
         })}
       />,
     );
-    expect(screen.getByText("MIN")).toBeInTheDocument();
+    expect(screen.queryByText("MIN")).not.toBeInTheDocument();
+    expect(screen.queryByText("TOR")).not.toBeInTheDocument();
     expect(screen.getByText("Minnesota Lynx")).toBeInTheDocument();
-    expect(screen.getByText("TOR")).toBeInTheDocument();
     expect(screen.getByText("Toronto Tempo")).toBeInTheDocument();
     expect(
       document.querySelector('img[src="https://example.com/min.png"]'),

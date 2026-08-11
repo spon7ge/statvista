@@ -39,10 +39,7 @@ function StarterColumn({
         {team.logoUrl ? (
           <img src={team.logoUrl} alt="" className="size-6 shrink-0 object-contain" />
         ) : null}
-        <span className="font-semibold" style={{ color: team.color }}>
-          {team.abbrev}
-        </span>
-        <span className="truncate font-medium text-white/90">{team.name}</span>
+        <span className="truncate font-semibold text-white">{team.name}</span>
       </h3>
       <ul className="space-y-2">
         {starters.map((starter) => (
