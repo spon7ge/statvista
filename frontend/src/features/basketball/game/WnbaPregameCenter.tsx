@@ -1,12 +1,7 @@
 import { useState } from "react";
+import { useWnbaGameProps } from "@/features/basketball/hooks/useWnbaGameProps";
 import { useWnbaOdds } from "@/features/basketball/hooks/useWnbaOdds";
-import { useWnbaProps } from "@/features/basketball/hooks/useWnbaProps";
 import { useWnbaTeamPreview } from "@/features/basketball/hooks/useWnbaTeamPreview";
-import {
-  expandWnbaTeamAbbrevs,
-  filterPropLines,
-} from "@/features/basketball/league/filterPropLines";
-import type { ApiWnbaPropLine } from "@/shared/lib/api";
 import { collectWnbaOddsBookBoards } from "../lib/wnbaOddsBoard";
 import type { GameDetail } from "../lib/types";
 import { InjuryReport } from "./InjuryReport";
@@ -19,6 +14,7 @@ import {
 import { WnbaGameInfo } from "./WnbaGameInfo";
 import { WnbaGameLeaders } from "./WnbaGameLeaders";
 import { WnbaGameOddsBoard } from "./WnbaGameOddsBoard";
+import { WnbaGamePropsGrid } from "./WnbaGamePropsGrid";
 import { WnbaSeasonTeamStats } from "./WnbaSeasonTeamStats";
 import { WnbaTeamPreview } from "./WnbaTeamPreview";
 
@@ -64,73 +60,24 @@ function GamePropsAppTabs({
   );
 }
 
-function formatSide(side: string): string {
-  const lower = side.toLowerCase();
-  if (lower === "over") return "Over";
-  if (lower === "under") return "Under";
-  return side;
-}
-
-function lineForApp(row: ApiWnbaPropLine, app: PropsAppTab): number | null {
-  return row[app]?.line ?? null;
-}
-
-function WnbaGamePropsList({
-  props,
-  app,
-  isPending,
-  error = null,
-}: {
-  props: ApiWnbaPropLine[];
-  app: PropsAppTab;
-  isPending: boolean;
-  error?: string | null;
-}) {
-  if (isPending) {
-    return (
-      <p className="text-[18px] text-white/50" data-testid="wnba-game-props-list">
-        Loading props…
-      </p>
-    );
-  }
-
-  if (props.length === 0) {
-    return (
-      <p className="text-[18px] text-white/50" data-testid="wnba-game-props-list">
-        {error || "No props for this game"}
-      </p>
-    );
-  }
-
-  return (
-    <ul className="space-y-1.5" data-testid="wnba-game-props-list">
-      {props.map((row) => {
-        const line = lineForApp(row, app);
-        const key = `${row.player_name}:${row.stat}:${row.side}:${line ?? ""}:${row.team_abbrev ?? ""}`;
-        return (
-          <li
-            key={key}
-            className="grid grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_4rem_4rem] items-center gap-2 rounded-lg px-1 py-1.5 text-sm text-white"
-          >
-            <span className="truncate font-semibold">{row.player_name}</span>
-            <span className="truncate text-white/55">{row.stat}</span>
-            <span className="text-center text-white/70">{formatSide(row.side)}</span>
-            <span className="text-center font-mono text-white">
-              {line != null ? line : "—"}
-            </span>
-          </li>
-        );
-      })}
-    </ul>
-  );
-}
-
 /** Scheduled game: pregame tabs + two-column Preview; Away/Home team preview. */
 export function WnbaPregameCenter({ detail }: { detail: GameDetail }) {
   const [activeTab, setActiveTab] = useState<PregameTab>("preview");
   const [propsApp, setPropsApp] = useState<PropsAppTab>("prizepicks");
   const oddsQuery = useWnbaOdds();
-  const propsQuery = useWnbaProps({ enabled: activeTab === "props" });
+
+  const prizeQuery = useWnbaGameProps({
+    espnEventId: detail.espnEventId,
+    app: "prizepicks",
+    enabled: activeTab === "props" && propsApp === "prizepicks",
+  });
+  const underdogQuery = useWnbaGameProps({
+    espnEventId: detail.espnEventId,
+    app: "underdog",
+    enabled: activeTab === "props" && propsApp === "underdog",
+  });
+  const propsQuery = propsApp === "underdog" ? underdogQuery : prizeQuery;
+
   const oddsBoards = collectWnbaOddsBookBoards(
     oddsQuery.data,
     detail.away.abbrev,
@@ -148,13 +95,6 @@ export function WnbaPregameCenter({ detail }: { detail: GameDetail }) {
     enabled: activeTab === "home",
   });
   const teamPreviewQuery = activeTab === "home" ? homePreview : awayPreview;
-
-  const filteredProps = filterPropLines(propsQuery.data?.props ?? [], {
-    stats: new Set(),
-    sides: new Set(),
-    teams: expandWnbaTeamAbbrevs([detail.away.abbrev, detail.home.abbrev]),
-    books: new Set([propsApp]),
-  });
 
   return (
     <div data-testid="wnba-pregame-center" className="space-y-4">
@@ -211,9 +151,8 @@ export function WnbaPregameCenter({ detail }: { detail: GameDetail }) {
               role="tabpanel"
               aria-labelledby={`wnba-game-props-${propsApp}-tab`}
             >
-              <WnbaGamePropsList
-                props={filteredProps}
-                app={propsApp}
+              <WnbaGamePropsGrid
+                categories={propsQuery.data?.categories ?? []}
                 isPending={propsQuery.isPending}
                 error={
                   propsQuery.isError

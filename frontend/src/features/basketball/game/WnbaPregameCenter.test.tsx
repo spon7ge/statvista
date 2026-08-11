@@ -1,11 +1,10 @@
-import { describe, expect, it, vi, beforeEach } from "vitest";
+import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type {
+  ApiWnbaGamePropsResponse,
   ApiWnbaOddsResponse,
-  ApiWnbaPropLine,
-  ApiWnbaPropsResponse,
   ApiWnbaTeamPreviewResponse,
 } from "@/shared/lib/api";
 import { buildScheduledDetail } from "../lib/testFixtures";
@@ -17,58 +16,51 @@ const useWnbaOdds = vi.fn(() => ({
   isPending: false,
 }));
 
-const useWnbaProps = vi.fn(() => ({
-  data: null as ApiWnbaPropsResponse | null,
-  isPending: false,
-  isError: false,
-}));
-
+const fetchWnbaGameProps = vi.fn();
 const fetchWnbaTeamPreview = vi.fn();
 
 vi.mock("@/features/basketball/hooks/useWnbaOdds", () => ({
   useWnbaOdds: (...args: unknown[]) => useWnbaOdds(...args),
 }));
 
-vi.mock("@/features/basketball/hooks/useWnbaProps", () => ({
-  useWnbaProps: (...args: unknown[]) => useWnbaProps(...args),
-}));
-
 vi.mock("@/shared/lib/api", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@/shared/lib/api")>();
   return {
     ...actual,
+    fetchWnbaGameProps: (...args: unknown[]) => fetchWnbaGameProps(...args),
     fetchWnbaTeamPreview: (...args: unknown[]) => fetchWnbaTeamPreview(...args),
   };
 });
 
-function propLine(
-  partial: Partial<ApiWnbaPropLine> &
-    Pick<ApiWnbaPropLine, "player_name" | "stat" | "side">,
-): ApiWnbaPropLine {
-  return {
-    team_abbrev: null,
-    logo_url: null,
-    market_type: "player_points",
-    game_date: null,
-    commence_time: null,
-    model_prediction: null,
-    over_under_pct: null,
-    ev: null,
-    fanduel: null,
-    draftkings: null,
-    caesars: null,
-    betmgm: null,
-    pinnacle: null,
-    bet365: null,
-    prizepicks: null,
-    underdog: null,
-    betr: null,
-    novig: null,
-    sleeper: null,
-    betrivers: null,
-    ...partial,
-  };
-}
+const emptyGameProps: ApiWnbaGamePropsResponse = {
+  as_of: "2026-08-10T00:00:00Z",
+  app: "prizepicks",
+  espn_event_id: "401749001",
+  away_abbrev: "MIN",
+  home_abbrev: "TOR",
+  categories: [],
+  error: null,
+};
+
+const collierGameProps: ApiWnbaGamePropsResponse = {
+  ...emptyGameProps,
+  categories: [
+    {
+      stat: "points",
+      label: "Points",
+      players: [
+        {
+          player_name: "N. Collier",
+          team_abbrev: "MIN",
+          headshot_url: null,
+          line: 22.5,
+          over: { american: -110, book: "fanduel" },
+          under: null,
+        },
+      ],
+    },
+  ],
+};
 
 const emptyTeamPreview: ApiWnbaTeamPreviewResponse = {
   side: "away",
@@ -208,10 +200,13 @@ describe("WnbaPregameCenter", () => {
   beforeEach(() => {
     useWnbaOdds.mockReset();
     useWnbaOdds.mockReturnValue({ data: null, isPending: false });
-    useWnbaProps.mockReset();
-    useWnbaProps.mockReturnValue({ data: null, isPending: false, isError: false });
+    fetchWnbaGameProps.mockReset();
+    fetchWnbaGameProps.mockResolvedValue(emptyGameProps);
     fetchWnbaTeamPreview.mockReset();
     fetchWnbaTeamPreview.mockResolvedValue(emptyTeamPreview);
+  });
+  afterEach(() => {
+    vi.clearAllMocks();
   });
 
   it("uses pregame broadcast header with Preview tab selected by default", () => {
@@ -336,139 +331,111 @@ describe("WnbaPregameCenter", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("does not enable props fetch outside Props tab", async () => {
+  it("does not show or fetch player props on Preview", async () => {
+    fetchWnbaGameProps.mockResolvedValue(collierGameProps);
+
     renderWithClient(<WnbaPregameCenter detail={scheduledWithPreview} />);
-    expect(useWnbaProps).toHaveBeenCalledWith(
-      expect.objectContaining({ enabled: false }),
-    );
-    await waitFor(() => expect(fetchWnbaTeamPreview).not.toHaveBeenCalled());
+
+    expect(screen.getByTestId("wnba-preview-left-column")).toBeInTheDocument();
+    expect(screen.queryByTestId("wnba-game-props-grid")).not.toBeInTheDocument();
+    await waitFor(() => expect(fetchWnbaGameProps).not.toHaveBeenCalled());
   });
 
-  it("filters Props tab to this game's teams and shows empty copy", async () => {
-    useWnbaProps.mockReturnValue({
-      data: {
-        as_of: "now",
-        error: null,
-        sportsbooks: ["prizepicks", "underdog"],
-        props: [
-          propLine({
-            player_name: "N. Collier",
-            team_abbrev: "MIN",
-            stat: "Points",
-            side: "over",
-            prizepicks: { line: 22.5, odds_american: null },
-          }),
-          propLine({
-            player_name: "J. Loyd",
-            team_abbrev: "SEA",
-            stat: "Points",
-            side: "over",
-            prizepicks: { line: 18.5, odds_american: null },
-          }),
-        ],
-      },
-      isPending: false,
-      isError: false,
-    });
+  it("shows PrizePicks player props when Props tab is selected", async () => {
+    fetchWnbaGameProps.mockResolvedValue(collierGameProps);
     const user = userEvent.setup();
+
     renderWithClient(<WnbaPregameCenter detail={scheduledWithPreview} />);
 
     await user.click(screen.getByRole("tab", { name: "Props" }));
 
-    expect(useWnbaProps).toHaveBeenCalledWith(
-      expect.objectContaining({ enabled: true }),
+    expect(screen.getByRole("tab", { name: "Props" })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    expect(screen.getByRole("tab", { name: "PrizePicks" })).toHaveAttribute(
+      "aria-selected",
+      "true",
     );
     expect(screen.getByTestId("wnba-pregame-props-panel")).toBeInTheDocument();
-    expect(
-      screen.getByRole("tab", { name: "PrizePicks" }),
-    ).toHaveAttribute("aria-selected", "true");
-    expect(screen.getByText("N. Collier")).toBeInTheDocument();
-    expect(screen.queryByText("J. Loyd")).not.toBeInTheDocument();
-    expect(
-      screen.queryByTestId("wnba-pregame-props-placeholder"),
-    ).not.toBeInTheDocument();
-    await waitFor(() => expect(fetchWnbaTeamPreview).not.toHaveBeenCalled());
+    expect(await screen.findByTestId("wnba-game-props-grid")).toBeInTheDocument();
+    expect(await screen.findByText("N. Collier")).toBeInTheDocument();
+    expect(screen.queryByTestId("wnba-preview-left-column")).not.toBeInTheDocument();
+    expect(fetchWnbaGameProps).toHaveBeenCalledWith({
+      espnEventId: scheduledWithPreview.espnEventId,
+      app: "prizepicks",
+    });
   });
 
-  it("shows No props for this game when filtered list is empty", async () => {
-    useWnbaProps.mockReturnValue({
-      data: {
-        as_of: "now",
-        error: null,
-        sportsbooks: ["prizepicks"],
-        props: [
-          propLine({
-            player_name: "J. Loyd",
-            team_abbrev: "SEA",
-            stat: "Points",
-            side: "over",
-            prizepicks: { line: 18.5, odds_american: null },
-          }),
-        ],
-      },
-      isPending: false,
-      isError: false,
-    });
+  it("requests underdog props when Underdog sub-tab is selected under Props", async () => {
+    fetchWnbaGameProps.mockImplementation(
+      async ({ app }: { espnEventId: string; app: string }) => ({
+        ...emptyGameProps,
+        app,
+        categories:
+          app === "underdog"
+            ? [
+                {
+                  stat: "assists",
+                  label: "Assists",
+                  players: [
+                    {
+                      player_name: "C. Williams",
+                      team_abbrev: "MIN",
+                      headshot_url: null,
+                      line: 5.5,
+                      over: { american: -110, book: "draftkings" },
+                      under: null,
+                    },
+                  ],
+                },
+              ]
+            : [],
+      }),
+    );
     const user = userEvent.setup();
+
     renderWithClient(<WnbaPregameCenter detail={scheduledWithPreview} />);
 
     await user.click(screen.getByRole("tab", { name: "Props" }));
-    expect(screen.getByText("No props for this game")).toBeInTheDocument();
-  });
-
-  it("shows Failed to load props when props query errors", async () => {
-    useWnbaProps.mockReturnValue({
-      data: undefined,
-      isPending: false,
-      isError: true,
-    });
-    const user = userEvent.setup();
-    renderWithClient(<WnbaPregameCenter detail={scheduledWithPreview} />);
-
-    await user.click(screen.getByRole("tab", { name: "Props" }));
-    expect(screen.getByText("Failed to load props")).toBeInTheDocument();
-    expect(screen.queryByText("No props for this game")).not.toBeInTheDocument();
-  });
-
-  it("switches to Underdog book filter under Props", async () => {
-    useWnbaProps.mockReturnValue({
-      data: {
-        as_of: "now",
-        error: null,
-        sportsbooks: ["prizepicks", "underdog"],
-        props: [
-          propLine({
-            player_name: "N. Collier",
-            team_abbrev: "MIN",
-            stat: "Points",
-            side: "over",
-            prizepicks: { line: 22.5, odds_american: null },
-          }),
-          propLine({
-            player_name: "C. Williams",
-            team_abbrev: "MIN",
-            stat: "Assists",
-            side: "over",
-            underdog: { line: 5.5, odds_american: null },
-          }),
-        ],
-      },
-      isPending: false,
-      isError: false,
-    });
-    const user = userEvent.setup();
-    renderWithClient(<WnbaPregameCenter detail={scheduledWithPreview} />);
-
-    await user.click(screen.getByRole("tab", { name: "Props" }));
-    expect(screen.getByText("N. Collier")).toBeInTheDocument();
-    expect(screen.queryByText("C. Williams")).not.toBeInTheDocument();
-
     await user.click(screen.getByRole("tab", { name: "Underdog" }));
+
+    await waitFor(() =>
+      expect(fetchWnbaGameProps).toHaveBeenCalledWith({
+        espnEventId: scheduledWithPreview.espnEventId,
+        app: "underdog",
+      }),
+    );
+    expect(await screen.findByText("C. Williams")).toBeInTheDocument();
     expect(screen.getByRole("tab", { name: "Underdog" })).toHaveAttribute(
       "aria-selected",
       "true",
     );
-    expect(screen.getByText("C. Williams")).toBeInTheDocument();
-    expect(screen.queryByText("N. Collier")).not.toBeInTheDocument();
+  });
+
+  it("shows empty copy via grid when Props has no categories", async () => {
+    fetchWnbaGameProps.mockResolvedValue(emptyGameProps);
+    const user = userEvent.setup();
+    renderWithClient(<WnbaPregameCenter detail={scheduledWithPreview} />);
+
+    await user.click(screen.getByRole("tab", { name: "Props" }));
+
+    expect(await screen.findByTestId("wnba-game-props-grid")).toBeInTheDocument();
+    expect(
+      screen.getByText("No props available for this matchup"),
+    ).toBeInTheDocument();
+  });
+
+  it("shows Failed to load props via grid when props query errors", async () => {
+    fetchWnbaGameProps.mockRejectedValue(new Error("boom"));
+    const user = userEvent.setup();
+    renderWithClient(<WnbaPregameCenter detail={scheduledWithPreview} />);
+
+    await user.click(screen.getByRole("tab", { name: "Props" }));
+
+    expect(await screen.findByText("Failed to load props")).toBeInTheDocument();
+    expect(
+      screen.queryByText("No props available for this matchup"),
+    ).not.toBeInTheDocument();
   });
 });
