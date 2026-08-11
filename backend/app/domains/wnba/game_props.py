@@ -167,7 +167,9 @@ async def get_wnba_props_for_game(*, espn_event_id: str, app: str) -> WnbaGamePr
         logger.warning("WNBA game props roster unavailable: %s", exc)
         error = _compose_error(error, "roster_unavailable")
 
-    # Bucket DFS slots: (norm_player, stat_key, line) -> display fields + sibling rows
+    # Bucket DFS slots: (norm_player, stat_key, line) -> display fields.
+    # Index ALL team-filtered rows by player/stat so opposite-side sportsbook
+    # quotes are visible even when that row lacks a DFS quote for `app`.
     buckets: dict[tuple[str, str, float], dict[str, Any]] = {}
     rows_by_player_stat: dict[tuple[str, str], list[WnbaPropLine]] = {}
 
@@ -175,11 +177,12 @@ async def get_wnba_props_for_game(*, espn_event_id: str, app: str) -> WnbaGamePr
         team = canonical_abbrev(row.team_abbrev or "")
         if team not in game_teams:
             continue
+        stat_key = _stat_key_for_row(row)
+        norm = norm_player_name(row.player_name)
+        rows_by_player_stat.setdefault((norm, stat_key), []).append(row)
         line = _dfs_line(row, app)
         if line is None:
             continue
-        stat_key = _stat_key_for_row(row)
-        norm = norm_player_name(row.player_name)
         key = (norm, stat_key, _line_key(line))
         if key not in buckets:
             buckets[key] = {
@@ -188,7 +191,6 @@ async def get_wnba_props_for_game(*, espn_event_id: str, app: str) -> WnbaGamePr
                 "line": float(line),
                 "stat_key": stat_key,
             }
-        rows_by_player_stat.setdefault((norm, stat_key), []).append(row)
 
     players_by_stat: dict[str, list[WnbaGamePropPlayer]] = {}
     for (norm, stat_key, _lk), bucket in buckets.items():

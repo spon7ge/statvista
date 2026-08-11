@@ -178,6 +178,117 @@ async def test_get_wnba_props_for_game_unsupported_app():
         await gp.get_wnba_props_for_game(espn_event_id="401770001", app="kalshi")
 
 
+async def _patch_game_props_deps(monkeypatch, today: WnbaPropsResponse):
+    class FakeTeam:
+        id = "1"
+        abbrev = "MIN"
+
+    class FakeHome:
+        id = "2"
+        abbrev = "SEA"
+
+    class FakeDetail:
+        away = FakeTeam()
+        home = FakeHome()
+
+    async def fake_detail(_id: str):
+        return FakeDetail()
+
+    async def fake_today():
+        return today
+
+    async def fake_roster(_team_id: str):
+        return []
+
+    monkeypatch.setattr(gp, "get_game_detail", fake_detail)
+    monkeypatch.setattr(gp, "get_today_props", fake_today)
+    monkeypatch.setattr(gp, "fetch_team_roster_athletes", fake_roster)
+
+
+@pytest.mark.asyncio
+async def test_opposite_side_quotes_without_dfs_on_under_row(monkeypatch):
+    """DFS line only on over still finds under sportsbook quotes from sibling row."""
+    today = WnbaPropsResponse(
+        as_of="2026-08-10T12:00:00Z",
+        props=[
+            _line(
+                player_name="N. Collier",
+                team_abbrev="MIN",
+                side="over",
+                prizepicks=_quote(22.5, None),
+                draftkings=_quote(22.5, -110),
+            ),
+            _line(
+                player_name="N. Collier",
+                team_abbrev="MIN",
+                side="under",
+                # No prizepicks on under — sportsbook under must still attach
+                draftkings=_quote(22.5, -105),
+                novig=_quote(22.5, 100),
+            ),
+        ],
+    )
+    await _patch_game_props_deps(monkeypatch, today)
+
+    res = await gp.get_wnba_props_for_game(espn_event_id="401770001", app="prizepicks")
+    assert len(res.categories) == 1
+    collier = res.categories[0].players[0]
+    assert collier.line == 22.5
+    assert collier.over is not None and collier.over.book == "draftkings"
+    assert collier.under is not None and collier.under.american == 100
+    assert collier.under.book == "novig"
+
+
+@pytest.mark.asyncio
+async def test_one_sided_quote_leaves_other_side_null(monkeypatch):
+    today = WnbaPropsResponse(
+        as_of="2026-08-10T12:00:00Z",
+        props=[
+            _line(
+                player_name="J. Loyd",
+                team_abbrev="SEA",
+                side="over",
+                prizepicks=_quote(18.5, None),
+                draftkings=_quote(18.5, -115),
+            ),
+        ],
+    )
+    await _patch_game_props_deps(monkeypatch, today)
+
+    res = await gp.get_wnba_props_for_game(espn_event_id="401770001", app="prizepicks")
+    assert len(res.categories) == 1
+    loyd = res.categories[0].players[0]
+    assert loyd.over is not None
+    assert loyd.under is None
+
+
+@pytest.mark.asyncio
+async def test_empty_categories_when_no_dfs_for_matchup(monkeypatch):
+    today = WnbaPropsResponse(
+        as_of="2026-08-10T12:00:00Z",
+        props=[
+            _line(
+                player_name="A. Wilson",
+                team_abbrev="LVA",
+                side="over",
+                prizepicks=_quote(20.5, None),
+                draftkings=_quote(20.5, -120),
+            ),
+            _line(
+                player_name="N. Collier",
+                team_abbrev="MIN",
+                side="over",
+                # Matchup team but no DFS for requested app
+                draftkings=_quote(22.5, -110),
+            ),
+        ],
+    )
+    await _patch_game_props_deps(monkeypatch, today)
+
+    res = await gp.get_wnba_props_for_game(espn_event_id="401770001", app="prizepicks")
+    assert res.categories == []
+
+
 def test_route_game_props_404(monkeypatch):
     from fastapi.testclient import TestClient
     from app.main import app
@@ -194,6 +305,7 @@ def test_route_game_props_404(monkeypatch):
     monkeypatch.setattr(routes, "get_wnba_props_for_game", boom)
     res = client.get("/api/wnba/props/game/999999?app=prizepicks")
     assert res.status_code == 404
+    assert res.json()["detail"] == "Game not found"
 
 
 def test_route_game_props_422_bad_app():
@@ -203,4 +315,5 @@ def test_route_game_props_422_bad_app():
     client = TestClient(app)
     res = client.get("/api/wnba/props/game/401770001?app=notabook")
     assert res.status_code == 422
+
 

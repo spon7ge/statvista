@@ -200,7 +200,7 @@ async def wnba_props_game(
     except LookupError as exc:
         raise HTTPException(
             status_code=404,
-            detail="game not found",
+            detail="Game not found",
             headers=_NO_STORE,
         ) from exc
     except ValueError as exc:
