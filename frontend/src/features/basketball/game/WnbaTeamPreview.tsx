@@ -4,7 +4,7 @@ import { GameSection } from "@/shared/ui/GameSection";
 import { teamColor } from "../league/wnbaTeamColors";
 
 type TeamLeaderCard = {
-  key: "ppg" | "rpg" | "apg";
+  key: "ppg" | "rpg" | "apg" | "fg_pct" | "fg3_pct";
   label: string;
   rank: number | null;
   value: string;
@@ -162,7 +162,7 @@ function TeamLeadersSection({
       <h2 className="text-center text-[18px] font-semibold text-white">
         Team Leaders
       </h2>
-      <div className="mt-3 grid grid-cols-3 gap-2">
+      <div className="mt-3 grid grid-cols-5 gap-2">
         {leaders.map((card) => (
           <div
             key={card.key}

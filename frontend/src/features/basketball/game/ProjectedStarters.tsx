@@ -35,11 +35,14 @@ function StarterColumn({
 }) {
   return (
     <div>
-      <h3 className="mb-3 flex items-baseline gap-2 text-sm">
+      <h3 className="mb-3 flex items-center gap-2 text-[18px]">
+        {team.logoUrl ? (
+          <img src={team.logoUrl} alt="" className="size-6 shrink-0 object-contain" />
+        ) : null}
         <span className="font-semibold" style={{ color: team.color }}>
           {team.abbrev}
         </span>
-        <span className="truncate text-white/45">{team.name}</span>
+        <span className="truncate font-medium text-white/90">{team.name}</span>
       </h3>
       <ul className="space-y-2">
         {starters.map((starter) => (
@@ -62,12 +65,8 @@ export function ProjectedStarters({ detail }: ProjectedStartersProps) {
 
   return (
     <GameSection>
-      <h2 className="text-sm font-semibold text-white">
-        Projected starters
-        <span className="font-normal text-white/45">
-          {" "}
-          · {projectedStarters.note}
-        </span>
+      <h2 className="text-center text-[18px] font-semibold text-white">
+        Projected Starters
       </h2>
 
       <div className="mt-4 grid gap-8 md:grid-cols-2">

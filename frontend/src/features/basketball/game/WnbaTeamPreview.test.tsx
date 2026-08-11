@@ -40,6 +40,25 @@ const fixture: ApiWnbaTeamPreviewResponse = {
       last_name: "Williams",
       headshot_url: null,
     },
+    {
+      key: "fg_pct",
+      label: "FG%",
+      rank: 2,
+      value: ".512",
+      player_id: "1",
+      last_name: "Collier",
+      headshot_url:
+        "https://a.espncdn.com/i/headshots/wnba/players/full/1.png",
+    },
+    {
+      key: "fg3_pct",
+      label: "3FG%",
+      rank: 5,
+      value: ".410",
+      player_id: "4",
+      last_name: "Carleton",
+      headshot_url: null,
+    },
   ],
   roster: [
     {
@@ -76,6 +95,10 @@ describe("WnbaTeamPreview", () => {
     expect(screen.getByTestId("wnba-team-leader-card-ppg")).toHaveStyle({
       backgroundColor: "#236192",
     });
+    expect(screen.getByTestId("wnba-team-leader-card-fg_pct")).toBeInTheDocument();
+    expect(screen.getByTestId("wnba-team-leader-card-fg3_pct")).toBeInTheDocument();
+    const leadersGrid = screen.getByTestId("wnba-team-leader-card-ppg").parentElement;
+    expect(leadersGrid).toHaveClass("grid-cols-5");
 
     const rosterTable = screen.getByTestId("wnba-team-roster-table");
     expect(rosterTable.className).toContain("overflow-x-auto");
@@ -103,17 +126,30 @@ describe("WnbaTeamPreview", () => {
     expect(screen.getByTestId("wnba-team-preview")).toBeInTheDocument();
   });
 
-  it("renders leader cards without team logos", () => {
+  it("renders five leader cards including FG% and 3FG%", () => {
     render(<WnbaTeamPreview data={fixture} isPending={false} error={null} />);
 
-    const ppgCard = screen.getByTestId("wnba-team-leader-card-ppg");
-    expect(ppgCard).toHaveTextContent("PPG");
-    expect(ppgCard).toHaveTextContent("26.6");
-    expect(ppgCard).toHaveTextContent("Collier");
-    expect(screen.getByTestId("wnba-team-leader-rank-ppg")).toHaveTextContent(
-      "#1",
+    expect(screen.getByTestId("wnba-team-leader-card-ppg")).toHaveTextContent(
+      "PPG",
     );
-    expect(ppgCard.querySelector('img[src*="team-logos"]')).toBeNull();
+    expect(screen.getByTestId("wnba-team-leader-card-rpg")).toHaveTextContent(
+      "RPG",
+    );
+    expect(screen.getByTestId("wnba-team-leader-card-apg")).toHaveTextContent(
+      "APG",
+    );
+    expect(
+      screen.getByTestId("wnba-team-leader-card-fg_pct"),
+    ).toHaveTextContent("FG%");
+    expect(
+      screen.getByTestId("wnba-team-leader-card-fg_pct"),
+    ).toHaveTextContent(".512");
+    expect(
+      screen.getByTestId("wnba-team-leader-card-fg3_pct"),
+    ).toHaveTextContent("3FG%");
+    expect(
+      screen.getByTestId("wnba-team-leader-card-fg3_pct"),
+    ).toHaveTextContent(".410");
     expect(screen.getByTestId("wnba-team-leader-headshot-ppg")).toHaveAttribute(
       "src",
       fixture.leaders[0].headshot_url,

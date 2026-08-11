@@ -1,9 +1,30 @@
 import { GameSection } from "@/shared/ui/GameSection";
-import type { GameDetail } from "../lib/types";
+import type { GameDetail, GameDetailTeam } from "../lib/types";
 
 type MatchupPredictionProps = {
   detail: GameDetail;
 };
+
+function TeamMark({
+  team,
+  align,
+}: {
+  team: GameDetailTeam;
+  align: "start" | "end";
+}) {
+  return (
+    <div
+      className={`flex items-center gap-1.5 ${
+        align === "end" ? "flex-row-reverse" : ""
+      }`}
+    >
+      {team.logoUrl ? (
+        <img src={team.logoUrl} alt="" className="size-6 object-contain" />
+      ) : null}
+      <span className="text-[14px] font-semibold text-white">{team.abbrev}</span>
+    </div>
+  );
+}
 
 export function MatchupPrediction({ detail }: MatchupPredictionProps) {
   const prediction = detail.matchupPrediction;
@@ -13,37 +34,38 @@ export function MatchupPrediction({ detail }: MatchupPredictionProps) {
   }
 
   return (
-    <GameSection>
-      <h2 className="text-sm font-semibold text-white">Matchup prediction</h2>
+    <GameSection data-testid="wnba-matchup-prediction">
+      <h2 className="text-center text-[18px] font-semibold text-white">
+        Matchup prediction
+      </h2>
 
-      <div className="mt-3 flex h-2 overflow-hidden rounded-full">
+      <div className="mt-3 flex items-center gap-2">
+        <TeamMark team={detail.away} align="start" />
         <div
-          className="h-full"
-          style={{
-            width: `${prediction.awayWinPct}%`,
-            backgroundColor: detail.away.color,
-          }}
-        />
-        <div
-          className="h-full"
-          style={{
-            width: `${prediction.homeWinPct}%`,
-            backgroundColor: detail.home.color,
-          }}
-        />
+          data-testid="wnba-matchup-prediction-pill"
+          className="flex h-9 min-w-0 flex-1 overflow-hidden rounded-full"
+        >
+          <div
+            className="flex h-full items-center justify-center text-[14px] font-semibold text-white"
+            style={{
+              width: `${prediction.awayWinPct}%`,
+              backgroundColor: detail.away.color,
+            }}
+          >
+            {`${prediction.awayWinPct}%`}
+          </div>
+          <div
+            className="flex h-full items-center justify-center text-[14px] font-semibold text-white"
+            style={{
+              width: `${prediction.homeWinPct}%`,
+              backgroundColor: detail.home.color,
+            }}
+          >
+            {`${prediction.homeWinPct}%`}
+          </div>
+        </div>
+        <TeamMark team={detail.home} align="end" />
       </div>
-
-      <div className="mt-2 flex items-center justify-between text-xs text-white/70">
-        <span>
-          {detail.away.abbrev}{" "}
-          <span>{`${prediction.awayWinPct}%`}</span>
-        </span>
-        <span>
-          <span>{`${prediction.homeWinPct}%`}</span> {detail.home.abbrev}
-        </span>
-      </div>
-
-      <p className="mt-2 text-xs text-white/50">{prediction.sourceLabel}</p>
     </GameSection>
   );
 }

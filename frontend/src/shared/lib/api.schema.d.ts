@@ -2901,7 +2901,7 @@ export interface components {
              * Key
              * @enum {string}
              */
-            key: "ppg" | "rpg" | "apg";
+            key: "ppg" | "rpg" | "apg" | "fg_pct" | "fg3_pct";
             /** Label */
             label: string;
             /** Last Name */

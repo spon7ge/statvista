@@ -8,7 +8,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 _RESPONSE_CONFIG = ConfigDict(json_schema_serialization_defaults_required=True)
 
-TeamLeaderKey = Literal["ppg", "rpg", "apg"]
+TeamLeaderKey = Literal["ppg", "rpg", "apg", "fg_pct", "fg3_pct"]
 
 
 class WnbaTeamLeaderCard(BaseModel):

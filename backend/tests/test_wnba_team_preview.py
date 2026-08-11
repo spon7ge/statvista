@@ -110,17 +110,20 @@ def test_parse_byathlete_and_merge_roster_rows():
     assert top.gp == 31
 
 
-def test_build_team_leaders_ppg_rpg_apg():
+def test_build_team_leaders_ppg_rpg_apg_fg_pct_fg3_pct():
     athletes = parse_roster_athletes(_roster_fixture())
     stats = parse_byathlete_stat_map(_byathlete_fixture())
     rows = merge_roster_rows(athletes, stats)
     leaders = build_team_leaders(rows, stats)
-    assert [c.key for c in leaders] == ["ppg", "rpg", "apg"]
+    assert [c.key for c in leaders] == ["ppg", "rpg", "apg", "fg_pct", "fg3_pct"]
+    assert [c.label for c in leaders] == ["PPG", "RPG", "APG", "FG%", "3FG%"]
     assert leaders[0].value == "19.1"
     assert leaders[0].last_name == "Gray"
     assert leaders[0].rank == 9
     assert leaders[1].last_name == "Reese"
     assert leaders[2].last_name == "Canada"
+    assert leaders[3].key == "fg_pct"
+    assert leaders[4].key == "fg3_pct"
 
 
 def _preview() -> WnbaTeamPreviewResponse:

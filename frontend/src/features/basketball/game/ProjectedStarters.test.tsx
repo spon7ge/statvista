@@ -16,10 +16,12 @@ describe("ProjectedStarters", () => {
         })}
       />,
     );
-    expect(screen.getByText(/Projected starters/i)).toBeInTheDocument();
+    const heading = screen.getByRole("heading", { name: "Projected Starters" });
+    expect(heading).toBeInTheDocument();
+    expect(heading).toHaveClass("text-center");
     expect(
-      screen.getByText(/from each team's last game/i),
-    ).toBeInTheDocument();
+      screen.queryByText(/from each team's last game/i),
+    ).not.toBeInTheDocument();
     expect(screen.getByText("Natasha Howard")).toBeInTheDocument();
     expect(screen.getByText("Maria Conde")).toBeInTheDocument();
     expect(screen.getByText("#1")).toBeInTheDocument();
@@ -51,10 +53,30 @@ describe("ProjectedStarters", () => {
     expect(screen.getByText("GTD")).toBeInTheDocument();
   });
 
-  it("shows team abbrev and name as column headers", () => {
+  it("shows team logo, abbrev, and name as column headers", () => {
     render(
       <ProjectedStarters
         detail={buildScheduledDetail({
+          away: {
+            id: "16",
+            abbrev: "MIN",
+            name: "Minnesota Lynx",
+            score: null,
+            record: null,
+            last10: null,
+            color: "#0C2340",
+            logoUrl: "https://example.com/min.png",
+          },
+          home: {
+            id: "129154",
+            abbrev: "TOR",
+            name: "Toronto Tempo",
+            score: null,
+            record: null,
+            last10: null,
+            color: "#CE1141",
+            logoUrl: "https://example.com/tor.png",
+          },
           projectedStarters: {
             note: "from each team's last game",
             away: [{ jersey: "1", name: "Natasha Howard", position: "F", gtd: false }],
@@ -67,5 +89,11 @@ describe("ProjectedStarters", () => {
     expect(screen.getByText("Minnesota Lynx")).toBeInTheDocument();
     expect(screen.getByText("TOR")).toBeInTheDocument();
     expect(screen.getByText("Toronto Tempo")).toBeInTheDocument();
+    expect(
+      document.querySelector('img[src="https://example.com/min.png"]'),
+    ).toBeTruthy();
+    expect(
+      document.querySelector('img[src="https://example.com/tor.png"]'),
+    ).toBeTruthy();
   });
 });

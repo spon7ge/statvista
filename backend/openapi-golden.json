@@ -8757,7 +8757,9 @@
             "enum": [
               "ppg",
               "rpg",
-              "apg"
+              "apg",
+              "fg_pct",
+              "fg3_pct"
             ],
             "title": "Key",
             "type": "string"

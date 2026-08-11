@@ -22,8 +22,41 @@ ESPN_BYATHLETE_URL = (
 )
 _ESPN_HEADERS = {"User-Agent": "Mozilla/5.0"}
 
-_LEADER_KEYS: tuple[TeamLeaderKey, ...] = ("ppg", "rpg", "apg")
-_LABEL: dict[TeamLeaderKey, str] = {"ppg": "PPG", "rpg": "RPG", "apg": "APG"}
+_LEADER_KEYS: tuple[TeamLeaderKey, ...] = (
+    "ppg",
+    "rpg",
+    "apg",
+    "fg_pct",
+    "fg3_pct",
+)
+_LABEL: dict[TeamLeaderKey, str] = {
+    "ppg": "PPG",
+    "rpg": "RPG",
+    "apg": "APG",
+    "fg_pct": "FG%",
+    "fg3_pct": "3FG%",
+}
+_VALUE_ATTR: dict[TeamLeaderKey, str] = {
+    "ppg": "pts_value",
+    "rpg": "reb_value",
+    "apg": "ast_value",
+    "fg_pct": "fg_pct_value",
+    "fg3_pct": "fg3_pct_value",
+}
+_RANK_ATTR: dict[TeamLeaderKey, str] = {
+    "ppg": "pts_rank",
+    "rpg": "reb_rank",
+    "apg": "ast_rank",
+    "fg_pct": "fg_pct_rank",
+    "fg3_pct": "fg3_pct_rank",
+}
+_DISPLAY_ATTR: dict[TeamLeaderKey, str] = {
+    "ppg": "pts",
+    "rpg": "reb",
+    "apg": "ast",
+    "fg_pct": "fg_pct",
+    "fg3_pct": "fg3_pct",
+}
 _ATHLETE_ID_RE = re.compile(r"/athletes/(\d+)")
 
 
@@ -53,9 +86,13 @@ class PlayerSeasonStats:
     pts_value: float | None = None
     reb_value: float | None = None
     ast_value: float | None = None
+    fg_pct_value: float | None = None
+    fg3_pct_value: float | None = None
     pts_rank: int | None = None
     reb_rank: int | None = None
     ast_rank: int | None = None
+    fg_pct_rank: int | None = None
+    fg3_pct_rank: int | None = None
 
 
 def _headshot_url(athlete: dict[str, Any]) -> str | None:
@@ -185,9 +222,13 @@ def _stats_from_flat(flat: dict[str, dict[str, Any]]) -> PlayerSeasonStats:
         pts_value=_as_float((flat.get("avgPoints") or {}).get("value")),
         reb_value=_as_float((flat.get("avgRebounds") or {}).get("value")),
         ast_value=_as_float((flat.get("avgAssists") or {}).get("value")),
+        fg_pct_value=_as_float((flat.get("fieldGoalPct") or {}).get("value")),
+        fg3_pct_value=_as_float((fg3 or {}).get("value")),
         pts_rank=_as_int((flat.get("avgPoints") or {}).get("rank")),
         reb_rank=_as_int((flat.get("avgRebounds") or {}).get("rank")),
         ast_rank=_as_int((flat.get("avgAssists") or {}).get("rank")),
+        fg_pct_rank=_as_int((flat.get("fieldGoalPct") or {}).get("rank")),
+        fg3_pct_rank=_as_int((fg3 or {}).get("rank")),
     )
 
 
@@ -254,13 +295,13 @@ def build_team_leaders(
     rows: list[WnbaTeamRosterRow],
     stats_by_id: dict[str, PlayerSeasonStats],
 ) -> list[WnbaTeamLeaderCard]:
-    """Pick team PPG / RPG / APG leaders from joined roster rows."""
+    """Pick team PPG / RPG / APG / FG% / 3FG% leaders from joined roster rows."""
     by_id = {row.player_id: row for row in rows}
     cards: list[WnbaTeamLeaderCard] = []
     for key in _LEADER_KEYS:
-        value_attr = {"ppg": "pts_value", "rpg": "reb_value", "apg": "ast_value"}[key]
-        rank_attr = {"ppg": "pts_rank", "rpg": "reb_rank", "apg": "ast_rank"}[key]
-        display_attr = {"ppg": "pts", "rpg": "reb", "apg": "ast"}[key]
+        value_attr = _VALUE_ATTR[key]
+        rank_attr = _RANK_ATTR[key]
+        display_attr = _DISPLAY_ATTR[key]
         best_id: str | None = None
         best_value: float | None = None
         for player_id, stats in stats_by_id.items():
@@ -276,7 +317,7 @@ def build_team_leaders(
             continue
         row = by_id[best_id]
         stats = stats_by_id[best_id]
-        display = getattr(stats, display_attr) or getattr(row, display_attr)
+        display = getattr(stats, display_attr) or getattr(row, display_attr, None)
         if not display:
             continue
         cards.append(
