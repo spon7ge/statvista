@@ -6,7 +6,7 @@ On Away/Home team tabs, **Team Leaders** show five cards in one row: **PPG, RPG,
 
 ## Non-goals
 
-- Min-attempt filters for shooting %
+- Min-attempt filters for shooting % (use MPG floor instead)
 - Changing Preview matchup `game_leaders` (PPG/RPG/APG only)
 - MLB team-preview leaders
 - Layout wrap / scroll (user chose `grid-cols-5`)
@@ -17,6 +17,7 @@ On Away/Home team tabs, **Team Leaders** show five cards in one row: **PPG, RPG,
 - Labels: `PPG`, `RPG`, `APG`, `FG%`, `3FG%`
 - In `PlayerSeasonStats`, add `fg_pct_value` / `fg3_pct_value` and optional `fg_pct_rank` / `fg3_pct_rank` from ESPN byathlete `fieldGoalPct` / three-point pct `value`/`rank`
 - `build_team_leaders` iterates the five keys in that order; pick max numeric value among roster-joined players; rank may be null for shooting if ESPN omits it
+- FG% / 3FG% only consider players with avg minutes ≥ 15 (`avgMinutes`); PPG/RPG/APG unchanged
 - OpenAPI regen after schema change
 
 ## Frontend

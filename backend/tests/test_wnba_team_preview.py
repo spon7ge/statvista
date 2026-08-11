@@ -122,8 +122,82 @@ def test_build_team_leaders_ppg_rpg_apg_fg_pct_fg3_pct():
     assert leaders[0].rank == 9
     assert leaders[1].last_name == "Reese"
     assert leaders[2].last_name == "Canada"
+    # Madina Okot (9.0 MPG) / Jaylyn Sherrod (6.7 MPG) excluded by 15 MPG floor
     assert leaders[3].key == "fg_pct"
+    assert leaders[3].last_name == "Jones"
     assert leaders[4].key == "fg3_pct"
+    assert leaders[4].last_name == "Howard"
+
+
+def test_build_team_leaders_shooting_requires_min_mpg():
+    from app.providers.espn.wnba_team_player_stats import PlayerSeasonStats
+
+    rows = [
+        WnbaTeamRosterRow(
+            player_id="low",
+            name="Low Minutes",
+            jersey="1",
+            position="C",
+            gp=10,
+            min="8.0",
+            pts="4.0",
+            reb="2.0",
+            ast="0.5",
+            stl=None,
+            blk=None,
+            to=None,
+            fg_pct="70.0",
+            fg3_pct="60.0",
+            ft_pct=None,
+            headshot_url=None,
+        ),
+        WnbaTeamRosterRow(
+            player_id="high",
+            name="High Minutes",
+            jersey="2",
+            position="G",
+            gp=30,
+            min="28.0",
+            pts="12.0",
+            reb="3.0",
+            ast="4.0",
+            stl=None,
+            blk=None,
+            to=None,
+            fg_pct="48.0",
+            fg3_pct="38.0",
+            ft_pct=None,
+            headshot_url=None,
+        ),
+    ]
+    stats = {
+        "low": PlayerSeasonStats(
+            min="8.0",
+            min_value=8.0,
+            fg_pct="70.0",
+            fg3_pct="60.0",
+            fg_pct_value=70.0,
+            fg3_pct_value=60.0,
+            pts_value=4.0,
+            reb_value=2.0,
+            ast_value=0.5,
+        ),
+        "high": PlayerSeasonStats(
+            min="28.0",
+            min_value=28.0,
+            fg_pct="48.0",
+            fg3_pct="38.0",
+            fg_pct_value=48.0,
+            fg3_pct_value=38.0,
+            pts_value=12.0,
+            reb_value=3.0,
+            ast_value=4.0,
+        ),
+    }
+    leaders = {c.key: c for c in build_team_leaders(rows, stats)}
+    assert leaders["fg_pct"].player_id == "high"
+    assert leaders["fg3_pct"].player_id == "high"
+    assert leaders["ppg"].player_id == "high"
 
 
 def _preview() -> WnbaTeamPreviewResponse:

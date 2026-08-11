@@ -57,6 +57,9 @@ _DISPLAY_ATTR: dict[TeamLeaderKey, str] = {
     "fg_pct": "fg_pct",
     "fg3_pct": "fg3_pct",
 }
+# Avoid tiny-sample shooters topping FG% / 3FG% (e.g. 5–9 MPG).
+_SHOOTING_LEADER_KEYS: frozenset[TeamLeaderKey] = frozenset({"fg_pct", "fg3_pct"})
+_MIN_MPG_FOR_SHOOTING_LEADERS = 15.0
 _ATHLETE_ID_RE = re.compile(r"/athletes/(\d+)")
 
 
@@ -74,6 +77,7 @@ class RosterAthlete:
 class PlayerSeasonStats:
     gp: int | None = None
     min: str | None = None
+    min_value: float | None = None
     pts: str | None = None
     reb: str | None = None
     ast: str | None = None
@@ -210,6 +214,7 @@ def _stats_from_flat(flat: dict[str, dict[str, Any]]) -> PlayerSeasonStats:
     return PlayerSeasonStats(
         gp=_as_int((flat.get("gamesPlayed") or {}).get("value")),
         min=_display(flat.get("avgMinutes")),
+        min_value=_as_float((flat.get("avgMinutes") or {}).get("value")),
         pts=_display(flat.get("avgPoints")),
         reb=_display(flat.get("avgRebounds")),
         ast=_display(flat.get("avgAssists")),
@@ -295,7 +300,10 @@ def build_team_leaders(
     rows: list[WnbaTeamRosterRow],
     stats_by_id: dict[str, PlayerSeasonStats],
 ) -> list[WnbaTeamLeaderCard]:
-    """Pick team PPG / RPG / APG / FG% / 3FG% leaders from joined roster rows."""
+    """Pick team PPG / RPG / APG / FG% / 3FG% leaders from joined roster rows.
+
+    FG% / 3FG% require avg minutes >= `_MIN_MPG_FOR_SHOOTING_LEADERS`.
+    """
     by_id = {row.player_id: row for row in rows}
     cards: list[WnbaTeamLeaderCard] = []
     for key in _LEADER_KEYS:
@@ -307,6 +315,10 @@ def build_team_leaders(
         for player_id, stats in stats_by_id.items():
             if player_id not in by_id:
                 continue
+            if key in _SHOOTING_LEADER_KEYS:
+                mpg = stats.min_value
+                if mpg is None or mpg < _MIN_MPG_FOR_SHOOTING_LEADERS:
+                    continue
             value = getattr(stats, value_attr)
             if value is None:
                 continue
