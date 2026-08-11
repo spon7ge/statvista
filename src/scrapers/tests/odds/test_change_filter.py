@@ -42,6 +42,17 @@ def test_skips_identical_line():
     assert skipped == 1
 
 
+def test_keeps_identical_line_on_new_calendar_day():
+    """Same player/line/odds tomorrow still upserts once for the new ET date."""
+    df = pd.DataFrame([_pp_row(scraped_at="2026-08-11T16:00:00+00:00")])
+    latest = pd.DataFrame([_pp_row(scraped_at="2026-08-10T16:00:00+00:00")])
+    kept, skipped = filter_unchanged_quotes(
+        df, latest=latest, spec=get_quote_spec("wnba_prizepicks")
+    )
+    assert len(kept) == 1
+    assert skipped == 0
+
+
 def test_keeps_line_change():
     df = pd.DataFrame([_pp_row(line_score=23.5)])
     latest = pd.DataFrame([_pp_row(line_score=22.5)])
@@ -214,9 +225,56 @@ def test_skips_identical_underdog_line_and_prices():
         "line_score": 0.5,
         "american_price": -120,
         "payout_multiplier": 0.94,
+        "scraped_at": "2026-08-10T18:00:00+00:00",
     }
-    df = pd.DataFrame([row])
+    df = pd.DataFrame([{**row, "scraped_at": "2026-08-10T20:00:00+00:00"}])
     latest = pd.DataFrame([row])
     kept, skipped = filter_unchanged_quotes(df, latest=latest, spec=spec)
     assert kept.empty
     assert skipped == 1
+
+
+def test_keeps_identical_underdog_line_on_new_day():
+    spec = get_quote_spec("mlb_underdogs")
+    prior = {
+        "league": "mlb",
+        "player_name": "Judge",
+        "stat_name": "hits",
+        "side": "over",
+        "line_score": 0.5,
+        "american_price": -112,
+        "payout_multiplier": 0.94,
+        "scraped_at": "2026-08-10T18:00:00+00:00",
+    }
+    today = {**prior, "scraped_at": "2026-08-11T18:00:00+00:00"}
+    kept, skipped = filter_unchanged_quotes(
+        pd.DataFrame([today]), latest=pd.DataFrame([prior]), spec=spec
+    )
+    assert len(kept) == 1
+    assert skipped == 0
+
+
+def test_fetch_latest_quotes_selects_scraped_at(monkeypatch):
+    captured_sql: list[str] = []
+
+    def fake_read_sql(sql, conn, params=None):
+        captured_sql.append(str(sql))
+        return pd.DataFrame()
+
+    class FakeConn:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            pass
+
+    class FakeEngine:
+        def connect(self):
+            return FakeConn()
+
+    monkeypatch.setattr("src.utils.db.get_engine", lambda: FakeEngine())
+    monkeypatch.setattr(change_filter.pd, "read_sql", fake_read_sql)
+
+    spec = get_quote_spec("mlb_underdogs")
+    fetch_latest_quotes("mlb_underdogs", league="mlb", spec=spec)
+    assert '"scraped_at"' in captured_sql[0]

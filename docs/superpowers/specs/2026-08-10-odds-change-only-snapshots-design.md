@@ -48,6 +48,8 @@ Identity = “same quote” for change detection and for “latest board” read
 **Exclude** `scraped_at`, `fetched_at`, line/points, and price fields from identity.  
 **Compare** = line/points + price columns present on that table (null-safe equality).
 
+**Write-path date partition:** the change filter appends the **America/New_York calendar date** of `scraped_at` to the identity key used only when deciding skip vs insert. Same line+odds on a new ET date still upserts once; same-day re-scrapes still skip. Board readers keep date-free identity (absolute latest quote).
+
 | Table family | Quote identity (examples) | Compare |
 | --- | --- | --- |
 | PrizePicks | `league, player_name, stat_type, odds_type` | `line_score` |

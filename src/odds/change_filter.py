@@ -3,7 +3,9 @@ from __future__ import annotations
 import logging
 import math
 import os
+from datetime import date, datetime
 from typing import Any
+from zoneinfo import ZoneInfo
 
 import pandas as pd
 from sqlalchemy import text
@@ -11,6 +13,9 @@ from sqlalchemy import text
 from src.odds.quote_specs import QuoteSpec, get_quote_spec
 
 logger = logging.getLogger(__name__)
+
+# Sports slate calendar day — same line/odds on a new ET date still upserts.
+_SCRAPE_DATE_TZ = ZoneInfo("America/New_York")
 
 
 def _is_null(value: Any) -> bool:
@@ -34,8 +39,29 @@ def values_equal(left: Any, right: Any) -> bool:
     return left == right
 
 
+def scraped_date_key(value: Any) -> date | None:
+    """Calendar date (America/New_York) from scraped_at for change-filter identity."""
+    if _is_null(value):
+        return None
+    if isinstance(value, datetime):
+        dt = value
+    else:
+        ts = pd.Timestamp(value)
+        if pd.isna(ts):
+            return None
+        dt = ts.to_pydatetime()
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=ZoneInfo("UTC"))
+    return dt.astimezone(_SCRAPE_DATE_TZ).date()
+
+
 def _identity_key(row: pd.Series, identity_cols: tuple[str, ...]) -> tuple:
-    return tuple(row.get(col) for col in identity_cols)
+    # Partition by scrape calendar day so identical line+odds still insert once
+    # per ET date (board readers keep date-free identity → absolute latest).
+    return (
+        *tuple(row.get(col) for col in identity_cols),
+        scraped_date_key(row.get("scraped_at")),
+    )
 
 
 def filter_unchanged_quotes(
@@ -81,7 +107,10 @@ def _skip_change_filter() -> bool:
 def fetch_latest_quotes(table: str, *, league: str, spec: QuoteSpec) -> pd.DataFrame:
     from src.utils.db import get_engine
 
-    cols = list(dict.fromkeys([*spec.identity_cols, *spec.compare_cols]))
+    # scraped_at needed so change filter can partition identity by ET calendar day.
+    cols = list(
+        dict.fromkeys([*spec.identity_cols, *spec.compare_cols, "scraped_at"])
+    )
     col_sql = ", ".join(f'"{c}"' for c in cols)
     identity_sql = ", ".join(f'"{c}"' for c in spec.identity_cols)
     order_sql = identity_sql + ', "scraped_at" DESC'
