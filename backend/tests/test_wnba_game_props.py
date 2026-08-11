@@ -4,6 +4,7 @@ from app.domains.wnba.game_props import pick_best_quote, group_game_prop_categor
 from app.domains.wnba.schemas_game_props import WnbaGamePropPlayer
 from app.domains.betting.prop_stat_keys import GAME_PROP_CATEGORY_ORDER, display_stat_label
 from app.domains.betting.schemas_props import WnbaPropBookQuote, WnbaPropLine, WnbaPropsResponse
+from app.providers.espn.wnba_team_player_stats import RosterAthlete
 
 
 def test_pick_best_quote_highest_american():
@@ -260,6 +261,49 @@ async def test_one_sided_quote_leaves_other_side_null(monkeypatch):
     loyd = res.categories[0].players[0]
     assert loyd.over is not None
     assert loyd.under is None
+
+
+@pytest.mark.asyncio
+async def test_roster_partial_failure_keeps_other_team_headshots(monkeypatch):
+    """Away roster fetch fails; home headshots still indexed and error is set."""
+    today = WnbaPropsResponse(
+        as_of="2026-08-10T12:00:00Z",
+        props=[
+            _line(
+                player_name="J. Loyd",
+                team_abbrev="SEA",
+                side="over",
+                prizepicks=_quote(18.5, None),
+                draftkings=_quote(18.5, -115),
+            ),
+        ],
+    )
+    await _patch_game_props_deps(monkeypatch, today)
+
+    home_headshot = "https://example.com/loyd.png"
+
+    async def fake_roster(team_id: str):
+        if team_id == "1":
+            raise RuntimeError("ESPN away roster down")
+        return [
+            RosterAthlete(
+                player_id="123",
+                name="J. Loyd",
+                jersey="24",
+                position="G",
+                headshot_url=home_headshot,
+                last_name="Loyd",
+            )
+        ]
+
+    monkeypatch.setattr(gp, "fetch_team_roster_athletes", fake_roster)
+
+    res = await gp.get_wnba_props_for_game(espn_event_id="401770001", app="prizepicks")
+    assert res.error is not None and "roster_unavailable" in res.error
+    assert len(res.categories) == 1
+    loyd = res.categories[0].players[0]
+    assert loyd.player_name == "J. Loyd"
+    assert loyd.headshot_url == home_headshot
 
 
 @pytest.mark.asyncio

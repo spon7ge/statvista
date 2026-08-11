@@ -155,17 +155,19 @@ async def get_wnba_props_for_game(*, espn_event_id: str, app: str) -> WnbaGamePr
     if today.error:
         error = _compose_error(error, today.error)
 
-    # Headshot index: normalized name -> url (soft-fail)
+    # Headshot index: normalized name -> url (soft-fail per team)
     headshots: dict[str, str | None] = {}
-    try:
-        for team_id in (detail.away.id, detail.home.id):
+    for team_id in (detail.away.id, detail.home.id):
+        try:
             athletes = await fetch_team_roster_athletes(team_id)
             for athlete in athletes:
                 # RosterAthlete.name is the display name field
                 headshots[norm_player_name(athlete.name)] = athlete.headshot_url
-    except Exception as exc:
-        logger.warning("WNBA game props roster unavailable: %s", exc)
-        error = _compose_error(error, "roster_unavailable")
+        except Exception as exc:
+            logger.warning(
+                "WNBA game props roster unavailable for team %s: %s", team_id, exc
+            )
+            error = _compose_error(error, "roster_unavailable")
 
     # Bucket DFS slots: (norm_player, stat_key, line) -> display fields.
     # Index ALL team-filtered rows by player/stat so opposite-side sportsbook
