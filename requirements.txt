@@ -1,6 +1,8 @@
 # ETL / ingestion / ML pipeline dependencies
 python-dotenv>=1.2.0
 psycopg2-binary>=2.9.12
+# IANA tz database; required on Windows for zoneinfo.ZoneInfo("America/...")
+tzdata>=2025.1
 sqlalchemy>=2.0.51
 supabase>=2.31.0
 pandas>=3.0.0
