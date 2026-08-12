@@ -11,11 +11,17 @@ import {
 } from "@/features/basketball/league/filterPropLines";
 import { useWnbaProps } from "@/features/basketball/hooks/useWnbaProps";
 import { useWnbaScoreboard } from "@/features/basketball/hooks/useWnbaScoreboard";
+import type { ApiWnbaPropLine } from "@/shared/lib/api";
 
 export function LeaguePropPicksPage() {
-  const { data, isLoading, isError, isFetched, dataUpdatedAt } = useWnbaProps();
+  const { data, isLoading, isError, isFetched, dataUpdatedAt } = useWnbaProps({
+    app: "prizepicks",
+    format: "power",
+    legs: 4,
+  });
   const { games, data: scoreboard } = useWnbaScoreboard();
-  const props = data?.props ?? [];
+  // Temporary: board API returns ApiWnbaPropRow[]; leftover table still wants ApiWnbaPropLine (Tasks 8–9).
+  const props = (data?.props ?? []) as unknown as ApiWnbaPropLine[];
   const activeProps = excludePastGameProps(props, games, scoreboard?.date);
   const showError = isError && !data;
   const showLoading = isLoading && !isFetched;

@@ -130,34 +130,27 @@ describe("fetchWnbaProps", () => {
     vi.unstubAllEnvs();
   });
 
-  it("hits /api/wnba/props/today", async () => {
+  it("hits /api/wnba/props/today with app format legs", async () => {
     vi.stubEnv("VITE_API_BASE_URL", undefined);
     fetchMock.mockResolvedValue({
       ok: true,
       json: async () => ({
         as_of: "now",
-        sportsbooks: [
-          "fanduel",
-          "draftkings",
-          "caesars",
-          "betmgm",
-          "pinnacle",
-          "bet365",
-          "prizepicks",
-          "underdog",
-          "betr",
-          "novig",
-          "sleeper",
-          "betrivers",
-        ],
+        app: "prizepicks",
+        format: "power",
+        legs: 4,
+        breakeven_pct: 54.3,
         props: [],
+        error: null,
       }),
     });
     const { fetchWnbaProps } = await import("./api");
-    await fetchWnbaProps();
-    expect(fetchMock).toHaveBeenCalledWith(
-      "/api/wnba/props/today",
-      expect.objectContaining({ cache: "no-store" }),
+    await fetchWnbaProps({ app: "prizepicks", format: "power", legs: 4 });
+    expect(global.fetch).toHaveBeenCalledWith(
+      expect.stringContaining(
+        "/api/wnba/props/today?app=prizepicks&format=power&legs=4",
+      ),
+      expect.anything(),
     );
   });
 
@@ -165,7 +158,9 @@ describe("fetchWnbaProps", () => {
     vi.stubEnv("VITE_API_BASE_URL", undefined);
     fetchMock.mockResolvedValue({ ok: false, status: 502 });
     const { fetchWnbaProps } = await import("./api");
-    await expect(fetchWnbaProps()).rejects.toThrow("Props request failed: 502");
+    await expect(
+      fetchWnbaProps({ app: "prizepicks", format: "power", legs: 4 }),
+    ).rejects.toThrow("Props request failed: 502");
   });
 });
 

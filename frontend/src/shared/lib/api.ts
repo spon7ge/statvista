@@ -39,9 +39,52 @@ export type ApiWnbaOddsGame = Schemas["WnbaOddsGame"];
 export type ApiWnbaOddsResponse = Schemas["WnbaOddsResponse"];
 
 export type ApiWnbaPropBookQuote = Schemas["WnbaPropBookQuote"];
-export type ApiWnbaPropLine = Schemas["WnbaPropLine"];
-export type ApiWnbaPropsResponse = Schemas["WnbaPropsResponse"];
+export type ApiWnbaPropRow = Schemas["WnbaPropRow"];
+export type ApiWnbaPropPicksResponse = Schemas["WnbaPropPicksResponse"];
 export type ApiWnbaGamePropsResponse = Schemas["WnbaGamePropsResponse"];
+
+/**
+ * Leftover pre-+EV-board quote/row shapes for PropPicksTable / filterPropLines.
+ * OpenAPI dropped WnbaPropLine / WnbaPropsResponse; Tasks 8–9 remake the table.
+ * Note: Schemas["WnbaPropBookQuote"] is the new board shape; leftover table
+ * still uses { line, odds_american }, so ApiWnbaPropLine embeds that locally.
+ */
+export type ApiWnbaPropLineBookQuote = {
+  line: number;
+  odds_american: number | null;
+};
+
+export type ApiWnbaPropLine = {
+  player_name: string;
+  team_abbrev: string;
+  logo_url: string | null;
+  stat: string;
+  market_type: string;
+  side: string;
+  model_prediction: number | null;
+  over_under_pct: number | null;
+  ev: number | null;
+  game_date: string | null;
+  commence_time: string | null;
+  fanduel: ApiWnbaPropLineBookQuote | null;
+  draftkings: ApiWnbaPropLineBookQuote | null;
+  caesars: ApiWnbaPropLineBookQuote | null;
+  betmgm: ApiWnbaPropLineBookQuote | null;
+  pinnacle: ApiWnbaPropLineBookQuote | null;
+  bet365: ApiWnbaPropLineBookQuote | null;
+  prizepicks: ApiWnbaPropLineBookQuote | null;
+  underdog: ApiWnbaPropLineBookQuote | null;
+  betr: ApiWnbaPropLineBookQuote | null;
+  novig: ApiWnbaPropLineBookQuote | null;
+  sleeper: ApiWnbaPropLineBookQuote | null;
+  betrivers: ApiWnbaPropLineBookQuote | null;
+};
+
+export type WnbaPropsParams = {
+  app: string;
+  format: string;
+  legs: number;
+};
 
 export type ApiWnbaFuturesEntry = Schemas["WnbaFuturesEntry"];
 export type ApiWnbaFuturesMarket = Schemas["WnbaFuturesMarket"];
@@ -190,8 +233,17 @@ export async function fetchWnbaOdds(): Promise<ApiWnbaOddsResponse> {
   return res.json();
 }
 
-export async function fetchWnbaProps(): Promise<ApiWnbaPropsResponse> {
-  const res = await fetch(`${API_BASE}/api/wnba/props/today`, {
+export async function fetchWnbaProps({
+  app,
+  format,
+  legs,
+}: WnbaPropsParams): Promise<ApiWnbaPropPicksResponse> {
+  const qs = new URLSearchParams({
+    app,
+    format,
+    legs: String(legs),
+  });
+  const res = await fetch(`${API_BASE}/api/wnba/props/today?${qs}`, {
     headers: { Accept: "application/json" },
     cache: "no-store",
   });

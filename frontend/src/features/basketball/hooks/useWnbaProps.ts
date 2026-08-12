@@ -1,13 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchWnbaProps } from "@/shared/lib/api";
+import { fetchWnbaProps, type WnbaPropsParams } from "@/shared/lib/api";
 
-const REFETCH_MS = 60_000;
+const REFETCH_MS = 15 * 60_000;
 
-export function useWnbaProps({ enabled = true }: { enabled?: boolean } = {}) {
+export function useWnbaProps({ app, format, legs }: WnbaPropsParams) {
   return useQuery({
-    queryKey: ["wnba", "props", "today"],
-    queryFn: fetchWnbaProps,
+    queryKey: ["wnba", "props", app, format, legs],
+    queryFn: () => fetchWnbaProps({ app, format, legs }),
     refetchInterval: REFETCH_MS,
-    enabled,
   });
 }

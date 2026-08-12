@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import type { ApiWnbaPropBookQuote, ApiWnbaPropLine } from "@/shared/lib/api";
+import type { ApiWnbaPropLine, ApiWnbaPropLineBookQuote } from "@/shared/lib/api";
 import { TeamAbbrevAvatar } from "@/shared/ui/TeamAbbrevAvatar";
 import {
   PROP_BOOK_OPTIONS,
@@ -36,7 +36,7 @@ function formatAmericanOdds(odds: number): string {
   return odds > 0 ? `+${odds}` : `${odds}`.replace("-", "−");
 }
 
-function OddsPill({ quote }: { quote: ApiWnbaPropBookQuote | null }) {
+function OddsPill({ quote }: { quote: ApiWnbaPropLineBookQuote | null }) {
   if (!quote) {
     return <span className="text-white/20">&nbsp;</span>;
   }
