@@ -106,7 +106,7 @@ main.tsx
 | `/about` | Product / tech / data story | — | none | Static components under `components/about/` |
 | Chrome ticker | All chrome routes | same scoreboard queries | WNBA + MLB today | Client merge; isolated per-league error handling |
 | `/wnba/matchups?date=` | Daily slate (no team-lines odds pill) | `useWnbaScoreboard(date)` | scoreboard (`/today` or `?date=`) | Cards → `/games/:espnEventId` (Preview odds board uses `GET /api/wnba/odds/today`) |
-| `/wnba/prop_picks` | Filterable DFS + US book prop table | `useWnbaProps`, scoreboard | `GET /api/wnba/props/today` | DFS-first board from Supabase PrizePicks/Underdog snapshots + Parlay US books; hide past tip-offs via scoreboard |
+| `/wnba/prop_picks` | Filterable DFS +EV ranked board (hybrid rows + expand) | `useWnbaProps({ app, format, legs })` | `GET /api/wnba/props/today?app=&format=&legs=` | Seed Parlay PrizePicks (fallback `odds.wnba_prizepicks`) or `odds.wnba_underdogs`; DK/FD from Parlay; PX/Novig/Pinnacle from snapshots; server fair/edge/tier; client hide finals + prior-day tips; Stat/Team/Side filters; page size 20 |
 | `/wnba/leaders` | Season leaderboards | `useWnbaLeaders` | `GET /api/wnba/leaders` | stats.wnba.com; WNBA hub pages (Leaders, Standings, Futures, Prop Picks, Player) use MLB-style colored banners with basketball sport mark |
 | `/wnba/standings` | East / West standings | `useWnbaStandings` | `GET /api/wnba/standings` | ESPN |
 | `/wnba/futures` | Championship / award futures | `useWnbaFutures` | `GET /api/wnba/futures` | ESPN core futures API |
@@ -131,12 +131,13 @@ main.tsx
 
 ```text
 LeaguePropPicksPage
-  → GET /api/wnba/props/today
-  → parlay_props.get_today_props()
-       ├─ ParlayAPI player props (US sportsbooks; main lines)
-       ├─ odds_snapshots (latest Supabase odds.wnba_prizepicks / odds.wnba_underdogs)
-       └─ attach_dfs_snapshots()  # DFS-first rows; match US books to DFS lines
-  → client excludePastGameProps(scoreboard) + PropPicksFilters
+  → useWnbaProps({ app, format, legs })
+  → GET /api/wnba/props/today?app=&format=&legs=
+  → wnba.props.get_wnba_props_today()
+       ├─ seed: Parlay PrizePicks (fallback odds.wnba_prizepicks) or odds.wnba_underdogs
+       ├─ exact-line indexes: Parlay DK/FD + odds.wnba_prophetx / novig / pinnacle
+       └─ prop_fair + prop_formats (fair %, edge, tier, recommend, sort)
+  → client excludePastGameProps(scoreboard) + filterWnbaPropPicks (Stat/Team/Side; page size 20)
 ```
 
 ---
@@ -200,7 +201,7 @@ Feature-level history lives under `docs/superpowers/specs/` and `docs/superpower
 | GET | `/api/wnba/scoreboard/today` | `wnba_scoreboard` |
 | GET | `/api/wnba/scoreboard?date=` | `wnba_scoreboard` |
 | GET | `/api/wnba/odds/today` | `parlay_odds` (+ `book_boards`: ProphetX → Novig → Pinnacle from Supabase team snapshots; legacy `games[]` retained) |
-| GET | `/api/wnba/props/today` | `parlay_props` (+ `dfs_attach`, `odds_snapshots`) |
+| GET | `/api/wnba/props/today` | `wnba.props` (+ `prop_fair`, `prop_formats`, snapshots) |
 | GET | `/api/wnba/props/game/{espn_event_id}` | `wnba.game_props` (+ `get_today_props`, game detail, roster headshots) |
 | GET | `/api/wnba/leaders` | `wnba_leaders` |
 | GET | `/api/wnba/standings` | `wnba_standings` |

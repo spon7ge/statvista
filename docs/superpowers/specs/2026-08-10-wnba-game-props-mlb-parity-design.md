@@ -20,7 +20,7 @@ On `/wnba/matchups` game detail pregame **Props**, match the MLB category-card p
 | Best odds pool | Sportsbooks on today’s WNBA props assembly (not DFS books) |
 | Best definition | Highest American per side; ties → book priority below |
 | Missing side | Empty pill cell |
-| League prop picks page | Unchanged |
+| League prop picks page | Superseded by 2026-08-11 (`/wnba/prop_picks` MLB +EV board) |
 | Live / Final | Out of scope (pregame only) |
 
 ## Architecture
