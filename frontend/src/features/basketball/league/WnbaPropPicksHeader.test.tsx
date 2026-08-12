@@ -45,6 +45,8 @@ describe("WnbaPropPicksHeader", () => {
     const banner = header.querySelector("div.rounded-3xl");
     expect(banner).toHaveStyle({ backgroundColor: "rgb(5, 150, 105)" });
     expect(WNBA_PROP_PICKS_BANNER_EMERALD).toBe("#059669");
+    // Match MLB: no overflow-hidden on the banner so filter menus can open below.
+    expect(banner?.className).not.toContain("overflow-hidden");
     expect(header.querySelector("img")).toBeNull();
 
     expect(screen.getByRole("tab", { name: "PrizePicks" })).toHaveAttribute(

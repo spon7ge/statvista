@@ -11,13 +11,14 @@ from app.core.outbound_cache import get_json
 
 logger = logging.getLogger(__name__)
 
+# site.api.espn.com is often Akamai-403; site.web.api serves the same docs.
 ESPN_TEAMS_URL = (
-    "https://site.api.espn.com/apis/site/v2/sports/basketball/wnba/teams"
+    "https://site.web.api.espn.com/apis/site/v2/sports/basketball/wnba/teams"
 )
 ESPN_ROSTER_URL = (
-    "https://site.api.espn.com/apis/site/v2/sports/basketball/wnba/teams/{team_id}/roster"
+    "https://site.web.api.espn.com/apis/site/v2/sports/basketball/wnba/teams/{team_id}/roster"
 )
-ESPN_TIMEOUT_SECONDS = 8.0
+ESPN_TIMEOUT_SECONDS = 12.0
 ROSTER_OUTBOUND_TTL_SECONDS = 900.0
 TEAMS_OUTBOUND_TTL_SECONDS = 3600.0
 ROSTER_CACHE_TTL_SECONDS = 600
@@ -25,6 +26,10 @@ INDEX_CACHE_TTL_SECONDS = 900
 HEADSHOT_TMPL = (
     "https://a.espncdn.com/i/headshots/wnba/players/full/{espn_id}.png"
 )
+_ESPN_HEADERS = {
+    "Referer": "https://www.espn.com/wnba/",
+    "Accept-Language": "en-US,en;q=0.9",
+}
 
 _roster_cache: dict[str, dict] = {}
 _index_cache: dict[str, Any] = {"expires_at": 0.0, "index": {}}
@@ -174,6 +179,7 @@ async def fetch_espn_roster(team_id: str) -> dict:
         url,
         ttl_seconds=ROSTER_OUTBOUND_TTL_SECONDS,
         timeout_seconds=ESPN_TIMEOUT_SECONDS,
+        headers=_ESPN_HEADERS,
     )
     return payload if isinstance(payload, dict) else {}
 
@@ -195,6 +201,7 @@ async def build_wnba_player_index() -> dict[str, WnbaRosterPlayer]:
         ESPN_TEAMS_URL,
         ttl_seconds=TEAMS_OUTBOUND_TTL_SECONDS,
         timeout_seconds=ESPN_TIMEOUT_SECONDS,
+        headers=_ESPN_HEADERS,
     )
     teams = team_entries_from_teams_payload(
         teams_payload if isinstance(teams_payload, dict) else {}
@@ -208,6 +215,7 @@ async def build_wnba_player_index() -> dict[str, WnbaRosterPlayer]:
                 ESPN_ROSTER_URL.format(team_id=team_id),
                 ttl_seconds=ROSTER_OUTBOUND_TTL_SECONDS,
                 timeout_seconds=ESPN_TIMEOUT_SECONDS,
+                headers=_ESPN_HEADERS,
             )
         except Exception as exc:
             logger.warning("ESPN WNBA roster %s failed: %s", team_id, exc)

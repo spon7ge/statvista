@@ -80,7 +80,7 @@ export function WnbaPropPicksHeader({
   return (
     <div data-testid="wnba-prop-picks-header" className="relative z-20 space-y-3">
       <div
-        className="relative overflow-hidden rounded-3xl px-5 py-5 sm:px-6 sm:py-6"
+        className="relative rounded-3xl px-5 py-5 sm:px-6 sm:py-6"
         style={{ backgroundColor: WNBA_PROP_PICKS_BANNER_EMERALD }}
       >
         <div
