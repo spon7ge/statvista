@@ -1,4 +1,5 @@
 export const WNBA_BOOK_LABELS: Record<string, string> = {
+  prophetx: "ProphetX",
   novig: "Novig",
   draftkings: "DraftKings",
   fanduel: "FanDuel",
