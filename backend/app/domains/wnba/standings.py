@@ -7,8 +7,7 @@ from datetime import datetime
 from typing import Any
 from zoneinfo import ZoneInfo
 
-import httpx
-
+from app.core.outbound_cache import get_json
 from app.domains.wnba.schemas_standings import (
     ConferenceKey,
     WnbaStandingsConference,
@@ -202,16 +201,13 @@ def _get_refresh_lock() -> asyncio.Lock:
 
 
 async def fetch_espn_standings() -> dict:
-    headers = {
-        "User-Agent": "Mozilla/5.0",
-        "Accept": "application/json",
-    }
-    async with httpx.AsyncClient(
-        timeout=ESPN_TIMEOUT_SECONDS, headers=headers
-    ) as client:
-        res = await client.get(ESPN_URL)
-        res.raise_for_status()
-        return res.json()
+    payload = await get_json(
+        "espn:wnba:standings",
+        ESPN_URL,
+        ttl_seconds=CACHE_TTL_SECONDS,
+        timeout_seconds=ESPN_TIMEOUT_SECONDS,
+    )
+    return payload if isinstance(payload, dict) else {}
 
 
 def _fresh_cached() -> WnbaStandingsResponse | None:

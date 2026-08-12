@@ -7,7 +7,7 @@ import unicodedata
 from dataclasses import dataclass
 from typing import Any, TypedDict
 
-import httpx
+from app.core.outbound_cache import get_json
 
 logger = logging.getLogger(__name__)
 
@@ -18,6 +18,8 @@ ESPN_ROSTER_URL = (
     "https://site.api.espn.com/apis/site/v2/sports/basketball/wnba/teams/{team_id}/roster"
 )
 ESPN_TIMEOUT_SECONDS = 8.0
+ROSTER_OUTBOUND_TTL_SECONDS = 900.0
+TEAMS_OUTBOUND_TTL_SECONDS = 3600.0
 ROSTER_CACHE_TTL_SECONDS = 600
 INDEX_CACHE_TTL_SECONDS = 900
 HEADSHOT_TMPL = (
@@ -167,17 +169,13 @@ def enrich_starters(
 
 async def fetch_espn_roster(team_id: str) -> dict:
     url = ESPN_ROSTER_URL.format(team_id=team_id)
-    async with httpx.AsyncClient(timeout=ESPN_TIMEOUT_SECONDS) as client:
-        response = await client.get(url)
-        response.raise_for_status()
-        return response.json()
-
-
-async def fetch_espn_json(url: str, client: httpx.AsyncClient) -> dict:
-    response = await client.get(url)
-    response.raise_for_status()
-    data = response.json()
-    return data if isinstance(data, dict) else {}
+    payload = await get_json(
+        f"espn:wnba:roster:{team_id}",
+        url,
+        ttl_seconds=ROSTER_OUTBOUND_TTL_SECONDS,
+        timeout_seconds=ESPN_TIMEOUT_SECONDS,
+    )
+    return payload if isinstance(payload, dict) else {}
 
 
 async def get_roster_index(team_id: str) -> dict[str, dict[str, str | None]]:
@@ -191,35 +189,38 @@ async def get_roster_index(team_id: str) -> dict[str, dict[str, str | None]]:
     return index
 
 
-async def build_wnba_player_index(
-    client: httpx.AsyncClient | None = None,
-) -> dict[str, WnbaRosterPlayer]:
-    owns = client is None
-    http_client = client or httpx.AsyncClient(timeout=ESPN_TIMEOUT_SECONDS)
-    try:
-        teams_payload = await fetch_espn_json(ESPN_TEAMS_URL, http_client)
-        teams = team_entries_from_teams_payload(teams_payload)
-        index: dict[str, WnbaRosterPlayer] = {}
+async def build_wnba_player_index() -> dict[str, WnbaRosterPlayer]:
+    teams_payload = await get_json(
+        "espn:wnba:teams",
+        ESPN_TEAMS_URL,
+        ttl_seconds=TEAMS_OUTBOUND_TTL_SECONDS,
+        timeout_seconds=ESPN_TIMEOUT_SECONDS,
+    )
+    teams = team_entries_from_teams_payload(
+        teams_payload if isinstance(teams_payload, dict) else {}
+    )
+    index: dict[str, WnbaRosterPlayer] = {}
 
-        async def one(team_id: str, abbrev: str) -> None:
-            try:
-                payload = await fetch_espn_json(
-                    ESPN_ROSTER_URL.format(team_id=team_id), http_client
-                )
-            except Exception as exc:
-                logger.warning("ESPN WNBA roster %s failed: %s", team_id, exc)
-                return
-            for key, entry in league_roster_player_index(
-                payload, team_abbrev=abbrev
-            ).items():
-                if key not in index:
-                    index[key] = entry
+    async def one(team_id: str, abbrev: str) -> None:
+        try:
+            payload = await get_json(
+                f"espn:wnba:roster:{team_id}",
+                ESPN_ROSTER_URL.format(team_id=team_id),
+                ttl_seconds=ROSTER_OUTBOUND_TTL_SECONDS,
+                timeout_seconds=ESPN_TIMEOUT_SECONDS,
+            )
+        except Exception as exc:
+            logger.warning("ESPN WNBA roster %s failed: %s", team_id, exc)
+            return
+        for key, entry in league_roster_player_index(
+            payload if isinstance(payload, dict) else {},
+            team_abbrev=abbrev,
+        ).items():
+            if key not in index:
+                index[key] = entry
 
-        await asyncio.gather(*(one(tid, abbr) for tid, abbr in teams))
-        return index
-    finally:
-        if owns:
-            await http_client.aclose()
+    await asyncio.gather(*(one(tid, abbr) for tid, abbr in teams))
+    return index
 
 
 async def get_wnba_player_index() -> dict[str, WnbaRosterPlayer]:
