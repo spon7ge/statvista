@@ -82,6 +82,15 @@ export function LeaguePropPicksPage() {
 
   const showBoardFilters =
     !showLoading && !apiEmpty && activeProps.length > 0;
+  const hidePastEmpty =
+    !showError && !showLoading && props.length > 0 && activeProps.length === 0;
+
+  let emptyMessage: string | undefined;
+  if (apiEmpty && !showError) {
+    emptyMessage = `No ${appLabel(app)} board available.`;
+  } else if (hidePastEmpty) {
+    emptyMessage = "No props for today's remaining games.";
+  }
 
   return (
     <div className="space-y-0 pb-8">
@@ -124,11 +133,7 @@ export function LeaguePropPicksPage() {
             filtersActive={
               filtersActive && !apiEmpty && activeProps.length > 0
             }
-            emptyMessage={
-              apiEmpty && !showError
-                ? `No ${appLabel(app)} board available.`
-                : undefined
-            }
+            emptyMessage={emptyMessage}
             lastUpdatedAt={dataUpdatedAt || undefined}
           />
         </div>

@@ -240,6 +240,48 @@ describe("LeaguePropPicksPage", () => {
     expect(screen.getByText("Jewell Loyd")).toBeInTheDocument();
   });
 
+  it("shows hide-past empty copy when API has props but all games are final", () => {
+    mockUseWnbaScoreboard.mockReturnValue({
+      games: [
+        {
+          status: "final",
+          home: { abbrev: "ATL" },
+          away: { abbrev: "CHI" },
+        },
+        {
+          status: "final",
+          home: { abbrev: "SEA" },
+          away: { abbrev: "LV" },
+        },
+      ],
+      data: { date: "2026-08-11", games: [], fetched_at: "" },
+    });
+    mockUseWnbaProps.mockReturnValue({
+      data: {
+        as_of: "now",
+        app: "prizepicks",
+        format: "power",
+        legs: 4,
+        breakeven_pct: 54.3,
+        props: [howard, loyd],
+        error: null,
+      },
+      isLoading: false,
+      isError: false,
+      isFetched: true,
+      dataUpdatedAt: Date.UTC(2026, 7, 5, 20, 0),
+    });
+
+    renderPage();
+    expect(screen.queryByText("Rhyne Howard")).not.toBeInTheDocument();
+    expect(screen.queryByText("Jewell Loyd")).not.toBeInTheDocument();
+    expect(
+      screen.getByText("No props for today's remaining games."),
+    ).toBeInTheDocument();
+    expect(screen.queryByText("Prop lines unavailable")).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Stat" })).not.toBeInTheDocument();
+  });
+
   it("does not render Tier or Fresh sharp vs stale DFS filter controls", () => {
     mockUseWnbaProps.mockReturnValue({
       data: {

@@ -125,7 +125,7 @@ main.tsx
 - Most WNBA handlers use short in-process caches; responses that must stay fresh often send `Cache-Control: no-store`.
 - MLB scoreboard today always returns `Cache-Control: no-store`; upstream failures surface as HTTP 502 (also no-store).
 - OpenAPI is the contract. Backend export → `frontend/openapi.json` → regenerate `api.schema.d.ts`. Verify with `npm run check:api`.
-- Prop picks: server builds DFS-anchored rows (`parlay_props` + `dfs_attach` + `odds_snapshots`); the UI filters by book / stat / team / side client-side (`filterPropLines`).
+- Prop picks: server builds DFS-anchored +EV rows (`wnba.props` / `mlb.props` + `prop_fair` / `prop_formats` + odds snapshots); the UI filters by Stat / Team / Side client-side (`filterWnbaPropPicks` / `filterMlbPropPicks`). Game-detail Props still reuse `get_today_props()` / DFS attach for the category grid.
 
 ### Prop picks data flow (detail)
 
