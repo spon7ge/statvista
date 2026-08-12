@@ -41,6 +41,24 @@ _PARLAY_ALIASES: dict[str, str] = {
     "player_points_rebounds_assists": "pts_rebs_asts",
 }
 
+_EXCHANGE_ALIASES: dict[str, str] = {
+    "points": "points",
+    "rebounds": "rebounds",
+    "assists": "assists",
+    "threes": "threes",
+    "player_total_points": "points",
+    "player_total_rebounds": "rebounds",
+    "player_total_assists": "assists",
+    "player_total_points_rebounds_assists": "pts_rebs_asts",
+    "player_total_points_rebounds": "pts_rebs",
+    "player_total_points_assists": "pts_asts",
+    "player_total_rebounds_assists": "rebs_asts",
+    "points_rebounds_assists": "pts_rebs_asts",
+    "points_rebounds": "pts_rebs",
+    "points_assists": "pts_asts",
+    "rebounds_assists": "rebs_asts",
+}
+
 _LABELS: dict[str, str] = {
     "points": "Points",
     "rebounds": "Rebounds",
@@ -78,6 +96,17 @@ def canonical_stat_key_from_ud(stat_name: str) -> str | None:
 
 def canonical_stat_key_from_parlay_market(market_key: str) -> str | None:
     return _PARLAY_ALIASES.get(market_key.strip().lower())
+
+
+def canonical_stat_key_from_exchange(stat_name: str) -> str | None:
+    raw = stat_name.strip().lower().replace(" ", "_").replace("+", "_")
+    if raw in _EXCHANGE_ALIASES:
+        return _EXCHANGE_ALIASES[raw]
+    return (
+        canonical_stat_key_from_pp(stat_name)
+        or canonical_stat_key_from_ud(stat_name)
+        or canonical_stat_key_from_parlay_market(stat_name)
+    )
 
 
 def display_stat_label(stat_key: str, fallback: str | None = None) -> str:

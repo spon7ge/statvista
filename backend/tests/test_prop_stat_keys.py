@@ -2,6 +2,7 @@ from app.domains.betting.prop_stat_keys import (
     canonical_stat_key_from_pp,
     canonical_stat_key_from_ud,
     canonical_stat_key_from_parlay_market,
+    canonical_stat_key_from_exchange,
 )
 
 
@@ -30,3 +31,11 @@ def test_parlay_markets():
     assert canonical_stat_key_from_parlay_market("player_three_pointers_made") == "threes"
     assert canonical_stat_key_from_parlay_market("player_pra") == "pts_rebs_asts"
     assert canonical_stat_key_from_parlay_market("player_points_rebounds_assists") == "pts_rebs_asts"
+
+
+def test_exchange_aliases_prophetx_combos():
+    assert canonical_stat_key_from_exchange("points") == "points"
+    assert canonical_stat_key_from_exchange("points_rebounds_assists") == "pts_rebs_asts"
+    assert canonical_stat_key_from_exchange("player_total_points") == "points"
+    assert canonical_stat_key_from_exchange("player_points") == "points"
+    assert canonical_stat_key_from_exchange("nope") is None
