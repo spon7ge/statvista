@@ -1,0 +1,274 @@
+from __future__ import annotations
+
+from datetime import datetime, timezone
+
+import pytest
+
+from app.domains.wnba import props as svc
+from app.providers.parlay.wnba_board import ParlayWnbaNormalized
+
+
+@pytest.fixture(autouse=True)
+def clear_cache():
+    svc._cache.clear()
+    yield
+    svc._cache.clear()
+
+
+def test_validate_query_rejects_wrong_format():
+    with pytest.raises(ValueError):
+        svc.validate_query("prizepicks", "standard", 4)
+
+
+@pytest.mark.asyncio
+async def test_prizepicks_falls_back_to_snapshot_when_parlay_pp_empty(monkeypatch):
+    now = datetime(2026, 8, 11, 20, 0, tzinfo=timezone.utc)
+
+    async def fake_parlay(**kwargs):
+        return ParlayWnbaNormalized(
+            prizepicks_board=[],
+            book_indexes={},
+            as_of=None,
+            unavailable=False,
+        )
+
+    monkeypatch.setattr(svc, "fetch_wnba_parlay_board_normalized", fake_parlay)
+    monkeypatch.setattr(
+        svc,
+        "fetch_latest_prizepicks",
+        lambda league="wnba": [
+            {
+                "player_name": "Caitlin Clark",
+                "stat_type": "points",
+                "line_score": 19.5,
+                "odds_type": "standard",
+                "scraped_at": now,
+            }
+        ],
+    )
+    monkeypatch.setattr(svc, "fetch_latest_underdog", lambda league="wnba": [])
+    monkeypatch.setattr(svc, "fetch_latest_prophetx", lambda league="wnba": [])
+    monkeypatch.setattr(svc, "fetch_latest_novig", lambda league="wnba": [])
+    monkeypatch.setattr(svc, "fetch_latest_pinnacle", lambda league="wnba": [])
+    monkeypatch.setattr(svc, "get_roster_index", lambda: {})
+
+    out = await svc.get_wnba_props_today(app="prizepicks", format="power", legs=4)
+    assert len(out.props) == 1
+    assert out.props[0].player_name == "Caitlin Clark"
+    assert out.props[0].line == 19.5
+    assert out.props[0].source_tier == "no_sharp_read"
+
+
+@pytest.mark.asyncio
+async def test_exact_line_only_and_px_novig_set_fair(monkeypatch):
+    now = datetime(2026, 8, 11, 20, 0, tzinfo=timezone.utc)
+    board = [{
+        "player_name": "Caitlin Clark",
+        "stat_type": "points",
+        "line_score": 19.5,
+        "odds_type": "standard",
+        "scraped_at": now,
+        "commence_time": "2026-08-11T23:00:00Z",
+    }]
+
+    async def fake_parlay(**kwargs):
+        return ParlayWnbaNormalized(
+            prizepicks_board=board,
+            book_indexes={},
+            as_of=now.isoformat(),
+            unavailable=False,
+        )
+
+    monkeypatch.setattr(svc, "fetch_wnba_parlay_board_normalized", fake_parlay)
+    monkeypatch.setattr(svc, "fetch_latest_prizepicks", lambda league="wnba": [])
+    monkeypatch.setattr(svc, "fetch_latest_underdog", lambda league="wnba": [])
+    monkeypatch.setattr(
+        svc,
+        "fetch_latest_prophetx",
+        lambda league="wnba": [
+            {
+                "player_name": "Caitlin Clark",
+                "stat_name": "points",
+                "line_score": 19.5,
+                "side": "over",
+                "american_price": -140,
+                "scraped_at": now,
+            },
+            {
+                "player_name": "Caitlin Clark",
+                "stat_name": "points",
+                "line_score": 22.5,
+                "side": "over",
+                "american_price": -110,
+                "scraped_at": now,
+            },
+        ],
+    )
+    monkeypatch.setattr(
+        svc,
+        "fetch_latest_novig",
+        lambda league="wnba": [
+            {
+                "player_name": "Caitlin Clark",
+                "stat_name": "points",
+                "line_score": 19.5,
+                "side": "over",
+                "american_price": -130,
+                "scraped_at": now,
+            }
+        ],
+    )
+    monkeypatch.setattr(svc, "fetch_latest_pinnacle", lambda league="wnba": [])
+    monkeypatch.setattr(svc, "get_roster_index", lambda: {})
+
+    out = await svc.get_wnba_props_today(app="prizepicks", format="power", legs=4)
+    row = out.props[0]
+    assert row.source_tier == "sharp_consensus"
+    assert row.fair_pct is not None
+    assert row.books.prophetx is not None
+    assert row.commence_time == "2026-08-11T23:00:00Z"
+    # 22.5 is not the DFS line — must not attach
+    assert row.line == 19.5
+
+
+@pytest.mark.asyncio
+async def test_empty_seed_sets_error(monkeypatch):
+    async def fake_parlay(**kwargs):
+        return ParlayWnbaNormalized(
+            prizepicks_board=[],
+            book_indexes={},
+            as_of=None,
+            unavailable=False,
+        )
+
+    monkeypatch.setattr(svc, "fetch_wnba_parlay_board_normalized", fake_parlay)
+    monkeypatch.setattr(svc, "fetch_latest_prizepicks", lambda league="wnba": [])
+    monkeypatch.setattr(svc, "fetch_latest_underdog", lambda league="wnba": [])
+    monkeypatch.setattr(svc, "fetch_latest_prophetx", lambda league="wnba": [])
+    monkeypatch.setattr(svc, "fetch_latest_novig", lambda league="wnba": [])
+    monkeypatch.setattr(svc, "fetch_latest_pinnacle", lambda league="wnba": [])
+    monkeypatch.setattr(svc, "get_roster_index", lambda: {})
+
+    out = await svc.get_wnba_props_today(app="prizepicks", format="power", legs=4)
+    assert out.props == []
+    assert out.error == "prizepicks_unavailable"
+
+
+@pytest.mark.asyncio
+async def test_no_sharp_read_sorts_last(monkeypatch):
+    now = datetime(2026, 8, 11, 20, 0, tzinfo=timezone.utc)
+    board = [
+        {
+            "player_name": "Caitlin Clark",
+            "stat_type": "points",
+            "line_score": 19.5,
+            "odds_type": "standard",
+            "scraped_at": now,
+        },
+        {
+            "player_name": "A'ja Wilson",
+            "stat_type": "points",
+            "line_score": 22.5,
+            "odds_type": "standard",
+            "scraped_at": now,
+        },
+    ]
+
+    async def fake_parlay(**kwargs):
+        return ParlayWnbaNormalized(
+            prizepicks_board=board,
+            book_indexes={},
+            as_of=now.isoformat(),
+            unavailable=False,
+        )
+
+    monkeypatch.setattr(svc, "fetch_wnba_parlay_board_normalized", fake_parlay)
+    monkeypatch.setattr(svc, "fetch_latest_prizepicks", lambda league="wnba": [])
+    monkeypatch.setattr(svc, "fetch_latest_underdog", lambda league="wnba": [])
+    monkeypatch.setattr(
+        svc,
+        "fetch_latest_prophetx",
+        lambda league="wnba": [
+            {
+                "player_name": "Caitlin Clark",
+                "stat_name": "points",
+                "line_score": 19.5,
+                "side": "over",
+                "american_price": -140,
+                "scraped_at": now,
+            },
+        ],
+    )
+    monkeypatch.setattr(
+        svc,
+        "fetch_latest_novig",
+        lambda league="wnba": [
+            {
+                "player_name": "Caitlin Clark",
+                "stat_name": "points",
+                "line_score": 19.5,
+                "side": "over",
+                "american_price": -130,
+                "scraped_at": now,
+            }
+        ],
+    )
+    monkeypatch.setattr(svc, "fetch_latest_pinnacle", lambda league="wnba": [])
+    monkeypatch.setattr(svc, "get_roster_index", lambda: {})
+
+    out = await svc.get_wnba_props_today(app="prizepicks", format="power", legs=4)
+    assert len(out.props) == 2
+    assert out.props[0].player_name == "Caitlin Clark"
+    assert out.props[0].source_tier == "sharp_consensus"
+    assert out.props[-1].player_name == "A'ja Wilson"
+    assert out.props[-1].source_tier == "no_sharp_read"
+
+
+@pytest.mark.asyncio
+async def test_mismatched_pinnacle_line_omitted(monkeypatch):
+    now = datetime(2026, 8, 11, 20, 0, tzinfo=timezone.utc)
+    board = [
+        {
+            "player_name": "Caitlin Clark",
+            "stat_type": "points",
+            "line_score": 19.5,
+            "odds_type": "standard",
+            "scraped_at": now,
+        },
+    ]
+
+    async def fake_parlay(**kwargs):
+        return ParlayWnbaNormalized(
+            prizepicks_board=board,
+            book_indexes={},
+            as_of=now.isoformat(),
+            unavailable=False,
+        )
+
+    monkeypatch.setattr(svc, "fetch_wnba_parlay_board_normalized", fake_parlay)
+    monkeypatch.setattr(svc, "fetch_latest_prizepicks", lambda league="wnba": [])
+    monkeypatch.setattr(svc, "fetch_latest_underdog", lambda league="wnba": [])
+    monkeypatch.setattr(svc, "fetch_latest_prophetx", lambda league="wnba": [])
+    monkeypatch.setattr(svc, "fetch_latest_novig", lambda league="wnba": [])
+    monkeypatch.setattr(
+        svc,
+        "fetch_latest_pinnacle",
+        lambda league="wnba": [
+            {
+                "player_name": "Caitlin Clark",
+                "market_type": "player_total_points",
+                "line_score": 22.5,
+                "side": "over",
+                "american_price": -110,
+                "scraped_at": now,
+            },
+        ],
+    )
+    monkeypatch.setattr(svc, "get_roster_index", lambda: {})
+
+    out = await svc.get_wnba_props_today(app="prizepicks", format="power", legs=4)
+    assert len(out.props) == 1
+    row = out.props[0]
+    assert row.line == 19.5
+    assert row.books.pinnacle is None
+    assert row.source_tier == "no_sharp_read"
