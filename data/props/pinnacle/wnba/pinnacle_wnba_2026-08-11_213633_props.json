@@ -1,0 +1,54 @@
+{
+  "fetched_at": "2026-08-11T21:36:47-07:00",
+  "source": "pinnacle_selenium",
+  "sport": "basketball",
+  "league": "wnba",
+  "list_page": "https://www.pinnacle.com/en/basketball/wnba/matchups/#all",
+  "parallel_workers_configured": 6,
+  "parallel_workers_effective": 2,
+  "games_per_worker_target": 2,
+  "arcadia_timeout_s": 90.0,
+  "arcadia_poll_s": 0.22,
+  "snapshot_kind": "props",
+  "games": [
+    {
+      "matchup_id": 1633450371,
+      "source_url": "https://www.pinnacle.com/en/basketball/wnba/chicago-sky-vs-golden-state-valkyries/1633450371/#period:0",
+      "path": "/en/basketball/wnba/chicago-sky-vs-golden-state-valkyries/1633450371/",
+      "league": "WNBA",
+      "start_time": "2026-08-13T02:00:00Z",
+      "label": "Chicago Sky vs Golden State Valkyries",
+      "participants": [
+        "Chicago Sky",
+        "Golden State Valkyries"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1633450370,
+      "source_url": "https://www.pinnacle.com/en/basketball/wnba/minnesota-lynx-vs-portland-fire/1633450370/#period:0",
+      "path": "/en/basketball/wnba/minnesota-lynx-vs-portland-fire/1633450370/",
+      "league": "WNBA",
+      "start_time": "2026-08-13T02:00:00Z",
+      "label": "Minnesota Lynx vs Portland Fire",
+      "participants": [
+        "Minnesota Lynx",
+        "Portland Fire"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1633447586,
+      "source_url": "https://www.pinnacle.com/en/basketball/wnba/toronto-tempo-vs-dallas-wings/1633447586/#period:0",
+      "path": "/en/basketball/wnba/toronto-tempo-vs-dallas-wings/1633447586/",
+      "league": "WNBA",
+      "start_time": "2026-08-13T00:00:00Z",
+      "label": "Toronto Tempo vs Dallas Wings",
+      "participants": [
+        "Toronto Tempo",
+        "Dallas Wings"
+      ],
+      "props": []
+    }
+  ]
+}

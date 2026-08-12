@@ -1,0 +1,212 @@
+{
+  "source": "novig",
+  "fetched_at": "2026-08-11T21:36:19-07:00",
+  "league": "wnba",
+  "snapshot_kind": "team",
+  "games": [
+    {
+      "event_id": "019ff0a9-b2ec-7293-a87e-4e4b07174e62",
+      "name": "Minnesota Lynx @ Portland Fire",
+      "scheduled": "2026-08-13T02:00:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "27a62a94-2811-4465-b075-e27cc66071ab",
+          "name": "Portland Fire",
+          "seq": 0
+        },
+        {
+          "id": "2b4ff049-679a-484f-8703-41894af4953d",
+          "name": "Minnesota Lynx",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "MIN",
+            "competitor_id": null,
+            "american": -700,
+            "line": null,
+            "stake": 6796.11
+          },
+          {
+            "name": "POR",
+            "competitor_id": null,
+            "american": 590,
+            "line": null,
+            "stake": 3999.87
+          }
+        ],
+        "spread": [
+          {
+            "name": "POR +12.5",
+            "competitor_id": null,
+            "american": 102,
+            "line": 12.5,
+            "stake": 10756.889999999998
+          },
+          {
+            "name": "MIN -12.5",
+            "competitor_id": null,
+            "american": -111,
+            "line": -12.5,
+            "stake": 1520.45
+          }
+        ],
+        "total": [
+          {
+            "name": "Over 184.5",
+            "competitor_id": null,
+            "american": -111,
+            "line": 184.5,
+            "stake": 575.86
+          },
+          {
+            "name": "Under 184.5",
+            "competitor_id": null,
+            "american": -108,
+            "line": 184.5,
+            "stake": 1415.13
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "019ff0a9-b125-7bd1-9e7d-291b35fdcdc3",
+      "name": "Chicago Sky @ Golden State Valkyries",
+      "scheduled": "2026-08-13T02:00:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "66c8262d-7593-486d-a3ec-eb152fb4303f",
+          "name": "Golden State Valkyries",
+          "seq": 0
+        },
+        {
+          "id": "d62d8226-1f08-4b08-9738-8945acbc8238",
+          "name": "Chicago Sky",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "GSV",
+            "competitor_id": null,
+            "american": -456,
+            "line": null,
+            "stake": 3640.2599999999998
+          },
+          {
+            "name": "CHI",
+            "competitor_id": null,
+            "american": 376,
+            "line": null,
+            "stake": 3547.0899999999997
+          }
+        ],
+        "spread": [
+          {
+            "name": "GSV -9.5",
+            "competitor_id": null,
+            "american": -104,
+            "line": -9.5,
+            "stake": 2400.05
+          },
+          {
+            "name": "CHI +9.5",
+            "competitor_id": null,
+            "american": -100,
+            "line": 9.5,
+            "stake": 2190.71
+          }
+        ],
+        "total": [
+          {
+            "name": "Over 166.5",
+            "competitor_id": null,
+            "american": -100,
+            "line": 166.5,
+            "stake": 1589.49
+          },
+          {
+            "name": "Under 166.5",
+            "competitor_id": null,
+            "american": -106,
+            "line": 166.5,
+            "stake": 2621.1299999999997
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "019ff08e-6892-7201-ad15-f997d11189fd",
+      "name": "Toronto Tempo @ Dallas Wings",
+      "scheduled": "2026-08-13T00:00:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "292f0b3e-7328-4d65-a4a3-b196e49f51f7",
+          "name": "Dallas Wings",
+          "seq": 0
+        },
+        {
+          "id": "c4d8e78a-6b00-4cd8-94f0-3635c40fa3ab",
+          "name": "Toronto Tempo",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "DAL",
+            "competitor_id": null,
+            "american": -400,
+            "line": null,
+            "stake": 4340.28
+          },
+          {
+            "name": "TOR",
+            "competitor_id": null,
+            "american": 355,
+            "line": null,
+            "stake": 3899.38
+          }
+        ],
+        "spread": [
+          {
+            "name": "DAL -8.5",
+            "competitor_id": null,
+            "american": -108,
+            "line": -8.5,
+            "stake": 1580.91
+          },
+          {
+            "name": "TOR +8.5",
+            "competitor_id": null,
+            "american": -104,
+            "line": 8.5,
+            "stake": 1356.12
+          }
+        ],
+        "total": [
+          {
+            "name": "Over 184.5",
+            "competitor_id": null,
+            "american": -104,
+            "line": 184.5,
+            "stake": 2661.7499999999995
+          },
+          {
+            "name": "Under 184.5",
+            "competitor_id": null,
+            "american": -108,
+            "line": 184.5,
+            "stake": 2343.87
+          }
+        ]
+      }
+    }
+  ]
+}

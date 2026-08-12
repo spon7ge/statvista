@@ -1,0 +1,348 @@
+{
+  "source": "novig",
+  "fetched_at": "2026-08-11T19:12:02-07:00",
+  "league": "wnba",
+  "snapshot_kind": "team",
+  "games": [
+    {
+      "event_id": "019ff0a9-b2ec-7293-a87e-4e4b07174e62",
+      "name": "Minnesota Lynx @ Portland Fire",
+      "scheduled": "2026-08-13T02:00:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "27a62a94-2811-4465-b075-e27cc66071ab",
+          "name": "Portland Fire",
+          "seq": 0
+        },
+        {
+          "id": "2b4ff049-679a-484f-8703-41894af4953d",
+          "name": "Minnesota Lynx",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "POR",
+            "competitor_id": null,
+            "american": 590,
+            "line": null,
+            "stake": 3182.6000000000004
+          },
+          {
+            "name": "MIN",
+            "competitor_id": null,
+            "american": -641,
+            "line": null,
+            "stake": 6338.26
+          }
+        ],
+        "spread": [
+          {
+            "name": "POR +12.5",
+            "competitor_id": null,
+            "american": -111,
+            "line": 12.5,
+            "stake": 1081.05
+          },
+          {
+            "name": "MIN -12.5",
+            "competitor_id": null,
+            "american": -100,
+            "line": -12.5,
+            "stake": 1309.44
+          }
+        ],
+        "total": [
+          {
+            "name": "Over 184.5",
+            "competitor_id": null,
+            "american": -111,
+            "line": 184.5,
+            "stake": 369.97
+          },
+          {
+            "name": "Under 184.5",
+            "competitor_id": null,
+            "american": -106,
+            "line": 184.5,
+            "stake": 1102.64
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "019ff0a9-b125-7bd1-9e7d-291b35fdcdc3",
+      "name": "Chicago Sky @ Golden State Valkyries",
+      "scheduled": "2026-08-13T02:00:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "66c8262d-7593-486d-a3ec-eb152fb4303f",
+          "name": "Golden State Valkyries",
+          "seq": 0
+        },
+        {
+          "id": "d62d8226-1f08-4b08-9738-8945acbc8238",
+          "name": "Chicago Sky",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "GSV",
+            "competitor_id": null,
+            "american": -456,
+            "line": null,
+            "stake": 3205.95
+          },
+          {
+            "name": "CHI",
+            "competitor_id": null,
+            "american": 365,
+            "line": null,
+            "stake": 1641.3
+          }
+        ],
+        "spread": [
+          {
+            "name": "GSV -9.5",
+            "competitor_id": null,
+            "american": -115,
+            "line": -9.5,
+            "stake": 2216.03
+          },
+          {
+            "name": "CHI +9.5",
+            "competitor_id": null,
+            "american": -104,
+            "line": 9.5,
+            "stake": 1684.72
+          }
+        ],
+        "total": [
+          {
+            "name": "Over 165.5",
+            "competitor_id": null,
+            "american": -108,
+            "line": 165.5,
+            "stake": 468.86
+          },
+          {
+            "name": "Under 165.5",
+            "competitor_id": null,
+            "american": -115,
+            "line": 165.5,
+            "stake": 588.54
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "019feb9e-ca78-7482-ab7d-e51a6dd96ff9",
+      "name": "Phoenix Mercury @ Los Angeles Sparks",
+      "scheduled": "2026-08-12T02:00:00+00:00",
+      "status": "live",
+      "competitors": [
+        {
+          "id": "af3c1846-b7cd-4236-9396-a4c8d936cf89",
+          "name": "Los Angeles Sparks",
+          "seq": 0
+        },
+        {
+          "id": "73088c48-54ca-47a7-915a-f164506e261d",
+          "name": "Phoenix Mercury",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "LA",
+            "competitor_id": null,
+            "american": 108,
+            "line": null,
+            "stake": 4884.55
+          },
+          {
+            "name": "PHX",
+            "competitor_id": null,
+            "american": -115,
+            "line": null,
+            "stake": 1521.46
+          }
+        ],
+        "spread": [
+          {
+            "name": "PHX +1.5",
+            "competitor_id": null,
+            "american": -141,
+            "line": 1.5,
+            "stake": 602.4
+          },
+          {
+            "name": "LA -1.5",
+            "competitor_id": null,
+            "american": 122,
+            "line": -1.5,
+            "stake": 454.54
+          }
+        ],
+        "total": [
+          {
+            "name": "Over 184.5",
+            "competitor_id": null,
+            "american": -117,
+            "line": 184.5,
+            "stake": 543.47
+          },
+          {
+            "name": "Under 184.5",
+            "competitor_id": null,
+            "american": 102,
+            "line": 184.5,
+            "stake": 495.04
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "019feb9e-cbbd-7b50-9ad1-bd2700e8b5fd",
+      "name": "Washington Mystics @ Las Vegas Aces",
+      "scheduled": "2026-08-12T02:00:00+00:00",
+      "status": "live",
+      "competitors": [
+        {
+          "id": "1531587c-e678-4ea7-a098-3540bf186b96",
+          "name": "Las Vegas Aces",
+          "seq": 0
+        },
+        {
+          "id": "088d1ab8-11dc-455b-80e1-b6bb9abf5bd3",
+          "name": "Washington Mystics",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "LV",
+            "competitor_id": null,
+            "american": -170,
+            "line": null,
+            "stake": 4592.44
+          },
+          {
+            "name": "WSH",
+            "competitor_id": null,
+            "american": 156,
+            "line": null,
+            "stake": 8506.72
+          }
+        ],
+        "spread": [
+          {
+            "name": "LV -3.5",
+            "competitor_id": null,
+            "american": -108,
+            "line": -3.5,
+            "stake": 3462.7
+          },
+          {
+            "name": "WSH +3.5",
+            "competitor_id": null,
+            "american": 104,
+            "line": 3.5,
+            "stake": 3582.6
+          }
+        ],
+        "total": [
+          {
+            "name": "Over 169.5",
+            "competitor_id": null,
+            "american": -104,
+            "line": 169.5,
+            "stake": 516.2
+          },
+          {
+            "name": "Under 169.5",
+            "competitor_id": null,
+            "american": -111,
+            "line": 169.5,
+            "stake": 576.31
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "019ff08e-6892-7201-ad15-f997d11189fd",
+      "name": "Toronto Tempo @ Dallas Wings",
+      "scheduled": "2026-08-13T00:00:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "292f0b3e-7328-4d65-a4a3-b196e49f51f7",
+          "name": "Dallas Wings",
+          "seq": 0
+        },
+        {
+          "id": "c4d8e78a-6b00-4cd8-94f0-3635c40fa3ab",
+          "name": "Toronto Tempo",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "DAL",
+            "competitor_id": null,
+            "american": -388,
+            "line": null,
+            "stake": 3952.97
+          },
+          {
+            "name": "TOR",
+            "competitor_id": null,
+            "american": 335,
+            "line": null,
+            "stake": 2512.3199999999997
+          }
+        ],
+        "spread": [
+          {
+            "name": "DAL -8.5",
+            "competitor_id": null,
+            "american": -130,
+            "line": -8.5,
+            "stake": 650.0
+          },
+          {
+            "name": "TOR +8.5",
+            "competitor_id": null,
+            "american": -102,
+            "line": 8.5,
+            "stake": 650.0
+          }
+        ],
+        "total": [
+          {
+            "name": "Over 185.5",
+            "competitor_id": null,
+            "american": -113,
+            "line": 185.5,
+            "stake": 65.0
+          },
+          {
+            "name": "Under 185.5",
+            "competitor_id": null,
+            "american": -111,
+            "line": 185.5,
+            "stake": 271.53
+          }
+        ]
+      }
+    }
+  ]
+}

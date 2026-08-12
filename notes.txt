@@ -4,3 +4,5 @@ statvista - todo list
 
 start backend: PYTHONPATH=..:. uvicorn app.main:app --reload --port 8000
 start frontend: npm run dev
+
+venv -> .\statvista\Scripts\Activate.ps1
