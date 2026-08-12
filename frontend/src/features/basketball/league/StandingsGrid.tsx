@@ -33,7 +33,7 @@ export function StandingsGrid({
       {isLoading ? (
         <Skeletons />
       ) : isError ? (
-        <p className="text-sm text-white/40">Standings unavailable</p>
+        <p className="text-[14px] text-white/40">Standings unavailable</p>
       ) : (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {conferences.map((conference) => (
@@ -44,7 +44,7 @@ export function StandingsGrid({
           ))}
         </div>
       )}
-      <p className="text-xs text-white/35">Data: ESPN</p>
+      <p className="text-[14px] text-white/35">Data: ESPN</p>
     </div>
   );
 }

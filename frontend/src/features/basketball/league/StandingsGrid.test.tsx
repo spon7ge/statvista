@@ -57,8 +57,9 @@ describe("StandingsGrid", () => {
     render(<StandingsGrid conferences={sample} />);
     expect(screen.getByText("Eastern Conference")).toBeInTheDocument();
     expect(screen.getByText("Western Conference")).toBeInTheDocument();
-    expect(screen.getByText("Indiana Fever")).toBeInTheDocument();
+    expect(screen.queryByText("Indiana Fever")).not.toBeInTheDocument();
     expect(screen.getByText("IND")).toBeInTheDocument();
+    expect(screen.getByText("MIN")).toBeInTheDocument();
     expect(screen.getByText("18-10")).toBeInTheDocument();
     expect(screen.getByText("7-5")).toBeInTheDocument(); // away
     expect(screen.getAllByText("8-2")).toHaveLength(2); // l10 (appears in both confs)
@@ -73,14 +74,16 @@ describe("StandingsGrid", () => {
     expect(screen.getAllByRole("columnheader", { name: "Strk" }).length).toBe(2);
   });
 
-  it("uses a compact table without a forced min width", () => {
+  it("keeps standings rows on one line with team abbrev only", () => {
     const { container } = render(
       <StandingsGrid conferences={sample} />,
     );
     const table = container.querySelector("table");
     expect(table).not.toBeNull();
-    expect(table?.className).toContain("text-xs");
-    expect(table?.className).not.toContain("min-w-[720px]");
+    expect(table?.className).toContain("text-[18px]");
+    expect(table?.className).toContain("min-w-max");
+    const teamCell = screen.getByText("IND").closest("div");
+    expect(teamCell?.className).toContain("whitespace-nowrap");
   });
 
   it("shows loading skeletons", () => {

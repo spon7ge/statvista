@@ -110,3 +110,33 @@ def test_normalize_empty_result_set():
     assert len(result.categories) == 6
     for cat in result.categories:
         assert cat.leaders == []
+
+
+def test_normalize_accepts_leagueleaders_result_set_shape():
+    from app.domains.wnba.leaders import coerce_stats_leaders_payload
+
+    payload = {
+        "resultSet": {
+            "headers": [
+                "PLAYER_ID",
+                "PLAYER",
+                "TEAM",
+                "GP",
+                "PTS",
+                "REB",
+                "AST",
+                "STL",
+                "BLK",
+                "FG3M",
+            ],
+            "rowSet": [
+                [1001, "A'ja Wilson", "LVA", 25, 26.2, 10.1, 2.5, 1.2, 2.0, 0.8],
+            ],
+        }
+    }
+    coerced = coerce_stats_leaders_payload(payload)
+    assert coerced["resultSets"][0]["headers"][1] == "PLAYER_NAME"
+    assert coerced["resultSets"][0]["headers"][2] == "TEAM_ABBREVIATION"
+    result = normalize_leaguedashplayerstats(payload, season=2026)
+    assert result.categories[0].leaders[0].name == "A'ja Wilson"
+    assert result.categories[0].leaders[0].team_abbrev == "LVA"

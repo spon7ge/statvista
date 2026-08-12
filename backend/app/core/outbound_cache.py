@@ -15,8 +15,13 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_CACHE_DIR = Path("data/cache/outbound")
 DEFAULT_HEADERS: dict[str, str] = {
-    "User-Agent": "Mozilla/5.0",
-    "Accept": "application/json",
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/128.0.0.0 Safari/537.36"
+    ),
+    "Accept": "application/json, text/plain, */*",
+    "Accept-Language": "en-US,en;q=0.9",
 }
 MIN_INTERVAL_SECONDS = 1.0
 BACKOFF_INITIAL_SECONDS = 30.0

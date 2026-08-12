@@ -5,10 +5,10 @@ import logging
 import time
 from datetime import datetime
 from typing import Any
+from urllib.parse import urlencode
 from zoneinfo import ZoneInfo
 
-import httpx
-
+from app.core.outbound_cache import get_json
 from app.domains.wnba.schemas_leaders import (
     LeaderCategoryKey,
     WnbaLeaderCategory,
@@ -19,9 +19,17 @@ from app.domains.wnba.schemas_leaders import (
 logger = logging.getLogger(__name__)
 
 ET = ZoneInfo("America/New_York")
-STATS_URL = "https://stats.wnba.com/stats/leaguedashplayerstats"
-STATS_TIMEOUT_SECONDS = 10.0
+# leaguedashplayerstats often hangs/403s; leagueleaders returns the same
+# per-game columns quickly and is stable from home networks.
+STATS_URL = "https://stats.wnba.com/stats/leagueleaders"
+STATS_TIMEOUT_SECONDS = 15.0
 CACHE_TTL_SECONDS = 10 * 60
+LEADERS_OUTBOUND_TTL_SECONDS = 600.0
+
+_HEADER_ALIASES = {
+    "PLAYER": "PLAYER_NAME",
+    "TEAM": "TEAM_ABBREVIATION",
+}
 
 _cache: dict = {}  # response, expires_at, season
 _refresh_lock: asyncio.Lock | None = None
@@ -40,8 +48,29 @@ _CATEGORY_SPECS: list[tuple[LeaderCategoryKey, str, str, str]] = [
 TOP_N = 10
 
 
+def coerce_stats_leaders_payload(payload: dict[str, Any]) -> dict[str, Any]:
+    """Normalize leagueleaders (resultSet) into leaguedash-shaped resultSets."""
+    if payload.get("resultSets"):
+        return payload
+    block = payload.get("resultSet")
+    if not isinstance(block, dict):
+        return payload
+    headers = [
+        _HEADER_ALIASES.get(str(h), str(h)) for h in (block.get("headers") or [])
+    ]
+    return {
+        "resultSets": [
+            {
+                "headers": headers,
+                "rowSet": block.get("rowSet") or [],
+            }
+        ]
+    }
+
+
 def _rows_as_dicts(payload: dict[str, Any]) -> list[dict[str, Any]]:
-    sets = payload.get("resultSets") or []
+    coerced = coerce_stats_leaders_payload(payload)
+    sets = coerced.get("resultSets") or []
     if not sets:
         return []
     block = sets[0] or {}
@@ -131,32 +160,28 @@ def _get_refresh_lock() -> asyncio.Lock:
 
 
 async def fetch_leaguedashplayerstats(season: int) -> dict:
-    headers = {
-        "User-Agent": "Mozilla/5.0",
-        "Referer": "https://www.wnba.com/",
-        "Accept": "application/json",
-    }
     params = {
-        "LastNGames": "0",
         "LeagueID": "10",
-        "MeasureType": "Base",
-        "Month": "0",
-        "OpponentTeamID": "0",
-        "PaceAdjust": "N",
         "PerMode": "PerGame",
-        "Period": "0",
-        "PlusMinus": "N",
-        "Rank": "N",
+        "Scope": "S",
         "Season": str(season),
         "SeasonType": "Regular Season",
-        "TeamID": "0",
+        "StatCategory": "PTS",
     }
-    async with httpx.AsyncClient(
-        timeout=STATS_TIMEOUT_SECONDS, headers=headers
-    ) as client:
-        res = await client.get(STATS_URL, params=params)
-        res.raise_for_status()
-        return res.json()
+    url = f"{STATS_URL}?{urlencode(params)}"
+    payload = await get_json(
+        f"stats:wnba:leagueleaders:{season}",
+        url,
+        ttl_seconds=LEADERS_OUTBOUND_TTL_SECONDS,
+        timeout_seconds=STATS_TIMEOUT_SECONDS,
+        headers={
+            "Referer": "https://www.wnba.com/stats/players/",
+            "Origin": "https://www.wnba.com",
+            "x-nba-stats-origin": "stats",
+            "x-nba-stats-token": "true",
+        },
+    )
+    return payload if isinstance(payload, dict) else {}
 
 
 def _fresh_cached() -> WnbaLeadersResponse | None:

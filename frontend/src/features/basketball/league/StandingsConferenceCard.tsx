@@ -1,6 +1,5 @@
 import type { ApiWnbaStandingsConference } from "@/shared/lib/api";
 import { TeamAbbrevAvatar } from "@/shared/ui/TeamAbbrevAvatar";
-import { teamColor } from "./wnbaTeamColors";
 
 type StandingsConferenceCardProps = {
   conference: ApiWnbaStandingsConference;
@@ -23,13 +22,13 @@ export function StandingsConferenceCard({
 }: StandingsConferenceCardProps) {
   return (
     <section className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
-      <h3 className="mb-3 text-base font-semibold tracking-tight text-white">
+      <h3 className="mb-3 text-[18px] font-semibold tracking-tight text-white">
         {conference.label}
       </h3>
       <div className="overflow-x-auto">
-        <table className="w-full text-left text-xs">
+        <table className="w-full min-w-max text-left text-[18px]">
           <thead>
-            <tr className="text-[10px] tracking-wide text-white/40 uppercase">
+            <tr className="whitespace-nowrap text-[14px] tracking-wide text-white/40 uppercase">
               <th className="pb-2 pr-1.5 font-medium">#</th>
               <th className="pb-2 pr-1 font-medium">Team</th>
               <th className="pb-2 pr-1.5 font-medium">W-L</th>
@@ -51,22 +50,21 @@ export function StandingsConferenceCard({
               </tr>
             ) : (
               conference.teams.map((row) => (
-                <tr key={`${conference.key}-${row.team_id}`}>
+                <tr
+                  key={`${conference.key}-${row.team_id}`}
+                  className="whitespace-nowrap"
+                >
                   <td className="py-1 pr-1.5 text-white/50">{row.rank}</td>
                   <td className="py-1 pr-1">
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1.5 whitespace-nowrap">
                       <TeamAbbrevAvatar
                         abbrev={row.abbrev}
                         logoUrl={row.logo_url}
                         sizeClassName="size-5"
                       />
-                      <span
-                        className="font-semibold"
-                        style={{ color: teamColor(row.abbrev) }}
-                      >
+                      <span className="shrink-0 font-semibold text-white">
                         {row.abbrev}
                       </span>
-                      <span className="text-white/80">{row.name}</span>
                     </div>
                   </td>
                   <td className="py-1 pr-1.5 tabular-nums text-white">{row.wl}</td>

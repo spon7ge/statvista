@@ -18,7 +18,11 @@ from app.domains.wnba.schemas_standings import (
 logger = logging.getLogger(__name__)
 
 ET = ZoneInfo("America/New_York")
-ESPN_URL = "https://site.api.espn.com/apis/v2/sports/basketball/wnba/standings"
+# site.api.espn.com is often Akamai-403 from datacenter/home IPs; site.web.api
+# returns the same standings document shape and is reachable.
+ESPN_URL = (
+    "https://site.web.api.espn.com/apis/v2/sports/basketball/wnba/standings"
+)
 ESPN_TIMEOUT_SECONDS = 10.0
 CACHE_TTL_SECONDS = 10 * 60
 
@@ -94,7 +98,8 @@ def _row_from_entry(entry: dict[str, Any]) -> WnbaStandingsRow | None:
     rank = _int_stat(stats, "playoffSeed")
     wins = _int_stat(stats, "wins")
     losses = _int_stat(stats, "losses")
-    wl = _display(stats, "overall")
+    # site.web.api uses "Total" where older site.api payloads used "overall".
+    wl = _display(stats, "overall", "Total")
     pct = _display(stats, "winPercent")
     gb = _display(stats, "gamesBehind")
     home = _display(stats, "Home")
@@ -206,6 +211,10 @@ async def fetch_espn_standings() -> dict:
         ESPN_URL,
         ttl_seconds=CACHE_TTL_SECONDS,
         timeout_seconds=ESPN_TIMEOUT_SECONDS,
+        headers={
+            "Referer": "https://www.espn.com/wnba/standings",
+            "Accept-Language": "en-US,en;q=0.9",
+        },
     )
     return payload if isinstance(payload, dict) else {}
 

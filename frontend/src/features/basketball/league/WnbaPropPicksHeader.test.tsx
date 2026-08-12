@@ -28,7 +28,7 @@ describe("WnbaPropPicksHeader", () => {
     ).toBeInTheDocument();
   });
 
-  it("keeps emerald banner, basketball mark, and wires app/legs callbacks", async () => {
+  it("keeps emerald banner and wires app/legs callbacks", async () => {
     const user = userEvent.setup();
     const onAppChange = vi.fn();
     const onLegsChange = vi.fn();
@@ -45,9 +45,7 @@ describe("WnbaPropPicksHeader", () => {
     const banner = header.querySelector("div.rounded-3xl");
     expect(banner).toHaveStyle({ backgroundColor: "rgb(5, 150, 105)" });
     expect(WNBA_PROP_PICKS_BANNER_EMERALD).toBe("#059669");
-    const mark = header.querySelector("img");
-    expect(mark).not.toBeNull();
-    expect(mark?.getAttribute("src") ?? "").toMatch(/wnba_basketball/);
+    expect(header.querySelector("img")).toBeNull();
 
     expect(screen.getByRole("tab", { name: "PrizePicks" })).toHaveAttribute(
       "id",

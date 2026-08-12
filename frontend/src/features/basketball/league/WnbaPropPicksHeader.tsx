@@ -1,6 +1,5 @@
 import { type ReactNode } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import basketballMark from "@/assets/wnba_basketball.png";
 
 export const WNBA_PROP_PICKS_BANNER_EMERALD = "#059669";
 
@@ -69,7 +68,7 @@ function LegsPill({
 }
 
 /**
- * Scores-style banner + PrizePicks / Underdog tabs (MLB twin; keeps WNBA mark).
+ * Scores-style banner + PrizePicks / Underdog tabs (MLB twin).
  */
 export function WnbaPropPicksHeader({
   activeApp,
@@ -89,17 +88,9 @@ export function WnbaPropPicksHeader({
           aria-hidden
         />
         <div className="relative z-10 flex min-h-[7.5rem] flex-col justify-between gap-6">
-          <div className="flex min-w-0 items-end gap-4 sm:gap-5">
-            <img
-              src={basketballMark}
-              alt=""
-              role="presentation"
-              className="h-20 w-auto shrink-0 self-center object-contain sm:h-24"
-            />
-            <h1 className="text-left text-[32px] leading-none font-bold tracking-tight text-white sm:text-[36px]">
-              WNBA Props
-            </h1>
-          </div>
+          <h1 className="min-w-0 text-left text-[32px] leading-none font-bold tracking-tight text-white sm:text-[36px]">
+            WNBA Props
+          </h1>
 
           <div className="relative z-30 flex flex-wrap items-center justify-end gap-2">
             {children}

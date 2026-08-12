@@ -57,3 +57,17 @@ def test_normalize_empty_children():
     result = normalize_espn_standings({"season": {"year": 2026}, "children": []})
     assert result.season == 2026
     assert result.conferences == []
+
+
+def test_normalize_accepts_total_as_overall_wl():
+    payload = _payload()
+    entry = payload["children"][0]["standings"]["entries"][0]
+    stats = entry["stats"]
+    for block in stats:
+        if block.get("name") == "overall":
+            block["name"] = "Total"
+            break
+    else:
+        raise AssertionError("fixture missing overall stat")
+    east = normalize_espn_standings(payload).conferences[0]
+    assert east.teams[0].wl == "18-10"
