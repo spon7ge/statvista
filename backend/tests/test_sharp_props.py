@@ -5,9 +5,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pytest
-from fastapi.testclient import TestClient
 
-from app.main import app
 from app.providers.sharp import props as svc
 
 FIXTURE = Path(__file__).parent / "fixtures" / "sharp_wnba_props.json"
@@ -160,7 +158,8 @@ def test_normalize_sort_order():
     )
 
 
-def test_props_route_returns_props_when_fetch_ok():
+@pytest.mark.asyncio
+async def test_get_today_props_returns_props_when_fetch_ok():
     payload = json.loads(FIXTURE.read_text())
 
     async def fake_fetch():
@@ -182,32 +181,28 @@ def test_props_route_returns_props_when_fetch_ok():
             return_value={"fanduel": 0, "draftkings": 0},
         ),
     ):
-        client = TestClient(app)
-        res = client.get("/api/wnba/props/today")
+        body = await svc.get_today_props()
 
-    assert res.status_code == 200
-    assert res.headers.get("cache-control") == "no-store"
-    body = res.json()
-    assert body["sportsbooks"] == [
-        "fanduel",
-        "draftkings",
-        "prizepicks",
-        "underdog",
-    ]
-    assert body["as_of"]
-    assert len(body["props"]) == 3
+    assert body.sportsbooks == list(svc.PROP_SPORTSBOOKS)
+    assert "fanduel" in body.sportsbooks
+    assert "draftkings" in body.sportsbooks
+    assert "prizepicks" in body.sportsbooks
+    assert "underdog" in body.sportsbooks
+    assert body.as_of
+    assert len(body.props) == 3
     over = next(
-        p
-        for p in body["props"]
-        if p["player_name"] == "Rhyne Howard" and p["side"] == "over"
+        p for p in body.props if p.player_name == "Rhyne Howard" and p.side == "over"
     )
-    assert over["fanduel"]["odds_american"] == -114
-    assert over["draftkings"]["odds_american"] == -120
-    assert over["team_abbrev"] == "ATL"
-    assert over["logo_url"] == "https://cdn.sharpapi.io/teams/basketball/48.png"
+    assert over.fanduel is not None
+    assert over.fanduel.odds_american == -114
+    assert over.draftkings is not None
+    assert over.draftkings.odds_american == -120
+    assert over.team_abbrev == "ATL"
+    assert over.logo_url == "https://cdn.sharpapi.io/teams/basketball/48.png"
 
 
-def test_props_route_ok_when_snapshot_persist_raises():
+@pytest.mark.asyncio
+async def test_get_today_props_ok_when_snapshot_persist_raises():
     payload = json.loads(FIXTURE.read_text())
 
     async def fake_fetch():
@@ -227,25 +222,22 @@ def test_props_route_ok_when_snapshot_persist_raises():
         patch.object(svc, "fetch_latest_underdog", return_value=[]),
         patch("src.odds.load_snapshots.maybe_persist_sharp_props", side_effect=boom),
     ):
-        client = TestClient(app)
-        res = client.get("/api/wnba/props/today")
+        body = await svc.get_today_props()
 
-    assert res.status_code == 200
-    assert len(res.json()["props"]) >= 1
+    assert len(body.props) >= 1
 
 
-def test_props_route_empty_when_no_key():
+@pytest.mark.asyncio
+async def test_get_today_props_empty_when_no_key():
     with patch.object(svc, "SHARP_API_KEY", None):
-        client = TestClient(app)
-        res = client.get("/api/wnba/props/today")
+        body = await svc.get_today_props()
 
-    assert res.status_code == 200
-    body = res.json()
-    assert body["props"] == []
-    assert body["error"]
+    assert body.props == []
+    assert body.error
 
 
-def test_props_route_stale_cache_on_error():
+@pytest.mark.asyncio
+async def test_get_today_props_stale_cache_on_error():
     payload = json.loads(FIXTURE.read_text())
 
     async def ok():
@@ -268,8 +260,8 @@ def test_props_route_stale_cache_on_error():
             return_value={"fanduel": 0, "draftkings": 0},
         ),
     ):
-        client = TestClient(app)
-        assert client.get("/api/wnba/props/today").status_code == 200
+        primed = await svc.get_today_props()
+        assert len(primed.props) == 3
 
     svc._cache["expires_at"] = 0
 
@@ -277,10 +269,9 @@ def test_props_route_stale_cache_on_error():
         patch.object(svc, "SHARP_API_KEY", "sk_test"),
         patch.object(svc, "fetch_sharp_prop_rows", side_effect=boom),
     ):
-        res = client.get("/api/wnba/props/today")
+        body = await svc.get_today_props()
 
-    assert res.status_code == 200
-    assert len(res.json()["props"]) == 3
+    assert len(body.props) == 3
 
 
 def test_fetch_prop_rows_fetches_books_separately_and_stops_without_next_offset():

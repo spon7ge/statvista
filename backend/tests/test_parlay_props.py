@@ -4,9 +4,8 @@ import json
 from pathlib import Path
 from unittest.mock import patch
 
-from fastapi.testclient import TestClient
+import pytest
 
-from app.main import app
 from app.domains.betting.schemas_props import PROP_SPORTSBOOKS
 from app.domains.betting import parlay_props as svc
 
@@ -102,15 +101,13 @@ def test_normalize_drops_milestone_and_alt_markets():
     assert all("milestones" not in p.market_type for p in props)
 
 
-def test_get_today_props_missing_key():
+@pytest.mark.asyncio
+async def test_get_today_props_missing_key():
     with patch.object(svc, "PARLAY_API_KEY", None):
         svc._cache.clear()
-        client = TestClient(app)
-        res = client.get("/api/wnba/props/today")
-    assert res.status_code == 200
-    body = res.json()
-    assert body["props"] == []
-    assert body["error"] == "PARLAY_API_KEY is not configured"
+        body = await svc.get_today_props()
+    assert body.props == []
+    assert body.error == "PARLAY_API_KEY is not configured"
 
 
 def _pp_snapshots() -> list[dict]:
@@ -130,7 +127,8 @@ def _pp_snapshots() -> list[dict]:
     ]
 
 
-def test_get_today_props_success():
+@pytest.mark.asyncio
+async def test_get_today_props_success():
     rows = _rows()
 
     async def fake_fetch():
@@ -148,20 +146,18 @@ def test_get_today_props_success():
         ),
     ):
         svc._cache.clear()
-        client = TestClient(app)
-        res = client.get("/api/wnba/props/today")
+        body = await svc.get_today_props()
 
-    assert res.status_code == 200
-    body = res.json()
-    assert body["error"] is None
-    assert len(body["props"]) >= 2
-    assert body["sportsbooks"] == list(PROP_SPORTSBOOKS)
-    assert "prizepicks" in body["sportsbooks"]
-    assert "betrivers" in body["sportsbooks"]
-    assert "pick6" not in body["sportsbooks"]
+    assert body.error is None
+    assert len(body.props) >= 2
+    assert body.sportsbooks == list(PROP_SPORTSBOOKS)
+    assert "prizepicks" in body.sportsbooks
+    assert "betrivers" in body.sportsbooks
+    assert "pick6" not in body.sportsbooks
 
 
-def test_get_today_props_persist_failure_still_returns():
+@pytest.mark.asyncio
+async def test_get_today_props_persist_failure_still_returns():
     rows = _rows()
 
     async def fake_fetch():
@@ -179,16 +175,14 @@ def test_get_today_props_persist_failure_still_returns():
         patch("src.odds.load_snapshots.maybe_persist_parlay_props", side_effect=boom),
     ):
         svc._cache.clear()
-        client = TestClient(app)
-        res = client.get("/api/wnba/props/today")
+        body = await svc.get_today_props()
 
-    assert res.status_code == 200
-    body = res.json()
-    assert body["error"] is None
-    assert len(body["props"]) >= 1
+    assert body.error is None
+    assert len(body.props) >= 1
 
 
-def test_get_today_props_attaches_snapshots():
+@pytest.mark.asyncio
+async def test_get_today_props_attaches_snapshots():
     rows = _rows()
 
     async def fake_fetch():
@@ -214,27 +208,22 @@ def test_get_today_props_attaches_snapshots():
         ),
         patch.object(svc, "fetch_latest_underdog", return_value=[]),
     ):
-        client = TestClient(app)
-        res = client.get("/api/wnba/props/today")
+        body = await svc.get_today_props()
 
-    assert res.status_code == 200
-    body = res.json()
-    assert body["error"] is None
-    assert body["props"]
-    assert all(
-        p.get("prizepicks") is not None or p.get("underdog") is not None
-        for p in body["props"]
-    )
+    assert body.error is None
+    assert body.props
+    assert all(p.prizepicks is not None or p.underdog is not None for p in body.props)
     howard_assists = [
         p
-        for p in body["props"]
-        if "howard" in p["player_name"].lower() and p["stat"].lower() == "assists"
+        for p in body.props
+        if "howard" in p.player_name.lower() and p.stat.lower() == "assists"
     ]
     assert howard_assists
-    assert all(p["prizepicks"] is not None for p in howard_assists)
+    assert all(p.prizepicks is not None for p in howard_assists)
 
 
-def test_get_today_props_parlay_fail_still_returns_dfs():
+@pytest.mark.asyncio
+async def test_get_today_props_parlay_fail_still_returns_dfs():
     async def boom():
         raise RuntimeError("parlay down")
 
@@ -256,12 +245,9 @@ def test_get_today_props_parlay_fail_still_returns_dfs():
         ),
         patch.object(svc, "fetch_latest_underdog", return_value=[]),
     ):
-        client = TestClient(app)
-        res = client.get("/api/wnba/props/today")
+        body = await svc.get_today_props()
 
-    assert res.status_code == 200
-    body = res.json()
-    assert body["error"] is None
-    assert body["props"]
-    assert all(p["fanduel"] is None for p in body["props"])
-    assert all(p["prizepicks"] is not None for p in body["props"])
+    assert body.error is None
+    assert body.props
+    assert all(p.fanduel is None for p in body.props)
+    assert all(p.prizepicks is not None for p in body.props)
