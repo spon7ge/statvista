@@ -37,12 +37,12 @@ _PINNACLE_TABLE = {
     "wnba": "wnba_pinnacle",
     "nba": "wnba_pinnacle",
 }
-_PROPHETX_TABLE = {"mlb": "mlb_prophetx"}
+_PROPHETX_TABLE = {"mlb": "mlb_prophetx", "wnba": "wnba_prophetx"}
 _PROPHETX_TEAM_TABLE = {
     "mlb": "mlb_prophetx_team",
     "wnba": "wnba_prophetx_team",
 }
-_NOVIG_TABLE = {"mlb": "mlb_novig"}
+_NOVIG_TABLE = {"mlb": "mlb_novig", "wnba": "wnba_novig"}
 _NOVIG_TEAM_TABLE = {
     "mlb": "mlb_novig_team",
     "wnba": "wnba_novig_team",

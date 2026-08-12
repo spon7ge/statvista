@@ -651,6 +651,37 @@ def test_load_prophetx_team_routes_wnba_table(monkeypatch, mock_upsert):
     assert len(df) >= 1
 
 
+def test_load_prophetx_props_routes_wnba_table(monkeypatch, mock_upsert):
+    monkeypatch.delenv("PROPHETX_SKIP_DB", raising=False)
+    games = [
+        {
+            "event_id": 1,
+            "competitors": [
+                {"name": "Away", "seq": 1},
+                {"name": "Home", "seq": 0},
+            ],
+            "props": [
+                {
+                    "player": "Caitlin Clark",
+                    "stat": "points",
+                    "line": 19.5,
+                    "over": {"american": -115, "stake": 10.0},
+                    "under": {"american": -105, "stake": 8.0},
+                    "market_id": 99,
+                    "sub_type": "player_total_points",
+                    "is_main": True,
+                }
+            ],
+        }
+    ]
+    count = load_snapshots.load_prophetx_props_snapshot(games, league="wnba")
+    assert count >= 1
+    mock_upsert.assert_called_once()
+    table, df = mock_upsert.call_args[0]
+    assert table == "wnba_prophetx"
+    assert mock_upsert.call_args[1]["schema"] == "odds"
+
+
 def test_load_novig_props_skip_db(monkeypatch, mock_upsert):
     monkeypatch.setenv("NOVIG_SKIP_DB", "1")
     count = load_snapshots.load_novig_props_snapshot(

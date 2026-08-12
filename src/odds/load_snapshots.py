@@ -364,6 +364,13 @@ def load_pinnacle_team_json_file(path: str, *, scraped_at: datetime | None = Non
     )
 
 
+def _prophetx_props_table(league: str) -> str:
+    key = (league or "").strip().lower()
+    if key == "wnba":
+        return "wnba_prophetx"
+    return "mlb_prophetx"
+
+
 def load_prophetx_props_snapshot(
     games: list[dict],
     *,
@@ -380,12 +387,13 @@ def load_prophetx_props_snapshot(
     df = _dedupe_conflict_rows(df, _PROPHETX_PROPS_CONFLICT_COLS)
     if df.empty:
         return 0
+    table = _prophetx_props_table(league)
     league_norm = (league or "").strip().lower()
-    df = apply_change_filter("mlb_prophetx", df, league=league_norm)
+    df = apply_change_filter(table, df, league=league_norm)
     if df.empty:
         return 0
     upsert_df(
-        "mlb_prophetx",
+        table,
         df,
         schema="odds",
         conflict_cols=_PROPHETX_PROPS_CONFLICT_COLS,

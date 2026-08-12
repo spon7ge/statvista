@@ -59,6 +59,7 @@ QUOTE_SPECS: dict[str, QuoteSpec] = {
     "wnba_pinnacle_team": _PINNACLE_TEAM,
     "mlb_pinnacle_team": _PINNACLE_TEAM,
     "mlb_prophetx": _EXCHANGE_PROPS,
+    "wnba_prophetx": _EXCHANGE_PROPS,
     "mlb_prophetx_team": _EXCHANGE_TEAM,
     "wnba_prophetx_team": _EXCHANGE_TEAM,
     "mlb_novig": _EXCHANGE_PROPS,

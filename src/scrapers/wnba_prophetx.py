@@ -434,20 +434,27 @@ def load_supabase_snapshots(
     props_path: str | None = None,
     team_path: str | None = None,
 ) -> None:
-    """Upsert team snapshot games to odds.wnba_prophetx_team (props table out of scope)."""
+    """Upsert snapshot games to odds.wnba_prophetx / odds.wnba_prophetx_team."""
     try:
-        from src.odds.load_snapshots import load_prophetx_team_snapshot
+        from src.odds.load_snapshots import (
+            load_prophetx_props_snapshot,
+            load_prophetx_team_snapshot,
+        )
 
         when = scraped_at or datetime.now(timezone.utc)
+        n_props = load_prophetx_props_snapshot(
+            props_games, league="wnba", scraped_at=when
+        )
         n_team = load_prophetx_team_snapshot(
             team_games, league="wnba", scraped_at=when
         )
         logger.info(
-            "Supabase ProphetX WNBA upserted team=%s%s",
+            "Supabase ProphetX WNBA upserted props=%s team=%s%s%s",
+            n_props,
             n_team,
+            f" props_path={props_path}" if props_path else "",
             f" team_path={team_path}" if team_path else "",
         )
-        del props_games, props_path  # props table out of scope this pass
     except Exception as exc:
         logger.error("Supabase ProphetX WNBA load failed (JSON kept): %s", exc)
 
