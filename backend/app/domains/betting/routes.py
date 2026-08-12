@@ -6,9 +6,8 @@ import datetime
 from fastapi import APIRouter, HTTPException, Query, Response
 
 from app.core import db
-from app.domains.betting.schemas import PropLine, WnbaOddsResponse, WnbaPropsResponse
+from app.domains.betting.schemas import PropLine, WnbaOddsResponse
 from app.providers.pinnacle.team_odds import get_today_odds
-from app.domains.betting.parlay_props import get_today_props
 
 router = APIRouter()
 
@@ -122,9 +121,3 @@ def get_slate(
 async def wnba_odds_today(response: Response) -> WnbaOddsResponse:
     response.headers["Cache-Control"] = "no-store"
     return await get_today_odds()
-
-
-@router.get("/wnba/props/today", response_model=WnbaPropsResponse, tags=["wnba"])
-async def wnba_props_today(response: Response) -> WnbaPropsResponse:
-    response.headers["Cache-Control"] = "no-store"
-    return await get_today_props()

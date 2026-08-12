@@ -8130,12 +8130,9 @@
         "type": "object"
       },
       "WnbaPropBookQuote": {
+        "description": "A single book's quote at the row's exact line, for the display side.",
         "properties": {
-          "line": {
-            "title": "Line",
-            "type": "number"
-          },
-          "odds_american": {
+          "american": {
             "anyOf": [
               {
                 "type": "integer"
@@ -8144,19 +8141,64 @@
                 "type": "null"
               }
             ],
-            "title": "Odds American"
+            "title": "American"
+          },
+          "changed_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Changed At"
+          },
+          "fair_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fair Pct"
+          },
+          "role": {
+            "anyOf": [
+              {
+                "const": "comparison",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Role"
+          },
+          "side": {
+            "enum": [
+              "over",
+              "under"
+            ],
+            "title": "Side",
+            "type": "string"
           }
         },
         "required": [
-          "line",
-          "odds_american"
+          "side",
+          "fair_pct",
+          "american",
+          "changed_at",
+          "role"
         ],
         "title": "WnbaPropBookQuote",
         "type": "object"
       },
-      "WnbaPropLine": {
+      "WnbaPropBooks": {
         "properties": {
-          "bet365": {
+          "draftkings": {
             "anyOf": [
               {
                 "$ref": "#/components/schemas/WnbaPropBookQuote"
@@ -8166,7 +8208,7 @@
               }
             ]
           },
-          "betmgm": {
+          "fanduel": {
             "anyOf": [
               {
                 "$ref": "#/components/schemas/WnbaPropBookQuote"
@@ -8176,7 +8218,7 @@
               }
             ]
           },
-          "betr": {
+          "novig": {
             "anyOf": [
               {
                 "$ref": "#/components/schemas/WnbaPropBookQuote"
@@ -8186,7 +8228,7 @@
               }
             ]
           },
-          "betrivers": {
+          "pinnacle": {
             "anyOf": [
               {
                 "$ref": "#/components/schemas/WnbaPropBookQuote"
@@ -8196,7 +8238,7 @@
               }
             ]
           },
-          "caesars": {
+          "prophetx": {
             "anyOf": [
               {
                 "$ref": "#/components/schemas/WnbaPropBookQuote"
@@ -8205,6 +8247,135 @@
                 "type": "null"
               }
             ]
+          }
+        },
+        "required": [
+          "prophetx",
+          "novig",
+          "draftkings",
+          "fanduel",
+          "pinnacle"
+        ],
+        "title": "WnbaPropBooks",
+        "type": "object"
+      },
+      "WnbaPropDfs": {
+        "properties": {
+          "american": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "American"
+          },
+          "changed_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Changed At"
+          },
+          "line": {
+            "title": "Line",
+            "type": "number"
+          },
+          "payout_multiplier": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Payout Multiplier"
+          }
+        },
+        "required": [
+          "line",
+          "changed_at",
+          "american",
+          "payout_multiplier"
+        ],
+        "title": "WnbaPropDfs",
+        "type": "object"
+      },
+      "WnbaPropPicksResponse": {
+        "properties": {
+          "app": {
+            "title": "App",
+            "type": "string"
+          },
+          "as_of": {
+            "title": "As Of",
+            "type": "string"
+          },
+          "breakeven_pct": {
+            "title": "Breakeven Pct",
+            "type": "number"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "format": {
+            "title": "Format",
+            "type": "string"
+          },
+          "legs": {
+            "title": "Legs",
+            "type": "integer"
+          },
+          "props": {
+            "items": {
+              "$ref": "#/components/schemas/WnbaPropRow"
+            },
+            "title": "Props",
+            "type": "array"
+          }
+        },
+        "required": [
+          "as_of",
+          "app",
+          "format",
+          "legs",
+          "breakeven_pct",
+          "props",
+          "error"
+        ],
+        "title": "WnbaPropPicksResponse",
+        "type": "object"
+      },
+      "WnbaPropRow": {
+        "properties": {
+          "alt_edge_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alt Edge Pct"
+          },
+          "books": {
+            "$ref": "#/components/schemas/WnbaPropBooks"
           },
           "commence_time": {
             "anyOf": [
@@ -8217,17 +8388,17 @@
             ],
             "title": "Commence Time"
           },
-          "draftkings": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/WnbaPropBookQuote"
-              },
-              {
-                "type": "null"
-              }
-            ]
+          "confidence_chips": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Confidence Chips",
+            "type": "array"
           },
-          "ev": {
+          "dfs": {
+            "$ref": "#/components/schemas/WnbaPropDfs"
+          },
+          "edge_pct": {
             "anyOf": [
               {
                 "type": "number"
@@ -8236,45 +8407,13 @@
                 "type": "null"
               }
             ],
-            "title": "Ev"
+            "title": "Edge Pct"
           },
-          "fanduel": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/WnbaPropBookQuote"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "game_date": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Game Date"
-          },
-          "logo_url": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Logo Url"
-          },
-          "market_type": {
-            "title": "Market Type",
+          "fair_explain": {
+            "title": "Fair Explain",
             "type": "string"
           },
-          "model_prediction": {
+          "fair_pct": {
             "anyOf": [
               {
                 "type": "number"
@@ -8283,66 +8422,82 @@
                 "type": "null"
               }
             ],
-            "title": "Model Prediction"
+            "title": "Fair Pct"
           },
-          "novig": {
+          "headshot_url": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/WnbaPropBookQuote"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "over_under_pct": {
-            "anyOf": [
-              {
-                "type": "number"
+                "type": "string"
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Over Under Pct"
+            "title": "Headshot Url"
           },
-          "pinnacle": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/WnbaPropBookQuote"
-              },
-              {
-                "type": "null"
-              }
-            ]
+          "line": {
+            "title": "Line",
+            "type": "number"
           },
           "player_name": {
             "title": "Player Name",
             "type": "string"
           },
-          "prizepicks": {
+          "position": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/WnbaPropBookQuote"
+                "type": "string"
               },
               {
                 "type": "null"
               }
-            ]
+            ],
+            "title": "Position"
           },
-          "side": {
-            "title": "Side",
+          "recency_chip": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recency Chip"
+          },
+          "recommended_side": {
+            "anyOf": [
+              {
+                "enum": [
+                  "over",
+                  "under"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recommended Side"
+          },
+          "sample_chips": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Sample Chips",
+            "type": "array"
+          },
+          "source_tier": {
+            "enum": [
+              "sharp_consensus",
+              "sharp_disagreement",
+              "sharp_single_source",
+              "mid_tier_fallback",
+              "soft_consensus",
+              "no_sharp_read"
+            ],
+            "title": "Source Tier",
             "type": "string"
-          },
-          "sleeper": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/WnbaPropBookQuote"
-              },
-              {
-                "type": "null"
-              }
-            ]
           },
           "stat": {
             "title": "Stat",
@@ -8358,85 +8513,29 @@
               }
             ],
             "title": "Team Abbrev"
-          },
-          "underdog": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/WnbaPropBookQuote"
-              },
-              {
-                "type": "null"
-              }
-            ]
           }
         },
         "required": [
           "player_name",
           "team_abbrev",
-          "logo_url",
+          "headshot_url",
+          "position",
           "stat",
-          "market_type",
-          "side",
-          "game_date",
-          "commence_time",
-          "model_prediction",
-          "over_under_pct",
-          "ev",
-          "fanduel",
-          "draftkings",
-          "caesars",
-          "betmgm",
-          "pinnacle",
-          "bet365",
-          "prizepicks",
-          "underdog",
-          "betr",
-          "novig",
-          "sleeper",
-          "betrivers"
+          "line",
+          "recommended_side",
+          "fair_pct",
+          "edge_pct",
+          "alt_edge_pct",
+          "source_tier",
+          "confidence_chips",
+          "sample_chips",
+          "recency_chip",
+          "books",
+          "dfs",
+          "fair_explain",
+          "commence_time"
         ],
-        "title": "WnbaPropLine",
-        "type": "object"
-      },
-      "WnbaPropsResponse": {
-        "properties": {
-          "as_of": {
-            "title": "As Of",
-            "type": "string"
-          },
-          "error": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Error"
-          },
-          "props": {
-            "items": {
-              "$ref": "#/components/schemas/WnbaPropLine"
-            },
-            "title": "Props",
-            "type": "array"
-          },
-          "sportsbooks": {
-            "items": {
-              "type": "string"
-            },
-            "title": "Sportsbooks",
-            "type": "array"
-          }
-        },
-        "required": [
-          "as_of",
-          "sportsbooks",
-          "props",
-          "error"
-        ],
-        "title": "WnbaPropsResponse",
+        "title": "WnbaPropRow",
         "type": "object"
       },
       "WnbaScoreboardResponse": {
@@ -10726,16 +10825,62 @@
     "/api/wnba/props/today": {
       "get": {
         "operationId": "wnba_props_today_api_wnba_props_today_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "app",
+            "required": true,
+            "schema": {
+              "enum": [
+                "prizepicks",
+                "underdog"
+              ],
+              "title": "App",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "format",
+            "required": true,
+            "schema": {
+              "minLength": 1,
+              "title": "Format",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "legs",
+            "required": true,
+            "schema": {
+              "maximum": 6,
+              "minimum": 2,
+              "title": "Legs",
+              "type": "integer"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/WnbaPropsResponse"
+                  "$ref": "#/components/schemas/WnbaPropPicksResponse"
                 }
               }
             },
             "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
           }
         },
         "summary": "Wnba Props Today",

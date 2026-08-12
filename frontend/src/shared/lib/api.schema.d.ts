@@ -2780,60 +2780,100 @@ export interface components {
             /** Team Name */
             team_name: string;
         };
-        /** WnbaPropBookQuote */
+        /**
+         * WnbaPropBookQuote
+         * @description A single book's quote at the row's exact line, for the display side.
+         */
         WnbaPropBookQuote: {
+            /** American */
+            american: number | null;
+            /** Changed At */
+            changed_at: string | null;
+            /** Fair Pct */
+            fair_pct: number | null;
+            /** Role */
+            role: "comparison" | null;
+            /**
+             * Side
+             * @enum {string}
+             */
+            side: "over" | "under";
+        };
+        /** WnbaPropBooks */
+        WnbaPropBooks: {
+            draftkings: components["schemas"]["WnbaPropBookQuote"] | null;
+            fanduel: components["schemas"]["WnbaPropBookQuote"] | null;
+            novig: components["schemas"]["WnbaPropBookQuote"] | null;
+            pinnacle: components["schemas"]["WnbaPropBookQuote"] | null;
+            prophetx: components["schemas"]["WnbaPropBookQuote"] | null;
+        };
+        /** WnbaPropDfs */
+        WnbaPropDfs: {
+            /** American */
+            american: number | null;
+            /** Changed At */
+            changed_at: string | null;
             /** Line */
             line: number;
-            /** Odds American */
-            odds_american: number | null;
+            /** Payout Multiplier */
+            payout_multiplier: number | null;
         };
-        /** WnbaPropLine */
-        WnbaPropLine: {
-            bet365: components["schemas"]["WnbaPropBookQuote"] | null;
-            betmgm: components["schemas"]["WnbaPropBookQuote"] | null;
-            betr: components["schemas"]["WnbaPropBookQuote"] | null;
-            betrivers: components["schemas"]["WnbaPropBookQuote"] | null;
-            caesars: components["schemas"]["WnbaPropBookQuote"] | null;
+        /** WnbaPropPicksResponse */
+        WnbaPropPicksResponse: {
+            /** App */
+            app: string;
+            /** As Of */
+            as_of: string;
+            /** Breakeven Pct */
+            breakeven_pct: number;
+            /** Error */
+            error: string | null;
+            /** Format */
+            format: string;
+            /** Legs */
+            legs: number;
+            /** Props */
+            props: components["schemas"]["WnbaPropRow"][];
+        };
+        /** WnbaPropRow */
+        WnbaPropRow: {
+            /** Alt Edge Pct */
+            alt_edge_pct: number | null;
+            books: components["schemas"]["WnbaPropBooks"];
             /** Commence Time */
             commence_time: string | null;
-            draftkings: components["schemas"]["WnbaPropBookQuote"] | null;
-            /** Ev */
-            ev: number | null;
-            fanduel: components["schemas"]["WnbaPropBookQuote"] | null;
-            /** Game Date */
-            game_date: string | null;
-            /** Logo Url */
-            logo_url: string | null;
-            /** Market Type */
-            market_type: string;
-            /** Model Prediction */
-            model_prediction: number | null;
-            novig: components["schemas"]["WnbaPropBookQuote"] | null;
-            /** Over Under Pct */
-            over_under_pct: number | null;
-            pinnacle: components["schemas"]["WnbaPropBookQuote"] | null;
+            /** Confidence Chips */
+            confidence_chips: string[];
+            dfs: components["schemas"]["WnbaPropDfs"];
+            /** Edge Pct */
+            edge_pct: number | null;
+            /** Fair Explain */
+            fair_explain: string;
+            /** Fair Pct */
+            fair_pct: number | null;
+            /** Headshot Url */
+            headshot_url: string | null;
+            /** Line */
+            line: number;
             /** Player Name */
             player_name: string;
-            prizepicks: components["schemas"]["WnbaPropBookQuote"] | null;
-            /** Side */
-            side: string;
-            sleeper: components["schemas"]["WnbaPropBookQuote"] | null;
+            /** Position */
+            position: string | null;
+            /** Recency Chip */
+            recency_chip: string | null;
+            /** Recommended Side */
+            recommended_side: ("over" | "under") | null;
+            /** Sample Chips */
+            sample_chips: string[];
+            /**
+             * Source Tier
+             * @enum {string}
+             */
+            source_tier: "sharp_consensus" | "sharp_disagreement" | "sharp_single_source" | "mid_tier_fallback" | "soft_consensus" | "no_sharp_read";
             /** Stat */
             stat: string;
             /** Team Abbrev */
             team_abbrev: string | null;
-            underdog: components["schemas"]["WnbaPropBookQuote"] | null;
-        };
-        /** WnbaPropsResponse */
-        WnbaPropsResponse: {
-            /** As Of */
-            as_of: string;
-            /** Error */
-            error: string | null;
-            /** Props */
-            props: components["schemas"]["WnbaPropLine"][];
-            /** Sportsbooks */
-            sportsbooks: string[];
         };
         /** WnbaScoreboardResponse */
         WnbaScoreboardResponse: {
@@ -3913,7 +3953,11 @@ export interface operations {
     };
     wnba_props_today_api_wnba_props_today_get: {
         parameters: {
-            query?: never;
+            query: {
+                app: "prizepicks" | "underdog";
+                format: string;
+                legs: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -3926,7 +3970,16 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["WnbaPropsResponse"];
+                    "application/json": components["schemas"]["WnbaPropPicksResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

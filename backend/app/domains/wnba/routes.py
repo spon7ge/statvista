@@ -10,6 +10,7 @@ from app.domains.wnba.game_detail import get_game_detail
 from app.domains.wnba.game_props import get_wnba_props_for_game
 from app.domains.wnba.leaders import get_wnba_leaders
 from app.domains.wnba.player import get_wnba_player
+from app.domains.wnba.props import get_wnba_props_today
 from app.domains.wnba.schemas import (
     WnbaFuturesResponse,
     WnbaGameDetail,
@@ -19,6 +20,7 @@ from app.domains.wnba.schemas import (
     WnbaScoreboardResponse,
     WnbaStandingsResponse,
 )
+from app.domains.wnba.schemas_prop_picks import WnbaPropPicksResponse
 from app.domains.wnba.schemas_team_preview import WnbaTeamPreviewResponse
 from app.domains.wnba.scoreboard import get_scoreboard_for_date, get_today_scoreboard
 from app.domains.wnba.standings import get_wnba_standings
@@ -183,6 +185,20 @@ async def wnba_team_preview(
             detail="WNBA team preview is temporarily unavailable",
             headers=_NO_STORE,
         ) from exc
+
+
+@router.get("/wnba/props/today", response_model=WnbaPropPicksResponse)
+async def wnba_props_today(
+    response: Response,
+    app: Literal["prizepicks", "underdog"] = Query(...),
+    format: str = Query(..., min_length=1),
+    legs: int = Query(..., ge=2, le=6),
+) -> WnbaPropPicksResponse:
+    response.headers["Cache-Control"] = "no-store"
+    try:
+        return await get_wnba_props_today(app=app, format=format, legs=legs)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc), headers=_NO_STORE) from exc
 
 
 @router.get(

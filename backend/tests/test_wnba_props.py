@@ -3,8 +3,11 @@ from __future__ import annotations
 from datetime import datetime, timezone
 
 import pytest
+from fastapi.testclient import TestClient
 
 from app.domains.wnba import props as svc
+from app.domains.wnba.schemas_prop_picks import WnbaPropPicksResponse
+from app.main import app
 from app.providers.parlay.wnba_board import ParlayWnbaNormalized
 
 
@@ -13,6 +16,49 @@ def clear_cache():
     svc._cache.clear()
     yield
     svc._cache.clear()
+
+
+client = TestClient(app)
+
+
+def test_props_today_422_on_bad_format():
+    res = client.get(
+        "/api/wnba/props/today",
+        params={"app": "prizepicks", "format": "standard", "legs": 4},
+    )
+    assert res.status_code == 422
+
+
+def test_props_today_requires_query():
+    res = client.get("/api/wnba/props/today")
+    assert res.status_code == 422
+
+
+def test_props_today_success_sets_no_store(monkeypatch):
+    from app.domains.wnba import routes as wnba_routes
+
+    async def fake_get(*, app: str, format: str, legs: int) -> WnbaPropPicksResponse:
+        return WnbaPropPicksResponse(
+            as_of="2026-08-11T20:00:00+00:00",
+            app=app,
+            format=format,
+            legs=legs,
+            breakeven_pct=50.0,
+            props=[],
+        )
+
+    monkeypatch.setattr(wnba_routes, "get_wnba_props_today", fake_get)
+    res = client.get(
+        "/api/wnba/props/today",
+        params={"app": "prizepicks", "format": "power", "legs": 4},
+    )
+    assert res.status_code == 200
+    assert res.headers.get("cache-control") == "no-store"
+    body = res.json()
+    assert body["app"] == "prizepicks"
+    assert body["format"] == "power"
+    assert body["legs"] == 4
+    assert body["props"] == []
 
 
 def test_validate_query_rejects_wrong_format():
