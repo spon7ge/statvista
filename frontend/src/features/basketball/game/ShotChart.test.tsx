@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { ShotChart, toFullCourtPoint } from "./ShotChart";
+import { COURT_FILL, ShotChart, toFullCourtPoint } from "./ShotChart";
 import { detail } from "../lib/testFixtures";
 
 describe("toFullCourtPoint", () => {
@@ -121,5 +121,11 @@ describe("ShotChart", () => {
       "bg-[#1c1e22]",
       "!p-3",
     );
+  });
+
+  it("paints the court with a hardwood fill", () => {
+    const { container } = render(<ShotChart detail={detail} />);
+    const court = container.querySelector("svg rect");
+    expect(court).toHaveAttribute("fill", COURT_FILL);
   });
 });

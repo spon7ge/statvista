@@ -56,25 +56,21 @@ function StatValue({
 }) {
   return (
     <div
-      className={`flex items-center gap-1.5 font-mono text-[18px] tabular-nums text-white/85 ${
+      className={`flex items-center font-mono text-[18px] tabular-nums text-white/85 ${
         side === "home" ? "justify-end" : ""
       }`}
     >
-      {side === "home" && isLeader ? (
+      {isLeader ? (
         <span
-          aria-label={`${label} home leader`}
-          className="size-2 rounded-full"
+          aria-label={`${label} ${side} leader`}
+          className="rounded-full px-2.5 py-0.5 text-white"
           style={{ backgroundColor: color }}
-        />
-      ) : null}
-      <span>{value}</span>
-      {side === "away" && isLeader ? (
-        <span
-          aria-label={`${label} away leader`}
-          className="size-2 rounded-full"
-          style={{ backgroundColor: color }}
-        />
-      ) : null}
+        >
+          {value}
+        </span>
+      ) : (
+        <span>{value}</span>
+      )}
     </div>
   );
 }

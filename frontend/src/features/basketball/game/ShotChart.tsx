@@ -5,7 +5,9 @@ import type { GameDetail, GameDetailShot, GameDetailTeam } from "../lib/types";
 /** Full court in feet × 10 (94 × 50). ESPN half-court shots: x 0–50 width, y 0–47 from basket. */
 const COURT_LENGTH = 940;
 const COURT_WIDTH = 500;
-const LINE = "rgba(255,255,255,0.35)";
+/** Maple hardwood + painted white lines (dark gym fill hid the court). */
+export const COURT_FILL = "#c4a36a";
+const LINE = "rgba(255,255,255,0.7)";
 const LINE_WIDTH = 1.5;
 
 type PeriodFilter = "all" | number;
@@ -166,7 +168,7 @@ function FullCourtMarkings() {
         width={COURT_LENGTH}
         height={COURT_WIDTH}
         rx={8}
-        fill="#0c0c0c"
+        fill={COURT_FILL}
         stroke={LINE}
         strokeWidth={LINE_WIDTH}
       />
