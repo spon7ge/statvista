@@ -50,7 +50,10 @@ async def test_prizepicks_falls_back_to_snapshot_when_parlay_pp_empty(monkeypatc
     monkeypatch.setattr(svc, "fetch_latest_prophetx", lambda league="wnba": [])
     monkeypatch.setattr(svc, "fetch_latest_novig", lambda league="wnba": [])
     monkeypatch.setattr(svc, "fetch_latest_pinnacle", lambda league="wnba": [])
-    monkeypatch.setattr(svc, "get_roster_index", lambda: {})
+    async def fake_roster():
+        return {}
+
+    monkeypatch.setattr(svc, "get_wnba_player_index", fake_roster)
 
     out = await svc.get_wnba_props_today(app="prizepicks", format="power", legs=4)
     assert len(out.props) == 1
@@ -119,7 +122,11 @@ async def test_exact_line_only_and_px_novig_set_fair(monkeypatch):
         ],
     )
     monkeypatch.setattr(svc, "fetch_latest_pinnacle", lambda league="wnba": [])
-    monkeypatch.setattr(svc, "get_roster_index", lambda: {})
+
+    async def fake_roster():
+        return {}
+
+    monkeypatch.setattr(svc, "get_wnba_player_index", fake_roster)
 
     out = await svc.get_wnba_props_today(app="prizepicks", format="power", legs=4)
     row = out.props[0]
@@ -147,11 +154,94 @@ async def test_empty_seed_sets_error(monkeypatch):
     monkeypatch.setattr(svc, "fetch_latest_prophetx", lambda league="wnba": [])
     monkeypatch.setattr(svc, "fetch_latest_novig", lambda league="wnba": [])
     monkeypatch.setattr(svc, "fetch_latest_pinnacle", lambda league="wnba": [])
-    monkeypatch.setattr(svc, "get_roster_index", lambda: {})
+
+    async def fake_roster():
+        return {}
+
+    monkeypatch.setattr(svc, "get_wnba_player_index", fake_roster)
 
     out = await svc.get_wnba_props_today(app="prizepicks", format="power", legs=4)
     assert out.props == []
     assert out.error == "prizepicks_unavailable"
+
+
+@pytest.mark.asyncio
+async def test_empty_underdog_seed_sets_underdog_unavailable(monkeypatch):
+    async def fake_parlay(**kwargs):
+        return ParlayWnbaNormalized(
+            prizepicks_board=[],
+            book_indexes={},
+            as_of=None,
+            unavailable=False,
+        )
+
+    monkeypatch.setattr(svc, "fetch_wnba_parlay_board_normalized", fake_parlay)
+    monkeypatch.setattr(svc, "fetch_latest_prizepicks", lambda league="wnba": [])
+    monkeypatch.setattr(svc, "fetch_latest_underdog", lambda league="wnba": [])
+    monkeypatch.setattr(svc, "fetch_latest_prophetx", lambda league="wnba": [])
+    monkeypatch.setattr(svc, "fetch_latest_novig", lambda league="wnba": [])
+    monkeypatch.setattr(svc, "fetch_latest_pinnacle", lambda league="wnba": [])
+
+    async def fake_roster():
+        return {}
+
+    monkeypatch.setattr(svc, "get_wnba_player_index", fake_roster)
+
+    out = await svc.get_wnba_props_today(app="underdog", format="standard", legs=4)
+    assert out.props == []
+    assert out.error == "underdog_unavailable"
+
+
+@pytest.mark.asyncio
+async def test_league_roster_index_attaches_team_and_headshot(monkeypatch):
+    now = datetime(2026, 8, 11, 20, 0, tzinfo=timezone.utc)
+    board = [
+        {
+            "player_name": "Caitlin Clark",
+            "stat_type": "points",
+            "line_score": 19.5,
+            "odds_type": "standard",
+            "scraped_at": now,
+        },
+    ]
+
+    async def fake_parlay(**kwargs):
+        return ParlayWnbaNormalized(
+            prizepicks_board=board,
+            book_indexes={},
+            as_of=now.isoformat(),
+            unavailable=False,
+        )
+
+    async def fake_roster():
+        return {
+            "caitlin clark": {
+                "espn_id": "4433403",
+                "position": "G",
+                "team_abbrev": "IND",
+                "headshot_url": (
+                    "https://a.espncdn.com/i/headshots/wnba/players/full/4433403.png"
+                ),
+            }
+        }
+
+    monkeypatch.setattr(svc, "fetch_wnba_parlay_board_normalized", fake_parlay)
+    monkeypatch.setattr(svc, "fetch_latest_prizepicks", lambda league="wnba": [])
+    monkeypatch.setattr(svc, "fetch_latest_underdog", lambda league="wnba": [])
+    monkeypatch.setattr(svc, "fetch_latest_prophetx", lambda league="wnba": [])
+    monkeypatch.setattr(svc, "fetch_latest_novig", lambda league="wnba": [])
+    monkeypatch.setattr(svc, "fetch_latest_pinnacle", lambda league="wnba": [])
+    monkeypatch.setattr(svc, "get_wnba_player_index", fake_roster)
+
+    out = await svc.get_wnba_props_today(app="prizepicks", format="power", legs=4)
+    assert len(out.props) == 1
+    row = out.props[0]
+    assert row.team_abbrev == "IND"
+    assert row.position == "G"
+    assert (
+        row.headshot_url
+        == "https://a.espncdn.com/i/headshots/wnba/players/full/4433403.png"
+    )
 
 
 @pytest.mark.asyncio
@@ -214,7 +304,11 @@ async def test_no_sharp_read_sorts_last(monkeypatch):
         ],
     )
     monkeypatch.setattr(svc, "fetch_latest_pinnacle", lambda league="wnba": [])
-    monkeypatch.setattr(svc, "get_roster_index", lambda: {})
+
+    async def fake_roster():
+        return {}
+
+    monkeypatch.setattr(svc, "get_wnba_player_index", fake_roster)
 
     out = await svc.get_wnba_props_today(app="prizepicks", format="power", legs=4)
     assert len(out.props) == 2
@@ -264,7 +358,10 @@ async def test_mismatched_pinnacle_line_omitted(monkeypatch):
             },
         ],
     )
-    monkeypatch.setattr(svc, "get_roster_index", lambda: {})
+    async def fake_roster():
+        return {}
+
+    monkeypatch.setattr(svc, "get_wnba_player_index", fake_roster)
 
     out = await svc.get_wnba_props_today(app="prizepicks", format="power", legs=4)
     assert len(out.props) == 1

@@ -15,7 +15,6 @@ Pipeline (WNBA parity with MLB props assemble):
 
 from __future__ import annotations
 
-import inspect
 import logging
 import time
 from datetime import datetime, timezone
@@ -49,7 +48,7 @@ from app.domains.wnba.schemas_prop_picks import (
     WnbaPropPicksResponse,
     WnbaPropRow,
 )
-from app.providers.espn.wnba_roster import get_roster_index, norm_player_name
+from app.providers.espn.wnba_roster import get_wnba_player_index, norm_player_name
 from app.providers.parlay.wnba_board import (
     FETCH_TIMEOUT_SECONDS,
     ParlayWnbaNormalized,
@@ -543,11 +542,7 @@ async def get_wnba_props_today(*, app: str, format: str, legs: int) -> WnbaPropP
     )
 
     try:
-        roster_result = get_roster_index()
-        if inspect.isawaitable(roster_result):
-            roster_index = await roster_result
-        else:
-            roster_index = roster_result
+        roster_index = await get_wnba_player_index()
         if isinstance(roster_index, dict):
             rows = _apply_roster_enrichment(rows, roster_index)
     except Exception as exc:
