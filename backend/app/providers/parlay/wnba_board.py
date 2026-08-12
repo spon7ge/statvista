@@ -7,10 +7,7 @@ import time
 from dataclasses import dataclass
 from typing import Any
 
-from app.domains.betting.prop_stat_keys import (
-    canonical_stat_key_from_parlay_market,
-    display_stat_label,
-)
+from app.domains.betting.prop_stat_keys import canonical_stat_key_from_parlay_market
 from app.domains.wnba.prop_fair import american_to_fair_pct
 from app.providers.parlay.client import parlay_get
 from src.odds.parlay_main_lines import select_parlay_main_lines
@@ -138,7 +135,17 @@ def _rows_for_normalize(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     ]
     selected = select_parlay_main_lines(filtered, books=_ALLOWED_BOOKS)
     selected_ids = {id(row) for row in selected}
-    # select_parlay_main_lines drops DFS rows with no over/under; keep PP line-only.
+    # Player/market keys already covered by a selected PrizePicks row (priced main).
+    pp_player_markets = {
+        (
+            _norm_player(str(row.get("player") or "")),
+            str(row.get("market_key") or "").lower().strip(),
+        )
+        for row in selected
+        if str(row.get("bookmaker") or "").lower().strip() == "prizepicks"
+    }
+    # select_parlay_main_lines drops DFS rows with no over/under; keep PP line-only
+    # only when that player/market has no already-selected PrizePicks row.
     for row in filtered:
         if id(row) in selected_ids:
             continue
@@ -147,7 +154,14 @@ def _rows_for_normalize(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
             continue
         if _parse_prices(row, require_side=False) is None:
             continue
+        player_market = (
+            _norm_player(str(row.get("player") or "")),
+            str(row.get("market_key") or "").lower().strip(),
+        )
+        if player_market in pp_player_markets:
+            continue
         selected.append(row)
+        pp_player_markets.add(player_market)
     return selected
 
 
@@ -165,8 +179,6 @@ def normalize_parlay_wnba_board(rows: list[dict[str, Any]]) -> ParlayWnbaNormali
         canonical = canonical_stat_key_from_parlay_market(market_key)
         if canonical is None:
             continue
-        # Board/index join on canonical keys; display_stat_label is the UI label.
-        _ = display_stat_label(canonical)
         parsed = _parse_prices(row, require_side=(book != "prizepicks"))
         if parsed is None:
             continue

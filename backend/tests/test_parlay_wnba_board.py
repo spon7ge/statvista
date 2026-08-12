@@ -46,3 +46,31 @@ def test_normalize_splits_pp_and_dk_fd():
     dk_key = ("caitlin clark", "points", "over", 19.5)
     assert dk_key in out.book_indexes["draftkings"]
     assert "caesars" not in out.book_indexes
+
+
+def test_pp_line_only_alt_not_seeded_when_priced_main_exists():
+    """Priced PP main wins; line-only alt must not bypass main-line selection."""
+    rows = [
+        {
+            "player": "Caitlin Clark",
+            "market": "Points",
+            "market_key": "player_points",
+            "bookmaker": "prizepicks",
+            "line": 19.5,
+            "over_price": -110,
+            "under_price": -110,
+        },
+        {
+            "player": "Caitlin Clark",
+            "market": "Points",
+            "market_key": "player_points",
+            "bookmaker": "prizepicks",
+            "line": 22.5,
+            "over_price": None,
+            "under_price": None,
+        },
+    ]
+    out = normalize_parlay_wnba_board(rows)
+    lines = [row["line_score"] for row in out.prizepicks_board]
+    assert 19.5 in lines
+    assert 22.5 not in lines
