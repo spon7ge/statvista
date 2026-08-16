@@ -1,0 +1,219 @@
+{
+  "source": "prophetx",
+  "fetched_at": "2026-08-13T14:02:38-07:00",
+  "league": "wnba",
+  "tournament_id": 1600000176,
+  "snapshot_kind": "team",
+  "games": [
+    {
+      "event_id": 13002478,
+      "name": "Atlanta Dream at Connecticut Sun",
+      "scheduled": "2026-08-13T23:00:00Z",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": 13000003,
+          "name": "Connecticut Sun",
+          "abbreviation": "CONN",
+          "seq": 0
+        },
+        {
+          "id": 13000001,
+          "name": "Atlanta Dream",
+          "abbreviation": "ATL",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "Connecticut Sun",
+            "competitor_id": 13000003,
+            "american": 425,
+            "line": null,
+            "stake": 1717.43
+          },
+          {
+            "name": "Atlanta Dream",
+            "competitor_id": 13000001,
+            "american": -475,
+            "line": null,
+            "stake": 620.77
+          }
+        ],
+        "spread": [
+          {
+            "name": "Connecticut Sun +10",
+            "competitor_id": 13000003,
+            "american": 101,
+            "line": 10,
+            "stake": 560.02
+          },
+          {
+            "name": "Atlanta Dream -10",
+            "competitor_id": 13000001,
+            "american": -107,
+            "line": -10,
+            "stake": 95.25
+          }
+        ],
+        "total": [
+          {
+            "name": "over 174.5",
+            "competitor_id": null,
+            "american": 114,
+            "line": 174.5,
+            "stake": 64.66
+          },
+          {
+            "name": "under 174.5",
+            "competitor_id": null,
+            "american": -123,
+            "line": 174.5,
+            "stake": 896.86
+          }
+        ]
+      }
+    },
+    {
+      "event_id": 13002479,
+      "name": "Los Angeles Sparks at New York Liberty",
+      "scheduled": "2026-08-14T00:00:00Z",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": 13000005,
+          "name": "New York Liberty",
+          "abbreviation": "NY",
+          "seq": 0
+        },
+        {
+          "id": 13000009,
+          "name": "Los Angeles Sparks",
+          "abbreviation": "LA",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "New York Liberty",
+            "competitor_id": 13000005,
+            "american": -365,
+            "line": null,
+            "stake": 204.51
+          },
+          {
+            "name": "Los Angeles Sparks",
+            "competitor_id": 13000009,
+            "american": 325,
+            "line": null,
+            "stake": 615.38
+          }
+        ],
+        "spread": [
+          {
+            "name": "New York Liberty -9",
+            "competitor_id": 13000005,
+            "american": 103,
+            "line": -9,
+            "stake": 1094.51
+          },
+          {
+            "name": "Los Angeles Sparks +9",
+            "competitor_id": 13000009,
+            "american": -110,
+            "line": 9,
+            "stake": 446.82
+          }
+        ],
+        "total": [
+          {
+            "name": "over 187",
+            "competitor_id": null,
+            "american": 102,
+            "line": 187,
+            "stake": 38.19
+          },
+          {
+            "name": "under 187",
+            "competitor_id": null,
+            "american": -106,
+            "line": 187,
+            "stake": 706.85
+          }
+        ]
+      }
+    },
+    {
+      "event_id": 13002480,
+      "name": "Washington Mystics at Las Vegas Aces",
+      "scheduled": "2026-08-14T02:00:00Z",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": 13000008,
+          "name": "Las Vegas Aces",
+          "abbreviation": "LV",
+          "seq": 0
+        },
+        {
+          "id": 13000006,
+          "name": "Washington Mystics",
+          "abbreviation": "WSH",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "Las Vegas Aces",
+            "competitor_id": 13000008,
+            "american": -210,
+            "line": null,
+            "stake": 287.77
+          },
+          {
+            "name": "Washington Mystics",
+            "competitor_id": 13000006,
+            "american": 200,
+            "line": null,
+            "stake": 829.0
+          }
+        ],
+        "spread": [
+          {
+            "name": "Las Vegas Aces -6.5",
+            "competitor_id": 13000008,
+            "american": 110,
+            "line": -6.5,
+            "stake": 496.82
+          },
+          {
+            "name": "Washington Mystics +6.5",
+            "competitor_id": 13000006,
+            "american": -115,
+            "line": 6.5,
+            "stake": 908.46
+          }
+        ],
+        "total": [
+          {
+            "name": "over 170.5",
+            "competitor_id": null,
+            "american": 105,
+            "line": 170.5,
+            "stake": 842.11
+          },
+          {
+            "name": "under 170.5",
+            "competitor_id": null,
+            "american": -111,
+            "line": 170.5,
+            "stake": 80.01
+          }
+        ]
+      }
+    }
+  ]
+}
