@@ -4,9 +4,11 @@ Pipeline (see docs/superpowers/specs/2026-08-19-mlb-prop-picks-player-board-desi
   1. Load the selected app's DFS lines from the PrizePicks Supabase snapshot
      (app=prizepicks) or Underdog snapshot (app=underdog) and bucket into one
      board row per (player, stat, line). Never seed PrizePicks from Parlay.
-  2. Index ProphetX, Novig, and Pinnacle scrapers; merge Parlay book indexes
-     (draftkings, fanduel) by (player, stat, side, line) — exact line only, no
-     closest-line fallback. Pinnacle expand quotes keep ``role="comparison"``.
+  2. Index ProphetX, Novig, and Pinnacle scrapers; merge Parlay sportsbook
+     quotes from ``mlb_parlay_api_odds`` (never live ``book_indexes``) by
+     (player, stat, side, line) — exact line only, no closest-line fallback.
+     Pinnacle expand quotes keep ``role="comparison"``. Live Parlay fetch still
+     runs so the snapshot table can refresh (throttled persist side-effect).
   3. Attach each book's **main** O/U (own line, alts excluded) on ``books_main``.
   4. For each side offered by the DFS app at that line, compute fair% via
      ``compute_fair`` and edge vs. the format breakeven; the recommended side
@@ -23,6 +25,7 @@ from typing import Any
 
 from app.core.odds_snapshots import (
     fetch_latest_novig,
+    fetch_latest_parlay_api_odds,
     fetch_latest_pinnacle,
     fetch_latest_prizepicks,
     fetch_latest_prophetx,
@@ -55,7 +58,6 @@ from app.providers.espn.mlb_roster import get_mlb_player_index
 from app.providers.espn.wnba_roster import norm_player_name
 from app.providers.parlay.mlb_props import (
     FETCH_TIMEOUT_SECONDS,
-    ParlayMlbNormalized,
     fetch_mlb_parlay_props_normalized,
 )
 from src.odds.parlay_main_lines import balance_score
@@ -677,12 +679,6 @@ def _apply_roster_enrichment(
     return enriched
 
 
-def _empty_parlay(*, unavailable: bool = True) -> ParlayMlbNormalized:
-    return ParlayMlbNormalized(
-        prizepicks_board=[], book_indexes={}, as_of=None, unavailable=unavailable
-    )
-
-
 async def get_mlb_props_today(*, app: str, format: str, legs: int) -> MlbPropsResponse:
     """Assemble the DFS-first, +EV-ranked MLB prop board for one app/format/legs."""
     validate_query(app, format, legs)
@@ -696,17 +692,11 @@ async def get_mlb_props_today(*, app: str, format: str, legs: int) -> MlbPropsRe
     now = _utcnow()
     breakeven = breakeven_pct(app, format, legs)
 
-    parlay_error: str | None = None
+    # Live fetch is persist-only; assembly never reads parlay.book_indexes.
     try:
-        parlay = await fetch_mlb_parlay_props_normalized(timeout=FETCH_TIMEOUT_SECONDS)
+        await fetch_mlb_parlay_props_normalized(timeout=FETCH_TIMEOUT_SECONDS)
     except Exception as exc:
         logger.warning("Parlay MLB props unavailable: %s", exc)
-        parlay_error = "parlay_unavailable"
-        parlay = _empty_parlay()
-    else:
-        # Only real unavailability (missing key / HTTP failure), not empty slate.
-        if parlay.unavailable:
-            parlay_error = "parlay_unavailable"
 
     if app == "prizepicks":
         dfs_rows = fetch_latest_prizepicks("mlb")
@@ -744,16 +734,23 @@ async def get_mlb_props_today(*, app: str, format: str, legs: int) -> MlbPropsRe
     pin_main = _main_from_snapshot_rows(
         pinnacle_rows, player_field="player_name", stat_field="market_type"
     )
-    dk_main = _main_from_side_index(parlay.book_indexes.get("draftkings", {}))
-    fd_main = _main_from_side_index(parlay.book_indexes.get("fanduel", {}))
+    snap_rows = fetch_latest_parlay_api_odds("mlb")
+    snapshot_indexes = index_parlay_api_odds_by_book(snap_rows)
+    # Empty snapshot → parlay_unavailable even if live Parlay is healthy.
+    # A populated snapshot must not be marked unavailable solely because live
+    # fetch failed (that request still serves the prior snapshot).
+    parlay_error = "parlay_unavailable" if not snap_rows else None
     parlay_mains = {
-        "draftkings": dk_main,
-        "fanduel": fd_main,
-        "betmgm": _main_from_side_index(parlay.book_indexes.get("betmgm", {})),
-        "caesars": _main_from_side_index(parlay.book_indexes.get("caesars", {})),
-        "kalshi": _main_from_side_index(parlay.book_indexes.get("kalshi", {})),
-        "fliff": _main_from_side_index(parlay.book_indexes.get("fliff", {})),
-        "bet365": _main_from_side_index(parlay.book_indexes.get("bet365", {})),
+        book: _main_from_side_index(snapshot_indexes.get(book, {}))
+        for book in (
+            "draftkings",
+            "fanduel",
+            "betmgm",
+            "caesars",
+            "kalshi",
+            "fliff",
+            "bet365",
+        )
     }
 
     rows = _assemble_rows(
@@ -762,7 +759,7 @@ async def get_mlb_props_today(*, app: str, format: str, legs: int) -> MlbPropsRe
         prophetx_idx,
         novig_idx,
         pinnacle_idx,
-        parlay.book_indexes,
+        snapshot_indexes,
         now,
         px_main=px_main,
         novig_main=novig_main,

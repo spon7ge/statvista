@@ -51,6 +51,66 @@ def _judge_parlay_indexes(now: datetime | None = None) -> dict:
     }
 
 
+def _parlay_indexes_to_api_odds(book_indexes: dict) -> list[dict]:
+    """Convert live Parlay SideIndexes into mlb_parlay_api_odds snapshot rows."""
+    rows: list[dict] = []
+    for book, index in book_indexes.items():
+        for (player, stat, side, line), hit in index.items():
+            rows.append(
+                {
+                    "sportsbook": book,
+                    "player_name": player,
+                    "market_type": stat,
+                    "side": side,
+                    "line_score": line,
+                    "american_price": hit["american"],
+                    "scraped_at": hit.get("changed_at"),
+                }
+            )
+    return rows
+
+
+def _judge_parlay_api_odds(now: datetime | None = None) -> list[dict]:
+    return [
+        {
+            "sportsbook": "draftkings",
+            "player_name": "Aaron Judge",
+            "market_type": "batter_total_bases",
+            "side": "over",
+            "line_score": 1.5,
+            "american_price": -128,
+            "scraped_at": now,
+        },
+        {
+            "sportsbook": "draftkings",
+            "player_name": "Aaron Judge",
+            "market_type": "batter_total_bases",
+            "side": "under",
+            "line_score": 1.5,
+            "american_price": 108,
+            "scraped_at": now,
+        },
+        {
+            "sportsbook": "fanduel",
+            "player_name": "Aaron Judge",
+            "market_type": "batter_total_bases",
+            "side": "over",
+            "line_score": 1.5,
+            "american_price": -125,
+            "scraped_at": now,
+        },
+        {
+            "sportsbook": "fanduel",
+            "player_name": "Aaron Judge",
+            "market_type": "batter_total_bases",
+            "side": "under",
+            "line_score": 1.5,
+            "american_price": 105,
+            "scraped_at": now,
+        },
+    ]
+
+
 def _judge_novig_snapshot(now: datetime | None = None) -> list[dict]:
     return [
         {
@@ -95,6 +155,7 @@ def _stub_snapshots(
     parlay: ParlayMlbNormalized | None = None,
     parlay_error: Exception | None = None,
     parlay_soft_empty: bool = False,
+    parlay_api_odds: list[dict] | None = None,
 ):
     monkeypatch.setattr(
         svc,
@@ -124,6 +185,114 @@ def _stub_snapshots(
         return _parlay(book_indexes=_judge_parlay_indexes())
 
     monkeypatch.setattr(svc, "fetch_mlb_parlay_props_normalized", fake_fetch_parlay)
+
+    if parlay_api_odds is None:
+        if parlay_error is not None or parlay_soft_empty:
+            snap_rows: list[dict] = []
+        elif parlay is not None:
+            snap_rows = _parlay_indexes_to_api_odds(parlay.book_indexes)
+        else:
+            snap_rows = _judge_parlay_api_odds()
+    else:
+        snap_rows = parlay_api_odds
+    monkeypatch.setattr(
+        svc,
+        "fetch_latest_parlay_api_odds",
+        lambda league="mlb": snap_rows,
+        raising=False,
+    )
+
+
+@pytest.mark.asyncio
+async def test_mlb_props_parlay_books_from_snapshot_not_live(monkeypatch):
+    now = datetime.now(timezone.utc)
+    wp_o, wp_oq = _side("Wrong Player", "total_bases", "over", 9.5, -999, now)
+    live_o, live_oq = _side("Aaron Judge", "total_bases", "over", 1.5, -999, now)
+    live_u, live_uq = _side("Aaron Judge", "total_bases", "under", 1.5, 999, now)
+    _stub_snapshots(
+        monkeypatch,
+        dfs_pp=[
+            {
+                "player_name": "Aaron Judge",
+                "stat_type": "Total Bases",
+                "line_score": 1.5,
+                "odds_type": "standard",
+                "scraped_at": now,
+            }
+        ],
+        parlay=_parlay(
+            book_indexes={
+                "draftkings": {wp_o: wp_oq, live_o: live_oq, live_u: live_uq},
+            }
+        ),
+        parlay_api_odds=_judge_parlay_api_odds(now),
+    )
+    monkeypatch.setattr(svc, "get_mlb_player_index", lambda: _async_return({}))
+
+    out = await svc.get_mlb_props_today(app="prizepicks", format="power", legs=4)
+
+    assert [p.player_name for p in out.props] == ["Aaron Judge"]
+    row = out.props[0]
+    assert row.books.draftkings is not None
+    assert row.books.draftkings.american == -128
+    assert row.books_main.draftkings is not None
+    assert row.books_main.draftkings.over_american == -128
+    assert row.books_main.draftkings.under_american == 108
+    assert out.error is None
+
+
+@pytest.mark.asyncio
+async def test_mlb_props_empty_snapshot_parlay_unavailable(monkeypatch):
+    now = datetime.now(timezone.utc)
+    _stub_snapshots(
+        monkeypatch,
+        dfs_pp=[
+            {
+                "player_name": "Aaron Judge",
+                "stat_type": "Total Bases",
+                "line_score": 1.5,
+                "odds_type": "standard",
+                "scraped_at": now,
+            }
+        ],
+        parlay=_parlay(book_indexes=_judge_parlay_indexes(now)),
+        parlay_api_odds=[],
+    )
+    monkeypatch.setattr(svc, "get_mlb_player_index", lambda: _async_return({}))
+
+    out = await svc.get_mlb_props_today(app="prizepicks", format="power", legs=4)
+
+    assert out.error == "parlay_unavailable"
+    assert len(out.props) == 1
+    assert out.props[0].player_name == "Aaron Judge"
+    assert out.props[0].books.draftkings is None
+    assert out.props[0].books_main.draftkings is None
+
+
+@pytest.mark.asyncio
+async def test_mlb_props_live_fail_does_not_error_when_snapshot_has_rows(monkeypatch):
+    now = datetime.now(timezone.utc)
+    _stub_snapshots(
+        monkeypatch,
+        dfs_pp=[
+            {
+                "player_name": "Aaron Judge",
+                "stat_type": "Total Bases",
+                "line_score": 1.5,
+                "odds_type": "standard",
+                "scraped_at": now,
+            }
+        ],
+        parlay_error=RuntimeError("parlay boom"),
+        parlay_api_odds=_judge_parlay_api_odds(now),
+    )
+    monkeypatch.setattr(svc, "get_mlb_player_index", lambda: _async_return({}))
+
+    out = await svc.get_mlb_props_today(app="prizepicks", format="power", legs=4)
+
+    assert out.error is None
+    assert out.props[0].books.draftkings is not None
+    assert out.props[0].books.draftkings.american == -128
 
 
 def test_props_module_does_not_import_odds_api():
@@ -646,7 +815,7 @@ def test_parlay_exception_sets_stable_unavailable_token(monkeypatch):
 
 
 def test_parlay_true_empty_slate_sets_no_error(monkeypatch):
-    """Successful empty Parlay normalize must not surface parlay_unavailable."""
+    """Empty live Parlay normalize is not an error when the snapshot has rows."""
     now = datetime.now(timezone.utc)
     _stub_snapshots(
         monkeypatch,
@@ -662,6 +831,7 @@ def test_parlay_true_empty_slate_sets_no_error(monkeypatch):
             },
         ],
         parlay=_parlay(),
+        parlay_api_odds=_judge_parlay_api_odds(now),
     )
 
     import asyncio
@@ -970,6 +1140,7 @@ def test_response_is_cached_within_ttl(monkeypatch):
     )
     monkeypatch.setattr(svc, "fetch_latest_novig", lambda league="mlb", **_kwargs: [])
     monkeypatch.setattr(svc, "fetch_latest_pinnacle", lambda league="mlb": [])
+    monkeypatch.setattr(svc, "fetch_latest_parlay_api_odds", lambda league="mlb": [])
 
     import asyncio
 

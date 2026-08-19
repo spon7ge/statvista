@@ -6,6 +6,7 @@ from typing import Any
 
 from app.core.odds_snapshots import (
     fetch_latest_novig,
+    fetch_latest_parlay_api_odds,
     fetch_latest_pinnacle,
     fetch_latest_prophetx,
     fetch_latest_underdog,
@@ -16,6 +17,7 @@ from app.domains.mlb.props import (
     FETCH_TIMEOUT_SECONDS,
     _build_board,
     _index_snapshot_rows,
+    index_parlay_api_odds_by_book,
 )
 from app.domains.mlb.schemas_game_props import (
     MlbGamePropBestQuote,
@@ -147,15 +149,13 @@ async def get_mlb_props_for_game(*, game_pk: str, app: str) -> MlbGamePropsRespo
     now = datetime.now(timezone.utc)
     error: str | None = None
 
+    # Live fetch is persist-only for sportsbook indexes; PrizePicks board still
+    # comes from the live Parlay payload for this game-scoped path.
     try:
         parlay = await fetch_mlb_parlay_props_normalized(timeout=FETCH_TIMEOUT_SECONDS)
     except Exception as exc:
         logger.warning("Parlay MLB props unavailable: %s", exc)
-        error = "parlay_unavailable"
         parlay = _empty_parlay()
-    else:
-        if parlay.unavailable:
-            error = "parlay_unavailable"
 
     if app == "prizepicks":
         dfs_rows = parlay.prizepicks_board
@@ -172,11 +172,15 @@ async def get_mlb_props_for_game(*, game_pk: str, app: str) -> MlbGamePropsRespo
     pinnacle_idx = _index_snapshot_rows(
         fetch_latest_pinnacle("mlb"), player_field="player_name", stat_field="market_type"
     )
+    snap_rows = fetch_latest_parlay_api_odds("mlb")
+    snapshot_indexes = index_parlay_api_odds_by_book(snap_rows)
+    if not snap_rows:
+        error = _compose_error(error, "parlay_unavailable")
     indexes: dict[str, SideIndex] = {
         "prophetx": prophetx_idx,
         "novig": novig_idx,
         "pinnacle": pinnacle_idx,
-        **parlay.book_indexes,
+        **snapshot_indexes,
     }
 
     try:

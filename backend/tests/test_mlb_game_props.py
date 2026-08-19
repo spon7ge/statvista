@@ -41,6 +41,24 @@ def _parlay(
     )
 
 
+def _parlay_indexes_to_api_odds(book_indexes: dict) -> list[dict]:
+    rows: list[dict] = []
+    for book, index in book_indexes.items():
+        for (player, stat, side, line), hit in index.items():
+            rows.append(
+                {
+                    "sportsbook": book,
+                    "player_name": player,
+                    "market_type": stat,
+                    "side": side,
+                    "line_score": line,
+                    "american_price": hit["american"],
+                    "scraped_at": hit.get("changed_at"),
+                }
+            )
+    return rows
+
+
 def _fake_detail(away="NYY", home="BOS"):
     return SimpleNamespace(
         away=SimpleNamespace(abbrev=away),
@@ -55,6 +73,7 @@ def _stub_snapshots(
     parlay_error: Exception | None = None,
     parlay_soft_empty: bool = False,
     ud_board: list[dict] | None = None,
+    parlay_api_odds: list[dict] | None = None,
 ):
     async def fake_parlay(**_k):
         if parlay_error is not None:
@@ -70,6 +89,21 @@ def _stub_snapshots(
     monkeypatch.setattr(gp, "fetch_latest_prophetx", lambda league="mlb": [])
     monkeypatch.setattr(gp, "fetch_latest_novig", lambda league="mlb": [])
     monkeypatch.setattr(gp, "fetch_latest_pinnacle", lambda league="mlb": [])
+    if parlay_api_odds is None:
+        if parlay_error is not None or parlay_soft_empty:
+            snap_rows: list[dict] = []
+        elif parlay is not None:
+            snap_rows = _parlay_indexes_to_api_odds(parlay.book_indexes)
+        else:
+            snap_rows = []
+    else:
+        snap_rows = parlay_api_odds
+    monkeypatch.setattr(
+        gp,
+        "fetch_latest_parlay_api_odds",
+        lambda league="mlb": snap_rows,
+        raising=False,
+    )
 
 
 def test_game_props_module_does_not_import_odds_api():
@@ -219,6 +253,85 @@ async def test_get_mlb_props_for_game_filters_teams_and_both_sides(monkeypatch):
 
 
 @pytest.mark.asyncio
+async def test_game_props_parlay_books_from_snapshot_not_live(monkeypatch):
+    monkeypatch.setattr(gp, "is_valid_mlb_game_pk", lambda pk: True)
+    monkeypatch.setattr(
+        gp, "get_mlb_game_detail", lambda pk: _async_return(_fake_detail())
+    )
+    pp_board = [
+        {
+            "player_name": "Aaron Judge",
+            "stat_type": "Home Runs",
+            "line_score": 0.5,
+            "odds_type": "standard",
+        },
+    ]
+    wp_o, wp_oq = _side("Wrong Player", "home_runs", "over", 0.5, 999)
+    live_o, live_oq = _side("Aaron Judge", "home_runs", "over", 0.5, 111)
+    live_u, live_uq = _side("Aaron Judge", "home_runs", "under", 0.5, -999)
+    _stub_snapshots(
+        monkeypatch,
+        parlay=_parlay(
+            board=pp_board,
+            book_indexes={
+                "draftkings": {wp_o: wp_oq, live_o: live_oq, live_u: live_uq},
+            },
+        ),
+        parlay_api_odds=[
+            {
+                "sportsbook": "draftkings",
+                "player_name": "Aaron Judge",
+                "market_type": "batter_home_runs",
+                "side": "over",
+                "line_score": 0.5,
+                "american_price": 250,
+            },
+            {
+                "sportsbook": "draftkings",
+                "player_name": "Aaron Judge",
+                "market_type": "batter_home_runs",
+                "side": "under",
+                "line_score": 0.5,
+                "american_price": -140,
+            },
+            {
+                "sportsbook": "fanduel",
+                "player_name": "Aaron Judge",
+                "market_type": "batter_home_runs",
+                "side": "over",
+                "line_score": 0.5,
+                "american_price": 270,
+            },
+        ],
+    )
+    monkeypatch.setattr(
+        gp,
+        "get_mlb_player_index",
+        lambda: _async_return(
+            {
+                norm_player_name("Aaron Judge"): {
+                    "team_abbrev": "NYY",
+                    "headshot_url": None,
+                    "position": "OF",
+                },
+            }
+        ),
+    )
+
+    res = await gp.get_mlb_props_for_game(game_pk="746123", app="prizepicks")
+    names = {p.player_name for c in res.categories for p in c.players}
+    assert names == {"Aaron Judge"}
+    judge = next(p for c in res.categories for p in c.players)
+    assert judge.over is not None
+    assert judge.over.american == 270
+    assert judge.over.book == "fanduel"
+    assert judge.under is not None
+    assert judge.under.american == -140
+    assert judge.under.book == "draftkings"
+    assert res.error is None
+
+
+@pytest.mark.asyncio
 async def test_get_mlb_props_for_game_unsupported_app():
     with pytest.raises(ValueError, match="unsupported app"):
         await gp.get_mlb_props_for_game(game_pk="746123", app="kalshi")
@@ -257,7 +370,21 @@ async def test_get_mlb_props_for_game_underdog_filters_ud_board(monkeypatch):
             "payout_multiplier": 1.0,
         },
     ]
-    _stub_snapshots(monkeypatch, parlay=_parlay(), ud_board=ud_board)
+    _stub_snapshots(
+        monkeypatch,
+        parlay=_parlay(),
+        ud_board=ud_board,
+        parlay_api_odds=[
+            {
+                "sportsbook": "draftkings",
+                "player_name": "Aaron Judge",
+                "market_type": "batter_home_runs",
+                "side": "over",
+                "line_score": 0.5,
+                "american_price": 250,
+            }
+        ],
+    )
     monkeypatch.setattr(
         gp,
         "get_mlb_player_index",
@@ -347,7 +474,20 @@ async def test_get_mlb_props_for_game_roster_failure_sets_error(monkeypatch):
             "odds_type": "standard",
         },
     ]
-    _stub_snapshots(monkeypatch, parlay=_parlay(board=pp_board))
+    _stub_snapshots(
+        monkeypatch,
+        parlay=_parlay(board=pp_board),
+        parlay_api_odds=[
+            {
+                "sportsbook": "draftkings",
+                "player_name": "Aaron Judge",
+                "market_type": "batter_home_runs",
+                "side": "over",
+                "line_score": 0.5,
+                "american_price": 250,
+            }
+        ],
+    )
 
     async def roster_raises():
         raise RuntimeError("espn down")
