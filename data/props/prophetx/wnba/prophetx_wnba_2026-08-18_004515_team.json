@@ -1,0 +1,289 @@
+{
+  "source": "prophetx",
+  "fetched_at": "2026-08-18T00:45:15-07:00",
+  "league": "wnba",
+  "tournament_id": 1600000176,
+  "snapshot_kind": "team",
+  "games": [
+    {
+      "event_id": 13002490,
+      "name": "Los Angeles Sparks at Connecticut Sun",
+      "scheduled": "2026-08-18T23:00:00Z",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": 13000003,
+          "name": "Connecticut Sun",
+          "abbreviation": "CONN",
+          "seq": 0
+        },
+        {
+          "id": 13000009,
+          "name": "Los Angeles Sparks",
+          "abbreviation": "LA",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "Connecticut Sun",
+            "competitor_id": 13000003,
+            "american": 114,
+            "line": null,
+            "stake": 127.04
+          },
+          {
+            "name": "Los Angeles Sparks",
+            "competitor_id": 13000009,
+            "american": -121,
+            "line": null,
+            "stake": 204.9
+          }
+        ],
+        "spread": [
+          {
+            "name": "Connecticut Sun +1.5",
+            "competitor_id": 13000003,
+            "american": 100,
+            "line": 1.5,
+            "stake": 81.0
+          },
+          {
+            "name": "Los Angeles Sparks -1.5",
+            "competitor_id": 13000009,
+            "american": -106,
+            "line": -1.5,
+            "stake": 138.91
+          }
+        ],
+        "total": [
+          {
+            "name": "over 171.5",
+            "competitor_id": null,
+            "american": -111,
+            "line": 171.5,
+            "stake": 198.18
+          },
+          {
+            "name": "under 171.5",
+            "competitor_id": null,
+            "american": -116,
+            "line": 171.5,
+            "stake": 634.48
+          }
+        ]
+      }
+    },
+    {
+      "event_id": 13002491,
+      "name": "Indiana Fever at Toronto Tempo",
+      "scheduled": "2026-08-18T23:00:00Z",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": 13000015,
+          "name": "Toronto Tempo",
+          "abbreviation": "TOR",
+          "seq": 0
+        },
+        {
+          "id": 13000004,
+          "name": "Indiana Fever",
+          "abbreviation": "IND",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "Toronto Tempo",
+            "competitor_id": 13000015,
+            "american": 415,
+            "line": null,
+            "stake": 541.62
+          },
+          {
+            "name": "Indiana Fever",
+            "competitor_id": 13000004,
+            "american": -450,
+            "line": null,
+            "stake": 2.0
+          }
+        ],
+        "spread": [
+          {
+            "name": "Toronto Tempo +10",
+            "competitor_id": 13000015,
+            "american": 103,
+            "line": 10,
+            "stake": 61.6
+          },
+          {
+            "name": "Indiana Fever -10",
+            "competitor_id": 13000004,
+            "american": -110,
+            "line": -10,
+            "stake": 236.98
+          }
+        ],
+        "total": [
+          {
+            "name": "over 192.5",
+            "competitor_id": null,
+            "american": -103,
+            "line": 192.5,
+            "stake": 47.92
+          },
+          {
+            "name": "under 192.5",
+            "competitor_id": null,
+            "american": -103,
+            "line": 192.5,
+            "stake": 24.46
+          }
+        ]
+      }
+    },
+    {
+      "event_id": 13002492,
+      "name": "New York Liberty at Chicago Sky",
+      "scheduled": "2026-08-19T01:00:00Z",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": 13000002,
+          "name": "Chicago Sky",
+          "abbreviation": "CHI",
+          "seq": 0
+        },
+        {
+          "id": 13000005,
+          "name": "New York Liberty",
+          "abbreviation": "NY",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "Chicago Sky",
+            "competitor_id": 13000002,
+            "american": 152,
+            "line": null,
+            "stake": 60.5
+          },
+          {
+            "name": "New York Liberty",
+            "competitor_id": 13000005,
+            "american": -158,
+            "line": null,
+            "stake": 284.96
+          }
+        ],
+        "spread": [
+          {
+            "name": "Chicago Sky +4.5",
+            "competitor_id": 13000002,
+            "american": -117,
+            "line": 4.5,
+            "stake": 143.23
+          },
+          {
+            "name": "New York Liberty -4.5",
+            "competitor_id": 13000005,
+            "american": 111,
+            "line": -4.5,
+            "stake": 169.0
+          }
+        ],
+        "total": [
+          {
+            "name": "over 181.5",
+            "competitor_id": null,
+            "american": 110,
+            "line": 181.5,
+            "stake": 200.0
+          },
+          {
+            "name": "under 181.5",
+            "competitor_id": null,
+            "american": -117,
+            "line": 181.5,
+            "stake": 40.46
+          }
+        ]
+      }
+    },
+    {
+      "event_id": 13002493,
+      "name": "Atlanta Dream at Las Vegas Aces",
+      "scheduled": "2026-08-19T01:00:00Z",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": 13000008,
+          "name": "Las Vegas Aces",
+          "abbreviation": "LV",
+          "seq": 0
+        },
+        {
+          "id": 13000001,
+          "name": "Atlanta Dream",
+          "abbreviation": "ATL",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "Las Vegas Aces",
+            "competitor_id": 13000008,
+            "american": -158,
+            "line": null,
+            "stake": 184.8
+          },
+          {
+            "name": "Atlanta Dream",
+            "competitor_id": 13000001,
+            "american": 152,
+            "line": null,
+            "stake": 420.94
+          }
+        ],
+        "spread": [
+          {
+            "name": "Las Vegas Aces -3.5",
+            "competitor_id": 13000008,
+            "american": -106,
+            "line": -3.5,
+            "stake": 64.37
+          },
+          {
+            "name": "Atlanta Dream +3.5",
+            "competitor_id": 13000001,
+            "american": 102,
+            "line": 3.5,
+            "stake": 14.0
+          }
+        ],
+        "total": [
+          {
+            "name": "over 179.5",
+            "competitor_id": null,
+            "american": 111,
+            "line": 179.5,
+            "stake": 222.0
+          },
+          {
+            "name": "under 179.5",
+            "competitor_id": null,
+            "american": -118,
+            "line": 179.5,
+            "stake": 20.07
+          }
+        ]
+      }
+    }
+  ]
+}

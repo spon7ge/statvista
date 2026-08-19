@@ -1,0 +1,711 @@
+{
+  "fetched_at": "2026-08-18T00:45:59-07:00",
+  "source": "pinnacle_selenium",
+  "sport": "basketball",
+  "league": "wnba",
+  "list_page": "https://www.pinnacle.com/en/basketball/wnba/matchups/#all",
+  "parallel_workers_configured": 6,
+  "parallel_workers_effective": 2,
+  "games_per_worker_target": 2,
+  "arcadia_timeout_s": 90.0,
+  "arcadia_poll_s": 0.22,
+  "snapshot_kind": "props",
+  "games": [
+    {
+      "matchup_id": 1633801652,
+      "source_url": "https://www.pinnacle.com/en/basketball/wnba/atlanta-dream-vs-las-vegas-aces/1633801652/#all",
+      "path": "/en/basketball/wnba/atlanta-dream-vs-las-vegas-aces/1633801652/",
+      "league": "WNBA",
+      "start_time": "2026-08-19T01:00:00Z",
+      "label": "Atlanta Dream vs Las Vegas Aces",
+      "participants": [
+        "Atlanta Dream",
+        "Las Vegas Aces"
+      ],
+      "props": [
+        {
+          "stat": "points",
+          "player": "A'ja Wilson",
+          "line": 24.5,
+          "market_id": 1634236156,
+          "decimal_over": 1.8,
+          "decimal_under": 1.962,
+          "american_over": -125,
+          "american_under": -104
+        },
+        {
+          "stat": "rebounds",
+          "player": "A'ja Wilson",
+          "line": 8.5,
+          "market_id": 1634236159,
+          "decimal_over": 1.725,
+          "decimal_under": 2.04,
+          "american_over": -138,
+          "american_under": 104
+        },
+        {
+          "stat": "points",
+          "player": "Allisha Gray",
+          "line": 19.5,
+          "market_id": 1634236165,
+          "decimal_over": 1.962,
+          "decimal_under": 1.8,
+          "american_over": -104,
+          "american_under": -125
+        },
+        {
+          "stat": "points",
+          "player": "Angel Reese",
+          "line": 15.5,
+          "market_id": 1634236168,
+          "decimal_over": 1.826,
+          "decimal_under": 1.917,
+          "american_over": -121,
+          "american_under": -109
+        },
+        {
+          "stat": "rebounds",
+          "player": "Angel Reese",
+          "line": 12.5,
+          "market_id": 1634236171,
+          "decimal_over": 1.877,
+          "decimal_under": 1.877,
+          "american_over": -114,
+          "american_under": -114
+        },
+        {
+          "stat": "assists",
+          "player": "Chelsea Gray",
+          "line": 5.5,
+          "market_id": 1634236177,
+          "decimal_over": 1.769,
+          "decimal_under": 1.98,
+          "american_over": -130,
+          "american_under": -102
+        },
+        {
+          "stat": "points",
+          "player": "Chelsea Gray",
+          "line": 11.5,
+          "market_id": 1634236180,
+          "decimal_over": 1.8,
+          "decimal_under": 1.962,
+          "american_over": -125,
+          "american_under": -104
+        },
+        {
+          "stat": "assists",
+          "player": "Jackie Young",
+          "line": 6.5,
+          "market_id": 1634236186,
+          "decimal_over": 2.16,
+          "decimal_under": 1.649,
+          "american_over": 116,
+          "american_under": -154
+        },
+        {
+          "stat": "points",
+          "player": "Jackie Young",
+          "line": 18.5,
+          "market_id": 1634236189,
+          "decimal_over": 1.847,
+          "decimal_under": 1.909,
+          "american_over": -118,
+          "american_under": -110
+        },
+        {
+          "stat": "points",
+          "player": "Jewell Loyd",
+          "line": 8.5,
+          "market_id": 1634236195,
+          "decimal_over": 1.926,
+          "decimal_under": 1.833,
+          "american_over": -108,
+          "american_under": -120
+        },
+        {
+          "stat": "assists",
+          "player": "Jordin Canada",
+          "line": 7.5,
+          "market_id": 1634236198,
+          "decimal_over": 1.775,
+          "decimal_under": 1.98,
+          "american_over": -129,
+          "american_under": -102
+        },
+        {
+          "stat": "points",
+          "player": "Jordin Canada",
+          "line": 11.5,
+          "market_id": 1634236201,
+          "decimal_over": 1.943,
+          "decimal_under": 1.82,
+          "american_over": -106,
+          "american_under": -122
+        },
+        {
+          "stat": "points",
+          "player": "NaLyssa Smith",
+          "line": 11.5,
+          "market_id": 1634236204,
+          "decimal_over": 1.926,
+          "decimal_under": 1.82,
+          "american_over": -108,
+          "american_under": -122
+        },
+        {
+          "stat": "rebounds",
+          "player": "NaLyssa Smith",
+          "line": 6.5,
+          "market_id": 1634236207,
+          "decimal_over": 1.935,
+          "decimal_under": 1.813,
+          "american_over": -107,
+          "american_under": -123
+        },
+        {
+          "stat": "assists",
+          "player": "Rhyne Howard",
+          "line": 4.5,
+          "market_id": 1634236213,
+          "decimal_over": 2.3,
+          "decimal_under": 1.578,
+          "american_over": 130,
+          "american_under": -173
+        },
+        {
+          "stat": "points",
+          "player": "Rhyne Howard",
+          "line": 17.5,
+          "market_id": 1634236216,
+          "decimal_over": 1.847,
+          "decimal_under": 1.909,
+          "american_over": -118,
+          "american_under": -110
+        }
+      ]
+    },
+    {
+      "matchup_id": 1633800538,
+      "source_url": "https://www.pinnacle.com/en/basketball/wnba/indiana-fever-vs-toronto-tempo/1633800538/#all",
+      "path": "/en/basketball/wnba/indiana-fever-vs-toronto-tempo/1633800538/",
+      "league": "WNBA",
+      "start_time": "2026-08-18T23:00:00Z",
+      "label": "Indiana Fever vs Toronto Tempo",
+      "participants": [
+        "Indiana Fever",
+        "Toronto Tempo"
+      ],
+      "props": [
+        {
+          "stat": "points",
+          "player": "Aliyah Boston",
+          "line": 16.5,
+          "market_id": 1634236078,
+          "decimal_over": 1.833,
+          "decimal_under": 1.909,
+          "american_over": -120,
+          "american_under": -110
+        },
+        {
+          "stat": "rebounds",
+          "player": "Aliyah Boston",
+          "line": 8.5,
+          "market_id": 1634236081,
+          "decimal_over": 1.735,
+          "decimal_under": 2.02,
+          "american_over": -136,
+          "american_under": 102
+        },
+        {
+          "stat": "points",
+          "player": "Aneesah Morrow",
+          "line": 12.5,
+          "market_id": 1634236084,
+          "decimal_over": 2.02,
+          "decimal_under": 1.758,
+          "american_over": 102,
+          "american_under": -132
+        },
+        {
+          "stat": "rebounds",
+          "player": "Aneesah Morrow",
+          "line": 7.5,
+          "market_id": 1634236087,
+          "decimal_over": 1.962,
+          "decimal_under": 1.781,
+          "american_over": -104,
+          "american_under": -128
+        },
+        {
+          "stat": "assists",
+          "player": "Caitlin Clark",
+          "line": 10.5,
+          "market_id": 1634236093,
+          "decimal_over": 2.26,
+          "decimal_under": 1.592,
+          "american_over": 126,
+          "american_under": -169
+        },
+        {
+          "stat": "points",
+          "player": "Caitlin Clark",
+          "line": 24.5,
+          "market_id": 1634236096,
+          "decimal_over": 1.98,
+          "decimal_under": 1.781,
+          "american_over": -102,
+          "american_under": -128
+        },
+        {
+          "stat": "rebounds",
+          "player": "Caitlin Clark",
+          "line": 4.5,
+          "market_id": 1634236099,
+          "decimal_over": 2.1,
+          "decimal_under": 1.685,
+          "american_over": 110,
+          "american_under": -146
+        },
+        {
+          "stat": "points",
+          "player": "Isabelle Harrison",
+          "line": 12.5,
+          "market_id": 1634236102,
+          "decimal_over": 1.909,
+          "decimal_under": 1.847,
+          "american_over": -110,
+          "american_under": -118
+        },
+        {
+          "stat": "rebounds",
+          "player": "Isabelle Harrison",
+          "line": 6.5,
+          "market_id": 1634236105,
+          "decimal_over": 1.82,
+          "decimal_under": 1.926,
+          "american_over": -122,
+          "american_under": -108
+        },
+        {
+          "stat": "points",
+          "player": "Kelsey Mitchell",
+          "line": 25.5,
+          "market_id": 1634236111,
+          "decimal_over": 1.82,
+          "decimal_under": 1.943,
+          "american_over": -122,
+          "american_under": -106
+        },
+        {
+          "stat": "assists",
+          "player": "Kiki Rice",
+          "line": 4.5,
+          "market_id": 1634236114,
+          "decimal_over": 1.654,
+          "decimal_under": 2.15,
+          "american_over": -153,
+          "american_under": 115
+        },
+        {
+          "stat": "points",
+          "player": "Kiki Rice",
+          "line": 12.5,
+          "market_id": 1634236117,
+          "decimal_over": 1.885,
+          "decimal_under": 1.87,
+          "american_over": -113,
+          "american_under": -115
+        },
+        {
+          "stat": "rebounds",
+          "player": "Kiki Rice",
+          "line": 5.5,
+          "market_id": 1634236120,
+          "decimal_over": 2.26,
+          "decimal_under": 1.581,
+          "american_over": 126,
+          "american_under": -172
+        },
+        {
+          "stat": "points",
+          "player": "Laura Juškaite",
+          "line": 10.5,
+          "market_id": 1634236126,
+          "decimal_over": 1.962,
+          "decimal_under": 1.781,
+          "american_over": -104,
+          "american_under": -128
+        },
+        {
+          "stat": "points",
+          "player": "Makayla Timpson",
+          "line": 7.5,
+          "market_id": 1634236129,
+          "decimal_over": 1.909,
+          "decimal_under": 1.847,
+          "american_over": -110,
+          "american_under": -118
+        },
+        {
+          "stat": "rebounds",
+          "player": "Makayla Timpson",
+          "line": 5.5,
+          "market_id": 1634236132,
+          "decimal_over": 1.699,
+          "decimal_under": 2.08,
+          "american_over": -143,
+          "american_under": 108
+        },
+        {
+          "stat": "assists",
+          "player": "Marina Mabrey",
+          "line": 4.5,
+          "market_id": 1634236138,
+          "decimal_over": 2.0,
+          "decimal_under": 1.758,
+          "american_over": 100,
+          "american_under": -132
+        },
+        {
+          "stat": "points",
+          "player": "Marina Mabrey",
+          "line": 19.5,
+          "market_id": 1634236141,
+          "decimal_over": 1.787,
+          "decimal_under": 1.962,
+          "american_over": -127,
+          "american_under": -104
+        },
+        {
+          "stat": "rebounds",
+          "player": "Marina Mabrey",
+          "line": 3.5,
+          "market_id": 1634236144,
+          "decimal_over": 2.0,
+          "decimal_under": 1.758,
+          "american_over": 100,
+          "american_under": -132
+        },
+        {
+          "stat": "points",
+          "player": "Sophie Cunningham",
+          "line": 7.5,
+          "market_id": 1634236147,
+          "decimal_over": 1.8,
+          "decimal_under": 1.962,
+          "american_over": -125,
+          "american_under": -104
+        }
+      ]
+    },
+    {
+      "matchup_id": 1633800537,
+      "source_url": "https://www.pinnacle.com/en/basketball/wnba/los-angeles-sparks-vs-connecticut-sun/1633800537/#all",
+      "path": "/en/basketball/wnba/los-angeles-sparks-vs-connecticut-sun/1633800537/",
+      "league": "WNBA",
+      "start_time": "2026-08-18T23:00:00Z",
+      "label": "Los Angeles Sparks vs Connecticut Sun",
+      "participants": [
+        "Los Angeles Sparks",
+        "Connecticut Sun"
+      ],
+      "props": [
+        {
+          "stat": "points",
+          "player": "Ariel Atkins",
+          "line": 8.5,
+          "market_id": 1634235744,
+          "decimal_over": 1.962,
+          "decimal_under": 1.8,
+          "american_over": -104,
+          "american_under": -125
+        },
+        {
+          "stat": "points",
+          "player": "Brittney Griner",
+          "line": 11.5,
+          "market_id": 1634235747,
+          "decimal_over": 2.13,
+          "decimal_under": 1.667,
+          "american_over": 113,
+          "american_under": -150
+        },
+        {
+          "stat": "rebounds",
+          "player": "Brittney Griner",
+          "line": 5.5,
+          "market_id": 1634235750,
+          "decimal_over": 1.885,
+          "decimal_under": 1.855,
+          "american_over": -113,
+          "american_under": -117
+        },
+        {
+          "stat": "points",
+          "player": "Dearica Hamby",
+          "line": 15.5,
+          "market_id": 1634235753,
+          "decimal_over": 1.943,
+          "decimal_under": 1.82,
+          "american_over": -106,
+          "american_under": -122
+        },
+        {
+          "stat": "rebounds",
+          "player": "Dearica Hamby",
+          "line": 7.5,
+          "market_id": 1634235756,
+          "decimal_over": 2.1,
+          "decimal_under": 1.685,
+          "american_over": 110,
+          "american_under": -146
+        },
+        {
+          "stat": "assists",
+          "player": "Erica Wheeler",
+          "line": 5.5,
+          "market_id": 1634235762,
+          "decimal_over": 2.1,
+          "decimal_under": 1.685,
+          "american_over": 110,
+          "american_under": -146
+        },
+        {
+          "stat": "points",
+          "player": "Erica Wheeler",
+          "line": 8.5,
+          "market_id": 1634235765,
+          "decimal_over": 1.787,
+          "decimal_under": 1.962,
+          "american_over": -127,
+          "american_under": -104
+        },
+        {
+          "stat": "assists",
+          "player": "Leila Lacan",
+          "line": 4.5,
+          "market_id": 1634235771,
+          "decimal_over": 1.735,
+          "decimal_under": 2.02,
+          "american_over": -136,
+          "american_under": 102
+        },
+        {
+          "stat": "points",
+          "player": "Leila Lacan",
+          "line": 11.5,
+          "market_id": 1634235774,
+          "decimal_over": 1.833,
+          "decimal_under": 1.926,
+          "american_over": -120,
+          "american_under": -108
+        },
+        {
+          "stat": "points",
+          "player": "Nneka Ogwumike",
+          "line": 16.5,
+          "market_id": 1634235783,
+          "decimal_over": 2.0,
+          "decimal_under": 1.769,
+          "american_over": 100,
+          "american_under": -130
+        },
+        {
+          "stat": "rebounds",
+          "player": "Nneka Ogwumike",
+          "line": 8.5,
+          "market_id": 1634235786,
+          "decimal_over": 1.82,
+          "decimal_under": 1.926,
+          "american_over": -122,
+          "american_under": -108
+        },
+        {
+          "stat": "points",
+          "player": "Rae Burrell",
+          "line": 17.5,
+          "market_id": 1634235792,
+          "decimal_over": 1.98,
+          "decimal_under": 1.781,
+          "american_over": -102,
+          "american_under": -128
+        }
+      ]
+    },
+    {
+      "matchup_id": 1633800548,
+      "source_url": "https://www.pinnacle.com/en/basketball/wnba/new-york-liberty-vs-chicago-sky/1633800548/#all",
+      "path": "/en/basketball/wnba/new-york-liberty-vs-chicago-sky/1633800548/",
+      "league": "WNBA",
+      "start_time": "2026-08-19T01:00:00Z",
+      "label": "New York Liberty vs Chicago Sky",
+      "participants": [
+        "New York Liberty",
+        "Chicago Sky"
+      ],
+      "props": [
+        {
+          "stat": "points",
+          "player": "Azura Stevens",
+          "line": 11.5,
+          "market_id": 1634236219,
+          "decimal_over": 1.87,
+          "decimal_under": 1.885,
+          "american_over": -115,
+          "american_under": -113
+        },
+        {
+          "stat": "rebounds",
+          "player": "Azura Stevens",
+          "line": 6.5,
+          "market_id": 1634236222,
+          "decimal_over": 2.24,
+          "decimal_under": 1.602,
+          "american_over": 124,
+          "american_under": -166
+        },
+        {
+          "stat": "assists",
+          "player": "Breanna Stewart",
+          "line": 3.5,
+          "market_id": 1634236228,
+          "decimal_over": 1.82,
+          "decimal_under": 1.909,
+          "american_over": -122,
+          "american_under": -110
+        },
+        {
+          "stat": "points",
+          "player": "Breanna Stewart",
+          "line": 22.5,
+          "market_id": 1634236231,
+          "decimal_over": 1.962,
+          "decimal_under": 1.8,
+          "american_over": -104,
+          "american_under": -125
+        },
+        {
+          "stat": "rebounds",
+          "player": "Breanna Stewart",
+          "line": 8.5,
+          "market_id": 1634236234,
+          "decimal_over": 2.08,
+          "decimal_under": 1.699,
+          "american_over": 108,
+          "american_under": -143
+        },
+        {
+          "stat": "assists",
+          "player": "Courtney Vandersloot",
+          "line": 4.5,
+          "market_id": 1634236237,
+          "decimal_over": 1.633,
+          "decimal_under": 2.18,
+          "american_over": -158,
+          "american_under": 118
+        },
+        {
+          "stat": "points",
+          "player": "Courtney Vandersloot",
+          "line": 8.5,
+          "market_id": 1634236240,
+          "decimal_over": 1.769,
+          "decimal_under": 2.0,
+          "american_over": -130,
+          "american_under": 100
+        },
+        {
+          "stat": "points",
+          "player": "Jonquel Jones",
+          "line": 14.5,
+          "market_id": 1634236246,
+          "decimal_over": 1.909,
+          "decimal_under": 1.847,
+          "american_over": -110,
+          "american_under": -118
+        },
+        {
+          "stat": "rebounds",
+          "player": "Jonquel Jones",
+          "line": 9.5,
+          "market_id": 1634236249,
+          "decimal_over": 1.709,
+          "decimal_under": 2.06,
+          "american_over": -141,
+          "american_under": 106
+        },
+        {
+          "stat": "points",
+          "player": "Kamilla Cardoso",
+          "line": 14.5,
+          "market_id": 1634236252,
+          "decimal_over": 1.909,
+          "decimal_under": 1.847,
+          "american_over": -110,
+          "american_under": -118
+        },
+        {
+          "stat": "rebounds",
+          "player": "Kamilla Cardoso",
+          "line": 7.5,
+          "market_id": 1634236255,
+          "decimal_over": 1.725,
+          "decimal_under": 2.04,
+          "american_over": -138,
+          "american_under": 104
+        },
+        {
+          "stat": "assists",
+          "player": "Natasha Cloud",
+          "line": 6.5,
+          "market_id": 1634236258,
+          "decimal_over": 2.16,
+          "decimal_under": 1.649,
+          "american_over": 116,
+          "american_under": -154
+        },
+        {
+          "stat": "points",
+          "player": "Natasha Cloud",
+          "line": 10.5,
+          "market_id": 1634236261,
+          "decimal_over": 1.98,
+          "decimal_under": 1.781,
+          "american_over": -102,
+          "american_under": -128
+        },
+        {
+          "stat": "assists",
+          "player": "Sabrina Ionescu",
+          "line": 4.5,
+          "market_id": 1634236267,
+          "decimal_over": 1.909,
+          "decimal_under": 1.833,
+          "american_over": -110,
+          "american_under": -120
+        },
+        {
+          "stat": "points",
+          "player": "Sabrina Ionescu",
+          "line": 16.5,
+          "market_id": 1634236270,
+          "decimal_over": 1.82,
+          "decimal_under": 1.943,
+          "american_over": -122,
+          "american_under": -106
+        },
+        {
+          "stat": "rebounds",
+          "player": "Sabrina Ionescu",
+          "line": 3.5,
+          "market_id": 1634236273,
+          "decimal_over": 1.877,
+          "decimal_under": 1.877,
+          "american_over": -114,
+          "american_under": -114
+        }
+      ]
+    }
+  ]
+}
