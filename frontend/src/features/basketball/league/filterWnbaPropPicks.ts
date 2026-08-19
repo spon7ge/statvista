@@ -1,9 +1,15 @@
 import type { ApiWnbaGame, ApiWnbaPropRow } from "@/shared/lib/api";
+import type { WnbaPropPlayerCard } from "./groupWnbaPropPlayers";
 
 export type WnbaPropFilterSelection = {
   stats: Set<string>;
   teams: Set<string>;
   sides: Set<string>;
+};
+
+export type WnbaPropPlayerFilterSelection = {
+  teams: Set<string>;
+  query: string;
 };
 
 type PastGamePropRow = Pick<ApiWnbaPropRow, "team_abbrev" | "commence_time">;
@@ -47,6 +53,27 @@ export function collectWnbaTeamOptions(props: ApiWnbaPropRow[]): string[] {
         .filter((abbrev): abbrev is string => Boolean(abbrev)),
     ),
   ].sort((a, b) => a.localeCompare(b));
+}
+
+/**
+ * Filters grouped player cards by team and name. Does not reorder
+ * (groupWnbaPropPlayers already sorts by prop_count).
+ */
+export function filterWnbaPropPlayers(
+  players: WnbaPropPlayerCard[],
+  selection: WnbaPropPlayerFilterSelection,
+): WnbaPropPlayerCard[] {
+  const { teams, query } = selection;
+  const needle = query.trim().toLowerCase();
+  return players.filter((player) => {
+    if (teams.size > 0 && (!player.team_abbrev || !teams.has(player.team_abbrev))) {
+      return false;
+    }
+    if (needle && !player.player_name.toLowerCase().includes(needle)) {
+      return false;
+    }
+    return true;
+  });
 }
 
 /** Align ESPN tricodes with odds/props spellings (same map as wnbaOddsBoard). */

@@ -1,61 +1,10 @@
 import { useEffect, useState } from "react";
-import type {
-  ApiWnbaPropBookQuote,
-  ApiWnbaPropDfs,
-  ApiWnbaPropRow,
-} from "@/shared/lib/api";
-import { bookDisplayName } from "@/features/basketball/lib/wnbaBookLabels";
-import { formatAmericanOdds } from "@/features/basketball/lib/wnbaOddsBoard";
+import { Link } from "react-router-dom";
 import { StatvistaBarsMark } from "@/shared/ui/StatvistaBarsMark";
+import type { WnbaPropAppTab } from "./WnbaPropPicksHeader";
+import type { WnbaPropPlayerCard } from "./groupWnbaPropPlayers";
 
 export const WNBA_PROP_PICKS_PAGE_SIZE = 20;
-
-function sideLabel(side: string | null): string {
-  if (side === "over") return "Over";
-  if (side === "under") return "Under";
-  return "—";
-}
-
-function altSideOf(side: string | null): string | null {
-  if (side === "over") return "under";
-  if (side === "under") return "over";
-  return null;
-}
-
-function formatEdge(value: number | null): string {
-  if (value === null) return "—";
-  const sign = value > 0 ? "+" : "";
-  return `${sign}${value.toFixed(1)}%`;
-}
-
-/** Underdog DFS quote for the recommended side: `-102 · 1.05×`. */
-export function dfsOddsPayoutLabel(dfs: ApiWnbaPropDfs): string | null {
-  const parts: string[] = [];
-  if (dfs.american != null) {
-    parts.push(formatAmericanOdds(dfs.american));
-  }
-  if (dfs.payout_multiplier != null) {
-    parts.push(`${dfs.payout_multiplier.toFixed(2)}×`);
-  }
-  return parts.length ? parts.join(" · ") : null;
-}
-
-function edgeToneClass(value: number | null): string {
-  if (value === null) return "text-white/35";
-  if (value > 0) return "text-emerald-400";
-  if (value < 0) return "text-red-400";
-  return "text-white/70";
-}
-
-function formatFair(value: number | null): string {
-  if (value === null) return "—";
-  return `${value.toFixed(1)}%`;
-}
-
-function formatFormatLabel(format: string): string {
-  if (format.length === 0) return format;
-  return format.charAt(0).toUpperCase() + format.slice(1);
-}
 
 export function formatWnbaPropPicksUpdatedAt(ms: number): string {
   return new Intl.DateTimeFormat("en-US", {
@@ -66,23 +15,9 @@ export function formatWnbaPropPicksUpdatedAt(ms: number): string {
   }).format(new Date(ms));
 }
 
-export function resolveBookLastUpdatedMs(
-  changedAt: string | null | undefined,
-  boardLastUpdatedAt: number | undefined,
-): number | null {
-  if (changedAt) {
-    const ms = Date.parse(changedAt);
-    if (!Number.isNaN(ms)) return ms;
-  }
-  if (boardLastUpdatedAt != null && !Number.isNaN(boardLastUpdatedAt)) {
-    return boardLastUpdatedAt;
-  }
-  return null;
-}
-
 /**
- * Round-robin into columns so visual rows stay edge-rank order (1,2,3 then
- * 4,5,6…) while each column expands independently.
+ * Round-robin into columns so visual rows stay rank order (1,2,3 then
+ * 4,5,6…) while each column is independent.
  */
 export function splitPropsIntoColumns<T>(
   items: T[],
@@ -119,10 +54,6 @@ function usePropPicksColumnCount(): number {
   return count;
 }
 
-function rowKey(row: ApiWnbaPropRow): string {
-  return `${row.player_name}:${row.stat}:${row.line}:${row.recommended_side ?? ""}`;
-}
-
 function Skeletons({ columnCount }: { columnCount: number }) {
   const perCol = Math.ceil(6 / columnCount);
   return (
@@ -144,199 +75,68 @@ function Skeletons({ columnCount }: { columnCount: number }) {
   );
 }
 
-function BookQuoteCell({
-  bookKey,
-  quote,
-  lastUpdatedAt,
-}: {
-  bookKey: string;
-  quote: ApiWnbaPropBookQuote | null;
-  lastUpdatedAt?: number;
-}) {
-  const updatedMs = quote
-    ? resolveBookLastUpdatedMs(quote.changed_at, lastUpdatedAt)
-    : null;
-  const title =
-    updatedMs != null
-      ? `Last updated ${formatWnbaPropPicksUpdatedAt(updatedMs)}`
-      : undefined;
-
-  return (
-    <div
-      className="flex flex-col items-center gap-0.5 rounded-md bg-[#45484d] px-2 py-1.5 text-center"
-      title={title}
-    >
-      <span className="text-[14px] font-medium tracking-wide text-white uppercase">
-        {bookDisplayName(bookKey)}
-      </span>
-      {quote ? (
-        <span className="font-mono text-[18px] text-white/90">
-          {quote.fair_pct !== null ? formatFair(quote.fair_pct) : "—"}
-        </span>
-      ) : (
-        <span className="text-[14px] text-white/20">No line</span>
-      )}
-    </div>
-  );
-}
-
-function ExpandedPanel({
-  row,
-  lastUpdatedAt,
-}: {
-  row: ApiWnbaPropRow;
-  lastUpdatedAt?: number;
-}) {
-  const alt = altSideOf(row.recommended_side);
-  return (
-    <div
-      data-testid="wnba-prop-row-expand"
-      className="mt-3 space-y-3 border-t border-white/10 pt-3 text-[18px]"
-    >
-      <p className="text-[14px] text-white/70">{row.fair_explain}</p>
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-        <BookQuoteCell
-          bookKey="prophetx"
-          quote={row.books.prophetx}
-          lastUpdatedAt={lastUpdatedAt}
-        />
-        <BookQuoteCell
-          bookKey="novig"
-          quote={row.books.novig}
-          lastUpdatedAt={lastUpdatedAt}
-        />
-        <BookQuoteCell
-          bookKey="draftkings"
-          quote={row.books.draftkings}
-          lastUpdatedAt={lastUpdatedAt}
-        />
-        <BookQuoteCell
-          bookKey="fanduel"
-          quote={row.books.fanduel}
-          lastUpdatedAt={lastUpdatedAt}
-        />
-        <BookQuoteCell
-          bookKey="pinnacle"
-          quote={row.books.pinnacle}
-          lastUpdatedAt={lastUpdatedAt}
-        />
-      </div>
-      <div className="flex flex-wrap items-center gap-4 text-[14px] text-white/50">
-        <span>
-          {sideLabel(row.recommended_side)} edge {formatEdge(row.edge_pct)}
-        </span>
-        {alt ? (
-          <span>
-            {sideLabel(alt)} edge {formatEdge(row.alt_edge_pct)}
-          </span>
-        ) : null}
-      </div>
-    </div>
-  );
-}
-
 function teamPosLabel(team: string | null, pos: string | null): string | null {
   const parts = [team, pos].filter(Boolean);
   return parts.length ? parts.join(" · ") : null;
 }
 
-function PropPickCard({
-  row,
-  expanded,
-  onToggle,
-  lastUpdatedAt,
+function PlayerCard({
+  player,
+  app,
 }: {
-  row: ApiWnbaPropRow;
-  expanded: boolean;
-  onToggle: () => void;
-  lastUpdatedAt?: number;
+  player: WnbaPropPlayerCard;
+  app: WnbaPropAppTab;
 }) {
   const [imgFailed, setImgFailed] = useState(false);
-  const isNoRead = row.source_tier === "no_sharp_read";
-  const lean = sideLabel(row.recommended_side);
-  const meta = teamPosLabel(row.team_abbrev, row.position);
-  const showImg = Boolean(row.headshot_url) && !imgFailed;
-  const initial = (row.player_name.trim()[0] ?? "?").toUpperCase();
-  const dfsOddsLabel = dfsOddsPayoutLabel(row.dfs);
+  const meta = teamPosLabel(player.team_abbrev, player.position);
+  const showImg = Boolean(player.headshot_url) && !imgFailed;
+  const initial = (player.player_name.trim()[0] ?? "?").toUpperCase();
 
   return (
     <article
       data-testid="wnba-prop-row"
-      className={`relative rounded-xl bg-[#1c1e22] p-4 ring-2 transition-[box-shadow,opacity] ${
-        expanded
-          ? "ring-[#059669]"
-          : "ring-transparent hover:ring-[#059669]"
-      } ${isNoRead ? "opacity-60" : ""}`}
+      className="relative rounded-xl bg-[#1c1e22] p-4 ring-2 ring-transparent transition-[box-shadow] hover:ring-[#059669]"
     >
-      {/* Decorative for now; wrap in a button when per-card actions land. */}
       <StatvistaBarsMark className="pointer-events-none absolute left-3 top-3 size-4 text-white" />
-      <button
-        type="button"
-        onClick={onToggle}
-        aria-expanded={expanded}
-        className="w-full text-left"
-      >
-        <div className="flex flex-col items-center text-center">
-          {showImg ? (
-            <img
-              src={row.headshot_url!}
-              alt={row.player_name}
-              className="size-16 rounded-full object-cover bg-white/10"
-              onError={() => setImgFailed(true)}
-            />
-          ) : (
-            <span
-              data-testid="wnba-prop-headshot-fallback"
-              className="flex size-16 items-center justify-center rounded-full bg-white/10 text-lg font-semibold text-white/50"
-            >
-              {initial}
-            </span>
-          )}
-          {meta ? (
-            <p className="mt-2 text-[14px] text-white/45">{meta}</p>
-          ) : null}
-          <p className="mt-1 text-[18px] font-semibold text-white">
-            {row.player_name}
-          </p>
-          <p className="mt-1 text-[18px] text-white">
-            {row.line} {row.stat}
-          </p>
-          {dfsOddsLabel ? (
-            <p
-              data-testid="wnba-prop-dfs-odds"
-              className="mt-0.5 font-mono text-[13px] text-white"
-            >
-              {dfsOddsLabel}
-            </p>
-          ) : null}
-          <div className="mt-3 flex w-full items-center justify-between gap-2">
-            <span className="inline-flex rounded-full bg-white px-2.5 py-0.5 text-[14px] font-semibold text-black">
-              {lean}
-            </span>
-            <span
-              className={`font-mono text-[18px] font-semibold ${edgeToneClass(row.edge_pct)}`}
-            >
-              {formatEdge(row.edge_pct)}
-            </span>
-          </div>
-        </div>
-      </button>
-
-      {expanded ? (
-        <ExpandedPanel row={row} lastUpdatedAt={lastUpdatedAt} />
-      ) : null}
+      <div className="flex flex-col items-center text-center">
+        {showImg ? (
+          <img
+            src={player.headshot_url!}
+            alt={player.player_name}
+            className="size-16 rounded-full object-cover bg-white/10"
+            onError={() => setImgFailed(true)}
+          />
+        ) : (
+          <span
+            data-testid="wnba-prop-headshot-fallback"
+            className="flex size-16 items-center justify-center rounded-full bg-white/10 text-lg font-semibold text-white/50"
+          >
+            {initial}
+          </span>
+        )}
+        {meta ? (
+          <p className="mt-2 text-[14px] text-white/45">{meta}</p>
+        ) : null}
+        <p className="mt-1 text-[18px] font-semibold text-white">
+          {player.player_name}
+        </p>
+        <Link
+          to={`/wnba/prop_picks/player/${player.player_slug}?app=${app}`}
+          className="mt-3 inline-flex rounded-full bg-white px-3 py-1.5 text-[14px] font-semibold text-emerald-800"
+        >
+          View {player.prop_count} {player.prop_count === 1 ? "prop" : "props"}
+        </Link>
+      </div>
     </article>
   );
 }
 
 export type WnbaPropPicksListProps = {
-  props: ApiWnbaPropRow[];
-  format: string;
-  legs: number;
-  breakevenPct: number | null;
+  players: WnbaPropPlayerCard[];
+  app: WnbaPropAppTab;
   isLoading?: boolean;
   isError?: boolean;
-  /** True when filters hid all rows (API still returned props). */
+  /** True when filters hid all players (API still returned props). */
   filtersActive?: boolean;
   /** Override default empty/error copy when set (e.g. missing app snapshot). */
   emptyMessage?: string;
@@ -345,47 +145,33 @@ export type WnbaPropPicksListProps = {
 };
 
 export function WnbaPropPicksList({
-  props,
-  format,
-  legs,
-  breakevenPct,
+  players,
+  app,
   isLoading = false,
   isError = false,
   filtersActive = false,
   emptyMessage,
   lastUpdatedAt,
 }: WnbaPropPicksListProps) {
-  const [expandedKeys, setExpandedKeys] = useState<Set<string>>(
-    () => new Set(),
-  );
   const [page, setPage] = useState(0);
   const columnCount = usePropPicksColumnCount();
 
   // Reset when the result set identity changes (not on every new array ref).
-  const listSignature = `${props.length}:${props[0]?.player_name ?? ""}:${props[0]?.stat ?? ""}:${props[0]?.recommended_side ?? ""}:${props[props.length - 1]?.player_name ?? ""}:${props[props.length - 1]?.stat ?? ""}:${props[props.length - 1]?.recommended_side ?? ""}`;
+  const listSignature = `${players.length}:${players[0]?.player_slug ?? ""}:${players[players.length - 1]?.player_slug ?? ""}`;
   useEffect(() => {
     setPage(0);
   }, [listSignature]);
 
   const totalPages = Math.max(
     1,
-    Math.ceil(props.length / WNBA_PROP_PICKS_PAGE_SIZE),
+    Math.ceil(players.length / WNBA_PROP_PICKS_PAGE_SIZE),
   );
   const safePage = Math.min(page, totalPages - 1);
   const start = safePage * WNBA_PROP_PICKS_PAGE_SIZE;
-  const pageRows = props.slice(start, start + WNBA_PROP_PICKS_PAGE_SIZE);
-  const end = start + pageRows.length;
-  const showPager = props.length > WNBA_PROP_PICKS_PAGE_SIZE;
-  const columns = splitPropsIntoColumns(pageRows, columnCount);
-
-  function toggleRow(key: string) {
-    setExpandedKeys((prev) => {
-      const next = new Set(prev);
-      if (next.has(key)) next.delete(key);
-      else next.add(key);
-      return next;
-    });
-  }
+  const pagePlayers = players.slice(start, start + WNBA_PROP_PICKS_PAGE_SIZE);
+  const end = start + pagePlayers.length;
+  const showPager = players.length > WNBA_PROP_PICKS_PAGE_SIZE;
+  const columns = splitPropsIntoColumns(pagePlayers, columnCount);
 
   const emptyCopy =
     emptyMessage ??
@@ -395,12 +181,7 @@ export function WnbaPropPicksList({
 
   return (
     <section className="space-y-3">
-      <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <p className="text-[14px] text-white/45">
-          {breakevenPct !== null
-            ? `Breakeven for ${legs}-pick ${formatFormatLabel(format)}: ${formatFair(breakevenPct)}`
-            : null}
-        </p>
+      <div className="flex flex-wrap items-baseline justify-end gap-2">
         {lastUpdatedAt ? (
           <p className="text-[14px] text-white/40">
             Last updated {formatWnbaPropPicksUpdatedAt(lastUpdatedAt)}
@@ -410,38 +191,33 @@ export function WnbaPropPicksList({
 
       {isLoading ? (
         <Skeletons columnCount={columnCount} />
-      ) : isError || props.length === 0 ? (
+      ) : isError || players.length === 0 ? (
         <p className="px-1 text-[14px] text-white/40">{emptyCopy}</p>
       ) : (
         <>
           <div
-            data-testid="wnba-prop-picks-list"
+            data-testid="wnba-prop-picks-grid"
             className="flex gap-3"
           >
-            {columns.map((colRows, colIdx) => (
+            {columns.map((colPlayers, colIdx) => (
               <div
                 key={colIdx}
                 data-testid="wnba-prop-picks-column"
                 className="flex min-w-0 flex-1 flex-col gap-3"
               >
-                {colRows.map((row) => {
-                  const key = rowKey(row);
-                  return (
-                    <PropPickCard
-                      key={key}
-                      row={row}
-                      expanded={expandedKeys.has(key)}
-                      onToggle={() => toggleRow(key)}
-                      lastUpdatedAt={lastUpdatedAt}
-                    />
-                  );
-                })}
+                {colPlayers.map((player) => (
+                  <PlayerCard
+                    key={`${player.player_name}|${player.team_abbrev ?? ""}`}
+                    player={player}
+                    app={app}
+                  />
+                ))}
               </div>
             ))}
           </div>
           <div className="flex flex-wrap items-center justify-between gap-2 px-1">
             <p className="text-[14px] text-white/40">
-              Showing {start + 1}–{end} of {props.length}
+              Showing {start + 1}–{end} of {players.length}
             </p>
             {showPager ? (
               <div className="flex items-center gap-1.5">
@@ -471,13 +247,6 @@ export function WnbaPropPicksList({
           </div>
         </>
       )}
-
-      {!isLoading && props.length > 0 ? (
-        <p className="px-1 text-[14px] text-white/35">
-          Fair from ProphetX/Novig (then DK/FD); Soft Consensus when 2+ soft
-          books (Pinnacle alone does not). DFS lines from PrizePicks/Underdog.
-        </p>
-      ) : null}
     </section>
   );
 }

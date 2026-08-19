@@ -42,10 +42,21 @@ function row(
   };
 }
 
-const howard = row({
+const howardPoints = row({
   player_name: "Rhyne Howard",
   team_abbrev: "ATL",
+  position: "G",
   stat: "Points",
+  recommended_side: "over",
+  source_tier: "sharp_consensus",
+});
+
+const howardAssists = row({
+  player_name: "Rhyne Howard",
+  team_abbrev: "ATL",
+  position: "G",
+  stat: "Assists",
+  line: 4.5,
   recommended_side: "over",
   source_tier: "sharp_consensus",
 });
@@ -53,6 +64,7 @@ const howard = row({
 const loyd = row({
   player_name: "Jewell Loyd",
   team_abbrev: "SEA",
+  position: "G",
   stat: "Assists",
   recommended_side: "under",
   source_tier: "no_sharp_read",
@@ -73,17 +85,35 @@ vi.mock("@/features/basketball/hooks/useWnbaScoreboard", () => ({
   useWnbaScoreboard: (...args: unknown[]) => mockUseWnbaScoreboard(...args),
 }));
 
-function renderPage() {
+function renderPage(path = "/wnba/prop_picks") {
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   });
   return render(
     <QueryClientProvider client={client}>
-      <MemoryRouter initialEntries={["/wnba/prop_picks"]}>
+      <MemoryRouter initialEntries={[path]}>
         <LeaguePropPicksPage />
       </MemoryRouter>
     </QueryClientProvider>,
   );
+}
+
+function mockBoard(props: ApiWnbaPropRow[]) {
+  mockUseWnbaProps.mockReturnValue({
+    data: {
+      as_of: "now",
+      app: "prizepicks",
+      format: "power",
+      legs: 4,
+      breakeven_pct: 54.3,
+      props,
+      error: null,
+    },
+    isLoading: false,
+    isError: false,
+    isFetched: true,
+    dataUpdatedAt: Date.UTC(2026, 7, 5, 20, 0),
+  });
 }
 
 describe("LeaguePropPicksPage", () => {
@@ -103,23 +133,8 @@ describe("LeaguePropPicksPage", () => {
     });
   });
 
-  it("defaults the toolbar to prizepicks/power/4 and lists rows", () => {
-    mockUseWnbaProps.mockReturnValue({
-      data: {
-        as_of: "now",
-        app: "prizepicks",
-        format: "power",
-        legs: 4,
-        breakeven_pct: 54.3,
-        props: [howard, loyd],
-        error: null,
-      },
-      isLoading: false,
-      isError: false,
-      isFetched: true,
-      dataUpdatedAt: Date.UTC(2026, 7, 5, 20, 0),
-    });
-
+  it("hardcodes prizepicks/power/4 and shows player cards without format or legs", () => {
+    mockBoard([howardPoints, howardAssists, loyd]);
     renderPage();
 
     expect(mockUseWnbaProps).toHaveBeenCalledWith({
@@ -128,31 +143,31 @@ describe("LeaguePropPicksPage", () => {
       legs: 4,
     });
     expect(screen.getByRole("heading", { name: "WNBA Props" })).toBeInTheDocument();
-    expect(screen.getByText(/Rhyne Howard/)).toBeInTheDocument();
     expect(screen.getByRole("tab", { name: "PrizePicks" })).toHaveAttribute(
       "aria-selected",
       "true",
     );
-    expect(screen.getByText("4-pick")).toBeInTheDocument();
+    expect(screen.getByText("Rhyne Howard")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "View 2 props" })).toHaveAttribute(
+      "href",
+      "/wnba/prop_picks/player/rhyne-howard?app=prizepicks",
+    );
+    expect(screen.getByRole("link", { name: "View 1 prop" })).toBeInTheDocument();
+
+    expect(screen.queryByText(/-pick/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Breakeven/i)).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "More legs" }),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Stat" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Side" })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Team" })).toBeInTheDocument();
+    expect(screen.getByRole("searchbox", { name: "Search player" })).toBeInTheDocument();
   });
 
-  it("refetches via the hook when switching app and legs", async () => {
+  it("refetches via the hook when switching app, keeping legs at 4", async () => {
     const user = userEvent.setup();
-    mockUseWnbaProps.mockReturnValue({
-      data: {
-        as_of: "now",
-        app: "prizepicks",
-        format: "power",
-        legs: 4,
-        breakeven_pct: 54.3,
-        props: [howard],
-        error: null,
-      },
-      isLoading: false,
-      isError: false,
-      isFetched: true,
-      dataUpdatedAt: Date.UTC(2026, 7, 5, 20, 0),
-    });
+    mockBoard([howardPoints]);
 
     renderPage();
     mockUseWnbaProps.mockClear();
@@ -163,39 +178,26 @@ describe("LeaguePropPicksPage", () => {
       format: "standard",
       legs: 4,
     });
+  });
 
-    mockUseWnbaProps.mockClear();
-    await user.click(screen.getByRole("button", { name: "More legs" }));
+  it("initializes the Underdog tab from ?app=underdog", () => {
+    mockBoard([howardPoints]);
+    renderPage("/wnba/prop_picks?app=underdog");
+
+    expect(screen.getByRole("tab", { name: "Underdog" })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
     expect(mockUseWnbaProps).toHaveBeenCalledWith({
       app: "underdog",
       format: "standard",
-      legs: 5,
-    });
-    await user.click(screen.getByRole("button", { name: "More legs" }));
-    expect(mockUseWnbaProps).toHaveBeenCalledWith({
-      app: "underdog",
-      format: "standard",
-      legs: 6,
+      legs: 4,
     });
   });
 
-  it("filters the list by team via WnbaPropPicksFilters", async () => {
+  it("filters the board by team via WnbaPropPicksFilters", async () => {
     const user = userEvent.setup();
-    mockUseWnbaProps.mockReturnValue({
-      data: {
-        as_of: "now",
-        app: "prizepicks",
-        format: "power",
-        legs: 4,
-        breakeven_pct: 54.3,
-        props: [howard, loyd],
-        error: null,
-      },
-      isLoading: false,
-      isError: false,
-      isFetched: true,
-      dataUpdatedAt: Date.UTC(2026, 7, 5, 20, 0),
-    });
+    mockBoard([howardPoints, loyd]);
 
     renderPage();
     expect(screen.getByText("Rhyne Howard")).toBeInTheDocument();
@@ -208,7 +210,18 @@ describe("LeaguePropPicksPage", () => {
     expect(screen.queryByText("Jewell Loyd")).not.toBeInTheDocument();
   });
 
-  it("hides props for final games before client filters", () => {
+  it("filters the board by player name search", async () => {
+    const user = userEvent.setup();
+    mockBoard([howardPoints, loyd]);
+
+    renderPage();
+    await user.type(screen.getByRole("searchbox", { name: "Search player" }), "howard");
+
+    expect(screen.getByText("Rhyne Howard")).toBeInTheDocument();
+    expect(screen.queryByText("Jewell Loyd")).not.toBeInTheDocument();
+  });
+
+  it("hides props for final games before grouping", () => {
     mockUseWnbaScoreboard.mockReturnValue({
       games: [
         {
@@ -219,24 +232,11 @@ describe("LeaguePropPicksPage", () => {
       ],
       data: { date: "2026-08-11", games: [], fetched_at: "" },
     });
-    mockUseWnbaProps.mockReturnValue({
-      data: {
-        as_of: "now",
-        app: "prizepicks",
-        format: "power",
-        legs: 4,
-        breakeven_pct: 54.3,
-        props: [howard, loyd],
-        error: null,
-      },
-      isLoading: false,
-      isError: false,
-      isFetched: true,
-      dataUpdatedAt: Date.UTC(2026, 7, 5, 20, 0),
-    });
+    mockBoard([howardPoints, howardAssists, loyd]);
 
     renderPage();
     expect(screen.queryByText("Rhyne Howard")).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "View 2 props" })).not.toBeInTheDocument();
     expect(screen.getByText("Jewell Loyd")).toBeInTheDocument();
   });
 
@@ -256,21 +256,7 @@ describe("LeaguePropPicksPage", () => {
       ],
       data: { date: "2026-08-11", games: [], fetched_at: "" },
     });
-    mockUseWnbaProps.mockReturnValue({
-      data: {
-        as_of: "now",
-        app: "prizepicks",
-        format: "power",
-        legs: 4,
-        breakeven_pct: 54.3,
-        props: [howard, loyd],
-        error: null,
-      },
-      isLoading: false,
-      isError: false,
-      isFetched: true,
-      dataUpdatedAt: Date.UTC(2026, 7, 5, 20, 0),
-    });
+    mockBoard([howardPoints, loyd]);
 
     renderPage();
     expect(screen.queryByText("Rhyne Howard")).not.toBeInTheDocument();
@@ -279,30 +265,15 @@ describe("LeaguePropPicksPage", () => {
       screen.getByText("No props for today's remaining games."),
     ).toBeInTheDocument();
     expect(screen.queryByText("Prop lines unavailable")).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Stat" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Team" })).not.toBeInTheDocument();
   });
 
-  it("does not render Tier or Fresh sharp vs stale DFS filter controls", () => {
-    mockUseWnbaProps.mockReturnValue({
-      data: {
-        as_of: "now",
-        app: "prizepicks",
-        format: "power",
-        legs: 4,
-        breakeven_pct: 54.3,
-        props: [howard, loyd],
-        error: null,
-      },
-      isLoading: false,
-      isError: false,
-      isFetched: true,
-      dataUpdatedAt: Date.UTC(2026, 7, 5, 20, 0),
-    });
-
+  it("does not render Stat, Side, Tier, or Fresh filter controls", () => {
+    mockBoard([howardPoints, loyd]);
     renderPage();
-    expect(screen.getByRole("button", { name: "Stat" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Team" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Side" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Stat" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Side" })).not.toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: "Tier" }),
     ).not.toBeInTheDocument();

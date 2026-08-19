@@ -1,19 +1,24 @@
 import { useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { LeagueSubnav } from "@/features/basketball/league/LeagueSubnav";
 import { useWnbaProps } from "@/features/basketball/hooks/useWnbaProps";
 import { useWnbaScoreboard } from "@/features/basketball/hooks/useWnbaScoreboard";
 import { WnbaPropPicksFilters } from "@/features/basketball/league/WnbaPropPicksFilters";
 import {
+  appFromSearch,
   WnbaPropPicksHeader,
   type WnbaPropAppTab,
 } from "@/features/basketball/league/WnbaPropPicksHeader";
 import { WnbaPropPicksList } from "@/features/basketball/league/WnbaPropPicksList";
 import {
-  collectWnbaStatOptions,
   collectWnbaTeamOptions,
   excludePastGameProps,
-  filterWnbaPropPicks,
+  filterWnbaPropPlayers,
 } from "@/features/basketball/league/filterWnbaPropPicks";
+import { groupWnbaPropPlayers } from "@/features/basketball/league/groupWnbaPropPlayers";
+
+/** Board always fetches 4-pick Power (PP) / Standard (UD); UI no longer exposes legs. */
+const BOARD_LEGS = 4;
 
 function formatForApp(app: WnbaPropAppTab): string {
   return app === "underdog" ? "standard" : "power";
@@ -24,26 +29,21 @@ function appLabel(app: WnbaPropAppTab): string {
 }
 
 export function LeaguePropPicksPage() {
-  const [app, setApp] = useState<WnbaPropAppTab>("prizepicks");
-  const [legs, setLegs] = useState<number>(4);
+  const [params, setSearchParams] = useSearchParams();
+  const app = appFromSearch(params.get("app"));
   const format = formatForApp(app);
 
   const { data, isLoading, isError, isFetched, dataUpdatedAt } = useWnbaProps({
     app,
     format,
-    legs,
+    legs: BOARD_LEGS,
   });
   const { games, data: scoreboard } = useWnbaScoreboard();
 
-  const [selectedStats, setSelectedStats] = useState<Set<string>>(
-    () => new Set(),
-  );
   const [selectedTeams, setSelectedTeams] = useState<Set<string>>(
     () => new Set(),
   );
-  const [selectedSides, setSelectedSides] = useState<Set<string>>(
-    () => new Set(),
-  );
+  const [query, setQuery] = useState("");
 
   const props = data?.props ?? [];
   const activeProps = useMemo(
@@ -54,29 +54,28 @@ export function LeaguePropPicksPage() {
   const showError = isError && !data;
   const apiEmpty = showError || Boolean(data && props.length === 0);
 
-  const filtersActive =
-    selectedStats.size > 0 ||
-    selectedTeams.size > 0 ||
-    selectedSides.size > 0;
+  const filtersActive = selectedTeams.size > 0 || query.trim().length > 0;
 
+  const players = useMemo(
+    () => groupWnbaPropPlayers(activeProps),
+    [activeProps],
+  );
   const filtered = useMemo(
     () =>
-      filterWnbaPropPicks(activeProps, {
-        stats: selectedStats,
+      filterWnbaPropPlayers(players, {
         teams: selectedTeams,
-        sides: selectedSides,
+        query,
       }),
-    [activeProps, selectedStats, selectedTeams, selectedSides],
+    [players, selectedTeams, query],
   );
 
   function clearFilters() {
-    setSelectedStats(new Set());
     setSelectedTeams(new Set());
-    setSelectedSides(new Set());
+    setQuery("");
   }
 
   function onAppChange(next: WnbaPropAppTab) {
-    setApp(next);
+    setSearchParams({ app: next }, { replace: true });
     clearFilters();
   }
 
@@ -99,20 +98,15 @@ export function LeaguePropPicksPage() {
         <WnbaPropPicksHeader
           activeApp={app}
           onAppChange={onAppChange}
-          legs={legs}
-          onLegsChange={setLegs}
         >
           {showBoardFilters ? (
             <WnbaPropPicksFilters
               tone="banner"
-              stats={collectWnbaStatOptions(activeProps)}
               teams={collectWnbaTeamOptions(activeProps)}
-              selectedStats={selectedStats}
               selectedTeams={selectedTeams}
-              selectedSides={selectedSides}
-              onStatsChange={setSelectedStats}
+              query={query}
               onTeamsChange={setSelectedTeams}
-              onSidesChange={setSelectedSides}
+              onQueryChange={setQuery}
               onClear={clearFilters}
             />
           ) : null}
@@ -124,10 +118,8 @@ export function LeaguePropPicksPage() {
           aria-labelledby={`wnba-props-${app}-tab`}
         >
           <WnbaPropPicksList
-            props={filtered}
-            format={format}
-            legs={legs}
-            breakevenPct={data?.breakeven_pct ?? null}
+            players={filtered}
+            app={app}
             isLoading={showLoading}
             isError={showError}
             filtersActive={

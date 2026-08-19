@@ -147,35 +147,26 @@ function MultiSelectFilter({
 }
 
 export type WnbaPropPicksFiltersProps = {
-  stats: string[];
   teams: string[];
-  selectedStats: Set<string>;
   selectedTeams: Set<string>;
-  selectedSides: Set<string>;
-  onStatsChange: (next: Set<string>) => void;
+  query: string;
   onTeamsChange: (next: Set<string>) => void;
-  onSidesChange: (next: Set<string>) => void;
+  onQueryChange: (query: string) => void;
   onClear: () => void;
   /** White capsule pills for use inside the green Scores-style header. */
   tone?: FilterTone;
 };
 
 export function WnbaPropPicksFilters({
-  stats,
   teams,
-  selectedStats,
   selectedTeams,
-  selectedSides,
-  onStatsChange,
+  query,
   onTeamsChange,
-  onSidesChange,
+  onQueryChange,
   onClear,
   tone = "default",
 }: WnbaPropPicksFiltersProps) {
-  const hasActive =
-    selectedStats.size > 0 ||
-    selectedTeams.size > 0 ||
-    selectedSides.size > 0;
+  const hasActive = selectedTeams.size > 0 || query.trim().length > 0;
   const onBanner = tone === "banner";
 
   return (
@@ -183,13 +174,6 @@ export function WnbaPropPicksFilters({
       className="flex flex-wrap items-center gap-2"
       aria-label="WNBA prop picks filters"
     >
-      <MultiSelectFilter
-        label="Stat"
-        tone={tone}
-        options={stats.map((s) => ({ value: s, label: s }))}
-        selected={selectedStats}
-        onChange={onStatsChange}
-      />
       {teams.length > 0 ? (
         <MultiSelectFilter
           label="Team"
@@ -199,15 +183,17 @@ export function WnbaPropPicksFilters({
           onChange={onTeamsChange}
         />
       ) : null}
-      <MultiSelectFilter
-        label="Side"
-        tone={tone}
-        options={[
-          { value: "over", label: "Over" },
-          { value: "under", label: "Under" },
-        ]}
-        selected={selectedSides}
-        onChange={onSidesChange}
+      <input
+        type="search"
+        value={query}
+        onChange={(event) => onQueryChange(event.target.value)}
+        placeholder="Search player"
+        aria-label="Search player"
+        className={
+          onBanner
+            ? "w-40 rounded-full bg-white px-3 py-1.5 text-[14px] font-semibold text-emerald-900 shadow-sm placeholder:font-medium placeholder:text-emerald-800/50"
+            : "w-40 rounded-md border border-white/10 bg-transparent px-2.5 py-1.5 text-[18px] text-white placeholder:text-white/40"
+        }
       />
       {hasActive ? (
         <button
