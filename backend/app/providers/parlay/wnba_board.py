@@ -1,4 +1,4 @@
-"""Fetch + normalize ParlayAPI WNBA player props into PP board + DK/FD indexes."""
+"""Fetch + normalize ParlayAPI WNBA player props into PP board + cmp book indexes."""
 
 from __future__ import annotations
 
@@ -186,7 +186,7 @@ def _rows_for_normalize(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 
 def normalize_parlay_wnba_board(rows: list[dict[str, Any]]) -> ParlayWnbaNormalized:
-    """Pure transform of Parlay WNBA prop rows → PP board + DK/FD side indexes."""
+    """Pure transform of Parlay WNBA prop rows → PP board + cmp sportsbook side indexes."""
     prizepicks_board: list[dict[str, Any]] = []
     pp_seen: set[tuple[str, str, float]] = set()
     book_indexes: dict[str, SideIndex] = {book: {} for book in _SCHEMA_BOOK_KEYS}

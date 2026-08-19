@@ -1,11 +1,11 @@
-"""Unit tests for Parlay WNBA board normalizer (PP + DK + FD)."""
+"""Unit tests for Parlay WNBA board normalizer (PP board + cmp books)."""
 
 from __future__ import annotations
 
 from app.providers.parlay.wnba_board import normalize_parlay_wnba_board
 
 
-def test_normalize_splits_pp_and_dk_fd():
+def test_normalize_splits_pp_and_cmp_books():
     # Keys match live WNBA Parlay rows (see parlay_props / fixtures), not the
     # brief's sportsbook/over_odds sketch.
     rows = [
@@ -43,9 +43,13 @@ def test_normalize_splits_pp_and_dk_fd():
     assert out.prizepicks_board[0]["odds_type"] == "standard"
     assert out.prizepicks_board[0]["stat_type"] == "points"
     assert out.prizepicks_board[0]["commence_time"] == "2026-08-11T23:00:00Z"
-    dk_key = ("caitlin clark", "points", "over", 19.5)
-    assert dk_key in out.book_indexes["draftkings"]
-    assert "caesars" not in out.book_indexes
+    over_key = ("caitlin clark", "points", "over", 19.5)
+    under_key = ("caitlin clark", "points", "under", 19.5)
+    assert over_key in out.book_indexes["draftkings"]
+    assert out.book_indexes["draftkings"][over_key]["american"] == -120
+    assert "caesars" in out.book_indexes
+    assert out.book_indexes["caesars"][over_key]["american"] == -110
+    assert out.book_indexes["caesars"][under_key]["american"] == -110
 
 
 def test_pp_line_only_alt_not_seeded_when_priced_main_exists():

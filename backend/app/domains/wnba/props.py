@@ -396,7 +396,7 @@ def _main_from_snapshot_rows(
 
 
 def _main_from_side_index(index: SideIndex) -> MainLineIndex:
-    """Collapse an exact-line SideIndex (already main-filtered, e.g. Parlay DK/FD)
+    """Collapse an exact-line SideIndex (already main-filtered, e.g. Parlay cmp books)
     into one quote per (player, stat). If multiple lines remain, balance-pick.
     """
     groups: dict[MainLineKey, dict[float, dict[str, dict[str, Any]]]] = {}
@@ -663,7 +663,7 @@ def _empty_parlay(*, unavailable: bool = True) -> ParlayWnbaNormalized:
 
 
 async def get_wnba_props_today(*, app: str, format: str, legs: int) -> WnbaPropPicksResponse:
-    """Assemble the DFS-first, +EV-ranked WNBA prop board for one app/format/legs."""
+    """Assemble the DFS-first WNBA prop player board for one app/format/legs."""
     validate_query(app, format, legs)
 
     cache_key = (app, format, legs)
