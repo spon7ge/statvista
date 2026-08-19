@@ -41,7 +41,7 @@ export function LeagueSubnav({ league }: LeagueSubnavProps) {
 
   function isActive(item: string): boolean {
     if (item === "Matchups") return pathname.endsWith("/matchups");
-    if (item === "Prop Picks") return pathname.endsWith("/prop_picks");
+    if (item === "Prop Picks") return pathname.includes("/prop_picks");
     if (item === "Leaders") return pathname.endsWith("/leaders");
     if (item === "Standings") return pathname.endsWith("/standings");
     if (item === "Futures") return pathname.endsWith("/futures");

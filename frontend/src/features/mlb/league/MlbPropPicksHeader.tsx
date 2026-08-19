@@ -2,6 +2,10 @@ import { type ReactNode } from "react";
 
 export type MlbPropAppTab = "prizepicks" | "underdog";
 
+export function appFromSearch(value: string | null): MlbPropAppTab {
+  return value === "underdog" ? "underdog" : "prizepicks";
+}
+
 const APP_TABS: { id: MlbPropAppTab; label: string }[] = [
   { id: "prizepicks", label: "PrizePicks" },
   { id: "underdog", label: "Underdog" },

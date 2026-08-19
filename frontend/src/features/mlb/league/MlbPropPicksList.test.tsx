@@ -94,7 +94,7 @@ describe("MlbPropPicksList", () => {
         app="underdog"
       />,
     );
-    expect(screen.getByRole("link", { name: "View 1 props" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "View 1 prop" })).toHaveAttribute(
       "href",
       "/mlb/prop_picks/player/mookie-betts?app=underdog",
     );

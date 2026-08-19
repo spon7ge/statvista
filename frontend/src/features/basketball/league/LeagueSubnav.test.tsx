@@ -40,11 +40,12 @@ describe("LeagueSubnav", () => {
     );
   });
 
-  it("links MLB Prop Picks to /mlb/prop_picks", () => {
-    renderSubnav("/mlb/prop_picks", "mlb");
-    const propPicks = screen.getByRole("link", { name: "Prop Picks" });
-    expect(propPicks).toHaveAttribute("href", "/mlb/prop_picks");
-    expect(propPicks).toHaveAttribute("aria-current", "page");
+  it("marks Prop Picks active on /mlb/prop_picks/player/:slug", () => {
+    renderSubnav("/mlb/prop_picks/player/aaron-judge", "mlb");
+    expect(screen.getByRole("link", { name: "Prop Picks" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
   });
 
   it("links MLB Leaders to /mlb/leaders", () => {

@@ -21,19 +21,44 @@ export function slugifyPlayerName(name: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
+function playerGroupKey(row: ApiMlbPropRow): string | null {
+  const name = row.player_name.trim();
+  if (!name) return null;
+  const team = (row.team_abbrev ?? "").trim().toUpperCase();
+  return `${name}\0${team}`;
+}
+
+function assignUniqueSlugs(cards: MlbPropPlayerCard[]): void {
+  const baseCounts = new Map<string, number>();
+  for (const card of cards) {
+    const base = slugifyPlayerName(card.player_name);
+    baseCounts.set(base, (baseCounts.get(base) ?? 0) + 1);
+  }
+  for (const card of cards) {
+    const base = slugifyPlayerName(card.player_name);
+    const teamSlug = slugifyPlayerName(card.team_abbrev ?? "");
+    if ((baseCounts.get(base) ?? 0) > 1 && teamSlug) {
+      card.player_slug = `${base}-${teamSlug}`;
+    } else {
+      card.player_slug = base;
+    }
+  }
+}
+
 export function groupMlbPropPlayers(props: ApiMlbPropRow[]): MlbPropPlayerCard[] {
-  const byName = new Map<string, ApiMlbPropRow[]>();
+  const byPlayer = new Map<string, ApiMlbPropRow[]>();
   for (const p of props) {
-    const key = p.player_name.trim();
+    const key = playerGroupKey(p);
     if (!key) continue;
-    const list = byName.get(key) ?? [];
+    const list = byPlayer.get(key) ?? [];
     list.push(p);
-    byName.set(key, list);
+    byPlayer.set(key, list);
   }
   const cards: MlbPropPlayerCard[] = [];
-  for (const [player_name, rows] of byName) {
-    const stats = [...new Set(rows.map((r) => r.stat).filter(Boolean))];
+  for (const rows of byPlayer.values()) {
     const sample = rows[0]!;
+    const player_name = sample.player_name.trim();
+    const stats = [...new Set(rows.map((r) => r.stat).filter(Boolean))];
     cards.push({
       player_name,
       player_slug: slugifyPlayerName(player_name),
@@ -45,10 +70,12 @@ export function groupMlbPropPlayers(props: ApiMlbPropRow[]): MlbPropPlayerCard[]
       rows,
     });
   }
+  assignUniqueSlugs(cards);
   cards.sort(
     (a, b) =>
       b.prop_count - a.prop_count ||
-      a.player_name.localeCompare(b.player_name),
+      a.player_name.localeCompare(b.player_name) ||
+      (a.team_abbrev ?? "").localeCompare(b.team_abbrev ?? ""),
   );
   return cards;
 }

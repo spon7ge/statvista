@@ -1,8 +1,10 @@
 import { useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { LeagueSubnav } from "@/features/basketball/league/LeagueSubnav";
 import { useMlbProps } from "@/features/mlb/hooks/useMlbProps";
 import { MlbPropPicksFilters } from "@/features/mlb/league/MlbPropPicksFilters";
 import {
+  appFromSearch,
   MlbPropPicksHeader,
   type MlbPropAppTab,
 } from "@/features/mlb/league/MlbPropPicksHeader";
@@ -25,7 +27,8 @@ function appLabel(app: MlbPropAppTab): string {
 }
 
 export function MlbPropPicksPage() {
-  const [app, setApp] = useState<MlbPropAppTab>("prizepicks");
+  const [params, setSearchParams] = useSearchParams();
+  const app = appFromSearch(params.get("app"));
   const format = formatForApp(app);
 
   const { data, isLoading, isError, isFetched, dataUpdatedAt } = useMlbProps({
@@ -62,7 +65,7 @@ export function MlbPropPicksPage() {
   }
 
   function onAppChange(next: MlbPropAppTab) {
-    setApp(next);
+    setSearchParams({ app: next }, { replace: true });
     clearFilters();
   }
 

@@ -79,13 +79,13 @@ vi.mock("@/features/mlb/hooks/useMlbProps", () => ({
   useMlbProps: (...args: unknown[]) => mockUseMlbProps(...args),
 }));
 
-function renderPage() {
+function renderPage(path = "/mlb/prop_picks") {
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   });
   return render(
     <QueryClientProvider client={client}>
-      <MemoryRouter initialEntries={["/mlb/prop_picks"]}>
+      <MemoryRouter initialEntries={[path]}>
         <MlbPropPicksPage />
       </MemoryRouter>
     </QueryClientProvider>,
@@ -139,7 +139,7 @@ describe("MlbPropPicksPage", () => {
     );
     expect(screen.getByText("Aaron Judge")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "View 2 props" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "View 1 props" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "View 1 prop" })).toBeInTheDocument();
 
     expect(screen.queryByText(/-pick/)).not.toBeInTheDocument();
     expect(screen.queryByText(/Breakeven/i)).not.toBeInTheDocument();
@@ -160,6 +160,21 @@ describe("MlbPropPicksPage", () => {
     mockUseMlbProps.mockClear();
 
     await user.click(screen.getByRole("tab", { name: "Underdog" }));
+    expect(mockUseMlbProps).toHaveBeenCalledWith({
+      app: "underdog",
+      format: "standard",
+      legs: 4,
+    });
+  });
+
+  it("initializes the Underdog tab from ?app=underdog", () => {
+    mockBoard([judgeTb]);
+    renderPage("/mlb/prop_picks?app=underdog");
+
+    expect(screen.getByRole("tab", { name: "Underdog" })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
     expect(mockUseMlbProps).toHaveBeenCalledWith({
       app: "underdog",
       format: "standard",

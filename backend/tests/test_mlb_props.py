@@ -103,8 +103,14 @@ def _stub_snapshots(
         raising=False,
     )
     monkeypatch.setattr(svc, "fetch_latest_underdog", lambda league="mlb": dfs_ud or [])
-    monkeypatch.setattr(svc, "fetch_latest_prophetx", lambda league="mlb": prophetx or [])
-    monkeypatch.setattr(svc, "fetch_latest_novig", lambda league="mlb": novig or [])
+    monkeypatch.setattr(
+        svc,
+        "fetch_latest_prophetx",
+        lambda league="mlb", **_kwargs: prophetx or [],
+    )
+    monkeypatch.setattr(
+        svc, "fetch_latest_novig", lambda league="mlb", **_kwargs: novig or []
+    )
     monkeypatch.setattr(svc, "fetch_latest_pinnacle", lambda league="mlb": pinnacle or [])
 
     async def fake_fetch_parlay(**_kwargs):
@@ -797,6 +803,144 @@ async def test_books_main_uses_book_main_line_not_dfs_only(monkeypatch):
     assert main.under_american == -105
 
 
+def test_main_from_snapshot_omits_when_all_is_main_false():
+    rows = [
+        {
+            "player_name": "Aaron Judge",
+            "stat_name": "total_bases",
+            "line_score": 1.5,
+            "side": "over",
+            "american_price": -200,
+            "is_main": False,
+        },
+        {
+            "player_name": "Aaron Judge",
+            "stat_name": "total_bases",
+            "line_score": 1.5,
+            "side": "under",
+            "american_price": 150,
+            "is_main": False,
+        },
+    ]
+    assert (
+        svc._main_from_snapshot_rows(
+            rows, player_field="player_name", stat_field="stat_name"
+        )
+        == {}
+    )
+
+
+def test_main_from_snapshot_picks_true_main_not_false_alt():
+    rows = [
+        {
+            "player_name": "Aaron Judge",
+            "stat_name": "total_bases",
+            "line_score": 2.5,
+            "side": "over",
+            "american_price": -115,
+            "is_main": True,
+        },
+        {
+            "player_name": "Aaron Judge",
+            "stat_name": "total_bases",
+            "line_score": 2.5,
+            "side": "under",
+            "american_price": -105,
+            "is_main": True,
+        },
+        {
+            "player_name": "Aaron Judge",
+            "stat_name": "total_bases",
+            "line_score": 1.5,
+            "side": "over",
+            "american_price": -200,
+            "is_main": False,
+        },
+        {
+            "player_name": "Aaron Judge",
+            "stat_name": "total_bases",
+            "line_score": 1.5,
+            "side": "under",
+            "american_price": 150,
+            "is_main": False,
+        },
+    ]
+    out = svc._main_from_snapshot_rows(
+        rows, player_field="player_name", stat_field="stat_name"
+    )
+    quote = out[("aaron judge", "total_bases")]
+    assert quote.line == 2.5
+    assert quote.over_american == -115
+    assert quote.under_american == -105
+
+
+def test_main_from_snapshot_balance_picks_when_is_main_absent():
+    rows = [
+        {
+            "player_name": "Aaron Judge",
+            "stat_name": "total_bases",
+            "line_score": 1.5,
+            "side": "over",
+            "american_price": -110,
+        },
+        {
+            "player_name": "Aaron Judge",
+            "stat_name": "total_bases",
+            "line_score": 1.5,
+            "side": "under",
+            "american_price": -110,
+        },
+    ]
+    out = svc._main_from_snapshot_rows(
+        rows, player_field="player_name", stat_field="stat_name"
+    )
+    quote = out[("aaron judge", "total_bases")]
+    assert quote.line == 1.5
+
+
+@pytest.mark.asyncio
+async def test_books_main_novig_none_when_all_is_main_false(monkeypatch):
+    now = datetime.now(timezone.utc)
+    pp = [
+        {
+            "player_name": "Aaron Judge",
+            "stat_type": "Total Bases",
+            "line_score": 1.5,
+            "odds_type": "standard",
+            "scraped_at": now,
+        }
+    ]
+    novig = [
+        {
+            "player_name": "Aaron Judge",
+            "stat_name": "total_bases",
+            "line_score": 1.5,
+            "side": "over",
+            "american_price": -200,
+            "scraped_at": now,
+            "is_main": False,
+        },
+        {
+            "player_name": "Aaron Judge",
+            "stat_name": "total_bases",
+            "line_score": 1.5,
+            "side": "under",
+            "american_price": 150,
+            "scraped_at": now,
+            "is_main": False,
+        },
+    ]
+    _stub_snapshots(
+        monkeypatch,
+        dfs_pp=pp,
+        novig=novig,
+        parlay=_parlay(book_indexes=_judge_parlay_indexes(now)),
+    )
+    monkeypatch.setattr(svc, "get_mlb_player_index", lambda: _async_return({}))
+    out = await svc.get_mlb_props_today(app="prizepicks", format="power", legs=4)
+    assert out.props[0].books_main.novig is None
+
+
 def test_response_is_cached_within_ttl(monkeypatch):
     now = datetime.now(timezone.utc)
     calls = {"count": 0}
@@ -821,8 +965,10 @@ def test_response_is_cached_within_ttl(monkeypatch):
         raising=False,
     )
     monkeypatch.setattr(svc, "fetch_latest_underdog", lambda league="mlb": [])
-    monkeypatch.setattr(svc, "fetch_latest_prophetx", lambda league="mlb": [])
-    monkeypatch.setattr(svc, "fetch_latest_novig", lambda league="mlb": [])
+    monkeypatch.setattr(
+        svc, "fetch_latest_prophetx", lambda league="mlb", **_kwargs: []
+    )
+    monkeypatch.setattr(svc, "fetch_latest_novig", lambda league="mlb", **_kwargs: [])
     monkeypatch.setattr(svc, "fetch_latest_pinnacle", lambda league="mlb": [])
 
     import asyncio

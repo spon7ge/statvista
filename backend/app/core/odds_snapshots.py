@@ -152,26 +152,30 @@ def fetch_latest_pinnacle(league: str = "wnba") -> list[dict]:
     return _fetch_rows(sql, lg)
 
 
-def fetch_latest_prophetx(league: str = "mlb") -> list[dict]:
+def fetch_latest_prophetx(league: str = "mlb", *, mains_only: bool = False) -> list[dict]:
     """Return rows from the latest ProphetX player snapshot for *league*.
 
     Includes ``is_main`` when the column exists (mlb/wnba ProphetX migrations).
     If an environment has not applied that column, retry without it so callers
     can balance-pick among all candidate lines instead of dropping the book.
+
+    ``mains_only=True`` adds ``WHERE is_main = true`` so books_main assembly is
+    not stuck with a False-alt when DISTINCT ON identity omits ``line_score``.
+    Fair/edge callers must leave this False (default).
     """
     lg = _normalized_league(league, "mlb")
     table = _PROPHETX_TABLE.get(lg, "mlb_prophetx")
-    return _fetch_player_prop_snapshot(table, lg)
+    return _fetch_player_prop_snapshot(table, lg, mains_only=mains_only)
 
 
-def fetch_latest_novig(league: str = "mlb") -> list[dict]:
+def fetch_latest_novig(league: str = "mlb", *, mains_only: bool = False) -> list[dict]:
     """Return rows from the latest Novig player snapshot for *league*.
 
     Same ``is_main`` try/fallback as :func:`fetch_latest_prophetx`.
     """
     lg = _normalized_league(league, "mlb")
     table = _NOVIG_TABLE.get(lg, "mlb_novig")
-    return _fetch_player_prop_snapshot(table, lg)
+    return _fetch_player_prop_snapshot(table, lg, mains_only=mains_only)
 
 
 def _is_missing_is_main_column(exc: BaseException) -> bool:
@@ -188,16 +192,26 @@ def _is_missing_is_main_column(exc: BaseException) -> bool:
     )
 
 
-def _fetch_player_prop_snapshot(table: str, league: str) -> list[dict[str, Any]]:
+def _fetch_player_prop_snapshot(
+    table: str, league: str, *, mains_only: bool = False
+) -> list[dict[str, Any]]:
     """Latest player-prop rows; prefer ``is_main``, else select without it.
 
     Pinnacle player tables have no ``is_main`` column — those fetchers stay
     on the base column list and callers balance-pick mains from row dicts.
+
+    ``mains_only`` filters ``is_main = true`` in SQL. Quote identity still
+    omits ``line_score`` (same DISTINCT ON as fair/edge); the filter is what
+    keeps a later-scraped alt from winning the collapse. Changing identity
+    cols would also change upserts/change-filters, so it stays out of this PR.
     """
     base_cols = (
         "player_name, stat_name, line_score, side, american_price, scraped_at"
     )
-    sql_with = _latest_snapshot_sql(table, f"{base_cols}, is_main")
+    extra_where = "AND is_main = true" if mains_only else ""
+    sql_with = _latest_snapshot_sql(
+        table, f"{base_cols}, is_main", extra_where=extra_where
+    )
     try:
         return _fetch_rows(sql_with, league, reraise=True)
     except Exception as exc:

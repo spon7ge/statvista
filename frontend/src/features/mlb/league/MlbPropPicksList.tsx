@@ -124,7 +124,7 @@ function PlayerCard({
           to={`/mlb/prop_picks/player/${player.player_slug}?app=${app}`}
           className="mt-3 inline-flex rounded-full bg-white px-3 py-1.5 text-[14px] font-semibold text-black"
         >
-          View {player.prop_count} props
+          View {player.prop_count} {player.prop_count === 1 ? "prop" : "props"}
         </Link>
       </div>
     </article>
@@ -207,7 +207,7 @@ export function MlbPropPicksList({
               >
                 {colPlayers.map((player) => (
                   <PlayerCard
-                    key={player.player_slug}
+                    key={`${player.player_name}|${player.team_abbrev ?? ""}`}
                     player={player}
                     app={app}
                   />

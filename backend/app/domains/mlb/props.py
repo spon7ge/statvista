@@ -324,13 +324,14 @@ def _main_from_snapshot_rows(
 ) -> MainLineIndex:
     """Build main O/U quotes per (player, stat). Prefer is_main=True rows.
 
-    Group candidate lines; if any row has is_main True for a line, keep only
-    those lines. Else pick the line with best balance_score across over/under
-    americans. Missing ``is_main`` on row dicts is treated as all-candidates
-    (balance-pick), so unit tests and DBs without the column still work.
+    If any row in a (player, stat) group has an ``is_main`` key:
+    keep only True-main lines; if none are True, omit the quote (do not
+    publish an alt as main). If the key is absent on every row (Pinnacle,
+    or DBs without the column), balance-pick among all candidate lines.
     """
     groups: dict[MainLineKey, dict[float, dict[str, Any]]] = {}
-    any_main: dict[MainLineKey, bool] = {}
+    has_flag: dict[MainLineKey, bool] = {}
+    any_true: dict[MainLineKey, bool] = {}
 
     for row in rows:
         player = str(row.get(player_field) or "").strip()
@@ -356,14 +357,19 @@ def _main_from_snapshot_rows(
             "american": american,
             "changed_at": _as_datetime(row.get("scraped_at")),
         }
-        if _row_is_main_flag(row) is True:
+        flag = _row_is_main_flag(row)
+        if flag is not None:
+            has_flag[key] = True
+        if flag is True:
             bucket["is_main"] = True
-            any_main[key] = True
+            any_true[key] = True
 
     out: MainLineIndex = {}
     for key, line_map in groups.items():
+        if has_flag.get(key) and not any_true.get(key):
+            continue
         candidates = line_map
-        if any_main.get(key):
+        if any_true.get(key):
             candidates = {
                 line_f: bucket
                 for line_f, bucket in line_map.items()
@@ -681,11 +687,18 @@ async def get_mlb_props_today(*, app: str, format: str, legs: int) -> MlbPropsRe
     pinnacle_idx = _index_snapshot_rows(
         pinnacle_rows, player_field="player_name", stat_field="market_type"
     )
+    # books_main: mains-only SQL so DISTINCT ON (player, stat, side) cannot
+    # collapse a later-scraped False-alt over the True-main. Fair/edge indexes
+    # above keep the unfiltered latest-per-identity fetch.
     px_main = _main_from_snapshot_rows(
-        prophetx_rows, player_field="player_name", stat_field="stat_name"
+        fetch_latest_prophetx("mlb", mains_only=True),
+        player_field="player_name",
+        stat_field="stat_name",
     )
     novig_main = _main_from_snapshot_rows(
-        novig_rows, player_field="player_name", stat_field="stat_name"
+        fetch_latest_novig("mlb", mains_only=True),
+        player_field="player_name",
+        stat_field="stat_name",
     )
     pin_main = _main_from_snapshot_rows(
         pinnacle_rows, player_field="player_name", stat_field="market_type"

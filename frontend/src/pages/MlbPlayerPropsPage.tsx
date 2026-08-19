@@ -2,7 +2,10 @@ import { useMemo, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { LeagueSubnav } from "@/features/basketball/league/LeagueSubnav";
 import { useMlbProps } from "@/features/mlb/hooks/useMlbProps";
-import type { MlbPropAppTab } from "@/features/mlb/league/MlbPropPicksHeader";
+import {
+  appFromSearch,
+  type MlbPropAppTab,
+} from "@/features/mlb/league/MlbPropPicksHeader";
 import { MlbPlayerPropsOddsGrid } from "@/features/mlb/league/MlbPlayerPropsOddsGrid";
 import {
   findPlayerBySlug,
@@ -16,10 +19,6 @@ const BOARD_LEGS = 4;
 
 function formatForApp(app: MlbPropAppTab): string {
   return app === "underdog" ? "standard" : "power";
-}
-
-function appFromSearch(value: string | null): MlbPropAppTab {
-  return value === "underdog" ? "underdog" : "prizepicks";
 }
 
 function teamPosLabel(team: string | null, pos: string | null): string | null {

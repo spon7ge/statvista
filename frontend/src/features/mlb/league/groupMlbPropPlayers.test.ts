@@ -64,6 +64,29 @@ describe("groupMlbPropPlayers", () => {
       "Aaron Judge",
     );
   });
+
+  it("disambiguates colliding names with team abbrev in the slug", () => {
+    const players = groupMlbPropPlayers([
+      row({
+        player_name: "Luis Castillo",
+        team_abbrev: "SEA",
+        stat: "Strikeouts",
+        line: 5.5,
+      }),
+      row({
+        player_name: "Luis Castillo",
+        team_abbrev: "MIN",
+        stat: "Hits",
+        line: 0.5,
+      }),
+    ]);
+    expect(players).toHaveLength(2);
+    const sea = findPlayerBySlug(players, "luis-castillo-sea");
+    const min = findPlayerBySlug(players, "luis-castillo-min");
+    expect(sea?.team_abbrev).toBe("SEA");
+    expect(min?.team_abbrev).toBe("MIN");
+    expect(findPlayerBySlug(players, "luis-castillo")).toBeNull();
+  });
 });
 
 describe("uniqueStatRows", () => {
