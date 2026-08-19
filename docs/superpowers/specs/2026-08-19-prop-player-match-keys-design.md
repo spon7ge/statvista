@@ -1,7 +1,7 @@
 # Prop player match keys — strong norm + aliases
 
 Date: 2026-08-19  
-Status: Approved  
+Status: Implemented  
 Related: WNBA/MLB prop picks player boards; Parlay / ProphetX / Novig / Pinnacle book joins
 
 ## Goal
