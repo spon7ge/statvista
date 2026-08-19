@@ -1,0 +1,2565 @@
+{
+  "source": "novig",
+  "fetched_at": "2026-08-18T21:51:47-07:00",
+  "league": "wnba",
+  "snapshot_kind": "props",
+  "games": [
+    {
+      "event_id": "01a014ae-fa9a-7072-9d2f-82076a3379b9",
+      "name": "Toronto Tempo @ Washington Mystics",
+      "scheduled": "2026-08-19T23:30:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "088d1ab8-11dc-455b-80e1-b6bb9abf5bd3",
+          "name": "Washington Mystics",
+          "seq": 0
+        },
+        {
+          "id": "c4d8e78a-6b00-4cd8-94f0-3635c40fa3ab",
+          "name": "Toronto Tempo",
+          "seq": 1
+        }
+      ],
+      "props": [
+        {
+          "player": "Marina Mabrey",
+          "stat": "rebounds",
+          "line": 3.5,
+          "over": {
+            "american": 122,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a017cf-16af-7212-aa7c-1c349a538e9b",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Shakira Austin",
+          "stat": "rebounds",
+          "line": 10.5,
+          "over": {
+            "american": -111,
+            "stake": 582.54
+          },
+          "under": {
+            "american": -108,
+            "stake": 550.0
+          },
+          "market_id": "01a014ae-fb20-7423-90e4-f0032b423ae3",
+          "sub_type": "rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Shakira Austin",
+          "stat": "assists",
+          "line": 2.5,
+          "over": {
+            "american": -138,
+            "stake": 1100.0
+          },
+          "under": null,
+          "market_id": "01a014ae-fb20-7423-90e4-f15324073647",
+          "sub_type": "assists",
+          "is_main": true
+        },
+        {
+          "player": "Sonia Citron",
+          "stat": "rebounds",
+          "line": 3.5,
+          "over": {
+            "american": -120,
+            "stake": 550.0
+          },
+          "under": {
+            "american": -113,
+            "stake": 550.0
+          },
+          "market_id": "01a014ae-fb20-7423-90e4-f39f82379e4e",
+          "sub_type": "rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Sonia Citron",
+          "stat": "points",
+          "line": 24.5,
+          "over": {
+            "american": 317,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a014ae-fb20-7423-90e4-f9f1f8189c40",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Kiki Iriafen",
+          "stat": "points",
+          "line": 19.5,
+          "over": {
+            "american": 208,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a014ae-fb20-7423-90e4-fa5ac71c4e36",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Kiki Iriafen",
+          "stat": "rebounds",
+          "line": 11.5,
+          "over": {
+            "american": 233,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a014ae-fb20-7423-90e4-fab520123d8e",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Shakira Austin",
+          "stat": "points",
+          "line": 14.5,
+          "over": {
+            "american": -809,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a014ae-fb20-7423-90e4-fae2aab6cc47",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Shakira Austin",
+          "stat": "points",
+          "line": 29.5,
+          "over": {
+            "american": 525,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a014ae-fb20-7423-90e4-fbdc31e4daaa",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Shakira Austin",
+          "stat": "rebounds",
+          "line": 7.5,
+          "over": {
+            "american": -733,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a014ae-fb20-7423-90e4-fc0035faa973",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Sonia Citron",
+          "stat": "assists",
+          "line": 3.5,
+          "over": {
+            "american": -400,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a014ae-fb20-7423-90e4-fc3795ea5c16",
+          "sub_type": "assists",
+          "is_main": false
+        },
+        {
+          "player": "Shakira Austin",
+          "stat": "rebounds",
+          "line": 9.5,
+          "over": {
+            "american": -245,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a014ae-fb20-7423-90e4-fc62246b5019",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Shakira Austin",
+          "stat": "rebounds",
+          "line": 11.5,
+          "over": {
+            "american": 115,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a014ae-fb20-7423-90e4-fc9a79c76115",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Kiki Iriafen",
+          "stat": "points",
+          "line": 14.5,
+          "over": {
+            "american": -182,
+            "stake": 400.0
+          },
+          "under": {
+            "american": -100,
+            "stake": 2000.0
+          },
+          "market_id": "01a014ae-fb20-7423-90e4-fcc16ba0c826",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Sonia Citron",
+          "stat": "rebounds",
+          "line": 5.5,
+          "over": {
+            "american": 300,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a014ae-fb20-7423-90e4-fcfc15c93088",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Shakira Austin",
+          "stat": "rebounds",
+          "line": 13.5,
+          "over": {
+            "american": 270,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a014ae-fb20-7423-90e4-fd2f55773b08",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Kiki Iriafen",
+          "stat": "rebounds",
+          "line": 5.5,
+          "over": {
+            "american": -1567,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a014ae-fb20-7423-90e4-fd5f616b2a65",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Shakira Austin",
+          "stat": "rebounds",
+          "line": 15.5,
+          "over": {
+            "american": 525,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a014ae-fb20-7423-90e4-fd862779e121",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Kiki Iriafen",
+          "stat": "points",
+          "line": 9.5,
+          "over": {
+            "american": -1718,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a014ae-fb20-7423-90e4-fdb71959a3b4",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Sonia Citron",
+          "stat": "assists",
+          "line": 5.5,
+          "over": null,
+          "under": {
+            "american": -182,
+            "stake": 845.07
+          },
+          "market_id": "01a014ae-fb20-7423-90e4-fdea5f53123e",
+          "sub_type": "assists",
+          "is_main": false
+        },
+        {
+          "player": "Kiki Iriafen",
+          "stat": "rebounds",
+          "line": 7.5,
+          "over": {
+            "american": -277,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a014ae-fb20-7423-90e4-fe14a1b8dc4b",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Kiki Iriafen",
+          "stat": "points",
+          "line": 24.5,
+          "over": {
+            "american": 590,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a014ae-fb20-7423-90e4-fe72b7ab5b29",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Sonia Citron",
+          "stat": "points",
+          "line": 14.5,
+          "over": {
+            "american": -400,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a014ae-fb20-7423-90e4-feaf638a330a",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Shakira Austin",
+          "stat": "assists",
+          "line": 3.5,
+          "over": {
+            "american": 182,
+            "stake": 1000.0
+          },
+          "under": null,
+          "market_id": "01a014ae-fb20-7423-90e4-fed4a456a817",
+          "sub_type": "assists",
+          "is_main": false
+        },
+        {
+          "player": "Shakira Austin",
+          "stat": "assists",
+          "line": 5.5,
+          "over": {
+            "american": 733,
+            "stake": 850.0
+          },
+          "under": null,
+          "market_id": "01a014ae-fb20-7423-90e4-ff3283cebca4",
+          "sub_type": "assists",
+          "is_main": false
+        },
+        {
+          "player": "Kiki Iriafen",
+          "stat": "rebounds",
+          "line": 13.5,
+          "over": {
+            "american": 488,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a014ae-fb20-7423-90e4-ff6a9e179b2b",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Sonia Citron",
+          "stat": "points",
+          "line": 19.5,
+          "over": {
+            "american": 106,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a014ae-fb20-7423-90e4-ff972ec2ec97",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Marina Mabrey",
+          "stat": "rebounds",
+          "line": 2.5,
+          "over": {
+            "american": -182,
+            "stake": 400.0
+          },
+          "under": {
+            "american": 117,
+            "stake": 400.0
+          },
+          "market_id": "01a017ce-e577-79f2-b023-a3ac3890e962",
+          "sub_type": "rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Isabelle Harrison",
+          "stat": "points",
+          "line": 9.5,
+          "over": {
+            "american": -264,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01820-2972-7ea3-8847-4ed4b8b9e19b",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Isabelle Harrison",
+          "stat": "rebounds",
+          "line": 7.5,
+          "over": {
+            "american": 186,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01820-2972-7ea3-8847-4f682d3a924d",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Isabelle Harrison",
+          "stat": "rebounds",
+          "line": 9.5,
+          "over": {
+            "american": 413,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01820-2973-73a1-88a8-9088badaf79c",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Isabelle Harrison",
+          "stat": "rebounds",
+          "line": 3.5,
+          "over": {
+            "american": -567,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01820-2973-73a1-88a8-91748f89ad94",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Isabelle Harrison",
+          "stat": "points",
+          "line": 14.5,
+          "over": {
+            "american": 167,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01820-2973-73a1-88a8-9563e64af4d2",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Isabelle Harrison",
+          "stat": "points",
+          "line": 19.5,
+          "over": {
+            "american": 525,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01820-2973-73a1-88a8-995c70c39274",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Lauren Betts",
+          "stat": "points",
+          "line": 9.5,
+          "over": {
+            "american": 194,
+            "stake": 400.0
+          },
+          "under": {
+            "american": -285,
+            "stake": 5769.23
+          },
+          "market_id": "01a017b2-847d-7601-994f-a0991e356855",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Marina Mabrey",
+          "stat": "assists",
+          "line": 4.5,
+          "over": {
+            "american": 125,
+            "stake": 1018.18
+          },
+          "under": null,
+          "market_id": "01a017d0-e1ab-7673-9d9b-37b77b978143",
+          "sub_type": "assists",
+          "is_main": false
+        },
+        {
+          "player": "Sonia Citron",
+          "stat": "assists",
+          "line": 7.5,
+          "over": {
+            "american": 365,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a014ae-fb20-7423-90e4-fb42ea13bad4",
+          "sub_type": "assists",
+          "is_main": false
+        },
+        {
+          "player": "Sonia Citron",
+          "stat": "points",
+          "line": 17.5,
+          "over": {
+            "american": -122,
+            "stake": 411.11
+          },
+          "under": {
+            "american": -111,
+            "stake": 42.11
+          },
+          "market_id": "01a014ae-fb20-7423-90e4-f306200436a8",
+          "sub_type": "points",
+          "is_main": true
+        },
+        {
+          "player": "Sonia Citron",
+          "stat": "points",
+          "line": 18.5,
+          "over": {
+            "american": -115,
+            "stake": 400.0
+          },
+          "under": {
+            "american": -133,
+            "stake": 400.0
+          },
+          "market_id": "01a017f9-9eac-7a32-9025-be6e499a36d7",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Georgia Amoore",
+          "stat": "points_rebounds_assists",
+          "line": 9.5,
+          "over": {
+            "american": 115,
+            "stake": 474.40999999999997
+          },
+          "under": null,
+          "market_id": "01a01825-9b64-7e33-90ed-d08853007409",
+          "sub_type": "points_rebounds_assists",
+          "is_main": true
+        },
+        {
+          "player": "Sonia Citron",
+          "stat": "assists",
+          "line": 4.5,
+          "over": {
+            "american": -167,
+            "stake": 681.69
+          },
+          "under": {
+            "american": 127,
+            "stake": 1003.52
+          },
+          "market_id": "01a014ae-fb20-7423-90e4-eebaebd41699",
+          "sub_type": "assists",
+          "is_main": true
+        },
+        {
+          "player": "Sonia Citron",
+          "stat": "points_rebounds_assists",
+          "line": 26.5,
+          "over": {
+            "american": -127,
+            "stake": 100.0
+          },
+          "under": {
+            "american": -106,
+            "stake": 100.0
+          },
+          "market_id": "01a0152a-84b5-7810-8982-b3ee2f5376c3",
+          "sub_type": "points_rebounds_assists",
+          "is_main": true
+        },
+        {
+          "player": "Shakira Austin",
+          "stat": "points_rebounds_assists",
+          "line": 33.5,
+          "over": {
+            "american": -120,
+            "stake": 500.0
+          },
+          "under": {
+            "american": -113,
+            "stake": 500.0
+          },
+          "market_id": "01a0152a-84b5-7810-8982-b4100ccf3a5f",
+          "sub_type": "points_rebounds_assists",
+          "is_main": true
+        },
+        {
+          "player": "Marina Mabrey",
+          "stat": "assists",
+          "line": 3.5,
+          "over": {
+            "american": -135,
+            "stake": 1954.76
+          },
+          "under": {
+            "american": 104,
+            "stake": 400.01
+          },
+          "market_id": "01a017d4-6326-7e92-9b55-13c08710b17f",
+          "sub_type": "assists",
+          "is_main": true
+        },
+        {
+          "player": "Kiki Iriafen",
+          "stat": "points_rebounds_assists",
+          "line": 26.5,
+          "over": {
+            "american": -133,
+            "stake": 400.0
+          },
+          "under": {
+            "american": 102,
+            "stake": 726.12
+          },
+          "market_id": "01a0156e-45f9-7ef1-8eb1-8dba3374a317",
+          "sub_type": "points_rebounds_assists",
+          "is_main": true
+        },
+        {
+          "player": "Marina Mabrey",
+          "stat": "assists",
+          "line": 7.5,
+          "over": {
+            "american": 809,
+            "stake": 450.0
+          },
+          "under": null,
+          "market_id": "01a017e9-6f41-7953-80cd-b53e62273ff7",
+          "sub_type": "assists",
+          "is_main": false
+        },
+        {
+          "player": "Marina Mabrey",
+          "stat": "assists",
+          "line": 5.5,
+          "over": {
+            "american": 300,
+            "stake": 950.0
+          },
+          "under": null,
+          "market_id": "01a017e9-6f41-7953-80cd-b5693795b851",
+          "sub_type": "assists",
+          "is_main": false
+        },
+        {
+          "player": "Marina Mabrey",
+          "stat": "rebounds",
+          "line": 5.5,
+          "over": {
+            "american": 471,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a017e9-6f41-7953-80cd-ba183f9c7dd7",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Kiki Iriafen",
+          "stat": "points",
+          "line": 15.5,
+          "over": {
+            "american": -108,
+            "stake": 615.04
+          },
+          "under": {
+            "american": -125,
+            "stake": 400.0
+          },
+          "market_id": "01a014ae-fb20-7423-90e4-ee86893267da",
+          "sub_type": "points",
+          "is_main": true
+        },
+        {
+          "player": "Georgia Amoore",
+          "stat": "points",
+          "line": 4.5,
+          "over": {
+            "american": -120,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a0182c-ee58-71a0-bf4c-ddc3c0d8cecc",
+          "sub_type": "points",
+          "is_main": true
+        },
+        {
+          "player": "Georgia Amoore",
+          "stat": "points",
+          "line": 5.5,
+          "over": {
+            "american": 160,
+            "stake": 3608.5699999999997
+          },
+          "under": null,
+          "market_id": "01a017bd-3f75-77a1-87e4-a26bfc5f21ae",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Georgia Amoore",
+          "stat": "assists",
+          "line": 3.5,
+          "over": {
+            "american": 133,
+            "stake": 1100.0
+          },
+          "under": {
+            "american": -190,
+            "stake": 400.0
+          },
+          "market_id": "01a017bd-3f77-7182-bee9-edcddfa8425c",
+          "sub_type": "assists",
+          "is_main": true
+        },
+        {
+          "player": "Michaela Onyenwere",
+          "stat": "rebounds",
+          "line": 2.5,
+          "over": {
+            "american": 102,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a017bd-3fa5-7030-9ed3-d3e3465be764",
+          "sub_type": "rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Lauren Betts",
+          "stat": "rebounds",
+          "line": 4.5,
+          "over": {
+            "american": -160,
+            "stake": 550.0
+          },
+          "under": {
+            "american": 125,
+            "stake": 199.73
+          },
+          "market_id": "01a017bd-3fa5-7030-9ed3-d41e5744a562",
+          "sub_type": "rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Michaela Onyenwere",
+          "stat": "points",
+          "line": 7.5,
+          "over": {
+            "american": -104,
+            "stake": 400.01
+          },
+          "under": null,
+          "market_id": "01a017bd-3f75-77a1-87e4-a2352fd9358b",
+          "sub_type": "points",
+          "is_main": true
+        },
+        {
+          "player": "Kiki Iriafen",
+          "stat": "rebounds",
+          "line": 9.5,
+          "over": {
+            "american": 108,
+            "stake": 569.23
+          },
+          "under": {
+            "american": -144,
+            "stake": 550.0
+          },
+          "market_id": "01a014ae-fb20-7423-90e4-efd7e0bb285d",
+          "sub_type": "rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Sonia Citron",
+          "stat": "assists",
+          "line": 9.5,
+          "over": {
+            "american": 770,
+            "stake": 250.0
+          },
+          "under": {
+            "american": -1329,
+            "stake": 18.91
+          },
+          "market_id": "01a014ae-fb20-7423-90e4-fe42375b6cea",
+          "sub_type": "assists",
+          "is_main": false
+        },
+        {
+          "player": "Lauren Betts",
+          "stat": "points",
+          "line": 6.5,
+          "over": {
+            "american": -100,
+            "stake": 699.99
+          },
+          "under": {
+            "american": -122,
+            "stake": 400.0
+          },
+          "market_id": "01a017ac-5051-78a2-aaf8-73a09f662b69",
+          "sub_type": "points",
+          "is_main": true
+        },
+        {
+          "player": "Shakira Austin",
+          "stat": "points",
+          "line": 19.5,
+          "over": {
+            "american": -135,
+            "stake": 414.7
+          },
+          "under": {
+            "american": 125,
+            "stake": 2742.11
+          },
+          "market_id": "01a014ae-fb20-7423-90e4-f3637adbb43b",
+          "sub_type": "points",
+          "is_main": true
+        },
+        {
+          "player": "Marina Mabrey",
+          "stat": "points",
+          "line": 19.5,
+          "over": {
+            "american": -120,
+            "stake": 522.09
+          },
+          "under": {
+            "american": -120,
+            "stake": 410.99
+          },
+          "market_id": "01a017c7-c4ab-7971-b007-be945f64b10e",
+          "sub_type": "points",
+          "is_main": true
+        },
+        {
+          "player": "Marina Mabrey",
+          "stat": "points",
+          "line": 24.5,
+          "over": {
+            "american": 194,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a017cd-cda4-7e33-9ed9-f873695c2fae",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Marina Mabrey",
+          "stat": "points",
+          "line": 29.5,
+          "over": {
+            "american": 426,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a017cd-cda4-7e33-9ed9-f8a45dbfd83a",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Lauren Betts",
+          "stat": "rebounds",
+          "line": 3.5,
+          "over": {
+            "american": -376,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a017cd-cda4-7e33-9ed9-f9939efd7aa2",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Michaela Onyenwere",
+          "stat": "rebounds",
+          "line": 3.5,
+          "over": {
+            "american": 208,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a017cd-cda4-7e33-9ed9-fa249b188d6e",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Marina Mabrey",
+          "stat": "points",
+          "line": 14.5,
+          "over": {
+            "american": -525,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a017cd-cda4-7e33-9ed9-fc04e4dd2f9b",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Georgia Amoore",
+          "stat": "points",
+          "line": 9.5,
+          "over": {
+            "american": 506,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a017cd-cda4-7e33-9ed9-fcce191e01f5",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Lauren Betts",
+          "stat": "rebounds",
+          "line": 5.5,
+          "over": {
+            "american": 113,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a017cd-cda4-7e33-9ed9-fe161e6e5e44",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Lauren Betts",
+          "stat": "rebounds",
+          "line": 7.5,
+          "over": {
+            "american": 300,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a017cd-cda4-7e33-9ed9-fed5660989f9",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Michaela Onyenwere",
+          "stat": "points",
+          "line": 9.5,
+          "over": {
+            "american": 174,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a017cd-cda4-7e33-9ed9-ff0c31e52b59",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Isabelle Harrison",
+          "stat": "points_rebounds_assists",
+          "line": 20.5,
+          "over": {
+            "american": 125,
+            "stake": 253.32
+          },
+          "under": null,
+          "market_id": "01a017e8-45c2-7333-a68b-48749cd76f55",
+          "sub_type": "points_rebounds_assists",
+          "is_main": false
+        },
+        {
+          "player": "Isabelle Harrison",
+          "stat": "assists",
+          "line": 2.5,
+          "over": {
+            "american": 174,
+            "stake": 100.0
+          },
+          "under": null,
+          "market_id": "01a01816-27cb-7c32-a06a-f0d34a637505",
+          "sub_type": "assists",
+          "is_main": true
+        },
+        {
+          "player": "Isabelle Harrison",
+          "stat": "rebounds",
+          "line": 5.5,
+          "over": {
+            "american": -153,
+            "stake": 400.0
+          },
+          "under": {
+            "american": -100,
+            "stake": 400.0
+          },
+          "market_id": "01a01816-27fd-7c33-aefa-c3e4f766a1d3",
+          "sub_type": "rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Isabelle Harrison",
+          "stat": "points",
+          "line": 11.5,
+          "over": {
+            "american": -120,
+            "stake": 400.0
+          },
+          "under": {
+            "american": -127,
+            "stake": 400.0
+          },
+          "market_id": "01a01817-6a31-7af2-b7f4-4d807cb8c0ca",
+          "sub_type": "points",
+          "is_main": true
+        },
+        {
+          "player": "Isabelle Harrison",
+          "stat": "points_rebounds_assists",
+          "line": 19.5,
+          "over": {
+            "american": -125,
+            "stake": 400.0
+          },
+          "under": {
+            "american": -122,
+            "stake": 400.0
+          },
+          "market_id": "01a01817-6a63-7791-b17b-f88cec0f92ef",
+          "sub_type": "points_rebounds_assists",
+          "is_main": true
+        },
+        {
+          "player": "Georgia Amoore",
+          "stat": "assists",
+          "line": 5.5,
+          "over": {
+            "american": 545,
+            "stake": 900.0
+          },
+          "under": null,
+          "market_id": "01a017cd-cda4-7e33-9ed9-fa5ac5ad263b",
+          "sub_type": "assists",
+          "is_main": false
+        },
+        {
+          "player": "Isabelle Harrison",
+          "stat": "assists",
+          "line": 3.5,
+          "over": {
+            "american": 376,
+            "stake": 500.0
+          },
+          "under": null,
+          "market_id": "01a01820-2973-73a1-88a8-989122014269",
+          "sub_type": "assists",
+          "is_main": false
+        },
+        {
+          "player": "Shakira Austin",
+          "stat": "points",
+          "line": 24.5,
+          "over": {
+            "american": 208,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a014ae-fb20-7423-90e4-fb77078ae316",
+          "sub_type": "points",
+          "is_main": false
+        }
+      ]
+    },
+    {
+      "event_id": "01a014ae-fb5c-7533-a6ee-cc0f3a6bcb81",
+      "name": "Minnesota Lynx @ Golden State Valkyries",
+      "scheduled": "2026-08-20T02:00:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "66c8262d-7593-486d-a3ec-eb152fb4303f",
+          "name": "Golden State Valkyries",
+          "seq": 0
+        },
+        {
+          "id": "2b4ff049-679a-484f-8703-41894af4953d",
+          "name": "Minnesota Lynx",
+          "seq": 1
+        }
+      ],
+      "props": [
+        {
+          "player": "Kayla Thornton",
+          "stat": "rebounds",
+          "line": 5.5,
+          "over": {
+            "american": 130,
+            "stake": 521.24
+          },
+          "under": {
+            "american": -150,
+            "stake": 653.16
+          },
+          "market_id": "01a015d1-9b81-7780-bdb1-4743bbe06cd0",
+          "sub_type": "rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Veronica Burton",
+          "stat": "rebounds",
+          "line": 3.5,
+          "over": {
+            "american": -144,
+            "stake": 500.0
+          },
+          "under": {
+            "american": 108,
+            "stake": 506.73
+          },
+          "market_id": "01a015d1-9b81-7780-bdb1-4778daffd080",
+          "sub_type": "rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Courtney Williams",
+          "stat": "rebounds",
+          "line": 4.5,
+          "over": {
+            "american": 113,
+            "stake": 500.0
+          },
+          "under": {
+            "american": -153,
+            "stake": 500.0
+          },
+          "market_id": "01a015d1-9b81-7780-bdb1-47a53856c463",
+          "sub_type": "rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Olivia Miles",
+          "stat": "rebounds",
+          "line": 4.5,
+          "over": {
+            "american": 104,
+            "stake": 400.0
+          },
+          "under": {
+            "american": -160,
+            "stake": 400.0
+          },
+          "market_id": "01a015d1-9b82-7083-a2e4-d7dac584c7f1",
+          "sub_type": "rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Kayla McBride",
+          "stat": "points",
+          "line": 14.5,
+          "over": {
+            "american": -102,
+            "stake": 550.0
+          },
+          "under": {
+            "american": -138,
+            "stake": 400.0
+          },
+          "market_id": "01a015d1-9b82-7083-a2e4-d832e9f4b68d",
+          "sub_type": "points",
+          "is_main": true
+        },
+        {
+          "player": "Courtney Williams",
+          "stat": "assists",
+          "line": 4.5,
+          "over": {
+            "american": 113,
+            "stake": 1174.39
+          },
+          "under": {
+            "american": -147,
+            "stake": 650.0
+          },
+          "market_id": "01a015d1-9b82-7083-a2e4-d89f52449e55",
+          "sub_type": "assists",
+          "is_main": true
+        },
+        {
+          "player": "Olivia Miles",
+          "stat": "assists",
+          "line": 6.5,
+          "over": {
+            "american": -108,
+            "stake": 1283.68
+          },
+          "under": {
+            "american": 106,
+            "stake": 459.80999999999995
+          },
+          "market_id": "01a015d1-9b82-7083-a2e4-d8ca557ecac3",
+          "sub_type": "assists",
+          "is_main": true
+        },
+        {
+          "player": "Janelle Salaun",
+          "stat": "rebounds",
+          "line": 3.5,
+          "over": {
+            "american": 115,
+            "stake": 500.0
+          },
+          "under": {
+            "american": -153,
+            "stake": 500.0
+          },
+          "market_id": "01a0181b-095d-7282-8f99-9ee0e1ae6d52",
+          "sub_type": "rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Napheesa Collier",
+          "stat": "assists",
+          "line": 5.5,
+          "over": {
+            "american": 733,
+            "stake": 850.0
+          },
+          "under": null,
+          "market_id": "01a015df-b8a4-7131-bd21-fcc8367d2968",
+          "sub_type": "assists",
+          "is_main": false
+        },
+        {
+          "player": "Gabby Williams",
+          "stat": "points",
+          "line": 13.5,
+          "over": {
+            "american": -141,
+            "stake": 400.0
+          },
+          "under": {
+            "american": -100,
+            "stake": 420.0
+          },
+          "market_id": "01a015f0-1759-77f0-9238-02ae0d2c8336",
+          "sub_type": "points",
+          "is_main": true
+        },
+        {
+          "player": "Kayla Thornton",
+          "stat": "points",
+          "line": 8.5,
+          "over": {
+            "american": -111,
+            "stake": 500.0
+          },
+          "under": {
+            "american": -138,
+            "stake": 400.0
+          },
+          "market_id": "01a015f0-1759-77f0-9238-024aff6a3172",
+          "sub_type": "points",
+          "is_main": true
+        },
+        {
+          "player": "Veronica Burton",
+          "stat": "points_rebounds",
+          "line": 17.5,
+          "over": {
+            "american": 144,
+            "stake": 507.15
+          },
+          "under": null,
+          "market_id": "01a0181f-b7a1-7722-9d89-9e89795bf07a",
+          "sub_type": "points_rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Napheesa Collier",
+          "stat": "points",
+          "line": 18.5,
+          "over": {
+            "american": -102,
+            "stake": 560.86
+          },
+          "under": {
+            "american": -130,
+            "stake": 457.47
+          },
+          "market_id": "01a015a7-0847-7d52-812e-a3ae65736b67",
+          "sub_type": "points",
+          "is_main": true
+        },
+        {
+          "player": "Olivia Miles",
+          "stat": "points",
+          "line": 20.5,
+          "over": {
+            "american": 150,
+            "stake": 956.26
+          },
+          "under": null,
+          "market_id": "01a015d1-9b82-7083-a2e4-d80c08508edc",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Veronica Burton",
+          "stat": "assists",
+          "line": 5.5,
+          "over": {
+            "american": -170,
+            "stake": 1000.0
+          },
+          "under": null,
+          "market_id": "01a015fa-db2f-7233-939c-9a91286ce628",
+          "sub_type": "assists",
+          "is_main": false
+        },
+        {
+          "player": "Olivia Miles",
+          "stat": "points",
+          "line": 24.5,
+          "over": {
+            "american": 251,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015fa-db30-7223-95d8-f82fdf1e7af4",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Olivia Miles",
+          "stat": "assists",
+          "line": 9.5,
+          "over": {
+            "american": 317,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015fa-db30-7223-95d8-f853b6a7ab43",
+          "sub_type": "assists",
+          "is_main": false
+        },
+        {
+          "player": "Gabby Williams",
+          "stat": "points",
+          "line": 9.5,
+          "over": {
+            "american": -669,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015fa-db30-7223-95d8-f8e81218ddf2",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Olivia Miles",
+          "stat": "assists",
+          "line": 5.5,
+          "over": {
+            "american": -335,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015fa-db30-7223-95d8-fa6392bd1b8a",
+          "sub_type": "assists",
+          "is_main": false
+        },
+        {
+          "player": "Veronica Burton",
+          "stat": "assists",
+          "line": 7.5,
+          "over": {
+            "american": 199,
+            "stake": 1000.0
+          },
+          "under": null,
+          "market_id": "01a015fa-db30-7223-95d8-fac6941d6e76",
+          "sub_type": "assists",
+          "is_main": false
+        },
+        {
+          "player": "Courtney Williams",
+          "stat": "rebounds",
+          "line": 5.5,
+          "over": {
+            "american": 190,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015fa-db30-7223-95d8-faf9ebbfe2b9",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Olivia Miles",
+          "stat": "rebounds",
+          "line": 5.5,
+          "over": {
+            "american": 239,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015fa-db30-7223-95d8-fb271f39bb15",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Kayla McBride",
+          "stat": "points",
+          "line": 19.5,
+          "over": {
+            "american": 264,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015fa-db30-7223-95d8-fc7283be8f3b",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Olivia Miles",
+          "stat": "points",
+          "line": 14.5,
+          "over": {
+            "american": -441,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015fa-db30-7223-95d8-fca7ddef107c",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Veronica Burton",
+          "stat": "rebounds",
+          "line": 5.5,
+          "over": {
+            "american": 264,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015fa-db30-7223-95d8-fd93f4716c8d",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Courtney Williams",
+          "stat": "assists",
+          "line": 3.5,
+          "over": {
+            "american": -257,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015fa-db30-7223-95d8-fe5e57227dee",
+          "sub_type": "assists",
+          "is_main": false
+        },
+        {
+          "player": "Natasha Howard",
+          "stat": "points",
+          "line": 14.5,
+          "over": {
+            "american": 199,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015fa-db30-7223-95d8-fee7eb33f62f",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Olivia Miles",
+          "stat": "assists",
+          "line": 7.5,
+          "over": {
+            "american": 138,
+            "stake": 1100.0
+          },
+          "under": {
+            "american": -150,
+            "stake": 50.0
+          },
+          "market_id": "01a015fa-db30-7223-95d8-ff7fba99f65a",
+          "sub_type": "assists",
+          "is_main": false
+        },
+        {
+          "player": "Veronica Burton",
+          "stat": "assists",
+          "line": 3.5,
+          "over": {
+            "american": -1567,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015fa-db30-7223-95d9-00037e0a0e80",
+          "sub_type": "assists",
+          "is_main": false
+        },
+        {
+          "player": "Kayla Thornton",
+          "stat": "rebounds",
+          "line": 7.5,
+          "over": {
+            "american": 292,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015fa-db30-7223-95d9-0032f3b6ab24",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Olivia Miles",
+          "stat": "rebounds",
+          "line": 3.5,
+          "over": {
+            "american": -174,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015fa-db30-7223-95d9-00f7d8f49bed",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Veronica Burton",
+          "stat": "assists",
+          "line": 9.5,
+          "over": {
+            "american": 525,
+            "stake": 900.0
+          },
+          "under": null,
+          "market_id": "01a015fa-db30-7223-95d9-012b12861b36",
+          "sub_type": "assists",
+          "is_main": false
+        },
+        {
+          "player": "Courtney Williams",
+          "stat": "rebounds",
+          "line": 7.5,
+          "over": {
+            "american": 545,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015fa-db30-7223-95d9-01b075760ca8",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Kayla McBride",
+          "stat": "points",
+          "line": 9.5,
+          "over": {
+            "american": -669,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015fa-db30-7223-95d9-024c030c6542",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Courtney Williams",
+          "stat": "assists",
+          "line": 7.5,
+          "over": {
+            "american": 700,
+            "stake": 850.0
+          },
+          "under": null,
+          "market_id": "01a015fa-db30-7223-95d9-0276ec0000c2",
+          "sub_type": "assists",
+          "is_main": false
+        },
+        {
+          "player": "Courtney Williams",
+          "stat": "rebounds",
+          "line": 3.5,
+          "over": {
+            "american": -233,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015fa-db30-7223-95d9-03cbe21291e2",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Kayla Thornton",
+          "stat": "rebounds",
+          "line": 3.5,
+          "over": {
+            "american": -441,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015fa-db30-7223-95d9-04ec5d1fc0a0",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Courtney Williams",
+          "stat": "assists",
+          "line": 5.5,
+          "over": {
+            "american": 212,
+            "stake": 1000.0
+          },
+          "under": null,
+          "market_id": "01a015fa-db30-7223-95d9-05ae43f5bb89",
+          "sub_type": "assists",
+          "is_main": false
+        },
+        {
+          "player": "Gabby Williams",
+          "stat": "points",
+          "line": 19.5,
+          "over": {
+            "american": 270,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015fa-db30-7223-95d9-063fa7c42036",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Natasha Howard",
+          "stat": "points",
+          "line": 9.5,
+          "over": {
+            "american": -245,
+            "stake": 400.0
+          },
+          "under": {
+            "american": 150,
+            "stake": 2487.5
+          },
+          "market_id": "01a015fa-db30-7223-95d9-0665e75ce135",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Olivia Miles",
+          "stat": "rebounds",
+          "line": 7.5,
+          "over": {
+            "american": 641,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015fa-db30-7223-95d9-06946191a8e5",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Gabby Williams",
+          "stat": "assists",
+          "line": 5.5,
+          "over": {
+            "american": 1011,
+            "stake": 50.0
+          },
+          "under": null,
+          "market_id": "01a017b2-84eb-7901-a439-8aa9af27a781",
+          "sub_type": "assists",
+          "is_main": false
+        },
+        {
+          "player": "Cecilia Zandalasini",
+          "stat": "rebounds",
+          "line": 3.5,
+          "over": {
+            "american": 199,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a017b2-84eb-7901-a439-8cef77627c14",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Gabby Williams",
+          "stat": "assists",
+          "line": 3.5,
+          "over": {
+            "american": 251,
+            "stake": 950.0
+          },
+          "under": null,
+          "market_id": "01a017b2-84eb-7901-a439-8e0489ba7edc",
+          "sub_type": "assists",
+          "is_main": false
+        },
+        {
+          "player": "Veronica Burton",
+          "stat": "assists",
+          "line": 6.5,
+          "over": {
+            "american": 120,
+            "stake": 1174.3899999999999
+          },
+          "under": {
+            "american": -147,
+            "stake": 650.0
+          },
+          "market_id": "01a015d1-9b83-7400-a5c1-112ad2efd198",
+          "sub_type": "assists",
+          "is_main": true
+        },
+        {
+          "player": "Veronica Burton",
+          "stat": "points",
+          "line": 12.5,
+          "over": {
+            "american": -117,
+            "stake": 550.0
+          },
+          "under": {
+            "american": -122,
+            "stake": 400.0
+          },
+          "market_id": "01a01821-7cb4-7221-a4c4-4a08dc0054b4",
+          "sub_type": "points",
+          "is_main": true
+        },
+        {
+          "player": "Veronica Burton",
+          "stat": "points_rebounds_assists",
+          "line": 22.5,
+          "over": {
+            "american": -117,
+            "stake": 500.0
+          },
+          "under": {
+            "american": -111,
+            "stake": 400.0
+          },
+          "market_id": "01a01821-7cb4-7221-a4c4-4a391647b5c1",
+          "sub_type": "points_rebounds_assists",
+          "is_main": true
+        },
+        {
+          "player": "Courtney Williams",
+          "stat": "points",
+          "line": 14.5,
+          "over": {
+            "american": 217,
+            "stake": 400.0
+          },
+          "under": {
+            "american": -300,
+            "stake": 256.35
+          },
+          "market_id": "01a015c4-30cd-7190-aa71-62bfa382c979",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Kayla Thornton",
+          "stat": "points",
+          "line": 14.5,
+          "over": {
+            "american": 426,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015fa-db30-7223-95d8-ffa0b5f07d1d",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Olivia Miles",
+          "stat": "points_rebounds_assists",
+          "line": 31.5,
+          "over": {
+            "american": 125,
+            "stake": 277.37
+          },
+          "under": null,
+          "market_id": "01a015ab-9cbe-7183-b8e3-b8fd5a6d7d29",
+          "sub_type": "points_rebounds_assists",
+          "is_main": false
+        },
+        {
+          "player": "Olivia Miles",
+          "stat": "points",
+          "line": 18.5,
+          "over": {
+            "american": -127,
+            "stake": 550.0
+          },
+          "under": {
+            "american": -117,
+            "stake": 400.0
+          },
+          "market_id": "01a017d5-f673-77e0-b283-9a151dac8f1e",
+          "sub_type": "points",
+          "is_main": true
+        },
+        {
+          "player": "Olivia Miles",
+          "stat": "points",
+          "line": 19.5,
+          "over": {
+            "american": 133,
+            "stake": 2352.71
+          },
+          "under": null,
+          "market_id": "01a015fa-db30-7223-95d8-f43e8671e440",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Natasha Howard",
+          "stat": "rebounds",
+          "line": 6.5,
+          "over": {
+            "american": -135,
+            "stake": 400.0
+          },
+          "under": {
+            "american": -113,
+            "stake": 400.0
+          },
+          "market_id": "01a015a7-0847-7d52-812e-a347064685bb",
+          "sub_type": "rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Courtney Williams",
+          "stat": "points",
+          "line": 10.5,
+          "over": {
+            "american": -125,
+            "stake": 550.0
+          },
+          "under": {
+            "american": -111,
+            "stake": 484.21999999999997
+          },
+          "market_id": "01a015a7-0847-7d52-812e-a37db136368e",
+          "sub_type": "points",
+          "is_main": true
+        },
+        {
+          "player": "Napheesa Collier",
+          "stat": "assists",
+          "line": 2.5,
+          "over": {
+            "american": -133,
+            "stake": 1100.0
+          },
+          "under": null,
+          "market_id": "01a015ab-9cbd-7d11-b13e-b593fa6062f7",
+          "sub_type": "assists",
+          "is_main": true
+        },
+        {
+          "player": "Courtney Williams",
+          "stat": "points_rebounds_assists",
+          "line": 19.5,
+          "over": {
+            "american": -115,
+            "stake": 500.0
+          },
+          "under": {
+            "american": -115,
+            "stake": 500.0
+          },
+          "market_id": "01a015ab-9cbe-7183-b8e3-b8940dd56206",
+          "sub_type": "points_rebounds_assists",
+          "is_main": true
+        },
+        {
+          "player": "Napheesa Collier",
+          "stat": "points_rebounds_assists",
+          "line": 28.5,
+          "over": {
+            "american": -120,
+            "stake": 100.0
+          },
+          "under": {
+            "american": -111,
+            "stake": 100.0
+          },
+          "market_id": "01a015ab-9cbe-7183-b8e3-b8c71cd57f99",
+          "sub_type": "points_rebounds_assists",
+          "is_main": true
+        },
+        {
+          "player": "Napheesa Collier",
+          "stat": "rebounds",
+          "line": 7.5,
+          "over": {
+            "american": 104,
+            "stake": 516.66
+          },
+          "under": {
+            "american": -127,
+            "stake": 629.89
+          },
+          "market_id": "01a015ab-9cbe-7183-b8e3-b925917545e3",
+          "sub_type": "rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Cecilia Zandalasini",
+          "stat": "points",
+          "line": 9.5,
+          "over": {
+            "american": -104,
+            "stake": 550.0
+          },
+          "under": {
+            "american": -135,
+            "stake": 400.0
+          },
+          "market_id": "01a015b5-39d6-75b1-a5b0-d5175d7f33a1",
+          "sub_type": "points",
+          "is_main": true
+        },
+        {
+          "player": "Veronica Burton",
+          "stat": "points",
+          "line": 9.5,
+          "over": {
+            "american": -400,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015c4-30cd-7190-aa71-5f2493e85027",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Napheesa Collier",
+          "stat": "points",
+          "line": 24.5,
+          "over": {
+            "american": 300,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015c4-30cd-7190-aa71-5f5ebb087000",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Natasha Howard",
+          "stat": "rebounds",
+          "line": 5.5,
+          "over": {
+            "american": -285,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015c4-30cd-7190-aa71-5f836c452c9d",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Napheesa Collier",
+          "stat": "rebounds",
+          "line": 5.5,
+          "over": {
+            "american": -426,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015c4-30cd-7190-aa71-5fb70a7143e3",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Napheesa Collier",
+          "stat": "rebounds",
+          "line": 11.5,
+          "over": {
+            "american": 456,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015c4-30cd-7190-aa71-604522f0c28d",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Napheesa Collier",
+          "stat": "rebounds",
+          "line": 9.5,
+          "over": {
+            "american": 199,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015c4-30cd-7190-aa71-60a44a4a3094",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Cecilia Zandalasini",
+          "stat": "points",
+          "line": 14.5,
+          "over": {
+            "american": 317,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015c4-30cd-7190-aa71-6106c1050a5f",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Natasha Howard",
+          "stat": "rebounds",
+          "line": 9.5,
+          "over": {
+            "american": 335,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015c4-30cd-7190-aa71-61360b38abec",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Courtney Williams",
+          "stat": "points",
+          "line": 9.5,
+          "over": {
+            "american": -203,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015c4-30cd-7190-aa71-616fe261d853",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Natasha Howard",
+          "stat": "rebounds",
+          "line": 7.5,
+          "over": {
+            "american": 120,
+            "stake": 409.17
+          },
+          "under": null,
+          "market_id": "01a015c4-30cd-7190-aa71-61c4cb7a3b12",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Veronica Burton",
+          "stat": "points",
+          "line": 19.5,
+          "over": {
+            "american": 388,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015c4-30cd-7190-aa71-61fe57393345",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Veronica Burton",
+          "stat": "points",
+          "line": 14.5,
+          "over": {
+            "american": 127,
+            "stake": 683.02
+          },
+          "under": null,
+          "market_id": "01a015c4-30cd-7190-aa71-62512279eb3d",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Napheesa Collier",
+          "stat": "points",
+          "line": 14.5,
+          "over": {
+            "american": -400,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015c4-30cd-7190-aa71-6284bf237446",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Courtney Williams",
+          "stat": "points",
+          "line": 19.5,
+          "over": null,
+          "under": {
+            "american": -1150,
+            "stake": 1195.3899999999999
+          },
+          "market_id": "01a015c4-30cd-7190-aa71-62ec94a0d0b9",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Natasha Howard",
+          "stat": "rebounds",
+          "line": 11.5,
+          "over": {
+            "american": 700,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015c4-30cd-7190-aa71-631607f2d154",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Napheesa Collier",
+          "stat": "assists",
+          "line": 3.5,
+          "over": {
+            "american": 163,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015c4-30cd-7190-aa71-6373a94aeb91",
+          "sub_type": "assists",
+          "is_main": false
+        },
+        {
+          "player": "Natasha Howard",
+          "stat": "rebounds",
+          "line": 3.5,
+          "over": {
+            "american": -1438,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015c4-30cd-7190-aa71-63a213d21853",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Kayla McBride",
+          "stat": "points_rebounds_assists",
+          "line": 18.5,
+          "over": {
+            "american": -120,
+            "stake": 400.0
+          },
+          "under": {
+            "american": -127,
+            "stake": 400.0
+          },
+          "market_id": "01a0173a-554c-7410-a6cb-b99f3e4447c0",
+          "sub_type": "points_rebounds_assists",
+          "is_main": true
+        },
+        {
+          "player": "Natasha Howard",
+          "stat": "points_rebounds_assists",
+          "line": 20.5,
+          "over": {
+            "american": -138,
+            "stake": 400.0
+          },
+          "under": {
+            "american": -111,
+            "stake": 400.0
+          },
+          "market_id": "01a0173a-554d-7f50-94bc-85d5d0343af6",
+          "sub_type": "points_rebounds_assists",
+          "is_main": true
+        },
+        {
+          "player": "Janelle Salaun",
+          "stat": "points",
+          "line": 19.5,
+          "over": {
+            "american": 567,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a017e9-705d-7c21-9326-d128c0b56392",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Janelle Salaun",
+          "stat": "points",
+          "line": 9.5,
+          "over": {
+            "american": -223,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a017e9-705d-7c21-9326-d2493fa2010c",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Janelle Salaun",
+          "stat": "points",
+          "line": 14.5,
+          "over": {
+            "american": 190,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a017e9-705e-7aa3-85fc-e642d664a104",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Tiffany Hayes",
+          "stat": "points",
+          "line": 9.5,
+          "over": {
+            "american": -111,
+            "stake": 550.0
+          },
+          "under": {
+            "american": -127,
+            "stake": 400.0
+          },
+          "market_id": "01a0182c-ee59-7fd3-a110-353574deb685",
+          "sub_type": "points",
+          "is_main": true
+        },
+        {
+          "player": "Natasha Howard",
+          "stat": "assists",
+          "line": 5.5,
+          "over": {
+            "american": 641,
+            "stake": 450.0
+          },
+          "under": null,
+          "market_id": "01a0177b-61bc-7691-8c2b-ac1aed2f1813",
+          "sub_type": "assists",
+          "is_main": false
+        },
+        {
+          "player": "Natasha Howard",
+          "stat": "assists",
+          "line": 3.5,
+          "over": {
+            "american": 160,
+            "stake": 650.0
+          },
+          "under": null,
+          "market_id": "01a0177b-61bc-7691-8c2b-b36007a5f899",
+          "sub_type": "assists",
+          "is_main": true
+        },
+        {
+          "player": "Veronica Burton",
+          "stat": "points",
+          "line": 13.5,
+          "over": {
+            "american": 141,
+            "stake": 3264.46
+          },
+          "under": {
+            "american": -153,
+            "stake": 381.36
+          },
+          "market_id": "01a015b5-39d5-76e3-9efb-35f4d53d83b2",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Olivia Miles",
+          "stat": "points_rebounds_assists",
+          "line": 30.5,
+          "over": {
+            "american": 108,
+            "stake": 529.87
+          },
+          "under": {
+            "american": -135,
+            "stake": 500.0
+          },
+          "market_id": "01a01756-b695-74b0-afca-85ad0e261f2c",
+          "sub_type": "points_rebounds_assists",
+          "is_main": true
+        },
+        {
+          "player": "Gabby Williams",
+          "stat": "rebounds",
+          "line": 2.5,
+          "over": {
+            "american": -178,
+            "stake": 400.0
+          },
+          "under": {
+            "american": 130,
+            "stake": 1327.43
+          },
+          "market_id": "01a017c4-1b5b-70f1-8071-a417b95821e1",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Janelle Salaun",
+          "stat": "points",
+          "line": 11.5,
+          "over": {
+            "american": 104,
+            "stake": 419.61
+          },
+          "under": {
+            "american": -115,
+            "stake": 107.53
+          },
+          "market_id": "01a017de-a791-7480-886f-3f2919b12bbe",
+          "sub_type": "points",
+          "is_main": true
+        },
+        {
+          "player": "Gabby Williams",
+          "stat": "points_rebounds_assists",
+          "line": 19.5,
+          "over": {
+            "american": -127,
+            "stake": 400.0
+          },
+          "under": {
+            "american": -120,
+            "stake": 400.0
+          },
+          "market_id": "01a017ac-5051-78a2-aaf8-73d611de4d6d",
+          "sub_type": "points_rebounds_assists",
+          "is_main": true
+        },
+        {
+          "player": "Cecilia Zandalasini",
+          "stat": "rebounds",
+          "line": 2.5,
+          "over": {
+            "american": -100,
+            "stake": 500.0
+          },
+          "under": {
+            "american": -133,
+            "stake": 100.0
+          },
+          "market_id": "01a017ac-5054-76a0-94cf-febf01763ed1",
+          "sub_type": "rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Gabby Williams",
+          "stat": "assists",
+          "line": 2.5,
+          "over": {
+            "american": 102,
+            "stake": 1100.0
+          },
+          "under": null,
+          "market_id": "01a017ac-50ac-7b22-8a6e-3237a9749ba1",
+          "sub_type": "assists",
+          "is_main": true
+        },
+        {
+          "player": "Cecilia Zandalasini",
+          "stat": "assists",
+          "line": 2.5,
+          "over": {
+            "american": 141,
+            "stake": 700.0
+          },
+          "under": null,
+          "market_id": "01a017c5-e431-7420-8b89-ceb73441f76c",
+          "sub_type": "assists",
+          "is_main": true
+        },
+        {
+          "player": "Tiffany Hayes",
+          "stat": "points",
+          "line": 14.5,
+          "over": {
+            "american": 317,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a0183b-a1ae-74a0-9dca-168304544b38",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Janelle Salaun",
+          "stat": "rebounds",
+          "line": 5.5,
+          "over": {
+            "american": 365,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a0183b-a1ae-74a0-9dca-1aa311ec1a3a",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Gabby Williams",
+          "stat": "points",
+          "line": 14.5,
+          "over": {
+            "american": -100,
+            "stake": 155.87
+          },
+          "under": null,
+          "market_id": "01a015fa-db30-7223-95d8-f7f40c823723",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Gabby Williams",
+          "stat": "rebounds",
+          "line": 5.5,
+          "over": {
+            "american": 471,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a017cd-cde8-71b2-9a7d-0e68952a8be3",
+          "sub_type": "rebounds",
+          "is_main": false
+        },
+        {
+          "player": "Cecilia Zandalasini",
+          "stat": "assists",
+          "line": 3.5,
+          "over": {
+            "american": 335,
+            "stake": 500.0
+          },
+          "under": null,
+          "market_id": "01a017cd-cde8-71b2-9a7d-12bf21685fef",
+          "sub_type": "assists",
+          "is_main": false
+        },
+        {
+          "player": "Gabby Williams",
+          "stat": "rebounds",
+          "line": 3.5,
+          "over": {
+            "american": 130,
+            "stake": 400.0
+          },
+          "under": {
+            "american": -174,
+            "stake": 1369.86
+          },
+          "market_id": "01a017cd-cde8-71b2-9a7d-194e915dcd77",
+          "sub_type": "rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Natasha Howard",
+          "stat": "points",
+          "line": 11.5,
+          "over": {
+            "american": -104,
+            "stake": 420.41
+          },
+          "under": {
+            "american": -127,
+            "stake": 415.58
+          },
+          "market_id": "01a015d1-9b82-7083-a2e4-d866816a4b6d",
+          "sub_type": "points",
+          "is_main": true
+        },
+        {
+          "player": "Kayla McBride",
+          "stat": "rebounds",
+          "line": 2.5,
+          "over": {
+            "american": -104,
+            "stake": 500.0
+          },
+          "under": {
+            "american": -130,
+            "stake": 100.0
+          },
+          "market_id": "01a0183e-c902-7693-8431-f481a87d2252",
+          "sub_type": "rebounds",
+          "is_main": true
+        },
+        {
+          "player": "Napheesa Collier",
+          "stat": "points",
+          "line": 19.5,
+          "over": {
+            "american": 104,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a015c4-30cd-7190-aa71-6197dfdd52fd",
+          "sub_type": "points",
+          "is_main": false
+        },
+        {
+          "player": "Kayla McBride",
+          "stat": "assists",
+          "line": 1.5,
+          "over": {
+            "american": -133,
+            "stake": 500.0
+          },
+          "under": null,
+          "market_id": "01a01847-e69c-73c3-9e0e-447a082c40ff",
+          "sub_type": "assists",
+          "is_main": true
+        },
+        {
+          "player": "Kayla McBride",
+          "stat": "rebounds",
+          "line": 3.5,
+          "over": {
+            "american": 199,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01857-7291-76f2-a0a8-696a980afc9f",
+          "sub_type": "rebounds",
+          "is_main": false
+        }
+      ]
+    }
+  ]
+}

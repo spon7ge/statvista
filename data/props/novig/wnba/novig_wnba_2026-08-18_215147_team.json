@@ -1,0 +1,144 @@
+{
+  "source": "novig",
+  "fetched_at": "2026-08-18T21:51:47-07:00",
+  "league": "wnba",
+  "snapshot_kind": "team",
+  "games": [
+    {
+      "event_id": "01a014ae-fa9a-7072-9d2f-82076a3379b9",
+      "name": "Toronto Tempo @ Washington Mystics",
+      "scheduled": "2026-08-19T23:30:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "088d1ab8-11dc-455b-80e1-b6bb9abf5bd3",
+          "name": "Washington Mystics",
+          "seq": 0
+        },
+        {
+          "id": "c4d8e78a-6b00-4cd8-94f0-3635c40fa3ab",
+          "name": "Toronto Tempo",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "TOR",
+            "competitor_id": null,
+            "american": 441,
+            "line": null,
+            "stake": 15191.240000000002
+          },
+          {
+            "name": "WSH",
+            "competitor_id": null,
+            "american": -506,
+            "line": null,
+            "stake": 3094.7500000000005
+          }
+        ],
+        "spread": [
+          {
+            "name": "WSH -10.5",
+            "competitor_id": null,
+            "american": -108,
+            "line": -10.5,
+            "stake": 712.5
+          },
+          {
+            "name": "TOR +10.5",
+            "competitor_id": null,
+            "american": -108,
+            "line": 10.5,
+            "stake": 823.61
+          }
+        ],
+        "total": [
+          {
+            "name": "Over 170.5",
+            "competitor_id": null,
+            "american": -104,
+            "line": 170.5,
+            "stake": 1283.91
+          },
+          {
+            "name": "Under 170.5",
+            "competitor_id": null,
+            "american": -113,
+            "line": 170.5,
+            "stake": 2256.18
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "01a014ae-fb5c-7533-a6ee-cc0f3a6bcb81",
+      "name": "Minnesota Lynx @ Golden State Valkyries",
+      "scheduled": "2026-08-20T02:00:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "66c8262d-7593-486d-a3ec-eb152fb4303f",
+          "name": "Golden State Valkyries",
+          "seq": 0
+        },
+        {
+          "id": "2b4ff049-679a-484f-8703-41894af4953d",
+          "name": "Minnesota Lynx",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "GSV",
+            "competitor_id": null,
+            "american": 117,
+            "line": null,
+            "stake": 3246.95
+          },
+          {
+            "name": "MIN",
+            "competitor_id": null,
+            "american": -122,
+            "line": null,
+            "stake": 6829.72
+          }
+        ],
+        "spread": [
+          {
+            "name": "GSV +2.5",
+            "competitor_id": null,
+            "american": -117,
+            "line": 2.5,
+            "stake": 1776.08
+          },
+          {
+            "name": "MIN -2.5",
+            "competitor_id": null,
+            "american": 104,
+            "line": -2.5,
+            "stake": 2749.44
+          }
+        ],
+        "total": [
+          {
+            "name": "Over 164.5",
+            "competitor_id": null,
+            "american": -108,
+            "line": 164.5,
+            "stake": 1314.44
+          },
+          {
+            "name": "Under 164.5",
+            "competitor_id": null,
+            "american": -111,
+            "line": 164.5,
+            "stake": 2224.2599999999998
+          }
+        ]
+      }
+    }
+  ]
+}

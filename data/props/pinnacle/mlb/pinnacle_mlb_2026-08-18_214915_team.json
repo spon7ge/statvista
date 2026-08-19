@@ -1,0 +1,4938 @@
+{
+  "fetched_at": "2026-08-18T21:51:02-07:00",
+  "source": "pinnacle_selenium",
+  "sport": "baseball",
+  "league": "mlb",
+  "list_page": "https://www.pinnacle.com/en/baseball/mlb/matchups/#all",
+  "parallel_workers_configured": 6,
+  "parallel_workers_effective": 5,
+  "games_per_worker_target": 2,
+  "arcadia_timeout_s": 90.0,
+  "arcadia_poll_s": 0.22,
+  "snapshot_kind": "team",
+  "games": [
+    {
+      "matchup_id": 1634054703,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/arizona-diamondbacks-vs-boston-red-sox/1634054703/#all",
+      "path": "/en/baseball/mlb/arizona-diamondbacks-vs-boston-red-sox/1634054703/",
+      "league": "MLB",
+      "start_time": "2026-08-19T20:10:00Z",
+      "label": "Arizona Diamondbacks vs Boston Red Sox",
+      "participants": [
+        "Arizona Diamondbacks",
+        "Boston Red Sox"
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "period": 3,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Boston Red Sox",
+                "american": 252,
+                "decimal": 3.52
+              },
+              {
+                "side": "away",
+                "team": "Arizona Diamondbacks",
+                "american": 328,
+                "decimal": 4.28
+              },
+              {
+                "side": "draw",
+                "american": -130,
+                "decimal": 1.769
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Boston Red Sox",
+                "american": -140,
+                "decimal": 1.714
+              },
+              {
+                "side": "away",
+                "team": "Arizona Diamondbacks",
+                "american": 126,
+                "decimal": 2.26
+              }
+            ]
+          }
+        ],
+        "spread": [
+          {
+            "period": 3,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Boston Red Sox",
+                "points": 0.0,
+                "american": -138,
+                "decimal": 1.725
+              },
+              {
+                "side": "away",
+                "team": "Arizona Diamondbacks",
+                "points": -0.0,
+                "american": 116,
+                "decimal": 2.16
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Boston Red Sox",
+                "points": -1.5,
+                "american": 148,
+                "decimal": 2.48
+              },
+              {
+                "side": "away",
+                "team": "Arizona Diamondbacks",
+                "points": 1.5,
+                "american": -168,
+                "decimal": 1.595
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Boston Red Sox",
+                "points": 1.5,
+                "american": -237,
+                "decimal": 1.422
+              },
+              {
+                "side": "away",
+                "team": "Arizona Diamondbacks",
+                "points": -1.5,
+                "american": 190,
+                "decimal": 2.9
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Boston Red Sox",
+                "points": 1.0,
+                "american": -195,
+                "decimal": 1.513
+              },
+              {
+                "side": "away",
+                "team": "Arizona Diamondbacks",
+                "points": -1.0,
+                "american": 163,
+                "decimal": 2.63
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Boston Red Sox",
+                "points": -1.0,
+                "american": 104,
+                "decimal": 2.04
+              },
+              {
+                "side": "away",
+                "team": "Arizona Diamondbacks",
+                "points": 1.0,
+                "american": -119,
+                "decimal": 1.84
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Boston Red Sox",
+                "points": -2.0,
+                "american": 196,
+                "decimal": 2.96
+              },
+              {
+                "side": "away",
+                "team": "Arizona Diamondbacks",
+                "points": 2.0,
+                "american": -234,
+                "decimal": 1.427
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Boston Red Sox",
+                "points": -2.5,
+                "american": 223,
+                "decimal": 3.23
+              },
+              {
+                "side": "away",
+                "team": "Arizona Diamondbacks",
+                "points": 2.5,
+                "american": -279,
+                "decimal": 1.358
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Boston Red Sox",
+                "points": -3.0,
+                "american": 296,
+                "decimal": 3.96
+              },
+              {
+                "side": "away",
+                "team": "Arizona Diamondbacks",
+                "points": 3.0,
+                "american": -406,
+                "decimal": 1.246
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Boston Red Sox",
+                "points": 0.0,
+                "american": -146,
+                "decimal": 1.685
+              },
+              {
+                "side": "away",
+                "team": "Arizona Diamondbacks",
+                "points": -0.0,
+                "american": 124,
+                "decimal": 2.24
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Boston Red Sox",
+                "points": 1.0,
+                "american": -311,
+                "decimal": 1.322
+              },
+              {
+                "side": "away",
+                "team": "Arizona Diamondbacks",
+                "points": -1.0,
+                "american": 233,
+                "decimal": 3.33
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Boston Red Sox",
+                "points": 0.5,
+                "american": -197,
+                "decimal": 1.508
+              },
+              {
+                "side": "away",
+                "team": "Arizona Diamondbacks",
+                "points": -0.5,
+                "american": 161,
+                "decimal": 2.61
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Boston Red Sox",
+                "points": -0.5,
+                "american": -102,
+                "decimal": 1.98
+              },
+              {
+                "side": "away",
+                "team": "Arizona Diamondbacks",
+                "points": 0.5,
+                "american": -117,
+                "decimal": 1.855
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Boston Red Sox",
+                "points": -1.0,
+                "american": 136,
+                "decimal": 2.36
+              },
+              {
+                "side": "away",
+                "team": "Arizona Diamondbacks",
+                "points": 1.0,
+                "american": -168,
+                "decimal": 1.595
+              }
+            ],
+            "is_alternate": true
+          }
+        ],
+        "total": [
+          {
+            "period": 3,
+            "lines": [
+              {
+                "side": "over",
+                "points": 0.5,
+                "american": -103,
+                "decimal": 1.971
+              },
+              {
+                "side": "under",
+                "points": 0.5,
+                "american": -115,
+                "decimal": 1.87
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 8.5,
+                "american": -105,
+                "decimal": 1.952
+              },
+              {
+                "side": "under",
+                "points": 8.5,
+                "american": -109,
+                "decimal": 1.917
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 7.0,
+                "american": -210,
+                "decimal": 1.476
+              },
+              {
+                "side": "under",
+                "points": 7.0,
+                "american": 170,
+                "decimal": 2.7
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 7.5,
+                "american": -149,
+                "decimal": 1.671
+              },
+              {
+                "side": "under",
+                "points": 7.5,
+                "american": 126,
+                "decimal": 2.26
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 8.0,
+                "american": -127,
+                "decimal": 1.787
+              },
+              {
+                "side": "under",
+                "points": 8.0,
+                "american": 109,
+                "decimal": 2.09
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 9.0,
+                "american": 117,
+                "decimal": 2.17
+              },
+              {
+                "side": "under",
+                "points": 9.0,
+                "american": -137,
+                "decimal": 1.73
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 9.5,
+                "american": 140,
+                "decimal": 2.4
+              },
+              {
+                "side": "under",
+                "points": 9.5,
+                "american": -165,
+                "decimal": 1.606
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 10.0,
+                "american": 164,
+                "decimal": 2.64
+              },
+              {
+                "side": "under",
+                "points": 10.0,
+                "american": -201,
+                "decimal": 1.498
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 4.0,
+                "american": -124,
+                "decimal": 1.806
+              },
+              {
+                "side": "under",
+                "points": 4.0,
+                "american": 106,
+                "decimal": 2.06
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 3.0,
+                "american": -250,
+                "decimal": 1.4
+              },
+              {
+                "side": "under",
+                "points": 3.0,
+                "american": 203,
+                "decimal": 3.03
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 3.5,
+                "american": -161,
+                "decimal": 1.621
+              },
+              {
+                "side": "under",
+                "points": 3.5,
+                "american": 136,
+                "decimal": 2.36
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 4.5,
+                "american": 108,
+                "decimal": 2.08
+              },
+              {
+                "side": "under",
+                "points": 4.5,
+                "american": -127,
+                "decimal": 1.787
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 5.0,
+                "american": 142,
+                "decimal": 2.42
+              },
+              {
+                "side": "under",
+                "points": 5.0,
+                "american": -168,
+                "decimal": 1.595
+              }
+            ],
+            "is_alternate": true
+          }
+        ]
+      }
+    },
+    {
+      "matchup_id": 1633851519,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/atlanta-braves-vs-minnesota-twins/1633851519/#all",
+      "path": "/en/baseball/mlb/atlanta-braves-vs-minnesota-twins/1633851519/",
+      "league": "MLB",
+      "start_time": "2026-08-19T17:40:00Z",
+      "label": "Atlanta Braves vs Minnesota Twins",
+      "participants": [
+        "Atlanta Braves",
+        "Minnesota Twins"
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "period": 3,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Minnesota Twins",
+                "american": 267,
+                "decimal": 3.67
+              },
+              {
+                "side": "away",
+                "team": "Atlanta Braves",
+                "american": 286,
+                "decimal": 3.86
+              },
+              {
+                "side": "draw",
+                "american": -122,
+                "decimal": 1.82
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Minnesota Twins",
+                "american": -102,
+                "decimal": 1.98
+              },
+              {
+                "side": "away",
+                "team": "Atlanta Braves",
+                "american": -108,
+                "decimal": 1.926
+              }
+            ]
+          }
+        ],
+        "spread": [
+          {
+            "period": 3,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Minnesota Twins",
+                "points": 0.0,
+                "american": -116,
+                "decimal": 1.862
+              },
+              {
+                "side": "away",
+                "team": "Atlanta Braves",
+                "points": -0.0,
+                "american": -102,
+                "decimal": 1.98
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Minnesota Twins",
+                "points": 1.5,
+                "american": -168,
+                "decimal": 1.595
+              },
+              {
+                "side": "away",
+                "team": "Atlanta Braves",
+                "points": -1.5,
+                "american": 148,
+                "decimal": 2.48
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Minnesota Twins",
+                "points": 3.0,
+                "american": -390,
+                "decimal": 1.256
+              },
+              {
+                "side": "away",
+                "team": "Atlanta Braves",
+                "points": -3.0,
+                "american": 287,
+                "decimal": 3.87
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Minnesota Twins",
+                "points": 2.5,
+                "american": -271,
+                "decimal": 1.369
+              },
+              {
+                "side": "away",
+                "team": "Atlanta Braves",
+                "points": -2.5,
+                "american": 218,
+                "decimal": 3.18
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Minnesota Twins",
+                "points": 2.0,
+                "american": -229,
+                "decimal": 1.437
+              },
+              {
+                "side": "away",
+                "team": "Atlanta Braves",
+                "points": -2.0,
+                "american": 193,
+                "decimal": 2.93
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Minnesota Twins",
+                "points": 1.0,
+                "american": -136,
+                "decimal": 1.735
+              },
+              {
+                "side": "away",
+                "team": "Atlanta Braves",
+                "points": -1.0,
+                "american": 118,
+                "decimal": 2.18
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Minnesota Twins",
+                "points": -1.0,
+                "american": 147,
+                "decimal": 2.47
+              },
+              {
+                "side": "away",
+                "team": "Atlanta Braves",
+                "points": 1.0,
+                "american": -175,
+                "decimal": 1.571
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Minnesota Twins",
+                "points": -1.5,
+                "american": 193,
+                "decimal": 2.93
+              },
+              {
+                "side": "away",
+                "team": "Atlanta Braves",
+                "points": 1.5,
+                "american": -242,
+                "decimal": 1.413
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Minnesota Twins",
+                "points": 0.0,
+                "american": -104,
+                "decimal": 1.962
+              },
+              {
+                "side": "away",
+                "team": "Atlanta Braves",
+                "points": -0.0,
+                "american": -112,
+                "decimal": 1.893
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Minnesota Twins",
+                "points": 1.0,
+                "american": -208,
+                "decimal": 1.481
+              },
+              {
+                "side": "away",
+                "team": "Atlanta Braves",
+                "points": -1.0,
+                "american": 165,
+                "decimal": 2.65
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Minnesota Twins",
+                "points": 0.5,
+                "american": -143,
+                "decimal": 1.699
+              },
+              {
+                "side": "away",
+                "team": "Atlanta Braves",
+                "points": -0.5,
+                "american": 120,
+                "decimal": 2.2
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Minnesota Twins",
+                "points": -0.5,
+                "american": 127,
+                "decimal": 2.27
+              },
+              {
+                "side": "away",
+                "team": "Atlanta Braves",
+                "points": 0.5,
+                "american": -152,
+                "decimal": 1.658
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Minnesota Twins",
+                "points": -1.0,
+                "american": 176,
+                "decimal": 2.76
+              },
+              {
+                "side": "away",
+                "team": "Atlanta Braves",
+                "points": 1.0,
+                "american": -223,
+                "decimal": 1.448
+              }
+            ],
+            "is_alternate": true
+          }
+        ],
+        "total": [
+          {
+            "period": 3,
+            "lines": [
+              {
+                "side": "over",
+                "points": 0.5,
+                "american": -110,
+                "decimal": 1.909
+              },
+              {
+                "side": "under",
+                "points": 0.5,
+                "american": -108,
+                "decimal": 1.926
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 8.5,
+                "american": -114,
+                "decimal": 1.877
+              },
+              {
+                "side": "under",
+                "points": 8.5,
+                "american": -101,
+                "decimal": 1.99
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 7.0,
+                "american": -223,
+                "decimal": 1.448
+              },
+              {
+                "side": "under",
+                "points": 7.0,
+                "american": 180,
+                "decimal": 2.8
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 7.5,
+                "american": -158,
+                "decimal": 1.633
+              },
+              {
+                "side": "under",
+                "points": 7.5,
+                "american": 134,
+                "decimal": 2.34
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 8.0,
+                "american": -137,
+                "decimal": 1.73
+              },
+              {
+                "side": "under",
+                "points": 8.0,
+                "american": 117,
+                "decimal": 2.17
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 9.0,
+                "american": 110,
+                "decimal": 2.1
+              },
+              {
+                "side": "under",
+                "points": 9.0,
+                "american": -128,
+                "decimal": 1.781
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 9.5,
+                "american": 134,
+                "decimal": 2.34
+              },
+              {
+                "side": "under",
+                "points": 9.5,
+                "american": -158,
+                "decimal": 1.633
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 10.0,
+                "american": 158,
+                "decimal": 2.58
+              },
+              {
+                "side": "under",
+                "points": 10.0,
+                "american": -193,
+                "decimal": 1.518
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 4.5,
+                "american": -117,
+                "decimal": 1.855
+              },
+              {
+                "side": "under",
+                "points": 4.5,
+                "american": 100,
+                "decimal": 2.0
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 3.5,
+                "american": -201,
+                "decimal": 1.498
+              },
+              {
+                "side": "under",
+                "points": 3.5,
+                "american": 168,
+                "decimal": 2.68
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 4.0,
+                "american": -160,
+                "decimal": 1.625
+              },
+              {
+                "side": "under",
+                "points": 4.0,
+                "american": 136,
+                "decimal": 2.36
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 5.0,
+                "american": 111,
+                "decimal": 2.11
+              },
+              {
+                "side": "under",
+                "points": 5.0,
+                "american": -129,
+                "decimal": 1.775
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 5.5,
+                "american": 137,
+                "decimal": 2.37
+              },
+              {
+                "side": "under",
+                "points": 5.5,
+                "american": -162,
+                "decimal": 1.617
+              }
+            ],
+            "is_alternate": true
+          }
+        ]
+      }
+    },
+    {
+      "matchup_id": 1634054702,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/detroit-tigers-vs-pittsburgh-pirates/1634054702/#all",
+      "path": "/en/baseball/mlb/detroit-tigers-vs-pittsburgh-pirates/1634054702/",
+      "league": "MLB",
+      "start_time": "2026-08-19T16:35:00Z",
+      "label": "Detroit Tigers vs Pittsburgh Pirates",
+      "participants": [
+        "Detroit Tigers",
+        "Pittsburgh Pirates"
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "period": 3,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Pittsburgh Pirates",
+                "american": 249,
+                "decimal": 3.49
+              },
+              {
+                "side": "away",
+                "team": "Detroit Tigers",
+                "american": 329,
+                "decimal": 4.29
+              },
+              {
+                "side": "draw",
+                "american": -129,
+                "decimal": 1.775
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Pittsburgh Pirates",
+                "american": -143,
+                "decimal": 1.699
+              },
+              {
+                "side": "away",
+                "team": "Detroit Tigers",
+                "american": 129,
+                "decimal": 2.29
+              }
+            ]
+          }
+        ],
+        "spread": [
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Pittsburgh Pirates",
+                "points": 0.0,
+                "american": -158,
+                "decimal": 1.633
+              },
+              {
+                "side": "away",
+                "team": "Detroit Tigers",
+                "points": -0.0,
+                "american": 134,
+                "decimal": 2.34
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Pittsburgh Pirates",
+                "points": 1.0,
+                "american": -339,
+                "decimal": 1.295
+              },
+              {
+                "side": "away",
+                "team": "Detroit Tigers",
+                "points": -1.0,
+                "american": 249,
+                "decimal": 3.49
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Pittsburgh Pirates",
+                "points": 0.5,
+                "american": -213,
+                "decimal": 1.469
+              },
+              {
+                "side": "away",
+                "team": "Detroit Tigers",
+                "points": -0.5,
+                "american": 172,
+                "decimal": 2.72
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Pittsburgh Pirates",
+                "points": -0.5,
+                "american": -108,
+                "decimal": 1.926
+              },
+              {
+                "side": "away",
+                "team": "Detroit Tigers",
+                "points": 0.5,
+                "american": -110,
+                "decimal": 1.909
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Pittsburgh Pirates",
+                "points": -1.0,
+                "american": 129,
+                "decimal": 2.29
+              },
+              {
+                "side": "away",
+                "team": "Detroit Tigers",
+                "points": 1.0,
+                "american": -158,
+                "decimal": 1.633
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 3,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Pittsburgh Pirates",
+                "points": 0.0,
+                "american": -140,
+                "decimal": 1.714
+              },
+              {
+                "side": "away",
+                "team": "Detroit Tigers",
+                "points": -0.0,
+                "american": 117,
+                "decimal": 2.17
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Pittsburgh Pirates",
+                "points": -1.5,
+                "american": 146,
+                "decimal": 2.46
+              },
+              {
+                "side": "away",
+                "team": "Detroit Tigers",
+                "points": 1.5,
+                "american": -166,
+                "decimal": 1.602
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Pittsburgh Pirates",
+                "points": 1.5,
+                "american": -255,
+                "decimal": 1.392
+              },
+              {
+                "side": "away",
+                "team": "Detroit Tigers",
+                "points": -1.5,
+                "american": 202,
+                "decimal": 3.02
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Pittsburgh Pirates",
+                "points": 1.0,
+                "american": -207,
+                "decimal": 1.483
+              },
+              {
+                "side": "away",
+                "team": "Detroit Tigers",
+                "points": -1.0,
+                "american": 172,
+                "decimal": 2.72
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Pittsburgh Pirates",
+                "points": -1.0,
+                "american": 101,
+                "decimal": 2.01
+              },
+              {
+                "side": "away",
+                "team": "Detroit Tigers",
+                "points": 1.0,
+                "american": -116,
+                "decimal": 1.862
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Pittsburgh Pirates",
+                "points": -2.0,
+                "american": 194,
+                "decimal": 2.94
+              },
+              {
+                "side": "away",
+                "team": "Detroit Tigers",
+                "points": 2.0,
+                "american": -231,
+                "decimal": 1.433
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Pittsburgh Pirates",
+                "points": -2.5,
+                "american": 221,
+                "decimal": 3.21
+              },
+              {
+                "side": "away",
+                "team": "Detroit Tigers",
+                "points": 2.5,
+                "american": -275,
+                "decimal": 1.364
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Pittsburgh Pirates",
+                "points": -3.0,
+                "american": 296,
+                "decimal": 3.96
+              },
+              {
+                "side": "away",
+                "team": "Detroit Tigers",
+                "points": 3.0,
+                "american": -405,
+                "decimal": 1.247
+              }
+            ],
+            "is_alternate": true
+          }
+        ],
+        "total": [
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 4.0,
+                "american": -121,
+                "decimal": 1.826
+              },
+              {
+                "side": "under",
+                "points": 4.0,
+                "american": 103,
+                "decimal": 2.03
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 3.0,
+                "american": -245,
+                "decimal": 1.408
+              },
+              {
+                "side": "under",
+                "points": 3.0,
+                "american": 199,
+                "decimal": 2.99
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 3.5,
+                "american": -158,
+                "decimal": 1.633
+              },
+              {
+                "side": "under",
+                "points": 3.5,
+                "american": 134,
+                "decimal": 2.34
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 4.5,
+                "american": 111,
+                "decimal": 2.11
+              },
+              {
+                "side": "under",
+                "points": 4.5,
+                "american": -130,
+                "decimal": 1.769
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 5.0,
+                "american": 146,
+                "decimal": 2.46
+              },
+              {
+                "side": "under",
+                "points": 5.0,
+                "american": -173,
+                "decimal": 1.578
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 3,
+            "lines": [
+              {
+                "side": "over",
+                "points": 0.5,
+                "american": -104,
+                "decimal": 1.962
+              },
+              {
+                "side": "under",
+                "points": 0.5,
+                "american": -114,
+                "decimal": 1.877
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 8.0,
+                "american": -108,
+                "decimal": 1.926
+              },
+              {
+                "side": "under",
+                "points": 8.0,
+                "american": -106,
+                "decimal": 1.943
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 6.5,
+                "american": -216,
+                "decimal": 1.463
+              },
+              {
+                "side": "under",
+                "points": 6.5,
+                "american": 175,
+                "decimal": 2.75
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 7.0,
+                "american": -174,
+                "decimal": 1.575
+              },
+              {
+                "side": "under",
+                "points": 7.0,
+                "american": 147,
+                "decimal": 2.47
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 7.5,
+                "american": -128,
+                "decimal": 1.781
+              },
+              {
+                "side": "under",
+                "points": 7.5,
+                "american": 110,
+                "decimal": 2.1
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 8.5,
+                "american": 107,
+                "decimal": 2.07
+              },
+              {
+                "side": "under",
+                "points": 8.5,
+                "american": -125,
+                "decimal": 1.8
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 9.0,
+                "american": 138,
+                "decimal": 2.38
+              },
+              {
+                "side": "under",
+                "points": 9.0,
+                "american": -163,
+                "decimal": 1.613
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 9.5,
+                "american": 162,
+                "decimal": 2.62
+              },
+              {
+                "side": "under",
+                "points": 9.5,
+                "american": -198,
+                "decimal": 1.505
+              }
+            ],
+            "is_alternate": true
+          }
+        ]
+      }
+    },
+    {
+      "matchup_id": 1634065285,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/los-angeles-dodgers-vs-colorado-rockies/1634065285/#all",
+      "path": "/en/baseball/mlb/los-angeles-dodgers-vs-colorado-rockies/1634065285/",
+      "league": "MLB",
+      "start_time": "2026-08-20T00:40:00Z",
+      "label": "Los Angeles Dodgers vs Colorado Rockies",
+      "participants": [
+        "Los Angeles Dodgers",
+        "Colorado Rockies"
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Colorado Rockies",
+                "american": 165,
+                "decimal": 2.65
+              },
+              {
+                "side": "away",
+                "team": "Los Angeles Dodgers",
+                "american": -184,
+                "decimal": 1.543
+              }
+            ]
+          },
+          {
+            "period": 3,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Colorado Rockies",
+                "american": 274,
+                "decimal": 3.74
+              },
+              {
+                "side": "away",
+                "team": "Los Angeles Dodgers",
+                "american": 223,
+                "decimal": 3.23
+              },
+              {
+                "side": "draw",
+                "american": -101,
+                "decimal": 1.99
+              }
+            ]
+          }
+        ],
+        "spread": [
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Colorado Rockies",
+                "points": 1.5,
+                "american": 109,
+                "decimal": 2.09
+              },
+              {
+                "side": "away",
+                "team": "Los Angeles Dodgers",
+                "points": -1.5,
+                "american": -123,
+                "decimal": 1.813
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Colorado Rockies",
+                "points": 3.0,
+                "american": -176,
+                "decimal": 1.568
+              },
+              {
+                "side": "away",
+                "team": "Los Angeles Dodgers",
+                "points": -3.0,
+                "american": 145,
+                "decimal": 2.45
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Colorado Rockies",
+                "points": 2.5,
+                "american": -138,
+                "decimal": 1.725
+              },
+              {
+                "side": "away",
+                "team": "Los Angeles Dodgers",
+                "points": -2.5,
+                "american": 118,
+                "decimal": 2.18
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Colorado Rockies",
+                "points": 2.0,
+                "american": -113,
+                "decimal": 1.885
+              },
+              {
+                "side": "away",
+                "team": "Los Angeles Dodgers",
+                "points": -2.0,
+                "american": -101,
+                "decimal": 1.99
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Colorado Rockies",
+                "points": 1.0,
+                "american": 137,
+                "decimal": 2.37
+              },
+              {
+                "side": "away",
+                "team": "Los Angeles Dodgers",
+                "points": -1.0,
+                "american": -158,
+                "decimal": 1.633
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Colorado Rockies",
+                "points": -1.0,
+                "american": 243,
+                "decimal": 3.43
+              },
+              {
+                "side": "away",
+                "team": "Los Angeles Dodgers",
+                "points": 1.0,
+                "american": -307,
+                "decimal": 1.326
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Colorado Rockies",
+                "points": -1.5,
+                "american": 283,
+                "decimal": 3.83
+              },
+              {
+                "side": "away",
+                "team": "Los Angeles Dodgers",
+                "points": 1.5,
+                "american": -382,
+                "decimal": 1.262
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 3,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Colorado Rockies",
+                "points": 0.0,
+                "american": 109,
+                "decimal": 2.09
+              },
+              {
+                "side": "away",
+                "team": "Los Angeles Dodgers",
+                "points": -0.0,
+                "american": -130,
+                "decimal": 1.769
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Colorado Rockies",
+                "points": 0.0,
+                "american": 148,
+                "decimal": 2.48
+              },
+              {
+                "side": "away",
+                "team": "Los Angeles Dodgers",
+                "points": -0.0,
+                "american": -176,
+                "decimal": 1.568
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Colorado Rockies",
+                "points": 1.0,
+                "american": -120,
+                "decimal": 1.833
+              },
+              {
+                "side": "away",
+                "team": "Los Angeles Dodgers",
+                "points": -1.0,
+                "american": -101,
+                "decimal": 1.99
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Colorado Rockies",
+                "points": 0.5,
+                "american": 108,
+                "decimal": 2.08
+              },
+              {
+                "side": "away",
+                "team": "Los Angeles Dodgers",
+                "points": -0.5,
+                "american": -129,
+                "decimal": 1.775
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Colorado Rockies",
+                "points": -0.5,
+                "american": 177,
+                "decimal": 2.77
+              },
+              {
+                "side": "away",
+                "team": "Los Angeles Dodgers",
+                "points": 0.5,
+                "american": -220,
+                "decimal": 1.455
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Colorado Rockies",
+                "points": -1.0,
+                "american": 241,
+                "decimal": 3.41
+              },
+              {
+                "side": "away",
+                "team": "Los Angeles Dodgers",
+                "points": 1.0,
+                "american": -325,
+                "decimal": 1.308
+              }
+            ],
+            "is_alternate": true
+          }
+        ],
+        "total": [
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 11.5,
+                "american": 101,
+                "decimal": 2.01
+              },
+              {
+                "side": "under",
+                "points": 11.5,
+                "american": -115,
+                "decimal": 1.87
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 10.0,
+                "american": -177,
+                "decimal": 1.565
+              },
+              {
+                "side": "under",
+                "points": 10.0,
+                "american": 146,
+                "decimal": 2.46
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 10.5,
+                "american": -146,
+                "decimal": 1.685
+              },
+              {
+                "side": "under",
+                "points": 10.5,
+                "american": 124,
+                "decimal": 2.24
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 11.0,
+                "american": -122,
+                "decimal": 1.82
+              },
+              {
+                "side": "under",
+                "points": 11.0,
+                "american": 104,
+                "decimal": 2.04
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 12.0,
+                "american": 116,
+                "decimal": 2.16
+              },
+              {
+                "side": "under",
+                "points": 12.0,
+                "american": -136,
+                "decimal": 1.735
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 12.5,
+                "american": 130,
+                "decimal": 2.3
+              },
+              {
+                "side": "under",
+                "points": 12.5,
+                "american": -154,
+                "decimal": 1.649
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 13.0,
+                "american": 159,
+                "decimal": 2.59
+              },
+              {
+                "side": "under",
+                "points": 13.0,
+                "american": -194,
+                "decimal": 1.515
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 3,
+            "lines": [
+              {
+                "side": "over",
+                "points": 0.5,
+                "american": -136,
+                "decimal": 1.735
+              },
+              {
+                "side": "under",
+                "points": 0.5,
+                "american": 114,
+                "decimal": 2.14
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 6.0,
+                "american": -100,
+                "decimal": 2.0
+              },
+              {
+                "side": "under",
+                "points": 6.0,
+                "american": -116,
+                "decimal": 1.862
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 5.0,
+                "american": -168,
+                "decimal": 1.595
+              },
+              {
+                "side": "under",
+                "points": 5.0,
+                "american": 142,
+                "decimal": 2.42
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 5.5,
+                "american": -126,
+                "decimal": 1.794
+              },
+              {
+                "side": "under",
+                "points": 5.5,
+                "american": 108,
+                "decimal": 2.08
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 6.5,
+                "american": 123,
+                "decimal": 2.23
+              },
+              {
+                "side": "under",
+                "points": 6.5,
+                "american": -144,
+                "decimal": 1.694
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 7.0,
+                "american": 158,
+                "decimal": 2.58
+              },
+              {
+                "side": "under",
+                "points": 7.0,
+                "american": -189,
+                "decimal": 1.529
+              }
+            ],
+            "is_alternate": true
+          }
+        ]
+      }
+    },
+    {
+      "matchup_id": 1634052523,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/miami-marlins-vs-philadelphia-phillies/1634052523/#all",
+      "path": "/en/baseball/mlb/miami-marlins-vs-philadelphia-phillies/1634052523/",
+      "league": "MLB",
+      "start_time": "2026-08-19T22:05:00Z",
+      "label": "Miami Marlins vs Philadelphia Phillies",
+      "participants": [
+        "Miami Marlins",
+        "Philadelphia Phillies"
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "period": 3,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Philadelphia Phillies",
+                "american": 251,
+                "decimal": 3.51
+              },
+              {
+                "side": "away",
+                "team": "Miami Marlins",
+                "american": 313,
+                "decimal": 4.13
+              },
+              {
+                "side": "draw",
+                "american": -125,
+                "decimal": 1.8
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Philadelphia Phillies",
+                "american": -128,
+                "decimal": 1.781
+              },
+              {
+                "side": "away",
+                "team": "Miami Marlins",
+                "american": 116,
+                "decimal": 2.16
+              }
+            ]
+          }
+        ],
+        "spread": [
+          {
+            "period": 3,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Philadelphia Phillies",
+                "points": 0.0,
+                "american": -132,
+                "decimal": 1.758
+              },
+              {
+                "side": "away",
+                "team": "Miami Marlins",
+                "points": -0.0,
+                "american": 111,
+                "decimal": 2.11
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Philadelphia Phillies",
+                "points": -1.5,
+                "american": 160,
+                "decimal": 2.6
+              },
+              {
+                "side": "away",
+                "team": "Miami Marlins",
+                "points": 1.5,
+                "american": -183,
+                "decimal": 1.546
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Philadelphia Phillies",
+                "points": 1.5,
+                "american": -221,
+                "decimal": 1.452
+              },
+              {
+                "side": "away",
+                "team": "Miami Marlins",
+                "points": -1.5,
+                "american": 178,
+                "decimal": 2.78
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Philadelphia Phillies",
+                "points": 1.0,
+                "american": -179,
+                "decimal": 1.559
+              },
+              {
+                "side": "away",
+                "team": "Miami Marlins",
+                "points": -1.0,
+                "american": 150,
+                "decimal": 2.5
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Philadelphia Phillies",
+                "points": -1.0,
+                "american": 114,
+                "decimal": 2.14
+              },
+              {
+                "side": "away",
+                "team": "Miami Marlins",
+                "points": 1.0,
+                "american": -131,
+                "decimal": 1.763
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Philadelphia Phillies",
+                "points": -2.0,
+                "american": 213,
+                "decimal": 3.13
+              },
+              {
+                "side": "away",
+                "team": "Miami Marlins",
+                "points": 2.0,
+                "american": -257,
+                "decimal": 1.389
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Philadelphia Phillies",
+                "points": -2.5,
+                "american": 240,
+                "decimal": 3.4
+              },
+              {
+                "side": "away",
+                "team": "Miami Marlins",
+                "points": 2.5,
+                "american": -303,
+                "decimal": 1.33
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Philadelphia Phillies",
+                "points": -3.0,
+                "american": 320,
+                "decimal": 4.2
+              },
+              {
+                "side": "away",
+                "team": "Miami Marlins",
+                "points": 3.0,
+                "american": -447,
+                "decimal": 1.224
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Philadelphia Phillies",
+                "points": 0.0,
+                "american": -120,
+                "decimal": 1.833
+              },
+              {
+                "side": "away",
+                "team": "Miami Marlins",
+                "points": -0.0,
+                "american": 103,
+                "decimal": 2.03
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Philadelphia Phillies",
+                "points": 1.0,
+                "american": -251,
+                "decimal": 1.398
+              },
+              {
+                "side": "away",
+                "team": "Miami Marlins",
+                "points": -1.0,
+                "american": 195,
+                "decimal": 2.95
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Philadelphia Phillies",
+                "points": 0.5,
+                "american": -164,
+                "decimal": 1.61
+              },
+              {
+                "side": "away",
+                "team": "Miami Marlins",
+                "points": -0.5,
+                "american": 136,
+                "decimal": 2.36
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Philadelphia Phillies",
+                "points": -0.5,
+                "american": 114,
+                "decimal": 2.14
+              },
+              {
+                "side": "away",
+                "team": "Miami Marlins",
+                "points": 0.5,
+                "american": -136,
+                "decimal": 1.735
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Philadelphia Phillies",
+                "points": -1.0,
+                "american": 156,
+                "decimal": 2.56
+              },
+              {
+                "side": "away",
+                "team": "Miami Marlins",
+                "points": 1.0,
+                "american": -195,
+                "decimal": 1.513
+              }
+            ],
+            "is_alternate": true
+          }
+        ],
+        "total": [
+          {
+            "period": 3,
+            "lines": [
+              {
+                "side": "over",
+                "points": 0.5,
+                "american": -108,
+                "decimal": 1.926
+              },
+              {
+                "side": "under",
+                "points": 0.5,
+                "american": -111,
+                "decimal": 1.901
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 8.5,
+                "american": -108,
+                "decimal": 1.926
+              },
+              {
+                "side": "under",
+                "points": 8.5,
+                "american": -106,
+                "decimal": 1.943
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 7.0,
+                "american": -210,
+                "decimal": 1.476
+              },
+              {
+                "side": "under",
+                "points": 7.0,
+                "american": 170,
+                "decimal": 2.7
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 7.5,
+                "american": -149,
+                "decimal": 1.671
+              },
+              {
+                "side": "under",
+                "points": 7.5,
+                "american": 127,
+                "decimal": 2.27
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 8.0,
+                "american": -129,
+                "decimal": 1.775
+              },
+              {
+                "side": "under",
+                "points": 8.0,
+                "american": 110,
+                "decimal": 2.1
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 9.0,
+                "american": 117,
+                "decimal": 2.17
+              },
+              {
+                "side": "under",
+                "points": 9.0,
+                "american": -137,
+                "decimal": 1.73
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 9.5,
+                "american": 141,
+                "decimal": 2.41
+              },
+              {
+                "side": "under",
+                "points": 9.5,
+                "american": -166,
+                "decimal": 1.602
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 10.0,
+                "american": 166,
+                "decimal": 2.66
+              },
+              {
+                "side": "under",
+                "points": 10.0,
+                "american": -205,
+                "decimal": 1.488
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 4.5,
+                "american": -102,
+                "decimal": 1.98
+              },
+              {
+                "side": "under",
+                "points": 4.5,
+                "american": -114,
+                "decimal": 1.877
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 3.5,
+                "american": -177,
+                "decimal": 1.565
+              },
+              {
+                "side": "under",
+                "points": 3.5,
+                "american": 149,
+                "decimal": 2.49
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 4.0,
+                "american": -138,
+                "decimal": 1.725
+              },
+              {
+                "side": "under",
+                "points": 4.0,
+                "american": 118,
+                "decimal": 2.18
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 5.0,
+                "american": 128,
+                "decimal": 2.28
+              },
+              {
+                "side": "under",
+                "points": 5.0,
+                "american": -150,
+                "decimal": 1.667
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 5.5,
+                "american": 155,
+                "decimal": 2.55
+              },
+              {
+                "side": "under",
+                "points": 5.5,
+                "american": -185,
+                "decimal": 1.541
+              }
+            ],
+            "is_alternate": true
+          }
+        ]
+      }
+    },
+    {
+      "matchup_id": 1634065286,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/san-diego-padres-vs-new-york-mets/1634065286/#all",
+      "path": "/en/baseball/mlb/san-diego-padres-vs-new-york-mets/1634065286/",
+      "league": "MLB",
+      "start_time": "2026-08-19T17:10:00Z",
+      "label": "San Diego Padres vs New York Mets",
+      "participants": [
+        "San Diego Padres",
+        "New York Mets"
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "period": 3,
+            "lines": [
+              {
+                "side": "home",
+                "team": "New York Mets",
+                "american": 269,
+                "decimal": 3.69
+              },
+              {
+                "side": "away",
+                "team": "San Diego Padres",
+                "american": 277,
+                "decimal": 3.77
+              },
+              {
+                "side": "draw",
+                "american": -120,
+                "decimal": 1.833
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "New York Mets",
+                "american": 112,
+                "decimal": 2.12
+              },
+              {
+                "side": "away",
+                "team": "San Diego Padres",
+                "american": -123,
+                "decimal": 1.813
+              }
+            ]
+          }
+        ],
+        "spread": [
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "New York Mets",
+                "points": 0.0,
+                "american": 108,
+                "decimal": 2.08
+              },
+              {
+                "side": "away",
+                "team": "San Diego Padres",
+                "points": -0.0,
+                "american": -126,
+                "decimal": 1.794
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "New York Mets",
+                "points": 1.0,
+                "american": -183,
+                "decimal": 1.546
+              },
+              {
+                "side": "away",
+                "team": "San Diego Padres",
+                "points": -1.0,
+                "american": 147,
+                "decimal": 2.47
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "New York Mets",
+                "points": 0.5,
+                "american": -128,
+                "decimal": 1.781
+              },
+              {
+                "side": "away",
+                "team": "San Diego Padres",
+                "points": -0.5,
+                "american": 108,
+                "decimal": 2.08
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "New York Mets",
+                "points": -0.5,
+                "american": 140,
+                "decimal": 2.4
+              },
+              {
+                "side": "away",
+                "team": "San Diego Padres",
+                "points": 0.5,
+                "american": -169,
+                "decimal": 1.592
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "New York Mets",
+                "points": -1.0,
+                "american": 193,
+                "decimal": 2.93
+              },
+              {
+                "side": "away",
+                "team": "San Diego Padres",
+                "points": 1.0,
+                "american": -249,
+                "decimal": 1.402
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 3,
+            "lines": [
+              {
+                "side": "home",
+                "team": "New York Mets",
+                "points": 0.0,
+                "american": -112,
+                "decimal": 1.893
+              },
+              {
+                "side": "away",
+                "team": "San Diego Padres",
+                "points": -0.0,
+                "american": -106,
+                "decimal": 1.943
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "New York Mets",
+                "points": 1.5,
+                "american": -151,
+                "decimal": 1.662
+              },
+              {
+                "side": "away",
+                "team": "San Diego Padres",
+                "points": -1.5,
+                "american": 133,
+                "decimal": 2.33
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "New York Mets",
+                "points": 3.0,
+                "american": -356,
+                "decimal": 1.281
+              },
+              {
+                "side": "away",
+                "team": "San Diego Padres",
+                "points": -3.0,
+                "american": 266,
+                "decimal": 3.66
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "New York Mets",
+                "points": 2.5,
+                "american": -247,
+                "decimal": 1.405
+              },
+              {
+                "side": "away",
+                "team": "San Diego Padres",
+                "points": -2.5,
+                "american": 201,
+                "decimal": 3.01
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "New York Mets",
+                "points": 2.0,
+                "american": -206,
+                "decimal": 1.485
+              },
+              {
+                "side": "away",
+                "team": "San Diego Padres",
+                "points": -2.0,
+                "american": 175,
+                "decimal": 2.75
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "New York Mets",
+                "points": 1.0,
+                "american": -119,
+                "decimal": 1.84
+              },
+              {
+                "side": "away",
+                "team": "San Diego Padres",
+                "points": -1.0,
+                "american": 104,
+                "decimal": 2.04
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "New York Mets",
+                "points": -1.0,
+                "american": 167,
+                "decimal": 2.67
+              },
+              {
+                "side": "away",
+                "team": "San Diego Padres",
+                "points": 1.0,
+                "american": -201,
+                "decimal": 1.498
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "New York Mets",
+                "points": -1.5,
+                "american": 211,
+                "decimal": 3.11
+              },
+              {
+                "side": "away",
+                "team": "San Diego Padres",
+                "points": 1.5,
+                "american": -269,
+                "decimal": 1.372
+              }
+            ],
+            "is_alternate": true
+          }
+        ],
+        "total": [
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 5.0,
+                "american": 104,
+                "decimal": 2.04
+              },
+              {
+                "side": "under",
+                "points": 5.0,
+                "american": -121,
+                "decimal": 1.826
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 4.0,
+                "american": -171,
+                "decimal": 1.585
+              },
+              {
+                "side": "under",
+                "points": 4.0,
+                "american": 144,
+                "decimal": 2.44
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 4.5,
+                "american": -124,
+                "decimal": 1.806
+              },
+              {
+                "side": "under",
+                "points": 4.5,
+                "american": 106,
+                "decimal": 2.06
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 5.5,
+                "american": 130,
+                "decimal": 2.3
+              },
+              {
+                "side": "under",
+                "points": 5.5,
+                "american": -153,
+                "decimal": 1.654
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 6.0,
+                "american": 171,
+                "decimal": 2.71
+              },
+              {
+                "side": "under",
+                "points": 6.0,
+                "american": -207,
+                "decimal": 1.483
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 3,
+            "lines": [
+              {
+                "side": "over",
+                "points": 0.5,
+                "american": -112,
+                "decimal": 1.893
+              },
+              {
+                "side": "under",
+                "points": 0.5,
+                "american": -106,
+                "decimal": 1.943
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 8.5,
+                "american": -113,
+                "decimal": 1.885
+              },
+              {
+                "side": "under",
+                "points": 8.5,
+                "american": -102,
+                "decimal": 1.98
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 7.0,
+                "american": -223,
+                "decimal": 1.448
+              },
+              {
+                "side": "under",
+                "points": 7.0,
+                "american": 180,
+                "decimal": 2.8
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 7.5,
+                "american": -158,
+                "decimal": 1.633
+              },
+              {
+                "side": "under",
+                "points": 7.5,
+                "american": 134,
+                "decimal": 2.34
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 8.0,
+                "american": -136,
+                "decimal": 1.735
+              },
+              {
+                "side": "under",
+                "points": 8.0,
+                "american": 116,
+                "decimal": 2.16
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 9.0,
+                "american": 111,
+                "decimal": 2.11
+              },
+              {
+                "side": "under",
+                "points": 9.0,
+                "american": -130,
+                "decimal": 1.769
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 9.5,
+                "american": 135,
+                "decimal": 2.35
+              },
+              {
+                "side": "under",
+                "points": 9.5,
+                "american": -159,
+                "decimal": 1.629
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 10.0,
+                "american": 159,
+                "decimal": 2.59
+              },
+              {
+                "side": "under",
+                "points": 10.0,
+                "american": -195,
+                "decimal": 1.513
+              }
+            ],
+            "is_alternate": true
+          }
+        ]
+      }
+    },
+    {
+      "matchup_id": 1634054699,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/seattle-mariners-vs-milwaukee-brewers/1634054699/#all",
+      "path": "/en/baseball/mlb/seattle-mariners-vs-milwaukee-brewers/1634054699/",
+      "league": "MLB",
+      "start_time": "2026-08-19T23:40:00Z",
+      "label": "Seattle Mariners vs Milwaukee Brewers",
+      "participants": [
+        "Seattle Mariners",
+        "Milwaukee Brewers"
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "period": 3,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Milwaukee Brewers",
+                "american": 304,
+                "decimal": 4.04
+              },
+              {
+                "side": "away",
+                "team": "Seattle Mariners",
+                "american": 367,
+                "decimal": 4.67
+              },
+              {
+                "side": "draw",
+                "american": -166,
+                "decimal": 1.602
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Milwaukee Brewers",
+                "american": -122,
+                "decimal": 1.82
+              },
+              {
+                "side": "away",
+                "team": "Seattle Mariners",
+                "american": 110,
+                "decimal": 2.1
+              }
+            ]
+          }
+        ],
+        "spread": [
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Milwaukee Brewers",
+                "points": 0.0,
+                "american": -119,
+                "decimal": 1.84
+              },
+              {
+                "side": "away",
+                "team": "Seattle Mariners",
+                "points": -0.0,
+                "american": 102,
+                "decimal": 2.02
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Milwaukee Brewers",
+                "points": 1.0,
+                "american": -275,
+                "decimal": 1.364
+              },
+              {
+                "side": "away",
+                "team": "Seattle Mariners",
+                "points": -1.0,
+                "american": 210,
+                "decimal": 3.1
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Milwaukee Brewers",
+                "points": 0.5,
+                "american": -170,
+                "decimal": 1.588
+              },
+              {
+                "side": "away",
+                "team": "Seattle Mariners",
+                "points": -0.5,
+                "american": 140,
+                "decimal": 2.4
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Milwaukee Brewers",
+                "points": -0.5,
+                "american": 120,
+                "decimal": 2.2
+              },
+              {
+                "side": "away",
+                "team": "Seattle Mariners",
+                "points": 0.5,
+                "american": -144,
+                "decimal": 1.694
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Milwaukee Brewers",
+                "points": -1.0,
+                "american": 174,
+                "decimal": 2.74
+              },
+              {
+                "side": "away",
+                "team": "Seattle Mariners",
+                "points": 1.0,
+                "american": -220,
+                "decimal": 1.455
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 3,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Milwaukee Brewers",
+                "points": 0.0,
+                "american": -130,
+                "decimal": 1.769
+              },
+              {
+                "side": "away",
+                "team": "Seattle Mariners",
+                "points": -0.0,
+                "american": 109,
+                "decimal": 2.09
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Milwaukee Brewers",
+                "points": -1.5,
+                "american": 177,
+                "decimal": 2.77
+              },
+              {
+                "side": "away",
+                "team": "Seattle Mariners",
+                "points": 1.5,
+                "american": -203,
+                "decimal": 1.493
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Milwaukee Brewers",
+                "points": 1.5,
+                "american": -225,
+                "decimal": 1.444
+              },
+              {
+                "side": "away",
+                "team": "Seattle Mariners",
+                "points": -1.5,
+                "american": 181,
+                "decimal": 2.81
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Milwaukee Brewers",
+                "points": 1.0,
+                "american": -177,
+                "decimal": 1.565
+              },
+              {
+                "side": "away",
+                "team": "Seattle Mariners",
+                "points": -1.0,
+                "american": 149,
+                "decimal": 2.49
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Milwaukee Brewers",
+                "points": -1.0,
+                "american": 125,
+                "decimal": 2.25
+              },
+              {
+                "side": "away",
+                "team": "Seattle Mariners",
+                "points": 1.0,
+                "american": -144,
+                "decimal": 1.694
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Milwaukee Brewers",
+                "points": -2.0,
+                "american": 241,
+                "decimal": 3.41
+              },
+              {
+                "side": "away",
+                "team": "Seattle Mariners",
+                "points": 2.0,
+                "american": -296,
+                "decimal": 1.338
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Milwaukee Brewers",
+                "points": -2.5,
+                "american": 270,
+                "decimal": 3.7
+              },
+              {
+                "side": "away",
+                "team": "Seattle Mariners",
+                "points": 2.5,
+                "american": -349,
+                "decimal": 1.287
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Milwaukee Brewers",
+                "points": -3.0,
+                "american": 370,
+                "decimal": 4.7
+              },
+              {
+                "side": "away",
+                "team": "Seattle Mariners",
+                "points": 3.0,
+                "american": -542,
+                "decimal": 1.185
+              }
+            ],
+            "is_alternate": true
+          }
+        ],
+        "total": [
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 3.5,
+                "american": -120,
+                "decimal": 1.833
+              },
+              {
+                "side": "under",
+                "points": 3.5,
+                "american": 103,
+                "decimal": 2.03
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 2.5,
+                "american": -233,
+                "decimal": 1.429
+              },
+              {
+                "side": "under",
+                "points": 2.5,
+                "american": 191,
+                "decimal": 2.91
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 3.0,
+                "american": -179,
+                "decimal": 1.559
+              },
+              {
+                "side": "under",
+                "points": 3.0,
+                "american": 150,
+                "decimal": 2.5
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 4.0,
+                "american": 111,
+                "decimal": 2.11
+              },
+              {
+                "side": "under",
+                "points": 4.0,
+                "american": -130,
+                "decimal": 1.769
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 4.5,
+                "american": 142,
+                "decimal": 2.42
+              },
+              {
+                "side": "under",
+                "points": 4.5,
+                "american": -168,
+                "decimal": 1.595
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 3,
+            "lines": [
+              {
+                "side": "over",
+                "points": 0.5,
+                "american": 125,
+                "decimal": 2.25
+              },
+              {
+                "side": "under",
+                "points": 0.5,
+                "american": -149,
+                "decimal": 1.671
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 7.0,
+                "american": -116,
+                "decimal": 1.862
+              },
+              {
+                "side": "under",
+                "points": 7.0,
+                "american": 101,
+                "decimal": 2.01
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 5.5,
+                "american": -223,
+                "decimal": 1.448
+              },
+              {
+                "side": "under",
+                "points": 5.5,
+                "american": 180,
+                "decimal": 2.8
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 6.0,
+                "american": -191,
+                "decimal": 1.524
+              },
+              {
+                "side": "under",
+                "points": 6.0,
+                "american": 160,
+                "decimal": 2.6
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 6.5,
+                "american": -151,
+                "decimal": 1.662
+              },
+              {
+                "side": "under",
+                "points": 6.5,
+                "american": 128,
+                "decimal": 2.28
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 7.5,
+                "american": 111,
+                "decimal": 2.11
+              },
+              {
+                "side": "under",
+                "points": 7.5,
+                "american": -130,
+                "decimal": 1.769
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 8.0,
+                "american": 133,
+                "decimal": 2.33
+              },
+              {
+                "side": "under",
+                "points": 8.0,
+                "american": -157,
+                "decimal": 1.637
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 8.5,
+                "american": 150,
+                "decimal": 2.5
+              },
+              {
+                "side": "under",
+                "points": 8.5,
+                "american": -182,
+                "decimal": 1.549
+              }
+            ],
+            "is_alternate": true
+          }
+        ]
+      }
+    },
+    {
+      "matchup_id": 1634052519,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/st-louis-cardinals-vs-cincinnati-reds/1634052519/#all",
+      "path": "/en/baseball/mlb/st-louis-cardinals-vs-cincinnati-reds/1634052519/",
+      "league": "MLB",
+      "start_time": "2026-08-19T22:40:00Z",
+      "label": "St. Louis Cardinals vs Cincinnati Reds",
+      "participants": [
+        "St. Louis Cardinals",
+        "Cincinnati Reds"
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "period": 3,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Cincinnati Reds",
+                "american": 238,
+                "decimal": 3.38
+              },
+              {
+                "side": "away",
+                "team": "St. Louis Cardinals",
+                "american": 352,
+                "decimal": 4.52
+              },
+              {
+                "side": "draw",
+                "american": -130,
+                "decimal": 1.769
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Cincinnati Reds",
+                "american": -143,
+                "decimal": 1.699
+              },
+              {
+                "side": "away",
+                "team": "St. Louis Cardinals",
+                "american": 129,
+                "decimal": 2.29
+              }
+            ]
+          }
+        ],
+        "spread": [
+          {
+            "period": 3,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Cincinnati Reds",
+                "points": 0.0,
+                "american": -156,
+                "decimal": 1.641
+              },
+              {
+                "side": "away",
+                "team": "St. Louis Cardinals",
+                "points": -0.0,
+                "american": 130,
+                "decimal": 2.3
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Cincinnati Reds",
+                "points": 0.0,
+                "american": -155,
+                "decimal": 1.645
+              },
+              {
+                "side": "away",
+                "team": "St. Louis Cardinals",
+                "points": -0.0,
+                "american": 131,
+                "decimal": 2.31
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Cincinnati Reds",
+                "points": 1.0,
+                "american": -330,
+                "decimal": 1.303
+              },
+              {
+                "side": "away",
+                "team": "St. Louis Cardinals",
+                "points": -1.0,
+                "american": 244,
+                "decimal": 3.44
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Cincinnati Reds",
+                "points": 0.5,
+                "american": -208,
+                "decimal": 1.481
+              },
+              {
+                "side": "away",
+                "team": "St. Louis Cardinals",
+                "points": -0.5,
+                "american": 169,
+                "decimal": 2.69
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Cincinnati Reds",
+                "points": -0.5,
+                "american": -107,
+                "decimal": 1.935
+              },
+              {
+                "side": "away",
+                "team": "St. Louis Cardinals",
+                "points": 0.5,
+                "american": -111,
+                "decimal": 1.901
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Cincinnati Reds",
+                "points": -1.0,
+                "american": 130,
+                "decimal": 2.3
+              },
+              {
+                "side": "away",
+                "team": "St. Louis Cardinals",
+                "points": 1.0,
+                "american": -160,
+                "decimal": 1.625
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Cincinnati Reds",
+                "points": -1.5,
+                "american": 149,
+                "decimal": 2.49
+              },
+              {
+                "side": "away",
+                "team": "St. Louis Cardinals",
+                "points": 1.5,
+                "american": -169,
+                "decimal": 1.592
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Cincinnati Reds",
+                "points": 1.5,
+                "american": -241,
+                "decimal": 1.415
+              },
+              {
+                "side": "away",
+                "team": "St. Louis Cardinals",
+                "points": -1.5,
+                "american": 193,
+                "decimal": 2.93
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Cincinnati Reds",
+                "points": 1.0,
+                "american": -199,
+                "decimal": 1.503
+              },
+              {
+                "side": "away",
+                "team": "St. Louis Cardinals",
+                "points": -1.0,
+                "american": 166,
+                "decimal": 2.66
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Cincinnati Reds",
+                "points": -1.0,
+                "american": 103,
+                "decimal": 2.03
+              },
+              {
+                "side": "away",
+                "team": "St. Louis Cardinals",
+                "points": 1.0,
+                "american": -117,
+                "decimal": 1.855
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Cincinnati Reds",
+                "points": -2.0,
+                "american": 197,
+                "decimal": 2.97
+              },
+              {
+                "side": "away",
+                "team": "St. Louis Cardinals",
+                "points": 2.0,
+                "american": -236,
+                "decimal": 1.424
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Cincinnati Reds",
+                "points": -2.5,
+                "american": 225,
+                "decimal": 3.25
+              },
+              {
+                "side": "away",
+                "team": "St. Louis Cardinals",
+                "points": 2.5,
+                "american": -281,
+                "decimal": 1.356
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Cincinnati Reds",
+                "points": -3.0,
+                "american": 300,
+                "decimal": 4.0
+              },
+              {
+                "side": "away",
+                "team": "St. Louis Cardinals",
+                "points": 3.0,
+                "american": -412,
+                "decimal": 1.243
+              }
+            ],
+            "is_alternate": true
+          }
+        ],
+        "total": [
+          {
+            "period": 3,
+            "lines": [
+              {
+                "side": "over",
+                "points": 0.5,
+                "american": -103,
+                "decimal": 1.971
+              },
+              {
+                "side": "under",
+                "points": 0.5,
+                "american": -116,
+                "decimal": 1.862
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 4.5,
+                "american": 107,
+                "decimal": 2.07
+              },
+              {
+                "side": "under",
+                "points": 4.5,
+                "american": -125,
+                "decimal": 1.8
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 3.5,
+                "american": -162,
+                "decimal": 1.617
+              },
+              {
+                "side": "under",
+                "points": 3.5,
+                "american": 137,
+                "decimal": 2.37
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 4.0,
+                "american": -125,
+                "decimal": 1.8
+              },
+              {
+                "side": "under",
+                "points": 4.0,
+                "american": 107,
+                "decimal": 2.07
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 5.0,
+                "american": 141,
+                "decimal": 2.41
+              },
+              {
+                "side": "under",
+                "points": 5.0,
+                "american": -166,
+                "decimal": 1.602
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 5.5,
+                "american": 169,
+                "decimal": 2.69
+              },
+              {
+                "side": "under",
+                "points": 5.5,
+                "american": -203,
+                "decimal": 1.493
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 8.5,
+                "american": -107,
+                "decimal": 1.935
+              },
+              {
+                "side": "under",
+                "points": 8.5,
+                "american": -107,
+                "decimal": 1.935
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 7.0,
+                "american": -207,
+                "decimal": 1.483
+              },
+              {
+                "side": "under",
+                "points": 7.0,
+                "american": 168,
+                "decimal": 2.68
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 7.5,
+                "american": -149,
+                "decimal": 1.671
+              },
+              {
+                "side": "under",
+                "points": 7.5,
+                "american": 126,
+                "decimal": 2.26
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 8.0,
+                "american": -128,
+                "decimal": 1.781
+              },
+              {
+                "side": "under",
+                "points": 8.0,
+                "american": 110,
+                "decimal": 2.1
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 9.0,
+                "american": 117,
+                "decimal": 2.17
+              },
+              {
+                "side": "under",
+                "points": 9.0,
+                "american": -137,
+                "decimal": 1.73
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 9.5,
+                "american": 140,
+                "decimal": 2.4
+              },
+              {
+                "side": "under",
+                "points": 9.5,
+                "american": -166,
+                "decimal": 1.602
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 10.0,
+                "american": 166,
+                "decimal": 2.66
+              },
+              {
+                "side": "under",
+                "points": 10.0,
+                "american": -204,
+                "decimal": 1.49
+              }
+            ],
+            "is_alternate": true
+          }
+        ]
+      }
+    },
+    {
+      "matchup_id": 1634065292,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/toronto-blue-jays-vs-tampa-bay-rays/1634065292/#all",
+      "path": "/en/baseball/mlb/toronto-blue-jays-vs-tampa-bay-rays/1634065292/",
+      "league": "MLB",
+      "start_time": "2026-08-19T22:40:00Z",
+      "label": "Toronto Blue Jays vs Tampa Bay Rays",
+      "participants": [
+        "Toronto Blue Jays",
+        "Tampa Bay Rays"
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "period": 3,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Tampa Bay Rays",
+                "american": 217,
+                "decimal": 3.17
+              },
+              {
+                "side": "away",
+                "team": "Toronto Blue Jays",
+                "american": 376,
+                "decimal": 4.76
+              },
+              {
+                "side": "draw",
+                "american": -126,
+                "decimal": 1.794
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Tampa Bay Rays",
+                "american": -209,
+                "decimal": 1.478
+              },
+              {
+                "side": "away",
+                "team": "Toronto Blue Jays",
+                "american": 185,
+                "decimal": 2.85
+              }
+            ]
+          }
+        ],
+        "spread": [
+          {
+            "period": 3,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Tampa Bay Rays",
+                "points": 0.0,
+                "american": -179,
+                "decimal": 1.559
+              },
+              {
+                "side": "away",
+                "team": "Toronto Blue Jays",
+                "points": -0.0,
+                "american": 148,
+                "decimal": 2.48
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Tampa Bay Rays",
+                "points": -1.5,
+                "american": 104,
+                "decimal": 2.04
+              },
+              {
+                "side": "away",
+                "team": "Toronto Blue Jays",
+                "points": 1.5,
+                "american": -117,
+                "decimal": 1.855
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Tampa Bay Rays",
+                "points": 1.5,
+                "american": -383,
+                "decimal": 1.261
+              },
+              {
+                "side": "away",
+                "team": "Toronto Blue Jays",
+                "points": -1.5,
+                "american": 283,
+                "decimal": 3.83
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Tampa Bay Rays",
+                "points": 1.0,
+                "american": -322,
+                "decimal": 1.311
+              },
+              {
+                "side": "away",
+                "team": "Toronto Blue Jays",
+                "points": -1.0,
+                "american": 252,
+                "decimal": 3.52
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Tampa Bay Rays",
+                "points": -1.0,
+                "american": -151,
+                "decimal": 1.662
+              },
+              {
+                "side": "away",
+                "team": "Toronto Blue Jays",
+                "points": 1.0,
+                "american": 131,
+                "decimal": 2.31
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Tampa Bay Rays",
+                "points": -2.0,
+                "american": 135,
+                "decimal": 2.35
+              },
+              {
+                "side": "away",
+                "team": "Toronto Blue Jays",
+                "points": 2.0,
+                "american": -156,
+                "decimal": 1.641
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Tampa Bay Rays",
+                "points": -2.5,
+                "american": 161,
+                "decimal": 2.61
+              },
+              {
+                "side": "away",
+                "team": "Toronto Blue Jays",
+                "points": 2.5,
+                "american": -193,
+                "decimal": 1.518
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Tampa Bay Rays",
+                "points": -3.0,
+                "american": 212,
+                "decimal": 3.12
+              },
+              {
+                "side": "away",
+                "team": "Toronto Blue Jays",
+                "points": 3.0,
+                "american": -270,
+                "decimal": 1.37
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Tampa Bay Rays",
+                "points": 0.0,
+                "american": -217,
+                "decimal": 1.461
+              },
+              {
+                "side": "away",
+                "team": "Toronto Blue Jays",
+                "points": -0.0,
+                "american": 180,
+                "decimal": 2.8
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Tampa Bay Rays",
+                "points": 1.0,
+                "american": -477,
+                "decimal": 1.21
+              },
+              {
+                "side": "away",
+                "team": "Toronto Blue Jays",
+                "points": -1.0,
+                "american": 325,
+                "decimal": 4.25
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Tampa Bay Rays",
+                "points": 0.5,
+                "american": -283,
+                "decimal": 1.353
+              },
+              {
+                "side": "away",
+                "team": "Toronto Blue Jays",
+                "points": -0.5,
+                "american": 220,
+                "decimal": 3.2
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Tampa Bay Rays",
+                "points": -0.5,
+                "american": -141,
+                "decimal": 1.709
+              },
+              {
+                "side": "away",
+                "team": "Toronto Blue Jays",
+                "points": 0.5,
+                "american": 118,
+                "decimal": 2.18
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Tampa Bay Rays",
+                "points": -1.0,
+                "american": -106,
+                "decimal": 1.943
+              },
+              {
+                "side": "away",
+                "team": "Toronto Blue Jays",
+                "points": 1.0,
+                "american": -115,
+                "decimal": 1.87
+              }
+            ],
+            "is_alternate": true
+          }
+        ],
+        "total": [
+          {
+            "period": 3,
+            "lines": [
+              {
+                "side": "over",
+                "points": 0.5,
+                "american": -106,
+                "decimal": 1.943
+              },
+              {
+                "side": "under",
+                "points": 0.5,
+                "american": -112,
+                "decimal": 1.893
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 8.0,
+                "american": 101,
+                "decimal": 2.01
+              },
+              {
+                "side": "under",
+                "points": 8.0,
+                "american": -115,
+                "decimal": 1.87
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 6.5,
+                "american": -203,
+                "decimal": 1.493
+              },
+              {
+                "side": "under",
+                "points": 6.5,
+                "american": 165,
+                "decimal": 2.65
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 7.0,
+                "american": -161,
+                "decimal": 1.621
+              },
+              {
+                "side": "under",
+                "points": 7.0,
+                "american": 137,
+                "decimal": 2.37
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 7.5,
+                "american": -119,
+                "decimal": 1.84
+              },
+              {
+                "side": "under",
+                "points": 7.5,
+                "american": 102,
+                "decimal": 2.02
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 8.5,
+                "american": 117,
+                "decimal": 2.17
+              },
+              {
+                "side": "under",
+                "points": 8.5,
+                "american": -137,
+                "decimal": 1.73
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 9.0,
+                "american": 151,
+                "decimal": 2.51
+              },
+              {
+                "side": "under",
+                "points": 9.0,
+                "american": -179,
+                "decimal": 1.559
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 9.5,
+                "american": 174,
+                "decimal": 2.74
+              },
+              {
+                "side": "under",
+                "points": 9.5,
+                "american": -216,
+                "decimal": 1.463
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 4.5,
+                "american": 101,
+                "decimal": 2.01
+              },
+              {
+                "side": "under",
+                "points": 4.5,
+                "american": -117,
+                "decimal": 1.855
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 3.5,
+                "american": -174,
+                "decimal": 1.575
+              },
+              {
+                "side": "under",
+                "points": 3.5,
+                "american": 147,
+                "decimal": 2.47
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 4.0,
+                "american": -135,
+                "decimal": 1.741
+              },
+              {
+                "side": "under",
+                "points": 4.0,
+                "american": 115,
+                "decimal": 2.15
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 5.0,
+                "american": 132,
+                "decimal": 2.32
+              },
+              {
+                "side": "under",
+                "points": 5.0,
+                "american": -156,
+                "decimal": 1.641
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 5.5,
+                "american": 160,
+                "decimal": 2.6
+              },
+              {
+                "side": "under",
+                "points": 5.5,
+                "american": -191,
+                "decimal": 1.524
+              }
+            ],
+            "is_alternate": true
+          }
+        ]
+      }
+    }
+  ]
+}
