@@ -25,8 +25,28 @@ CACHE_TTL_SECONDS = 60.0
 
 _cache: dict[str, Any] = {"expires_at": 0.0, "value": None}
 
-_ALLOWED_BOOKS = frozenset({"prizepicks", "draftkings", "fanduel"})
-_SCHEMA_BOOK_KEYS: tuple[str, ...] = ("draftkings", "fanduel")
+_ALLOWED_BOOKS = frozenset(
+    {
+        "prizepicks",
+        "draftkings",
+        "fanduel",
+        "betmgm",
+        "caesars",
+        "kalshi",
+        "fliff",
+        "bet365",
+    }
+)
+# Sportsbook side indexes for books_main (exact-line fair stays DK/FD + scrapers).
+_SCHEMA_BOOK_KEYS: tuple[str, ...] = (
+    "draftkings",
+    "fanduel",
+    "betmgm",
+    "caesars",
+    "kalshi",
+    "fliff",
+    "bet365",
+)
 
 # Same allowlist as app.domains.betting.parlay_props._PROP_MARKET_KEYS.
 _PROP_MARKET_KEYS = (
