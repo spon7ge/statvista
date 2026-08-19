@@ -5,3 +5,15 @@ start backend: PYTHONPATH=..:. uvicorn app.main:app --reload --port 8000
 start frontend: npm run dev
 
 venv -> .\statvista\Scripts\Activate.ps1
+
+# if blocked — reuse the Brave window you already cleared, or:
+python mlb_prizepick.py --print-brave-cdp-cmd
+
+""/Applications/Brave Browser.app/Contents/MacOS/Brave Browser" --remote-debugging-port=9222 
+--user-data-dir="/Users/alexgonzalez/Documents/NBA-Prop-Predictor/data/props/prizepicks/.pw_profile" "https://app.prizepicks.com/"
+
+# run printed Brave cmd, then:
+PRIZEPICKS_CDP=1 python mlb_prizepick.py
+
+# later runs (cookie warm):
+python mlb_prizepick.py

@@ -11,10 +11,33 @@ Install for better success rate:
 Optional environment variables:
     PRIZEPICKS_OUTPUT: Override default output path (must end in .json)
     PRIZEPICKS_COOKIE: Browser session cookie (from DevTools)
-    PRIZEPICKS_COOKIE_FILE: Path to file containing cookie
+    PRIZEPICKS_COOKIE_FILE: Path to file containing cookie (default: an auto-managed
+                             file under data/props/prizepicks/ — see below)
+    PRIZEPICKS_STORAGE_STATE: Path to Playwright storage_state JSON (default:
+                               data/props/prizepicks/.playwright_storage.json)
+    PRIZEPICKS_PROFILE_DIR: Persistent Chrome/Chromium user-data dir (default:
+                             data/props/prizepicks/.pw_profile)
+    PRIZEPICKS_EXECUTABLE: Absolute path to a Chromium-based browser binary
+                            (Brave/Chrome/Edge). Overrides channel auto-detect.
+    PRIZEPICKS_CHANNEL: Playwright browser channel. Default: auto-detect a
+                         system browser (Chrome, Brave, Edge), else chrome.
+                         Set to chromium/off/0 for bundled Chromium.
+    PRIZEPICKS_CDP_URL: Attach to an already-running browser via CDP
+                         (e.g. http://127.0.0.1:9222). Best when DataDome
+                         blocks Playwright-launched browsers — open Brave with
+                         --remote-debugging-port=9222, solve captcha, then run.
+    PRIZEPICKS_PROXY: Optional proxy URL for HTTP and Playwright
     PRIZEPICKS_IMPERSONATE: Comma-separated curl_cffi profiles (default: safari17_2_ios,...)
     PRIZEPICKS_HEADLESS: Set to 1/true/yes for headless Playwright (default: headed)
     LOG_LEVEL: Set logging level (DEBUG, INFO, WARNING, ERROR)
+
+Cookie / profile persistence:
+    Browser fallback prefers a system browser (Brave/Chrome) with a persistent
+    profile under data/props/prizepicks/.pw_profile. When Playwright-launched
+    browsers keep getting DataDome-blocked, use CDP attach (PRIZEPICKS_CDP_URL)
+    after solving the captcha in a manually started Brave window.
+    Session cookies (+ storage_state) are saved after a successful solve so HTTP
+    can often skip the browser until the session dies.
 
 Default output (one file per league):
     data/props/prizepicks/prizepicks_{league}_YYYY-MM-DD_HHMMSS.json
@@ -37,6 +60,7 @@ import time
 from dataclasses import dataclass, asdict
 from datetime import datetime, timezone
 from typing import Any
+from urllib.parse import unquote, urlparse
 from zoneinfo import ZoneInfo
 
 import requests
@@ -49,6 +73,11 @@ _ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__
 if _ROOT not in sys.path:
     sys.path.insert(0, _ROOT)
 _DEFAULT_OUTPUT_DIR = os.path.join(_ROOT, "data", "props", "prizepicks")
+_DEFAULT_COOKIE_FILE = os.path.join(_DEFAULT_OUTPUT_DIR, ".session_cookie.txt")
+_DEFAULT_STORAGE_STATE_FILE = os.path.join(
+    _DEFAULT_OUTPUT_DIR, ".playwright_storage.json"
+)
+_DEFAULT_PROFILE_DIR = os.path.join(_DEFAULT_OUTPUT_DIR, ".pw_profile")
 _OUTPUT_TZ = ZoneInfo("America/Los_Angeles")
 
 # PrizePicks league_id values (NBA=7, WNBA=3)
@@ -112,7 +141,7 @@ ORIGIN_VARIANTS = [
 ]
 
 APP_URL = "https://app.prizepicks.com/"
-PLAYWRIGHT_WAIT_SECONDS = 120
+PLAYWRIGHT_WAIT_SECONDS = 180
 PLAYWRIGHT_POLL_INTERVAL_SECONDS = 2.0
 
 # ============================================================================
@@ -230,14 +259,167 @@ def resolve_output_path(
     return path
 
 
+def cookie_file_path() -> str:
+    """
+    Resolve which file to read/write for the persisted session cookie.
+
+    Uses PRIZEPICKS_COOKIE_FILE if explicitly set, otherwise the
+    auto-managed default under data/props/prizepicks/.
+    """
+    explicit = os.environ.get("PRIZEPICKS_COOKIE_FILE", "").strip()
+    if explicit:
+        return os.path.expanduser(explicit)
+    return _DEFAULT_COOKIE_FILE
+
+
+def storage_state_path() -> str:
+    """Resolve Playwright storage_state JSON path (env override or default)."""
+    explicit = os.environ.get("PRIZEPICKS_STORAGE_STATE", "").strip()
+    if explicit:
+        return os.path.expanduser(explicit)
+    return _DEFAULT_STORAGE_STATE_FILE
+
+
+def profile_dir_path() -> str:
+    """Resolve persistent browser profile directory (env override or default)."""
+    explicit = os.environ.get("PRIZEPICKS_PROFILE_DIR", "").strip()
+    if explicit:
+        return os.path.expanduser(explicit)
+    return _DEFAULT_PROFILE_DIR
+
+
+# Prefer real installed browsers over Playwright's bundled Chromium (DataDome).
+_SYSTEM_CHROMIUM_CANDIDATES: tuple[str, ...] = (
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser",
+    "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+    "/Applications/Chromium.app/Contents/MacOS/Chromium",
+    "/Applications/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+)
+
+
+def detect_system_chromium_executable() -> str | None:
+    """Return the first installed Chromium-based browser binary, if any."""
+    for path in _SYSTEM_CHROMIUM_CANDIDATES:
+        if os.path.isfile(path) and os.access(path, os.X_OK):
+            return path
+    return None
+
+
+def playwright_channel_from_env() -> str | None:
+    """
+    Explicit Playwright channel from PRIZEPICKS_CHANNEL, if set.
+
+    Empty / unset means "auto" (see resolve_playwright_browser). Values
+    chromium / off / 0 / false / bundled force bundled Chromium (no channel).
+    """
+    raw = os.environ.get("PRIZEPICKS_CHANNEL", "").strip().lower()
+    if raw == "":
+        return None  # auto
+    if raw in {"0", "off", "false", "chromium", "bundled"}:
+        return None
+    return raw
+
+
+def resolve_playwright_browser() -> tuple[str | None, str | None]:
+    """
+    Choose Playwright launch browser.
+
+    Returns:
+        (channel, executable_path) — at most one is set. Both None → bundled Chromium.
+
+    Priority:
+    1. PRIZEPICKS_EXECUTABLE
+    2. Explicit PRIZEPICKS_CHANNEL (non-auto)
+    3. Auto-detected system Chrome / Brave / Edge / Chromium
+    4. channel=chrome (Playwright-managed Chrome)
+    """
+    explicit_exe = os.environ.get("PRIZEPICKS_EXECUTABLE", "").strip()
+    if explicit_exe:
+        return None, os.path.expanduser(explicit_exe)
+
+    raw_channel = os.environ.get("PRIZEPICKS_CHANNEL", "").strip().lower()
+    if raw_channel in {"0", "off", "false", "chromium", "bundled"}:
+        return None, None
+    if raw_channel:
+        return raw_channel, None
+
+    detected = detect_system_chromium_executable()
+    if detected:
+        return None, detected
+
+    return "chrome", None
+
+
+def cdp_url_from_env() -> str | None:
+    """
+    Optional CDP endpoint for attaching to a manually started browser.
+
+    PRIZEPICKS_CDP_URL wins. PRIZEPICKS_CDP=1/true/yes defaults to
+    http://127.0.0.1:9222.
+    """
+    explicit = os.environ.get("PRIZEPICKS_CDP_URL", "").strip()
+    if explicit:
+        return explicit
+    raw = os.environ.get("PRIZEPICKS_CDP", "").strip().lower()
+    if raw in {"1", "true", "yes"}:
+        return "http://127.0.0.1:9222"
+    return None
+
+
+def storage_state_for_context(path: str | None = None) -> str | None:
+    """Return storage_state path if the file exists and is valid JSON; else None.
+
+    Playwright aborts new_context() on corrupt storage_state. Invalid files
+    should fall back to an empty context instead of failing the whole run.
+    """
+    target = path or storage_state_path()
+    if not os.path.isfile(target):
+        return None
+    try:
+        with open(target, encoding="utf-8") as f:
+            json.load(f)
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        logger.warning(
+            f"Ignoring invalid Playwright storage_state at {target}; "
+            "using empty context"
+        )
+        return None
+    return target
+
+
+def proxy_from_env() -> str | None:
+    """Optional proxy URL for HTTP and Playwright (`PRIZEPICKS_PROXY`)."""
+    raw = os.environ.get("PRIZEPICKS_PROXY", "").strip()
+    return raw or None
+
+
+def playwright_proxy_kwargs(proxy_url: str) -> dict[str, str]:
+    """Playwright proxy dict; split user:pass@host into username/password keys."""
+    parsed = urlparse(proxy_url)
+    if not parsed.hostname:
+        return {"server": proxy_url}
+    server = f"{parsed.scheme}://{parsed.hostname}"
+    if parsed.port:
+        server = f"{server}:{parsed.port}"
+    config: dict[str, str] = {"server": server}
+    if parsed.username:
+        config["username"] = unquote(parsed.username)
+    if parsed.password:
+        config["password"] = unquote(parsed.password)
+    return config
+
+
 def get_cookie_for_request() -> str:
     """
     Load optional browser cookie.
-    
+
     Checks (in order):
     1. PRIZEPICKS_COOKIE env var
-    2. PRIZEPICKS_COOKIE_FILE env var
-    
+    2. Cookie file — PRIZEPICKS_COOKIE_FILE if set, else the auto-managed
+       default file (data/props/prizepicks/.session_cookie.txt), which is
+       written automatically after a successful Playwright DataDome solve.
+
     Returns:
         Cookie string, or empty string if none found
     """
@@ -246,22 +428,56 @@ def get_cookie_for_request() -> str:
     if c:
         logger.debug("Using PRIZEPICKS_COOKIE from environment")
         return c
-    
-    # Try file
-    path = os.environ.get("PRIZEPICKS_COOKIE_FILE", "").strip()
-    if path:
-        expanded = os.path.expanduser(path)
-        if os.path.isfile(expanded):
-            logger.debug(f"Loading cookie from: {expanded}")
-            try:
-                with open(expanded, encoding="utf-8") as f:
-                    return f.read().strip()
-            except IOError as e:
-                logger.warning(f"Failed to read cookie file: {e}")
-                return ""
-    
-    logger.debug("No cookie found (PRIZEPICKS_COOKIE* not set)")
+
+    # Try file (explicit or auto-managed default)
+    path = cookie_file_path()
+    if os.path.isfile(path):
+        logger.debug(f"Loading cookie from: {path}")
+        try:
+            with open(path, encoding="utf-8") as f:
+                cookie = f.read().strip()
+                if cookie:
+                    return cookie
+        except IOError as e:
+            logger.warning(f"Failed to read cookie file: {e}")
+
+    logger.debug("No cookie found (PRIZEPICKS_COOKIE not set, no cookie file yet)")
     return ""
+
+
+def save_session_cookie(cookie_header: str, path: str | None = None) -> None:
+    """
+    Persist a session cookie string to disk for reuse by future runs.
+
+    Args:
+        cookie_header: A "name=value; name2=value2" cookie header string
+        path: Override target path (default: cookie_file_path())
+    """
+    target = path or cookie_file_path()
+    parent = os.path.dirname(os.path.abspath(target))
+    if parent:
+        os.makedirs(parent, exist_ok=True)
+
+    try:
+        with open(target, "w", encoding="utf-8") as f:
+            f.write(cookie_header.strip() + "\n")
+        logger.info(f"✓ Saved session cookie to {target} (reused automatically by future runs)")
+    except IOError as e:
+        logger.warning(f"Failed to save session cookie: {e}")
+
+
+def _build_cookie_header_from_playwright(cookies: list[dict[str, Any]]) -> str:
+    """Build a 'name=value; ...' header string from Playwright context cookies."""
+    parts = []
+    for c in cookies:
+        domain = c.get("domain") or ""
+        name = c.get("name")
+        value = c.get("value")
+        if "prizepicks.com" not in domain or not name or value is None:
+            continue
+        parts.append(f"{name}={value}")
+    parts.sort()
+    return "; ".join(parts)
 
 
 def add_headers_to_dict(base: dict[str, str], overrides: dict[str, str] | None = None) -> dict[str, str]:
@@ -331,14 +547,28 @@ def build_fetch_failure_message() -> str:
         "Troubleshooting:\n"
         "1. Browser fallback (recommended when HTTP returns 403):\n"
         "   pip install playwright && playwright install chromium\n"
-        "   Re-run headed (default) and solve any captcha in the window.\n"
+        "   Prefer CDP attach when Playwright-launched browsers stay blocked:\n"
+        "     1) Start Brave with remote debugging (separate terminal):\n"
+        "        python -m src.scrapers.wnba_prizepick --print-brave-cdp-cmd\n"
+        "        # or run the printed Brave command yourself\n"
+        "     2) Solve any captcha at app.prizepicks.com in that window\n"
+        "     3) PRIZEPICKS_CDP=1 python src/scrapers/wnba_prizepick.py\n"
+        "   Otherwise: headed Brave/Chrome persistent profile (.pw_profile).\n"
         "   Use PRIZEPICKS_HEADLESS=1 only when no interactive captcha is expected.\n"
+        "   If hard-restricted: wait 30–60m, rm .session_cookie.txt, retry.\n"
         "2. Optional browser session cookie for the HTTP path:\n"
         "   PRIZEPICKS_COOKIE='...' python prizepicks_scraper.py\n"
         "   Or: PRIZEPICKS_COOKIE_FILE=~/.prizepicks_cookie python ...\n"
+        "   Auto-managed files (written after a successful Playwright solve):\n"
+        "   data/props/prizepicks/.session_cookie.txt\n"
+        "   data/props/prizepicks/.playwright_storage.json\n"
+        "   Override with PRIZEPICKS_COOKIE_FILE / PRIZEPICKS_STORAGE_STATE /\n"
+        "   PRIZEPICKS_PROFILE_DIR / PRIZEPICKS_CHANNEL.\n"
         "3. curl_cffi impersonation profiles:\n"
         "   pip install curl_cffi\n"
         "   PRIZEPICKS_IMPERSONATE='safari17_0,chrome131' python ...\n"
+        "4. Optional proxy (sticky residential IPs if challenges remain frequent):\n"
+        "   PRIZEPICKS_PROXY='http://user:pass@host:port' python ...\n"
         "\n"
         "Run with LOG_LEVEL=DEBUG for detailed diagnostics."
     )
@@ -452,6 +682,7 @@ def try_fetch_with_curl_cffi(
 
     profiles = get_curl_impersonate_list()
     cookie = get_cookie_for_request()
+    proxy = proxy_from_env()
 
     for i, profile in enumerate(profiles, 1):
         for origin_var in ORIGIN_VARIANTS:
@@ -466,6 +697,10 @@ def try_fetch_with_curl_cffi(
                 f"origin={origin_name}, cookie={'yes' if cookie else 'no'}"
             )
 
+            get_kwargs: dict[str, Any] = {"impersonate": profile}
+            if proxy:
+                get_kwargs["proxy"] = proxy
+
             try:
                 out: dict[str, dict[str, Any]] = {}
                 for league_name, league_id in leagues:
@@ -475,7 +710,7 @@ def try_fetch_with_curl_cffi(
                         headers=headers,
                         timeout=45,
                         get_fn=curl_requests.get,
-                        get_kwargs={"impersonate": profile},
+                        get_kwargs=get_kwargs,
                     )
                     if data is not None:
                         out[league_name] = data
@@ -507,6 +742,10 @@ def try_fetch_with_requests(
     logger.info("Attempting fetch with requests (stdlib)...")
 
     cookie = get_cookie_for_request()
+    proxy = proxy_from_env()
+    get_kwargs: dict[str, Any] = {}
+    if proxy:
+        get_kwargs["proxies"] = {"http": proxy, "https": proxy}
 
     for origin_var in ORIGIN_VARIANTS:
         origin_name = origin_var["name"]
@@ -526,6 +765,7 @@ def try_fetch_with_requests(
                     headers=headers,
                     timeout=30,
                     get_fn=requests.get,
+                    get_kwargs=get_kwargs,
                 )
                 if data is not None:
                     out[league_name] = data
@@ -563,14 +803,122 @@ def _playwright_fetch_url(page: Any, api_url: str) -> tuple[int, str]:
     return int(result.get("status") or 0), (result.get("text") or "")
 
 
+def brave_cdp_launch_command(*, port: int = 9222) -> str:
+    """Shell command to start Brave with remote debugging on the scraper profile."""
+    exe = detect_system_chromium_executable() or (
+        "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser"
+    )
+    profile = profile_dir_path()
+    return (
+        f'"{exe}" '
+        f"--remote-debugging-port={port} "
+        f'--user-data-dir="{profile}" '
+        f'"{APP_URL}"'
+    )
+
+
+def _playwright_poll_until_cleared(
+    page: Any,
+    *,
+    probe_url: str,
+    deadline: float,
+) -> bool:
+    """Poll in-page API until projections JSON returns or deadline hits."""
+    captcha_logged = False
+    while time.monotonic() < deadline:
+        page_content = ""
+        try:
+            page_content = page.content()
+        except Exception:
+            pass
+
+        if is_datadome_challenge(page_content) and not captcha_logged:
+            logger.info(
+                "DataDome captcha detected — solve it in the browser window"
+            )
+            captcha_logged = True
+
+        try:
+            status, text = _playwright_fetch_url(page, probe_url)
+        except Exception as e:
+            logger.debug(f"  Playwright evaluate error: {type(e).__name__}: {e}")
+            time.sleep(PLAYWRIGHT_POLL_INTERVAL_SECONDS)
+            continue
+
+        data = _parse_projections_json(text) if status == 200 else None
+        if data is not None:
+            return True
+
+        if is_datadome_challenge(text) and not captcha_logged:
+            logger.info(
+                "DataDome captcha detected — solve it in the browser window"
+            )
+            captcha_logged = True
+        else:
+            logger.debug(
+                f"  Playwright poll: status={status}, "
+                f"datadome={is_datadome_challenge(text)}"
+            )
+
+        time.sleep(PLAYWRIGHT_POLL_INTERVAL_SECONDS)
+    return False
+
+
+def _persist_playwright_session(context: Any, *, profile: str | None = None) -> None:
+    """Save cookie header + storage_state after a successful clearance."""
+    try:
+        cookie_header = _build_cookie_header_from_playwright(context.cookies())
+        if cookie_header:
+            save_session_cookie(cookie_header)
+        state_path = storage_state_path()
+        parent = os.path.dirname(os.path.abspath(state_path))
+        if parent:
+            os.makedirs(parent, exist_ok=True)
+        context.storage_state(path=state_path)
+        extra = f" (profile also at {profile})" if profile else ""
+        logger.info(f"✓ Saved Playwright storage_state to {state_path}{extra}")
+    except Exception as e:
+        logger.warning(f"Could not persist session/storage: {e}")
+
+
+def _fetch_leagues_with_page(
+    page: Any,
+    league_urls: list[tuple[str, str]],
+) -> dict[str, dict[str, Any]] | None:
+    """Fetch each league URL via in-page fetch; return mapping or None."""
+    out: dict[str, dict[str, Any]] = {}
+    for league_name, url in league_urls:
+        try:
+            status, text = _playwright_fetch_url(page, url)
+        except Exception as e:
+            logger.debug(
+                f"  Playwright {league_name} error: {type(e).__name__}: {e}"
+            )
+            continue
+        data = _parse_projections_json(text) if status == 200 else None
+        if data is None:
+            logger.warning(
+                f"Playwright {league_name} failed "
+                f"(status={status}, datadome={is_datadome_challenge(text)})"
+            )
+            continue
+        out[league_name] = data
+        logger.info(
+            f"✓ Playwright {league_name} ok "
+            f"(rows={len(data.get('data') or [])})"
+        )
+    return out or None
+
+
 def try_fetch_with_playwright(
     leagues: tuple[tuple[str, int], ...] = DEFAULT_LEAGUES,
 ) -> dict[str, dict[str, Any]] | None:
     """
-    Last-resort fetch: open PrizePicks in Chromium, clear DataDome, fetch each league.
+    Last-resort fetch via Playwright: CDP attach (preferred when set) or
+    launch a persistent system browser profile, clear DataDome, fetch leagues.
 
-    Headed by default so a captcha can be solved manually. Set PRIZEPICKS_HEADLESS=1
-    for non-interactive runs.
+    Set PRIZEPICKS_CDP_URL / PRIZEPICKS_CDP=1 to attach to a manually started
+    Brave/Chrome with --remote-debugging-port (best clearance success rate).
 
     Returns:
         Mapping league name → API payload, or None if Playwright is unavailable / times out.
@@ -584,104 +932,159 @@ def try_fetch_with_playwright(
         )
         return None
 
+    cdp_url = cdp_url_from_env()
     headless = headless_from_env()
-    logger.info(
-        "Attempting fetch with Playwright "
-        f"({'headless' if headless else 'headed'}; wait up to "
-        f"{PLAYWRIGHT_WAIT_SECONDS}s)..."
-    )
-    if not headless:
-        logger.info(
-            "If a captcha appears, solve it in the browser window; "
-            "the scraper will keep polling the API."
-        )
+    profile = profile_dir_path()
+    os.makedirs(profile, exist_ok=True)
 
-    captcha_logged = False
-    deadline = time.monotonic() + PLAYWRIGHT_WAIT_SECONDS
     league_urls = [(name, projections_api_url(lid)) for name, lid in leagues]
     probe_url = league_urls[0][1]
+    deadline = time.monotonic() + PLAYWRIGHT_WAIT_SECONDS
 
     try:
         with sync_playwright() as p:
-            browser = p.chromium.launch(headless=headless)
-            try:
-                context = browser.new_context()
-                page = context.new_page()
+            browser = None
+            context: Any
+            owns_browser = False
+
+            if cdp_url:
+                logger.info(
+                    f"Attempting fetch with Playwright CDP attach ({cdp_url}; "
+                    f"wait up to {PLAYWRIGHT_WAIT_SECONDS}s)..."
+                )
+                logger.info(
+                    "Solve any captcha in the already-open browser; "
+                    "the scraper will keep polling the API."
+                )
+                try:
+                    browser = p.chromium.connect_over_cdp(cdp_url)
+                except Exception as cdp_err:
+                    logger.info(
+                        f"CDP attach failed ({type(cdp_err).__name__}: {cdp_err}). "
+                        "Nothing is listening on that port — start Brave first, "
+                        "leave it open, then re-run with PRIZEPICKS_CDP=1:\n"
+                        f"  {brave_cdp_launch_command()}"
+                    )
+                    return None
+                context = (
+                    browser.contexts[0]
+                    if browser.contexts
+                    else browser.new_context()
+                )
+                page = context.pages[0] if context.pages else context.new_page()
+                try:
+                    page.goto(APP_URL, wait_until="domcontentloaded", timeout=60_000)
+                except Exception as e:
+                    logger.debug(f"CDP goto note: {type(e).__name__}: {e}")
+            else:
+                channel, executable = resolve_playwright_browser()
+                if executable:
+                    browser_label = executable
+                elif channel:
+                    browser_label = f"channel={channel}"
+                else:
+                    browser_label = "bundled-chromium"
+                logger.info(
+                    "Attempting fetch with Playwright "
+                    f"({browser_label}, {'headless' if headless else 'headed'}; "
+                    f"profile={profile}; wait up to {PLAYWRIGHT_WAIT_SECONDS}s)..."
+                )
+                if not headless:
+                    logger.info(
+                        "If a captcha appears, solve it in the browser window; "
+                        "the scraper will keep polling the API."
+                    )
+                    logger.info(
+                        "Tip: if captchas stay unsolvable, start Brave with CDP "
+                        f"instead:\n  {brave_cdp_launch_command()}\n"
+                        "Then: PRIZEPICKS_CDP=1 python wnba_prizepick.py"
+                    )
+
+                proxy = proxy_from_env()
+                launch_kwargs: dict[str, Any] = {
+                    "user_data_dir": profile,
+                    "headless": headless,
+                    "viewport": {"width": 1280, "height": 800},
+                    "locale": "en-US",
+                    "args": ["--disable-blink-features=AutomationControlled"],
+                }
+                if executable:
+                    launch_kwargs["executable_path"] = executable
+                elif channel:
+                    launch_kwargs["channel"] = channel
+                if proxy:
+                    launch_kwargs["proxy"] = playwright_proxy_kwargs(proxy)
+                    logger.info("Using PRIZEPICKS_PROXY for Playwright")
+
+                try:
+                    context = p.chromium.launch_persistent_context(**launch_kwargs)
+                except Exception as first_err:
+                    used_system = (
+                        "channel" in launch_kwargs
+                        or "executable_path" in launch_kwargs
+                    )
+                    if not used_system:
+                        raise
+                    launch_kwargs.pop("channel", None)
+                    failed_exe = launch_kwargs.pop("executable_path", None)
+                    alt = detect_system_chromium_executable()
+                    if alt and alt != failed_exe:
+                        launch_kwargs["executable_path"] = alt
+                        logger.warning(
+                            f"Playwright browser launch failed "
+                            f"({type(first_err).__name__}: {first_err}); "
+                            f"retrying with {alt}"
+                        )
+                        try:
+                            context = p.chromium.launch_persistent_context(
+                                **launch_kwargs
+                            )
+                        except Exception as second_err:
+                            launch_kwargs.pop("executable_path", None)
+                            logger.warning(
+                                f"Alternate system browser failed "
+                                f"({type(second_err).__name__}: {second_err}); "
+                                "retrying with bundled Chromium"
+                            )
+                            context = p.chromium.launch_persistent_context(
+                                **launch_kwargs
+                            )
+                    else:
+                        logger.warning(
+                            f"Playwright system browser failed "
+                            f"({type(first_err).__name__}: {first_err}); "
+                            "retrying with bundled Chromium"
+                        )
+                        context = p.chromium.launch_persistent_context(**launch_kwargs)
+
+                owns_browser = True
+                page = context.pages[0] if context.pages else context.new_page()
                 page.goto(APP_URL, wait_until="domcontentloaded", timeout=60_000)
 
-                cleared = False
-                while time.monotonic() < deadline:
-                    page_content = ""
-                    try:
-                        page_content = page.content()
-                    except Exception:
-                        pass
-
-                    if is_datadome_challenge(page_content) and not captcha_logged:
-                        logger.info(
-                            "DataDome captcha detected — solve it in the browser window"
-                        )
-                        captcha_logged = True
-
-                    try:
-                        status, text = _playwright_fetch_url(page, probe_url)
-                    except Exception as e:
-                        logger.debug(f"  Playwright evaluate error: {type(e).__name__}: {e}")
-                        time.sleep(PLAYWRIGHT_POLL_INTERVAL_SECONDS)
-                        continue
-
-                    data = _parse_projections_json(text) if status == 200 else None
-                    if data is not None:
-                        cleared = True
-                        break
-
-                    if is_datadome_challenge(text) and not captcha_logged:
-                        logger.info(
-                            "DataDome captcha detected — solve it in the browser window"
-                        )
-                        captcha_logged = True
-                    else:
-                        logger.debug(
-                            f"  Playwright poll: status={status}, "
-                            f"datadome={is_datadome_challenge(text)}"
-                        )
-
-                    time.sleep(PLAYWRIGHT_POLL_INTERVAL_SECONDS)
-
+            try:
+                cleared = _playwright_poll_until_cleared(
+                    page, probe_url=probe_url, deadline=deadline
+                )
                 if not cleared:
                     logger.info(
                         "Playwright wait exhausted without a valid projections payload"
                     )
                     return None
 
-                out: dict[str, dict[str, Any]] = {}
-                for league_name, url in league_urls:
-                    try:
-                        status, text = _playwright_fetch_url(page, url)
-                    except Exception as e:
-                        logger.debug(
-                            f"  Playwright {league_name} error: {type(e).__name__}: {e}"
-                        )
-                        continue
-                    data = _parse_projections_json(text) if status == 200 else None
-                    if data is None:
-                        logger.warning(
-                            f"Playwright {league_name} failed "
-                            f"(status={status}, datadome={is_datadome_challenge(text)})"
-                        )
-                        continue
-                    out[league_name] = data
-                    logger.info(
-                        f"✓ Playwright {league_name} ok "
-                        f"(rows={len(data.get('data') or [])})"
-                    )
-
-                return out or None
+                _persist_playwright_session(
+                    context, profile=None if cdp_url else profile
+                )
+                return _fetch_leagues_with_page(page, league_urls)
             finally:
-                browser.close()
+                if owns_browser:
+                    context.close()
+                elif browser is not None:
+                    # CDP: disconnect only — leave the user's browser running.
+                    browser.close()
     except Exception as e:
         logger.info(f"Playwright fallback failed: {type(e).__name__}: {e}")
         return None
+
 
 
 def fetch_projections_payloads(
@@ -1120,12 +1523,24 @@ Environment variables:
         help="Load projections from JSON file instead of fetching",
     )
     parser.add_argument(
+        "--print-brave-cdp-cmd",
+        action="store_true",
+        help="Print a Brave launch command with --remote-debugging-port and exit",
+    )
+    parser.add_argument(
         "--save-export",
         action="store_true",
         help="With --from-file: also save as timestamped export",
     )
 
     args = parser.parse_args()
+
+    if args.print_brave_cdp_cmd:
+        print(brave_cdp_launch_command())
+        print()
+        print("# After Brave opens and you clear any captcha:")
+        print("PRIZEPICKS_CDP=1 python wnba_prizepick.py")
+        return
 
     if args.from_file:
         scraper = PrizePicks_Scraper()
