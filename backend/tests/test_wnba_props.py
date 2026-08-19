@@ -67,35 +67,41 @@ def test_validate_query_rejects_wrong_format():
 
 
 @pytest.mark.asyncio
-async def test_prizepicks_falls_back_to_snapshot_when_parlay_pp_empty(monkeypatch):
+async def test_prizepicks_board_from_supabase_not_parlay(monkeypatch):
     now = datetime(2026, 8, 11, 20, 0, tzinfo=timezone.utc)
+    pp = [
+        {
+            "player_name": "Caitlin Clark",
+            "stat_type": "points",
+            "line_score": 19.5,
+            "odds_type": "standard",
+            "scraped_at": now,
+        }
+    ]
 
     async def fake_parlay(**kwargs):
         return ParlayWnbaNormalized(
-            prizepicks_board=[],
+            prizepicks_board=[
+                {
+                    "player_name": "Wrong Player",
+                    "stat_type": "points",
+                    "line_score": 99.5,
+                    "odds_type": "standard",
+                    "scraped_at": now,
+                }
+            ],
             book_indexes={},
-            as_of=None,
+            as_of=now.isoformat(),
             unavailable=False,
         )
 
     monkeypatch.setattr(svc, "fetch_wnba_parlay_board_normalized", fake_parlay)
-    monkeypatch.setattr(
-        svc,
-        "fetch_latest_prizepicks",
-        lambda league="wnba": [
-            {
-                "player_name": "Caitlin Clark",
-                "stat_type": "points",
-                "line_score": 19.5,
-                "odds_type": "standard",
-                "scraped_at": now,
-            }
-        ],
-    )
+    monkeypatch.setattr(svc, "fetch_latest_prizepicks", lambda league="wnba": pp)
     monkeypatch.setattr(svc, "fetch_latest_underdog", lambda league="wnba": [])
-    monkeypatch.setattr(svc, "fetch_latest_prophetx", lambda league="wnba": [])
-    monkeypatch.setattr(svc, "fetch_latest_novig", lambda league="wnba": [])
+    monkeypatch.setattr(svc, "fetch_latest_prophetx", lambda league="wnba", **_kw: [])
+    monkeypatch.setattr(svc, "fetch_latest_novig", lambda league="wnba", **_kw: [])
     monkeypatch.setattr(svc, "fetch_latest_pinnacle", lambda league="wnba": [])
+
     async def fake_roster():
         return {}
 
@@ -104,8 +110,7 @@ async def test_prizepicks_falls_back_to_snapshot_when_parlay_pp_empty(monkeypatc
     out = await svc.get_wnba_props_today(app="prizepicks", format="power", legs=4)
     assert len(out.props) == 1
     assert out.props[0].player_name == "Caitlin Clark"
-    assert out.props[0].line == 19.5
-    assert out.props[0].source_tier == "no_sharp_read"
+    assert out.error is None
 
 
 @pytest.mark.asyncio
@@ -122,19 +127,19 @@ async def test_exact_line_only_and_px_novig_set_fair(monkeypatch):
 
     async def fake_parlay(**kwargs):
         return ParlayWnbaNormalized(
-            prizepicks_board=board,
+            prizepicks_board=[],
             book_indexes={},
             as_of=now.isoformat(),
             unavailable=False,
         )
 
     monkeypatch.setattr(svc, "fetch_wnba_parlay_board_normalized", fake_parlay)
-    monkeypatch.setattr(svc, "fetch_latest_prizepicks", lambda league="wnba": [])
+    monkeypatch.setattr(svc, "fetch_latest_prizepicks", lambda league="wnba": board)
     monkeypatch.setattr(svc, "fetch_latest_underdog", lambda league="wnba": [])
     monkeypatch.setattr(
         svc,
         "fetch_latest_prophetx",
-        lambda league="wnba": [
+        lambda league="wnba", **_kw: [
             {
                 "player_name": "Caitlin Clark",
                 "stat_name": "points",
@@ -156,7 +161,7 @@ async def test_exact_line_only_and_px_novig_set_fair(monkeypatch):
     monkeypatch.setattr(
         svc,
         "fetch_latest_novig",
-        lambda league="wnba": [
+        lambda league="wnba", **_kw: [
             {
                 "player_name": "Caitlin Clark",
                 "stat_name": "points",
@@ -186,19 +191,29 @@ async def test_exact_line_only_and_px_novig_set_fair(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_empty_seed_sets_error(monkeypatch):
+    now = datetime(2026, 8, 11, 20, 0, tzinfo=timezone.utc)
+
     async def fake_parlay(**kwargs):
         return ParlayWnbaNormalized(
-            prizepicks_board=[],
+            prizepicks_board=[
+                {
+                    "player_name": "Wrong Player",
+                    "stat_type": "points",
+                    "line_score": 99.5,
+                    "odds_type": "standard",
+                    "scraped_at": now,
+                }
+            ],
             book_indexes={},
-            as_of=None,
+            as_of=now.isoformat(),
             unavailable=False,
         )
 
     monkeypatch.setattr(svc, "fetch_wnba_parlay_board_normalized", fake_parlay)
     monkeypatch.setattr(svc, "fetch_latest_prizepicks", lambda league="wnba": [])
     monkeypatch.setattr(svc, "fetch_latest_underdog", lambda league="wnba": [])
-    monkeypatch.setattr(svc, "fetch_latest_prophetx", lambda league="wnba": [])
-    monkeypatch.setattr(svc, "fetch_latest_novig", lambda league="wnba": [])
+    monkeypatch.setattr(svc, "fetch_latest_prophetx", lambda league="wnba", **_kw: [])
+    monkeypatch.setattr(svc, "fetch_latest_novig", lambda league="wnba", **_kw: [])
     monkeypatch.setattr(svc, "fetch_latest_pinnacle", lambda league="wnba": [])
 
     async def fake_roster():
@@ -224,8 +239,8 @@ async def test_empty_underdog_seed_sets_underdog_unavailable(monkeypatch):
     monkeypatch.setattr(svc, "fetch_wnba_parlay_board_normalized", fake_parlay)
     monkeypatch.setattr(svc, "fetch_latest_prizepicks", lambda league="wnba": [])
     monkeypatch.setattr(svc, "fetch_latest_underdog", lambda league="wnba": [])
-    monkeypatch.setattr(svc, "fetch_latest_prophetx", lambda league="wnba": [])
-    monkeypatch.setattr(svc, "fetch_latest_novig", lambda league="wnba": [])
+    monkeypatch.setattr(svc, "fetch_latest_prophetx", lambda league="wnba", **_kw: [])
+    monkeypatch.setattr(svc, "fetch_latest_novig", lambda league="wnba", **_kw: [])
     monkeypatch.setattr(svc, "fetch_latest_pinnacle", lambda league="wnba": [])
 
     async def fake_roster():
@@ -253,7 +268,7 @@ async def test_league_roster_index_attaches_team_and_headshot(monkeypatch):
 
     async def fake_parlay(**kwargs):
         return ParlayWnbaNormalized(
-            prizepicks_board=board,
+            prizepicks_board=[],
             book_indexes={},
             as_of=now.isoformat(),
             unavailable=False,
@@ -272,10 +287,10 @@ async def test_league_roster_index_attaches_team_and_headshot(monkeypatch):
         }
 
     monkeypatch.setattr(svc, "fetch_wnba_parlay_board_normalized", fake_parlay)
-    monkeypatch.setattr(svc, "fetch_latest_prizepicks", lambda league="wnba": [])
+    monkeypatch.setattr(svc, "fetch_latest_prizepicks", lambda league="wnba": board)
     monkeypatch.setattr(svc, "fetch_latest_underdog", lambda league="wnba": [])
-    monkeypatch.setattr(svc, "fetch_latest_prophetx", lambda league="wnba": [])
-    monkeypatch.setattr(svc, "fetch_latest_novig", lambda league="wnba": [])
+    monkeypatch.setattr(svc, "fetch_latest_prophetx", lambda league="wnba", **_kw: [])
+    monkeypatch.setattr(svc, "fetch_latest_novig", lambda league="wnba", **_kw: [])
     monkeypatch.setattr(svc, "fetch_latest_pinnacle", lambda league="wnba": [])
     monkeypatch.setattr(svc, "get_wnba_player_index", fake_roster)
 
@@ -312,19 +327,19 @@ async def test_no_sharp_read_sorts_last(monkeypatch):
 
     async def fake_parlay(**kwargs):
         return ParlayWnbaNormalized(
-            prizepicks_board=board,
+            prizepicks_board=[],
             book_indexes={},
             as_of=now.isoformat(),
             unavailable=False,
         )
 
     monkeypatch.setattr(svc, "fetch_wnba_parlay_board_normalized", fake_parlay)
-    monkeypatch.setattr(svc, "fetch_latest_prizepicks", lambda league="wnba": [])
+    monkeypatch.setattr(svc, "fetch_latest_prizepicks", lambda league="wnba": board)
     monkeypatch.setattr(svc, "fetch_latest_underdog", lambda league="wnba": [])
     monkeypatch.setattr(
         svc,
         "fetch_latest_prophetx",
-        lambda league="wnba": [
+        lambda league="wnba", **_kw: [
             {
                 "player_name": "Caitlin Clark",
                 "stat_name": "points",
@@ -338,7 +353,7 @@ async def test_no_sharp_read_sorts_last(monkeypatch):
     monkeypatch.setattr(
         svc,
         "fetch_latest_novig",
-        lambda league="wnba": [
+        lambda league="wnba", **_kw: [
             {
                 "player_name": "Caitlin Clark",
                 "stat_name": "points",
@@ -379,17 +394,17 @@ async def test_mismatched_pinnacle_line_omitted(monkeypatch):
 
     async def fake_parlay(**kwargs):
         return ParlayWnbaNormalized(
-            prizepicks_board=board,
+            prizepicks_board=[],
             book_indexes={},
             as_of=now.isoformat(),
             unavailable=False,
         )
 
     monkeypatch.setattr(svc, "fetch_wnba_parlay_board_normalized", fake_parlay)
-    monkeypatch.setattr(svc, "fetch_latest_prizepicks", lambda league="wnba": [])
+    monkeypatch.setattr(svc, "fetch_latest_prizepicks", lambda league="wnba": board)
     monkeypatch.setattr(svc, "fetch_latest_underdog", lambda league="wnba": [])
-    monkeypatch.setattr(svc, "fetch_latest_prophetx", lambda league="wnba": [])
-    monkeypatch.setattr(svc, "fetch_latest_novig", lambda league="wnba": [])
+    monkeypatch.setattr(svc, "fetch_latest_prophetx", lambda league="wnba", **_kw: [])
+    monkeypatch.setattr(svc, "fetch_latest_novig", lambda league="wnba", **_kw: [])
     monkeypatch.setattr(
         svc,
         "fetch_latest_pinnacle",
@@ -415,3 +430,76 @@ async def test_mismatched_pinnacle_line_omitted(monkeypatch):
     assert row.line == 19.5
     assert row.books.pinnacle is None
     assert row.source_tier == "no_sharp_read"
+
+
+@pytest.mark.asyncio
+async def test_books_main_attaches_main_quotes(monkeypatch):
+    now = datetime(2026, 8, 11, 20, 0, tzinfo=timezone.utc)
+    pp = [
+        {
+            "player_name": "Caitlin Clark",
+            "stat_type": "points",
+            "line_score": 19.5,
+            "odds_type": "standard",
+            "scraped_at": now,
+        }
+    ]
+
+    async def fake_parlay(**kwargs):
+        return ParlayWnbaNormalized(
+            prizepicks_board=[],
+            book_indexes={},
+            as_of=None,
+            unavailable=False,
+        )
+
+    monkeypatch.setattr(svc, "fetch_wnba_parlay_board_normalized", fake_parlay)
+    monkeypatch.setattr(svc, "fetch_latest_prizepicks", lambda league="wnba": pp)
+    monkeypatch.setattr(svc, "fetch_latest_underdog", lambda league="wnba": [])
+    monkeypatch.setattr(
+        svc,
+        "fetch_latest_prophetx",
+        lambda league="wnba", mains_only=False, **_kw: [
+            {
+                "player_name": "Caitlin Clark",
+                "stat_name": "points",
+                "line_score": 20.5,
+                "side": "over",
+                "american_price": -115,
+                "scraped_at": now,
+                "is_main": True,
+            },
+            {
+                "player_name": "Caitlin Clark",
+                "stat_name": "points",
+                "line_score": 20.5,
+                "side": "under",
+                "american_price": -105,
+                "scraped_at": now,
+                "is_main": True,
+            },
+            {
+                "player_name": "Caitlin Clark",
+                "stat_name": "points",
+                "line_score": 19.5,
+                "side": "over",
+                "american_price": -140,
+                "scraped_at": now,
+                "is_main": False,
+            },
+        ],
+    )
+    monkeypatch.setattr(svc, "fetch_latest_novig", lambda league="wnba", **_kw: [])
+    monkeypatch.setattr(svc, "fetch_latest_pinnacle", lambda league="wnba": [])
+
+    async def fake_roster():
+        return {}
+
+    monkeypatch.setattr(svc, "get_wnba_player_index", fake_roster)
+
+    out = await svc.get_wnba_props_today(app="prizepicks", format="power", legs=4)
+    main = out.props[0].books_main.prophetx
+    assert main is not None
+    assert main.line == 20.5
+    assert main.over_american == -115
+    assert main.under_american == -105

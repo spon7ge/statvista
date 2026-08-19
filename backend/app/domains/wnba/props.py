@@ -1,16 +1,17 @@
 """Assemble GET /api/wnba/props/today: DFS board + fair/edge/tier per row.
 
 Pipeline (WNBA parity with MLB props assemble):
-  1. Load the selected app's DFS lines from Parlay PrizePicks board
-     (fallback: PrizePicks snapshot) or Underdog snapshot and bucket into one
-     board row per (player, stat, line).
+  1. Load the selected app's DFS lines from the PrizePicks Supabase snapshot
+     (app=prizepicks) or Underdog snapshot (app=underdog) and bucket into one
+     board row per (player, stat, line). Never seed PrizePicks from Parlay.
   2. Index ProphetX, Novig, and Pinnacle scrapers; merge Parlay book indexes
      (draftkings, fanduel) by (player, stat, side, line) — exact line only, no
      closest-line fallback. Pinnacle expand quotes keep ``role="comparison"``.
-  3. For each side offered by the DFS app at that line, compute fair% via
+  3. Attach each book's **main** O/U (own line, alts excluded) on ``books_main``.
+  4. For each side offered by the DFS app at that line, compute fair% via
      ``compute_fair`` and edge vs. the format breakeven; the recommended side
      is whichever has the higher edge.
-  4. Sort rows with a sharp/mid-tier/soft read above ``no_sharp_read`` rows.
+  5. Sort rows with a sharp/mid-tier/soft read above ``no_sharp_read`` rows.
 """
 
 from __future__ import annotations
@@ -42,7 +43,9 @@ from app.domains.wnba.prop_fair import (
 )
 from app.domains.wnba.prop_formats import breakeven_pct
 from app.domains.wnba.schemas_prop_picks import (
+    WnbaPropBookMainQuote,
     WnbaPropBooks,
+    WnbaPropBooksMain,
     WnbaPropBookQuote,
     WnbaPropDfs,
     WnbaPropPicksResponse,
@@ -54,6 +57,7 @@ from app.providers.parlay.wnba_board import (
     ParlayWnbaNormalized,
     fetch_wnba_parlay_board_normalized,
 )
+from src.odds.parlay_main_lines import balance_score
 
 logger = logging.getLogger(__name__)
 
@@ -67,6 +71,8 @@ _APP_FORMATS: dict[str, str] = {"prizepicks": "power", "underdog": "standard"}
 BoardKey = tuple[str, str, float]
 SideKey = tuple[str, str, str, float]
 SideIndex = dict[SideKey, dict[str, Any]]
+MainLineKey = tuple[str, str]  # (norm_player, stat_key)
+MainLineIndex = dict[MainLineKey, WnbaPropBookMainQuote]
 
 _cache: dict[tuple[str, str, int], dict[str, Any]] = {}
 
@@ -264,6 +270,154 @@ def _index_snapshot_rows(
     return index
 
 
+def _row_is_main_flag(row: dict[str, Any]) -> bool | None:
+    """Return True/False when ``is_main`` is on the row; None if the key is absent."""
+    if "is_main" not in row:
+        return None
+    value = row["is_main"]
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, str):
+        lowered = value.strip().lower()
+        if lowered in ("true", "t", "1", "yes"):
+            return True
+        if lowered in ("false", "f", "0", "no", ""):
+            return False
+    if value is None:
+        return False
+    return bool(value)
+
+
+def _balance_for_sides(sides: dict[str, dict[str, Any]]) -> float:
+    over_am = (sides.get("over") or {}).get("american")
+    under_am = (sides.get("under") or {}).get("american")
+    over_score = over_am if over_am is not None else -110
+    under_score = under_am if under_am is not None else -110
+    return balance_score(int(over_score), int(under_score))
+
+
+def _quote_from_sides(
+    line_f: float, sides: dict[str, dict[str, Any]]
+) -> WnbaPropBookMainQuote:
+    over = sides.get("over")
+    under = sides.get("under")
+    changed_ats = [
+        dt
+        for hit in (over, under)
+        if hit is not None
+        for dt in (_as_datetime(hit.get("changed_at")),)
+        if dt is not None
+    ]
+    return WnbaPropBookMainQuote(
+        line=line_f,
+        over_american=None if over is None else over.get("american"),
+        under_american=None if under is None else under.get("american"),
+        changed_at=_iso(max(changed_ats) if changed_ats else None),
+    )
+
+
+def _pick_main_line(
+    lines: dict[float, dict[str, dict[str, Any]]],
+) -> WnbaPropBookMainQuote | None:
+    if not lines:
+        return None
+    line_f, sides = min(
+        lines.items(),
+        key=lambda item: (_balance_for_sides(item[1]), abs(item[0])),
+    )
+    return _quote_from_sides(line_f, sides)
+
+
+def _main_from_snapshot_rows(
+    rows: list[dict[str, Any]],
+    *,
+    player_field: str,
+    stat_field: str,
+) -> MainLineIndex:
+    """Build main O/U quotes per (player, stat). Prefer is_main=True rows.
+
+    If any row in a (player, stat) group has an ``is_main`` key:
+    keep only True-main lines; if none are True, omit the quote (do not
+    publish an alt as main). If the key is absent on every row (Pinnacle,
+    or DBs without the column), balance-pick among all candidate lines.
+    """
+    groups: dict[MainLineKey, dict[float, dict[str, Any]]] = {}
+    has_flag: dict[MainLineKey, bool] = {}
+    any_true: dict[MainLineKey, bool] = {}
+
+    for row in rows:
+        player = str(row.get(player_field) or "").strip()
+        stat_raw = str(row.get(stat_field) or "").strip()
+        side = str(row.get("side") or "").lower()
+        line_raw = row.get("line_score")
+        if not player or not stat_raw or side not in _VALID_SIDES or line_raw is None:
+            continue
+        stat_key = canonical_stat_key_from_exchange(stat_raw)
+        if stat_key is None:
+            continue
+        american = _parse_american(row.get("american_price"))
+        if american is None:
+            continue
+        try:
+            line_f = _line_key(float(line_raw))
+        except (TypeError, ValueError):
+            continue
+        key: MainLineKey = (_norm_player(player), stat_key)
+        line_map = groups.setdefault(key, {})
+        bucket = line_map.setdefault(line_f, {"sides": {}, "is_main": False})
+        bucket["sides"][side] = {
+            "american": american,
+            "changed_at": _as_datetime(row.get("scraped_at")),
+        }
+        flag = _row_is_main_flag(row)
+        if flag is not None:
+            has_flag[key] = True
+        if flag is True:
+            bucket["is_main"] = True
+            any_true[key] = True
+
+    out: MainLineIndex = {}
+    for key, line_map in groups.items():
+        if has_flag.get(key) and not any_true.get(key):
+            continue
+        candidates = line_map
+        if any_true.get(key):
+            candidates = {
+                line_f: bucket
+                for line_f, bucket in line_map.items()
+                if bucket["is_main"]
+            }
+        picked = _pick_main_line(
+            {line_f: bucket["sides"] for line_f, bucket in candidates.items()}
+        )
+        if picked is not None:
+            out[key] = picked
+    return out
+
+
+def _main_from_side_index(index: SideIndex) -> MainLineIndex:
+    """Collapse an exact-line SideIndex (already main-filtered, e.g. Parlay DK/FD)
+    into one quote per (player, stat). If multiple lines remain, balance-pick.
+    """
+    groups: dict[MainLineKey, dict[float, dict[str, dict[str, Any]]]] = {}
+    for (norm_player, stat_key, side, line_f), hit in index.items():
+        if side not in _VALID_SIDES:
+            continue
+        key: MainLineKey = (norm_player, stat_key)
+        sides = groups.setdefault(key, {}).setdefault(line_f, {})
+        sides[side] = {
+            "american": hit.get("american"),
+            "changed_at": hit.get("changed_at"),
+        }
+
+    out: MainLineIndex = {}
+    for key, line_map in groups.items():
+        picked = _pick_main_line(line_map)
+        if picked is not None:
+            out[key] = picked
+    return out
+
+
 def _side_fair_books(
     indexes: dict[str, SideIndex], key: SideKey
 ) -> dict[str, float | None]:
@@ -348,9 +502,18 @@ def _assemble_rows(
     pinnacle_idx: SideIndex,
     parlay_book_indexes: dict[str, SideIndex],
     now: datetime,
+    *,
+    px_main: MainLineIndex | None = None,
+    novig_main: MainLineIndex | None = None,
+    pin_main: MainLineIndex | None = None,
+    parlay_mains: dict[str, MainLineIndex] | None = None,
 ) -> list[WnbaPropRow]:
     dk_idx = parlay_book_indexes.get("draftkings", {})
     fd_idx = parlay_book_indexes.get("fanduel", {})
+    px_main = px_main or {}
+    novig_main = novig_main or {}
+    pin_main = pin_main or {}
+    parlay_mains = parlay_mains or {}
     fair_book_indexes = {
         "prophetx": prophetx_idx,
         "novig": novig_idx,
@@ -398,6 +561,23 @@ def _assemble_rows(
             fanduel=_book_quote(fd_idx, display_key),
             pinnacle=_book_quote(pinnacle_idx, display_key, role="comparison"),
         )
+        main_key: MainLineKey = (norm_player, stat_key)
+
+        def _parlay_main(book: str) -> WnbaPropBookMainQuote | None:
+            return (parlay_mains.get(book) or {}).get(main_key)
+
+        books_main = WnbaPropBooksMain(
+            prophetx=px_main.get(main_key),
+            novig=novig_main.get(main_key),
+            draftkings=_parlay_main("draftkings"),
+            fanduel=_parlay_main("fanduel"),
+            betmgm=_parlay_main("betmgm"),
+            caesars=_parlay_main("caesars"),
+            kalshi=_parlay_main("kalshi"),
+            fliff=_parlay_main("fliff"),
+            bet365=_parlay_main("bet365"),
+            pinnacle=pin_main.get(main_key),
+        )
 
         driving_changed_at = _fair_driving_changed_at(
             primary.source_tier,
@@ -432,6 +612,7 @@ def _assemble_rows(
                 sample_chips=primary.sample_chips,
                 recency_chip=chip,
                 books=books,
+                books_main=books_main,
                 dfs=WnbaPropDfs(
                     line=line_f,
                     changed_at=_iso(dfs_changed_at),
@@ -503,17 +684,17 @@ async def get_wnba_props_today(*, app: str, format: str, legs: int) -> WnbaPropP
         parlay = _empty_parlay()
 
     if app == "prizepicks":
-        dfs_rows = list(parlay.prizepicks_board)
-        if not dfs_rows:
-            dfs_rows = fetch_latest_prizepicks("wnba")
+        dfs_rows = fetch_latest_prizepicks("wnba")
+        seed_error = "prizepicks_unavailable" if not dfs_rows else None
     else:
         dfs_rows = fetch_latest_underdog("wnba")
+        seed_error = None
     board = _build_board(app, dfs_rows)
 
-    # Soft-fail: surface parlay_unavailable only when Parlay failed and seed is empty.
-    # Empty successful seed → app-specific unavailable token.
-    error: str | None = None
-    if not board:
+    # Empty PP snapshot is prizepicks_unavailable even when Parlay is healthy.
+    # Underdog empty + Parlay failed keeps the existing parlay_unavailable token.
+    error: str | None = seed_error
+    if not board and error is None:
         if parlay_raised or parlay.unavailable:
             error = "parlay_unavailable"
         elif app == "prizepicks":
@@ -527,9 +708,35 @@ async def get_wnba_props_today(*, app: str, format: str, legs: int) -> WnbaPropP
     novig_idx = _index_snapshot_rows(
         fetch_latest_novig("wnba"), player_field="player_name", stat_field="stat_name"
     )
+    pinnacle_rows = fetch_latest_pinnacle("wnba")
     pinnacle_idx = _index_snapshot_rows(
-        fetch_latest_pinnacle("wnba"), player_field="player_name", stat_field="market_type"
+        pinnacle_rows, player_field="player_name", stat_field="market_type"
     )
+    # books_main: mains-only SQL so DISTINCT ON (player, stat, side) cannot
+    # collapse a later-scraped False-alt over the True-main. Fair/edge indexes
+    # above keep the unfiltered latest-per-identity fetch.
+    px_main = _main_from_snapshot_rows(
+        fetch_latest_prophetx("wnba", mains_only=True),
+        player_field="player_name",
+        stat_field="stat_name",
+    )
+    novig_main = _main_from_snapshot_rows(
+        fetch_latest_novig("wnba", mains_only=True),
+        player_field="player_name",
+        stat_field="stat_name",
+    )
+    pin_main = _main_from_snapshot_rows(
+        pinnacle_rows, player_field="player_name", stat_field="market_type"
+    )
+    parlay_mains = {
+        "draftkings": _main_from_side_index(parlay.book_indexes.get("draftkings", {})),
+        "fanduel": _main_from_side_index(parlay.book_indexes.get("fanduel", {})),
+        "betmgm": _main_from_side_index(parlay.book_indexes.get("betmgm", {})),
+        "caesars": _main_from_side_index(parlay.book_indexes.get("caesars", {})),
+        "kalshi": _main_from_side_index(parlay.book_indexes.get("kalshi", {})),
+        "fliff": _main_from_side_index(parlay.book_indexes.get("fliff", {})),
+        "bet365": _main_from_side_index(parlay.book_indexes.get("bet365", {})),
+    }
 
     rows = _assemble_rows(
         board,
@@ -539,6 +746,10 @@ async def get_wnba_props_today(*, app: str, format: str, legs: int) -> WnbaPropP
         pinnacle_idx,
         parlay.book_indexes,
         now,
+        px_main=px_main,
+        novig_main=novig_main,
+        pin_main=pin_main,
+        parlay_mains=parlay_mains,
     )
 
     try:
