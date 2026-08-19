@@ -3,11 +3,13 @@ export const WNBA_BOOK_LABELS: Record<string, string> = {
   novig: "Novig",
   draftkings: "DraftKings",
   fanduel: "FanDuel",
-  pinnacle: "Pinnacle",
   betmgm: "BetMGM",
   caesars: "Caesars",
-  betrivers: "BetRivers",
+  kalshi: "Kalshi",
+  fliff: "Fliff",
   bet365: "bet365",
+  pinnacle: "Pinnacle",
+  betrivers: "BetRivers",
 };
 
 export function bookDisplayName(book: string): string {

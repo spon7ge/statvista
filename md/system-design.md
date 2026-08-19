@@ -71,6 +71,7 @@ main.tsx
       /games/:espnEventId  GameDetailPage
       /wnba/matchups       LeagueMatchupsPage (league="wnba")
       /wnba/prop_picks     LeaguePropPicksPage
+      /wnba/prop_picks/player/:playerSlug  WnbaPlayerPropsPage
       /wnba/leaders        LeagueLeadersPage
       /wnba/standings      LeagueStandingsPage
       /wnba/futures        LeagueFuturesPage
@@ -108,6 +109,7 @@ main.tsx
 | Chrome ticker | All chrome routes | same scoreboard queries | WNBA + MLB today | Client merge; isolated per-league error handling |
 | `/wnba/matchups?date=` | Daily slate (no team-lines odds pill) | `useWnbaScoreboard(date)` | scoreboard (`/today` or `?date=`) | Cards → `/games/:espnEventId` (Preview odds board uses `GET /api/wnba/odds/today`) |
 | `/wnba/prop_picks` | Filterable DFS +EV ranked board (hybrid rows + expand) | `useWnbaProps({ app, format, legs })` | `GET /api/wnba/props/today?app=&format=&legs=` | Seed Parlay PrizePicks (fallback `odds.wnba_prizepicks`) or `odds.wnba_underdogs`; DK/FD from Parlay; PX/Novig/Pinnacle from snapshots; server fair/edge/tier; client hide finals + prior-day tips; Stat/Team/Side filters; page size 20 |
+| `/wnba/prop_picks/player/:playerSlug?app=` | Per-player main-line odds grid (BettingPros-style) | `useWnbaProps` | same `GET /api/wnba/props/today?app=&format=&legs=` | `findPlayerBySlug` + `uniqueStatRows`; `WnbaPlayerPropsOddsGrid` reads `books_main` (ProphetX, Novig, DraftKings, FanDuel, BetMGM, Caesars, Kalshi, Fliff, bet365, Pinnacle — main lines only, NL when missing; no OPEN/BEST); unknown slug → empty state + link back to board |
 | `/wnba/leaders` | Season leaderboards | `useWnbaLeaders` | `GET /api/wnba/leaders` | stats.wnba.com `leagueleaders` via outbound cache; WNBA hub pages (Leaders, Standings, Futures, Prop Picks, Player) use MLB-style colored banners with basketball sport mark |
 | `/wnba/standings` | East / West standings | `useWnbaStandings` | `GET /api/wnba/standings` | ESPN `site.web.api` via `app.core.outbound_cache` (memory + `data/cache/outbound`, TTL + SWR) |
 | `/wnba/futures` | Championship / award futures | `useWnbaFutures` | `GET /api/wnba/futures` | ESPN core futures API |

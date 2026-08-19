@@ -9,6 +9,7 @@ import { LeagueStandingsPage } from "@/pages/LeagueStandingsPage";
 import { LeagueFuturesPage } from "@/pages/LeagueFuturesPage";
 import { LeaguePlayerPage } from "@/pages/LeaguePlayerPage";
 import { LeaguePropPicksPage } from "@/pages/LeaguePropPicksPage";
+import { WnbaPlayerPropsPage } from "@/pages/WnbaPlayerPropsPage";
 import { MlbGameDetailPage } from "@/pages/MlbGameDetailPage";
 import { MlbLeadersPage } from "@/pages/MlbLeadersPage";
 import { MlbStandingsPage } from "@/pages/MlbStandingsPage";
@@ -29,6 +30,10 @@ export function AppRouter() {
           element={<LeagueMatchupsPage league="wnba" />}
         />
         <Route path="/wnba/prop_picks" element={<LeaguePropPicksPage />} />
+        <Route
+          path="/wnba/prop_picks/player/:playerSlug"
+          element={<WnbaPlayerPropsPage />}
+        />
         <Route path="/wnba/leaders" element={<LeagueLeadersPage />} />
         <Route path="/wnba/standings" element={<LeagueStandingsPage />} />
         <Route path="/wnba/futures" element={<LeagueFuturesPage />} />

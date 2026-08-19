@@ -135,6 +135,210 @@ describe("AppRouter", () => {
     );
   });
 
+  it("renders player odds grid at /wnba/prop_picks/player/:playerSlug", async () => {
+    fetchMock.mockImplementation(async (input: RequestInfo) => {
+      const url = String(input);
+      if (url.includes("/api/wnba/props/today")) {
+        return {
+          ok: true,
+          json: async () => ({
+            as_of: "now",
+            app: "prizepicks",
+            format: "power",
+            legs: 4,
+            breakeven_pct: 54.3,
+            props: [
+              {
+                player_name: "Caitlin Clark",
+                team_abbrev: "IND",
+                position: "G",
+                headshot_url: null,
+                commence_time: null,
+                stat: "Points",
+                line: 18.5,
+                recommended_side: "over",
+                fair_pct: 58.2,
+                edge_pct: 5.1,
+                alt_edge_pct: null,
+                source_tier: "sharp_consensus",
+                confidence_chips: [],
+                sample_chips: [],
+                recency_chip: null,
+                books: {
+                  prophetx: null,
+                  novig: null,
+                  draftkings: null,
+                  fanduel: null,
+                  pinnacle: null,
+                },
+                books_main: {
+                  prophetx: {
+                    line: 18.5,
+                    over_american: -115,
+                    under_american: -105,
+                    changed_at: null,
+                  },
+                  novig: null,
+                  draftkings: {
+                    line: 19.5,
+                    over_american: -120,
+                    under_american: 100,
+                    changed_at: null,
+                  },
+                  fanduel: null,
+                  betmgm: null,
+                  caesars: null,
+                  kalshi: null,
+                  fliff: null,
+                  bet365: null,
+                  pinnacle: null,
+                },
+                dfs: {
+                  line: 18.5,
+                  changed_at: null,
+                  american: null,
+                  payout_multiplier: null,
+                },
+                fair_explain: "",
+              },
+              {
+                player_name: "Caitlin Clark",
+                team_abbrev: "IND",
+                position: "G",
+                headshot_url: null,
+                commence_time: null,
+                stat: "Assists",
+                line: 8.5,
+                recommended_side: "over",
+                fair_pct: null,
+                edge_pct: null,
+                alt_edge_pct: null,
+                source_tier: "no_sharp_read",
+                confidence_chips: [],
+                sample_chips: [],
+                recency_chip: null,
+                books: {
+                  prophetx: null,
+                  novig: null,
+                  draftkings: null,
+                  fanduel: null,
+                  pinnacle: null,
+                },
+                books_main: {
+                  prophetx: null,
+                  novig: null,
+                  draftkings: null,
+                  fanduel: null,
+                  betmgm: null,
+                  caesars: null,
+                  kalshi: null,
+                  fliff: null,
+                  bet365: null,
+                  pinnacle: null,
+                },
+                dfs: {
+                  line: 8.5,
+                  changed_at: null,
+                  american: null,
+                  payout_multiplier: null,
+                },
+                fair_explain: "",
+              },
+            ],
+            error: null,
+          }),
+        };
+      }
+      return {
+        ok: true,
+        json: async () => ({ date: "2026-07-29", fetched_at: "", games: [] }),
+      };
+    });
+
+    renderWithProviders([
+      "/wnba/prop_picks/player/caitlin-clark?app=prizepicks",
+    ]);
+    expect(await screen.findByText(/Caitlin Clark/i)).toBeInTheDocument();
+    expect(screen.getByText(/Points/i)).toBeInTheDocument();
+    expect(screen.getByText(/DraftKings/i)).toBeInTheDocument();
+  });
+
+  it("shows empty state for unknown WNBA player slug", async () => {
+    fetchMock.mockImplementation(async (input: RequestInfo) => {
+      const url = String(input);
+      if (url.includes("/api/wnba/props/today")) {
+        return {
+          ok: true,
+          json: async () => ({
+            as_of: "now",
+            app: "prizepicks",
+            format: "power",
+            legs: 4,
+            breakeven_pct: 54.3,
+            props: [
+              {
+                player_name: "Caitlin Clark",
+                team_abbrev: "IND",
+                position: "G",
+                headshot_url: null,
+                commence_time: null,
+                stat: "Points",
+                line: 18.5,
+                recommended_side: "over",
+                fair_pct: null,
+                edge_pct: null,
+                alt_edge_pct: null,
+                source_tier: "no_sharp_read",
+                confidence_chips: [],
+                sample_chips: [],
+                recency_chip: null,
+                books: {
+                  prophetx: null,
+                  novig: null,
+                  draftkings: null,
+                  fanduel: null,
+                  pinnacle: null,
+                },
+                books_main: {
+                  prophetx: null,
+                  novig: null,
+                  draftkings: null,
+                  fanduel: null,
+                  betmgm: null,
+                  caesars: null,
+                  kalshi: null,
+                  fliff: null,
+                  bet365: null,
+                  pinnacle: null,
+                },
+                dfs: {
+                  line: 18.5,
+                  changed_at: null,
+                  american: null,
+                  payout_multiplier: null,
+                },
+                fair_explain: "",
+              },
+            ],
+            error: null,
+          }),
+        };
+      }
+      return {
+        ok: true,
+        json: async () => ({ date: "2026-07-29", fetched_at: "", games: [] }),
+      };
+    });
+
+    renderWithProviders(["/wnba/prop_picks/player/nobody?app=prizepicks"]);
+    expect(
+      await screen.findByText(/player not found|unavailable/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: /back to prop picks/i }),
+    ).toHaveAttribute("href", expect.stringMatching(/\/wnba\/prop_picks/));
+  });
+
   it("renders NBA coming-soon hub at /nba/matchups", async () => {
     renderWithProviders(["/nba/matchups"]);
     expect(
