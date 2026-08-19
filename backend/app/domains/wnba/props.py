@@ -28,6 +28,7 @@ from app.core.odds_snapshots import (
     fetch_latest_prophetx,
     fetch_latest_underdog,
 )
+from app.domains.betting.player_match_keys import match_player_key
 from app.domains.betting.prop_stat_keys import (
     canonical_stat_key_from_exchange,
     canonical_stat_key_from_pp,
@@ -87,10 +88,6 @@ def validate_query(app: str, format: str, legs: int) -> None:
             f"app {app!r} requires format {expected_format!r}, got {format!r}"
         )
     breakeven_pct(app, format, legs)  # raises ValueError for bad legs
-
-
-def _norm_player(name: str) -> str:
-    return name.strip().casefold()
 
 
 def _line_key(line: float) -> float:
@@ -204,7 +201,7 @@ def _build_board(app: str, dfs_rows: list[dict[str, Any]]) -> dict[BoardKey, dic
             sides_offered = (side,)
             stat_label = display_stat_label(stat_key, fallback=stat_name)
 
-        key: BoardKey = (_norm_player(player), stat_key, _line_key(line_f))
+        key: BoardKey = (match_player_key(player), stat_key, _line_key(line_f))
         bucket = buckets.setdefault(
             key,
             {
@@ -262,7 +259,7 @@ def _index_snapshot_rows(
             line_f = float(line_raw)
         except (TypeError, ValueError):
             continue
-        key: SideKey = (_norm_player(player), stat_key, side, _line_key(line_f))
+        key: SideKey = (match_player_key(player), stat_key, side, _line_key(line_f))
         index[key] = {
             "american": american,
             "changed_at": _as_datetime(row.get("scraped_at")),
@@ -362,7 +359,7 @@ def _main_from_snapshot_rows(
             line_f = _line_key(float(line_raw))
         except (TypeError, ValueError):
             continue
-        key: MainLineKey = (_norm_player(player), stat_key)
+        key: MainLineKey = (match_player_key(player), stat_key)
         line_map = groups.setdefault(key, {})
         bucket = line_map.setdefault(line_f, {"sides": {}, "is_main": False})
         bucket["sides"][side] = {

@@ -503,3 +503,129 @@ async def test_books_main_attaches_main_quotes(monkeypatch):
     assert main.line == 20.5
     assert main.over_american == -115
     assert main.under_american == -105
+
+
+@pytest.mark.asyncio
+async def test_books_main_joins_accent_variant_names(monkeypatch):
+    now = datetime(2026, 8, 11, 20, 0, tzinfo=timezone.utc)
+    pp = [
+        {
+            "player_name": "Janelle Salaün",
+            "stat_type": "points",
+            "line_score": 12.5,
+            "odds_type": "standard",
+            "scraped_at": now,
+        }
+    ]
+
+    async def fake_parlay(**kwargs):
+        return ParlayWnbaNormalized(
+            prizepicks_board=[],
+            book_indexes={},
+            as_of=None,
+            unavailable=False,
+        )
+
+    monkeypatch.setattr(svc, "fetch_wnba_parlay_board_normalized", fake_parlay)
+    monkeypatch.setattr(svc, "fetch_latest_prizepicks", lambda league="wnba": pp)
+    monkeypatch.setattr(svc, "fetch_latest_underdog", lambda league="wnba": [])
+    monkeypatch.setattr(
+        svc,
+        "fetch_latest_prophetx",
+        lambda league="wnba", mains_only=False, **_kw: [
+            {
+                "player_name": "Janelle Salaun",
+                "stat_name": "points",
+                "line_score": 13.5,
+                "side": "over",
+                "american_price": -110,
+                "scraped_at": now,
+                "is_main": True,
+            },
+            {
+                "player_name": "Janelle Salaun",
+                "stat_name": "points",
+                "line_score": 13.5,
+                "side": "under",
+                "american_price": -110,
+                "scraped_at": now,
+                "is_main": True,
+            },
+        ],
+    )
+    monkeypatch.setattr(svc, "fetch_latest_novig", lambda league="wnba", **_kw: [])
+    monkeypatch.setattr(svc, "fetch_latest_pinnacle", lambda league="wnba": [])
+
+    async def fake_roster():
+        return {}
+
+    monkeypatch.setattr(svc, "get_wnba_player_index", fake_roster)
+
+    out = await svc.get_wnba_props_today(app="prizepicks", format="power", legs=4)
+    assert out.props[0].player_name == "Janelle Salaün"
+    main = out.props[0].books_main.prophetx
+    assert main is not None
+    assert main.line == 13.5
+
+
+@pytest.mark.asyncio
+async def test_books_main_joins_aliased_middle_name(monkeypatch):
+    now = datetime(2026, 8, 11, 20, 0, tzinfo=timezone.utc)
+    pp = [
+        {
+            "player_name": "Jessica Shepard",
+            "stat_type": "points",
+            "line_score": 10.5,
+            "odds_type": "standard",
+            "scraped_at": now,
+        }
+    ]
+
+    async def fake_parlay(**kwargs):
+        return ParlayWnbaNormalized(
+            prizepicks_board=[],
+            book_indexes={},
+            as_of=None,
+            unavailable=False,
+        )
+
+    monkeypatch.setattr(svc, "fetch_wnba_parlay_board_normalized", fake_parlay)
+    monkeypatch.setattr(svc, "fetch_latest_prizepicks", lambda league="wnba": pp)
+    monkeypatch.setattr(svc, "fetch_latest_underdog", lambda league="wnba": [])
+    monkeypatch.setattr(
+        svc,
+        "fetch_latest_novig",
+        lambda league="wnba", mains_only=False, **_kw: [
+            {
+                "player_name": "Jessica Lynn Shepard",
+                "stat_name": "points",
+                "line_score": 11.5,
+                "side": "over",
+                "american_price": -105,
+                "scraped_at": now,
+                "is_main": True,
+            },
+            {
+                "player_name": "Jessica Lynn Shepard",
+                "stat_name": "points",
+                "line_score": 11.5,
+                "side": "under",
+                "american_price": -115,
+                "scraped_at": now,
+                "is_main": True,
+            },
+        ],
+    )
+    monkeypatch.setattr(svc, "fetch_latest_prophetx", lambda league="wnba", **_kw: [])
+    monkeypatch.setattr(svc, "fetch_latest_pinnacle", lambda league="wnba": [])
+
+    async def fake_roster():
+        return {}
+
+    monkeypatch.setattr(svc, "get_wnba_player_index", fake_roster)
+
+    out = await svc.get_wnba_props_today(app="prizepicks", format="power", legs=4)
+    assert out.props[0].player_name == "Jessica Shepard"
+    main = out.props[0].books_main.novig
+    assert main is not None
+    assert main.line == 11.5

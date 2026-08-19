@@ -7,6 +7,7 @@ import time
 from dataclasses import dataclass
 from typing import Any
 
+from app.domains.betting.player_match_keys import match_player_key
 from app.domains.betting.prop_stat_keys import canonical_stat_key_from_parlay_market
 from app.domains.wnba.prop_fair import american_to_fair_pct
 from app.providers.parlay.client import parlay_get
@@ -89,10 +90,6 @@ def _empty(*, unavailable: bool = True) -> ParlayWnbaNormalized:
     )
 
 
-def _norm_player(name: str) -> str:
-    return name.strip().casefold()
-
-
 def _line_key(line: float) -> float:
     return round(float(line), 2)
 
@@ -158,7 +155,7 @@ def _rows_for_normalize(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     # Player/market keys already covered by a selected PrizePicks row (priced main).
     pp_player_markets = {
         (
-            _norm_player(str(row.get("player") or "")),
+            match_player_key(str(row.get("player") or "")),
             str(row.get("market_key") or "").lower().strip(),
         )
         for row in selected
@@ -175,7 +172,7 @@ def _rows_for_normalize(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
         if _parse_prices(row, require_side=False) is None:
             continue
         player_market = (
-            _norm_player(str(row.get("player") or "")),
+            match_player_key(str(row.get("player") or "")),
             str(row.get("market_key") or "").lower().strip(),
         )
         if player_market in pp_player_markets:
@@ -209,7 +206,7 @@ def normalize_parlay_wnba_board(rows: list[dict[str, Any]]) -> ParlayWnbaNormali
             as_of = changed_at
 
         if book == "prizepicks":
-            board_key = (_norm_player(player), canonical, line_k)
+            board_key = (match_player_key(player), canonical, line_k)
             if board_key in pp_seen:
                 continue
             pp_seen.add(board_key)
@@ -234,7 +231,7 @@ def normalize_parlay_wnba_board(rows: list[dict[str, Any]]) -> ParlayWnbaNormali
             american = _parse_american(raw)
             if american is None:
                 continue
-            side_key: SideKey = (_norm_player(player), canonical, side, line_k)
+            side_key: SideKey = (match_player_key(player), canonical, side, line_k)
             book_indexes[book][side_key] = {
                 "american": american,
                 "fair_pct": american_to_fair_pct(american),
