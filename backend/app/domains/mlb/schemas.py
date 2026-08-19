@@ -76,7 +76,9 @@ from app.domains.mlb.schemas_team_preview import (
 )
 from app.domains.mlb.schemas_props import (
     MlbPropBooks,
+    MlbPropBookMainQuote,
     MlbPropBookQuote,
+    MlbPropBooksMain,
     MlbPropDfs,
     MlbPropRow,
     MlbPropsResponse,
@@ -153,7 +155,9 @@ __all__ = [
     "MlbPlayerOfTheGame",
     "MlbPlayerOfTheGameStat",
     "MlbPropBooks",
+    "MlbPropBookMainQuote",
     "MlbPropBookQuote",
+    "MlbPropBooksMain",
     "MlbPropDfs",
     "MlbPropRow",
     "MlbPropsResponse",

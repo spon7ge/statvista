@@ -35,6 +35,27 @@ class MlbPropBooks(BaseModel):
     pinnacle: MlbPropBookQuote | None = None
 
 
+class MlbPropBookMainQuote(BaseModel):
+    """A book's main line for a player+stat (may differ from the DFS line)."""
+
+    model_config = _RESPONSE_CONFIG
+
+    line: float
+    over_american: int | None = None
+    under_american: int | None = None
+    changed_at: str | None = None
+
+
+class MlbPropBooksMain(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    prophetx: MlbPropBookMainQuote | None = None
+    novig: MlbPropBookMainQuote | None = None
+    draftkings: MlbPropBookMainQuote | None = None
+    fanduel: MlbPropBookMainQuote | None = None
+    pinnacle: MlbPropBookMainQuote | None = None
+
+
 class MlbPropDfs(BaseModel):
     model_config = _RESPONSE_CONFIG
 
@@ -62,6 +83,7 @@ class MlbPropRow(BaseModel):
     sample_chips: list[str] = Field(default_factory=list)
     recency_chip: str | None = None
     books: MlbPropBooks = Field(default_factory=MlbPropBooks)
+    books_main: MlbPropBooksMain = Field(default_factory=MlbPropBooksMain)
     dfs: MlbPropDfs
     fair_explain: str
 

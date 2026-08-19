@@ -4066,6 +4066,56 @@
         "title": "MlbPlayerOfTheGameStat",
         "type": "object"
       },
+      "MlbPropBookMainQuote": {
+        "description": "A book's main line for a player+stat (may differ from the DFS line).",
+        "properties": {
+          "changed_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Changed At"
+          },
+          "line": {
+            "title": "Line",
+            "type": "number"
+          },
+          "over_american": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Over American"
+          },
+          "under_american": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Under American"
+          }
+        },
+        "required": [
+          "line",
+          "over_american",
+          "under_american",
+          "changed_at"
+        ],
+        "title": "MlbPropBookMainQuote",
+        "type": "object"
+      },
       "MlbPropBookQuote": {
         "description": "A single book's quote at the row's exact line, for the display side.",
         "properties": {
@@ -4196,6 +4246,69 @@
         "title": "MlbPropBooks",
         "type": "object"
       },
+      "MlbPropBooksMain": {
+        "properties": {
+          "draftkings": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbPropBookMainQuote"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "fanduel": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbPropBookMainQuote"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "novig": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbPropBookMainQuote"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "pinnacle": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbPropBookMainQuote"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "prophetx": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MlbPropBookMainQuote"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "prophetx",
+          "novig",
+          "draftkings",
+          "fanduel",
+          "pinnacle"
+        ],
+        "title": "MlbPropBooksMain",
+        "type": "object"
+      },
       "MlbPropDfs": {
         "properties": {
           "american": {
@@ -4260,6 +4373,9 @@
           },
           "books": {
             "$ref": "#/components/schemas/MlbPropBooks"
+          },
+          "books_main": {
+            "$ref": "#/components/schemas/MlbPropBooksMain"
           },
           "confidence_chips": {
             "items": {
@@ -4404,6 +4520,7 @@
           "sample_chips",
           "recency_chip",
           "books",
+          "books_main",
           "dfs",
           "fair_explain"
         ],

@@ -1729,6 +1729,20 @@ export interface components {
             value: string;
         };
         /**
+         * MlbPropBookMainQuote
+         * @description A book's main line for a player+stat (may differ from the DFS line).
+         */
+        MlbPropBookMainQuote: {
+            /** Changed At */
+            changed_at: string | null;
+            /** Line */
+            line: number;
+            /** Over American */
+            over_american: number | null;
+            /** Under American */
+            under_american: number | null;
+        };
+        /**
          * MlbPropBookQuote
          * @description A single book's quote at the row's exact line, for the display side.
          */
@@ -1755,6 +1769,14 @@ export interface components {
             pinnacle: components["schemas"]["MlbPropBookQuote"] | null;
             prophetx: components["schemas"]["MlbPropBookQuote"] | null;
         };
+        /** MlbPropBooksMain */
+        MlbPropBooksMain: {
+            draftkings: components["schemas"]["MlbPropBookMainQuote"] | null;
+            fanduel: components["schemas"]["MlbPropBookMainQuote"] | null;
+            novig: components["schemas"]["MlbPropBookMainQuote"] | null;
+            pinnacle: components["schemas"]["MlbPropBookMainQuote"] | null;
+            prophetx: components["schemas"]["MlbPropBookMainQuote"] | null;
+        };
         /** MlbPropDfs */
         MlbPropDfs: {
             /** American */
@@ -1771,6 +1793,7 @@ export interface components {
             /** Alt Edge Pct */
             alt_edge_pct: number | null;
             books: components["schemas"]["MlbPropBooks"];
+            books_main: components["schemas"]["MlbPropBooksMain"];
             /** Confidence Chips */
             confidence_chips: string[];
             dfs: components["schemas"]["MlbPropDfs"];
