@@ -91,7 +91,7 @@ def _normalized_league(league: str, default: str) -> str:
     return (league or default).strip().lower()
 
 
-def _fetch_rows(sql: str, league: str) -> list[dict[str, Any]]:
+def _fetch_rows(sql: str, league: str, *, reraise: bool = False) -> list[dict[str, Any]]:
     try:
         from src.utils.db import get_engine
     except ImportError as exc:
@@ -109,6 +109,8 @@ def _fetch_rows(sql: str, league: str) -> list[dict[str, Any]]:
             result = conn.execute(text(sql), {"league": league})
             return [dict(row._mapping) for row in result]
     except Exception as exc:
+        if reraise:
+            raise
         logger.warning("odds snapshot query failed: %s", exc)
         return []
 
@@ -151,25 +153,62 @@ def fetch_latest_pinnacle(league: str = "wnba") -> list[dict]:
 
 
 def fetch_latest_prophetx(league: str = "mlb") -> list[dict]:
-    """Return rows from the latest ProphetX player snapshot for *league*."""
+    """Return rows from the latest ProphetX player snapshot for *league*.
+
+    Includes ``is_main`` when the column exists (mlb/wnba ProphetX migrations).
+    If an environment has not applied that column, retry without it so callers
+    can balance-pick among all candidate lines instead of dropping the book.
+    """
     lg = _normalized_league(league, "mlb")
     table = _PROPHETX_TABLE.get(lg, "mlb_prophetx")
-    sql = _latest_snapshot_sql(
-        table,
-        "player_name, stat_name, line_score, side, american_price, scraped_at",
-    )
-    return _fetch_rows(sql, lg)
+    return _fetch_player_prop_snapshot(table, lg)
 
 
 def fetch_latest_novig(league: str = "mlb") -> list[dict]:
-    """Return rows from the latest Novig player snapshot for *league*."""
+    """Return rows from the latest Novig player snapshot for *league*.
+
+    Same ``is_main`` try/fallback as :func:`fetch_latest_prophetx`.
+    """
     lg = _normalized_league(league, "mlb")
     table = _NOVIG_TABLE.get(lg, "mlb_novig")
-    sql = _latest_snapshot_sql(
-        table,
-        "player_name, stat_name, line_score, side, american_price, scraped_at",
+    return _fetch_player_prop_snapshot(table, lg)
+
+
+def _is_missing_is_main_column(exc: BaseException) -> bool:
+    """True when the SELECT failed because ``is_main`` is not on the table."""
+    text = str(exc).lower()
+    if "is_main" not in text:
+        return False
+    name = type(exc).__name__.lower()
+    return (
+        "undefinedcolumn" in name
+        or "programmingerror" in name
+        or "does not exist" in text
+        or "undefined column" in text
     )
-    return _fetch_rows(sql, lg)
+
+
+def _fetch_player_prop_snapshot(table: str, league: str) -> list[dict[str, Any]]:
+    """Latest player-prop rows; prefer ``is_main``, else select without it.
+
+    Pinnacle player tables have no ``is_main`` column — those fetchers stay
+    on the base column list and callers balance-pick mains from row dicts.
+    """
+    base_cols = (
+        "player_name, stat_name, line_score, side, american_price, scraped_at"
+    )
+    sql_with = _latest_snapshot_sql(table, f"{base_cols}, is_main")
+    try:
+        return _fetch_rows(sql_with, league, reraise=True)
+    except Exception as exc:
+        if not _is_missing_is_main_column(exc):
+            logger.warning("odds snapshot query failed: %s", exc)
+            return []
+        logger.warning(
+            "odds.%s has no is_main column; selecting without it (balance-pick mains)",
+            table,
+        )
+        return _fetch_rows(_latest_snapshot_sql(table, base_cols), league)
 
 
 def fetch_latest_pinnacle_team(league: str = "wnba") -> list[dict]:

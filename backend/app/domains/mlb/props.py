@@ -1,16 +1,17 @@
 """Assemble GET /api/mlb/props/today: DFS board + fair/edge/tier per row.
 
-Pipeline (see docs/superpowers/specs/2026-08-09-mlb-props-parlay-supabase-design.md):
-  1. Load the selected app's DFS lines from Parlay PrizePicks
+Pipeline (see docs/superpowers/specs/2026-08-19-mlb-prop-picks-player-board-design.md):
+  1. Load the selected app's DFS lines from the PrizePicks Supabase snapshot
      (app=prizepicks) or Underdog snapshot (app=underdog) and bucket into one
-     board row per (player, stat, line).
+     board row per (player, stat, line). Never seed PrizePicks from Parlay.
   2. Index ProphetX, Novig, and Pinnacle scrapers; merge Parlay book indexes
      (draftkings, fanduel) by (player, stat, side, line) — exact line only, no
      closest-line fallback. Pinnacle expand quotes keep ``role="comparison"``.
-  3. For each side offered by the DFS app at that line, compute fair% via
+  3. Attach each book's **main** O/U (own line, alts excluded) on ``books_main``.
+  4. For each side offered by the DFS app at that line, compute fair% via
      ``compute_fair`` and edge vs. the format breakeven; the recommended side
      is whichever has the higher edge.
-  4. Sort rows with a sharp/mid-tier/soft read above ``no_sharp_read`` rows.
+  5. Sort rows with a sharp/mid-tier/soft read above ``no_sharp_read`` rows.
 """
 
 from __future__ import annotations
@@ -23,6 +24,7 @@ from typing import Any
 from app.core.odds_snapshots import (
     fetch_latest_novig,
     fetch_latest_pinnacle,
+    fetch_latest_prizepicks,
     fetch_latest_prophetx,
     fetch_latest_underdog,
 )
@@ -41,7 +43,9 @@ from app.domains.mlb.prop_stat_keys import (
     display_stat_label,
 )
 from app.domains.mlb.schemas_props import (
+    MlbPropBookMainQuote,
     MlbPropBooks,
+    MlbPropBooksMain,
     MlbPropBookQuote,
     MlbPropDfs,
     MlbPropRow,
@@ -54,6 +58,7 @@ from app.providers.parlay.mlb_props import (
     ParlayMlbNormalized,
     fetch_mlb_parlay_props_normalized,
 )
+from src.odds.parlay_main_lines import balance_score
 
 logger = logging.getLogger(__name__)
 
@@ -67,6 +72,8 @@ _APP_FORMATS: dict[str, str] = {"prizepicks": "power", "underdog": "standard"}
 BoardKey = tuple[str, str, float]
 SideKey = tuple[str, str, str, float]
 SideIndex = dict[SideKey, dict[str, Any]]
+MainLineKey = tuple[str, str]  # (norm_player, stat_key)
+MainLineIndex = dict[MainLineKey, MlbPropBookMainQuote]
 
 _cache: dict[tuple[str, str, int], dict[str, Any]] = {}
 
@@ -251,6 +258,148 @@ def _index_snapshot_rows(
     return index
 
 
+def _row_is_main_flag(row: dict[str, Any]) -> bool | None:
+    """Return True/False when ``is_main`` is on the row; None if the key is absent."""
+    if "is_main" not in row:
+        return None
+    value = row["is_main"]
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, str):
+        lowered = value.strip().lower()
+        if lowered in ("true", "t", "1", "yes"):
+            return True
+        if lowered in ("false", "f", "0", "no", ""):
+            return False
+    if value is None:
+        return False
+    return bool(value)
+
+
+def _balance_for_sides(sides: dict[str, dict[str, Any]]) -> float:
+    over_am = (sides.get("over") or {}).get("american")
+    under_am = (sides.get("under") or {}).get("american")
+    over_score = over_am if over_am is not None else -110
+    under_score = under_am if under_am is not None else -110
+    return balance_score(int(over_score), int(under_score))
+
+
+def _quote_from_sides(
+    line_f: float, sides: dict[str, dict[str, Any]]
+) -> MlbPropBookMainQuote:
+    over = sides.get("over")
+    under = sides.get("under")
+    changed_ats = [
+        dt
+        for hit in (over, under)
+        if hit is not None
+        for dt in (_as_datetime(hit.get("changed_at")),)
+        if dt is not None
+    ]
+    return MlbPropBookMainQuote(
+        line=line_f,
+        over_american=None if over is None else over.get("american"),
+        under_american=None if under is None else under.get("american"),
+        changed_at=_iso(max(changed_ats) if changed_ats else None),
+    )
+
+
+def _pick_main_line(
+    lines: dict[float, dict[str, dict[str, Any]]],
+) -> MlbPropBookMainQuote | None:
+    if not lines:
+        return None
+    line_f, sides = min(
+        lines.items(),
+        key=lambda item: (_balance_for_sides(item[1]), abs(item[0])),
+    )
+    return _quote_from_sides(line_f, sides)
+
+
+def _main_from_snapshot_rows(
+    rows: list[dict[str, Any]],
+    *,
+    player_field: str,
+    stat_field: str,
+) -> MainLineIndex:
+    """Build main O/U quotes per (player, stat). Prefer is_main=True rows.
+
+    Group candidate lines; if any row has is_main True for a line, keep only
+    those lines. Else pick the line with best balance_score across over/under
+    americans. Missing ``is_main`` on row dicts is treated as all-candidates
+    (balance-pick), so unit tests and DBs without the column still work.
+    """
+    groups: dict[MainLineKey, dict[float, dict[str, Any]]] = {}
+    any_main: dict[MainLineKey, bool] = {}
+
+    for row in rows:
+        player = str(row.get(player_field) or "").strip()
+        stat_raw = str(row.get(stat_field) or "").strip()
+        side = str(row.get("side") or "").lower()
+        line_raw = row.get("line_score")
+        if not player or not stat_raw or side not in _VALID_SIDES or line_raw is None:
+            continue
+        stat_key = canonical_stat_key_from_sharp_mlb(stat_raw)
+        if stat_key is None:
+            continue
+        american = _parse_american(row.get("american_price"))
+        if american is None:
+            continue
+        try:
+            line_f = _line_key(float(line_raw))
+        except (TypeError, ValueError):
+            continue
+        key: MainLineKey = (_norm_player(player), stat_key)
+        line_map = groups.setdefault(key, {})
+        bucket = line_map.setdefault(line_f, {"sides": {}, "is_main": False})
+        bucket["sides"][side] = {
+            "american": american,
+            "changed_at": _as_datetime(row.get("scraped_at")),
+        }
+        if _row_is_main_flag(row) is True:
+            bucket["is_main"] = True
+            any_main[key] = True
+
+    out: MainLineIndex = {}
+    for key, line_map in groups.items():
+        candidates = line_map
+        if any_main.get(key):
+            candidates = {
+                line_f: bucket
+                for line_f, bucket in line_map.items()
+                if bucket["is_main"]
+            }
+        picked = _pick_main_line(
+            {line_f: bucket["sides"] for line_f, bucket in candidates.items()}
+        )
+        if picked is not None:
+            out[key] = picked
+    return out
+
+
+def _main_from_side_index(index: SideIndex) -> MainLineIndex:
+    """Collapse an exact-line SideIndex (already main-filtered, e.g. Parlay DK/FD)
+    into one quote per (player, stat). If multiple lines remain, balance-pick.
+    """
+    groups: dict[MainLineKey, dict[float, dict[str, dict[str, Any]]]] = {}
+    for (norm_player, stat_key, side, line_f), hit in index.items():
+        if side not in _VALID_SIDES:
+            continue
+        key: MainLineKey = (norm_player, stat_key)
+        sides = groups.setdefault(key, {}).setdefault(line_f, {})
+        sides[side] = {
+            "american": hit.get("american"),
+            "changed_at": hit.get("changed_at"),
+        }
+
+    out: MainLineIndex = {}
+    for key, line_map in groups.items():
+        picked = _pick_main_line(line_map)
+        if picked is not None:
+            out[key] = picked
+    return out
+
+
 def _side_fair_books(
     indexes: dict[str, SideIndex], key: SideKey
 ) -> dict[str, float | None]:
@@ -335,9 +484,20 @@ def _assemble_rows(
     pinnacle_idx: SideIndex,
     parlay_book_indexes: dict[str, SideIndex],
     now: datetime,
+    *,
+    px_main: MainLineIndex | None = None,
+    novig_main: MainLineIndex | None = None,
+    dk_main: MainLineIndex | None = None,
+    fd_main: MainLineIndex | None = None,
+    pin_main: MainLineIndex | None = None,
 ) -> list[MlbPropRow]:
     dk_idx = parlay_book_indexes.get("draftkings", {})
     fd_idx = parlay_book_indexes.get("fanduel", {})
+    px_main = px_main or {}
+    novig_main = novig_main or {}
+    dk_main = dk_main or {}
+    fd_main = fd_main or {}
+    pin_main = pin_main or {}
     fair_book_indexes = {
         "prophetx": prophetx_idx,
         "novig": novig_idx,
@@ -385,6 +545,14 @@ def _assemble_rows(
             fanduel=_book_quote(fd_idx, display_key),
             pinnacle=_book_quote(pinnacle_idx, display_key, role="comparison"),
         )
+        main_key: MainLineKey = (norm_player, stat_key)
+        books_main = MlbPropBooksMain(
+            prophetx=px_main.get(main_key),
+            novig=novig_main.get(main_key),
+            draftkings=dk_main.get(main_key),
+            fanduel=fd_main.get(main_key),
+            pinnacle=pin_main.get(main_key),
+        )
 
         driving_changed_at = _fair_driving_changed_at(
             primary.source_tier,
@@ -419,6 +587,7 @@ def _assemble_rows(
                 sample_chips=primary.sample_chips,
                 recency_chip=chip,
                 books=books,
+                books_main=books_main,
                 dfs=MlbPropDfs(
                     line=line_f,
                     changed_at=_iso(dfs_changed_at),
@@ -493,20 +662,36 @@ async def get_mlb_props_today(*, app: str, format: str, legs: int) -> MlbPropsRe
             parlay_error = "parlay_unavailable"
 
     if app == "prizepicks":
-        dfs_rows = parlay.prizepicks_board
+        dfs_rows = fetch_latest_prizepicks("mlb")
+        seed_error = "prizepicks_unavailable" if not dfs_rows else None
     else:
         dfs_rows = fetch_latest_underdog("mlb")
+        seed_error = None
     board = _build_board(app, dfs_rows)
 
+    prophetx_rows = fetch_latest_prophetx("mlb")
+    novig_rows = fetch_latest_novig("mlb")
+    pinnacle_rows = fetch_latest_pinnacle("mlb")
     prophetx_idx = _index_snapshot_rows(
-        fetch_latest_prophetx("mlb"), player_field="player_name", stat_field="stat_name"
+        prophetx_rows, player_field="player_name", stat_field="stat_name"
     )
     novig_idx = _index_snapshot_rows(
-        fetch_latest_novig("mlb"), player_field="player_name", stat_field="stat_name"
+        novig_rows, player_field="player_name", stat_field="stat_name"
     )
     pinnacle_idx = _index_snapshot_rows(
-        fetch_latest_pinnacle("mlb"), player_field="player_name", stat_field="market_type"
+        pinnacle_rows, player_field="player_name", stat_field="market_type"
     )
+    px_main = _main_from_snapshot_rows(
+        prophetx_rows, player_field="player_name", stat_field="stat_name"
+    )
+    novig_main = _main_from_snapshot_rows(
+        novig_rows, player_field="player_name", stat_field="stat_name"
+    )
+    pin_main = _main_from_snapshot_rows(
+        pinnacle_rows, player_field="player_name", stat_field="market_type"
+    )
+    dk_main = _main_from_side_index(parlay.book_indexes.get("draftkings", {}))
+    fd_main = _main_from_side_index(parlay.book_indexes.get("fanduel", {}))
 
     rows = _assemble_rows(
         board,
@@ -516,6 +701,11 @@ async def get_mlb_props_today(*, app: str, format: str, legs: int) -> MlbPropsRe
         pinnacle_idx,
         parlay.book_indexes,
         now,
+        px_main=px_main,
+        novig_main=novig_main,
+        dk_main=dk_main,
+        fd_main=fd_main,
+        pin_main=pin_main,
     )
 
     try:
@@ -531,7 +721,7 @@ async def get_mlb_props_today(*, app: str, format: str, legs: int) -> MlbPropsRe
         legs=legs,
         breakeven_pct=breakeven,
         props=rows,
-        error=parlay_error,
+        error=seed_error or parlay_error,
     )
     _cache[cache_key] = {"response": response, "expires_at": now_mono + CACHE_TTL_SECONDS}
     return response
