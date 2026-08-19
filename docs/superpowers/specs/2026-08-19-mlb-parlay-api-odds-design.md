@@ -1,7 +1,7 @@
 # MLB Parlay API odds table — persist + snapshot serve
 
 Date: 2026-08-19  
-Status: Approved (design)  
+Status: Implemented  
 Mirror of: `docs/superpowers/specs/2026-08-03-wnba-parlay-api-odds-unified-table-design.md`  
 Related: MLB prop picks player board `2026-08-19-mlb-prop-picks-player-board-design.md`; Parlay Supabase books `2026-08-09-mlb-props-parlay-supabase-design.md`
 
