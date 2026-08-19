@@ -8,10 +8,13 @@ import {
 } from "@/features/mlb/league/MlbPropPicksHeader";
 import { MlbPropPicksList } from "@/features/mlb/league/MlbPropPicksList";
 import {
-  collectMlbStatOptions,
   collectMlbTeamOptions,
-  filterMlbPropPicks,
+  filterMlbPropPlayers,
 } from "@/features/mlb/league/filterMlbPropPicks";
+import { groupMlbPropPlayers } from "@/features/mlb/league/groupMlbPropPlayers";
+
+/** Board always fetches 4-pick Power (PP) / Standard (UD); UI no longer exposes legs. */
+const BOARD_LEGS = 4;
 
 function formatForApp(app: MlbPropAppTab): string {
   return app === "underdog" ? "standard" : "power";
@@ -23,49 +26,39 @@ function appLabel(app: MlbPropAppTab): string {
 
 export function MlbPropPicksPage() {
   const [app, setApp] = useState<MlbPropAppTab>("prizepicks");
-  const [legs, setLegs] = useState<number>(4);
   const format = formatForApp(app);
 
   const { data, isLoading, isError, isFetched, dataUpdatedAt } = useMlbProps({
     app,
     format,
-    legs,
+    legs: BOARD_LEGS,
   });
 
-  const [selectedStats, setSelectedStats] = useState<Set<string>>(
-    () => new Set(),
-  );
   const [selectedTeams, setSelectedTeams] = useState<Set<string>>(
     () => new Set(),
   );
-  const [selectedSides, setSelectedSides] = useState<Set<string>>(
-    () => new Set(),
-  );
+  const [query, setQuery] = useState("");
 
   const props = data?.props ?? [];
   const showLoading = isLoading && !isFetched;
   const showError = isError && !data;
   const apiEmpty = showError || Boolean(data && props.length === 0);
 
-  const filtersActive =
-    selectedStats.size > 0 ||
-    selectedTeams.size > 0 ||
-    selectedSides.size > 0;
+  const filtersActive = selectedTeams.size > 0 || query.trim().length > 0;
 
+  const players = useMemo(() => groupMlbPropPlayers(props), [props]);
   const filtered = useMemo(
     () =>
-      filterMlbPropPicks(props, {
-        stats: selectedStats,
+      filterMlbPropPlayers(players, {
         teams: selectedTeams,
-        sides: selectedSides,
+        query,
       }),
-    [props, selectedStats, selectedTeams, selectedSides],
+    [players, selectedTeams, query],
   );
 
   function clearFilters() {
-    setSelectedStats(new Set());
     setSelectedTeams(new Set());
-    setSelectedSides(new Set());
+    setQuery("");
   }
 
   function onAppChange(next: MlbPropAppTab) {
@@ -82,20 +75,15 @@ export function MlbPropPicksPage() {
         <MlbPropPicksHeader
           activeApp={app}
           onAppChange={onAppChange}
-          legs={legs}
-          onLegsChange={setLegs}
         >
           {showBoardFilters ? (
             <MlbPropPicksFilters
               tone="banner"
-              stats={collectMlbStatOptions(props)}
               teams={collectMlbTeamOptions(props)}
-              selectedStats={selectedStats}
               selectedTeams={selectedTeams}
-              selectedSides={selectedSides}
-              onStatsChange={setSelectedStats}
+              query={query}
               onTeamsChange={setSelectedTeams}
-              onSidesChange={setSelectedSides}
+              onQueryChange={setQuery}
               onClear={clearFilters}
             />
           ) : null}
@@ -107,10 +95,8 @@ export function MlbPropPicksPage() {
           aria-labelledby={`mlb-props-${app}-tab`}
         >
           <MlbPropPicksList
-            props={filtered}
-            format={format}
-            legs={legs}
-            breakevenPct={data?.breakeven_pct ?? null}
+            players={filtered}
+            app={app}
             isLoading={showLoading}
             isError={showError}
             filtersActive={filtersActive && !apiEmpty && props.length > 0}

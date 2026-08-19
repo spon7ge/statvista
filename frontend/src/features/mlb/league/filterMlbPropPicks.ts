@@ -1,9 +1,15 @@
 import type { ApiMlbPropRow } from "@/shared/lib/api";
+import type { MlbPropPlayerCard } from "./groupMlbPropPlayers";
 
 export type MlbPropFilterSelection = {
   stats: Set<string>;
   teams: Set<string>;
   sides: Set<string>;
+};
+
+export type MlbPropPlayerFilterSelection = {
+  teams: Set<string>;
+  query: string;
 };
 
 /**
@@ -44,4 +50,25 @@ export function collectMlbTeamOptions(props: ApiMlbPropRow[]): string[] {
         .filter((abbrev): abbrev is string => Boolean(abbrev)),
     ),
   ].sort((a, b) => a.localeCompare(b));
+}
+
+/**
+ * Filters grouped player cards by team and name. Does not reorder
+ * (groupMlbPropPlayers already sorts by prop_count).
+ */
+export function filterMlbPropPlayers(
+  players: MlbPropPlayerCard[],
+  selection: MlbPropPlayerFilterSelection,
+): MlbPropPlayerCard[] {
+  const { teams, query } = selection;
+  const needle = query.trim().toLowerCase();
+  return players.filter((player) => {
+    if (teams.size > 0 && (!player.team_abbrev || !teams.has(player.team_abbrev))) {
+      return false;
+    }
+    if (needle && !player.player_name.toLowerCase().includes(needle)) {
+      return false;
+    }
+    return true;
+  });
 }

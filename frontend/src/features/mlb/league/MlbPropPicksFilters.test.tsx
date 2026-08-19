@@ -4,67 +4,72 @@ import { describe, expect, it, vi } from "vitest";
 import { MlbPropPicksFilters } from "./MlbPropPicksFilters";
 
 describe("MlbPropPicksFilters", () => {
-  it("renders stat/team/side filters and Clear only (no Tier or Fresh toggle)", async () => {
+  it("renders Team filter and player search only (no Stat or Side)", async () => {
     const user = userEvent.setup();
-    const onStatsChange = vi.fn();
     const onTeamsChange = vi.fn();
-    const onSidesChange = vi.fn();
+    const onQueryChange = vi.fn();
     const onClear = vi.fn();
 
     const { rerender } = render(
       <MlbPropPicksFilters
-        stats={["Hits", "Total Bases"]}
         teams={["LAD", "NYY"]}
-        selectedStats={new Set()}
         selectedTeams={new Set()}
-        selectedSides={new Set()}
-        onStatsChange={onStatsChange}
+        query=""
         onTeamsChange={onTeamsChange}
-        onSidesChange={onSidesChange}
+        onQueryChange={onQueryChange}
         onClear={onClear}
       />,
     );
 
-    expect(screen.getByRole("button", { name: "Stat" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Team" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Side" })).toBeInTheDocument();
+    expect(screen.getByRole("searchbox", { name: "Search player" })).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Search player")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Stat" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Side" })).not.toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: "Tier" }),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: /Fresh sharp vs stale DFS/i }),
     ).not.toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: "Clear filters" }),
     ).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Stat" }));
-    await user.click(screen.getByRole("option", { name: "Hits" }));
-    expect(onStatsChange).toHaveBeenCalledWith(new Set(["Hits"]));
-
     await user.click(screen.getByRole("button", { name: "Team" }));
     await user.click(screen.getByRole("option", { name: "NYY" }));
     expect(onTeamsChange).toHaveBeenCalledWith(new Set(["NYY"]));
 
-    await user.click(screen.getByRole("button", { name: "Side" }));
-    await user.click(screen.getByRole("option", { name: "Under" }));
-    expect(onSidesChange).toHaveBeenCalledWith(new Set(["under"]));
+    await user.type(screen.getByRole("searchbox", { name: "Search player" }), "Judge");
+    expect(onQueryChange).toHaveBeenCalled();
 
     rerender(
       <MlbPropPicksFilters
-        stats={["Hits", "Total Bases"]}
         teams={["LAD", "NYY"]}
-        selectedStats={new Set(["Hits"])}
-        selectedTeams={new Set()}
-        selectedSides={new Set()}
-        onStatsChange={onStatsChange}
+        selectedTeams={new Set(["NYY"])}
+        query=""
         onTeamsChange={onTeamsChange}
-        onSidesChange={onSidesChange}
+        onQueryChange={onQueryChange}
         onClear={onClear}
       />,
     );
 
-    expect(screen.getByRole("button", { name: "Stat (1)" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Team (1)" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Clear filters" }));
+    expect(onClear).toHaveBeenCalled();
+  });
+
+  it("shows Clear filters when a player search query is active", async () => {
+    const user = userEvent.setup();
+    const onClear = vi.fn();
+    render(
+      <MlbPropPicksFilters
+        teams={["NYY"]}
+        selectedTeams={new Set()}
+        query="soto"
+        onTeamsChange={vi.fn()}
+        onQueryChange={vi.fn()}
+        onClear={onClear}
+      />,
+    );
+
     await user.click(screen.getByRole("button", { name: "Clear filters" }));
     expect(onClear).toHaveBeenCalled();
   });
@@ -72,19 +77,16 @@ describe("MlbPropPicksFilters", () => {
   it("hides Team filter when no team options are available", () => {
     render(
       <MlbPropPicksFilters
-        stats={["Hits"]}
         teams={[]}
-        selectedStats={new Set()}
         selectedTeams={new Set()}
-        selectedSides={new Set()}
-        onStatsChange={vi.fn()}
+        query=""
         onTeamsChange={vi.fn()}
-        onSidesChange={vi.fn()}
+        onQueryChange={vi.fn()}
         onClear={vi.fn()}
       />,
     );
 
-    expect(screen.getByRole("button", { name: "Stat" })).toBeInTheDocument();
+    expect(screen.getByRole("searchbox", { name: "Search player" })).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Team" })).not.toBeInTheDocument();
   });
 });

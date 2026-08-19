@@ -1,9 +1,12 @@
 import { describe, expect, it } from "vitest";
 import type { ApiMlbPropRow } from "@/shared/lib/api";
+import type { MlbPropPlayerCard } from "./groupMlbPropPlayers";
+import { slugifyPlayerName } from "./groupMlbPropPlayers";
 import {
   collectMlbStatOptions,
   collectMlbTeamOptions,
   filterMlbPropPicks,
+  filterMlbPropPlayers,
   type MlbPropFilterSelection,
 } from "./filterMlbPropPicks";
 
@@ -156,5 +159,80 @@ describe("collectMlbTeamOptions", () => {
       row({ player_name: "D", team_abbrev: "NYY" }),
     ];
     expect(collectMlbTeamOptions(props)).toEqual(["LAD", "NYY"]);
+  });
+});
+
+function playerCard(
+  partial: Partial<MlbPropPlayerCard> & Pick<MlbPropPlayerCard, "player_name">,
+): MlbPropPlayerCard {
+  return {
+    player_slug: slugifyPlayerName(partial.player_name),
+    prop_count: 1,
+    team_abbrev: null,
+    position: null,
+    headshot_url: null,
+    stats: ["Hits"],
+    rows: [],
+    ...partial,
+  };
+}
+
+describe("filterMlbPropPlayers", () => {
+  const judge = playerCard({
+    player_name: "Aaron Judge",
+    team_abbrev: "NYY",
+    prop_count: 2,
+  });
+  const betts = playerCard({
+    player_name: "Mookie Betts",
+    team_abbrev: "LAD",
+    prop_count: 1,
+  });
+  const players = [judge, betts];
+
+  it("returns all players when no filters are active", () => {
+    expect(filterMlbPropPlayers(players, { teams: new Set(), query: "" })).toEqual(
+      players,
+    );
+  });
+
+  it("filters by team", () => {
+    expect(
+      filterMlbPropPlayers(players, { teams: new Set(["NYY"]), query: "" }),
+    ).toEqual([judge]);
+  });
+
+  it("excludes players with a null team when a team filter is active", () => {
+    const noTeam = playerCard({ player_name: "No Team", team_abbrev: null });
+    expect(
+      filterMlbPropPlayers([noTeam], { teams: new Set(["NYY"]), query: "" }),
+    ).toEqual([]);
+  });
+
+  it("filters by player name query case-insensitively", () => {
+    expect(
+      filterMlbPropPlayers(players, { teams: new Set(), query: "jUdGe" }),
+    ).toEqual([judge]);
+  });
+
+  it("trims the search query", () => {
+    expect(
+      filterMlbPropPlayers(players, { teams: new Set(), query: "  betts  " }),
+    ).toEqual([betts]);
+  });
+
+  it("combines team and name query with AND semantics", () => {
+    expect(
+      filterMlbPropPlayers(players, { teams: new Set(["LAD"]), query: "judge" }),
+    ).toEqual([]);
+    expect(
+      filterMlbPropPlayers(players, { teams: new Set(["NYY"]), query: "aaron" }),
+    ).toEqual([judge]);
+  });
+
+  it("never reorders players", () => {
+    expect(
+      filterMlbPropPlayers([betts, judge], { teams: new Set(), query: "" }),
+    ).toEqual([betts, judge]);
   });
 });

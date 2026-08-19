@@ -11,6 +11,8 @@ function row(
 ): ApiMlbPropRow {
   return {
     team_abbrev: null,
+    position: null,
+    headshot_url: null,
     stat: "Total Bases",
     line: 1.5,
     recommended_side: "over",
@@ -39,10 +41,21 @@ function row(
   };
 }
 
-const judge = row({
+const judgeTb = row({
   player_name: "Aaron Judge",
   team_abbrev: "NYY",
+  position: "RF",
   stat: "Total Bases",
+  recommended_side: "over",
+  source_tier: "sharp_consensus",
+});
+
+const judgeHits = row({
+  player_name: "Aaron Judge",
+  team_abbrev: "NYY",
+  position: "RF",
+  stat: "Hits",
+  line: 0.5,
   recommended_side: "over",
   source_tier: "sharp_consensus",
 });
@@ -50,6 +63,7 @@ const judge = row({
 const betts = row({
   player_name: "Mookie Betts",
   team_abbrev: "LAD",
+  position: "SS",
   stat: "Hits",
   recommended_side: "under",
   source_tier: "no_sharp_read",
@@ -78,6 +92,24 @@ function renderPage() {
   );
 }
 
+function mockBoard(props: ApiMlbPropRow[]) {
+  mockUseMlbProps.mockReturnValue({
+    data: {
+      as_of: "now",
+      app: "prizepicks",
+      format: "power",
+      legs: 4,
+      breakeven_pct: 54.3,
+      props,
+      error: null,
+    },
+    isLoading: false,
+    isError: false,
+    isFetched: true,
+    dataUpdatedAt: Date.UTC(2026, 7, 5, 20, 0),
+  });
+}
+
 describe("MlbPropPicksPage", () => {
   beforeEach(() => {
     window.matchMedia = vi.fn().mockImplementation((query: string) => ({
@@ -91,23 +123,8 @@ describe("MlbPropPicksPage", () => {
     }));
   });
 
-  it("defaults the toolbar to prizepicks/power/4 and lists rows", () => {
-    mockUseMlbProps.mockReturnValue({
-      data: {
-        as_of: "now",
-        app: "prizepicks",
-        format: "power",
-        legs: 4,
-        breakeven_pct: 54.3,
-        props: [judge, betts],
-        error: null,
-      },
-      isLoading: false,
-      isError: false,
-      isFetched: true,
-      dataUpdatedAt: Date.UTC(2026, 7, 5, 20, 0),
-    });
-
+  it("hardcodes prizepicks/power/4 and shows player cards without format or legs", () => {
+    mockBoard([judgeTb, judgeHits, betts]);
     renderPage();
 
     expect(mockUseMlbProps).toHaveBeenCalledWith({
@@ -116,31 +133,28 @@ describe("MlbPropPicksPage", () => {
       legs: 4,
     });
     expect(screen.getByRole("heading", { name: "MLB Props" })).toBeInTheDocument();
-    expect(screen.getByText(/Aaron Judge/)).toBeInTheDocument();
     expect(screen.getByRole("tab", { name: "PrizePicks" })).toHaveAttribute(
       "aria-selected",
       "true",
     );
-    expect(screen.getByText("4-pick")).toBeInTheDocument();
+    expect(screen.getByText("Aaron Judge")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "View 2 props" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "View 1 props" })).toBeInTheDocument();
+
+    expect(screen.queryByText(/-pick/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Breakeven/i)).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "More legs" }),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Stat" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Side" })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Team" })).toBeInTheDocument();
+    expect(screen.getByRole("searchbox", { name: "Search player" })).toBeInTheDocument();
   });
 
-  it("refetches via the hook when switching app and legs", async () => {
+  it("refetches via the hook when switching app, keeping legs at 4", async () => {
     const user = userEvent.setup();
-    mockUseMlbProps.mockReturnValue({
-      data: {
-        as_of: "now",
-        app: "prizepicks",
-        format: "power",
-        legs: 4,
-        breakeven_pct: 54.3,
-        props: [judge],
-        error: null,
-      },
-      isLoading: false,
-      isError: false,
-      isFetched: true,
-      dataUpdatedAt: Date.UTC(2026, 7, 5, 20, 0),
-    });
+    mockBoard([judgeTb]);
 
     renderPage();
     mockUseMlbProps.mockClear();
@@ -151,39 +165,11 @@ describe("MlbPropPicksPage", () => {
       format: "standard",
       legs: 4,
     });
-
-    mockUseMlbProps.mockClear();
-    await user.click(screen.getByRole("button", { name: "More legs" }));
-    expect(mockUseMlbProps).toHaveBeenCalledWith({
-      app: "underdog",
-      format: "standard",
-      legs: 5,
-    });
-    await user.click(screen.getByRole("button", { name: "More legs" }));
-    expect(mockUseMlbProps).toHaveBeenCalledWith({
-      app: "underdog",
-      format: "standard",
-      legs: 6,
-    });
   });
 
-  it("filters the list by team via MlbPropPicksFilters", async () => {
+  it("filters the board by team via MlbPropPicksFilters", async () => {
     const user = userEvent.setup();
-    mockUseMlbProps.mockReturnValue({
-      data: {
-        as_of: "now",
-        app: "prizepicks",
-        format: "power",
-        legs: 4,
-        breakeven_pct: 54.3,
-        props: [judge, betts],
-        error: null,
-      },
-      isLoading: false,
-      isError: false,
-      isFetched: true,
-      dataUpdatedAt: Date.UTC(2026, 7, 5, 20, 0),
-    });
+    mockBoard([judgeTb, betts]);
 
     renderPage();
     expect(screen.getByText("Aaron Judge")).toBeInTheDocument();
@@ -196,27 +182,23 @@ describe("MlbPropPicksPage", () => {
     expect(screen.queryByText("Mookie Betts")).not.toBeInTheDocument();
   });
 
-  it("does not render Tier or Fresh sharp vs stale DFS filter controls", () => {
-    mockUseMlbProps.mockReturnValue({
-      data: {
-        as_of: "now",
-        app: "prizepicks",
-        format: "power",
-        legs: 4,
-        breakeven_pct: 54.3,
-        props: [judge, betts],
-        error: null,
-      },
-      isLoading: false,
-      isError: false,
-      isFetched: true,
-      dataUpdatedAt: Date.UTC(2026, 7, 5, 20, 0),
-    });
+  it("filters the board by player name search", async () => {
+    const user = userEvent.setup();
+    mockBoard([judgeTb, betts]);
 
     renderPage();
-    expect(screen.getByRole("button", { name: "Stat" })).toBeInTheDocument();
+    await user.type(screen.getByRole("searchbox", { name: "Search player" }), "judge");
+
+    expect(screen.getByText("Aaron Judge")).toBeInTheDocument();
+    expect(screen.queryByText("Mookie Betts")).not.toBeInTheDocument();
+  });
+
+  it("does not render Stat, Side, Tier, or Fresh filter controls", () => {
+    mockBoard([judgeTb, betts]);
+    renderPage();
     expect(screen.getByRole("button", { name: "Team" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Side" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Stat" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Side" })).not.toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: "Tier" }),
     ).not.toBeInTheDocument();

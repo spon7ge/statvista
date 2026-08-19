@@ -4,17 +4,11 @@ import { describe, expect, it, vi } from "vitest";
 import { MlbPropPicksHeader } from "./MlbPropPicksHeader";
 
 describe("MlbPropPicksHeader", () => {
-  it("places MLB Props top-left and exposes PrizePicks / Underdog tabs plus legs pill", async () => {
+  it("places MLB Props top-left and PrizePicks / Underdog tabs without legs or format pills", async () => {
     const user = userEvent.setup();
     const onAppChange = vi.fn();
-    const onLegsChange = vi.fn();
     render(
-      <MlbPropPicksHeader
-        activeApp="prizepicks"
-        onAppChange={onAppChange}
-        legs={4}
-        onLegsChange={onLegsChange}
-      />,
+      <MlbPropPicksHeader activeApp="prizepicks" onAppChange={onAppChange} />,
     );
 
     const heading = screen.getByRole("heading", { name: "MLB Props" });
@@ -29,8 +23,22 @@ describe("MlbPropPicksHeader", () => {
     await user.click(underdog);
     expect(onAppChange).toHaveBeenCalledWith("underdog");
 
-    expect(screen.getByText("4-pick")).toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "More legs" }));
-    expect(onLegsChange).toHaveBeenCalledWith(5);
+    expect(screen.queryByText(/-pick/)).not.toBeInTheDocument();
+    expect(screen.queryByRole("group", { name: "Legs" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "More legs" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Fewer legs" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("renders children in the banner slot", () => {
+    render(
+      <MlbPropPicksHeader activeApp="prizepicks" onAppChange={vi.fn()}>
+        <span>Team filter</span>
+      </MlbPropPicksHeader>,
+    );
+    expect(screen.getByText("Team filter")).toBeInTheDocument();
   });
 });
