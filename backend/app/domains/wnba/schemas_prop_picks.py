@@ -35,6 +35,32 @@ class WnbaPropBooks(BaseModel):
     pinnacle: WnbaPropBookQuote | None = None
 
 
+class WnbaPropBookMainQuote(BaseModel):
+    """A book's main line for a player+stat (may differ from the DFS line)."""
+
+    model_config = _RESPONSE_CONFIG
+
+    line: float
+    over_american: int | None = None
+    under_american: int | None = None
+    changed_at: str | None = None
+
+
+class WnbaPropBooksMain(BaseModel):
+    model_config = _RESPONSE_CONFIG
+
+    prophetx: WnbaPropBookMainQuote | None = None
+    novig: WnbaPropBookMainQuote | None = None
+    draftkings: WnbaPropBookMainQuote | None = None
+    fanduel: WnbaPropBookMainQuote | None = None
+    betmgm: WnbaPropBookMainQuote | None = None
+    caesars: WnbaPropBookMainQuote | None = None
+    kalshi: WnbaPropBookMainQuote | None = None
+    fliff: WnbaPropBookMainQuote | None = None
+    bet365: WnbaPropBookMainQuote | None = None
+    pinnacle: WnbaPropBookMainQuote | None = None
+
+
 class WnbaPropDfs(BaseModel):
     model_config = _RESPONSE_CONFIG
 
@@ -62,6 +88,7 @@ class WnbaPropRow(BaseModel):
     sample_chips: list[str] = Field(default_factory=list)
     recency_chip: str | None = None
     books: WnbaPropBooks = Field(default_factory=WnbaPropBooks)
+    books_main: WnbaPropBooksMain = Field(default_factory=WnbaPropBooksMain)
     dfs: WnbaPropDfs
     fair_explain: str
     commence_time: str | None = None

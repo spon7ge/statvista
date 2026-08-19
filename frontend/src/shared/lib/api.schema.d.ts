@@ -2809,6 +2809,20 @@ export interface components {
             team_name: string;
         };
         /**
+         * WnbaPropBookMainQuote
+         * @description A book's main line for a player+stat (may differ from the DFS line).
+         */
+        WnbaPropBookMainQuote: {
+            /** Changed At */
+            changed_at: string | null;
+            /** Line */
+            line: number;
+            /** Over American */
+            over_american: number | null;
+            /** Under American */
+            under_american: number | null;
+        };
+        /**
          * WnbaPropBookQuote
          * @description A single book's quote at the row's exact line, for the display side.
          */
@@ -2834,6 +2848,19 @@ export interface components {
             novig: components["schemas"]["WnbaPropBookQuote"] | null;
             pinnacle: components["schemas"]["WnbaPropBookQuote"] | null;
             prophetx: components["schemas"]["WnbaPropBookQuote"] | null;
+        };
+        /** WnbaPropBooksMain */
+        WnbaPropBooksMain: {
+            bet365: components["schemas"]["WnbaPropBookMainQuote"] | null;
+            betmgm: components["schemas"]["WnbaPropBookMainQuote"] | null;
+            caesars: components["schemas"]["WnbaPropBookMainQuote"] | null;
+            draftkings: components["schemas"]["WnbaPropBookMainQuote"] | null;
+            fanduel: components["schemas"]["WnbaPropBookMainQuote"] | null;
+            fliff: components["schemas"]["WnbaPropBookMainQuote"] | null;
+            kalshi: components["schemas"]["WnbaPropBookMainQuote"] | null;
+            novig: components["schemas"]["WnbaPropBookMainQuote"] | null;
+            pinnacle: components["schemas"]["WnbaPropBookMainQuote"] | null;
+            prophetx: components["schemas"]["WnbaPropBookMainQuote"] | null;
         };
         /** WnbaPropDfs */
         WnbaPropDfs: {
@@ -2868,6 +2895,7 @@ export interface components {
             /** Alt Edge Pct */
             alt_edge_pct: number | null;
             books: components["schemas"]["WnbaPropBooks"];
+            books_main: components["schemas"]["WnbaPropBooksMain"];
             /** Commence Time */
             commence_time: string | null;
             /** Confidence Chips */

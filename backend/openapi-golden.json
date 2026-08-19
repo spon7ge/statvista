@@ -8301,6 +8301,56 @@
         "title": "WnbaPlayerResponse",
         "type": "object"
       },
+      "WnbaPropBookMainQuote": {
+        "description": "A book's main line for a player+stat (may differ from the DFS line).",
+        "properties": {
+          "changed_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Changed At"
+          },
+          "line": {
+            "title": "Line",
+            "type": "number"
+          },
+          "over_american": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Over American"
+          },
+          "under_american": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Under American"
+          }
+        },
+        "required": [
+          "line",
+          "over_american",
+          "under_american",
+          "changed_at"
+        ],
+        "title": "WnbaPropBookMainQuote",
+        "type": "object"
+      },
       "WnbaPropBookQuote": {
         "description": "A single book's quote at the row's exact line, for the display side.",
         "properties": {
@@ -8431,6 +8481,124 @@
         "title": "WnbaPropBooks",
         "type": "object"
       },
+      "WnbaPropBooksMain": {
+        "properties": {
+          "bet365": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WnbaPropBookMainQuote"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "betmgm": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WnbaPropBookMainQuote"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "caesars": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WnbaPropBookMainQuote"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "draftkings": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WnbaPropBookMainQuote"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "fanduel": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WnbaPropBookMainQuote"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "fliff": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WnbaPropBookMainQuote"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "kalshi": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WnbaPropBookMainQuote"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "novig": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WnbaPropBookMainQuote"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "pinnacle": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WnbaPropBookMainQuote"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "prophetx": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WnbaPropBookMainQuote"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "prophetx",
+          "novig",
+          "draftkings",
+          "fanduel",
+          "betmgm",
+          "caesars",
+          "kalshi",
+          "fliff",
+          "bet365",
+          "pinnacle"
+        ],
+        "title": "WnbaPropBooksMain",
+        "type": "object"
+      },
       "WnbaPropDfs": {
         "properties": {
           "american": {
@@ -8548,6 +8716,9 @@
           },
           "books": {
             "$ref": "#/components/schemas/WnbaPropBooks"
+          },
+          "books_main": {
+            "$ref": "#/components/schemas/WnbaPropBooksMain"
           },
           "commence_time": {
             "anyOf": [
@@ -8703,6 +8874,7 @@
           "sample_chips",
           "recency_chip",
           "books",
+          "books_main",
           "dfs",
           "fair_explain",
           "commence_time"

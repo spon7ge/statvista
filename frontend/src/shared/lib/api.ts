@@ -39,6 +39,7 @@ export type ApiWnbaOddsGame = Schemas["WnbaOddsGame"];
 export type ApiWnbaOddsResponse = Schemas["WnbaOddsResponse"];
 
 export type ApiWnbaPropBookQuote = Schemas["WnbaPropBookQuote"];
+export type ApiWnbaPropBookMainQuote = Schemas["WnbaPropBookMainQuote"];
 export type ApiWnbaPropDfs = Schemas["WnbaPropDfs"];
 export type ApiWnbaPropRow = Schemas["WnbaPropRow"];
 export type ApiWnbaPropPicksResponse = Schemas["WnbaPropPicksResponse"];

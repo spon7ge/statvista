@@ -1,4 +1,21 @@
-from app.domains.wnba.schemas_prop_picks import WnbaPropPicksResponse, WnbaPropRow
+from app.domains.wnba.schemas_prop_picks import (
+    WnbaPropBooksMain,
+    WnbaPropPicksResponse,
+    WnbaPropRow,
+)
+
+EXPECTED_BOOKS_MAIN = (
+    "prophetx",
+    "novig",
+    "draftkings",
+    "fanduel",
+    "betmgm",
+    "caesars",
+    "kalshi",
+    "fliff",
+    "bet365",
+    "pinnacle",
+)
 
 
 def test_board_row_includes_commence_time():
@@ -21,3 +38,11 @@ def test_board_row_includes_commence_time():
         props=[row],
     )
     assert body.props[0].books.pinnacle is None
+
+
+def test_wnba_prop_books_main_fields_match_mlb_set():
+    assert tuple(WnbaPropBooksMain.model_fields.keys()) == EXPECTED_BOOKS_MAIN
+
+
+def test_wnba_prop_row_includes_books_main():
+    assert "books_main" in WnbaPropRow.model_fields

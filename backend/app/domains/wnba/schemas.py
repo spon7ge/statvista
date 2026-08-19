@@ -62,7 +62,9 @@ from app.domains.wnba.schemas_team_preview import (
     WnbaTeamRosterRow,
 )
 from app.domains.wnba.schemas_prop_picks import (
+    WnbaPropBookMainQuote,
     WnbaPropBooks,
+    WnbaPropBooksMain,
     WnbaPropBookQuote,
     WnbaPropDfs,
     WnbaPropPicksResponse,
@@ -104,8 +106,10 @@ __all__ = [
     "WnbaPlayerAverages",
     "WnbaPlayerGame",
     "WnbaPlayerResponse",
+    "WnbaPropBookMainQuote",
     "WnbaPropBookQuote",
     "WnbaPropBooks",
+    "WnbaPropBooksMain",
     "WnbaPropDfs",
     "WnbaPropPicksResponse",
     "WnbaPropRow",
