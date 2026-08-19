@@ -3,6 +3,11 @@ export const MLB_BOOK_LABELS: Record<string, string> = {
   novig: "Novig",
   draftkings: "DraftKings",
   fanduel: "FanDuel",
+  betmgm: "BetMGM",
+  caesars: "Caesars",
+  kalshi: "Kalshi",
+  fliff: "Fliff",
+  bet365: "bet365",
   pinnacle: "Pinnacle",
 };
 

@@ -24,6 +24,11 @@ function row(
       novig: null,
       draftkings: null,
       fanduel: null,
+      betmgm: null,
+      caesars: null,
+      kalshi: null,
+      fliff: null,
+      bet365: null,
       pinnacle: null,
     },
     books_main: {
@@ -31,6 +36,11 @@ function row(
       novig: null,
       draftkings: null,
       fanduel: null,
+      betmgm: null,
+      caesars: null,
+      kalshi: null,
+      fliff: null,
+      bet365: null,
       pinnacle: null,
     },
     dfs: {
@@ -63,6 +73,11 @@ const hits = row({
       under_american: -115,
       changed_at: null,
     },
+    betmgm: null,
+    caesars: null,
+    kalshi: null,
+    fliff: null,
+    bet365: null,
     pinnacle: null,
   },
 });
@@ -76,13 +91,18 @@ describe("MlbPlayerPropsOddsGrid", () => {
     expect(screen.getByText("Novig")).toBeInTheDocument();
     expect(screen.getByText("DraftKings")).toBeInTheDocument();
     expect(screen.getByText("FanDuel")).toBeInTheDocument();
+    expect(screen.getByText("BetMGM")).toBeInTheDocument();
+    expect(screen.getByText("Caesars")).toBeInTheDocument();
+    expect(screen.getByText("Kalshi")).toBeInTheDocument();
+    expect(screen.getByText("Fliff")).toBeInTheDocument();
+    expect(screen.getByText("bet365")).toBeInTheDocument();
     expect(screen.getByText("Pinnacle")).toBeInTheDocument();
     expect(screen.getByText("Hits")).toBeInTheDocument();
     expect(screen.getByText("1.5")).toBeInTheDocument();
     expect(screen.getByText("O 1.5 (-110)")).toBeInTheDocument();
     expect(screen.getByText("U 1.5 (-110)")).toBeInTheDocument();
     expect(screen.getByText("O 1.5 (-105)")).toBeInTheDocument();
-    expect(screen.getAllByText("NL").length).toBe(3);
+    expect(screen.getAllByText("NL").length).toBe(8);
     expect(screen.queryByText("OPEN")).not.toBeInTheDocument();
     expect(screen.queryByText("BEST")).not.toBeInTheDocument();
   });

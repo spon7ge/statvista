@@ -1771,8 +1771,13 @@ export interface components {
         };
         /** MlbPropBooksMain */
         MlbPropBooksMain: {
+            bet365: components["schemas"]["MlbPropBookMainQuote"] | null;
+            betmgm: components["schemas"]["MlbPropBookMainQuote"] | null;
+            caesars: components["schemas"]["MlbPropBookMainQuote"] | null;
             draftkings: components["schemas"]["MlbPropBookMainQuote"] | null;
             fanduel: components["schemas"]["MlbPropBookMainQuote"] | null;
+            fliff: components["schemas"]["MlbPropBookMainQuote"] | null;
+            kalshi: components["schemas"]["MlbPropBookMainQuote"] | null;
             novig: components["schemas"]["MlbPropBookMainQuote"] | null;
             pinnacle: components["schemas"]["MlbPropBookMainQuote"] | null;
             prophetx: components["schemas"]["MlbPropBookMainQuote"] | null;

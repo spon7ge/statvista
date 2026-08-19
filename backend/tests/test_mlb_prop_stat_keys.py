@@ -31,6 +31,14 @@ def test_sharp_prefixed_and_bare_forms():
     assert canonical_stat_key_from_sharp_mlb("pitcher_strikeouts") == "pitcher_strikeouts"
     # ProphetX emits bare "strikeouts" for pitcher K props today.
     assert canonical_stat_key_from_sharp_mlb("strikeouts") == "pitcher_strikeouts"
+    assert (
+        canonical_stat_key_from_sharp_mlb("batter_hits_runs_rbis") == "hits_runs_rbis"
+    )
+    assert (
+        canonical_stat_key_from_sharp_mlb("player_hits_runs_rbis") == "hits_runs_rbis"
+    )
+    assert canonical_stat_key_from_sharp_mlb("pitcher_walks") == "walks_allowed"
+    assert canonical_stat_key_from_sharp_mlb("batter_walks") == "walks"
 
 
 def test_sharp_unmatched_returns_none():

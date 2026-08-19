@@ -53,6 +53,11 @@ class MlbPropBooksMain(BaseModel):
     novig: MlbPropBookMainQuote | None = None
     draftkings: MlbPropBookMainQuote | None = None
     fanduel: MlbPropBookMainQuote | None = None
+    betmgm: MlbPropBookMainQuote | None = None
+    caesars: MlbPropBookMainQuote | None = None
+    kalshi: MlbPropBookMainQuote | None = None
+    fliff: MlbPropBookMainQuote | None = None
+    bet365: MlbPropBookMainQuote | None = None
     pinnacle: MlbPropBookMainQuote | None = None
 
 

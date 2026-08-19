@@ -7,6 +7,11 @@ export const MLB_PLAYER_PROP_GRID_BOOKS = [
   "novig",
   "draftkings",
   "fanduel",
+  "betmgm",
+  "caesars",
+  "kalshi",
+  "fliff",
+  "bet365",
   "pinnacle",
 ] as const;
 
@@ -42,7 +47,7 @@ export function MlbPlayerPropsOddsGrid({
 }) {
   return (
     <div className="overflow-x-auto" data-testid="mlb-player-props-odds-grid">
-      <table className="w-full min-w-[48rem] border-collapse text-left">
+      <table className="w-full min-w-[72rem] border-collapse text-left">
         <thead>
           <tr className="border-b border-white/10 text-[11px] font-medium uppercase tracking-wide text-white/45">
             <th className="px-3 py-2 font-medium">Market</th>

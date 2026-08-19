@@ -493,17 +493,15 @@ def _assemble_rows(
     *,
     px_main: MainLineIndex | None = None,
     novig_main: MainLineIndex | None = None,
-    dk_main: MainLineIndex | None = None,
-    fd_main: MainLineIndex | None = None,
     pin_main: MainLineIndex | None = None,
+    parlay_mains: dict[str, MainLineIndex] | None = None,
 ) -> list[MlbPropRow]:
     dk_idx = parlay_book_indexes.get("draftkings", {})
     fd_idx = parlay_book_indexes.get("fanduel", {})
     px_main = px_main or {}
     novig_main = novig_main or {}
-    dk_main = dk_main or {}
-    fd_main = fd_main or {}
     pin_main = pin_main or {}
+    parlay_mains = parlay_mains or {}
     fair_book_indexes = {
         "prophetx": prophetx_idx,
         "novig": novig_idx,
@@ -552,11 +550,20 @@ def _assemble_rows(
             pinnacle=_book_quote(pinnacle_idx, display_key, role="comparison"),
         )
         main_key: MainLineKey = (norm_player, stat_key)
+
+        def _parlay_main(book: str) -> MlbPropBookMainQuote | None:
+            return (parlay_mains.get(book) or {}).get(main_key)
+
         books_main = MlbPropBooksMain(
             prophetx=px_main.get(main_key),
             novig=novig_main.get(main_key),
-            draftkings=dk_main.get(main_key),
-            fanduel=fd_main.get(main_key),
+            draftkings=_parlay_main("draftkings"),
+            fanduel=_parlay_main("fanduel"),
+            betmgm=_parlay_main("betmgm"),
+            caesars=_parlay_main("caesars"),
+            kalshi=_parlay_main("kalshi"),
+            fliff=_parlay_main("fliff"),
+            bet365=_parlay_main("bet365"),
             pinnacle=pin_main.get(main_key),
         )
 
@@ -705,6 +712,15 @@ async def get_mlb_props_today(*, app: str, format: str, legs: int) -> MlbPropsRe
     )
     dk_main = _main_from_side_index(parlay.book_indexes.get("draftkings", {}))
     fd_main = _main_from_side_index(parlay.book_indexes.get("fanduel", {}))
+    parlay_mains = {
+        "draftkings": dk_main,
+        "fanduel": fd_main,
+        "betmgm": _main_from_side_index(parlay.book_indexes.get("betmgm", {})),
+        "caesars": _main_from_side_index(parlay.book_indexes.get("caesars", {})),
+        "kalshi": _main_from_side_index(parlay.book_indexes.get("kalshi", {})),
+        "fliff": _main_from_side_index(parlay.book_indexes.get("fliff", {})),
+        "bet365": _main_from_side_index(parlay.book_indexes.get("bet365", {})),
+    }
 
     rows = _assemble_rows(
         board,
@@ -716,9 +732,8 @@ async def get_mlb_props_today(*, app: str, format: str, legs: int) -> MlbPropsRe
         now,
         px_main=px_main,
         novig_main=novig_main,
-        dk_main=dk_main,
-        fd_main=fd_main,
         pin_main=pin_main,
+        parlay_mains=parlay_mains,
     )
 
     try:

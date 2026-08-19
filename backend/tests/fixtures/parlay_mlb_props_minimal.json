@@ -76,5 +76,44 @@
     "updated_at": "2026-08-09T18:01:00Z",
     "home_team": "Los Angeles Dodgers",
     "away_team": "San Diego Padres"
+  },
+  {
+    "bookmaker": "betmgm",
+    "bookmaker_title": "BetMGM",
+    "player": "Shohei Ohtani",
+    "market_key": "batter_hits",
+    "market": "Hits",
+    "line": 1.5,
+    "over_price": -122,
+    "under_price": -102,
+    "updated_at": "2026-08-09T18:02:00Z",
+    "home_team": "Los Angeles Dodgers",
+    "away_team": "San Diego Padres"
+  },
+  {
+    "bookmaker": "caesars",
+    "bookmaker_title": "Caesars",
+    "player": "Shohei Ohtani",
+    "market_key": "batter_hits_runs_rbis",
+    "market": "Hits+Runs+RBIs",
+    "line": 1.5,
+    "over_price": -115,
+    "under_price": -105,
+    "updated_at": "2026-08-09T18:02:00Z",
+    "home_team": "Los Angeles Dodgers",
+    "away_team": "San Diego Padres"
+  },
+  {
+    "bookmaker": "draftkings",
+    "bookmaker_title": "DraftKings",
+    "player": "Shohei Ohtani",
+    "market_key": "batter_hits_runs_rbis",
+    "market": "Hits+Runs+RBIs",
+    "line": 1.5,
+    "over_price": -110,
+    "under_price": -110,
+    "updated_at": "2026-08-09T18:02:00Z",
+    "home_team": "Los Angeles Dodgers",
+    "away_team": "San Diego Padres"
   }
 ]

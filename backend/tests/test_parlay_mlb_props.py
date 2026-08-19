@@ -37,8 +37,19 @@ def test_normalize_builds_pp_board_and_dk_fd_indexes():
     assert any(r["player_name"] == "Shohei Ohtani" for r in out.prizepicks_board)
     assert "draftkings" in out.book_indexes
     assert "fanduel" in out.book_indexes
+    assert "betmgm" in out.book_indexes
+    assert "caesars" in out.book_indexes
     assert "novig" not in out.book_indexes
     assert "prizepicks" not in out.book_indexes
+
+
+def test_normalize_indexes_hits_runs_rbis_and_cmp_books():
+    out = normalize_parlay_mlb_props(_fixture_rows())
+    hrr_over = ("shohei ohtani", "hits_runs_rbis", "over", 1.5)
+    assert out.book_indexes["draftkings"][hrr_over]["american"] == -110
+    assert out.book_indexes["caesars"][hrr_over]["american"] == -115
+    mgm_key = ("shohei ohtani", "hits", "under", 1.5)
+    assert out.book_indexes["betmgm"][mgm_key]["american"] == -102
 
 
 def test_normalize_builds_prizepicks_board_rows():

@@ -60,6 +60,7 @@ _UD_ALIASES: dict[str, str] = {
 _SHARP_ALIASES: dict[str, str] = {
     "hits": "hits",
     "hits_allowed": "hits_allowed",
+    "hits_runs_rbis": "hits_runs_rbis",
     "home_runs": "home_runs",
     "rbis": "rbis",
     "runs": "runs",
@@ -193,6 +194,9 @@ def canonical_stat_key_from_sharp_mlb(market_key: str) -> str | None:
             return "batter_strikeouts"
         if prefix == "pitcher_" and stripped == "strikeouts":
             return "pitcher_strikeouts"
+        # ``pitcher_walks`` must not collapse to batter ``walks``.
+        if prefix == "pitcher_" and stripped == "walks":
+            return "walks_allowed"
         mapped = _SHARP_ALIASES.get(stripped)
         if mapped:
             return mapped
