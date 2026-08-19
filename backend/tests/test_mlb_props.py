@@ -1188,6 +1188,57 @@ async def test_books_main_joins_accent_variant_names_mlb(monkeypatch):
     assert main.over_american == -115
 
 
+@pytest.mark.asyncio
+async def test_books_main_joins_bobby_witt_jr_alias(monkeypatch):
+    """Underdog 'Bobby Witt' joins Novig 'Bobby Witt Jr.' via alias."""
+    now = datetime.now(timezone.utc)
+    ud = [
+        {
+            "player_name": "Bobby Witt",
+            "stat_name": "total_bases",
+            "line_score": 1.5,
+            "side": "over",
+            "american_price": -110,
+            "payout_multiplier": 1.0,
+            "scraped_at": now,
+        }
+    ]
+    novig = [
+        {
+            "player_name": "Bobby Witt Jr.",
+            "stat_name": "total_bases",
+            "line_score": 1.5,
+            "side": "over",
+            "american_price": -115,
+            "scraped_at": now,
+            "is_main": True,
+        },
+        {
+            "player_name": "Bobby Witt Jr.",
+            "stat_name": "total_bases",
+            "line_score": 1.5,
+            "side": "under",
+            "american_price": -105,
+            "scraped_at": now,
+            "is_main": True,
+        },
+    ]
+    _stub_snapshots(
+        monkeypatch,
+        dfs_ud=ud,
+        novig=novig,
+        parlay=_parlay(book_indexes={}),
+        parlay_api_odds=[],
+    )
+    monkeypatch.setattr(svc, "get_mlb_player_index", lambda: _async_return({}))
+    out = await svc.get_mlb_props_today(app="underdog", format="standard", legs=4)
+    assert out.props[0].player_name == "Bobby Witt"
+    main = out.props[0].books_main.novig
+    assert main is not None
+    assert main.line == 1.5
+    assert main.over_american == -115
+
+
 def test_response_is_cached_within_ttl(monkeypatch):
     now = datetime.now(timezone.utc)
     calls = {"count": 0}

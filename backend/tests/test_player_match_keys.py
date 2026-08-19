@@ -32,6 +32,11 @@ def test_match_player_key_alias_middle_name():
     assert match_player_key("Jessica Shepard") == "jessica shepard"
 
 
+def test_match_player_key_alias_bobby_witt_jr():
+    assert match_player_key("Bobby Witt Jr.") == "bobby witt"
+    assert match_player_key("Bobby Witt") == "bobby witt"
+
+
 def test_match_player_key_without_alias_is_strong_norm():
     assert match_player_key("Janelle Salaün") == "janelle salaun"
 

@@ -8,6 +8,8 @@ import unicodedata
 # Alternate strong-normed spellings → canonical strong-normed (prefer DFS shape).
 PLAYER_NAME_ALIASES: dict[str, str] = {
     "jessica lynn shepard": "jessica shepard",
+    # Underdog omits Jr.; PP / Parlay / scrapers usually include it.
+    "bobby witt jr.": "bobby witt",
 }
 
 _WS = re.compile(r"\s+")
