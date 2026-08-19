@@ -1,4 +1,4 @@
-"""Read latest PrizePicks / Underdog / Pinnacle / ProphetX / Novig odds snapshots from Supabase.
+"""Read latest PrizePicks / Underdog / Pinnacle / ProphetX / Novig / Parlay API odds snapshots from Supabase.
 
 Board queries return the latest row per quote identity (``DISTINCT ON``), not a
 single ``MAX(scraped_at)`` batch.
@@ -52,6 +52,10 @@ _PINNACLE_TEAM_TABLE = {
     "mlb": "mlb_pinnacle_team",
     "wnba": "wnba_pinnacle_team",
     "nba": "wnba_pinnacle_team",
+}
+_PARLAY_API_ODDS_TABLE = {
+    "mlb": "mlb_parlay_api_odds",
+    "wnba": "wnba_parlay_api_odds",
 }
 
 
@@ -148,6 +152,22 @@ def fetch_latest_pinnacle(league: str = "wnba") -> list[dict]:
     sql = _latest_snapshot_sql(
         table,
         "player_name, market_type, side, line_score, american_price, scraped_at",
+    )
+    return _fetch_rows(sql, lg)
+
+
+def fetch_latest_parlay_api_odds(league: str = "mlb") -> list[dict]:
+    """Return latest-per-identity Parlay sportsbook odds for *league*.
+
+    Quote identity includes ``sportsbook`` so each book keeps its own latest
+    over/under; callers group those rows into per-book SideIndexes.
+    """
+    lg = _normalized_league(league, "mlb")
+    table = _PARLAY_API_ODDS_TABLE.get(lg, "mlb_parlay_api_odds")
+    sql = _latest_snapshot_sql(
+        table,
+        "sportsbook, player_name, market_type, side, line_score, "
+        "american_price, scraped_at",
     )
     return _fetch_rows(sql, lg)
 
