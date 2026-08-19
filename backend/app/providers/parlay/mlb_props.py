@@ -7,6 +7,7 @@ import time
 from dataclasses import dataclass
 from typing import Any
 
+from app.domains.betting.player_match_keys import match_player_key
 from app.domains.mlb.prop_fair import american_to_fair_pct
 from app.domains.mlb.prop_stat_keys import (
     canonical_stat_key_from_sharp_mlb,
@@ -102,10 +103,6 @@ def _empty(*, unavailable: bool = True) -> ParlayMlbNormalized:
         as_of=None,
         unavailable=unavailable,
     )
-
-
-def _norm_player(name: str) -> str:
-    return name.strip().casefold()
 
 
 def _line_key(line: float) -> float:
@@ -205,7 +202,7 @@ def normalize_parlay_mlb_props(rows: list[dict[str, Any]]) -> ParlayMlbNormalize
         stat_label = display_stat_label(canonical)
 
         if book == "prizepicks":
-            board_key = (_norm_player(player), canonical, line_k)
+            board_key = (match_player_key(player), canonical, line_k)
             if board_key in pp_seen:
                 continue
             pp_seen.add(board_key)
@@ -226,7 +223,7 @@ def normalize_parlay_mlb_props(rows: list[dict[str, Any]]) -> ParlayMlbNormalize
             american = _parse_american(raw)
             if american is None:
                 continue
-            side_key: SideKey = (_norm_player(player), canonical, side, line_k)
+            side_key: SideKey = (match_player_key(player), canonical, side, line_k)
             book_indexes[book][side_key] = {
                 "american": american,
                 "fair_pct": american_to_fair_pct(american),

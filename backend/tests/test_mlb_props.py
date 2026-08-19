@@ -1111,6 +1111,83 @@ async def test_books_main_novig_none_when_all_is_main_false(monkeypatch):
     assert out.props[0].books_main.novig is None
 
 
+def test_index_parlay_api_odds_matches_accent_variants():
+    from app.domains.betting.player_match_keys import match_player_key
+
+    rows = [
+        {
+            "sportsbook": "draftkings",
+            "player_name": "José Ramírez",
+            "market_type": "total_bases",
+            "side": "over",
+            "line_score": 1.5,
+            "american_price": -120,
+            "scraped_at": "2026-08-19T12:00:00Z",
+        },
+        {
+            "sportsbook": "draftkings",
+            "player_name": "José Ramírez",
+            "market_type": "total_bases",
+            "side": "under",
+            "line_score": 1.5,
+            "american_price": 100,
+            "scraped_at": "2026-08-19T12:00:00Z",
+        },
+    ]
+    indexes = svc.index_parlay_api_odds_by_book(rows)
+    key_over = (match_player_key("Jose Ramirez"), "total_bases", "over", 1.5)
+    assert key_over in indexes["draftkings"]
+    assert indexes["draftkings"][key_over]["american"] == -120
+
+
+@pytest.mark.asyncio
+async def test_books_main_joins_accent_variant_names_mlb(monkeypatch):
+    now = datetime.now(timezone.utc)
+    pp = [
+        {
+            "player_name": "Jose Ramirez",
+            "stat_type": "Total Bases",
+            "line_score": 1.5,
+            "odds_type": "standard",
+            "scraped_at": now,
+        }
+    ]
+    novig = [
+        {
+            "player_name": "José Ramírez",
+            "stat_name": "total_bases",
+            "line_score": 2.5,
+            "side": "over",
+            "american_price": -115,
+            "scraped_at": now,
+            "is_main": True,
+        },
+        {
+            "player_name": "José Ramírez",
+            "stat_name": "total_bases",
+            "line_score": 2.5,
+            "side": "under",
+            "american_price": -105,
+            "scraped_at": now,
+            "is_main": True,
+        },
+    ]
+    _stub_snapshots(
+        monkeypatch,
+        dfs_pp=pp,
+        novig=novig,
+        parlay=_parlay(book_indexes={}),
+        parlay_api_odds=[],
+    )
+    monkeypatch.setattr(svc, "get_mlb_player_index", lambda: _async_return({}))
+    out = await svc.get_mlb_props_today(app="prizepicks", format="power", legs=4)
+    assert out.props[0].player_name == "Jose Ramirez"
+    main = out.props[0].books_main.novig
+    assert main is not None
+    assert main.line == 2.5
+    assert main.over_american == -115
+
+
 def test_response_is_cached_within_ttl(monkeypatch):
     now = datetime.now(timezone.utc)
     calls = {"count": 0}
