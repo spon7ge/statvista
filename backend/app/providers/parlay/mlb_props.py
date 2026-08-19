@@ -275,6 +275,13 @@ async def fetch_mlb_parlay_props_normalized(
     if not rows:
         return _empty(unavailable=False)
 
+    try:
+        from src.odds.load_snapshots import maybe_persist_parlay_props
+
+        maybe_persist_parlay_props(rows, league="mlb")
+    except Exception:
+        logger.exception("MLB Parlay snapshot persist failed")
+
     out = normalize_parlay_mlb_props(rows)
     _cache["value"] = out
     _cache["expires_at"] = time.monotonic() + CACHE_TTL_SECONDS

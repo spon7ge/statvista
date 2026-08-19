@@ -138,3 +138,80 @@ async def test_fetch_caches_successful_normalize():
 
     assert first is second
     assert mock_get.await_count == 1
+
+
+@pytest.mark.asyncio
+async def test_fetch_mlb_parlay_persists_snapshot(monkeypatch):
+    called: dict[str, object] = {}
+
+    def fake_persist(rows, *, league="wnba", scraped_at=None):
+        called["league"] = league
+        called["n"] = len(rows)
+        return {"draftkings": 1}
+
+    monkeypatch.setattr(
+        "src.odds.load_snapshots.maybe_persist_parlay_props", fake_persist
+    )
+    mock_get = AsyncMock(return_value=_fixture_rows())
+    with patch("app.providers.parlay.mlb_props.parlay_get", new=mock_get):
+        out = await fetch_mlb_parlay_props_normalized()
+
+    assert called.get("league") == "mlb"
+    assert called.get("n", 0) > 0
+    assert out.unavailable is False
+
+
+@pytest.mark.asyncio
+async def test_fetch_mlb_parlay_skips_persist_on_fetch_failure(monkeypatch):
+    called: dict[str, object] = {"n": 0}
+
+    def fake_persist(rows, *, league="wnba", scraped_at=None):
+        called["n"] = len(rows)
+        return {}
+
+    monkeypatch.setattr(
+        "src.odds.load_snapshots.maybe_persist_parlay_props", fake_persist
+    )
+    mock_get = AsyncMock(side_effect=RuntimeError("network down"))
+    with patch("app.providers.parlay.mlb_props.parlay_get", new=mock_get):
+        out = await fetch_mlb_parlay_props_normalized()
+
+    assert called.get("n", 0) == 0
+    assert out.unavailable is True
+
+
+@pytest.mark.asyncio
+async def test_fetch_mlb_parlay_skips_persist_on_empty_payload(monkeypatch):
+    called: dict[str, object] = {"invoked": False}
+
+    def fake_persist(rows, *, league="wnba", scraped_at=None):
+        called["invoked"] = True
+        return {}
+
+    monkeypatch.setattr(
+        "src.odds.load_snapshots.maybe_persist_parlay_props", fake_persist
+    )
+    with patch(
+        "app.providers.parlay.mlb_props.parlay_get",
+        new=AsyncMock(return_value=[]),
+    ):
+        out = await fetch_mlb_parlay_props_normalized()
+
+    assert called.get("invoked") is False
+    assert out.unavailable is False
+
+
+@pytest.mark.asyncio
+async def test_fetch_mlb_parlay_persist_failure_still_returns(monkeypatch):
+    def boom(*_a, **_k):
+        raise RuntimeError("db down")
+
+    monkeypatch.setattr(
+        "src.odds.load_snapshots.maybe_persist_parlay_props", boom
+    )
+    mock_get = AsyncMock(return_value=_fixture_rows())
+    with patch("app.providers.parlay.mlb_props.parlay_get", new=mock_get):
+        out = await fetch_mlb_parlay_props_normalized()
+
+    assert out.unavailable is False
+    assert "draftkings" in out.book_indexes
