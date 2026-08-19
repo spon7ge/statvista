@@ -1,7 +1,7 @@
 # WNBA prop picks — player board + per-player odds grid
 
 Date: 2026-08-19  
-Status: Approved (design)  
+Status: Implemented  
 Parent: `docs/superpowers/specs/2026-08-11-wnba-prop-picks-mlb-parity-design.md`  
 Mirror of: `docs/superpowers/specs/2026-08-19-mlb-prop-picks-player-board-design.md`  
 Related: DFS snapshots `2026-08-02-wnba-prop-picks-dfs-snapshots-design.md`
