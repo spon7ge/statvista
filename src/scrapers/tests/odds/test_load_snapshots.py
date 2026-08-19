@@ -393,6 +393,54 @@ PARLAY_ROWS = [
     },
 ]
 
+PARLAY_ROWS_MLB = [
+    {
+        "bookmaker": "draftkings",
+        "player": "Aaron Judge",
+        "market_key": "player_home_runs",
+        "market": "Home Runs",
+        "line": 0.5,
+        "over_price": -120,
+        "under_price": -110,
+    },
+    {
+        "bookmaker": "kalshi",
+        "player": "Aaron Judge",
+        "market_key": "player_home_runs",
+        "market": "Home Runs",
+        "line": 0.5,
+        "over_price": -105,
+        "under_price": -115,
+    },
+]
+
+
+def test_parlay_api_odds_table_routes_by_league():
+    assert load_snapshots.parlay_api_odds_table("wnba") == "wnba_parlay_api_odds"
+    assert load_snapshots.parlay_api_odds_table("mlb") == "mlb_parlay_api_odds"
+
+
+def test_maybe_persist_parlay_props_mlb_writes_mlb_table(monkeypatch, mock_upsert):
+    monkeypatch.setattr(load_snapshots, "should_persist_parlay_props", lambda **kw: True)
+    counts = load_snapshots.maybe_persist_parlay_props(
+        PARLAY_ROWS_MLB, league="mlb", scraped_at=SCRAPED
+    )
+    table, df = mock_upsert.call_args[0]
+    assert table == "mlb_parlay_api_odds"
+    assert "kalshi" in load_snapshots.MLB_PARLAY_PROP_SPORTSBOOKS
+    assert "fliff" in load_snapshots.MLB_PARLAY_PROP_SPORTSBOOKS
+    assert "kalshi" in set(df["sportsbook"])
+    assert counts.get("kalshi", 0) >= 1
+
+
+def test_maybe_persist_parlay_props_wnba_still_wnba_table(monkeypatch, mock_upsert):
+    monkeypatch.setattr(load_snapshots, "should_persist_parlay_props", lambda **kw: True)
+    load_snapshots.maybe_persist_parlay_props(
+        PARLAY_ROWS, league="wnba", scraped_at=SCRAPED
+    )
+    table, _df = mock_upsert.call_args[0]
+    assert table == "wnba_parlay_api_odds"
+
 
 def test_maybe_persist_parlay_props_writes_books(monkeypatch, mock_upsert):
     monkeypatch.setattr(load_snapshots, "should_persist_parlay_props", lambda **kw: True)
@@ -439,7 +487,7 @@ def test_should_persist_parlay_false_when_recent(monkeypatch):
 
 def test_parlay_persist_exclude_pinnacle_and_use_unified_table():
     assert "pinnacle" not in load_snapshots.PARLAY_PROP_SPORTSBOOKS
-    assert load_snapshots._PARLAY_API_ODDS_TABLE == "wnba_parlay_api_odds"
+    assert load_snapshots.parlay_api_odds_table("wnba") == "wnba_parlay_api_odds"
     assert "sportsbook" in load_snapshots._PARLAY_API_ODDS_CONFLICT_COLS
 
 
@@ -453,6 +501,18 @@ def test_latest_parlay_props_scraped_at_uses_unified_table(monkeypatch):
     monkeypatch.setattr(load_snapshots, "_latest_scraped_at", fake_latest)
     assert load_snapshots.latest_parlay_props_scraped_at("wnba") is not None
     assert seen == [("wnba_parlay_api_odds", "wnba")]
+
+
+def test_latest_parlay_props_scraped_at_uses_mlb_table(monkeypatch):
+    seen: list[tuple[str, str]] = []
+
+    def fake_latest(table: str, league: str):
+        seen.append((table, league))
+        return datetime(2026, 8, 1, tzinfo=timezone.utc)
+
+    monkeypatch.setattr(load_snapshots, "_latest_scraped_at", fake_latest)
+    assert load_snapshots.latest_parlay_props_scraped_at("mlb") is not None
+    assert seen == [("mlb_parlay_api_odds", "mlb")]
 
 
 PINNACLE_GAMES = [

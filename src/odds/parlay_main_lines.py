@@ -21,7 +21,8 @@ SHARPNESS_ORDER: tuple[str, ...] = (
     "betrivers",
 )
 
-SPORTSBOOK_BOOKS = frozenset(SHARPNESS_ORDER)
+# Kalshi / Fliff are sportsbooks we persist for MLB but do not rank for DFS matching.
+SPORTSBOOK_BOOKS = frozenset(SHARPNESS_ORDER) | {"kalshi", "fliff"}
 
 DFS_BOOKS = frozenset(
     {

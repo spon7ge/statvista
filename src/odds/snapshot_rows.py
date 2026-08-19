@@ -108,6 +108,8 @@ _PARLAY_BOOKS = frozenset(
         "novig",
         "sleeper",
         "betrivers",
+        "kalshi",
+        "fliff",
     }
 )
 
@@ -246,7 +248,7 @@ def parlay_props_to_api_odds_rows(
     scraped_at: datetime,
     books: tuple[str, ...] | list[str] | frozenset[str],
 ) -> list[dict]:
-    """Map Parlay props for many books into odds.wnba_parlay_api_odds row dicts."""
+    """Map Parlay props for many books into unified Parlay API odds row dicts."""
     out: list[dict] = []
     for book in books:
         out.extend(

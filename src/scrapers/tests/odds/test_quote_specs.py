@@ -21,6 +21,12 @@ def test_parlay_unified_includes_sportsbook():
     assert spec.compare_cols == ("line_score", "american_price")
 
 
+def test_mlb_parlay_api_odds_quote_spec_registered():
+    spec = get_quote_spec("mlb_parlay_api_odds")
+    assert spec is not None
+    assert spec == get_quote_spec("wnba_parlay_api_odds")
+
+
 def test_pinnacle_team_keeps_period_and_is_alternate():
     spec = get_quote_spec("mlb_pinnacle_team")
     assert spec.identity_cols == (
@@ -68,6 +74,7 @@ def test_registry_covers_loader_tables():
         "wnba_fanduel",
         "wnba_draftkings",
         "wnba_parlay_api_odds",
+        "mlb_parlay_api_odds",
         "mlb_prophetx",
         "mlb_prophetx_team",
         "wnba_prophetx_team",

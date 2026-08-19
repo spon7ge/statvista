@@ -56,6 +56,7 @@ QUOTE_SPECS: dict[str, QuoteSpec] = {
     "wnba_fanduel": _BOOK_PROPS,
     "wnba_draftkings": _BOOK_PROPS,
     "wnba_parlay_api_odds": _PARLAY_PROPS,
+    "mlb_parlay_api_odds": _PARLAY_PROPS,
     "wnba_pinnacle_team": _PINNACLE_TEAM,
     "mlb_pinnacle_team": _PINNACLE_TEAM,
     "mlb_prophetx": _EXCHANGE_PROPS,

@@ -68,8 +68,6 @@ _PARLAY_API_ODDS_CONFLICT_COLS = [
 # Same shape as Sharp / Selenium Pinnacle prop tables (no sportsbook column).
 _PARLAY_BOOK_CONFLICT_COLS = _SHARP_BOOK_CONFLICT_COLS
 
-_PARLAY_API_ODDS_TABLE = "wnba_parlay_api_odds"
-
 _PINNACLE_TEAM_CONFLICT_COLS = [
     "league",
     "away_team",
@@ -125,7 +123,7 @@ _SHARP_BOOK_TABLES = {
     "draftkings": "wnba_draftkings",
 }
 
-# Books persisted from Parlay into odds.wnba_parlay_api_odds (no Pinnacle).
+# Books persisted from Parlay into the WNBA unified table (no Pinnacle).
 PARLAY_PROP_SPORTSBOOKS = (
     "fanduel",
     "draftkings",
@@ -139,6 +137,23 @@ PARLAY_PROP_SPORTSBOOKS = (
     "sleeper",
     "betrivers",
 )
+
+# MLB persist set: WNBA books plus Kalshi/Fliff (serve books; extras stay for archive).
+MLB_PARLAY_PROP_SPORTSBOOKS = PARLAY_PROP_SPORTSBOOKS + ("kalshi", "fliff")
+
+
+def parlay_api_odds_table(league: str) -> str:
+    lg = (league or "").strip().lower()
+    if lg == "mlb":
+        return "mlb_parlay_api_odds"
+    return "wnba_parlay_api_odds"  # wnba / default
+
+
+def _parlay_prop_sportsbooks(league: str) -> tuple[str, ...]:
+    lg = (league or "").strip().lower()
+    if lg == "mlb":
+        return MLB_PARLAY_PROP_SPORTSBOOKS
+    return PARLAY_PROP_SPORTSBOOKS
 
 DEFAULT_SNAPSHOT_MINUTES = 30
 
@@ -602,8 +617,8 @@ def latest_sharp_props_scraped_at(league: str = "wnba") -> datetime | None:
 
 
 def latest_parlay_props_scraped_at(league: str = "wnba") -> datetime | None:
-    """Return the newest scraped_at on the unified Parlay API odds table."""
-    return _latest_scraped_at(_PARLAY_API_ODDS_TABLE, league)
+    """Return the newest scraped_at on the league's unified Parlay API odds table."""
+    return _latest_scraped_at(parlay_api_odds_table(league), league)
 
 
 def should_persist_sharp_props(
@@ -694,30 +709,32 @@ def load_parlay_api_odds_snapshot(
     *,
     league: str,
     scraped_at: datetime | None = None,
-    books: tuple[str, ...] = PARLAY_PROP_SPORTSBOOKS,
+    books: tuple[str, ...] | None = None,
 ) -> dict[str, int]:
-    """Upsert Parlay main lines for all books into odds.wnba_parlay_api_odds."""
-    empty = {book: 0 for book in books}
+    """Upsert Parlay main lines into the league Parlay API odds table."""
+    resolved_books = books if books is not None else _parlay_prop_sportsbooks(league)
+    empty = {book: 0 for book in resolved_books}
     if _skip_db("PARLAY_PROPS_SKIP_DB") or _skip_db("SHARP_PROPS_SKIP_DB"):
         return empty
 
     scraped_at = scraped_at or datetime.now(timezone.utc)
     rows = parlay_props_to_api_odds_rows(
-        parlay_rows, league=league, scraped_at=scraped_at, books=books
+        parlay_rows, league=league, scraped_at=scraped_at, books=resolved_books
     )
     if not rows:
         return empty
 
+    table_name = parlay_api_odds_table(league)
     df = _coerce_float_columns(pd.DataFrame(rows), ["line_score"])
     df = _dedupe_conflict_rows(df, _PARLAY_API_ODDS_CONFLICT_COLS)
     if df.empty:
         return empty
     league_norm = (league or "").strip().lower()
-    df = apply_change_filter(_PARLAY_API_ODDS_TABLE, df, league=league_norm)
+    df = apply_change_filter(table_name, df, league=league_norm)
     if df.empty:
         return empty
     upsert_df(
-        _PARLAY_API_ODDS_TABLE,
+        table_name,
         df,
         schema="odds",
         conflict_cols=_PARLAY_API_ODDS_CONFLICT_COLS,
@@ -789,11 +806,12 @@ def maybe_persist_parlay_props(
     scraped_at: datetime | None = None,
 ) -> dict[str, int]:
     """
-    Persist Parlay display books into odds.wnba_parlay_api_odds when the throttle allows.
+    Persist Parlay display books into the league Parlay API odds table when the throttle allows.
 
     Best-effort: never raises. Returns counts written per book (0 if skipped).
     """
-    empty = {book: 0 for book in PARLAY_PROP_SPORTSBOOKS}
+    books = _parlay_prop_sportsbooks(league)
+    empty = {book: 0 for book in books}
     if _skip_db("PARLAY_PROPS_SKIP_DB") or _skip_db("SHARP_PROPS_SKIP_DB"):
         return empty
     if not parlay_rows:
@@ -812,7 +830,7 @@ def maybe_persist_parlay_props(
             parlay_rows,
             league=league,
             scraped_at=scraped_at,
-            books=PARLAY_PROP_SPORTSBOOKS,
+            books=books,
         )
         if any(counts.values()):
             logger.info(
