@@ -205,6 +205,39 @@ def test_parlay_props_to_api_odds_rows_multi_book_skips_pinnacle_when_excluded()
     assert len(rows) == 4
 
 
+def test_parlay_props_to_book_rows_maps_mlb_batter_and_pitcher_markets():
+    scraped = datetime(2026, 8, 1, tzinfo=timezone.utc)
+    rows = parlay_props_to_book_rows(
+        [
+            {
+                "bookmaker": "draftkings",
+                "player": "Shohei Ohtani",
+                "market_key": "batter_hits",
+                "market": "Hits",
+                "line": 1.5,
+                "over_price": -118,
+                "under_price": -104,
+            },
+            {
+                "bookmaker": "draftkings",
+                "player": "Gerrit Cole",
+                "market_key": "pitcher_strikeouts",
+                "market": "Strikeouts",
+                "line": 6.5,
+                "over_price": -110,
+                "under_price": -110,
+            },
+        ],
+        sportsbook="draftkings",
+        league="mlb",
+        scraped_at=scraped,
+    )
+    markets = {r["market_type"] for r in rows}
+    assert markets == {"batter_hits", "pitcher_strikeouts"}
+    assert len(rows) == 4
+    assert all(r["league"] == "mlb" for r in rows)
+
+
 def test_parlay_props_to_book_rows_allows_one_sided_dfs():
     scraped = datetime(2026, 8, 1, tzinfo=timezone.utc)
     rows = parlay_props_to_book_rows(

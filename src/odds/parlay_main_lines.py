@@ -35,7 +35,14 @@ DFS_BOOKS = frozenset(
 
 PARLAY_PROP_BOOKS = SPORTSBOOK_BOOKS | DFS_BOOKS
 
+# WNBA/NBA Parlay keys are player_*; MLB Parlay uses batter_* / pitcher_*.
+_PARLAY_PLAYER_MARKET_PREFIXES = ("player_", "batter_", "pitcher_")
+
 _LINE_EPS = 1e-6
+
+
+def is_parlay_player_market(market: str) -> bool:
+    return market.startswith(_PARLAY_PLAYER_MARKET_PREFIXES)
 
 
 def _american_to_implied_prob(price: int) -> float:
@@ -167,7 +174,7 @@ def select_parlay_main_lines(
             continue
         player = str(row.get("player") or "").strip()
         market = str(row.get("market_key") or "").strip()
-        if not player or not market.startswith("player_"):
+        if not player or not is_parlay_player_market(market):
             continue
         parsed = _parse_prices(row)
         if parsed is None:

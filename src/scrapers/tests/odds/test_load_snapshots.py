@@ -1,6 +1,7 @@
 import json
 import os
 from datetime import datetime, timezone
+from pathlib import Path
 from unittest.mock import MagicMock
 
 import pandas as pd
@@ -431,6 +432,30 @@ def test_maybe_persist_parlay_props_mlb_writes_mlb_table(monkeypatch, mock_upser
     assert "fliff" in load_snapshots.MLB_PARLAY_PROP_SPORTSBOOKS
     assert "kalshi" in set(df["sportsbook"])
     assert counts.get("kalshi", 0) >= 1
+
+
+def test_maybe_persist_parlay_props_mlb_batter_hits_upserts_rows(
+    monkeypatch, mock_upsert
+):
+    """Realistic Parlay MLB keys (batter_*) must produce mlb_parlay_api_odds rows."""
+    monkeypatch.setattr(load_snapshots, "should_persist_parlay_props", lambda **kw: True)
+    fixture = (
+        Path(__file__).resolve().parents[4]
+        / "backend"
+        / "tests"
+        / "fixtures"
+        / "parlay_mlb_props_minimal.json"
+    )
+    rows = json.loads(fixture.read_text(encoding="utf-8"))
+    counts = load_snapshots.maybe_persist_parlay_props(
+        rows, league="mlb", scraped_at=SCRAPED
+    )
+    assert mock_upsert.called, "persist mapper dropped batter_* rows (0 upserts)"
+    table, df = mock_upsert.call_args[0]
+    assert table == "mlb_parlay_api_odds"
+    assert len(df) > 0
+    assert "batter_hits" in set(df["market_type"])
+    assert counts.get("draftkings", 0) > 0
 
 
 def test_maybe_persist_parlay_props_wnba_still_wnba_table(monkeypatch, mock_upsert):

@@ -189,7 +189,7 @@ def parlay_props_to_book_rows(
     scraped_at: datetime,
 ) -> list[dict]:
     """Map Parlay prop API rows for one book (main lines only), with sportsbook set."""
-    from src.odds.parlay_main_lines import select_parlay_main_lines
+    from src.odds.parlay_main_lines import is_parlay_player_market, select_parlay_main_lines
 
     book = sportsbook.lower().strip()
     if book not in _PARLAY_BOOKS:
@@ -201,7 +201,7 @@ def parlay_props_to_book_rows(
     for row in select_parlay_main_lines(rows, books=frozenset({book})):
         player = str(row.get("player") or "").strip()
         market = str(row.get("market_key") or "").strip()
-        if not player or not market.startswith("player_"):
+        if not player or not is_parlay_player_market(market):
             continue
         try:
             line_score = float(row["line"])

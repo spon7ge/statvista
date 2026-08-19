@@ -221,3 +221,36 @@ def test_books_filter_still_uses_excluded_sportsbooks_for_match():
     assert len(out) == 1
     assert out[0]["bookmaker"] == "underdog"
     assert out[0]["line"] == 3.5
+
+
+def test_select_parlay_main_lines_keeps_mlb_batter_and_pitcher_markets():
+    rows = [
+        {
+            "bookmaker": "draftkings",
+            "player": "Shohei Ohtani",
+            "market_key": "batter_hits",
+            "market": "Hits",
+            "line": 1.5,
+            "over_price": -118,
+            "under_price": -104,
+        },
+        {
+            "bookmaker": "draftkings",
+            "player": "Gerrit Cole",
+            "market_key": "pitcher_strikeouts",
+            "market": "Strikeouts",
+            "line": 6.5,
+            "over_price": -110,
+            "under_price": -110,
+        },
+        {
+            "bookmaker": "draftkings",
+            "player": "Team Total",
+            "market_key": "team_total",
+            "line": 4.5,
+            "over_price": -110,
+            "under_price": -110,
+        },
+    ]
+    out = select_parlay_main_lines(rows)
+    assert {r["market_key"] for r in out} == {"batter_hits", "pitcher_strikeouts"}
