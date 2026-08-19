@@ -283,6 +283,13 @@ async def fetch_wnba_parlay_board_normalized(
     if not rows:
         return _empty(unavailable=False)
 
+    try:
+        from src.odds.load_snapshots import maybe_persist_parlay_props
+
+        maybe_persist_parlay_props(rows, league="wnba")
+    except Exception:
+        logger.exception("WNBA Parlay snapshot persist failed")
+
     # Main-line selection runs inside normalize; fetch keeps the filter narrow.
     out = normalize_parlay_wnba_board(rows)
     _cache["value"] = out
