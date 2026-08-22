@@ -114,7 +114,6 @@ describe("WnbaTeamPreview", () => {
     const rosterTable = screen.getByTestId("wnba-team-roster-table");
     expect(rosterTable.className).toContain("overflow-x-auto");
     for (const col of [
-      "#",
       "POS",
       "GP",
       "MIN",

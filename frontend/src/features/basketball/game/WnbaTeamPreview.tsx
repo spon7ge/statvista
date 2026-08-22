@@ -42,7 +42,6 @@ type TeamPreviewView = {
 };
 
 const ROSTER_COLS = [
-  "#",
   "POS",
   "GP",
   "MIN",
@@ -110,7 +109,6 @@ function cell(value: string | number | null): string | number {
 
 function rosterValues(row: RosterSeasonRow): Array<string | number> {
   return [
-    cell(row.jersey),
     cell(row.position),
     cell(row.gp),
     cell(row.min),
@@ -132,16 +130,22 @@ function rosterValues(row: RosterSeasonRow): Array<string | number> {
 }
 
 function colWidth(col: string): string {
-  if (col === "SH-EFF" || col === "SC-EFF" || col === "PPEP") {
+  if (col === "SH-EFF" || col === "SC-EFF" || col === "PPEP" || col === "RTG") {
+    return "w-16 shrink-0";
+  }
+  if (
+    col === "MIN" ||
+    col === "FG%" ||
+    col === "3P%" ||
+    col === "FT%" ||
+    col === "+/-"
+  ) {
     return "w-14 shrink-0";
   }
-  if (col === "MIN" || col === "FG%" || col === "3P%" || col === "FT%") {
-    return "w-12 shrink-0";
-  }
   if (col === "POS") {
-    return "w-10 shrink-0";
+    return "w-11 shrink-0";
   }
-  return "w-9 shrink-0";
+  return "w-12 shrink-0";
 }
 
 function TeamLeaderHeadshot({ card }: { card: TeamLeaderCard }) {
@@ -229,7 +233,7 @@ function RosterTable({ rows }: { rows: RosterSeasonRow[] }) {
           <div className="min-w-max">
             <div className="flex items-baseline gap-3 border-b border-white/[0.08] pb-1.5 text-[14px] tracking-wide text-white/40">
               <span className="w-28 shrink-0">PLAYER</span>
-              <div className="flex gap-x-2">
+              <div className="flex gap-x-3">
                 {ROSTER_COLS.map((col) => (
                   <span
                     key={col}
@@ -249,7 +253,7 @@ function RosterTable({ rows }: { rows: RosterSeasonRow[] }) {
                   <span className="w-28 shrink-0 truncate whitespace-nowrap text-white">
                     {row.name}
                   </span>
-                  <div className="flex gap-x-2 font-mono">
+                  <div className="flex gap-x-3 font-mono">
                     {rosterValues(row).map((value, colIndex) => (
                       <span
                         key={`${row.playerId}-${ROSTER_COLS[colIndex]}`}

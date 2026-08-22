@@ -11,9 +11,19 @@ describe("MlbFinalTeamStats", () => {
     expect(screen.getByRole("heading", { name: "Team Stats" })).toBeInTheDocument();
     expect(screen.queryByText("STAT")).not.toBeInTheDocument();
     expect(screen.getByText("AVG")).toBeInTheDocument();
-    expect(screen.getByTestId("mlb-team-stat-avg-home")).toBeInTheDocument();
-    expect(screen.getByTestId("mlb-team-stat-k-away")).toBeInTheDocument();
-    expect(screen.getByTestId("mlb-team-stat-era-home")).toBeInTheDocument();
+
+    const avgHome = screen.getByTestId("mlb-team-stat-avg-home");
+    expect(avgHome).toHaveTextContent(".268");
+    expect(avgHome).toHaveClass("rounded-full");
+    expect(avgHome).toHaveStyle({ backgroundColor: mlbFinalDetail.home.color });
+
+    const kAway = screen.getByTestId("mlb-team-stat-k-away");
+    expect(kAway).toHaveTextContent("10");
+    expect(kAway).toHaveClass("rounded-full");
+
+    const eraHome = screen.getByTestId("mlb-team-stat-era-home");
+    expect(eraHome).toHaveTextContent("3.20");
+    expect(eraHome).toHaveClass("rounded-full");
   });
 
   it("shows white team abbrev and logo in the header", () => {

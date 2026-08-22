@@ -91,29 +91,26 @@ function StatValue({
   isLeader: boolean;
   color: string;
 }) {
+  const display = value ?? "–";
+
   return (
     <div
-      className={`flex items-center gap-1.5 font-mono text-[18px] tabular-nums text-white/85 ${
+      className={`flex items-center gap-1.5 font-mono text-[18px] tabular-nums text-white ${
         side === "home" ? "justify-end" : ""
       }`}
     >
-      {side === "home" && isLeader ? (
+      {isLeader ? (
         <span
-          aria-label={`${statKey} home leader`}
-          className="size-2 rounded-full"
-          data-testid={`mlb-team-stat-${statKey}-home`}
+          aria-label={`${statKey} ${side} leader`}
+          data-testid={`mlb-team-stat-${statKey}-${side}`}
+          className="rounded-full px-2.5 py-0.5 text-white"
           style={{ backgroundColor: color }}
-        />
-      ) : null}
-      <span>{value ?? "–"}</span>
-      {side === "away" && isLeader ? (
-        <span
-          aria-label={`${statKey} away leader`}
-          className="size-2 rounded-full"
-          data-testid={`mlb-team-stat-${statKey}-away`}
-          style={{ backgroundColor: color }}
-        />
-      ) : null}
+        >
+          {display}
+        </span>
+      ) : (
+        <span>{display}</span>
+      )}
     </div>
   );
 }
