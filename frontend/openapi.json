@@ -9362,8 +9362,8 @@
               "ppg",
               "rpg",
               "apg",
-              "fg_pct",
-              "fg3_pct"
+              "bpg",
+              "spg"
             ],
             "title": "Key",
             "type": "string"
@@ -9589,6 +9589,17 @@
             "title": "Player Id",
             "type": "string"
           },
+          "plus_minus": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plus Minus"
+          },
           "position": {
             "anyOf": [
               {
@@ -9599,6 +9610,17 @@
               }
             ],
             "title": "Position"
+          },
+          "ppep": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ppep"
           },
           "pts": {
             "anyOf": [
@@ -9621,6 +9643,39 @@
               }
             ],
             "title": "Reb"
+          },
+          "rtg": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rtg"
+          },
+          "sc_eff": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sc Eff"
+          },
+          "sh_eff": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sh Eff"
           },
           "stl": {
             "anyOf": [
@@ -9661,6 +9716,11 @@
           "fg_pct",
           "fg3_pct",
           "ft_pct",
+          "sh_eff",
+          "sc_eff",
+          "ppep",
+          "rtg",
+          "plus_minus",
           "headshot_url"
         ],
         "title": "WnbaTeamRosterRow",

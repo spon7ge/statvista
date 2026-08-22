@@ -3060,7 +3060,7 @@ export interface components {
              * Key
              * @enum {string}
              */
-            key: "ppg" | "rpg" | "apg" | "fg_pct" | "fg3_pct";
+            key: "ppg" | "rpg" | "apg" | "bpg" | "spg";
             /** Label */
             label: string;
             /** Last Name */
@@ -3120,12 +3120,22 @@ export interface components {
             name: string;
             /** Player Id */
             player_id: string;
+            /** Plus Minus */
+            plus_minus: string | null;
             /** Position */
             position: string | null;
+            /** Ppep */
+            ppep: string | null;
             /** Pts */
             pts: string | null;
             /** Reb */
             reb: string | null;
+            /** Rtg */
+            rtg: string | null;
+            /** Sc Eff */
+            sc_eff: string | null;
+            /** Sh Eff */
+            sh_eff: string | null;
             /** Stl */
             stl: string | null;
             /** To */
