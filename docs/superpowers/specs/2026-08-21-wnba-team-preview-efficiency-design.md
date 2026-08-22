@@ -1,7 +1,7 @@
 # WNBA team-preview leaders + efficiency roster cols
 
 Date: 2026-08-21  
-Status: Approved  
+Status: Implemented  
 Related: Away/Home scheduled tabs (`WnbaTeamPreview`); ESPN byathlete season stats
 
 ## Goal
