@@ -4,7 +4,7 @@ import { GameSection } from "@/shared/ui/GameSection";
 import { teamColor } from "../league/wnbaTeamColors";
 
 type TeamLeaderCard = {
-  key: "ppg" | "rpg" | "apg" | "fg_pct" | "fg3_pct";
+  key: "ppg" | "rpg" | "apg" | "bpg" | "spg";
   label: string;
   rank: number | null;
   value: string;
@@ -29,6 +29,11 @@ type RosterSeasonRow = {
   fgPct: string | null;
   fg3Pct: string | null;
   ftPct: string | null;
+  shEff: string | null;
+  scEff: string | null;
+  ppep: string | null;
+  rtg: string | null;
+  plusMinus: string | null;
 };
 
 type TeamPreviewView = {
@@ -50,6 +55,11 @@ const ROSTER_COLS = [
   "FG%",
   "3P%",
   "FT%",
+  "SH-EFF",
+  "SC-EFF",
+  "PPEP",
+  "RTG",
+  "+/-",
 ] as const;
 
 function mapLeader(
@@ -85,6 +95,11 @@ function mapWnbaTeamPreview(data: ApiWnbaTeamPreviewResponse): TeamPreviewView {
       fgPct: row.fg_pct,
       fg3Pct: row.fg3_pct,
       ftPct: row.ft_pct,
+      shEff: row.sh_eff,
+      scEff: row.sc_eff,
+      ppep: row.ppep,
+      rtg: row.rtg,
+      plusMinus: row.plus_minus,
     })),
   };
 }
@@ -108,10 +123,18 @@ function rosterValues(row: RosterSeasonRow): Array<string | number> {
     cell(row.fgPct),
     cell(row.fg3Pct),
     cell(row.ftPct),
+    cell(row.shEff),
+    cell(row.scEff),
+    cell(row.ppep),
+    cell(row.rtg),
+    cell(row.plusMinus),
   ];
 }
 
 function colWidth(col: string): string {
+  if (col === "SH-EFF" || col === "SC-EFF" || col === "PPEP") {
+    return "w-14 shrink-0";
+  }
   if (col === "MIN" || col === "FG%" || col === "3P%" || col === "FT%") {
     return "w-12 shrink-0";
   }
