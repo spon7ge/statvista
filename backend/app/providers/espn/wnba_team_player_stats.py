@@ -26,40 +26,37 @@ _LEADER_KEYS: tuple[TeamLeaderKey, ...] = (
     "ppg",
     "rpg",
     "apg",
-    "fg_pct",
-    "fg3_pct",
+    "bpg",
+    "spg",
 )
 _LABEL: dict[TeamLeaderKey, str] = {
     "ppg": "PPG",
     "rpg": "RPG",
     "apg": "APG",
-    "fg_pct": "FG%",
-    "fg3_pct": "3FG%",
+    "bpg": "BPG",
+    "spg": "SPG",
 }
 _VALUE_ATTR: dict[TeamLeaderKey, str] = {
     "ppg": "pts_value",
     "rpg": "reb_value",
     "apg": "ast_value",
-    "fg_pct": "fg_pct_value",
-    "fg3_pct": "fg3_pct_value",
+    "bpg": "blk_value",
+    "spg": "stl_value",
 }
 _RANK_ATTR: dict[TeamLeaderKey, str] = {
     "ppg": "pts_rank",
     "rpg": "reb_rank",
     "apg": "ast_rank",
-    "fg_pct": "fg_pct_rank",
-    "fg3_pct": "fg3_pct_rank",
+    "bpg": "blk_rank",
+    "spg": "stl_rank",
 }
 _DISPLAY_ATTR: dict[TeamLeaderKey, str] = {
     "ppg": "pts",
     "rpg": "reb",
     "apg": "ast",
-    "fg_pct": "fg_pct",
-    "fg3_pct": "fg3_pct",
+    "bpg": "blk",
+    "spg": "stl",
 }
-# Avoid tiny-sample shooters topping FG% / 3FG% (e.g. 5–9 MPG).
-_SHOOTING_LEADER_KEYS: frozenset[TeamLeaderKey] = frozenset({"fg_pct", "fg3_pct"})
-_MIN_MPG_FOR_SHOOTING_LEADERS = 15.0
 _ATHLETE_ID_RE = re.compile(r"/athletes/(\d+)")
 
 
@@ -90,13 +87,22 @@ class PlayerSeasonStats:
     pts_value: float | None = None
     reb_value: float | None = None
     ast_value: float | None = None
+    stl_value: float | None = None
+    blk_value: float | None = None
     fg_pct_value: float | None = None
     fg3_pct_value: float | None = None
     pts_rank: int | None = None
     reb_rank: int | None = None
     ast_rank: int | None = None
+    stl_rank: int | None = None
+    blk_rank: int | None = None
     fg_pct_rank: int | None = None
     fg3_pct_rank: int | None = None
+    sh_eff: str | None = None
+    sc_eff: str | None = None
+    ppep: str | None = None
+    rtg: str | None = None
+    plus_minus: str | None = None
 
 
 def _headshot_url(athlete: dict[str, Any]) -> str | None:
@@ -227,13 +233,22 @@ def _stats_from_flat(flat: dict[str, dict[str, Any]]) -> PlayerSeasonStats:
         pts_value=_as_float((flat.get("avgPoints") or {}).get("value")),
         reb_value=_as_float((flat.get("avgRebounds") or {}).get("value")),
         ast_value=_as_float((flat.get("avgAssists") or {}).get("value")),
+        stl_value=_as_float((flat.get("avgSteals") or {}).get("value")),
+        blk_value=_as_float((flat.get("avgBlocks") or {}).get("value")),
         fg_pct_value=_as_float((flat.get("fieldGoalPct") or {}).get("value")),
         fg3_pct_value=_as_float((fg3 or {}).get("value")),
         pts_rank=_as_int((flat.get("avgPoints") or {}).get("rank")),
         reb_rank=_as_int((flat.get("avgRebounds") or {}).get("rank")),
         ast_rank=_as_int((flat.get("avgAssists") or {}).get("rank")),
+        stl_rank=_as_int((flat.get("avgSteals") or {}).get("rank")),
+        blk_rank=_as_int((flat.get("avgBlocks") or {}).get("rank")),
         fg_pct_rank=_as_int((flat.get("fieldGoalPct") or {}).get("rank")),
         fg3_pct_rank=_as_int((fg3 or {}).get("rank")),
+        sh_eff=_display(flat.get("shootingEfficiency")),
+        sc_eff=_display(flat.get("scoringEfficiency")),
+        ppep=_display(flat.get("pointsPerEstimatedPossessions")),
+        rtg=_display(flat.get("NBARating")),
+        plus_minus=_display(flat.get("plusMinus")),
     )
 
 
@@ -281,6 +296,11 @@ def merge_roster_rows(
                 fg_pct=stats.fg_pct,
                 fg3_pct=stats.fg3_pct,
                 ft_pct=stats.ft_pct,
+                sh_eff=stats.sh_eff,
+                sc_eff=stats.sc_eff,
+                ppep=stats.ppep,
+                rtg=stats.rtg,
+                plus_minus=stats.plus_minus,
                 headshot_url=athlete.headshot_url,
             )
         )
@@ -300,10 +320,7 @@ def build_team_leaders(
     rows: list[WnbaTeamRosterRow],
     stats_by_id: dict[str, PlayerSeasonStats],
 ) -> list[WnbaTeamLeaderCard]:
-    """Pick team PPG / RPG / APG / FG% / 3FG% leaders from joined roster rows.
-
-    FG% / 3FG% require avg minutes >= `_MIN_MPG_FOR_SHOOTING_LEADERS`.
-    """
+    """Pick team PPG / RPG / APG / BPG / SPG leaders from joined roster rows."""
     by_id = {row.player_id: row for row in rows}
     cards: list[WnbaTeamLeaderCard] = []
     for key in _LEADER_KEYS:
@@ -315,10 +332,6 @@ def build_team_leaders(
         for player_id, stats in stats_by_id.items():
             if player_id not in by_id:
                 continue
-            if key in _SHOOTING_LEADER_KEYS:
-                mpg = stats.min_value
-                if mpg is None or mpg < _MIN_MPG_FOR_SHOOTING_LEADERS:
-                    continue
             value = getattr(stats, value_attr)
             if value is None:
                 continue

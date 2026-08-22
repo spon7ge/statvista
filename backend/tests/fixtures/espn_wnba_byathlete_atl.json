@@ -12,12 +12,14 @@
               {
                 "name": "avgBlocks",
                 "displayValue": "0.4",
-                "value": 0.41935483
+                "value": 0.41935483,
+                "rank": 42
               },
               {
                 "name": "avgSteals",
                 "displayValue": "1.4",
-                "value": 1.3870968
+                "value": 1.3870968,
+                "rank": 8
               }
             ]
           },
@@ -38,12 +40,37 @@
                 "name": "gamesPlayed",
                 "displayValue": "31",
                 "value": 31.0
+              },
+              {
+                "name": "NBARating",
+                "displayValue": "112.3",
+                "value": 112.3
+              },
+              {
+                "name": "plusMinus",
+                "displayValue": "+3.2",
+                "value": 3.2
               }
             ]
           },
           {
             "name": "offensive",
             "stats": [
+              {
+                "name": "shootingEfficiency",
+                "displayValue": "1.12",
+                "value": 1.12
+              },
+              {
+                "name": "scoringEfficiency",
+                "displayValue": "1.05",
+                "value": 1.05
+              },
+              {
+                "name": "pointsPerEstimatedPossessions",
+                "displayValue": "0.98",
+                "value": 0.98
+              },
               {
                 "name": "fieldGoalPct",
                 "displayValue": "45.6",
@@ -97,12 +124,14 @@
               {
                 "name": "avgBlocks",
                 "displayValue": "0.9",
-                "value": 0.93333334
+                "value": 0.93333334,
+                "rank": 18
               },
               {
                 "name": "avgSteals",
                 "displayValue": "2.3",
-                "value": 2.3333333
+                "value": 2.3333333,
+                "rank": 2
               }
             ]
           },
