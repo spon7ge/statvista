@@ -1,0 +1,3423 @@
+{
+  "source": "novig",
+  "fetched_at": "2026-08-19T20:29:48-07:00",
+  "league": "mlb",
+  "snapshot_kind": "props",
+  "games": [
+    {
+      "event_id": "01a01616-aa7b-7e62-a7c8-a4e7781f0991",
+      "name": "Los Angeles Dodgers @ Colorado Rockies",
+      "scheduled": "2026-08-20T00:40:00+00:00",
+      "status": "live",
+      "competitors": [
+        {
+          "id": "63d07ea8-8cab-4d81-9616-a35d586f0b63",
+          "name": "Colorado Rockies",
+          "seq": 0
+        },
+        {
+          "id": "27c001ab-1b6e-4a67-9b10-db41a0770f24",
+          "name": "Los Angeles Dodgers",
+          "seq": 1
+        }
+      ],
+      "props": []
+    },
+    {
+      "event_id": "01a01af1-a934-74f3-ad5d-0314485fdd04",
+      "name": "St. Louis Cardinals @ Cincinnati Reds",
+      "scheduled": "2026-08-20T16:40:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "686bf033-ca28-4581-af2e-2f63eab6c40e",
+          "name": "Cincinnati Reds",
+          "seq": 0
+        },
+        {
+          "id": "56efe53d-3dfc-4892-8f46-98441fd95427",
+          "name": "St. Louis Cardinals",
+          "seq": 1
+        }
+      ],
+      "props": [
+        {
+          "player": "Bryan Torres",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -138,
+            "stake": 100.0
+          },
+          "under": null,
+          "market_id": "01a01d2a-4af1-7060-93b1-d2ace648554d",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Jordan Walker",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -257,
+            "stake": 1500.0
+          },
+          "under": null,
+          "market_id": "01a01d2a-4af1-7060-93b1-d33ebe370390",
+          "sub_type": "hits",
+          "is_main": false
+        },
+        {
+          "player": "Ivan Herrera",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -270,
+            "stake": 1500.0
+          },
+          "under": null,
+          "market_id": "01a01d2a-4af2-7df0-8c21-e24dda81fb08",
+          "sub_type": "hits",
+          "is_main": false
+        },
+        {
+          "player": "Ivan Herrera",
+          "stat": "hits",
+          "line": 1.5,
+          "over": {
+            "american": 174,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01cf8-9663-7bd1-b308-6ef9b734ea62",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "JJ Wetherholt",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -285,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01d2a-4af2-7df0-8c21-e27aa77d07dd",
+          "sub_type": "hits",
+          "is_main": false
+        },
+        {
+          "player": "JJ Wetherholt",
+          "stat": "hits",
+          "line": 1.5,
+          "over": {
+            "american": 199,
+            "stake": 900.0
+          },
+          "under": null,
+          "market_id": "01a01cf8-9661-7510-b7e3-7a33a338ed2d",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Elly De La Cruz",
+          "stat": "total_bases",
+          "line": 1.5,
+          "over": {
+            "american": 113,
+            "stake": 800.0
+          },
+          "under": {
+            "american": -167,
+            "stake": 400.0
+          },
+          "market_id": "01a01cf8-962a-7da0-91df-695a2dc01bcb",
+          "sub_type": "total_bases",
+          "is_main": true
+        },
+        {
+          "player": "JJ Wetherholt",
+          "stat": "total_bases",
+          "line": 1.5,
+          "over": {
+            "american": 111,
+            "stake": 800.0
+          },
+          "under": {
+            "american": -156,
+            "stake": 400.0
+          },
+          "market_id": "01a01cf8-962b-7142-8d64-b9006a60db07",
+          "sub_type": "total_bases",
+          "is_main": true
+        },
+        {
+          "player": "Ivan Herrera",
+          "stat": "total_bases",
+          "line": 1.5,
+          "over": {
+            "american": 122,
+            "stake": 800.0
+          },
+          "under": {
+            "american": -178,
+            "stake": 400.0
+          },
+          "market_id": "01a01cf8-962b-7142-8d64-b93b2e6f5faf",
+          "sub_type": "total_bases",
+          "is_main": true
+        },
+        {
+          "player": "Eugenio Suarez",
+          "stat": "total_bases",
+          "line": 1.5,
+          "over": {
+            "american": 133,
+            "stake": 800.0
+          },
+          "under": {
+            "american": -186,
+            "stake": 400.0
+          },
+          "market_id": "01a01cf8-962b-7142-8d64-b96cfe777781",
+          "sub_type": "total_bases",
+          "is_main": true
+        },
+        {
+          "player": "Alec Burleson",
+          "stat": "total_bases",
+          "line": 1.5,
+          "over": {
+            "american": -125,
+            "stake": 800.0
+          },
+          "under": {
+            "american": -120,
+            "stake": 400.0
+          },
+          "market_id": "01a01cf8-962b-7142-8d64-b996e3ce6de2",
+          "sub_type": "total_bases",
+          "is_main": true
+        },
+        {
+          "player": "JJ Bleday",
+          "stat": "total_bases",
+          "line": 1.5,
+          "over": {
+            "american": 117,
+            "stake": 800.0
+          },
+          "under": {
+            "american": -167,
+            "stake": 400.0
+          },
+          "market_id": "01a01cf8-962b-7142-8d64-b9c5f982addd",
+          "sub_type": "total_bases",
+          "is_main": true
+        },
+        {
+          "player": "Sal Stewart",
+          "stat": "total_bases",
+          "line": 1.5,
+          "over": {
+            "american": 117,
+            "stake": 800.0
+          },
+          "under": {
+            "american": -163,
+            "stake": 400.0
+          },
+          "market_id": "01a01cf8-962b-7142-8d64-b9f979431418",
+          "sub_type": "total_bases",
+          "is_main": true
+        },
+        {
+          "player": "Jordan Walker",
+          "stat": "total_bases",
+          "line": 1.5,
+          "over": {
+            "american": 113,
+            "stake": 800.0
+          },
+          "under": {
+            "american": -160,
+            "stake": 400.0
+          },
+          "market_id": "01a01cf8-962b-7142-8d64-ba29e21550a5",
+          "sub_type": "total_bases",
+          "is_main": true
+        },
+        {
+          "player": "Joshua Baez",
+          "stat": "total_bases",
+          "line": 1.5,
+          "over": {
+            "american": 130,
+            "stake": 800.0
+          },
+          "under": {
+            "american": -190,
+            "stake": 400.0
+          },
+          "market_id": "01a01cf8-962c-7ae0-a4d8-1c05e40bf226",
+          "sub_type": "total_bases",
+          "is_main": true
+        },
+        {
+          "player": "Eugenio Suarez",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 160,
+            "stake": 650.0
+          },
+          "under": null,
+          "market_id": "01a01cf8-962e-7153-8673-8dcfbc8f9c31",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Sal Stewart",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 163,
+            "stake": 650.0
+          },
+          "under": null,
+          "market_id": "01a01cf8-962e-7153-8673-8df725fdc3d7",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Nathan Church",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 182,
+            "stake": 650.0
+          },
+          "under": null,
+          "market_id": "01a01cf8-962e-7153-8673-8e24f18bf305",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Ivan Herrera",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 174,
+            "stake": 650.0
+          },
+          "under": null,
+          "market_id": "01a01cf8-962e-7153-8673-8e594a38fe8f",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Héctor Rodríguez",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 194,
+            "stake": 650.0
+          },
+          "under": null,
+          "market_id": "01a01cf8-962e-7153-8673-8e85a1a6cdd7",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Ke'Bryan Hayes",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 257,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01cf8-962e-7153-8673-8eb673bcf2f7",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "JJ Bleday",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 144,
+            "stake": 650.0
+          },
+          "under": null,
+          "market_id": "01a01cf8-962f-7230-9743-e9aee04b13a4",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Blaze Jordan",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 208,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01cf8-962f-7230-9743-e9da316a966e",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Masyn Winn",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 212,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01cf8-962f-7230-9743-ea04dd438cf5",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Jordan Walker",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 130,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01cf8-962f-7230-9743-ea3f3e651cc3",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Dane Myers",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 239,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01cf8-962f-7230-9743-ea666361f77b",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Joshua Baez",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 156,
+            "stake": 650.0
+          },
+          "under": null,
+          "market_id": "01a01cf8-962f-7230-9743-ea93178387bc",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Alec Burleson",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 108,
+            "stake": 650.0
+          },
+          "under": null,
+          "market_id": "01a01cf8-962f-7230-9743-eacf27ea2bb6",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Elly De La Cruz",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 153,
+            "stake": 650.0
+          },
+          "under": null,
+          "market_id": "01a01cf8-962f-7230-9743-eafa468957e9",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Nathan Church",
+          "stat": "total_bases",
+          "line": 1.5,
+          "over": {
+            "american": 138,
+            "stake": 800.0
+          },
+          "under": {
+            "american": -190,
+            "stake": 400.0
+          },
+          "market_id": "01a01d11-c42c-7650-90c3-6fc7da0177c2",
+          "sub_type": "total_bases",
+          "is_main": true
+        },
+        {
+          "player": "JJ Wetherholt",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 174,
+            "stake": 650.0
+          },
+          "under": null,
+          "market_id": "01a01cf8-9630-7561-b6ba-7a7ee583e801",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Matt McLain",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 212,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01cf8-9630-7561-b6ba-7aa9fec9a100",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Michael McGreevy",
+          "stat": "strikeouts",
+          "line": 3.5,
+          "over": {
+            "american": -376,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01cf8-9635-7763-a72f-b0aa28c80310",
+          "sub_type": "pitcher_strikeouts",
+          "is_main": false
+        },
+        {
+          "player": "Brady Singer",
+          "stat": "strikeouts",
+          "line": 4.5,
+          "over": {
+            "american": 120,
+            "stake": 951.78
+          },
+          "under": {
+            "american": -156,
+            "stake": 1629.22
+          },
+          "market_id": "01a01cf8-9635-7763-a72f-afe2d2ba7d57",
+          "sub_type": "pitcher_strikeouts",
+          "is_main": true
+        },
+        {
+          "player": "Brady Singer",
+          "stat": "strikeouts",
+          "line": 3.5,
+          "over": {
+            "american": -257,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01cf8-9635-7763-a72f-b015fb4ce236",
+          "sub_type": "pitcher_strikeouts",
+          "is_main": false
+        },
+        {
+          "player": "Brady Singer",
+          "stat": "strikeouts",
+          "line": 5.5,
+          "over": {
+            "american": 228,
+            "stake": 750.0
+          },
+          "under": null,
+          "market_id": "01a01cf8-9635-7763-a72f-b04e67d78163",
+          "sub_type": "pitcher_strikeouts",
+          "is_main": false
+        },
+        {
+          "player": "Michael McGreevy",
+          "stat": "strikeouts",
+          "line": 5.5,
+          "over": {
+            "american": 174,
+            "stake": 750.0
+          },
+          "under": {
+            "american": -251,
+            "stake": 877.19
+          },
+          "market_id": "01a01cf8-9636-7bf2-8e6c-437fead50219",
+          "sub_type": "pitcher_strikeouts",
+          "is_main": false
+        },
+        {
+          "player": "Nathan Church",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -208,
+            "stake": 1550.0
+          },
+          "under": null,
+          "market_id": "01a01cf8-9660-7c01-a6d5-32a50fbaf2ff",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Blaze Jordan",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -199,
+            "stake": 1550.0
+          },
+          "under": null,
+          "market_id": "01a01cf8-9660-7c01-a6d5-32da592e2202",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Dane Myers",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -186,
+            "stake": 1550.0
+          },
+          "under": null,
+          "market_id": "01a01cf8-9661-7510-b7e3-797c915b7e16",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Alec Burleson",
+          "stat": "hits",
+          "line": 1.5,
+          "over": {
+            "american": 163,
+            "stake": 1550.0
+          },
+          "under": null,
+          "market_id": "01a01cf8-9661-7510-b7e3-79af80485c03",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Masyn Winn",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -194,
+            "stake": 1550.0
+          },
+          "under": null,
+          "market_id": "01a01cf8-9661-7510-b7e3-79dc232068a8",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Eugenio Suarez",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -194,
+            "stake": 1550.0
+          },
+          "under": null,
+          "market_id": "01a01cf8-9661-7510-b7e3-7a0b383c6fd7",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Elly De La Cruz",
+          "stat": "hits",
+          "line": 1.5,
+          "over": {
+            "american": 199,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01cf8-9661-7510-b7e3-7a66c42693c1",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "JJ Bleday",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -208,
+            "stake": 1550.0
+          },
+          "under": null,
+          "market_id": "01a01cf8-9662-76b0-bd14-43f86ef62ac7",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Joshua Baez",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -213,
+            "stake": 1550.0
+          },
+          "under": null,
+          "market_id": "01a01cf8-9662-76b0-bd14-4421798691f9",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Matt McLain",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -150,
+            "stake": 1550.0
+          },
+          "under": null,
+          "market_id": "01a01cf8-9662-76b0-bd14-445f6f8bad00",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Ke'Bryan Hayes",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -133,
+            "stake": 1550.0
+          },
+          "under": null,
+          "market_id": "01a01cf8-9662-76b0-bd14-44861072762a",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Jordan Walker",
+          "stat": "hits",
+          "line": 1.5,
+          "over": {
+            "american": 186,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01cf8-9662-76b0-bd14-44ba14fb44f4",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Héctor Rodríguez",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -167,
+            "stake": 1550.0
+          },
+          "under": null,
+          "market_id": "01a01cf8-9663-7bd1-b308-6f21fa502d1f",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Tyler Stephenson",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 456,
+            "stake": 2100.0
+          },
+          "under": null,
+          "market_id": "01a01d16-ef5d-7633-babb-092a18642821",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Michael McGreevy",
+          "stat": "strikeouts",
+          "line": 4.5,
+          "over": {
+            "american": -100,
+            "stake": 4610.11
+          },
+          "under": {
+            "american": -108,
+            "stake": 2633.12
+          },
+          "market_id": "01a01cf8-9635-7763-a72f-b07300956de9",
+          "sub_type": "pitcher_strikeouts",
+          "is_main": true
+        },
+        {
+          "player": "Blaze Jordan",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 852,
+            "stake": 2450.0
+          },
+          "under": null,
+          "market_id": "01a01cfb-501c-7430-a1e8-23d5c25df3d0",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Jordan Walker",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 388,
+            "stake": 2650.0
+          },
+          "under": null,
+          "market_id": "01a01cfb-501c-7430-a1e8-28bdd3a00f17",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Ivan Herrera",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 545,
+            "stake": 2550.0
+          },
+          "under": null,
+          "market_id": "01a01cfb-501c-7430-a1e8-28ea23bebc72",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Joshua Baez",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 388,
+            "stake": 2650.0
+          },
+          "under": null,
+          "market_id": "01a01cfb-501c-7430-a1e8-2c40626113a5",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "JJ Bleday",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 355,
+            "stake": 2700.0
+          },
+          "under": null,
+          "market_id": "01a01cfb-501c-7430-a1e8-2d97ad5af9a4",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Nathan Church",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 545,
+            "stake": 2550.0
+          },
+          "under": null,
+          "market_id": "01a01cfb-501c-7430-a1e8-2e25127ae0ce",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Dane Myers",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 953,
+            "stake": 2480.0
+          },
+          "under": null,
+          "market_id": "01a01cfb-501c-7430-a1e8-2e85bdbc7af0",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Elly De La Cruz",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 317,
+            "stake": 2750.0
+          },
+          "under": null,
+          "market_id": "01a01cfb-501c-7430-a1e8-2ee136f9b93b",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Matt McLain",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 590,
+            "stake": 2500.0
+          },
+          "under": null,
+          "market_id": "01a01cfb-501c-7430-a1e8-2f40781b45b0",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Sal Stewart",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 441,
+            "stake": 2400.0
+          },
+          "under": null,
+          "market_id": "01a01cfb-501c-7430-a1e8-2fa8e2c10551",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "JJ Wetherholt",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 413,
+            "stake": 2650.0
+          },
+          "under": null,
+          "market_id": "01a01cfb-501c-7430-a1e8-30687439ef1e",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Héctor Rodríguez",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 614,
+            "stake": 2500.0
+          },
+          "under": null,
+          "market_id": "01a01cfb-501c-7430-a1e8-312fc0640e37",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Masyn Winn",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 900,
+            "stake": 2400.0
+          },
+          "under": null,
+          "market_id": "01a01cfb-501c-7430-a1e8-327641fd976f",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Eugenio Suarez",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 355,
+            "stake": 2700.0
+          },
+          "under": null,
+          "market_id": "01a01cfb-501c-7430-a1e8-32ad3f3989fb",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Alec Burleson",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 264,
+            "stake": 2900.0
+          },
+          "under": null,
+          "market_id": "01a01cfb-501c-7430-a1e8-32d5c8d48a64",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Ke'Bryan Hayes",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 1011,
+            "stake": 2480.0
+          },
+          "under": null,
+          "market_id": "01a01cfb-501c-7430-a1e8-35457556b423",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Sal Stewart",
+          "stat": "hits",
+          "line": 1.5,
+          "over": {
+            "american": 170,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01cf8-9662-76b0-bd14-43c73b3d09b1",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Tyler Stephenson",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -208,
+            "stake": 1550.0
+          },
+          "under": null,
+          "market_id": "01a01cfe-14d3-7fa2-bcd3-08084fcfaece",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Tyler Stephenson",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 170,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01cfe-14d4-7061-93a5-6196316161a7",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Tyler Stephenson",
+          "stat": "total_bases",
+          "line": 1.5,
+          "over": {
+            "american": 127,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01cfe-1505-7762-b497-5bbe189eb139",
+          "sub_type": "total_bases",
+          "is_main": true
+        }
+      ]
+    },
+    {
+      "event_id": "01a01b0d-0148-7f21-84df-d598462a7450",
+      "name": "San Francisco Giants @ Cleveland Guardians",
+      "scheduled": "2026-08-20T17:10:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "36ad1bcc-d30f-40e5-8c8b-35aa977095ae",
+          "name": "Cleveland Guardians",
+          "seq": 0
+        },
+        {
+          "id": "4e99ae20-f3b7-4316-bc87-09b06c99f6f4",
+          "name": "San Francisco Giants",
+          "seq": 1
+        }
+      ],
+      "props": [
+        {
+          "player": "Landen Roupp",
+          "stat": "strikeouts",
+          "line": 4.5,
+          "over": {
+            "american": 102,
+            "stake": 259.5
+          },
+          "under": {
+            "american": -144,
+            "stake": 150.0
+          },
+          "market_id": "01a01d1c-3f62-7e22-960d-16792d42ddea",
+          "sub_type": "pitcher_strikeouts",
+          "is_main": true
+        },
+        {
+          "player": "Willy Adames",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -167,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01d1d-7986-7310-8ef0-c0a9dd096ec4",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Christian Koss",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -141,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01d1d-7986-7310-8ef0-c0d01d407e2a",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Rafael Devers",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -182,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01d1d-7986-7310-8ef0-c10a003522bd",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Drew Gilbert",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -153,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01d1d-7986-7310-8ef0-c13bb2047071",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Travis Bazzana",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -182,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01d1d-7986-7310-8ef0-c167b4afdf59",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Jo Adell",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -213,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01d1d-7986-7310-8ef0-c194d25ec482",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Victor Bericoto",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -156,
+            "stake": 1150.0
+          },
+          "under": null,
+          "market_id": "01a01d1d-7987-7e12-9209-bbb262d879af",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Steven Kwan",
+          "stat": "hits",
+          "line": 1.5,
+          "over": {
+            "american": 178,
+            "stake": 50.0
+          },
+          "under": null,
+          "market_id": "01a01d1d-7987-7e12-9209-bbef603f164c",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Osleivis Basabe",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -167,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01d1d-7987-7e12-9209-bc17961e1e65",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Jose Ramirez",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -277,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01d1d-7987-7e12-9209-bc4624b6a78c",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Nathaniel Lowe",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -228,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01d1d-7988-78c3-be8c-b074798d4e50",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Jung Hoo Lee",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -245,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01d1d-7988-78c3-be8c-b0d8bf616027",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Brayan Rocchio",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -182,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01d1d-7988-78c3-be8c-b10da2c800c6",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Bryce Eldridge",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -153,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01d1d-7988-78c3-be8c-b1305ee3827a",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Jose Ramirez",
+          "stat": "total_bases",
+          "line": 1.5,
+          "over": {
+            "american": 117,
+            "stake": 400.0
+          },
+          "under": {
+            "american": -182,
+            "stake": 400.0
+          },
+          "market_id": "01a01d1d-79a5-7f91-9e8b-cbc3bed4aa17",
+          "sub_type": "total_bases",
+          "is_main": true
+        },
+        {
+          "player": "Jung Hoo Lee",
+          "stat": "total_bases",
+          "line": 1.5,
+          "over": {
+            "american": 127,
+            "stake": 400.0
+          },
+          "under": {
+            "american": -199,
+            "stake": 400.0
+          },
+          "market_id": "01a01d1d-79a5-7f91-9e8b-cc2554f2872d",
+          "sub_type": "total_bases",
+          "is_main": true
+        },
+        {
+          "player": "Steven Kwan",
+          "stat": "total_bases",
+          "line": 1.5,
+          "over": {
+            "american": 108,
+            "stake": 400.0
+          },
+          "under": {
+            "american": -167,
+            "stake": 400.0
+          },
+          "market_id": "01a01d1d-79a6-7ca3-9f38-c750937a1d39",
+          "sub_type": "total_bases",
+          "is_main": true
+        },
+        {
+          "player": "Gavin Williams",
+          "stat": "strikeouts",
+          "line": 6.5,
+          "over": null,
+          "under": {
+            "american": 117,
+            "stake": 1566.93
+          },
+          "market_id": "01a01d1c-3f62-7e22-960d-15e5f1dc9dee",
+          "sub_type": "pitcher_strikeouts",
+          "is_main": true
+        }
+      ]
+    },
+    {
+      "event_id": "01a01b0d-0199-74b3-8caf-95ad867951ef",
+      "name": "Toronto Blue Jays @ Tampa Bay Rays",
+      "scheduled": "2026-08-20T17:10:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "ed06a009-1c69-427b-ab44-81ffb7f1f751",
+          "name": "Tampa Bay Rays",
+          "seq": 0
+        },
+        {
+          "id": "1ffe4749-9868-4bdd-b460-1c8b378affc7",
+          "name": "Toronto Blue Jays",
+          "seq": 1
+        }
+      ],
+      "props": []
+    },
+    {
+      "event_id": "01a01b28-9c60-7d52-a821-1deedbb7a160",
+      "name": "Seattle Mariners @ Milwaukee Brewers",
+      "scheduled": "2026-08-20T18:10:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "eb0c9d78-6082-4527-9b70-44f68de884a1",
+          "name": "Milwaukee Brewers",
+          "seq": 0
+        },
+        {
+          "id": "e189f0cd-a983-4455-bcad-4769daea281a",
+          "name": "Seattle Mariners",
+          "seq": 1
+        }
+      ],
+      "props": [
+        {
+          "player": "George Kirby",
+          "stat": "strikeouts",
+          "line": 4.5,
+          "over": null,
+          "under": {
+            "american": 111,
+            "stake": 211.43
+          },
+          "market_id": "01a01d2b-5bb9-7dd3-a4e1-5082938cb5ce",
+          "sub_type": "pitcher_strikeouts",
+          "is_main": true
+        },
+        {
+          "player": "Dominic Canzone",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -199,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01d2c-209a-7813-be8e-6c0f3120f9ea",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Josh Naylor",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -199,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01d2c-209a-7813-be8e-6c38e620637b",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Brock Rodden",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -138,
+            "stake": 450.0
+          },
+          "under": null,
+          "market_id": "01a01d2c-209a-7813-be8e-6c673f39dc23",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Christian Yelich",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -213,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01d2c-209b-7893-b9b0-44bc692c8a25",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Taylor Ward",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -245,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01d2c-209b-7893-b9b0-44ecde0be2aa",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Julio Rodriguez",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -264,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01d2c-209b-7893-b9b0-45141b5e6b39",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Randy Arozarena",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -270,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01d2c-209b-7893-b9b0-454936518d7d",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Brice Turang",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -285,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01d2c-209b-7893-b9b0-4571b899e7f1",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "William Contreras",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -257,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01d2c-209c-73d2-8436-63c5a707dc01",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Garrett Mitchell",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -182,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01d2c-209c-73d2-8436-63fe67610134",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Weston Wilson",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -125,
+            "stake": 50.0
+          },
+          "under": null,
+          "market_id": "01a01d2c-209c-73d2-8436-64256dc84c19",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "David Hamilton",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -127,
+            "stake": 50.0
+          },
+          "under": null,
+          "market_id": "01a01d2c-209c-73d2-8436-645e44df82ce",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Jake Bauers",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -228,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01d2c-209d-7c92-99f6-a91441b6b469",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Jackson Chourio",
+          "stat": "hits",
+          "line": 1.5,
+          "over": {
+            "american": 186,
+            "stake": 50.0
+          },
+          "under": null,
+          "market_id": "01a01d2c-209d-7c92-99f6-a947342c18f8",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Julio Rodriguez",
+          "stat": "total_bases",
+          "line": 1.5,
+          "over": {
+            "american": 111,
+            "stake": 400.0
+          },
+          "under": {
+            "american": -170,
+            "stake": 400.0
+          },
+          "market_id": "01a01d2c-20a3-76e2-bc08-6ed1ba048fac",
+          "sub_type": "total_bases",
+          "is_main": true
+        },
+        {
+          "player": "Jackson Chourio",
+          "stat": "total_bases",
+          "line": 1.5,
+          "over": {
+            "american": 106,
+            "stake": 400.0
+          },
+          "under": {
+            "american": -163,
+            "stake": 400.0
+          },
+          "market_id": "01a01d2c-20a4-7f92-9df4-d00d402f3b3f",
+          "sub_type": "total_bases",
+          "is_main": true
+        },
+        {
+          "player": "Randy Arozarena",
+          "stat": "total_bases",
+          "line": 1.5,
+          "over": {
+            "american": 115,
+            "stake": 400.0
+          },
+          "under": {
+            "american": -178,
+            "stake": 400.0
+          },
+          "market_id": "01a01d2c-20a4-7f92-9df4-d037559a1067",
+          "sub_type": "total_bases",
+          "is_main": true
+        },
+        {
+          "player": "Taylor Ward",
+          "stat": "total_bases",
+          "line": 1.5,
+          "over": {
+            "american": 117,
+            "stake": 400.0
+          },
+          "under": {
+            "american": -182,
+            "stake": 400.0
+          },
+          "market_id": "01a01d2c-20a5-7982-a559-1635dbd9056f",
+          "sub_type": "total_bases",
+          "is_main": true
+        },
+        {
+          "player": "Brice Turang",
+          "stat": "total_bases",
+          "line": 1.5,
+          "over": {
+            "american": 113,
+            "stake": 400.0
+          },
+          "under": {
+            "american": -174,
+            "stake": 400.0
+          },
+          "market_id": "01a01d2c-20a5-7982-a559-169ce9443ebc",
+          "sub_type": "total_bases",
+          "is_main": true
+        },
+        {
+          "player": "William Contreras",
+          "stat": "total_bases",
+          "line": 1.5,
+          "over": {
+            "american": 130,
+            "stake": 400.0
+          },
+          "under": {
+            "american": -203,
+            "stake": 400.0
+          },
+          "market_id": "01a01d2c-20a5-7982-a559-172e13689161",
+          "sub_type": "total_bases",
+          "is_main": true
+        },
+        {
+          "player": "Robert Gasser",
+          "stat": "strikeouts",
+          "line": 4.5,
+          "over": null,
+          "under": {
+            "american": 115,
+            "stake": 288.54
+          },
+          "market_id": "01a01d2b-5bb8-7850-b188-ba594eaa8864",
+          "sub_type": "pitcher_strikeouts",
+          "is_main": true
+        }
+      ]
+    },
+    {
+      "event_id": "01a01b28-9c9d-7542-9356-e4b48e0d8411",
+      "name": "Atlanta Braves @ Chicago White Sox",
+      "scheduled": "2026-08-20T18:10:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "8066c07c-5eea-437d-aa05-62022d079484",
+          "name": "Chicago White Sox",
+          "seq": 0
+        },
+        {
+          "id": "bdad0d95-3eae-45a9-b6c3-8484253cb330",
+          "name": "Atlanta Braves",
+          "seq": 1
+        }
+      ],
+      "props": [
+        {
+          "player": "Anthony Kay",
+          "stat": "strikeouts",
+          "line": 4.5,
+          "over": {
+            "american": 125,
+            "stake": 643.77
+          },
+          "under": {
+            "american": -135,
+            "stake": 742.0799999999999
+          },
+          "market_id": "01a01c64-e576-7e23-a5a6-bc2ff2fc0912",
+          "sub_type": "pitcher_strikeouts",
+          "is_main": true
+        },
+        {
+          "player": "Chase Meidroth",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 257,
+            "stake": 250.0
+          },
+          "under": null,
+          "market_id": "01a01c64-e570-7d00-962e-db3268bd7c1e",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Lane Thomas",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 270,
+            "stake": 250.0
+          },
+          "under": null,
+          "market_id": "01a01c64-e570-7d00-962e-db6720e814a0",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Michael Harris II",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 170,
+            "stake": 250.0
+          },
+          "under": null,
+          "market_id": "01a01c64-e571-70f1-9bd0-7e2a48f6ff55",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Braden Montgomery",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 194,
+            "stake": 250.0
+          },
+          "under": null,
+          "market_id": "01a01c64-e571-70f1-9bd0-7dc326c06aa2",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Tristan Peters",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 270,
+            "stake": 250.0
+          },
+          "under": null,
+          "market_id": "01a01c64-e571-70f1-9bd0-7df23aeef749",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Colson Montgomery",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 178,
+            "stake": 250.0
+          },
+          "under": null,
+          "market_id": "01a01c64-e572-74b1-a931-8d550190db60",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Drew Romo",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 245,
+            "stake": 250.0
+          },
+          "under": null,
+          "market_id": "01a01c64-e572-74b1-a931-8d8f9ea53ff1",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Matt Olson",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 160,
+            "stake": 327.0
+          },
+          "under": null,
+          "market_id": "01a01c64-e572-74b1-a931-8e443030ee86",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Anthony Kay",
+          "stat": "strikeouts",
+          "line": 3.5,
+          "over": {
+            "american": -239,
+            "stake": 473.0
+          },
+          "under": null,
+          "market_id": "01a01c64-e576-7e23-a5a6-bc5b451e0c2f",
+          "sub_type": "pitcher_strikeouts",
+          "is_main": false
+        },
+        {
+          "player": "Anthony Kay",
+          "stat": "strikeouts",
+          "line": 5.5,
+          "over": {
+            "american": 212,
+            "stake": 473.0
+          },
+          "under": null,
+          "market_id": "01a01c64-e576-7e23-a5a6-bc8295a9ddf4",
+          "sub_type": "pitcher_strikeouts",
+          "is_main": false
+        },
+        {
+          "player": "Drake Baldwin",
+          "stat": "total_bases",
+          "line": 1.5,
+          "over": {
+            "american": 127,
+            "stake": 750.0
+          },
+          "under": {
+            "american": -182,
+            "stake": 400.0
+          },
+          "market_id": "01a01c64-e5a8-7ff2-8c52-01428888f052",
+          "sub_type": "total_bases",
+          "is_main": true
+        },
+        {
+          "player": "Mauricio Dubon",
+          "stat": "total_bases",
+          "line": 1.5,
+          "over": {
+            "american": 138,
+            "stake": 750.0
+          },
+          "under": null,
+          "market_id": "01a01c64-e5a9-7da0-9ee8-cd991c893546",
+          "sub_type": "total_bases",
+          "is_main": true
+        },
+        {
+          "player": "Ozzie Albies",
+          "stat": "total_bases",
+          "line": 1.5,
+          "over": {
+            "american": 120,
+            "stake": 750.0
+          },
+          "under": {
+            "american": -178,
+            "stake": 400.0
+          },
+          "market_id": "01a01c64-e5a9-7da0-9ee8-cdce7162a821",
+          "sub_type": "total_bases",
+          "is_main": true
+        },
+        {
+          "player": "Michael Harris II",
+          "stat": "total_bases",
+          "line": 1.5,
+          "over": {
+            "american": 141,
+            "stake": 750.0
+          },
+          "under": {
+            "american": -203,
+            "stake": 400.0
+          },
+          "market_id": "01a01c64-e5a9-7da0-9ee8-ce579e22ef1b",
+          "sub_type": "total_bases",
+          "is_main": true
+        },
+        {
+          "player": "Braden Montgomery",
+          "stat": "total_bases",
+          "line": 1.5,
+          "over": {
+            "american": 135,
+            "stake": 250.0
+          },
+          "under": null,
+          "market_id": "01a01c64-e5aa-78f1-b045-5934f058679b",
+          "sub_type": "total_bases",
+          "is_main": true
+        },
+        {
+          "player": "Miguel Vargas",
+          "stat": "total_bases",
+          "line": 1.5,
+          "over": {
+            "american": 117,
+            "stake": 750.0
+          },
+          "under": {
+            "american": -167,
+            "stake": 400.0
+          },
+          "market_id": "01a01c64-e5aa-78f1-b045-5993c70eeeb7",
+          "sub_type": "total_bases",
+          "is_main": true
+        },
+        {
+          "player": "Ronald Acuna Jr.",
+          "stat": "total_bases",
+          "line": 1.5,
+          "over": {
+            "american": 104,
+            "stake": 826.0
+          },
+          "under": {
+            "american": -153,
+            "stake": 475.0
+          },
+          "market_id": "01a01c64-e5ab-76b2-b9de-6b91b956bdc4",
+          "sub_type": "total_bases",
+          "is_main": true
+        },
+        {
+          "player": "Drew Romo",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -106,
+            "stake": 650.0
+          },
+          "under": null,
+          "market_id": "01a01c64-e5ab-76b2-b9de-6c27d60cd3fd",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Tristan Peters",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -144,
+            "stake": 650.0
+          },
+          "under": null,
+          "market_id": "01a01c64-e5ab-76b2-b9de-6c59039e99e2",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Braden Montgomery",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -223,
+            "stake": 650.0
+          },
+          "under": null,
+          "market_id": "01a01c64-e5ab-76b2-b9de-6c8e453a7b63",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Munetaka Murakami",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -190,
+            "stake": 650.0
+          },
+          "under": null,
+          "market_id": "01a01c64-e5ac-7e92-942d-a3114114fa77",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Mauricio Dubon",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -251,
+            "stake": 1100.0
+          },
+          "under": null,
+          "market_id": "01a01c64-e5ac-7e92-942d-a349107b21b1",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Matt Olson",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -199,
+            "stake": 726.0
+          },
+          "under": null,
+          "market_id": "01a01c64-e5ac-7e92-942d-a3a75cb5b498",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Sam Antonacci",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -208,
+            "stake": 650.0
+          },
+          "under": null,
+          "market_id": "01a01c64-e5ac-7e92-942d-a3dff017fc90",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Miguel Vargas",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -245,
+            "stake": 650.0
+          },
+          "under": null,
+          "market_id": "01a01c64-e5ad-7571-9d9c-89aae2078ceb",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Lane Thomas",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -153,
+            "stake": 650.0
+          },
+          "under": null,
+          "market_id": "01a01c64-e5ad-7571-9d9c-89d45ce4dd9b",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Austin Riley",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -163,
+            "stake": 650.0
+          },
+          "under": null,
+          "market_id": "01a01c64-e5ad-7571-9d9c-8a0a69fdc1d8",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Colson Montgomery",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -167,
+            "stake": 650.0
+          },
+          "under": null,
+          "market_id": "01a01c64-e5ad-7571-9d9c-8a36cda873c6",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Andrew Benintendi",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -178,
+            "stake": 650.0
+          },
+          "under": null,
+          "market_id": "01a01c64-e5ad-7571-9d9c-8a64d0cf22eb",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Sean Murphy",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -115,
+            "stake": 650.0
+          },
+          "under": null,
+          "market_id": "01a01c64-e5ad-7571-9d9c-8a9ccd0d3b89",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Chase Meidroth",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -178,
+            "stake": 650.0
+          },
+          "under": null,
+          "market_id": "01a01c64-e5ae-7201-8691-54ca6196a8b1",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Ozzie Albies",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -285,
+            "stake": 650.0
+          },
+          "under": null,
+          "market_id": "01a01c64-e5ae-7201-8691-54f561282674",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Michael Harris II",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -213,
+            "stake": 650.0
+          },
+          "under": null,
+          "market_id": "01a01c64-e5ae-7201-8691-555bd06d0b8a",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Grant Holmes",
+          "stat": "strikeouts",
+          "line": 3.5,
+          "over": null,
+          "under": {
+            "american": 120,
+            "stake": 140.92000000000002
+          },
+          "market_id": "01a01c64-e576-7e23-a5a6-bbc049de9200",
+          "sub_type": "pitcher_strikeouts",
+          "is_main": true
+        },
+        {
+          "player": "Grant Holmes",
+          "stat": "strikeouts",
+          "line": 4.5,
+          "over": {
+            "american": 147,
+            "stake": 126.0
+          },
+          "under": null,
+          "market_id": "01a01c64-e576-7e23-a5a6-bb9a8055b1cd",
+          "sub_type": "pitcher_strikeouts",
+          "is_main": false
+        },
+        {
+          "player": "Matt Olson",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 456,
+            "stake": 1896.9
+          },
+          "under": {
+            "american": -567,
+            "stake": 725.67
+          },
+          "market_id": "01a01c72-2aa6-7f40-8c76-044b9652637b",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Austin Riley",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 733,
+            "stake": 1691.71
+          },
+          "under": null,
+          "market_id": "01a01c72-2aa6-7f40-8c76-0625b20a290d",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Tristan Peters",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 953,
+            "stake": 1730.0
+          },
+          "under": null,
+          "market_id": "01a01c72-2aa6-7f40-8c76-07d8758d18b8",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Mauricio Dubon",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 1011,
+            "stake": 1730.0
+          },
+          "under": null,
+          "market_id": "01a01c72-2aa6-7f40-8c76-0a189dfb5ef9",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Ozzie Albies",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 641,
+            "stake": 1750.0
+          },
+          "under": null,
+          "market_id": "01a01c72-2aa6-7f40-8c76-0b980baafc12",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Drew Romo",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 852,
+            "stake": 1650.0
+          },
+          "under": null,
+          "market_id": "01a01c72-2aa6-7f40-8c76-0bff04ca43e1",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Andrew Benintendi",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 567,
+            "stake": 1701.3
+          },
+          "under": null,
+          "market_id": "01a01c72-2aa6-7f40-8c76-0d4f72aeda59",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Chase Meidroth",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 953,
+            "stake": 1730.0
+          },
+          "under": null,
+          "market_id": "01a01c72-2aa6-7f40-8c76-0ef535d2b369",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Ronald Acuna Jr.",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 400,
+            "stake": 2824.0
+          },
+          "under": {
+            "american": -506,
+            "stake": 88.3
+          },
+          "market_id": "01a01c72-2aa6-7f40-8c76-0f2428b9fb3f",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Sam Antonacci",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 809,
+            "stake": 1775.51
+          },
+          "under": null,
+          "market_id": "01a01c72-2aa6-7f40-8c76-0f5cfd878bf8",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Munetaka Murakami",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 365,
+            "stake": 1730.0
+          },
+          "under": null,
+          "market_id": "01a01c72-2aa6-7f40-8c76-1040bdba6261",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Lane Thomas",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 733,
+            "stake": 1775.51
+          },
+          "under": null,
+          "market_id": "01a01c72-2aa6-7f40-8c76-128c6a67c9bc",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Braden Montgomery",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 590,
+            "stake": 1730.0
+          },
+          "under": null,
+          "market_id": "01a01c72-2aa6-7f40-8c76-12bd9f21bc80",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Miguel Vargas",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 488,
+            "stake": 1691.71
+          },
+          "under": {
+            "american": -525,
+            "stake": 1200.75
+          },
+          "market_id": "01a01c72-2aa6-7f40-8c76-13a8ca9c5d53",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Michael Harris II",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 641,
+            "stake": 1650.0
+          },
+          "under": null,
+          "market_id": "01a01c72-2aa6-7f40-8c76-14cd4455569e",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Colson Montgomery",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 400,
+            "stake": 1695.51
+          },
+          "under": {
+            "american": -506,
+            "stake": 30.3
+          },
+          "market_id": "01a01c72-2aa6-7f40-8c76-15e1a35efd99",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Drake Baldwin",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 525,
+            "stake": 1695.51
+          },
+          "under": null,
+          "market_id": "01a01c72-2aa6-7f40-8c76-17370d9edad2",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Sean Murphy",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 669,
+            "stake": 1730.0
+          },
+          "under": null,
+          "market_id": "01a01c72-2aa6-7f40-8c76-188edd2ce4e7",
+          "sub_type": "home_runs",
+          "is_main": true
+        }
+      ]
+    },
+    {
+      "event_id": "01a01b28-9ce6-7103-aa1d-1f0b8aef2c6a",
+      "name": "New York Yankees @ Baltimore Orioles",
+      "scheduled": "2026-08-20T22:35:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "82c244e9-9a6f-4a0b-9b0d-9bb2f714aa8a",
+          "name": "Baltimore Orioles",
+          "seq": 0
+        },
+        {
+          "id": "d13cdd0c-1306-4526-a0ba-91e3af6489f1",
+          "name": "New York Yankees",
+          "seq": 1
+        }
+      ],
+      "props": [
+        {
+          "player": "George Lombard Jr.",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -160,
+            "stake": 1450.0
+          },
+          "under": null,
+          "market_id": "01a01cd0-4faf-7350-b866-5263b1984183",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Trent Grisham",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -233,
+            "stake": 1450.0
+          },
+          "under": null,
+          "market_id": "01a01cd0-4faf-7350-b866-52cc0632aafa",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Colton Cowser",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": 108,
+            "stake": 1450.0
+          },
+          "under": null,
+          "market_id": "01a01cd0-4faf-7350-b866-52ffc75d94cd",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Pete Alonso",
+          "stat": "hits",
+          "line": 1.5,
+          "over": {
+            "american": 217,
+            "stake": 850.0
+          },
+          "under": null,
+          "market_id": "01a01cd0-4faf-7350-b866-532ae02ec1dd",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Leody Taveras",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -160,
+            "stake": 1450.0
+          },
+          "under": null,
+          "market_id": "01a01cd0-4faf-7350-b866-535f7996b430",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Austin Wells",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -108,
+            "stake": 1450.0
+          },
+          "under": null,
+          "market_id": "01a01cd0-4faf-7350-b866-53849e6af20c",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Heliot Ramos",
+          "stat": "hits",
+          "line": 1.5,
+          "over": {
+            "american": 203,
+            "stake": 850.0
+          },
+          "under": null,
+          "market_id": "01a01cd0-4fb0-74c1-bb17-e2ecdd32b7e1",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Jazz Chisholm Jr.",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -174,
+            "stake": 1450.0
+          },
+          "under": null,
+          "market_id": "01a01cd0-4fb0-74c1-bb17-e312c1d2b8cb",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Jackson Holliday",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -182,
+            "stake": 1450.0
+          },
+          "under": null,
+          "market_id": "01a01cd0-4fb0-74c1-bb17-e3460b82c333",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Samuel Basallo",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -170,
+            "stake": 1450.0
+          },
+          "under": null,
+          "market_id": "01a01cd0-4fb0-74c1-bb17-e3771dc09529",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Gunnar Henderson",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -223,
+            "stake": 1450.0
+          },
+          "under": null,
+          "market_id": "01a01cd0-4fb0-74c1-bb17-e3d5acbe6c33",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Dylan Beavers",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -125,
+            "stake": 1450.0
+          },
+          "under": null,
+          "market_id": "01a01cd0-4fb1-73b0-9b44-a43800c0ccd6",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Gerrit Cole",
+          "stat": "strikeouts",
+          "line": 6.5,
+          "over": {
+            "american": -106,
+            "stake": 950.0
+          },
+          "under": {
+            "american": -115,
+            "stake": 3450.5299999999997
+          },
+          "market_id": "01a01c8b-2e65-7343-b71a-eeaad655e7f4",
+          "sub_type": "pitcher_strikeouts",
+          "is_main": true
+        },
+        {
+          "player": "Kyle Bradish",
+          "stat": "strikeouts",
+          "line": 5.5,
+          "over": {
+            "american": -122,
+            "stake": 1932.2400000000002
+          },
+          "under": {
+            "american": -102,
+            "stake": 1667.7000000000003
+          },
+          "market_id": "01a01cd0-4faa-7c30-b141-8be0ae4582c4",
+          "sub_type": "pitcher_strikeouts",
+          "is_main": true
+        },
+        {
+          "player": "Jose Caballero",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 1150,
+            "stake": 1730.0
+          },
+          "under": null,
+          "market_id": "01a01d16-f1aa-78e2-a84f-448fee43859a",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Christian Encarnacion-Strand",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 456,
+            "stake": 1650.0
+          },
+          "under": null,
+          "market_id": "01a01cfb-520b-7622-9a2e-52269d64884d",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Tyler O'Neill",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 471,
+            "stake": 2680.0
+          },
+          "under": null,
+          "market_id": "01a01cfb-520b-7622-9a2e-5883e74ca2b6",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Ryan McMahon",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 525,
+            "stake": 1480.0
+          },
+          "under": null,
+          "market_id": "01a01cfb-520b-7622-9a2e-5f42b14dccfc",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "George Lombard Jr.",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 1011,
+            "stake": 2480.0
+          },
+          "under": null,
+          "market_id": "01a01ce0-0526-76a3-b458-0fd54d2a7852",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Coby Mayo",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 344,
+            "stake": 1496.77
+          },
+          "under": null,
+          "market_id": "01a01ce0-0526-76a3-b458-025e514f229c",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Pete Alonso",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 344,
+            "stake": 2750.0
+          },
+          "under": {
+            "american": -471,
+            "stake": 21.27
+          },
+          "market_id": "01a01ce0-0526-76a3-b458-04fed0247a24",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Leody Taveras",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 770,
+            "stake": 2130.0
+          },
+          "under": null,
+          "market_id": "01a01ce0-0526-76a3-b458-05511c97076e",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Ben Rice",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 365,
+            "stake": 2700.0
+          },
+          "under": null,
+          "market_id": "01a01ce0-0526-76a3-b458-067441d81dcf",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Spencer Jones",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 700,
+            "stake": 2530.0
+          },
+          "under": null,
+          "market_id": "01a01ce0-0526-76a3-b458-082fd2444efa",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Jazz Chisholm Jr.",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 488,
+            "stake": 2550.0
+          },
+          "under": null,
+          "market_id": "01a01ce0-0526-76a3-b458-08b967db0a43",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Austin Wells",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 700,
+            "stake": 2530.0
+          },
+          "under": null,
+          "market_id": "01a01ce0-0526-76a3-b458-091ab47b1b7e",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Colton Cowser",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 669,
+            "stake": 2580.0
+          },
+          "under": null,
+          "market_id": "01a01ce0-0526-76a3-b458-0a0405422d5b",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Luis Garcia Jr.",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 471,
+            "stake": 2600.0
+          },
+          "under": null,
+          "market_id": "01a01ce0-0526-76a3-b458-0c45c0db27d7",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Trent Grisham",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 525,
+            "stake": 2550.0
+          },
+          "under": null,
+          "market_id": "01a01ce0-0526-76a3-b458-0f16fe71a89a",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Dylan Beavers",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 700,
+            "stake": 2530.0
+          },
+          "under": null,
+          "market_id": "01a01ce0-0526-76a3-b458-103429214dc9",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Jackson Holliday",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 700,
+            "stake": 2530.0
+          },
+          "under": null,
+          "market_id": "01a01ce0-0526-76a3-b458-106e0214483d",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Heliot Ramos",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 590,
+            "stake": 2580.0
+          },
+          "under": null,
+          "market_id": "01a01ce0-0526-76a3-b458-112f41da2919",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Gunnar Henderson",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 471,
+            "stake": 2600.0
+          },
+          "under": {
+            "american": -770,
+            "stake": 124.85
+          },
+          "market_id": "01a01ce0-0526-76a3-b458-12db5f824cb4",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Samuel Basallo",
+          "stat": "home_runs",
+          "line": 0.5,
+          "over": {
+            "american": 506,
+            "stake": 2550.0
+          },
+          "under": null,
+          "market_id": "01a01ce0-0526-76a3-b458-13ccdc8f54a5",
+          "sub_type": "home_runs",
+          "is_main": true
+        },
+        {
+          "player": "Gerrit Cole",
+          "stat": "strikeouts",
+          "line": 5.5,
+          "over": {
+            "american": -264,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01c8b-2e65-7343-b71a-eed3c478af08",
+          "sub_type": "pitcher_strikeouts",
+          "is_main": false
+        },
+        {
+          "player": "Gerrit Cole",
+          "stat": "strikeouts",
+          "line": 7.5,
+          "over": {
+            "american": 182,
+            "stake": 650.0
+          },
+          "under": {
+            "american": -251,
+            "stake": 1228.07
+          },
+          "market_id": "01a01c8b-2e65-7343-b71a-ef08d7058c43",
+          "sub_type": "pitcher_strikeouts",
+          "is_main": false
+        },
+        {
+          "player": "Luis Garcia Jr.",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -277,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01cef-639b-7a63-91d5-5cc216f4f5e8",
+          "sub_type": "hits",
+          "is_main": false
+        },
+        {
+          "player": "Luis Garcia Jr.",
+          "stat": "hits",
+          "line": 1.5,
+          "over": {
+            "american": 190,
+            "stake": 850.0
+          },
+          "under": null,
+          "market_id": "01a01cd0-4fb0-74c1-bb17-e3a6ac17cbf5",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Heliot Ramos",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -277,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01cef-639c-7d00-98d1-a1e22daf65ba",
+          "sub_type": "hits",
+          "is_main": false
+        },
+        {
+          "player": "Tyler O'Neill",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -174,
+            "stake": 1450.0
+          },
+          "under": null,
+          "market_id": "01a01cef-639d-7570-b0a7-4187bf586791",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Christian Encarnacion-Strand",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -178,
+            "stake": 600.0
+          },
+          "under": null,
+          "market_id": "01a01cef-639d-7570-b0a7-4215d61a6576",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Pete Alonso",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -264,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01cef-639d-7570-b0a7-4241496bf5dc",
+          "sub_type": "hits",
+          "is_main": false
+        },
+        {
+          "player": "Ben Rice",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -264,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01cef-639e-74d2-962b-203476713b2c",
+          "sub_type": "hits",
+          "is_main": false
+        },
+        {
+          "player": "Ben Rice",
+          "stat": "hits",
+          "line": 1.5,
+          "over": {
+            "american": 217,
+            "stake": 850.0
+          },
+          "under": null,
+          "market_id": "01a01cd0-4faf-7350-b866-5296042ab26b",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Pete Alonso",
+          "stat": "total_bases",
+          "line": 1.5,
+          "over": {
+            "american": 111,
+            "stake": 1300.0
+          },
+          "under": {
+            "american": -156,
+            "stake": 400.0
+          },
+          "market_id": "01a01cd0-4fa9-7af0-a259-645f05b0ec2e",
+          "sub_type": "total_bases",
+          "is_main": true
+        },
+        {
+          "player": "Heliot Ramos",
+          "stat": "total_bases",
+          "line": 1.5,
+          "over": {
+            "american": 122,
+            "stake": 700.0
+          },
+          "under": {
+            "american": -178,
+            "stake": 400.0
+          },
+          "market_id": "01a01cd0-4fa9-7af0-a259-6485bb89770b",
+          "sub_type": "total_bases",
+          "is_main": true
+        },
+        {
+          "player": "Ben Rice",
+          "stat": "total_bases",
+          "line": 1.5,
+          "over": {
+            "american": 106,
+            "stake": 700.0
+          },
+          "under": {
+            "american": -156,
+            "stake": 400.0
+          },
+          "market_id": "01a01cd0-4fa9-7af0-a259-64bc1d98b8c4",
+          "sub_type": "total_bases",
+          "is_main": true
+        },
+        {
+          "player": "Luis Garcia Jr.",
+          "stat": "total_bases",
+          "line": 1.5,
+          "over": {
+            "american": 115,
+            "stake": 700.0
+          },
+          "under": {
+            "american": -160,
+            "stake": 400.0
+          },
+          "market_id": "01a01cd0-4faa-7c30-b141-8b50c100bb1f",
+          "sub_type": "total_bases",
+          "is_main": true
+        },
+        {
+          "player": "Gunnar Henderson",
+          "stat": "total_bases",
+          "line": 1.5,
+          "over": {
+            "american": 135,
+            "stake": 700.0
+          },
+          "under": {
+            "american": -190,
+            "stake": 400.0
+          },
+          "market_id": "01a01cd0-4faa-7c30-b141-8b818642d94f",
+          "sub_type": "total_bases",
+          "is_main": true
+        },
+        {
+          "player": "Trent Grisham",
+          "stat": "total_bases",
+          "line": 1.5,
+          "over": {
+            "american": 122,
+            "stake": 700.0
+          },
+          "under": {
+            "american": -182,
+            "stake": 400.0
+          },
+          "market_id": "01a01cd0-4faa-7c30-b141-8bb149ba93bd",
+          "sub_type": "total_bases",
+          "is_main": true
+        },
+        {
+          "player": "Kyle Bradish",
+          "stat": "strikeouts",
+          "line": 4.5,
+          "over": {
+            "american": -326,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01cd0-4faa-7c30-b141-8c123b1fe97f",
+          "sub_type": "pitcher_strikeouts",
+          "is_main": false
+        },
+        {
+          "player": "Kyle Bradish",
+          "stat": "strikeouts",
+          "line": 6.5,
+          "over": {
+            "american": 153,
+            "stake": 650.0
+          },
+          "under": null,
+          "market_id": "01a01cd0-4faa-7c30-b141-8c47c11d59a0",
+          "sub_type": "pitcher_strikeouts",
+          "is_main": false
+        },
+        {
+          "player": "Trent Grisham",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 182,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01cd0-4faa-7c30-b141-8c78abc2ebc2",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Colton Cowser",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 292,
+            "stake": 600.0
+          },
+          "under": null,
+          "market_id": "01a01cd0-4fab-78a3-8c87-c2a579d0b764",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Luis Garcia Jr.",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 156,
+            "stake": 600.0
+          },
+          "under": null,
+          "market_id": "01a01cd0-4fab-78a3-8c87-c2d2a2dd027f",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Ben Rice",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 167,
+            "stake": 600.0
+          },
+          "under": null,
+          "market_id": "01a01cd0-4fab-78a3-8c87-c305c6a0b81f",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Gunnar Henderson",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 182,
+            "stake": 200.0
+          },
+          "under": null,
+          "market_id": "01a01cd0-4fab-78a3-8c87-c33481062234",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Austin Wells",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 223,
+            "stake": 200.0
+          },
+          "under": null,
+          "market_id": "01a01cd0-4fab-78a3-8c87-c36e6d39acec",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Dylan Beavers",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 277,
+            "stake": 600.0
+          },
+          "under": null,
+          "market_id": "01a01cd0-4fab-78a3-8c87-c3c8c19ede43",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Samuel Basallo",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 163,
+            "stake": 200.0
+          },
+          "under": null,
+          "market_id": "01a01cd0-4fac-7432-be59-90c56fe22889",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "George Lombard Jr.",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 239,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01cd0-4fac-7432-be59-90fae7bc5afa",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Leody Taveras",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 239,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01cd0-4fac-7432-be59-912c1dea12a4",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Heliot Ramos",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 163,
+            "stake": 600.0
+          },
+          "under": null,
+          "market_id": "01a01cd0-4fac-7432-be59-9159d9af83bc",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Pete Alonso",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 167,
+            "stake": 600.0
+          },
+          "under": null,
+          "market_id": "01a01cd0-4fac-7432-be59-918cfa24ce1c",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Jazz Chisholm Jr.",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 190,
+            "stake": 600.0
+          },
+          "under": null,
+          "market_id": "01a01cd0-4fac-7432-be59-91be7b1a9fdf",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Spencer Jones",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -156,
+            "stake": 1450.0
+          },
+          "under": null,
+          "market_id": "01a01cd0-4faf-7350-b866-5234ed237376",
+          "sub_type": "hits",
+          "is_main": true
+        },
+        {
+          "player": "Tyler O'Neill",
+          "stat": "rbis",
+          "line": 0.5,
+          "over": {
+            "american": 182,
+            "stake": 400.0
+          },
+          "under": null,
+          "market_id": "01a01cef-63a7-7d81-bf3b-0a9726c2dbe4",
+          "sub_type": "rbis",
+          "is_main": true
+        },
+        {
+          "player": "Jose Caballero",
+          "stat": "hits",
+          "line": 0.5,
+          "over": {
+            "american": -150,
+            "stake": 600.0
+          },
+          "under": null,
+          "market_id": "01a01d0a-8d7f-7c73-bff4-40dffe98e258",
+          "sub_type": "hits",
+          "is_main": true
+        }
+      ]
+    },
+    {
+      "event_id": "01a01b28-9d29-7e23-8c26-abc8bd184d3b",
+      "name": "Los Angeles Angels @ Houston Astros",
+      "scheduled": "2026-08-21T00:10:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "a3865dd0-0b29-4196-b8b9-b076f4fee96e",
+          "name": "Houston Astros",
+          "seq": 0
+        },
+        {
+          "id": "d09c395d-4df0-4859-be9a-a11422d6367d",
+          "name": "Los Angeles Angels",
+          "seq": 1
+        }
+      ],
+      "props": [
+        {
+          "player": "Peter Lambert",
+          "stat": "strikeouts",
+          "line": 5.5,
+          "over": {
+            "american": 104,
+            "stake": 235.55
+          },
+          "under": {
+            "american": -125,
+            "stake": 275.6
+          },
+          "market_id": "01a01cc2-1bcd-7851-a2c7-47b771db00b1",
+          "sub_type": "pitcher_strikeouts",
+          "is_main": true
+        },
+        {
+          "player": "Grayson Rodriguez",
+          "stat": "strikeouts",
+          "line": 4.5,
+          "over": {
+            "american": -120,
+            "stake": 204.95
+          },
+          "under": {
+            "american": -127,
+            "stake": 150.0
+          },
+          "market_id": "01a01cc2-1bce-78e1-9a1a-5363d49e4b54",
+          "sub_type": "pitcher_strikeouts",
+          "is_main": true
+        }
+      ]
+    },
+    {
+      "event_id": "01a01b43-f2f1-7ba3-a4df-ba53b28bd85d",
+      "name": "Oakland Athletics @ Kansas City Royals",
+      "scheduled": "2026-08-20T18:10:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "1dc0a479-72c7-478a-a41e-f8e0bedb1fca",
+          "name": "Kansas City Royals",
+          "seq": 0
+        },
+        {
+          "id": "5dc6e5ff-6823-4669-9e5a-93cf78b4004d",
+          "name": "Oakland Athletics",
+          "seq": 1
+        }
+      ],
+      "props": []
+    },
+    {
+      "event_id": "01a01c04-60a2-7ee2-a354-cbea45ea6fd7",
+      "name": "Washington Nationals @ Texas Rangers",
+      "scheduled": "2026-08-21T00:05:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "c700a31c-e05f-47ca-b05b-b8ce13c8db17",
+          "name": "Texas Rangers",
+          "seq": 0
+        },
+        {
+          "id": "67a7b095-774f-412b-b619-abef68deff10",
+          "name": "Washington Nationals",
+          "seq": 1
+        }
+      ],
+      "props": []
+    }
+  ]
+}

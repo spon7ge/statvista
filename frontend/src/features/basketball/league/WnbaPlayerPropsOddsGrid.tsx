@@ -31,10 +31,16 @@ function MainQuoteCell({
   return (
     <div className="font-mono text-sm text-white">
       <div>
-        O {quote.line} ({formatMainAmerican(quote.over_american)})
+        <div>O {quote.line}</div>
+        <div className="text-white/70">
+          ({formatMainAmerican(quote.over_american)})
+        </div>
       </div>
-      <div>
-        U {quote.line} ({formatMainAmerican(quote.under_american)})
+      <div className="mt-1">
+        <div>U {quote.line}</div>
+        <div className="text-white/70">
+          ({formatMainAmerican(quote.under_american)})
+        </div>
       </div>
     </div>
   );
@@ -49,10 +55,10 @@ export function WnbaPlayerPropsOddsGrid({
     <div className="overflow-x-auto" data-testid="wnba-player-props-odds-grid">
       <table className="w-full min-w-[72rem] border-collapse text-left">
         <thead>
-          <tr className="border-b border-white/10 text-[11px] font-medium uppercase tracking-wide text-white/45">
-            <th className="px-3 py-2 font-medium">Market</th>
+          <tr className="border-b border-white/10 text-[11px] font-bold uppercase tracking-wide text-white">
+            <th className="px-3 py-2 font-bold">Market</th>
             {WNBA_PLAYER_PROP_GRID_BOOKS.map((book) => (
-              <th key={book} className="px-3 py-2 font-medium">
+              <th key={book} className="px-3 py-2 font-bold">
                 {WNBA_BOOK_LABELS[book]}
               </th>
             ))}
@@ -63,7 +69,7 @@ export function WnbaPlayerPropsOddsGrid({
             <tr key={row.stat} className="border-b border-white/5">
               <th scope="row" className="px-3 py-3 font-normal">
                 <div className="text-sm font-semibold text-white">{row.stat}</div>
-                <div className="font-mono text-xs text-white/45">{row.line}</div>
+                <div className="font-mono text-base font-bold text-white">{row.line}</div>
               </th>
               {WNBA_PLAYER_PROP_GRID_BOOKS.map((book) => (
                 <td key={book} className="px-3 py-3 align-top">

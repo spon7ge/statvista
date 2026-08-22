@@ -1,0 +1,57 @@
+{
+  "source": "PrizePicks",
+  "league": "NBA",
+  "fetched_at": "2026-08-20T03:29:20Z",
+  "raw_snapshot": null,
+  "count": 6,
+  "projections": [
+    {
+      "player": "Jayson Tatum",
+      "stat_type": "Points",
+      "line_score": 26.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-19T17:07:30.269-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Cade Cunningham",
+      "stat_type": "Points",
+      "line_score": 24.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-19T17:07:30.269-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jalen Brunson",
+      "stat_type": "Points",
+      "line_score": 25.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-19T17:07:30.269-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "LeBron James",
+      "stat_type": "Points",
+      "line_score": 17.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-19T17:07:30.269-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Shai Gilgeous-Alexander",
+      "stat_type": "Points",
+      "line_score": 29.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-19T17:07:30.269-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Points",
+      "line_score": 26,
+      "odds_type": "standard",
+      "updated_at": "2026-08-19T17:07:30.269-04:00",
+      "league": "NBA"
+    }
+  ]
+}

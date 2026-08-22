@@ -95,9 +95,10 @@ describe("WnbaPlayerPropsOddsGrid", () => {
     expect(screen.getByText("Pinnacle")).toBeInTheDocument();
     expect(screen.getByText("Points")).toBeInTheDocument();
     expect(screen.getByText("18.5")).toBeInTheDocument();
-    expect(screen.getByText("O 18.5 (-110)")).toBeInTheDocument();
-    expect(screen.getByText("U 18.5 (-110)")).toBeInTheDocument();
-    expect(screen.getByText("O 18.5 (-105)")).toBeInTheDocument();
+    expect(screen.getAllByText("O 18.5").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText("U 18.5").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText("(-110)").length).toBeGreaterThanOrEqual(2);
+    expect(screen.getByText("(-105)")).toBeInTheDocument();
     expect(screen.getAllByText("NL").length).toBe(8);
     expect(screen.queryByText("OPEN")).not.toBeInTheDocument();
     expect(screen.queryByText("BEST")).not.toBeInTheDocument();

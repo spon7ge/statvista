@@ -1,0 +1,280 @@
+{
+  "source": "novig",
+  "fetched_at": "2026-08-19T20:32:34-07:00",
+  "league": "wnba",
+  "snapshot_kind": "team",
+  "games": [
+    {
+      "event_id": "01a019f3-1684-7582-8ecb-fe1c75438b95",
+      "name": "Indiana Fever @ Dallas Wings",
+      "scheduled": "2026-08-21T00:00:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "292f0b3e-7328-4d65-a4a3-b196e49f51f7",
+          "name": "Dallas Wings",
+          "seq": 0
+        },
+        {
+          "id": "893a624e-4797-4980-8ebc-5d02f31d1730",
+          "name": "Indiana Fever",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "DAL",
+            "competitor_id": null,
+            "american": 141,
+            "line": null,
+            "stake": 4649.4400000000005
+          },
+          {
+            "name": "IND",
+            "competitor_id": null,
+            "american": -160,
+            "line": null,
+            "stake": 2776.27
+          }
+        ],
+        "spread": [
+          {
+            "name": "DAL +3.5",
+            "competitor_id": null,
+            "american": -108,
+            "line": 3.5,
+            "stake": 1550.0
+          },
+          {
+            "name": "IND -3.5",
+            "competitor_id": null,
+            "american": -111,
+            "line": -3.5,
+            "stake": 1643.68
+          }
+        ],
+        "total": [
+          {
+            "name": "Under 185.5",
+            "competitor_id": null,
+            "american": -111,
+            "line": 185.5,
+            "stake": 1432.1100000000001
+          },
+          {
+            "name": "Over 185.5",
+            "competitor_id": null,
+            "american": -102,
+            "line": 185.5,
+            "stake": 2995.8499999999995
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "01a014ae-fb5c-7533-a6ee-cc0f3a6bcb81",
+      "name": "Minnesota Lynx @ Golden State Valkyries",
+      "scheduled": "2026-08-20T02:00:00+00:00",
+      "status": "live",
+      "competitors": [
+        {
+          "id": "66c8262d-7593-486d-a3ec-eb152fb4303f",
+          "name": "Golden State Valkyries",
+          "seq": 0
+        },
+        {
+          "id": "2b4ff049-679a-484f-8703-41894af4953d",
+          "name": "Minnesota Lynx",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "GSV",
+            "competitor_id": null,
+            "american": 1567,
+            "line": null,
+            "stake": 3736.71
+          },
+          {
+            "name": "MIN",
+            "competitor_id": null,
+            "american": -2281,
+            "line": null,
+            "stake": 5254.01
+          }
+        ],
+        "spread": [
+          {
+            "name": "GSV +17.5",
+            "competitor_id": null,
+            "american": -99900,
+            "line": 17.5,
+            "stake": 200.0
+          },
+          {
+            "name": "MIN -17.5",
+            "competitor_id": null,
+            "american": -99900,
+            "line": -17.5,
+            "stake": 200.0
+          }
+        ],
+        "total": [
+          {
+            "name": "Over 140.5",
+            "competitor_id": null,
+            "american": -99900,
+            "line": 140.5,
+            "stake": 200.0
+          },
+          {
+            "name": "Under 140.5",
+            "competitor_id": null,
+            "american": -122,
+            "line": 140.5,
+            "stake": 204.74
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "01a01a0e-fa0b-76d1-822d-5344566fe0ea",
+      "name": "Connecticut Sun @ Las Vegas Aces",
+      "scheduled": "2026-08-21T02:00:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "1531587c-e678-4ea7-a098-3540bf186b96",
+          "name": "Las Vegas Aces",
+          "seq": 0
+        },
+        {
+          "id": "ce1c8908-c426-4600-9260-60c29760652c",
+          "name": "Connecticut Sun",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "LV",
+            "competitor_id": null,
+            "american": -900,
+            "line": null,
+            "stake": 4918.790000000001
+          },
+          {
+            "name": "CONN",
+            "competitor_id": null,
+            "american": 770,
+            "line": null,
+            "stake": 3415.27
+          }
+        ],
+        "spread": [
+          {
+            "name": "LV -14.5",
+            "competitor_id": null,
+            "american": -106,
+            "line": -14.5,
+            "stake": 2047.1399999999999
+          },
+          {
+            "name": "CONN +14.5",
+            "competitor_id": null,
+            "american": -102,
+            "line": 14.5,
+            "stake": 1872.58
+          }
+        ],
+        "total": [
+          {
+            "name": "Under 164.5",
+            "competitor_id": null,
+            "american": -104,
+            "line": 164.5,
+            "stake": 1050.0
+          },
+          {
+            "name": "Over 164.5",
+            "competitor_id": null,
+            "american": -120,
+            "line": 164.5,
+            "stake": 1050.0
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "01a01a0e-f927-7fd3-a417-3fbcede23857",
+      "name": "Atlanta Dream @ Los Angeles Sparks",
+      "scheduled": "2026-08-21T02:00:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "af3c1846-b7cd-4236-9396-a4c8d936cf89",
+          "name": "Los Angeles Sparks",
+          "seq": 0
+        },
+        {
+          "id": "c0d35807-1cb1-4f33-8a85-9cc14596945c",
+          "name": "Atlanta Dream",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "LA",
+            "competitor_id": null,
+            "american": 317,
+            "line": null,
+            "stake": 3308.2599999999998
+          },
+          {
+            "name": "ATL",
+            "competitor_id": null,
+            "american": -376,
+            "line": null,
+            "stake": 4089.8900000000003
+          }
+        ],
+        "spread": [
+          {
+            "name": "ATL -8.5",
+            "competitor_id": null,
+            "american": -106,
+            "line": -8.5,
+            "stake": 2405.0699999999997
+          },
+          {
+            "name": "LA +8.5",
+            "competitor_id": null,
+            "american": -108,
+            "line": 8.5,
+            "stake": 2346.61
+          }
+        ],
+        "total": [
+          {
+            "name": "Under 177.5",
+            "competitor_id": null,
+            "american": -100,
+            "line": 177.5,
+            "stake": 1350.0
+          },
+          {
+            "name": "Over 177.5",
+            "competitor_id": null,
+            "american": -127,
+            "line": 177.5,
+            "stake": 1390.9
+          }
+        ]
+      }
+    }
+  ]
+}
