@@ -27,6 +27,9 @@ describe("BrandHero", () => {
     expect(
       screen.getByText(/the only research tool you need to make smarter bets/i),
     ).toBeInTheDocument();
+    expect(
+      screen.queryByText(/follow the games, learn the lines/i),
+    ).not.toBeInTheDocument();
     expect(screen.getByText(/basketball intelligence/i)).toBeInTheDocument();
     expect(
       screen.getByRole("link", { name: /see what.?s live/i }),

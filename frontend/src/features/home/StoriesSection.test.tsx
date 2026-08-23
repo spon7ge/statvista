@@ -10,6 +10,9 @@ describe("StoriesSection", () => {
       screen.getByRole("heading", { name: "Stories" }),
     ).toBeInTheDocument();
     expect(
+      screen.queryByText("A few things worth knowing before tip-off."),
+    ).not.toBeInTheDocument();
+    expect(
       screen.getByText("Summer League is over. Who won?"),
     ).toBeInTheDocument();
     expect(screen.getAllByRole("article")).toHaveLength(3);

@@ -97,10 +97,7 @@ export function StoriesSection({ stories }: StoriesSectionProps) {
       id="stories"
       className="mx-auto max-w-6xl border-t border-white/10 px-4 py-16 sm:px-6 sm:py-20"
     >
-      <SectionHeading
-        title="Stories"
-        subtitle="A few things worth knowing before tip-off."
-      />
+      <SectionHeading title="Stories" />
 
       {list.length === 0 ? (
         <p className="text-sm text-white/40">No stories yet.</p>
