@@ -1,7 +1,5 @@
 import { type ReactNode } from "react";
 
-export const WNBA_PROP_PICKS_BANNER_EMERALD = "#059669";
-
 export type WnbaPropAppTab = "prizepicks" | "underdog";
 
 export function appFromSearch(value: string | null): WnbaPropAppTab {
@@ -16,12 +14,12 @@ const APP_TABS: { id: WnbaPropAppTab; label: string }[] = [
 type WnbaPropPicksHeaderProps = {
   activeApp: WnbaPropAppTab;
   onAppChange: (app: WnbaPropAppTab) => void;
-  /** Optional board filters rendered as pills in the header row. */
+  /** Team + search pills on the right of the title. */
   children?: ReactNode;
 };
 
 /**
- * Scores-style banner + PrizePicks / Underdog tabs (MLB twin).
+ * WNBA Props (left) with Team / search pills (right) + PrizePicks / Underdog tabs.
  * Format/legs are fixed on the board (4-pick Power/Standard) so they stay off the chrome.
  */
 export function WnbaPropPicksHeader({
@@ -31,23 +29,15 @@ export function WnbaPropPicksHeader({
 }: WnbaPropPicksHeaderProps) {
   return (
     <div data-testid="wnba-prop-picks-header" className="relative z-20 space-y-3">
-      <div
-        className="relative rounded-3xl px-5 py-5 sm:px-6 sm:py-6"
-        style={{ backgroundColor: WNBA_PROP_PICKS_BANNER_EMERALD }}
-      >
-        <div
-          className="pointer-events-none absolute inset-0 overflow-hidden rounded-3xl bg-black/20"
-          aria-hidden
-        />
-        <div className="relative z-10 flex min-h-[7.5rem] flex-col justify-between gap-6">
-          <h1 className="min-w-0 text-left text-[32px] leading-none font-bold tracking-tight text-white sm:text-[36px]">
-            WNBA Props
-          </h1>
-
-          <div className="relative z-30 flex flex-wrap items-center justify-end gap-2">
+      <div className="flex min-h-10 items-center justify-between gap-3">
+        <h1 className="min-w-0 shrink-0 text-left text-[28px] leading-none font-bold tracking-tight text-white sm:text-[32px]">
+          WNBA Props
+        </h1>
+        {children ? (
+          <div className="flex min-w-0 flex-wrap items-center justify-end gap-2">
             {children}
           </div>
-        </div>
+        ) : null}
       </div>
 
       <div

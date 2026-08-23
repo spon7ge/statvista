@@ -33,4 +33,20 @@ describe("LeaderCategoryCard", () => {
       "/wnba/player/1628932",
     );
   });
+
+  it("renders white team abbrev with ESPN logo", () => {
+    render(
+      <MemoryRouter>
+        <LeaderCategoryCard category={category} />
+      </MemoryRouter>,
+    );
+
+    const abbrev = screen.getByText("LVA");
+    expect(abbrev).toHaveClass("text-white");
+    const logo = screen.getByRole("presentation");
+    expect(logo).toHaveAttribute(
+      "src",
+      "https://a.espncdn.com/i/teamlogos/wnba/500/lv.png",
+    );
+  });
 });

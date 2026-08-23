@@ -89,4 +89,44 @@ describe("WnbaPropPicksFilters", () => {
     expect(screen.getByRole("searchbox", { name: "Search player" })).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Team" })).not.toBeInTheDocument();
   });
+
+  it("splits Team left and search right in pill form", () => {
+    render(
+      <WnbaPropPicksFilters
+        tone="pill"
+        layout="split"
+        teams={["ATL", "SEA"]}
+        selectedTeams={new Set()}
+        query=""
+        onTeamsChange={vi.fn()}
+        onQueryChange={vi.fn()}
+        onClear={vi.fn()}
+      />,
+    );
+
+    const team = screen.getByRole("button", { name: "Team" });
+    const search = screen.getByRole("searchbox", { name: "Search player" });
+    expect(team).toHaveClass("rounded-full");
+    expect(search).toHaveClass("rounded-full");
+    expect(team.compareDocumentPosition(search) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it("renders Team and search as pills in inline layout", () => {
+    render(
+      <WnbaPropPicksFilters
+        tone="pill"
+        teams={["ATL"]}
+        selectedTeams={new Set()}
+        query=""
+        onTeamsChange={vi.fn()}
+        onQueryChange={vi.fn()}
+        onClear={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByRole("button", { name: "Team" })).toHaveClass("rounded-full");
+    expect(screen.getByRole("searchbox", { name: "Search player" })).toHaveClass(
+      "rounded-full",
+    );
+  });
 });

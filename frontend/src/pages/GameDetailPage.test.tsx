@@ -134,7 +134,10 @@ describe("GameDetailPage", () => {
     expect(await screen.findByTestId("wnba-pregame-center")).toBeInTheDocument();
     expect(screen.getByText(/Projected starters/i)).toBeInTheDocument();
     expect(screen.getByText("Natasha Howard")).toBeInTheDocument();
-    expect(screen.queryByRole("tablist")).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /back/i })).toHaveAttribute(
+      "href",
+      "/wnba/matchups",
+    );
     expect(screen.queryByTestId("wnba-live-center")).not.toBeInTheDocument();
   });
 
@@ -165,6 +168,10 @@ describe("GameDetailPage", () => {
     renderGameDetail("401857098");
 
     expect(await screen.findByTestId("wnba-live-center")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /back/i })).toHaveAttribute(
+      "href",
+      "/wnba/matchups",
+    );
     expect(screen.getByTestId("wnba-broadcast-header")).toBeInTheDocument();
     expect(screen.getByText(/Shot chart/i)).toBeInTheDocument();
     expect(screen.queryByText(/Matchup prediction/i)).not.toBeInTheDocument();

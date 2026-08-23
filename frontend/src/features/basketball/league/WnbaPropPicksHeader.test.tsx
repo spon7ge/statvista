@@ -1,11 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-import {
-  appFromSearch,
-  WNBA_PROP_PICKS_BANNER_EMERALD,
-  WnbaPropPicksHeader,
-} from "./WnbaPropPicksHeader";
+import { appFromSearch, WnbaPropPicksHeader } from "./WnbaPropPicksHeader";
 
 describe("appFromSearch", () => {
   it("defaults to prizepicks and accepts underdog", () => {
@@ -17,7 +13,7 @@ describe("appFromSearch", () => {
 });
 
 describe("WnbaPropPicksHeader", () => {
-  it("places WNBA Props top-left and PrizePicks / Underdog tabs without legs or format pills", async () => {
+  it("places WNBA Props on the left without a green banner", async () => {
     const user = userEvent.setup();
     const onAppChange = vi.fn();
     render(
@@ -25,8 +21,10 @@ describe("WnbaPropPicksHeader", () => {
     );
 
     const heading = screen.getByRole("heading", { name: "WNBA Props" });
-    expect(heading).toBeInTheDocument();
     expect(heading).toHaveClass("text-left");
+    expect(
+      screen.getByTestId("wnba-prop-picks-header").querySelector("div.rounded-3xl"),
+    ).toBeNull();
 
     const prize = screen.getByRole("tab", { name: "PrizePicks" });
     const underdog = screen.getByRole("tab", { name: "Underdog" });
@@ -38,25 +36,12 @@ describe("WnbaPropPicksHeader", () => {
 
     expect(screen.queryByText(/-pick/)).not.toBeInTheDocument();
     expect(screen.queryByRole("group", { name: "Legs" })).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: "More legs" }),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: "Fewer legs" }),
-    ).not.toBeInTheDocument();
   });
 
-  it("keeps emerald banner and tab ids", () => {
+  it("keeps tab ids for panels", () => {
     render(
       <WnbaPropPicksHeader activeApp="prizepicks" onAppChange={vi.fn()} />,
     );
-
-    const header = screen.getByTestId("wnba-prop-picks-header");
-    const banner = header.querySelector("div.rounded-3xl");
-    expect(banner).toHaveStyle({ backgroundColor: "rgb(5, 150, 105)" });
-    expect(WNBA_PROP_PICKS_BANNER_EMERALD).toBe("#059669");
-    expect(banner?.className).not.toContain("overflow-hidden");
-    expect(header.querySelector("img")).toBeNull();
 
     expect(screen.getByRole("tab", { name: "PrizePicks" })).toHaveAttribute(
       "id",
@@ -68,12 +53,13 @@ describe("WnbaPropPicksHeader", () => {
     );
   });
 
-  it("renders children in the banner slot", () => {
+  it("renders children to the right of the title", () => {
     render(
       <WnbaPropPicksHeader activeApp="prizepicks" onAppChange={vi.fn()}>
         <span>Team filter</span>
       </WnbaPropPicksHeader>,
     );
     expect(screen.getByText("Team filter")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "WNBA Props" })).toBeInTheDocument();
   });
 });

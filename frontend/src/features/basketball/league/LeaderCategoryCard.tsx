@@ -1,10 +1,32 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import type { ApiWnbaLeaderCategory } from "@/shared/lib/api";
-import { teamColor } from "./wnbaTeamColors";
+import { wnbaTeamLogoUrl } from "./wnbaTeamLogos";
 
 type LeaderCategoryCardProps = {
   category: ApiWnbaLeaderCategory;
 };
+
+function TeamCell({ abbrev }: { abbrev: string }) {
+  const logoUrl = wnbaTeamLogoUrl(abbrev);
+  const [logoFailed, setLogoFailed] = useState(false);
+  const showLogo = Boolean(logoUrl) && !logoFailed;
+
+  return (
+    <span className="inline-flex items-center gap-1.5">
+      <span className="font-semibold text-white">{abbrev}</span>
+      {showLogo && logoUrl ? (
+        <img
+          src={logoUrl}
+          alt=""
+          role="presentation"
+          className="size-5 shrink-0 object-contain"
+          onError={() => setLogoFailed(true)}
+        />
+      ) : null}
+    </span>
+  );
+}
 
 export function LeaderCategoryCard({ category }: LeaderCategoryCardProps) {
   return (
@@ -41,11 +63,8 @@ export function LeaderCategoryCard({ category }: LeaderCategoryCardProps) {
                     {row.name}
                   </Link>
                 </td>
-                <td
-                  className="py-1.5 font-semibold"
-                  style={{ color: teamColor(row.team_abbrev) }}
-                >
-                  {row.team_abbrev}
+                <td className="py-1.5">
+                  <TeamCell abbrev={row.team_abbrev} />
                 </td>
                 <td className="py-1.5 text-right text-white/45">{row.gp}</td>
                 <td className="py-1.5 text-right font-semibold text-white">

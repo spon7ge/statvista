@@ -16,7 +16,7 @@ function attributionLabel(sources: string[]): string {
 function BackLink() {
   return (
     <Link
-      to="/"
+      to="/mlb/matchups"
       className="inline-flex items-center gap-1 text-sm font-medium text-white/70 no-underline transition-colors hover:text-white"
     >
       ← Back

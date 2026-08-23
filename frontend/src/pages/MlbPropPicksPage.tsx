@@ -81,7 +81,7 @@ export function MlbPropPicksPage() {
         >
           {showBoardFilters ? (
             <MlbPropPicksFilters
-              tone="banner"
+              tone="pill"
               teams={collectMlbTeamOptions(props)}
               selectedTeams={selectedTeams}
               query={query}

@@ -101,7 +101,7 @@ export function LeaguePropPicksPage() {
         >
           {showBoardFilters ? (
             <WnbaPropPicksFilters
-              tone="banner"
+              tone="pill"
               teams={collectWnbaTeamOptions(activeProps)}
               selectedTeams={selectedTeams}
               query={query}

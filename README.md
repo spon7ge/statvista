@@ -1,6 +1,6 @@
 # statvista
 
-Interactive basketball (and baseball) analytics — live scoreboards, matchup boards, prop context, and game centers for fans who want a clearer view of the slate.
+Interactive basketball and baseball analytics — live scoreboards, matchup boards, prop context, and game centers for fans who want a clearer view of the slate.
 
 **Status:** Not publicly deployed yet. Run locally to try the current build.
 
@@ -8,13 +8,19 @@ Interactive basketball (and baseball) analytics — live scoreboards, matchup bo
 
 ---
 
-## Demo
+## Screenshots
 
-Local walkthrough of the current UI (home, league hubs, props, game detail):
+Home landing with a live ticker and a merged LIVE NOW board:
 
-<video src="assets/demo/statvista-demo.mov" controls width="100%"></video>
+![statvista home landing](assets/screenshots/home.png)
 
-If the player does not render in your GitHub client, download the file: [statvista-demo.mov](assets/demo/statvista-demo.mov).
+WNBA game center — shot chart, team stats, scoring plays, and game flow:
+
+![WNBA game center](assets/screenshots/wnba-game-center.png)
+
+MLB game center — live situation, pitch tracking, team stats, and hit chart:
+
+![MLB game center](assets/screenshots/mlb-game-center.png)
 
 ---
 
@@ -22,9 +28,9 @@ If the player does not render in your GitHub client, download the file: [statvis
 
 statvista is a React + FastAPI research site that turns public sports feeds into readable boards:
 
-- **Home** — brand hero plus a merged LIVE NOW board (WNBA + MLB)
-- **WNBA** — matchups with odds, DFS/US prop picks, leaders, standings, futures, player pages, and full game centers
-- **MLB** — dated matchups with odds, plus live and final game detail (situation, win probability)
+- **Home** — brand hero, live ticker, and a merged LIVE NOW board (WNBA + MLB)
+- **WNBA** — matchups with odds, DFS/US prop picks, leaders, standings, futures, player pages, and full game centers (shot chart, team stats, play-by-play, game flow)
+- **MLB** — dated matchups with odds, plus live and final game detail (situation, pitch tracking, hit chart, win probability)
 - **NBA** — matchups hub scaffolded; historical prop research pipeline still in the repo
 
 The website read path talks to live upstream APIs (and Supabase odds snapshots). A separate Postgres medallion + quantile-ML path remains for research / batch props — see linked docs below.

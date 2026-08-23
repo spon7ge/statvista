@@ -290,6 +290,8 @@ def test_event_markets_query_uses_uuid_variable() -> None:
     query = nv._GET_EVENT_MARKETS_QUERY
     assert "$id: uuid!" in query
     assert "$id: String!" not in query
+    # Nested orders exceed Novig's 4s GraphQL timeout; odds use `available`.
+    assert "orders" not in query
 
 
 def test_fetch_event_markets_parses_nested(monkeypatch) -> None:

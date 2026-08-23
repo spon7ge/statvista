@@ -2,7 +2,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
 
 type FilterOption = { value: string; label: string };
-type FilterTone = "default" | "banner";
+type FilterTone = "default" | "banner" | "pill";
 
 type MultiSelectFilterProps = {
   label: string;
@@ -25,6 +25,7 @@ function MultiSelectFilter({
   const triggerLabel =
     selected.size > 0 ? `${label} (${selected.size})` : label;
   const onBanner = tone === "banner";
+  const onPill = tone === "pill";
 
   useEffect(() => {
     if (!open) return;
@@ -66,11 +67,17 @@ function MultiSelectFilter({
                   ? "bg-white text-emerald-900"
                   : "bg-white/90 text-emerald-800 hover:bg-white"
               }`
-            : `inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-[18px] font-medium transition-colors ${
-                selected.size > 0
-                  ? "border-white/20 bg-white/10 text-white"
-                  : "border-white/10 bg-transparent text-white/55 hover:text-white"
-              }`
+            : onPill
+              ? `inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[14px] font-semibold transition-colors ${
+                  selected.size > 0
+                    ? "border-white/25 bg-white/15 text-white"
+                    : "border-white/15 bg-white/10 text-white/80 hover:bg-white/15 hover:text-white"
+                }`
+              : `inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-[18px] font-medium transition-colors ${
+                  selected.size > 0
+                    ? "border-white/20 bg-white/10 text-white"
+                    : "border-white/10 bg-transparent text-white/55 hover:text-white"
+                }`
         }
       >
         {triggerLabel}
@@ -153,8 +160,10 @@ export type MlbPropPicksFiltersProps = {
   onTeamsChange: (next: Set<string>) => void;
   onQueryChange: (query: string) => void;
   onClear: () => void;
-  /** White capsule pills for use inside the green Scores-style header. */
+  /** `banner` = white pills on green; `pill` = dark-page capsules; default = square. */
   tone?: FilterTone;
+  /** Team (+ clear) on the left, search on the right. */
+  layout?: "inline" | "split";
 };
 
 export function MlbPropPicksFilters({
@@ -165,49 +174,80 @@ export function MlbPropPicksFilters({
   onQueryChange,
   onClear,
   tone = "default",
+  layout = "inline",
 }: MlbPropPicksFiltersProps) {
   const hasActive = selectedTeams.size > 0 || query.trim().length > 0;
   const onBanner = tone === "banner";
+  const onPill = tone === "pill";
+  const split = layout === "split";
+
+  const teamControl =
+    teams.length > 0 ? (
+      <MultiSelectFilter
+        label="Team"
+        tone={tone}
+        options={teams.map((t) => ({ value: t, label: t }))}
+        selected={selectedTeams}
+        onChange={onTeamsChange}
+      />
+    ) : null;
+
+  const clearControl = hasActive ? (
+    <button
+      type="button"
+      onClick={onClear}
+      className={
+        onBanner
+          ? "rounded-full bg-white/20 px-3 py-1.5 text-[14px] font-semibold text-white hover:bg-white/30"
+          : onPill
+            ? "rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[14px] font-semibold text-white/80 hover:bg-white/15 hover:text-white"
+            : "px-1.5 text-[14px] text-white/40 transition-colors hover:text-white"
+      }
+    >
+      Clear filters
+    </button>
+  ) : null;
+
+  const searchControl = (
+    <input
+      type="search"
+      value={query}
+      onChange={(event) => onQueryChange(event.target.value)}
+      placeholder="Search player"
+      aria-label="Search player"
+      className={
+        onBanner
+          ? "w-40 rounded-full bg-white px-3 py-1.5 text-[14px] font-semibold text-emerald-900 shadow-sm placeholder:font-medium placeholder:text-emerald-800/50"
+          : onPill
+            ? "w-40 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[14px] font-semibold text-white placeholder:font-medium placeholder:text-white/40"
+            : "w-40 rounded-md border border-white/10 bg-transparent px-2.5 py-1.5 text-[18px] text-white placeholder:text-white/40"
+      }
+    />
+  );
+
+  if (split) {
+    return (
+      <div
+        className="flex w-full items-center justify-between gap-3"
+        aria-label="MLB prop picks filters"
+      >
+        <div className="flex min-w-0 flex-wrap items-center gap-2">
+          {teamControl}
+          {clearControl}
+        </div>
+        <div className="shrink-0">{searchControl}</div>
+      </div>
+    );
+  }
 
   return (
     <div
       className="flex flex-wrap items-center gap-2"
       aria-label="MLB prop picks filters"
     >
-      {teams.length > 0 ? (
-        <MultiSelectFilter
-          label="Team"
-          tone={tone}
-          options={teams.map((t) => ({ value: t, label: t }))}
-          selected={selectedTeams}
-          onChange={onTeamsChange}
-        />
-      ) : null}
-      <input
-        type="search"
-        value={query}
-        onChange={(event) => onQueryChange(event.target.value)}
-        placeholder="Search player"
-        aria-label="Search player"
-        className={
-          onBanner
-            ? "w-40 rounded-full bg-white px-3 py-1.5 text-[14px] font-semibold text-emerald-900 shadow-sm placeholder:font-medium placeholder:text-emerald-800/50"
-            : "w-40 rounded-md border border-white/10 bg-transparent px-2.5 py-1.5 text-[18px] text-white placeholder:text-white/40"
-        }
-      />
-      {hasActive ? (
-        <button
-          type="button"
-          onClick={onClear}
-          className={
-            onBanner
-              ? "rounded-full bg-white/20 px-3 py-1.5 text-[14px] font-semibold text-white hover:bg-white/30"
-              : "px-1.5 text-[14px] text-white/40 transition-colors hover:text-white"
-          }
-        >
-          Clear filters
-        </button>
-      ) : null}
+      {teamControl}
+      {searchControl}
+      {clearControl}
     </div>
   );
 }

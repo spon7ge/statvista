@@ -38,12 +38,7 @@ function UnableToLoadGame() {
   return (
     <div className="mx-auto max-w-6xl space-y-3 px-4 py-10 text-center sm:px-6">
       <p className="text-sm text-white/60">Unable to load game</p>
-      <Link
-        to="/"
-        className="inline-flex items-center gap-1 text-sm font-medium text-white/70 no-underline transition-colors hover:text-white"
-      >
-        ← Back
-      </Link>
+      <BackLink />
     </div>
   );
 }
@@ -51,7 +46,7 @@ function UnableToLoadGame() {
 function BackLink() {
   return (
     <Link
-      to="/"
+      to="/wnba/matchups"
       className="inline-flex items-center gap-1 text-sm font-medium text-white/70 no-underline transition-colors hover:text-white"
     >
       ← Back

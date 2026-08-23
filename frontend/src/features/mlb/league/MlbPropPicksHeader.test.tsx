@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 import { MlbPropPicksHeader } from "./MlbPropPicksHeader";
 
 describe("MlbPropPicksHeader", () => {
-  it("places MLB Props top-left and PrizePicks / Underdog tabs without legs or format pills", async () => {
+  it("places MLB Props on the left without a green banner", async () => {
     const user = userEvent.setup();
     const onAppChange = vi.fn();
     render(
@@ -12,8 +12,10 @@ describe("MlbPropPicksHeader", () => {
     );
 
     const heading = screen.getByRole("heading", { name: "MLB Props" });
-    expect(heading).toBeInTheDocument();
     expect(heading).toHaveClass("text-left");
+    expect(
+      screen.getByTestId("mlb-prop-picks-header").querySelector("div.rounded-3xl"),
+    ).toBeNull();
 
     const prize = screen.getByRole("tab", { name: "PrizePicks" });
     const underdog = screen.getByRole("tab", { name: "Underdog" });
@@ -25,20 +27,15 @@ describe("MlbPropPicksHeader", () => {
 
     expect(screen.queryByText(/-pick/)).not.toBeInTheDocument();
     expect(screen.queryByRole("group", { name: "Legs" })).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: "More legs" }),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: "Fewer legs" }),
-    ).not.toBeInTheDocument();
   });
 
-  it("renders children in the banner slot", () => {
+  it("renders children to the right of the title", () => {
     render(
       <MlbPropPicksHeader activeApp="prizepicks" onAppChange={vi.fn()}>
         <span>Team filter</span>
       </MlbPropPicksHeader>,
     );
     expect(screen.getByText("Team filter")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "MLB Props" })).toBeInTheDocument();
   });
 });

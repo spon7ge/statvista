@@ -126,7 +126,7 @@ describe("MlbGameDetailPage", () => {
     expect(screen.getAllByText(/Fenway Park/i).length).toBeGreaterThanOrEqual(1);
     expect(screen.getByRole("link", { name: /back/i })).toHaveAttribute(
       "href",
-      "/",
+      "/mlb/matchups",
     );
   });
 
@@ -146,7 +146,7 @@ describe("MlbGameDetailPage", () => {
     expect(screen.queryByTestId("mlb-live-center")).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: /back/i })).toHaveAttribute(
       "href",
-      "/",
+      "/mlb/matchups",
     );
   });
 
@@ -164,7 +164,7 @@ describe("MlbGameDetailPage", () => {
     expect(screen.getByText(/Data: MLB Stats API · ESPN/i)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /back/i })).toHaveAttribute(
       "href",
-      "/",
+      "/mlb/matchups",
     );
   });
 
@@ -174,7 +174,7 @@ describe("MlbGameDetailPage", () => {
     expect(await screen.findByText("Unable to load game")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /back/i })).toHaveAttribute(
       "href",
-      "/",
+      "/mlb/matchups",
     );
   });
 });

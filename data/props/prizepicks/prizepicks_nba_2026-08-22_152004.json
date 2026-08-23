@@ -1,0 +1,1553 @@
+{
+  "source": "PrizePicks",
+  "league": "NBA",
+  "fetched_at": "2026-08-22T22:20:04Z",
+  "raw_snapshot": null,
+  "count": 193,
+  "projections": [
+    {
+      "player": "Cade Cunningham",
+      "stat_type": "Rebounds",
+      "line_score": 5.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:08:40.915-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jayson Tatum",
+      "stat_type": "Pts+Rebs+Asts",
+      "line_score": 54.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:24.112-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Cade Cunningham",
+      "stat_type": "Pts+Rebs+Asts",
+      "line_score": 49.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:20.395-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jayson Tatum",
+      "stat_type": "Pts+Rebs",
+      "line_score": 49.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:23.442-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jayson Tatum",
+      "stat_type": "Pts+Rebs+Asts",
+      "line_score": 49.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:23.918-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Cade Cunningham",
+      "stat_type": "Pts+Asts",
+      "line_score": 44.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:19.341-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Cade Cunningham",
+      "stat_type": "Pts+Rebs+Asts",
+      "line_score": 44.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:20.307-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jayson Tatum",
+      "stat_type": "Pts+Asts",
+      "line_score": 44.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:22.750-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jayson Tatum",
+      "stat_type": "Pts+Rebs",
+      "line_score": 44.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:23.349-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jayson Tatum",
+      "stat_type": "Pts+Rebs+Asts",
+      "line_score": 44.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:24.017-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jayson Tatum",
+      "stat_type": "Pts+Rebs+Asts",
+      "line_score": 42.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:02:24.197-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Cade Cunningham",
+      "stat_type": "Pts+Rebs+Asts",
+      "line_score": 40.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:02:20.482-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Cade Cunningham",
+      "stat_type": "Pts+Asts",
+      "line_score": 39.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:19.258-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Cade Cunningham",
+      "stat_type": "Pts+Rebs",
+      "line_score": 39.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:19.891-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jayson Tatum",
+      "stat_type": "Pts+Asts",
+      "line_score": 39.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:22.667-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jayson Tatum",
+      "stat_type": "Pts+Rebs",
+      "line_score": 39.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:23.266-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jayson Tatum",
+      "stat_type": "Pts+Rebs+Asts",
+      "line_score": 39.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:23.833-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jayson Tatum",
+      "stat_type": "Pts+Rebs",
+      "line_score": 36.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:02:23.525-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Cade Cunningham",
+      "stat_type": "Points",
+      "line_score": 34.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:18.840-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Cade Cunningham",
+      "stat_type": "Pts+Asts",
+      "line_score": 34.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:02:19.426-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Cade Cunningham",
+      "stat_type": "Pts+Rebs",
+      "line_score": 34.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:19.807-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Cade Cunningham",
+      "stat_type": "Pts+Rebs+Asts",
+      "line_score": 34.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:20.220-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jayson Tatum",
+      "stat_type": "Points",
+      "line_score": 34.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:22.280-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jayson Tatum",
+      "stat_type": "Pts+Rebs",
+      "line_score": 34.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:23.179-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jayson Tatum",
+      "stat_type": "Pts+Rebs+Asts",
+      "line_score": 34.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:23.749-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jayson Tatum",
+      "stat_type": "Pts+Asts",
+      "line_score": 32.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:02:22.837-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Cade Cunningham",
+      "stat_type": "Pts+Rebs",
+      "line_score": 30.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:02:19.976-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Cade Cunningham",
+      "stat_type": "Points",
+      "line_score": 29.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:18.757-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Cade Cunningham",
+      "stat_type": "Pts+Asts",
+      "line_score": 29.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:19.151-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Cade Cunningham",
+      "stat_type": "Pts+Rebs",
+      "line_score": 29.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:19.729-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jayson Tatum",
+      "stat_type": "Points",
+      "line_score": 29.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:22.199-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jayson Tatum",
+      "stat_type": "Pts+Asts",
+      "line_score": 29.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:22.574-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jayson Tatum",
+      "stat_type": "Pts+Rebs",
+      "line_score": 29.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:23.089-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jayson Tatum",
+      "stat_type": "Points",
+      "line_score": 26.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:06:17.317-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Cade Cunningham",
+      "stat_type": "Points",
+      "line_score": 24.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:06:17.391-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Cade Cunningham",
+      "stat_type": "Pts+Rebs",
+      "line_score": 24.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:19.639-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jayson Tatum",
+      "stat_type": "Points",
+      "line_score": 24.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:22.115-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Cade Cunningham",
+      "stat_type": "Points",
+      "line_score": 19.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:18.667-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Cade Cunningham",
+      "stat_type": "Rebs+Asts",
+      "line_score": 19.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:20.988-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jayson Tatum",
+      "stat_type": "Rebs+Asts",
+      "line_score": 19.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:24.886-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Cade Cunningham",
+      "stat_type": "Rebs+Asts",
+      "line_score": 14.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:02:21.069-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Cade Cunningham",
+      "stat_type": "Assists",
+      "line_score": 13.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:18.370-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jayson Tatum",
+      "stat_type": "Rebounds",
+      "line_score": 13.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:24.666-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Cade Cunningham",
+      "stat_type": "Assists",
+      "line_score": 11.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:18.290-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jayson Tatum",
+      "stat_type": "Rebounds",
+      "line_score": 11.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:24.586-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Cade Cunningham",
+      "stat_type": "Assists",
+      "line_score": 9.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:02:18.450-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jayson Tatum",
+      "stat_type": "Assists",
+      "line_score": 9.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:21.815-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jayson Tatum",
+      "stat_type": "Rebounds",
+      "line_score": 8.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:24.506-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Cade Cunningham",
+      "stat_type": "Assists",
+      "line_score": 7.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:18.210-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Cade Cunningham",
+      "stat_type": "Rebounds",
+      "line_score": 7.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:20.775-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jayson Tatum",
+      "stat_type": "Assists",
+      "line_score": 7.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:21.733-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jayson Tatum",
+      "stat_type": "Rebounds",
+      "line_score": 7.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:24.421-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jayson Tatum",
+      "stat_type": "Assists",
+      "line_score": 5.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:02:21.901-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jayson Tatum",
+      "stat_type": "3-PT Made",
+      "line_score": 4.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:21.448-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Cade Cunningham",
+      "stat_type": "3-PT Made",
+      "line_score": 3.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:17.976-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Cade Cunningham",
+      "stat_type": "Rebounds",
+      "line_score": 3.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:20.688-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jayson Tatum",
+      "stat_type": "3-PT Made",
+      "line_score": 3.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:21.366-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Cade Cunningham",
+      "stat_type": "3-PT Made",
+      "line_score": 2.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:17.891-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jayson Tatum",
+      "stat_type": "3-PT Made",
+      "line_score": 2.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:02:21.530-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Cade Cunningham",
+      "stat_type": "3-PT Made",
+      "line_score": 2,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:10:53.951-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Cade Cunningham",
+      "stat_type": "3-PT Made",
+      "line_score": 1.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:17.800-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jayson Tatum",
+      "stat_type": "3-PT Made",
+      "line_score": 1.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:21.281-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jalen Brunson",
+      "stat_type": "Pts+Asts",
+      "line_score": 44.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:18:43.590-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jalen Brunson",
+      "stat_type": "Pts+Rebs+Asts",
+      "line_score": 44.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:27.973-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jalen Brunson",
+      "stat_type": "Pts+Asts",
+      "line_score": 39.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:26.866-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jalen Brunson",
+      "stat_type": "Pts+Rebs",
+      "line_score": 39.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:27.419-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jalen Brunson",
+      "stat_type": "Pts+Rebs+Asts",
+      "line_score": 39.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:27.889-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "LeBron James",
+      "stat_type": "Pts+Rebs+Asts",
+      "line_score": 39.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:31.524-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jalen Brunson",
+      "stat_type": "Pts+Rebs+Asts",
+      "line_score": 35.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:02:28.059-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jalen Brunson",
+      "stat_type": "Points",
+      "line_score": 34.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:26.492-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jalen Brunson",
+      "stat_type": "Pts+Rebs",
+      "line_score": 34.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:27.335-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jalen Brunson",
+      "stat_type": "Pts+Rebs+Asts",
+      "line_score": 34.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:27.799-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "LeBron James",
+      "stat_type": "Pts+Asts",
+      "line_score": 34.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:30.536-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "LeBron James",
+      "stat_type": "Pts+Rebs",
+      "line_score": 34.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:31.038-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "LeBron James",
+      "stat_type": "Pts+Rebs+Asts",
+      "line_score": 34.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:31.442-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jalen Brunson",
+      "stat_type": "Pts+Asts",
+      "line_score": 32.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:02:27.031-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "LeBron James",
+      "stat_type": "Pts+Rebs+Asts",
+      "line_score": 30.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:02:31.605-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jalen Brunson",
+      "stat_type": "Points",
+      "line_score": 29.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:26.410-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jalen Brunson",
+      "stat_type": "Pts+Asts",
+      "line_score": 29.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:26.781-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jalen Brunson",
+      "stat_type": "Pts+Rebs",
+      "line_score": 29.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:17:13.921-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jalen Brunson",
+      "stat_type": "Pts+Rebs+Asts",
+      "line_score": 29.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:27.714-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "LeBron James",
+      "stat_type": "Pts+Asts",
+      "line_score": 29.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:30.452-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "LeBron James",
+      "stat_type": "Pts+Rebs",
+      "line_score": 29.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:30.931-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "LeBron James",
+      "stat_type": "Pts+Rebs+Asts",
+      "line_score": 29.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:20:19.831-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jalen Brunson",
+      "stat_type": "Points",
+      "line_score": 25.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:07:00.762-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jalen Brunson",
+      "stat_type": "Points",
+      "line_score": 24.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:26.319-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jalen Brunson",
+      "stat_type": "Pts+Rebs",
+      "line_score": 24.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:27.247-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "LeBron James",
+      "stat_type": "Points",
+      "line_score": 24.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:30.052-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "LeBron James",
+      "stat_type": "Pts+Asts",
+      "line_score": 24.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:17:13.990-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "LeBron James",
+      "stat_type": "Pts+Rebs+Asts",
+      "line_score": 24.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:31.346-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "LeBron James",
+      "stat_type": "Pts+Rebs",
+      "line_score": 24.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:20:19.603-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "LeBron James",
+      "stat_type": "Pts+Rebs",
+      "line_score": 23.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:02:31.120-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jalen Brunson",
+      "stat_type": "Points",
+      "line_score": 19.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:26.235-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "LeBron James",
+      "stat_type": "Points",
+      "line_score": 19.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:29.959-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "LeBron James",
+      "stat_type": "Pts+Asts",
+      "line_score": 19.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:30.366-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "LeBron James",
+      "stat_type": "Pts+Rebs",
+      "line_score": 19.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:30.846-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "LeBron James",
+      "stat_type": "Rebs+Asts",
+      "line_score": 19.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:20:20.064-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "LeBron James",
+      "stat_type": "Points",
+      "line_score": 17.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:07:00.920-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "LeBron James",
+      "stat_type": "Points",
+      "line_score": 14.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:29.866-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "LeBron James",
+      "stat_type": "Rebs+Asts",
+      "line_score": 14.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:32.548-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jalen Brunson",
+      "stat_type": "Rebs+Asts",
+      "line_score": 14.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:20:19.341-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "LeBron James",
+      "stat_type": "Rebs+Asts",
+      "line_score": 13.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-21T15:28:17.889-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jalen Brunson",
+      "stat_type": "Assists",
+      "line_score": 9.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:25.750-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jalen Brunson",
+      "stat_type": "Rebs+Asts",
+      "line_score": 9.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:02:28.571-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "LeBron James",
+      "stat_type": "Assists",
+      "line_score": 9.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:29.360-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "LeBron James",
+      "stat_type": "Rebounds",
+      "line_score": 9.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:32.322-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jalen Brunson",
+      "stat_type": "Assists",
+      "line_score": 7.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:25.672-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "LeBron James",
+      "stat_type": "Assists",
+      "line_score": 7.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:29.278-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "LeBron James",
+      "stat_type": "Rebounds",
+      "line_score": 7.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:32.167-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jalen Brunson",
+      "stat_type": "Assists",
+      "line_score": 6.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:02:25.830-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "LeBron James",
+      "stat_type": "Rebounds",
+      "line_score": 6.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:32.242-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jalen Brunson",
+      "stat_type": "Assists",
+      "line_score": 5.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:25.578-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "LeBron James",
+      "stat_type": "Assists",
+      "line_score": 5.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:29.196-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "LeBron James",
+      "stat_type": "Rebounds",
+      "line_score": 5.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:32.083-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jalen Brunson",
+      "stat_type": "Rebounds",
+      "line_score": 5.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:20:19.132-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jalen Brunson",
+      "stat_type": "3-PT Made",
+      "line_score": 4.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:25.358-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jalen Brunson",
+      "stat_type": "3-PT Made",
+      "line_score": 3.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:25.190-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jalen Brunson",
+      "stat_type": "Rebounds",
+      "line_score": 3.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:28.357-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jalen Brunson",
+      "stat_type": "Rebounds",
+      "line_score": 3,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:08:00.581-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jalen Brunson",
+      "stat_type": "3-PT Made",
+      "line_score": 2.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:25.273-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jalen Brunson",
+      "stat_type": "Rebounds",
+      "line_score": 2.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:28.275-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "LeBron James",
+      "stat_type": "3-PT Made",
+      "line_score": 2.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:28.886-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jalen Brunson",
+      "stat_type": "3-PT Made",
+      "line_score": 1.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:25.108-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "LeBron James",
+      "stat_type": "3-PT Made",
+      "line_score": 1.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:28.970-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Jalen Brunson",
+      "stat_type": "Double-Double",
+      "line_score": 0.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:26.022-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "LeBron James",
+      "stat_type": "3-PT Made",
+      "line_score": 0.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:28.801-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "LeBron James",
+      "stat_type": "Double-Double",
+      "line_score": 0.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:29.647-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Rebounds",
+      "line_score": 11.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:09:21.247-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Assists",
+      "line_score": 3,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:09:46.043-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Shai Gilgeous-Alexander",
+      "stat_type": "3-PT Made",
+      "line_score": 1.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:11:36.623-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Pts+Rebs+Asts",
+      "line_score": 54.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:39.204-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Shai Gilgeous-Alexander",
+      "stat_type": "Pts+Rebs+Asts",
+      "line_score": 49.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:35.184-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Pts+Rebs",
+      "line_score": 49.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:38.655-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Pts+Rebs+Asts",
+      "line_score": 49.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:39.117-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Shai Gilgeous-Alexander",
+      "stat_type": "Pts+Asts",
+      "line_score": 44.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:34.264-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Shai Gilgeous-Alexander",
+      "stat_type": "Pts+Rebs",
+      "line_score": 44.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:34.730-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Shai Gilgeous-Alexander",
+      "stat_type": "Pts+Rebs+Asts",
+      "line_score": 44.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:35.102-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Pts+Rebs",
+      "line_score": 44.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:38.471-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Pts+Rebs+Asts",
+      "line_score": 44.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:39.027-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Pts+Rebs+Asts",
+      "line_score": 40.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:02:39.287-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Shai Gilgeous-Alexander",
+      "stat_type": "Points",
+      "line_score": 39.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:33.661-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Shai Gilgeous-Alexander",
+      "stat_type": "Pts+Asts",
+      "line_score": 39.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:34.180-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Shai Gilgeous-Alexander",
+      "stat_type": "Pts+Rebs",
+      "line_score": 39.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:34.641-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Shai Gilgeous-Alexander",
+      "stat_type": "Pts+Rebs+Asts",
+      "line_score": 39.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:02:35.272-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Pts+Asts",
+      "line_score": 39.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:37.996-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Pts+Rebs",
+      "line_score": 39.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:38.571-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Pts+Rebs",
+      "line_score": 37.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:02:38.735-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Shai Gilgeous-Alexander",
+      "stat_type": "Pts+Asts",
+      "line_score": 35.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:02:34.346-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Shai Gilgeous-Alexander",
+      "stat_type": "Points",
+      "line_score": 34.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:33.577-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Shai Gilgeous-Alexander",
+      "stat_type": "Pts+Asts",
+      "line_score": 34.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:34.095-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Shai Gilgeous-Alexander",
+      "stat_type": "Pts+Rebs",
+      "line_score": 34.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:02:34.811-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Shai Gilgeous-Alexander",
+      "stat_type": "Pts+Rebs+Asts",
+      "line_score": 34.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:35.017-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Points",
+      "line_score": 34.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:37.614-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Pts+Asts",
+      "line_score": 34.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:37.915-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Pts+Rebs",
+      "line_score": 34.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:38.288-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Pts+Rebs+Asts",
+      "line_score": 34.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:38.943-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Shai Gilgeous-Alexander",
+      "stat_type": "Points",
+      "line_score": 29.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:07:00.854-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Shai Gilgeous-Alexander",
+      "stat_type": "Pts+Asts",
+      "line_score": 29.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:34.010-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Shai Gilgeous-Alexander",
+      "stat_type": "Pts+Rebs",
+      "line_score": 29.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:34.556-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Points",
+      "line_score": 29.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:37.533-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Pts+Asts",
+      "line_score": 29.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:02:38.077-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Pts+Rebs",
+      "line_score": 29.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:38.391-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Points",
+      "line_score": 26,
+      "odds_type": "standard",
+      "updated_at": "2026-08-19T17:07:30.269-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Shai Gilgeous-Alexander",
+      "stat_type": "Points",
+      "line_score": 24.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:33.492-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Points",
+      "line_score": 24.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:37.450-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Pts+Asts",
+      "line_score": 24.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:37.831-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Points",
+      "line_score": 19.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:37.366-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Rebs+Asts",
+      "line_score": 19.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:39.884-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Rebounds",
+      "line_score": 15.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:39.663-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Rebs+Asts",
+      "line_score": 14.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:02:39.971-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Rebounds",
+      "line_score": 13.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:39.581-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Rebounds",
+      "line_score": 11,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:08:00.701-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Shai Gilgeous-Alexander",
+      "stat_type": "Rebs+Asts",
+      "line_score": 9.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:02:35.845-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Rebounds",
+      "line_score": 9.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:39.500-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Shai Gilgeous-Alexander",
+      "stat_type": "Assists",
+      "line_score": 7.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:32.985-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Shai Gilgeous-Alexander",
+      "stat_type": "Assists",
+      "line_score": 5.5,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:02:33.070-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Shai Gilgeous-Alexander",
+      "stat_type": "Rebounds",
+      "line_score": 5.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:35.570-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Assists",
+      "line_score": 5.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:36.582-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Shai Gilgeous-Alexander",
+      "stat_type": "Rebounds",
+      "line_score": 4.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:35.650-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Blocked Shots",
+      "line_score": 4.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:36.977-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Shai Gilgeous-Alexander",
+      "stat_type": "Rebounds",
+      "line_score": 4,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:08:00.641-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Shai Gilgeous-Alexander",
+      "stat_type": "Rebounds",
+      "line_score": 3.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:35.489-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "3-PT Made",
+      "line_score": 3.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:36.221-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Assists",
+      "line_score": 3.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:36.504-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Blocked Shots",
+      "line_score": 3.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:36.894-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Shai Gilgeous-Alexander",
+      "stat_type": "3-PT Made",
+      "line_score": 2.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:32.778-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "3-PT Made",
+      "line_score": 2.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:36.144-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Assists",
+      "line_score": 2.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:36.419-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Blocked Shots",
+      "line_score": 2.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:36.783-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "3-PT Made",
+      "line_score": 2,
+      "odds_type": "standard",
+      "updated_at": "2026-08-20T11:10:54.020-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "3-PT Made",
+      "line_score": 1.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:36.056-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Shai Gilgeous-Alexander",
+      "stat_type": "Double-Double",
+      "line_score": 0.5,
+      "odds_type": "demon",
+      "updated_at": "2026-08-20T11:02:33.271-04:00",
+      "league": "NBA"
+    },
+    {
+      "player": "Victor Wembanyama",
+      "stat_type": "Double-Double",
+      "line_score": 0.5,
+      "odds_type": "goblin",
+      "updated_at": "2026-08-20T11:02:37.168-04:00",
+      "league": "NBA"
+    }
+  ]
+}

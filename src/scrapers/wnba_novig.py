@@ -75,6 +75,9 @@ query GetWnbaEvents {
 }
 """
 
+# Omit nested `orders` — Hasura's 4s project limit times out when joining open
+# CASH orders under every outcome. American odds come from `available`; stake
+# stays null without orders.
 _GET_EVENT_MARKETS_QUERY = """
 query GetEventMarkets($id: uuid!) {
   event(where: { id: { _eq: $id } }) {
@@ -89,11 +92,6 @@ query GetEventMarkets($id: uuid!) {
         description
         available
         last
-        orders(where: { status: { _eq: "OPEN" }, currency: { _eq: "CASH" } }) {
-          qty
-          price
-          status
-        }
       }
     }
   }

@@ -1,21 +1,16 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
-import {
-  WNBA_LEADERS_BANNER_ORANGE,
-  WnbaLeadersHeader,
-} from "./WnbaLeadersHeader";
+import { WnbaLeadersHeader } from "./WnbaLeadersHeader";
 
 describe("WnbaLeadersHeader", () => {
-  it("renders an orange banner titled WNBA {season} Leaders without basketball mark", () => {
+  it("renders the WNBA {season} Leaders title without an orange banner", () => {
     render(<WnbaLeadersHeader season={2026} />);
 
     const header = screen.getByTestId("wnba-leaders-header");
     expect(
       screen.getByRole("heading", { name: "WNBA 2026 Leaders" }),
     ).toBeInTheDocument();
-    const banner = header.querySelector("div.rounded-3xl");
-    expect(banner).toHaveStyle({ backgroundColor: "rgb(243, 131, 18)" });
-    expect(WNBA_LEADERS_BANNER_ORANGE).toBe("#F38312");
+    expect(header.querySelector("div.rounded-3xl")).toBeNull();
     expect(header.querySelector("img")).toBeNull();
   });
 });
