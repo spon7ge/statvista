@@ -43,6 +43,9 @@ def test_ip_uses_prophetx_over_draftkings():
     over = ip_pct_for_side(cluster, "over")
     under = ip_pct_for_side(cluster, "under")
     assert over is not None and under is not None
+    # ProphetX de-vig is 58/42; DraftKings would be 48/52. Pin PX so a
+    # DK-first IP order cannot pass on complementarity alone.
+    assert (over, under) == (58, 42)
     assert over + under == 100
 
 
