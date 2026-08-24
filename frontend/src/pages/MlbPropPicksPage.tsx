@@ -35,7 +35,10 @@ export function MlbPropPicksPage() {
     setQuery("");
   }
 
-  const showBoardFilters = !isLoading && !isError && rows.length > 0;
+  // React Query keeps `data` after a failed 15-minute refetch; only treat
+  // error as empty-state on the first load when nothing is cached.
+  const showBoardError = isError && !data;
+  const showBoardFilters = !isLoading && !showBoardError && rows.length > 0;
 
   return (
     <div className="space-y-0 pb-8">
@@ -57,7 +60,7 @@ export function MlbPropPicksPage() {
         <MlbPropPicksTable
           rows={filtered}
           isLoading={isLoading}
-          isError={isError}
+          isError={showBoardError}
           lastUpdatedAt={dataUpdatedAt || undefined}
         />
       </section>

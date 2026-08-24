@@ -196,4 +196,22 @@ describe("MlbPropPicksPage", () => {
     );
     expect(screen.getByText("No board yet")).toBeInTheDocument();
   });
+
+  it("keeps a cached board visible when a background refetch fails", () => {
+    mockUseMlbPropBoard.mockReturnValue({
+      data: {
+        as_of: "now",
+        warnings: [],
+        rows: [judge],
+      },
+      isLoading: false,
+      isError: true,
+      isFetched: true,
+      dataUpdatedAt: Date.UTC(2026, 7, 5, 20, 0),
+    });
+    renderPage();
+
+    expect(screen.getByText("Aaron Judge")).toBeInTheDocument();
+    expect(screen.queryByText("Prop lines unavailable")).not.toBeInTheDocument();
+  });
 });
