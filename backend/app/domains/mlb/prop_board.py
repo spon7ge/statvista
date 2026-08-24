@@ -88,6 +88,8 @@ Enrichment = tuple[dict[str, PlayerCtx], dict[str, TeamRankRow], list[str], set[
 
 # (person_id, group, season) -> (monotonic_ts, splits)
 _log_cache: dict[tuple[int, str, int], tuple[float, list[dict[str, Any]]]] = {}
+# player_name -> (monotonic_ts, person_id | None)
+_person_cache: dict[str, tuple[float, int | None]] = {}
 
 
 def collect_board_quotes() -> list[BoardQuote]:
@@ -537,10 +539,7 @@ async def _attach_game_logs(
         nonlocal logs_failed
         async with sem:
             try:
-                # Search HTTP failures are a log-path outage, not "player unknown".
-                person_id = await search_person_id(
-                    client, player_name, raise_on_error=True
-                )
+                person_id = await _cached_person_id(client, player_name)
             except MlbStatsRequestError:
                 logs_failed = True
                 return
@@ -561,6 +560,20 @@ async def _attach_game_logs(
 
     await asyncio.gather(*(one(key, name) for key, name in players.items()))
     return logs_failed
+
+
+async def _cached_person_id(
+    client: httpx.AsyncClient, player_name: str
+) -> int | None:
+    now = time.monotonic()
+    cached = _person_cache.get(player_name)
+    if cached is not None and now - cached[0] < _LOG_TTL_SECONDS:
+        return cached[1]
+    person_id = await search_person_id(
+        client, player_name, raise_on_error=True
+    )
+    _person_cache[player_name] = (now, person_id)
+    return person_id
 
 
 async def _cached_game_log(

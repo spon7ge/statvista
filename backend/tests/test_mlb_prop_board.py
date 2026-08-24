@@ -293,7 +293,7 @@ def test_game_index_maps_team_to_opponent_and_side():
 
 @pytest.mark.asyncio
 async def test_load_enrichment_soft_fails_ranks_and_missing_person(monkeypatch):
-    from app.domains.mlb.prop_board import load_enrichment
+    from app.domains.mlb.prop_board import _person_cache, load_enrichment
     from app.domains.mlb.prop_board_cluster import Cluster
 
     cluster = Cluster(
@@ -320,6 +320,7 @@ async def test_load_enrichment_soft_fails_ranks_and_missing_person(monkeypatch):
     monkeypatch.setattr("app.domains.mlb.prop_board.get_today_scoreboard", boom_board)
     monkeypatch.setattr("app.domains.mlb.prop_board._load_team_ranks", boom_ranks)
     monkeypatch.setattr("app.domains.mlb.prop_board.search_person_id", no_person)
+    _person_cache.clear()
 
     ctx, ranks, warnings, missing = await load_enrichment([cluster])
     assert warnings == ["team_ranks_unavailable"]
@@ -342,7 +343,7 @@ def _hits_cluster():
 
 @pytest.mark.asyncio
 async def test_load_enrichment_warns_when_game_log_get_fails(monkeypatch):
-    from app.domains.mlb.prop_board import _log_cache, load_enrichment
+    from app.domains.mlb.prop_board import _log_cache, _person_cache, load_enrichment
 
     class BoomClient:
         def __init__(self, *args, **kwargs):
@@ -372,6 +373,7 @@ async def test_load_enrichment_warns_when_game_log_get_fails(monkeypatch):
         return 592450
 
     _log_cache.clear()
+    _person_cache.clear()
     monkeypatch.setattr("app.domains.mlb.prop_board.httpx.AsyncClient", BoomClient)
     monkeypatch.setattr("app.domains.mlb.prop_board.get_mlb_player_index", ok_roster)
     monkeypatch.setattr("app.domains.mlb.prop_board.get_today_scoreboard", ok_board)
@@ -386,7 +388,7 @@ async def test_load_enrichment_warns_when_game_log_get_fails(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_load_enrichment_empty_success_logs_do_not_warn(monkeypatch):
-    from app.domains.mlb.prop_board import _log_cache, load_enrichment
+    from app.domains.mlb.prop_board import _log_cache, _person_cache, load_enrichment
 
     async def ok_roster():
         return {}
@@ -406,6 +408,7 @@ async def test_load_enrichment_empty_success_logs_do_not_warn(monkeypatch):
         return []
 
     _log_cache.clear()
+    _person_cache.clear()
     monkeypatch.setattr("app.domains.mlb.prop_board.get_mlb_player_index", ok_roster)
     monkeypatch.setattr("app.domains.mlb.prop_board.get_today_scoreboard", ok_board)
     monkeypatch.setattr("app.domains.mlb.prop_board._load_team_ranks", ok_ranks)
@@ -415,3 +418,41 @@ async def test_load_enrichment_empty_success_logs_do_not_warn(monkeypatch):
     _ctx, _ranks, warnings, missing = await load_enrichment([_hits_cluster()])
     assert "gamelogs_unavailable" not in warnings
     assert missing == set()
+
+
+@pytest.mark.asyncio
+async def test_load_enrichment_reuses_cached_person_id(monkeypatch):
+    from app.domains.mlb.prop_board import _log_cache, _person_cache, load_enrichment
+
+    calls = {"n": 0}
+
+    async def ok_roster():
+        return {}
+
+    async def ok_board():
+        from types import SimpleNamespace
+
+        return SimpleNamespace(games=[])
+
+    async def ok_ranks(*_a, **_k):
+        return {}
+
+    async def person_id(*_a, **_k):
+        calls["n"] += 1
+        return 592450
+
+    async def empty_logs(*_a, **_k):
+        return []
+
+    _log_cache.clear()
+    _person_cache.clear()
+    _person_cache.clear()
+    monkeypatch.setattr("app.domains.mlb.prop_board.get_mlb_player_index", ok_roster)
+    monkeypatch.setattr("app.domains.mlb.prop_board.get_today_scoreboard", ok_board)
+    monkeypatch.setattr("app.domains.mlb.prop_board._load_team_ranks", ok_ranks)
+    monkeypatch.setattr("app.domains.mlb.prop_board.search_person_id", person_id)
+    monkeypatch.setattr("app.domains.mlb.prop_board.fetch_game_log_splits", empty_logs)
+
+    await load_enrichment([_hits_cluster()])
+    await load_enrichment([_hits_cluster()])
+    assert calls["n"] == 1
