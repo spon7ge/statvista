@@ -326,3 +326,92 @@ async def test_load_enrichment_soft_fails_ranks_and_missing_person(monkeypatch):
     assert ranks == {}
     assert "aaron judge" in missing
     assert ctx["aaron judge"]["team_abbrev"] is None
+
+
+def _hits_cluster():
+    from app.domains.mlb.prop_board_cluster import Cluster
+
+    return Cluster(
+        player_name="Judge",
+        player_key="aaron judge",
+        stat="hits",
+        line=1.5,
+        quotes=(),
+    )
+
+
+@pytest.mark.asyncio
+async def test_load_enrichment_warns_when_game_log_get_fails(monkeypatch):
+    from app.domains.mlb.prop_board import _log_cache, load_enrichment
+
+    class BoomClient:
+        def __init__(self, *args, **kwargs):
+            pass
+
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *args):
+            return False
+
+        async def get(self, *args, **kwargs):
+            raise RuntimeError("stats api down")
+
+    async def ok_roster():
+        return {}
+
+    async def ok_board():
+        from types import SimpleNamespace
+
+        return SimpleNamespace(games=[])
+
+    async def ok_ranks(*_a, **_k):
+        return {}
+
+    async def person_id(*_a, **_k):
+        return 592450
+
+    _log_cache.clear()
+    monkeypatch.setattr("app.domains.mlb.prop_board.httpx.AsyncClient", BoomClient)
+    monkeypatch.setattr("app.domains.mlb.prop_board.get_mlb_player_index", ok_roster)
+    monkeypatch.setattr("app.domains.mlb.prop_board.get_today_scoreboard", ok_board)
+    monkeypatch.setattr("app.domains.mlb.prop_board._load_team_ranks", ok_ranks)
+    monkeypatch.setattr("app.domains.mlb.prop_board.search_person_id", person_id)
+
+    ctx, _ranks, warnings, missing = await load_enrichment([_hits_cluster()])
+    assert warnings.count("gamelogs_unavailable") == 1
+    assert missing == set()
+    assert ctx["aaron judge"]["splits_hitting"] == []
+
+
+@pytest.mark.asyncio
+async def test_load_enrichment_empty_success_logs_do_not_warn(monkeypatch):
+    from app.domains.mlb.prop_board import _log_cache, load_enrichment
+
+    async def ok_roster():
+        return {}
+
+    async def ok_board():
+        from types import SimpleNamespace
+
+        return SimpleNamespace(games=[])
+
+    async def ok_ranks(*_a, **_k):
+        return {}
+
+    async def person_id(*_a, **_k):
+        return 592450
+
+    async def empty_logs(*_a, **_k):
+        return []
+
+    _log_cache.clear()
+    monkeypatch.setattr("app.domains.mlb.prop_board.get_mlb_player_index", ok_roster)
+    monkeypatch.setattr("app.domains.mlb.prop_board.get_today_scoreboard", ok_board)
+    monkeypatch.setattr("app.domains.mlb.prop_board._load_team_ranks", ok_ranks)
+    monkeypatch.setattr("app.domains.mlb.prop_board.search_person_id", person_id)
+    monkeypatch.setattr("app.domains.mlb.prop_board.fetch_game_log_splits", empty_logs)
+
+    _ctx, _ranks, warnings, missing = await load_enrichment([_hits_cluster()])
+    assert "gamelogs_unavailable" not in warnings
+    assert missing == set()

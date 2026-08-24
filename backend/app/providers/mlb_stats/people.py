@@ -14,6 +14,10 @@ STATS_BASE = "https://statsapi.mlb.com/api/v1"
 STATS_TIMEOUT_SECONDS = 10.0
 
 
+class MlbStatsRequestError(Exception):
+    """Stats API HTTP/network failure, distinct from empty successful results."""
+
+
 def _norm_name(value: str) -> str:
     nfkd = unicodedata.normalize("NFKD", value)
     ascii_only = "".join(c for c in nfkd if not unicodedata.combining(c))
@@ -34,7 +38,9 @@ def pick_best_person(people: list[dict], query: str) -> dict | None:
     return sorted(people, key=score)[0]
 
 
-async def search_person_id(client: httpx.AsyncClient, name: str) -> int | None:
+async def search_person_id(
+    client: httpx.AsyncClient, name: str, *, raise_on_error: bool = False
+) -> int | None:
     if not name or not name.strip():
         return None
     try:
@@ -48,6 +54,8 @@ async def search_person_id(client: httpx.AsyncClient, name: str) -> int | None:
         return int(best["id"]) if best and best.get("id") is not None else None
     except Exception as exc:
         logger.warning("people search failed for %r: %s", name, exc)
+        if raise_on_error:
+            raise MlbStatsRequestError(str(exc)) from exc
         return None
 
 
@@ -70,8 +78,9 @@ async def fetch_game_log_splits(
         res.raise_for_status()
         return (res.json().get("stats") or [{}])[0].get("splits") or []
     except Exception as exc:
+        # Raise so callers can tell a failed GET from a successful empty log.
         logger.warning("game log failed for %s: %s", person_id, exc)
-        return []
+        raise MlbStatsRequestError(str(exc)) from exc
 
 
 async def fetch_season_pitching(

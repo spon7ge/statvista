@@ -1,5 +1,6 @@
 import pytest
 from app.providers.mlb_stats.people import (
+    MlbStatsRequestError,
     fetch_game_log_splits,
     fetch_season_pitching,
     fetch_vs_pitcher_total,
@@ -31,6 +32,17 @@ async def test_search_person_id_reads_people(monkeypatch):
             return FakeResp()
 
     assert await search_person_id(FakeClient(), "Zack Littell") == 641793
+
+
+@pytest.mark.asyncio
+async def test_search_person_id_raise_on_error_signals_outage():
+    class FakeClient:
+        async def get(self, url, params=None):
+            raise RuntimeError("timeout")
+
+    assert await search_person_id(FakeClient(), "Zack Littell") is None
+    with pytest.raises(MlbStatsRequestError):
+        await search_person_id(FakeClient(), "Zack Littell", raise_on_error=True)
 
 
 @pytest.mark.asyncio
@@ -158,9 +170,10 @@ async def test_fetch_game_log_splits_returns_splits():
 
 
 @pytest.mark.asyncio
-async def test_fetch_game_log_splits_failure_returns_empty():
+async def test_fetch_game_log_splits_failure_raises():
     class FakeClient:
         async def get(self, url, params=None):
             raise RuntimeError("timeout")
 
-    assert await fetch_game_log_splits(FakeClient(), 1, 2026, "pitching") == []
+    with pytest.raises(MlbStatsRequestError):
+        await fetch_game_log_splits(FakeClient(), 1, 2026, "pitching")

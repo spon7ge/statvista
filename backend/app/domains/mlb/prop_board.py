@@ -62,6 +62,7 @@ from app.providers.espn.mlb_roster import get_mlb_player_index
 from app.providers.espn.wnba_roster import norm_player_name
 from app.providers.mlb_stats.people import (
     STATS_TIMEOUT_SECONDS,
+    MlbStatsRequestError,
     fetch_game_log_splits,
     search_person_id,
 )
@@ -203,7 +204,7 @@ async def load_enrichment(clusters: list[Cluster] | None = None) -> Enrichment:
             warnings.append("team_ranks_unavailable")
 
         try:
-            await _attach_game_logs(
+            logs_failed = await _attach_game_logs(
                 client,
                 season,
                 player_ctx,
@@ -211,9 +212,12 @@ async def load_enrichment(clusters: list[Cluster] | None = None) -> Enrichment:
                 stats_needed,
                 missing_person,
             )
+            if logs_failed:
+                warnings.append("gamelogs_unavailable")
         except Exception as exc:
             logger.warning("MLB board game logs unavailable: %s", exc)
-            warnings.append("gamelogs_unavailable")
+            if "gamelogs_unavailable" not in warnings:
+                warnings.append("gamelogs_unavailable")
 
     return player_ctx, ranks, warnings, missing_person
 
@@ -525,12 +529,21 @@ async def _attach_game_logs(
     players: dict[str, str],
     stats_needed: dict[str, set[str]],
     missing_person: set[str],
-) -> None:
+) -> bool:
     sem = asyncio.Semaphore(_PERSON_LOOKUP_CONCURRENCY)
+    logs_failed = False
 
     async def one(player_key: str, player_name: str) -> None:
+        nonlocal logs_failed
         async with sem:
-            person_id = await search_person_id(client, player_name)
+            try:
+                # Search HTTP failures are a log-path outage, not "player unknown".
+                person_id = await search_person_id(
+                    client, player_name, raise_on_error=True
+                )
+            except MlbStatsRequestError:
+                logs_failed = True
+                return
             if person_id is None:
                 missing_person.add(player_key)
                 return
@@ -539,11 +552,15 @@ async def _attach_game_logs(
                 groups.add("pitching" if is_pitcher_stat(stat) else "hitting")
             ctx = player_ctx.setdefault(player_key, {})
             for group in groups:
-                ctx[f"splits_{group}"] = await _cached_game_log(
-                    client, person_id, season, group
-                )
+                try:
+                    ctx[f"splits_{group}"] = await _cached_game_log(
+                        client, person_id, season, group
+                    )
+                except MlbStatsRequestError:
+                    logs_failed = True
 
     await asyncio.gather(*(one(key, name) for key, name in players.items()))
+    return logs_failed
 
 
 async def _cached_game_log(
