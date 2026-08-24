@@ -495,17 +495,13 @@ describe("AppRouter", () => {
   it("renders MLB prop picks at /mlb/prop_picks", async () => {
     fetchMock.mockImplementation(async (input: RequestInfo) => {
       const url = String(input);
-      if (url.includes("/api/mlb/props/today")) {
+      if (url.includes("/api/mlb/props/board")) {
         return {
           ok: true,
           json: async () => ({
             as_of: "now",
-            app: "prizepicks",
-            format: "power",
-            legs: 4,
-            breakeven_pct: 54.3,
-            props: [],
-            error: null,
+            warnings: [],
+            rows: [],
           }),
         };
       }
@@ -520,138 +516,28 @@ describe("AppRouter", () => {
     expect(
       await screen.findByRole("heading", { name: "MLB Props" }),
     ).toBeInTheDocument();
-    expect(
-      await screen.findByText("No PrizePicks board available."),
-    ).toBeInTheDocument();
+    expect(await screen.findByText("No board yet")).toBeInTheDocument();
+    expect(screen.queryByRole("tab", { name: "PrizePicks" })).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Prop Picks" })).toHaveAttribute(
       "aria-current",
       "page",
     );
     expect(fetchMock).toHaveBeenCalledWith(
-      "/api/mlb/props/today?app=prizepicks&format=power&legs=4",
+      "/api/mlb/props/board",
       expect.objectContaining({ cache: "no-store" }),
     );
   });
 
-  it("renders player odds grid at /mlb/prop_picks/player/:playerSlug", async () => {
+  it("redirects /mlb/prop_picks/player/:playerSlug to the research board", async () => {
     fetchMock.mockImplementation(async (input: RequestInfo) => {
       const url = String(input);
-      if (url.includes("/api/mlb/props/today")) {
+      if (url.includes("/api/mlb/props/board")) {
         return {
           ok: true,
           json: async () => ({
             as_of: "now",
-            app: "prizepicks",
-            format: "power",
-            legs: 4,
-            breakeven_pct: 54.3,
-            props: [
-              {
-                player_name: "Aaron Judge",
-                team_abbrev: "NYY",
-                position: "RF",
-                headshot_url: null,
-                stat: "Strikeouts",
-                line: 6.5,
-                recommended_side: "over",
-                fair_pct: 58.2,
-                edge_pct: 5.1,
-                alt_edge_pct: null,
-                source_tier: "sharp_consensus",
-                confidence_chips: [],
-                sample_chips: [],
-                recency_chip: null,
-                books: {
-                  prophetx: null,
-                  novig: null,
-                  draftkings: null,
-                  fanduel: null,
-                  betmgm: null,
-                  caesars: null,
-                  kalshi: null,
-                  fliff: null,
-                  bet365: null,
-                  pinnacle: null,
-                },
-                books_main: {
-                  prophetx: {
-                    line: 6.5,
-                    over_american: -115,
-                    under_american: -105,
-                    changed_at: null,
-                  },
-                  novig: null,
-                  draftkings: {
-                    line: 7,
-                    over_american: -120,
-                    under_american: 100,
-                    changed_at: null,
-                  },
-                  fanduel: null,
-                  betmgm: null,
-                  caesars: null,
-                  kalshi: null,
-                  fliff: null,
-                  bet365: null,
-                  pinnacle: null,
-                },
-                dfs: {
-                  line: 6.5,
-                  changed_at: null,
-                  american: null,
-                  payout_multiplier: null,
-                },
-                fair_explain: "",
-              },
-              {
-                player_name: "Aaron Judge",
-                team_abbrev: "NYY",
-                position: "RF",
-                headshot_url: null,
-                stat: "Hits",
-                line: 1.5,
-                recommended_side: "over",
-                fair_pct: null,
-                edge_pct: null,
-                alt_edge_pct: null,
-                source_tier: "no_sharp_read",
-                confidence_chips: [],
-                sample_chips: [],
-                recency_chip: null,
-                books: {
-                  prophetx: null,
-                  novig: null,
-                  draftkings: null,
-                  fanduel: null,
-                  betmgm: null,
-                  caesars: null,
-                  kalshi: null,
-                  fliff: null,
-                  bet365: null,
-                  pinnacle: null,
-                },
-                books_main: {
-                  prophetx: null,
-                  novig: null,
-                  draftkings: null,
-                  fanduel: null,
-                  betmgm: null,
-                  caesars: null,
-                  kalshi: null,
-                  fliff: null,
-                  bet365: null,
-                  pinnacle: null,
-                },
-                dfs: {
-                  line: 1.5,
-                  changed_at: null,
-                  american: null,
-                  payout_multiplier: null,
-                },
-                fair_explain: "",
-              },
-            ],
-            error: null,
+            warnings: [],
+            rows: [],
           }),
         };
       }
@@ -662,89 +548,17 @@ describe("AppRouter", () => {
     });
 
     renderWithProviders(["/mlb/prop_picks/player/aaron-judge?app=prizepicks"]);
-    expect(await screen.findByText(/Aaron Judge/i)).toBeInTheDocument();
-    expect(screen.getByText(/Strikeouts/i)).toBeInTheDocument();
-    expect(screen.getByText(/DraftKings/i)).toBeInTheDocument();
-  });
-
-  it("shows empty state for unknown slug", async () => {
-    fetchMock.mockImplementation(async (input: RequestInfo) => {
-      const url = String(input);
-      if (url.includes("/api/mlb/props/today")) {
-        return {
-          ok: true,
-          json: async () => ({
-            as_of: "now",
-            app: "prizepicks",
-            format: "power",
-            legs: 4,
-            breakeven_pct: 54.3,
-            props: [
-              {
-                player_name: "Aaron Judge",
-                team_abbrev: "NYY",
-                position: "RF",
-                headshot_url: null,
-                stat: "Strikeouts",
-                line: 6.5,
-                recommended_side: "over",
-                fair_pct: null,
-                edge_pct: null,
-                alt_edge_pct: null,
-                source_tier: "no_sharp_read",
-                confidence_chips: [],
-                sample_chips: [],
-                recency_chip: null,
-                books: {
-                  prophetx: null,
-                  novig: null,
-                  draftkings: null,
-                  fanduel: null,
-                  betmgm: null,
-                  caesars: null,
-                  kalshi: null,
-                  fliff: null,
-                  bet365: null,
-                  pinnacle: null,
-                },
-                books_main: {
-                  prophetx: null,
-                  novig: null,
-                  draftkings: null,
-                  fanduel: null,
-                  betmgm: null,
-                  caesars: null,
-                  kalshi: null,
-                  fliff: null,
-                  bet365: null,
-                  pinnacle: null,
-                },
-                dfs: {
-                  line: 6.5,
-                  changed_at: null,
-                  american: null,
-                  payout_multiplier: null,
-                },
-                fair_explain: "",
-              },
-            ],
-            error: null,
-          }),
-        };
-      }
-      return {
-        ok: true,
-        json: async () => ({ date: "2026-07-29", fetched_at: "", games: [] }),
-      };
-    });
-
-    renderWithProviders(["/mlb/prop_picks/player/nobody?app=prizepicks"]);
     expect(
-      await screen.findByText(/player not found|unavailable/i),
+      await screen.findByRole("heading", { name: "MLB Props" }),
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole("link", { name: /back to prop picks/i }),
-    ).toHaveAttribute("href", expect.stringMatching(/\/mlb\/prop_picks/));
+    expect(await screen.findByText("No board yet")).toBeInTheDocument();
+    expect(screen.queryByTestId("mlb-player-props-odds-grid")).not.toBeInTheDocument();
+    expect(screen.queryByText(/DraftKings/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Strikeouts/i)).not.toBeInTheDocument();
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/mlb/props/board",
+      expect.objectContaining({ cache: "no-store" }),
+    );
   });
 
   it("renders MLB game detail shell at /mlb/games/:gamePk", async () => {

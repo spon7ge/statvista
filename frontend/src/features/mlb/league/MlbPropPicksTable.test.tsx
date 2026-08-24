@@ -1,0 +1,233 @@
+import { render, screen, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { describe, expect, it } from "vitest";
+import type { ApiMlbPropBoardRow } from "@/shared/lib/api";
+import { formatMlbPropPicksUpdatedAt } from "./MlbPropPicksList";
+import { MlbPropPicksTable } from "./MlbPropPicksTable";
+
+function fixtureRow(
+  over: Partial<ApiMlbPropBoardRow> = {},
+): ApiMlbPropBoardRow {
+  return {
+    player_name: "Aaron Judge",
+    headshot_url: null,
+    team_abbrev: "NYY",
+    opponent_abbrev: "BOS",
+    home_away: "away",
+    stat: "hits",
+    market_label: "Over 1.5 Hits",
+    side: "over",
+    line: 1.5,
+    game_pk: 1,
+    game_start_at: "2026-08-23T23:10:00Z",
+    books: [{ book: "prophetx", american: -115, url: null }],
+    ip_pct: 53,
+    opp_def_rank: 12,
+    opp_def_label: "12th BOS",
+    opp_pace_rank: 4,
+    opp_pace_label: "4th BOS",
+    hit_l5: 80,
+    hit_l10: 70,
+    hit_l15: 60,
+    ...over,
+  };
+}
+
+describe("MlbPropPicksTable", () => {
+  it("renders board columns and no dfs tabs", () => {
+    render(
+      <MlbPropPicksTable rows={[fixtureRow()]} lastUpdatedAt={Date.now()} />,
+    );
+    expect(screen.getByText("Line")).toBeInTheDocument();
+    expect(screen.getByText("IP")).toBeInTheDocument();
+    expect(screen.getByText("Opp Def Rank")).toBeInTheDocument();
+    expect(screen.getByText("Opp Pace Rank")).toBeInTheDocument();
+    expect(screen.getByText("L5")).toBeInTheDocument();
+    expect(screen.queryByRole("tab", { name: "PrizePicks" })).not.toBeInTheDocument();
+  });
+
+  it("renders em dash for null ip", () => {
+    render(<MlbPropPicksTable rows={[{ ...fixtureRow(), ip_pct: null }]} />);
+    expect(screen.getByTestId("ip-cell")).toHaveTextContent("—");
+  });
+
+  it("renders the composite cell and remaining column headers", () => {
+    render(<MlbPropPicksTable rows={[fixtureRow()]} />);
+    expect(screen.getByText("Aaron Judge")).toBeInTheDocument();
+    expect(screen.getByText("NYY @ BOS")).toBeInTheDocument();
+    expect(screen.getByText("Over 1.5 Hits")).toBeInTheDocument();
+    expect(screen.getByText("Odds")).toBeInTheDocument();
+    expect(screen.getByText("L10")).toBeInTheDocument();
+    expect(screen.getByText("L15")).toBeInTheDocument();
+  });
+
+  it("shows No board yet when there are no rows", () => {
+    render(<MlbPropPicksTable rows={[]} />);
+    expect(screen.getByText("No board yet")).toBeInTheDocument();
+  });
+
+  it("renders em dash for null ranks and hit rates", () => {
+    render(
+      <MlbPropPicksTable
+        rows={[
+          fixtureRow({
+            opp_def_rank: null,
+            opp_def_label: null,
+            opp_pace_rank: null,
+            opp_pace_label: null,
+            hit_l5: null,
+            hit_l10: null,
+            hit_l15: null,
+          }),
+        ]}
+      />,
+    );
+    expect(screen.getByTestId("opp-def-cell")).toHaveTextContent("—");
+    expect(screen.getByTestId("opp-pace-cell")).toHaveTextContent("—");
+    expect(screen.getByTestId("hit-l5-cell")).toHaveTextContent("—");
+    expect(screen.getByTestId("hit-l10-cell")).toHaveTextContent("—");
+    expect(screen.getByTestId("hit-l15-cell")).toHaveTextContent("—");
+  });
+
+  it("renders home matchups as opponent @ team", () => {
+    render(
+      <MlbPropPicksTable
+        rows={[
+          fixtureRow({
+            home_away: "home",
+            team_abbrev: "NYY",
+            opponent_abbrev: "BOS",
+          }),
+        ]}
+      />,
+    );
+    expect(screen.getByText("BOS @ NYY")).toBeInTheDocument();
+  });
+
+  it("sorts by game start, name, stat, Over then Under, then line by default", () => {
+    render(
+      <MlbPropPicksTable
+        rows={[
+          fixtureRow({
+            player_name: "Zack Late",
+            game_start_at: "2026-08-23T23:10:00Z",
+            stat: "hits",
+            side: "over",
+            line: 1.5,
+            market_label: "Over 1.5 Hits",
+          }),
+          fixtureRow({
+            player_name: "Aaron Early",
+            game_start_at: "2026-08-23T20:10:00Z",
+            stat: "hits",
+            side: "under",
+            line: 0.5,
+            market_label: "Under 0.5 Hits",
+          }),
+          fixtureRow({
+            player_name: "Aaron Early",
+            game_start_at: "2026-08-23T20:10:00Z",
+            stat: "hits",
+            side: "over",
+            line: 1.5,
+            market_label: "Over 1.5 Hits",
+          }),
+          fixtureRow({
+            player_name: "Aaron Early",
+            game_start_at: "2026-08-23T20:10:00Z",
+            stat: "runs",
+            side: "over",
+            line: 0.5,
+            market_label: "Over 0.5 Runs",
+          }),
+        ]}
+      />,
+    );
+    const names = screen.getAllByTestId("board-row-name").map((el) => el.textContent);
+    const markets = screen
+      .getAllByTestId("board-row-market")
+      .map((el) => el.textContent);
+    expect(names).toEqual([
+      "Aaron Early",
+      "Aaron Early",
+      "Aaron Early",
+      "Zack Late",
+    ]);
+    expect(markets).toEqual([
+      "Over 1.5 Hits",
+      "Under 0.5 Hits",
+      "Over 0.5 Runs",
+      "Over 1.5 Hits",
+    ]);
+  });
+
+  it("sorts a numeric column from the header and parks nulls last", async () => {
+    const user = userEvent.setup();
+    render(
+      <MlbPropPicksTable
+        rows={[
+          fixtureRow({ player_name: "Mid", ip_pct: 50 }),
+          fixtureRow({ player_name: "High", ip_pct: 80 }),
+          fixtureRow({ player_name: "Missing", ip_pct: null }),
+          fixtureRow({ player_name: "Low", ip_pct: 20 }),
+        ]}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "IP" }));
+    expect(screen.getAllByTestId("board-row-name").map((el) => el.textContent)).toEqual([
+      "Low",
+      "Mid",
+      "High",
+      "Missing",
+    ]);
+
+    await user.click(screen.getByRole("button", { name: "IP" }));
+    expect(screen.getAllByTestId("board-row-name").map((el) => el.textContent)).toEqual([
+      "High",
+      "Mid",
+      "Low",
+      "Missing",
+    ]);
+  });
+
+  it("shows four odds chips plus overflow and omits DFS American", () => {
+    render(
+      <MlbPropPicksTable
+        rows={[
+          fixtureRow({
+            books: [
+              { book: "prophetx", american: -115, url: null },
+              { book: "novig", american: -110, url: null },
+              { book: "pinnacle", american: -105, url: null },
+              { book: "draftkings", american: -120, url: null },
+              { book: "prizepicks", american: null, url: null },
+            ],
+          }),
+        ]}
+      />,
+    );
+    const odds = screen.getByTestId("odds-cell");
+    expect(within(odds).getByText("-115")).toBeInTheDocument();
+    expect(within(odds).getByText("-110")).toBeInTheDocument();
+    expect(within(odds).getByText("-105")).toBeInTheDocument();
+    expect(within(odds).getByText("-120")).toBeInTheDocument();
+    expect(within(odds).getByText("+1")).toBeInTheDocument();
+    expect(within(odds).queryByText("PrizePicks")).not.toBeInTheDocument();
+  });
+
+  it("renders rank pills and last-updated copy", () => {
+    const updatedAt = Date.UTC(2026, 7, 5, 20, 0);
+    render(
+      <MlbPropPicksTable
+        rows={[fixtureRow()]}
+        lastUpdatedAt={updatedAt}
+      />,
+    );
+    expect(screen.getByTestId("opp-def-cell")).toHaveTextContent("12th BOS");
+    expect(screen.getByTestId("opp-pace-cell")).toHaveTextContent("4th BOS");
+    expect(
+      screen.getByText(`Last updated ${formatMlbPropPicksUpdatedAt(updatedAt)}`),
+    ).toBeInTheDocument();
+  });
+});
