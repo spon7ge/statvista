@@ -89,6 +89,9 @@ export type ApiMlbPropBooksMain = Schemas["MlbPropBooksMain"];
 export type ApiMlbPropDfs = Schemas["MlbPropDfs"];
 export type ApiMlbPropRow = Schemas["MlbPropRow"];
 export type ApiMlbPropsResponse = Schemas["MlbPropsResponse"];
+export type ApiMlbPropBoardBookChip = Schemas["MlbPropBoardBookChip"];
+export type ApiMlbPropBoardRow = Schemas["MlbPropBoardRow"];
+export type ApiMlbPropBoardResponse = Schemas["MlbPropBoardResponse"];
 export type ApiMlbGamePropsResponse = Schemas["MlbGamePropsResponse"];
 export type ApiMlbTeamPreviewResponse = Schemas["MlbTeamPreviewResponse"];
 export type ApiMlbLeaderRow = Schemas["MlbLeaderRow"];
@@ -361,6 +364,17 @@ export async function fetchMlbProps({
   });
   if (!res.ok) {
     throw new Error(`MLB props request failed: ${res.status}`);
+  }
+  return res.json();
+}
+
+export async function fetchMlbPropBoard(): Promise<ApiMlbPropBoardResponse> {
+  const res = await fetch(`${API_BASE}/api/mlb/props/board`, {
+    headers: { Accept: "application/json" },
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    throw new Error(`MLB prop board request failed: ${res.status}`);
   }
   return res.json();
 }
