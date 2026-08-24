@@ -252,6 +252,9 @@ async def get_mlb_prop_board() -> MlbPropBoardResponse:
                 l5 = l10 = l15 = None
             else:
                 l5, l10, l15 = hit_rates(cluster.stat, side, cluster.line, splits)
+            chips = _chips_for_side(cluster, side)
+            if not chips:
+                continue
             rows.append(
                 MlbPropBoardRow(
                     player_name=cluster.player_name,
@@ -265,7 +268,7 @@ async def get_mlb_prop_board() -> MlbPropBoardResponse:
                     line=cluster.line,
                     game_pk=ctx.get("game_pk"),
                     game_start_at=ctx.get("game_start_at"),
-                    books=_chips_for_side(cluster, side),
+                    books=chips,
                     ip_pct=ip_pct_for_side(cluster, side),
                     opp_def_rank=def_r,
                     opp_def_label=def_l,
@@ -411,6 +414,9 @@ def _chips_for_side(cluster: Cluster, side: Side) -> list[MlbPropBoardBookChip]:
         if quote is None:
             continue
         american = quote.over_american if side == "over" else quote.under_american
+        # PrizePicks has no American in the feed; the table still shows -137.
+        if american is None and book != "prizepicks":
+            continue
         chips.append(
             MlbPropBoardBookChip(book=book, american=american, url=quote.url)
         )

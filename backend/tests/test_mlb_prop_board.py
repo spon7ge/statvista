@@ -130,6 +130,74 @@ async def test_assembler_market_label_chips_and_sort(monkeypatch):
 
 
 @pytest.mark.asyncio
+async def test_chips_skip_books_without_american_on_that_side(monkeypatch):
+    quotes = [
+        BoardQuote(
+            player_name="Betts",
+            player_key="mookie betts",
+            stat="hits",
+            line=1.5,
+            book="fanduel",
+            over_american=-108,
+            under_american=None,
+        ),
+        BoardQuote(
+            player_name="Betts",
+            player_key="mookie betts",
+            stat="hits",
+            line=1.5,
+            book="draftkings",
+            over_american=-115,
+            under_american=-105,
+        ),
+        BoardQuote(
+            player_name="Betts",
+            player_key="mookie betts",
+            stat="hits",
+            line=1.5,
+            book="prizepicks",
+            over_american=None,
+            under_american=None,
+        ),
+    ]
+    monkeypatch.setattr("app.domains.mlb.prop_board.collect_board_quotes", lambda: quotes)
+    monkeypatch.setattr(
+        "app.domains.mlb.prop_board.load_enrichment",
+        lambda *_: ({}, {}, [], set()),
+    )
+    body = await get_mlb_prop_board()
+    over = next(r for r in body.rows if r.side == "over")
+    under = next(r for r in body.rows if r.side == "under")
+    assert [c.book for c in over.books] == ["draftkings", "fanduel", "prizepicks"]
+    assert [c.american for c in over.books] == [-115, -108, None]
+    assert [c.book for c in under.books] == ["draftkings", "prizepicks"]
+    assert [c.american for c in under.books] == [-105, None]
+
+
+@pytest.mark.asyncio
+async def test_assembler_omits_side_with_no_odds_chips(monkeypatch):
+    quotes = [
+        BoardQuote(
+            player_name="Betts",
+            player_key="mookie betts",
+            stat="hits",
+            line=1.5,
+            book="fanduel",
+            over_american=-108,
+            under_american=None,
+        ),
+    ]
+    monkeypatch.setattr("app.domains.mlb.prop_board.collect_board_quotes", lambda: quotes)
+    monkeypatch.setattr(
+        "app.domains.mlb.prop_board.load_enrichment",
+        lambda *_: ({}, {}, [], set()),
+    )
+    body = await get_mlb_prop_board()
+    assert [r.side for r in body.rows] == ["over"]
+    assert [c.book for c in body.rows[0].books] == ["fanduel"]
+
+
+@pytest.mark.asyncio
 async def test_missing_person_id_keeps_hit_rates_null(monkeypatch):
     quotes = [
         BoardQuote(

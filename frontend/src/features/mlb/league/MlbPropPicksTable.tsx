@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { ApiMlbPropBoardRow } from "@/shared/lib/api";
 import betMgmIcon from "@/assets/betmgm-icon.svg?raw";
+import caesarsIcon from "@/assets/caesars-icon.svg?raw";
 import draftKingsIcon from "@/assets/draftkings-icon.svg?raw";
 import fanDuelIcon from "@/assets/fanduel-icon.svg?raw";
 import fliffIcon from "@/assets/fliff-icon.svg?raw";
@@ -26,6 +27,7 @@ const PRIZEPICKS_AMERICAN = -137;
 // `fliff` is the board key for fliff-icon.svg.
 const BOOK_SVGS: Record<string, string> = {
   betmgm: betMgmIcon,
+  caesars: caesarsIcon,
   draftkings: draftKingsIcon,
   fanduel: fanDuelIcon,
   fliff: fliffIcon,
@@ -126,16 +128,14 @@ function BookChip({
   url: string | null;
 }) {
   const label = bookDisplayName(book);
-  const displayAmerican =
-    book === "prizepicks" ? PRIZEPICKS_AMERICAN : american;
+  const displayAmerican = postedAmerican(book, american);
+  if (displayAmerican == null) return null;
   const inner = (
     <>
       <BookMark book={book} label={label} />
-      {displayAmerican != null ? (
-        <span className="font-mono text-[11px] text-white">
-          {formatAmericanOdds(displayAmerican)}
-        </span>
-      ) : null}
+      <span className="font-mono text-[11px] text-white">
+        {formatAmericanOdds(displayAmerican)}
+      </span>
     </>
   );
   const className = "inline-flex items-center gap-1";
@@ -159,8 +159,18 @@ function BookChip({
   );
 }
 
+function postedAmerican(
+  book: string,
+  american: number | null,
+): number | null {
+  if (book === "prizepicks") return PRIZEPICKS_AMERICAN;
+  return american;
+}
+
 function OddsCell({ row }: { row: ApiMlbPropBoardRow }) {
-  const books = orderedBoardBooks(row.books);
+  const books = orderedBoardBooks(row.books).filter(
+    (chip) => postedAmerican(chip.book, chip.american) != null,
+  );
   const visible = books.slice(0, VISIBLE_ODDS_CHIPS);
   const overflow = books.length - visible.length;
   return (
@@ -197,15 +207,17 @@ function CompositeCell({ row }: { row: ApiMlbPropBoardRow }) {
         </span>
       )}
       <div className="min-w-0">
-        <p
-          data-testid="board-row-name"
-          className="truncate text-sm font-bold text-white"
-        >
-          {row.player_name}
+        <p data-testid="board-row-headline" className="truncate text-sm">
+          <span
+            data-testid="board-row-name"
+            className="font-bold text-white"
+          >
+            {row.player_name}
+          </span>
+          {matchup ? (
+            <span className="text-white/45"> · {matchup}</span>
+          ) : null}
         </p>
-        {matchup ? (
-          <p className="truncate text-[12px] text-white/45">{matchup}</p>
-        ) : null}
         <p
           data-testid="board-row-market"
           className="truncate text-[12px] text-white/70"

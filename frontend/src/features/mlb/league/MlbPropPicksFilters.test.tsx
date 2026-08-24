@@ -4,13 +4,14 @@ import { describe, expect, it, vi } from "vitest";
 import { MlbPropPicksFilters } from "./MlbPropPicksFilters";
 
 describe("MlbPropPicksFilters", () => {
-  it("renders Team, Proposition, Over/Under, and Hit rate next to player search", async () => {
+  it("renders Team, Bookmaker, Proposition, Over/Under, and Hit rate next to player search", async () => {
     const user = userEvent.setup();
     const onTeamsChange = vi.fn();
     const onQueryChange = vi.fn();
     const onMarketsChange = vi.fn();
     const onSidesChange = vi.fn();
     const onHitRateChange = vi.fn();
+    const onBooksChange = vi.fn();
     const onClear = vi.fn();
 
     const { rerender } = render(
@@ -31,10 +32,17 @@ describe("MlbPropPicksFilters", () => {
         onSidesChange={onSidesChange}
         hitRate={null}
         onHitRateChange={onHitRateChange}
+        books={[
+          { value: "draftkings", label: "DraftKings" },
+          { value: "fanduel", label: "FanDuel" },
+        ]}
+        selectedBooks={new Set()}
+        onBooksChange={onBooksChange}
       />,
     );
 
     expect(screen.getByRole("button", { name: "Team" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Bookmaker" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Proposition" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Over/Under" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Hit rate" })).toBeInTheDocument();
@@ -57,6 +65,10 @@ describe("MlbPropPicksFilters", () => {
     await user.click(screen.getByRole("option", { name: "L10" }));
     expect(onHitRateChange).toHaveBeenCalledWith("l10");
 
+    await user.click(screen.getByRole("button", { name: "Bookmaker" }));
+    await user.click(screen.getByRole("option", { name: "DraftKings" }));
+    expect(onBooksChange).toHaveBeenCalledWith(new Set(["draftkings"]));
+
     rerender(
       <MlbPropPicksFilters
         teams={["LAD", "NYY"]}
@@ -72,10 +84,17 @@ describe("MlbPropPicksFilters", () => {
         onSidesChange={onSidesChange}
         hitRate="l10"
         onHitRateChange={onHitRateChange}
+        books={[
+          { value: "draftkings", label: "DraftKings" },
+          { value: "fanduel", label: "FanDuel" },
+        ]}
+        selectedBooks={new Set(["draftkings"])}
+        onBooksChange={onBooksChange}
       />,
     );
 
     expect(screen.getByRole("button", { name: "Team (1)" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Bookmaker (1)" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Proposition (1)" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Over/Under (1)" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Hit rate (L10)" })).toBeInTheDocument();
@@ -115,5 +134,6 @@ describe("MlbPropPicksFilters", () => {
 
     expect(screen.getByRole("searchbox", { name: "Search player" })).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Team" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Bookmaker" })).not.toBeInTheDocument();
   });
 });

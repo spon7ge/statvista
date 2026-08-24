@@ -27,8 +27,8 @@ PrizePicks and Underdog are **not** page tabs. They appear only as Odds chips, a
 | Opp Def Rank | Batter props: opponent staff ERA rank (1 = lowest ERA = toughest). Pitcher props: opponent offense OPS rank (1 = highest OPS = toughest) |
 | Opp Pace Rank | Opponent plate appearances per game rank (1 = highest pace), same on batter and pitcher rows |
 | L5 / L10 / L15 | Hit rate of this side vs this exact line over last N **played** games (not team games / DNPs) |
-| First cell | Composite: headshot, name, matchup, market (`Over 1.5 Hits`) |
-| Filters | Team + Proposition (market) + Over/Under + Hit rate (L5/L10/L15 highest→lowest) + player name search |
+| First cell | Composite: headshot, **name · matchup**, market (`Over 1.5 Hits`) on the line below |
+| Filters | Team + Bookmaker + Proposition (market) + Over/Under + Hit rate (L5/L10/L15 highest→lowest) + player name search |
 | Default sort | Game start, player name, market, Over before Under, line |
 | Empty IP/ranks/L# | Render `—`; sort last |
 
@@ -60,7 +60,7 @@ GET /api/mlb/props/board
 ### Keep
 
 - MLB subnav item Prop Picks → `/mlb/prop_picks`
-- Team + name filters (repointed at board rows)
+- Team + Bookmaker + name filters (repointed at board rows)
 - Headshots / team abbrev from the existing ESPN MLB player index when matched
 - Book deep-links where the app already has a URL (optional chip click); row click does **not** open a player page
 
@@ -92,9 +92,9 @@ A row exists only if at least one **allowed** source (sportsbook main or DFS mai
 
 | UI | Payload | Rules |
 | --- | --- | --- |
-| Composite (not a header “Player”) | `player_name`, `headshot_url`, `team_abbrev`, `opponent_abbrev`, `home_away`, `market_label`, `side` | Name bold; matchup muted (`NYY @ BOS` from the player’s game); market line `Over 1.5 Hits` using `display_stat_label` |
+| Composite (not a header “Player”) | `player_name`, `headshot_url`, `team_abbrev`, `opponent_abbrev`, `home_away`, `market_label`, `side` | Name bold; matchup muted on the same line (`Name · NYY @ BOS`); market (`Over 1.5 Hits`) on the line below |
 | Line | `line` | The clustered number |
-| Odds | `books[]` | Icon + American for this side when the book posts a two-way; DFS chips may omit American and show icon only. Overflow `+N`. Order: ProphetX, Novig, Pinnacle, DraftKings, FanDuel, BetMGM, Caesars, bet365, Kalshi, Fliff, PrizePicks, Underdog (skip missing). |
+| Odds | `books[]` | Icon + American for this side when that book posts a price; omit the chip if American is missing (PrizePicks still shows -137). Overflow `+N`. Order: ProphetX, Novig, Pinnacle, DraftKings, FanDuel, BetMGM, Caesars, bet365, Kalshi, Fliff, PrizePicks, Underdog. |
 | IP | `ip_pct` | Integer percent, e.g. `53`. Null → `—` |
 | Opp Def Rank | `opp_def_rank`, `opp_def_label` | Pill: `12th BOS`. Null → `—` |
 | Opp Pace Rank | `opp_pace_rank`, `opp_pace_label` | Same pill treatment |
@@ -169,6 +169,8 @@ Need at least 1 qualifying game to show a percent; otherwise null. Windows of 5/
 
 - Team multi-select filters `team_abbrev`.
 - Search matches player name (case-insensitive substring).
+- Bookmaker multi-select keeps a row if it has at least one selected book with a posted price; Odds chips are trimmed to those books.
+- Rows with no posted Odds (no American, except PrizePicks which uses -137) are omitted.
 - Proposition multi-select filters `stat` (market), labeled from the market name (Hits, Strikeouts, …).
 - Over/Under multi-select filters `side`.
 - Hit rate is a single-select of L5 / L10 / L15 that sorts that column **highest → lowest**.
@@ -231,7 +233,7 @@ Do not 500 because an enrichment source failed.
 - Table headers: composite, Line, Odds, IP, Opp Def Rank, Opp Pace Rank, L5, L10, L15.
 - No PrizePicks/Underdog tabs.
 - Null IP renders `—`.
-- Team + search filter rows.
+- Team + Bookmaker + search filter rows.
 - `/mlb/prop_picks/player/:slug` is not a player odds-grid page.
 
 ## Out of scope

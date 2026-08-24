@@ -16,7 +16,7 @@ export type MlbPropBoardSort = {
   direction: "asc" | "desc";
 };
 
-const BOOK_CHIP_ORDER = [
+export const BOOK_CHIP_ORDER = [
   "prophetx",
   "novig",
   "pinnacle",

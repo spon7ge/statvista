@@ -191,6 +191,9 @@ export type MlbPropPicksFiltersProps = {
   onMarketsChange?: (next: Set<string>) => void;
   selectedSides?: Set<string>;
   onSidesChange?: (next: Set<string>) => void;
+  books?: MlbPropositionOption[];
+  selectedBooks?: Set<string>;
+  onBooksChange?: (next: Set<string>) => void;
   hitRate?: MlbHitRateWindow | null;
   onHitRateChange?: (next: MlbHitRateWindow | null) => void;
   /** `banner` = white pills on green; `pill` = dark-page capsules; default = square. */
@@ -211,6 +214,9 @@ export function MlbPropPicksFilters({
   onMarketsChange,
   selectedSides = new Set(),
   onSidesChange,
+  books = [],
+  selectedBooks = new Set(),
+  onBooksChange,
   hitRate = null,
   onHitRateChange,
   tone = "default",
@@ -221,6 +227,7 @@ export function MlbPropPicksFilters({
     query.trim().length > 0 ||
     selectedMarkets.size > 0 ||
     selectedSides.size > 0 ||
+    selectedBooks.size > 0 ||
     hitRate != null;
   const onBanner = tone === "banner";
   const onPill = tone === "pill";
@@ -234,6 +241,17 @@ export function MlbPropPicksFilters({
         options={teams.map((t) => ({ value: t, label: t }))}
         selected={selectedTeams}
         onChange={onTeamsChange}
+      />
+    ) : null;
+
+  const bookmakerControl =
+    books.length > 0 ? (
+      <MultiSelectFilter
+        label="Bookmaker"
+        tone={tone}
+        options={books}
+        selected={selectedBooks}
+        onChange={onBooksChange ?? (() => {})}
       />
     ) : null;
 
@@ -276,6 +294,7 @@ export function MlbPropPicksFilters({
 
   const extraFilters = (
     <>
+      {bookmakerControl}
       {propositionControl}
       {sideControl}
       {hitRateControl}

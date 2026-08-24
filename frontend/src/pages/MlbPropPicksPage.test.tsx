@@ -109,6 +109,7 @@ describe("MlbPropPicksPage", () => {
     expect(screen.getByRole("button", { name: "Team" })).toBeInTheDocument();
     const filters = screen.getByLabelText("MLB prop picks filters");
     expect(within(filters).getByRole("button", { name: "Proposition" })).toBeInTheDocument();
+    expect(within(filters).getByRole("button", { name: "Bookmaker" })).toBeInTheDocument();
     expect(within(filters).getByRole("button", { name: "Over/Under" })).toBeInTheDocument();
     expect(within(filters).getByRole("button", { name: "Hit rate" })).toBeInTheDocument();
     expect(screen.getByRole("searchbox", { name: "Search player" })).toBeInTheDocument();
@@ -138,6 +139,36 @@ describe("MlbPropPicksPage", () => {
 
     expect(screen.getByText("Aaron Judge")).toBeInTheDocument();
     expect(screen.queryByText("Mookie Betts")).not.toBeInTheDocument();
+  });
+
+  it("filters the board by bookmaker and shows only that book's odds", async () => {
+    const user = userEvent.setup();
+    mockBoard([
+      judge,
+      row({
+        player_name: "Mookie Betts",
+        team_abbrev: "LAD",
+        opponent_abbrev: "SF",
+        market_label: "Under 0.5 Hits",
+        side: "under",
+        line: 0.5,
+        books: [{ book: "draftkings", american: -120, url: null }],
+      }),
+    ]);
+    renderPage();
+    const filters = screen.getByLabelText("MLB prop picks filters");
+
+    await user.click(within(filters).getByRole("button", { name: "Bookmaker" }));
+    await user.click(screen.getByRole("option", { name: "DraftKings" }));
+
+    expect(screen.queryByText("Aaron Judge")).not.toBeInTheDocument();
+    expect(screen.getByText("Mookie Betts")).toBeInTheDocument();
+    expect(
+      screen.getByTestId("odds-cell").querySelector('svg[aria-label="DraftKings"]'),
+    ).toBeTruthy();
+    expect(
+      screen.getByTestId("odds-cell").querySelector('svg[aria-label="ProphetX"]'),
+    ).toBeNull();
   });
 
   it("filters the board by proposition, over/under, and hit-rate sort", async () => {

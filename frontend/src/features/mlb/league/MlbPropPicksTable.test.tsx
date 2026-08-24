@@ -54,8 +54,10 @@ describe("MlbPropPicksTable", () => {
 
   it("renders the composite cell and remaining column headers", () => {
     render(<MlbPropPicksTable rows={[fixtureRow()]} />);
-    expect(screen.getByText("Aaron Judge")).toBeInTheDocument();
-    expect(screen.getByText("NYY @ BOS")).toBeInTheDocument();
+    expect(screen.getByTestId("board-row-headline")).toHaveTextContent(
+      "Aaron Judge · NYY @ BOS",
+    );
+    expect(screen.getByTestId("board-row-name")).toHaveTextContent("Aaron Judge");
     expect(screen.getByText("Over 1.5 Hits")).toBeInTheDocument();
     expect(screen.getByText("Odds")).toBeInTheDocument();
     expect(screen.getByText("L10")).toBeInTheDocument();
@@ -102,7 +104,9 @@ describe("MlbPropPicksTable", () => {
         ]}
       />,
     );
-    expect(screen.getByText("BOS @ NYY")).toBeInTheDocument();
+    expect(screen.getByTestId("board-row-headline")).toHaveTextContent(
+      "Aaron Judge · BOS @ NYY",
+    );
   });
 
   it("sorts by game start, name, stat, Over then Under, then line by default", () => {
@@ -235,7 +239,8 @@ describe("MlbPropPicksTable", () => {
             books: [
               { book: "fliff", american: -102, url: null },
               { book: "betmgm", american: -112, url: null },
-              { book: "underdog", american: null, url: null },
+              { book: "caesars", american: -118, url: null },
+              { book: "underdog", american: -105, url: null },
             ],
           }),
         ]}
@@ -248,6 +253,7 @@ describe("MlbPropPicksTable", () => {
     expect(cells[0].querySelector('svg[aria-label="FanDuel"]')).toBeTruthy();
     expect(cells[1].querySelector('svg[aria-label="Fliff"]')).toBeTruthy();
     expect(cells[1].querySelector('svg[aria-label="BetMGM"]')).toBeTruthy();
+    expect(cells[1].querySelector('svg[aria-label="Caesars"]')).toBeTruthy();
     expect(cells[1].querySelector('svg[aria-label="Underdog"]')).toBeTruthy();
     expect(cells[0].querySelector(".bg-white\\/10")).toBeNull();
     expect(cells[0].querySelector(".rounded-md")).toBeNull();
@@ -281,6 +287,29 @@ describe("MlbPropPicksTable", () => {
     const odds = screen.getByTestId("odds-cell");
     expect(odds.querySelector('svg[aria-label="Underdog"]')).toBeTruthy();
     expect(within(odds).getByText("-105")).toBeInTheDocument();
+  });
+
+  it("hides book marks when that book has no posted American for the line", () => {
+    render(
+      <MlbPropPicksTable
+        rows={[
+          fixtureRow({
+            books: [
+              { book: "prophetx", american: -115, url: null },
+              { book: "fanduel", american: null, url: null },
+              { book: "underdog", american: null, url: null },
+              { book: "novig", american: null, url: null },
+            ],
+          }),
+        ]}
+      />,
+    );
+    const odds = screen.getByTestId("odds-cell");
+    expect(odds.querySelector('svg[aria-label="ProphetX"]')).toBeTruthy();
+    expect(within(odds).getByText("-115")).toBeInTheDocument();
+    expect(odds.querySelector('svg[aria-label="FanDuel"]')).toBeNull();
+    expect(odds.querySelector('svg[aria-label="Underdog"]')).toBeNull();
+    expect(odds.querySelector('svg[aria-label="Novig"]')).toBeNull();
   });
 
   it("paginates to 30 rows with next/previous", async () => {

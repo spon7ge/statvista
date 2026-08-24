@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  collectMlbBoardBookmakerOptions,
   collectMlbBoardPropositionOptions,
   filterMlbPropBoardRows,
 } from "./filterMlbPropBoard";
@@ -18,7 +19,7 @@ const row = (over: Partial<ApiMlbPropBoardRow>): ApiMlbPropBoardRow =>
     line: 1.5,
     game_pk: 1,
     game_start_at: null,
-    books: [],
+    books: [{ book: "prophetx", american: -115, url: null }],
     ip_pct: 53,
     opp_def_rank: 2,
     opp_def_label: "2nd BOS",
@@ -113,6 +114,74 @@ describe("filterMlbPropBoardRows", () => {
     expect(options).toEqual([
       { value: "hits", label: "Hits" },
       { value: "strikeouts", label: "Strikeouts" },
+    ]);
+  });
+
+  it("filters by bookmaker and keeps only selected book chips", () => {
+    const rows = [
+      row({
+        player_name: "Aaron Judge",
+        books: [
+          { book: "prophetx", american: -115, url: null },
+          { book: "draftkings", american: -120, url: null },
+        ],
+      }),
+      row({
+        player_name: "Mookie Betts",
+        team_abbrev: "LAD",
+        books: [{ book: "fanduel", american: -108, url: null }],
+      }),
+    ];
+    const out = filterMlbPropBoardRows(rows, {
+      teams: new Set(),
+      query: "",
+      books: new Set(["draftkings"]),
+    });
+    expect(out).toHaveLength(1);
+    expect(out[0].player_name).toBe("Aaron Judge");
+    expect(out[0].books.map((chip) => chip.book)).toEqual(["draftkings"]);
+  });
+
+  it("drops rows with no posted American odds", () => {
+    const rows = [
+      row({ player_name: "Aaron Judge", books: [] }),
+      row({
+        player_name: "Juan Soto",
+        books: [{ book: "fanduel", american: null, url: null }],
+      }),
+      row({
+        player_name: "Mookie Betts",
+        books: [{ book: "prizepicks", american: null, url: null }],
+      }),
+      row({
+        player_name: "Freddie Freeman",
+        team_abbrev: "LAD",
+        books: [{ book: "draftkings", american: -120, url: null }],
+      }),
+    ];
+    expect(
+      filterMlbPropBoardRows(rows, { teams: new Set(), query: "" }).map(
+        (r) => r.player_name,
+      ),
+    ).toEqual(["Mookie Betts", "Freddie Freeman"]);
+  });
+
+  it("collects unique bookmaker options in chip order", () => {
+    expect(
+      collectMlbBoardBookmakerOptions([
+        row({
+          books: [
+            { book: "underdog", american: -105, url: null },
+            { book: "draftkings", american: -120, url: null },
+          ],
+        }),
+        row({
+          books: [{ book: "draftkings", american: -110, url: null }],
+        }),
+      ]),
+    ).toEqual([
+      { value: "draftkings", label: "DraftKings" },
+      { value: "underdog", label: "Underdog" },
     ]);
   });
 });
