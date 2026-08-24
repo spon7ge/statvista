@@ -1,5 +1,6 @@
 import pytest
 from app.providers.mlb_stats.people import (
+    fetch_game_log_splits,
     fetch_season_pitching,
     fetch_vs_pitcher_total,
     pick_best_person,
@@ -120,3 +121,46 @@ async def test_fetch_vs_pitcher_total_empty_splits_returns_none():
             return FakeResp()
 
     assert await fetch_vs_pitcher_total(FakeClient(), 1, 2) is None
+
+
+@pytest.mark.asyncio
+async def test_fetch_game_log_splits_returns_splits():
+    class FakeResp:
+        def raise_for_status(self):
+            return None
+
+        def json(self):
+            return {
+                "stats": [
+                    {
+                        "splits": [
+                            {"stat": {"hits": 2, "plateAppearances": 4}},
+                            {"stat": {"hits": 0, "plateAppearances": 3}},
+                        ]
+                    }
+                ]
+            }
+
+    class FakeClient:
+        async def get(self, url, params=None):
+            assert url.endswith("/people/695578/stats")
+            assert params == {
+                "stats": "gameLog",
+                "group": "hitting",
+                "season": 2026,
+                "sportId": 1,
+            }
+            return FakeResp()
+
+    splits = await fetch_game_log_splits(FakeClient(), 695578, 2026, "hitting")
+    assert len(splits) == 2
+    assert splits[0]["stat"]["hits"] == 2
+
+
+@pytest.mark.asyncio
+async def test_fetch_game_log_splits_failure_returns_empty():
+    class FakeClient:
+        async def get(self, url, params=None):
+            raise RuntimeError("timeout")
+
+    assert await fetch_game_log_splits(FakeClient(), 1, 2026, "pitching") == []

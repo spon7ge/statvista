@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 import unicodedata
-from typing import Any
+from typing import Any, Literal
 
 import httpx
 
@@ -49,6 +49,29 @@ async def search_person_id(client: httpx.AsyncClient, name: str) -> int | None:
     except Exception as exc:
         logger.warning("people search failed for %r: %s", name, exc)
         return None
+
+
+async def fetch_game_log_splits(
+    client: httpx.AsyncClient,
+    person_id: int,
+    season: int,
+    group: Literal["hitting", "pitching"],
+) -> list[dict]:
+    try:
+        res = await client.get(
+            f"{STATS_BASE}/people/{person_id}/stats",
+            params={
+                "stats": "gameLog",
+                "group": group,
+                "season": season,
+                "sportId": 1,
+            },
+        )
+        res.raise_for_status()
+        return (res.json().get("stats") or [{}])[0].get("splits") or []
+    except Exception as exc:
+        logger.warning("game log failed for %s: %s", person_id, exc)
+        return []
 
 
 async def fetch_season_pitching(
