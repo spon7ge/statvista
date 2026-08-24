@@ -77,6 +77,28 @@ def _numeric_stat(raw: Any) -> float | None:
     return value if value == value else None
 
 
+def ops_from_hitting_stat(stat: dict[str, Any]) -> float | None:
+    """Board OPS rank: OBP + SLG (higher offense = tougher vs pitchers)."""
+    obp = _numeric_stat(stat.get("obp"))
+    slg = _numeric_stat(stat.get("slg"))
+    if obp is None or slg is None:
+        return None
+    return obp + slg
+
+
+def pa_per_game_from_hitting_stat(stat: dict[str, Any]) -> float | None:
+    """Board pace rank: plate appearances per game (higher = faster)."""
+    plate_appearances = _numeric_stat(stat.get("plateAppearances"))
+    games_played = _numeric_stat(stat.get("gamesPlayed"))
+    if plate_appearances is None or games_played is None or games_played == 0:
+        return None
+    return plate_appearances / games_played
+
+
+def era_from_pitching_stat(stat: dict[str, Any]) -> float | None:
+    return _numeric_stat(stat.get("era"))
+
+
 def parse_hitting_split(stat: dict[str, Any]) -> _TeamSeasonStatLine:
     """Map a Stats API hitting split to the season stats response fields."""
     return {

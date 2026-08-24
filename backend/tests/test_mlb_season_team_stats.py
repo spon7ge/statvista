@@ -5,6 +5,8 @@ from app.providers.mlb_stats.team_season import (
     competition_rank,
     fetch_season_team_stats_pair,
     fetch_team_season_stat_line,
+    ops_from_hitting_stat,
+    pa_per_game_from_hitting_stat,
     parse_hitting_split,
     parse_pitching_split,
 )
@@ -61,6 +63,27 @@ async def test_fetch_team_season_stat_line_does_not_cache_total_failure():
     assert await fetch_team_season_stat_line(client, 119, 2026) == {}
     assert await fetch_team_season_stat_line(client, 119, 2026) == {}
     assert len(client.calls) == 4
+
+
+def test_ops_from_hitting_stat_sums_obp_slg():
+    assert ops_from_hitting_stat({"obp": ".339", "slg": ".430"}) == pytest.approx(0.769)
+
+
+def test_ops_from_hitting_stat_missing_is_none():
+    assert ops_from_hitting_stat({"obp": ".339"}) is None
+    assert ops_from_hitting_stat({}) is None
+
+
+def test_pa_per_game_from_hitting_stat():
+    assert pa_per_game_from_hitting_stat(
+        {"plateAppearances": 500, "gamesPlayed": 10}
+    ) == 50.0
+
+
+def test_pa_per_game_zero_games_is_none():
+    assert pa_per_game_from_hitting_stat(
+        {"plateAppearances": 500, "gamesPlayed": 0}
+    ) is None
 
 
 def test_competition_rank_ties_skip():
