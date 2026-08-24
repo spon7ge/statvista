@@ -7,7 +7,8 @@ from typing import Any
 from app.domains.mlb.prop_board_ranks import is_pitcher_stat
 from app.domains.mlb.schemas_prop_board import Side
 
-# Stats API gameLog splits are newest-first; take the first N qualifying.
+# Stats API gameLog splits are oldest-first. Sort by date descending so
+# L5/L10/L15 are the most recent qualifying games. Missing dates sort last.
 _WINDOWS: tuple[int, int, int] = (5, 10, 15)
 
 _DIRECT_FIELDS: dict[str, str] = {
@@ -137,6 +138,11 @@ def _window_pct(
     return int(round(hits / len(window) * 100))
 
 
+def _date_key(split: dict[str, Any]) -> str:
+    raw = split.get("date")
+    return raw if isinstance(raw, str) else ""
+
+
 def hit_rates(
     stat: str,
     side: Side,
@@ -146,5 +152,6 @@ def hit_rates(
     qualifying = qualifying_splits(stat, splits)
     if not qualifying:
         return None, None, None
-    l5, l10, l15 = (_window_pct(stat, side, line, qualifying[:n]) for n in _WINDOWS)
+    newest_first = sorted(qualifying, key=_date_key, reverse=True)
+    l5, l10, l15 = (_window_pct(stat, side, line, newest_first[:n]) for n in _WINDOWS)
     return l5, l10, l15

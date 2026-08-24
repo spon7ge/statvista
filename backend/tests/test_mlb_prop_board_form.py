@@ -90,6 +90,21 @@ def test_windows_use_first_n_qualifying():
     assert l15 == 33
 
 
+def test_l5_uses_latest_dates_when_log_is_oldest_first():
+    """Stats API gameLog is oldest-first; L5 must be the most recent five games."""
+    early_hits = [
+        {"date": f"2026-03-{day:02d}", "stat": {"plateAppearances": 4, "hits": 2}}
+        for day in range(25, 30)
+    ]
+    late_misses = [
+        {"date": f"2026-05-{day:02d}", "stat": {"plateAppearances": 4, "hits": 0}}
+        for day in range(27, 32)
+    ]
+    l5, l10, _ = hit_rates("hits", "over", 1.5, early_hits + late_misses)
+    assert l5 == 0
+    assert l10 == 50
+
+
 def test_actual_for_stat_maps_canonical_fields():
     hitting = {
         "stat": {
