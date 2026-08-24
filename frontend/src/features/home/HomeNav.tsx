@@ -16,7 +16,6 @@ const leagues = [
 
 export function HomeNav() {
   const { pathname } = useLocation();
-  const aboutActive = pathname === "/about";
   const activeLeague =
     leagues.find((league) => pathname.startsWith(`/${league.id}`)) ?? null;
 
@@ -88,7 +87,7 @@ export function HomeNav() {
                 aria-controls={leagueMenuId}
                 onClick={() => setLeagueOpen((open) => !open)}
                 className={
-                  activeLeague || aboutActive
+                  activeLeague
                     ? "inline-flex items-center gap-1.5 rounded-md bg-white/10 px-2.5 py-1 text-[14px] font-medium text-white"
                     : "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[14px] font-medium text-white transition-colors hover:bg-white/5"
                 }
@@ -103,8 +102,6 @@ export function HomeNav() {
                     />
                     {activeLeague.label}
                   </>
-                ) : aboutActive ? (
-                  "About"
                 ) : (
                   "Leagues"
                 )}
@@ -147,36 +144,9 @@ export function HomeNav() {
                       </li>
                     );
                   })}
-                  <li role="none" className="mt-0.5 border-t border-white/10">
-                    <Link
-                      role="menuitem"
-                      to="/about"
-                      aria-current={aboutActive ? "page" : undefined}
-                      onClick={() => setLeagueOpen(false)}
-                      className={
-                        aboutActive
-                          ? "flex items-center gap-2 px-2.5 py-1.5 text-[14px] font-medium text-white no-underline bg-white/10"
-                          : "flex items-center gap-2 px-2.5 py-1.5 text-[14px] font-medium text-white no-underline hover:bg-white/5"
-                      }
-                    >
-                      About
-                    </Link>
-                  </li>
                 </ul>
               ) : null}
             </div>
-
-            <Link
-              to="/about"
-              aria-current={aboutActive ? "page" : undefined}
-              className={
-                aboutActive
-                  ? "hidden rounded-md bg-white/10 px-2.5 py-1 text-[14px] font-medium text-white no-underline sm:inline"
-                  : "hidden rounded-md px-2.5 py-1 text-[14px] font-medium text-white no-underline transition-colors hover:bg-white/5 sm:inline"
-              }
-            >
-              About
-            </Link>
           </nav>
 
           <button

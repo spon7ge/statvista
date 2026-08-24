@@ -7,7 +7,7 @@ describe("MlbPropPicksHeader", () => {
     render(<MlbPropPicksHeader />);
 
     const heading = screen.getByRole("heading", { name: "MLB Props" });
-    expect(heading).toHaveClass("text-left");
+    expect(heading).toHaveClass("text-left", "text-[32px]", "sm:text-[36px]");
     expect(
       screen.getByTestId("mlb-prop-picks-header").querySelector("div.rounded-3xl"),
     ).toBeNull();
@@ -19,7 +19,7 @@ describe("MlbPropPicksHeader", () => {
     expect(screen.queryByRole("group", { name: "Legs" })).not.toBeInTheDocument();
   });
 
-  it("renders children to the right of the title", () => {
+  it("renders filter children under the title", () => {
     render(
       <MlbPropPicksHeader>
         <span>Team filter</span>

@@ -4,7 +4,12 @@ import { useMlbPropBoard } from "@/features/mlb/hooks/useMlbPropBoard";
 import { MlbPropPicksFilters } from "@/features/mlb/league/MlbPropPicksFilters";
 import { MlbPropPicksHeader } from "@/features/mlb/league/MlbPropPicksHeader";
 import { MlbPropPicksTable } from "@/features/mlb/league/MlbPropPicksTable";
-import { filterMlbPropBoardRows } from "@/features/mlb/league/filterMlbPropBoard";
+import {
+  collectMlbBoardPropositionOptions,
+  filterMlbPropBoardRows,
+  type MlbHitRateWindow,
+  type MlbPropBoardSide,
+} from "@/features/mlb/league/filterMlbPropBoard";
 import type { ApiMlbPropBoardRow } from "@/shared/lib/api";
 
 function collectMlbBoardTeamOptions(rows: ApiMlbPropBoardRow[]): string[] {
@@ -23,16 +28,33 @@ export function MlbPropPicksPage() {
     () => new Set(),
   );
   const [query, setQuery] = useState("");
+  const [selectedMarkets, setSelectedMarkets] = useState<Set<string>>(
+    () => new Set(),
+  );
+  const [selectedSides, setSelectedSides] = useState<Set<MlbPropBoardSide>>(
+    () => new Set(),
+  );
+  const [hitRate, setHitRate] = useState<MlbHitRateWindow | null>(null);
 
   const rows = data?.rows ?? [];
+  const markets = useMemo(() => collectMlbBoardPropositionOptions(rows), [rows]);
   const filtered = useMemo(
-    () => filterMlbPropBoardRows(rows, { teams: selectedTeams, query }),
-    [rows, selectedTeams, query],
+    () =>
+      filterMlbPropBoardRows(rows, {
+        teams: selectedTeams,
+        query,
+        markets: selectedMarkets,
+        sides: selectedSides,
+      }),
+    [rows, selectedTeams, query, selectedMarkets, selectedSides],
   );
 
   function clearFilters() {
     setSelectedTeams(new Set());
     setQuery("");
+    setSelectedMarkets(new Set());
+    setSelectedSides(new Set());
+    setHitRate(null);
   }
 
   // React Query keeps `data` after a failed 15-minute refetch; only treat
@@ -43,7 +65,7 @@ export function MlbPropPicksPage() {
   return (
     <div className="space-y-0 pb-8">
       <LeagueSubnav league="mlb" />
-      <section className="mx-auto max-w-7xl space-y-6 px-4 pb-16 sm:px-6 sm:pb-20">
+      <section className="mx-auto max-w-6xl space-y-6 px-4 pb-16 sm:px-6 sm:pb-20">
         <MlbPropPicksHeader>
           {showBoardFilters ? (
             <MlbPropPicksFilters
@@ -54,6 +76,22 @@ export function MlbPropPicksPage() {
               onTeamsChange={setSelectedTeams}
               onQueryChange={setQuery}
               onClear={clearFilters}
+              markets={markets}
+              selectedMarkets={selectedMarkets}
+              onMarketsChange={setSelectedMarkets}
+              selectedSides={selectedSides}
+              onSidesChange={(next) =>
+                setSelectedSides(
+                  new Set(
+                    [...next].filter(
+                      (side): side is MlbPropBoardSide =>
+                        side === "over" || side === "under",
+                    ),
+                  ),
+                )
+              }
+              hitRate={hitRate}
+              onHitRateChange={setHitRate}
             />
           ) : null}
         </MlbPropPicksHeader>
@@ -62,6 +100,7 @@ export function MlbPropPicksPage() {
           isLoading={isLoading}
           isError={showBoardError}
           lastUpdatedAt={dataUpdatedAt || undefined}
+          hitRateWindow={hitRate}
         />
       </section>
     </div>

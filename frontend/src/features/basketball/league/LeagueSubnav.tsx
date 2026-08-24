@@ -7,24 +7,27 @@ type LeagueSubnavProps = {
   league: LeagueSlug;
 };
 
-const exploreItems = [
-  "Matchups",
-  "Prop Picks",
-  "Leaders",
-  "Standings",
-  "Playoff race",
-  "Futures",
-] as const;
-
 const learnItems = ["How it works", "Glossary"] as const;
 
-const allItems = [...exploreItems, ...learnItems] as const;
+function exploreItemsFor(league: LeagueSlug): readonly string[] {
+  const researchTab = league === "nba" ? "Playoff race" : "Arbitrage";
+  return [
+    "Matchups",
+    "Prop Picks",
+    "Leaders",
+    "Standings",
+    researchTab,
+    "Futures",
+  ];
+}
 
 export function LeagueSubnav({ league }: LeagueSubnavProps) {
   const { pathname } = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
+  const exploreItems = exploreItemsFor(league);
+  const allItems = [...exploreItems, ...learnItems];
 
   function itemPath(item: string): string | null {
     if (item === "Matchups") return `/${league}/matchups`;

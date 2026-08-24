@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
+import type { MlbHitRateWindow, MlbPropositionOption } from "./filterMlbPropBoard";
 
 type FilterOption = { value: string; label: string };
 type FilterTone = "default" | "banner" | "pill";
@@ -10,6 +11,8 @@ type MultiSelectFilterProps = {
   selected: Set<string>;
   onChange: (next: Set<string>) => void;
   tone?: FilterTone;
+  /** One value at a time; click again to clear. */
+  single?: boolean;
 };
 
 function MultiSelectFilter({
@@ -18,12 +21,19 @@ function MultiSelectFilter({
   selected,
   onChange,
   tone = "default",
+  single = false,
 }: MultiSelectFilterProps) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const listId = useId();
-  const triggerLabel =
-    selected.size > 0 ? `${label} (${selected.size})` : label;
+  const selectedOption = single
+    ? options.find((opt) => selected.has(opt.value))
+    : undefined;
+  const triggerLabel = selectedOption
+    ? `${label} (${selectedOption.label})`
+    : selected.size > 0
+      ? `${label} (${selected.size})`
+      : label;
   const onBanner = tone === "banner";
   const onPill = tone === "pill";
 
@@ -46,6 +56,11 @@ function MultiSelectFilter({
   }, [open]);
 
   function toggle(value: string) {
+    if (single) {
+      onChange(selected.has(value) ? new Set() : new Set([value]));
+      setOpen(false);
+      return;
+    }
     const next = new Set(selected);
     if (next.has(value)) next.delete(value);
     else next.add(value);
@@ -92,7 +107,7 @@ function MultiSelectFilter({
           id={listId}
           role="listbox"
           aria-label={label}
-          aria-multiselectable="true"
+          aria-multiselectable={!single}
           className={
             onBanner
               ? "absolute top-full left-0 z-50 mt-1.5 max-h-56 min-w-[10rem] overflow-y-auto rounded-xl border border-black/10 bg-white py-1 shadow-lg"
@@ -153,6 +168,17 @@ function MultiSelectFilter({
   );
 }
 
+const SIDE_OPTIONS: FilterOption[] = [
+  { value: "over", label: "Over" },
+  { value: "under", label: "Under" },
+];
+
+const HIT_RATE_OPTIONS: FilterOption[] = [
+  { value: "l5", label: "L5" },
+  { value: "l10", label: "L10" },
+  { value: "l15", label: "L15" },
+];
+
 export type MlbPropPicksFiltersProps = {
   teams: string[];
   selectedTeams: Set<string>;
@@ -160,6 +186,13 @@ export type MlbPropPicksFiltersProps = {
   onTeamsChange: (next: Set<string>) => void;
   onQueryChange: (query: string) => void;
   onClear: () => void;
+  markets?: MlbPropositionOption[];
+  selectedMarkets?: Set<string>;
+  onMarketsChange?: (next: Set<string>) => void;
+  selectedSides?: Set<string>;
+  onSidesChange?: (next: Set<string>) => void;
+  hitRate?: MlbHitRateWindow | null;
+  onHitRateChange?: (next: MlbHitRateWindow | null) => void;
   /** `banner` = white pills on green; `pill` = dark-page capsules; default = square. */
   tone?: FilterTone;
   /** Team (+ clear) on the left, search on the right. */
@@ -173,10 +206,22 @@ export function MlbPropPicksFilters({
   onTeamsChange,
   onQueryChange,
   onClear,
+  markets = [],
+  selectedMarkets = new Set(),
+  onMarketsChange,
+  selectedSides = new Set(),
+  onSidesChange,
+  hitRate = null,
+  onHitRateChange,
   tone = "default",
   layout = "inline",
 }: MlbPropPicksFiltersProps) {
-  const hasActive = selectedTeams.size > 0 || query.trim().length > 0;
+  const hasActive =
+    selectedTeams.size > 0 ||
+    query.trim().length > 0 ||
+    selectedMarkets.size > 0 ||
+    selectedSides.size > 0 ||
+    hitRate != null;
   const onBanner = tone === "banner";
   const onPill = tone === "pill";
   const split = layout === "split";
@@ -191,6 +236,51 @@ export function MlbPropPicksFilters({
         onChange={onTeamsChange}
       />
     ) : null;
+
+  const propositionControl =
+    markets.length > 0 ? (
+      <MultiSelectFilter
+        label="Proposition"
+        tone={tone}
+        options={markets}
+        selected={selectedMarkets}
+        onChange={onMarketsChange ?? (() => {})}
+      />
+    ) : null;
+
+  const sideControl = (
+    <MultiSelectFilter
+      label="Over/Under"
+      tone={tone}
+      options={SIDE_OPTIONS}
+      selected={selectedSides}
+      onChange={onSidesChange ?? (() => {})}
+    />
+  );
+
+  const hitRateControl = (
+    <MultiSelectFilter
+      label="Hit rate"
+      tone={tone}
+      single
+      options={HIT_RATE_OPTIONS}
+      selected={hitRate ? new Set([hitRate]) : new Set()}
+      onChange={(next) => {
+        const value = [...next][0];
+        onHitRateChange?.(
+          value === "l5" || value === "l10" || value === "l15" ? value : null,
+        );
+      }}
+    />
+  );
+
+  const extraFilters = (
+    <>
+      {propositionControl}
+      {sideControl}
+      {hitRateControl}
+    </>
+  );
 
   const clearControl = hasActive ? (
     <button
@@ -233,6 +323,7 @@ export function MlbPropPicksFilters({
       >
         <div className="flex min-w-0 flex-wrap items-center gap-2">
           {teamControl}
+          {extraFilters}
           {clearControl}
         </div>
         <div className="shrink-0">{searchControl}</div>
@@ -246,6 +337,7 @@ export function MlbPropPicksFilters({
       aria-label="MLB prop picks filters"
     >
       {teamControl}
+      {extraFilters}
       {searchControl}
       {clearControl}
     </div>

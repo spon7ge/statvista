@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { filterMlbPropBoardRows } from "./filterMlbPropBoard";
+import {
+  collectMlbBoardPropositionOptions,
+  filterMlbPropBoardRows,
+} from "./filterMlbPropBoard";
 import type { ApiMlbPropBoardRow } from "@/shared/lib/api";
 
 const row = (over: Partial<ApiMlbPropBoardRow>): ApiMlbPropBoardRow =>
@@ -63,5 +66,53 @@ describe("filterMlbPropBoardRows", () => {
     expect(
       filterMlbPropBoardRows(rows, { teams: new Set(), query: "  jUdGe  " }),
     ).toEqual([rows[0]]);
+  });
+
+  it("filters by proposition market (stat) and over/under side", () => {
+    const rows = [
+      row({ player_name: "Aaron Judge", stat: "hits", side: "over" }),
+      row({
+        player_name: "Aaron Judge",
+        stat: "hits",
+        side: "under",
+        market_label: "Under 1.5 Hits",
+      }),
+      row({
+        player_name: "Shohei Ohtani",
+        stat: "strikeouts",
+        side: "over",
+        market_label: "Over 6.5 Strikeouts",
+        team_abbrev: "LAD",
+      }),
+    ];
+    expect(
+      filterMlbPropBoardRows(rows, {
+        teams: new Set(),
+        query: "",
+        markets: new Set(["hits"]),
+      }).map((r) => `${r.player_name}:${r.side}`),
+    ).toEqual(["Aaron Judge:over", "Aaron Judge:under"]);
+    expect(
+      filterMlbPropBoardRows(rows, {
+        teams: new Set(),
+        query: "",
+        sides: new Set(["over"]),
+      }).map((r) => `${r.player_name}:${r.stat}`),
+    ).toEqual(["Aaron Judge:hits", "Shohei Ohtani:strikeouts"]);
+  });
+
+  it("collects unique proposition options from market labels", () => {
+    const options = collectMlbBoardPropositionOptions([
+      row({ stat: "hits", market_label: "Over 1.5 Hits" }),
+      row({ stat: "hits", market_label: "Under 0.5 Hits" }),
+      row({
+        stat: "strikeouts",
+        market_label: "Over 6.5 Strikeouts",
+      }),
+    ]);
+    expect(options).toEqual([
+      { value: "hits", label: "Hits" },
+      { value: "strikeouts", label: "Strikeouts" },
+    ]);
   });
 });

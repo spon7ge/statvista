@@ -26,37 +26,13 @@ describe("HomeNav", () => {
     expect(
       screen.getByRole("button", { name: /^leagues$/i }).parentElement,
     ).toHaveClass("sm:hidden");
-    expect(screen.getByRole("link", { name: "About" })).toHaveClass(
-      "hidden",
-      "sm:inline",
-    );
-  });
-
-  it("links About to /about", () => {
-    renderNav("/");
-    expect(screen.getByRole("link", { name: "About" })).toHaveAttribute(
-      "href",
-      "/about",
-    );
-  });
-
-  it("marks About as current on /about", () => {
-    renderNav("/about");
-    expect(screen.getByRole("link", { name: "About" })).toHaveAttribute(
-      "aria-current",
-      "page",
-    );
-  });
-
-  it("does not mark About current on home", () => {
-    renderNav("/");
-    expect(screen.getByRole("link", { name: "About" })).not.toHaveAttribute(
-      "aria-current",
-    );
+    expect(
+      screen.queryByRole("link", { name: "About" }),
+    ).not.toBeInTheDocument();
   });
 
   it("points league links at matchups hubs", () => {
-    renderNav("/about");
+    renderNav("/");
     expect(screen.getByRole("link", { name: "NBA" })).toHaveAttribute(
       "href",
       "/nba/matchups",
@@ -101,7 +77,7 @@ describe("HomeNav", () => {
     );
   });
 
-  it("shows Leagues trigger on home and opens league plus About links", async () => {
+  it("shows Leagues trigger on home and opens league links", async () => {
     const user = userEvent.setup();
     renderNav("/");
 
@@ -123,8 +99,8 @@ describe("HomeNav", () => {
       screen.getByRole("menuitem", { name: "MLB" }),
     ).toHaveAttribute("href", "/mlb/matchups");
     expect(
-      screen.getByRole("menuitem", { name: "About" }),
-    ).toHaveAttribute("href", "/about");
+      screen.queryByRole("menuitem", { name: "About" }),
+    ).not.toBeInTheDocument();
   });
 
   it("shows current league on the mobile trigger and marks it in the menu", async () => {
@@ -140,19 +116,6 @@ describe("HomeNav", () => {
     );
     expect(screen.getByRole("menuitem", { name: "NBA" })).not.toHaveAttribute(
       "aria-current",
-    );
-  });
-
-  it("shows About on the mobile trigger and marks it in the menu", async () => {
-    const user = userEvent.setup();
-    renderNav("/about");
-
-    const trigger = screen.getByRole("button", { name: /^about$/i });
-    await user.click(trigger);
-
-    expect(screen.getByRole("menuitem", { name: "About" })).toHaveAttribute(
-      "aria-current",
-      "page",
     );
   });
 

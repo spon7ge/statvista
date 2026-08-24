@@ -28,7 +28,7 @@ PrizePicks and Underdog are **not** page tabs. They appear only as Odds chips, a
 | Opp Pace Rank | Opponent plate appearances per game rank (1 = highest pace), same on batter and pitcher rows |
 | L5 / L10 / L15 | Hit rate of this side vs this exact line over last N **played** games (not team games / DNPs) |
 | First cell | Composite: headshot, name, matchup, market (`Over 1.5 Hits`) |
-| Filters | Team multi-select + player name search |
+| Filters | Team + Proposition (market) + Over/Under + Hit rate (L5/L10/L15 highest→lowest) + player name search |
 | Default sort | Game start, player name, market, Over before Under, line |
 | Empty IP/ranks/L# | Render `—`; sort last |
 
@@ -169,11 +169,14 @@ Need at least 1 qualifying game to show a percent; otherwise null. Windows of 5/
 
 - Team multi-select filters `team_abbrev`.
 - Search matches player name (case-insensitive substring).
-- No Stat / Side / format / legs controls in v1.
+- Proposition multi-select filters `stat` (market), labeled from the market name (Hits, Strikeouts, …).
+- Over/Under multi-select filters `side`.
+- Hit rate is a single-select of L5 / L10 / L15 that sorts that column **highest → lowest**.
 - Default sort: `game_start_at`, `player_name`, `stat`, Over before Under, `line`.
 - Every column header is sortable. Null IP / ranks / hit rates sort last in both directions.
 - Keep a last-updated time from `as_of` or React Query `dataUpdatedAt`.
 - Dense dark table, sticky header, horizontal scroll on small screens. No card grid.
+- Client paginates **30 rows per page** after sort, with Previous/Next (same chrome as the old player list).
 
 ## Backend shape
 

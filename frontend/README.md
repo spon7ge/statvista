@@ -77,7 +77,6 @@ frontend/src/
     basketball/        # WNBA (+ future NBA) game, league UI, hooks
     mlb/               # MLB game UI + hooks
     home/              # landing marketing sections
-    about/
   pages/               # thin route composers
   shared/
     ui/                # cross-feature chrome (GameSection, avatars, footer)

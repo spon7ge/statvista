@@ -4,10 +4,13 @@ import { describe, expect, it, vi } from "vitest";
 import { MlbPropPicksFilters } from "./MlbPropPicksFilters";
 
 describe("MlbPropPicksFilters", () => {
-  it("renders Team filter and player search only (no Stat or Side)", async () => {
+  it("renders Team, Proposition, Over/Under, and Hit rate next to player search", async () => {
     const user = userEvent.setup();
     const onTeamsChange = vi.fn();
     const onQueryChange = vi.fn();
+    const onMarketsChange = vi.fn();
+    const onSidesChange = vi.fn();
+    const onHitRateChange = vi.fn();
     const onClear = vi.fn();
 
     const { rerender } = render(
@@ -18,27 +21,41 @@ describe("MlbPropPicksFilters", () => {
         onTeamsChange={onTeamsChange}
         onQueryChange={onQueryChange}
         onClear={onClear}
+        markets={[
+          { value: "hits", label: "Hits" },
+          { value: "strikeouts", label: "Strikeouts" },
+        ]}
+        selectedMarkets={new Set()}
+        onMarketsChange={onMarketsChange}
+        selectedSides={new Set()}
+        onSidesChange={onSidesChange}
+        hitRate={null}
+        onHitRateChange={onHitRateChange}
       />,
     );
 
     expect(screen.getByRole("button", { name: "Team" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Proposition" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Over/Under" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Hit rate" })).toBeInTheDocument();
     expect(screen.getByRole("searchbox", { name: "Search player" })).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Search player")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Stat" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Side" })).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: "Tier" }),
-    ).not.toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: "Clear filters" }),
     ).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Team" }));
-    await user.click(screen.getByRole("option", { name: "NYY" }));
-    expect(onTeamsChange).toHaveBeenCalledWith(new Set(["NYY"]));
+    await user.click(screen.getByRole("button", { name: "Proposition" }));
+    await user.click(screen.getByRole("option", { name: "Hits" }));
+    expect(onMarketsChange).toHaveBeenCalledWith(new Set(["hits"]));
 
-    await user.type(screen.getByRole("searchbox", { name: "Search player" }), "Judge");
-    expect(onQueryChange).toHaveBeenCalled();
+    await user.click(screen.getByRole("button", { name: "Over/Under" }));
+    await user.click(screen.getByRole("option", { name: "Over" }));
+    expect(onSidesChange).toHaveBeenCalledWith(new Set(["over"]));
+
+    await user.click(screen.getByRole("button", { name: "Hit rate" }));
+    await user.click(screen.getByRole("option", { name: "L10" }));
+    expect(onHitRateChange).toHaveBeenCalledWith("l10");
 
     rerender(
       <MlbPropPicksFilters
@@ -48,10 +65,20 @@ describe("MlbPropPicksFilters", () => {
         onTeamsChange={onTeamsChange}
         onQueryChange={onQueryChange}
         onClear={onClear}
+        markets={[{ value: "hits", label: "Hits" }]}
+        selectedMarkets={new Set(["hits"])}
+        onMarketsChange={onMarketsChange}
+        selectedSides={new Set(["over"])}
+        onSidesChange={onSidesChange}
+        hitRate="l10"
+        onHitRateChange={onHitRateChange}
       />,
     );
 
     expect(screen.getByRole("button", { name: "Team (1)" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Proposition (1)" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Over/Under (1)" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Hit rate (L10)" })).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Clear filters" }));
     expect(onClear).toHaveBeenCalled();
   });

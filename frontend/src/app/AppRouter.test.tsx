@@ -50,13 +50,14 @@ describe("AppRouter", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders about at /about", () => {
+  it("renders not found at /about", () => {
     renderWithProviders(["/about"]);
     expect(
-      screen.getByRole("heading", { name: /about statvista/i }),
+      screen.getByRole("heading", { name: /page not found/i }),
     ).toBeInTheDocument();
-    expect(screen.getAllByRole("main")).toHaveLength(1);
-    expect(screen.getByText("No live games")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", { name: /about statvista/i }),
+    ).not.toBeInTheDocument();
   });
 
   it("renders not found for unknown paths", () => {

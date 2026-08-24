@@ -8,27 +8,24 @@ export function appFromSearch(value: string | null): MlbPropAppTab {
 }
 
 type MlbPropPicksHeaderProps = {
-  /** Team + search pills on the right of the title. */
+  /** Filter pills under the title (same column as the league subnav). */
   children?: ReactNode;
 };
 
 /**
- * MLB Props title (left) with optional Team / search pills (right).
+ * MLB Props title, matching other MLB league pages (Leaders / Standings).
+ * Filter pills sit under the title in the same max-w-6xl column as the subnav.
  * PrizePicks / Underdog tabs stay on game-detail Props, not this page.
  */
 export function MlbPropPicksHeader({ children }: MlbPropPicksHeaderProps) {
   return (
     <div data-testid="mlb-prop-picks-header" className="relative z-20 space-y-3">
-      <div className="flex min-h-10 items-center justify-between gap-3">
-        <h1 className="min-w-0 shrink-0 text-left text-[28px] leading-none font-bold tracking-tight text-white sm:text-[32px]">
-          MLB Props
-        </h1>
-        {children ? (
-          <div className="flex min-w-0 flex-wrap items-center justify-end gap-2">
-            {children}
-          </div>
-        ) : null}
-      </div>
+      <h1 className="text-left text-[32px] leading-none font-bold tracking-tight text-white sm:text-[36px]">
+        MLB Props
+      </h1>
+      {children ? (
+        <div className="flex flex-wrap items-center gap-2">{children}</div>
+      ) : null}
     </div>
   );
 }

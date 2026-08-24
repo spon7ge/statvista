@@ -72,6 +72,29 @@ describe("LeagueSubnav", () => {
     );
   });
 
+  it("replaces Playoff race with a disabled Arbitrage item on MLB and WNBA", () => {
+    const { unmount } = renderSubnav("/wnba/matchups");
+    expect(screen.getByRole("button", { name: "Arbitrage" })).toBeDisabled();
+    expect(
+      screen.queryByRole("button", { name: "Playoff race" }),
+    ).not.toBeInTheDocument();
+    unmount();
+
+    renderSubnav("/mlb/matchups", "mlb");
+    expect(screen.getByRole("button", { name: "Arbitrage" })).toBeDisabled();
+    expect(
+      screen.queryByRole("button", { name: "Playoff race" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("keeps Playoff race on NBA and does not show Arbitrage", () => {
+    renderSubnav("/nba/matchups", "nba");
+    expect(screen.getByRole("button", { name: "Playoff race" })).toBeDisabled();
+    expect(
+      screen.queryByRole("button", { name: "Arbitrage" }),
+    ).not.toBeInTheDocument();
+  });
+
   it("links Futures to /mlb/futures for mlb", () => {
     renderSubnav("/mlb/futures", "mlb");
     expect(screen.getByRole("link", { name: "Futures" })).toHaveAttribute(

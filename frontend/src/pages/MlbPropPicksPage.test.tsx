@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -96,6 +96,9 @@ describe("MlbPropPicksPage", () => {
 
     expect(mockUseMlbPropBoard).toHaveBeenCalledWith();
     expect(screen.getByRole("heading", { name: "MLB Props" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "MLB Props" }).closest("section"),
+    ).toHaveClass("max-w-6xl");
     expect(screen.queryByRole("tab", { name: "PrizePicks" })).not.toBeInTheDocument();
     expect(screen.queryByRole("tab", { name: "Underdog" })).not.toBeInTheDocument();
     expect(screen.getByText("Aaron Judge")).toBeInTheDocument();
@@ -104,6 +107,10 @@ describe("MlbPropPicksPage", () => {
     expect(screen.getByText("IP")).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: /View \d+ props?/ })).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Team" })).toBeInTheDocument();
+    const filters = screen.getByLabelText("MLB prop picks filters");
+    expect(within(filters).getByRole("button", { name: "Proposition" })).toBeInTheDocument();
+    expect(within(filters).getByRole("button", { name: "Over/Under" })).toBeInTheDocument();
+    expect(within(filters).getByRole("button", { name: "Hit rate" })).toBeInTheDocument();
     expect(screen.getByRole("searchbox", { name: "Search player" })).toBeInTheDocument();
   });
 
@@ -131,6 +138,43 @@ describe("MlbPropPicksPage", () => {
 
     expect(screen.getByText("Aaron Judge")).toBeInTheDocument();
     expect(screen.queryByText("Mookie Betts")).not.toBeInTheDocument();
+  });
+
+  it("filters the board by proposition, over/under, and hit-rate sort", async () => {
+    const user = userEvent.setup();
+    const ohtani = row({
+      player_name: "Shohei Ohtani",
+      team_abbrev: "LAD",
+      opponent_abbrev: "SF",
+      stat: "strikeouts",
+      market_label: "Over 6.5 Strikeouts",
+      side: "over",
+      line: 6.5,
+      hit_l5: 90,
+    });
+    mockBoard([judge, betts, ohtani]);
+    renderPage();
+    const filters = screen.getByLabelText("MLB prop picks filters");
+
+    await user.click(within(filters).getByRole("button", { name: "Proposition" }));
+    await user.click(screen.getByRole("option", { name: "Hits" }));
+    expect(screen.getByText("Aaron Judge")).toBeInTheDocument();
+    expect(screen.getByText("Mookie Betts")).toBeInTheDocument();
+    expect(screen.queryByText("Shohei Ohtani")).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Over/Under" }));
+    await user.click(screen.getByRole("option", { name: "Over" }));
+    expect(screen.getByText("Aaron Judge")).toBeInTheDocument();
+    expect(screen.queryByText("Mookie Betts")).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Clear filters" }));
+    await user.click(screen.getByRole("button", { name: "Hit rate" }));
+    await user.click(screen.getByRole("option", { name: "L5" }));
+    expect(screen.getAllByTestId("board-row-name").map((el) => el.textContent)).toEqual([
+      "Shohei Ohtani",
+      "Aaron Judge",
+      "Mookie Betts",
+    ]);
   });
 
   it("does not render Stat, Side, Tier, or Fresh filter controls", () => {

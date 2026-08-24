@@ -38,6 +38,7 @@ describe("MlbPropPicksTable", () => {
     render(
       <MlbPropPicksTable rows={[fixtureRow()]} lastUpdatedAt={Date.now()} />,
     );
+    expect(screen.getByText("Proposition")).toBeInTheDocument();
     expect(screen.getByText("Line")).toBeInTheDocument();
     expect(screen.getByText("IP")).toBeInTheDocument();
     expect(screen.getByText("Opp Def Rank")).toBeInTheDocument();
@@ -214,6 +215,113 @@ describe("MlbPropPicksTable", () => {
     expect(within(odds).getByText("-120")).toBeInTheDocument();
     expect(within(odds).getByText("+1")).toBeInTheDocument();
     expect(within(odds).queryByText("PrizePicks")).not.toBeInTheDocument();
+  });
+
+  it("renders asset book marks without a chip box", () => {
+    render(
+      <MlbPropPicksTable
+        rows={[
+          fixtureRow({
+            books: [
+              { book: "prophetx", american: -115, url: null },
+              { book: "novig", american: -110, url: null },
+              { book: "draftkings", american: -120, url: null },
+              { book: "fanduel", american: -108, url: null },
+            ],
+          }),
+          fixtureRow({
+            player_name: "Mookie Betts",
+            game_pk: 2,
+            books: [
+              { book: "fliff", american: -102, url: null },
+              { book: "betmgm", american: -112, url: null },
+              { book: "underdog", american: null, url: null },
+            ],
+          }),
+        ]}
+      />,
+    );
+    const cells = screen.getAllByTestId("odds-cell");
+    expect(cells[0].querySelector('svg[aria-label="ProphetX"]')).toBeTruthy();
+    expect(cells[0].querySelector('svg[aria-label="Novig"]')).toBeTruthy();
+    expect(cells[0].querySelector('svg[aria-label="DraftKings"]')).toBeTruthy();
+    expect(cells[0].querySelector('svg[aria-label="FanDuel"]')).toBeTruthy();
+    expect(cells[1].querySelector('svg[aria-label="Fliff"]')).toBeTruthy();
+    expect(cells[1].querySelector('svg[aria-label="BetMGM"]')).toBeTruthy();
+    expect(cells[1].querySelector('svg[aria-label="Underdog"]')).toBeTruthy();
+    expect(cells[0].querySelector(".bg-white\\/10")).toBeNull();
+    expect(cells[0].querySelector(".rounded-md")).toBeNull();
+  });
+
+  it("renders PrizePicks mark and -137 for every PrizePicks chip", () => {
+    render(
+      <MlbPropPicksTable
+        rows={[
+          fixtureRow({
+            books: [{ book: "prizepicks", american: null, url: null }],
+          }),
+        ]}
+      />,
+    );
+    const odds = screen.getByTestId("odds-cell");
+    expect(odds.querySelector('svg[aria-label="PrizePicks"]')).toBeTruthy();
+    expect(within(odds).getByText("-137")).toBeInTheDocument();
+  });
+
+  it("renders Underdog mark and the dataset American price", () => {
+    render(
+      <MlbPropPicksTable
+        rows={[
+          fixtureRow({
+            books: [{ book: "underdog", american: -105, url: null }],
+          }),
+        ]}
+      />,
+    );
+    const odds = screen.getByTestId("odds-cell");
+    expect(odds.querySelector('svg[aria-label="Underdog"]')).toBeTruthy();
+    expect(within(odds).getByText("-105")).toBeInTheDocument();
+  });
+
+  it("paginates to 30 rows with next/previous", async () => {
+    const user = userEvent.setup();
+    const many = Array.from({ length: 33 }, (_, i) =>
+      fixtureRow({
+        player_name: `Player ${String(i).padStart(2, "0")}`,
+        game_pk: i,
+      }),
+    );
+
+    render(<MlbPropPicksTable rows={many} />);
+
+    expect(screen.getByText("Showing 1–30 of 33")).toBeInTheDocument();
+    expect(screen.getByText("Player 00")).toBeInTheDocument();
+    expect(screen.queryByText("Player 30")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Previous" })).toBeDisabled();
+
+    await user.click(screen.getByRole("button", { name: "Next" }));
+    expect(screen.getByText("Showing 31–33 of 33")).toBeInTheDocument();
+    expect(screen.getByText("Player 30")).toBeInTheDocument();
+    expect(screen.queryByText("Player 00")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Next" })).toBeDisabled();
+  });
+
+  it("sorts by the selected hit-rate window highest to lowest", () => {
+    render(
+      <MlbPropPicksTable
+        rows={[
+          fixtureRow({ player_name: "Low", hit_l5: 20 }),
+          fixtureRow({ player_name: "High", hit_l5: 90 }),
+          fixtureRow({ player_name: "Mid", hit_l5: 50 }),
+        ]}
+        hitRateWindow="l5"
+      />,
+    );
+    expect(screen.getAllByTestId("board-row-name").map((el) => el.textContent)).toEqual([
+      "High",
+      "Mid",
+      "Low",
+    ]);
   });
 
   it("renders rank pills and last-updated copy", () => {

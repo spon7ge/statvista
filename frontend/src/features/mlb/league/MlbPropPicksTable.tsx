@@ -1,7 +1,13 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { ApiMlbPropBoardRow } from "@/shared/lib/api";
-import draftKingsLogo from "@/assets/draftkings.png";
-import fanDuelLogo from "@/assets/fanduel.png";
+import betMgmIcon from "@/assets/betmgm-icon.svg?raw";
+import draftKingsIcon from "@/assets/draftkings-icon.svg?raw";
+import fanDuelIcon from "@/assets/fanduel-icon.svg?raw";
+import fliffIcon from "@/assets/fliff-icon.svg?raw";
+import novigIcon from "@/assets/novig-icon.svg?raw";
+import prizePicksIcon from "@/assets/prizepicks-icon.svg?raw";
+import prophetXIcon from "@/assets/prophetx-icon.svg?raw";
+import underdogIcon from "@/assets/underdog-icon.svg?raw";
 import { bookDisplayName } from "@/features/mlb/lib/mlbBookLabels";
 import { formatAmericanOdds } from "@/features/mlb/lib/mlbOddsBoard";
 import { formatMlbPropPicksUpdatedAt } from "./MlbPropPicksList";
@@ -13,13 +19,20 @@ import {
 } from "./sortMlbPropBoard";
 
 const VISIBLE_ODDS_CHIPS = 4;
-const DFS_BOOKS = new Set(["prizepicks", "underdog"]);
+export const MLB_PROP_BOARD_PAGE_SIZE = 30;
+const PRIZEPICKS_AMERICAN = -137;
 
-// Only DK/FD ship PNG marks today; other books use the same short labels
-// as the existing MLB odds UI instead of inventing new logos.
-const BOOK_LOGOS: Record<string, string> = {
-  draftkings: draftKingsLogo,
-  fanduel: fanDuelLogo,
+// Inline SVGs so `currentColor` paints on the dark table.
+// `fliff` is the board key for fliff-icon.svg.
+const BOOK_SVGS: Record<string, string> = {
+  betmgm: betMgmIcon,
+  draftkings: draftKingsIcon,
+  fanduel: fanDuelIcon,
+  fliff: fliffIcon,
+  novig: novigIcon,
+  prizepicks: prizePicksIcon,
+  prophetx: prophetXIcon,
+  underdog: underdogIcon,
 };
 
 const BOOK_SHORT: Record<string, string> = {
@@ -42,10 +55,12 @@ type MlbPropPicksTableProps = {
   isLoading?: boolean;
   isError?: boolean;
   lastUpdatedAt?: number;
+  /** When set, sort that hit-rate column highest → lowest. */
+  hitRateWindow?: "l5" | "l10" | "l15" | null;
 };
 
 const COLUMNS: { key: MlbPropBoardSortKey; label: string }[] = [
-  { key: "player", label: "" },
+  { key: "player", label: "Proposition" },
   { key: "line", label: "Line" },
   { key: "odds", label: "Odds" },
   { key: "ip", label: "IP" },
@@ -83,6 +98,24 @@ function rankToneClass(rank: number | null): string {
   return "bg-emerald-500/20 text-emerald-200";
 }
 
+function BookMark({ book, label }: { book: string; label: string }) {
+  const svg = BOOK_SVGS[book];
+  if (svg) {
+    return (
+      <span
+        className="inline-flex size-3.5 shrink-0 text-white [&_svg]:block [&_svg]:size-3.5"
+        dangerouslySetInnerHTML={{ __html: svg }}
+      />
+    );
+  }
+  const short = BOOK_SHORT[book] ?? label.slice(0, 3).toUpperCase();
+  return (
+    <span className="text-[10px] font-semibold tracking-wide text-white/70">
+      {short}
+    </span>
+  );
+}
+
 function BookChip({
   book,
   american,
@@ -92,35 +125,27 @@ function BookChip({
   american: number | null;
   url: string | null;
 }) {
-  const logo = BOOK_LOGOS[book];
   const label = bookDisplayName(book);
-  const short = BOOK_SHORT[book] ?? label.slice(0, 3).toUpperCase();
-  const showAmerican = american != null && !DFS_BOOKS.has(book);
+  const displayAmerican =
+    book === "prizepicks" ? PRIZEPICKS_AMERICAN : american;
   const inner = (
     <>
-      {logo ? (
-        <img src={logo} alt={label} className="h-3.5 w-3.5 object-contain" />
-      ) : (
-        <span className="text-[10px] font-semibold tracking-wide text-white/70">
-          {short}
-        </span>
-      )}
-      {showAmerican ? (
+      <BookMark book={book} label={label} />
+      {displayAmerican != null ? (
         <span className="font-mono text-[11px] text-white">
-          {formatAmericanOdds(american)}
+          {formatAmericanOdds(displayAmerican)}
         </span>
       ) : null}
     </>
   );
-  const className =
-    "inline-flex items-center gap-1 rounded-md bg-white/10 px-1.5 py-0.5";
+  const className = "inline-flex items-center gap-1";
   if (url) {
     return (
       <a
         href={url}
         target="_blank"
         rel="noreferrer"
-        className={`${className} hover:bg-white/15`}
+        className={`${className} hover:opacity-80`}
         aria-label={label}
       >
         {inner}
@@ -239,11 +264,38 @@ export function MlbPropPicksTable({
   isLoading = false,
   isError = false,
   lastUpdatedAt,
+  hitRateWindow = null,
 }: MlbPropPicksTableProps) {
   const [sort, setSort] = useState<MlbPropBoardSort | null>(null);
+  const [page, setPage] = useState(0);
   const sorted = useMemo(() => sortMlbPropBoardRows(rows, sort), [rows, sort]);
 
+  useEffect(() => {
+    if (hitRateWindow) {
+      setSort({ key: hitRateWindow, direction: "desc" });
+    } else {
+      setSort(null);
+    }
+    setPage(0);
+  }, [hitRateWindow]);
+
+  const listSignature = `${rows.length}:${rows[0]?.player_name ?? ""}:${rows[rows.length - 1]?.player_name ?? ""}:${rows[0]?.stat ?? ""}:${rows[rows.length - 1]?.stat ?? ""}`;
+  useEffect(() => {
+    setPage(0);
+  }, [listSignature]);
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(sorted.length / MLB_PROP_BOARD_PAGE_SIZE),
+  );
+  const safePage = Math.min(page, totalPages - 1);
+  const start = safePage * MLB_PROP_BOARD_PAGE_SIZE;
+  const pageRows = sorted.slice(start, start + MLB_PROP_BOARD_PAGE_SIZE);
+  const end = start + pageRows.length;
+  const showPager = sorted.length > MLB_PROP_BOARD_PAGE_SIZE;
+
   function onSort(key: MlbPropBoardSortKey) {
+    setPage(0);
     setSort((current) => {
       if (!current || current.key !== key) {
         return { key, direction: "asc" };
@@ -273,10 +325,11 @@ export function MlbPropPicksTable({
       ) : sorted.length === 0 ? (
         <p className="px-1 text-[14px] text-white/40">No board yet</p>
       ) : (
-        <div className="overflow-x-auto">
+        <>
+          <div className="overflow-x-auto">
           <table className="w-full min-w-[64rem] border-collapse text-left">
-            <thead className="sticky top-0 bg-[#111214]">
-              <tr className="border-b border-white/10 text-[11px] font-bold uppercase tracking-wide text-white/70">
+            <thead className="sticky top-0">
+              <tr className="border-b border-white/10 text-[11px] font-semibold uppercase tracking-wide text-white/70">
                 {COLUMNS.map((column) => {
                   const active = sort?.key === column.key;
                   const ariaSort = !active
@@ -285,13 +338,17 @@ export function MlbPropPicksTable({
                       ? "ascending"
                       : "descending";
                   return (
-                    <th key={column.key} className="px-2 py-2 font-bold" aria-sort={ariaSort}>
+                    <th
+                      key={column.key}
+                      className="px-2 py-2 font-semibold"
+                      aria-sort={ariaSort}
+                    >
                       <button
                         type="button"
                         onClick={() => onSort(column.key)}
-                        className="text-left uppercase tracking-wide text-white/70 hover:text-white"
+                        className="bg-transparent p-0 text-left uppercase tracking-wide text-white/70 hover:text-white"
                       >
-                        {column.label || <span className="sr-only">Player</span>}
+                        {column.label}
                       </button>
                     </th>
                   );
@@ -299,7 +356,7 @@ export function MlbPropPicksTable({
               </tr>
             </thead>
             <tbody>
-              {sorted.map((row) => (
+              {pageRows.map((row) => (
                 <tr
                   key={`${row.player_name}:${row.stat}:${row.side}:${row.line}:${row.game_pk ?? ""}`}
                   className="border-b border-white/5"
@@ -334,6 +391,37 @@ export function MlbPropPicksTable({
             </tbody>
           </table>
         </div>
+          <div className="flex flex-wrap items-center justify-between gap-2 px-1">
+            <p className="text-[14px] text-white/40">
+              Showing {start + 1}–{end} of {sorted.length}
+            </p>
+            {showPager ? (
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  disabled={safePage <= 0}
+                  onClick={() => setPage((p) => Math.max(0, p - 1))}
+                  className="rounded-md border border-white/10 px-2.5 py-0.5 text-[14px] text-white/55 enabled:hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
+                >
+                  Previous
+                </button>
+                <span className="text-[14px] text-white/35">
+                  Page {safePage + 1} of {totalPages}
+                </span>
+                <button
+                  type="button"
+                  disabled={safePage >= totalPages - 1}
+                  onClick={() =>
+                    setPage((p) => Math.min(totalPages - 1, p + 1))
+                  }
+                  className="rounded-md border border-white/10 px-2.5 py-0.5 text-[14px] text-white/55 enabled:hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
+                >
+                  Next
+                </button>
+              </div>
+            ) : null}
+          </div>
+        </>
       )}
     </section>
   );
