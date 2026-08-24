@@ -263,6 +263,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/mlb/props/board": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Mlb Props Board */
+        get: operations["mlb_props_board_api_mlb_props_board_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/mlb/props/game/{game_pk}": {
         parameters: {
             query?: never;
@@ -1727,6 +1744,73 @@ export interface components {
             label: string | null;
             /** Value */
             value: string;
+        };
+        /** MlbPropBoardBookChip */
+        MlbPropBoardBookChip: {
+            /** American */
+            american: number | null;
+            /** Book */
+            book: string;
+            /** Url */
+            url: string | null;
+        };
+        /** MlbPropBoardResponse */
+        MlbPropBoardResponse: {
+            /**
+             * As Of
+             * Format: date-time
+             */
+            as_of: string;
+            /** Rows */
+            rows: components["schemas"]["MlbPropBoardRow"][];
+            /** Warnings */
+            warnings: string[];
+        };
+        /** MlbPropBoardRow */
+        MlbPropBoardRow: {
+            /** Books */
+            books: components["schemas"]["MlbPropBoardBookChip"][];
+            /** Game Pk */
+            game_pk: number | null;
+            /** Game Start At */
+            game_start_at: string | null;
+            /** Headshot Url */
+            headshot_url: string | null;
+            /** Hit L10 */
+            hit_l10: number | null;
+            /** Hit L15 */
+            hit_l15: number | null;
+            /** Hit L5 */
+            hit_l5: number | null;
+            /** Home Away */
+            home_away: ("away" | "home") | null;
+            /** Ip Pct */
+            ip_pct: number | null;
+            /** Line */
+            line: number;
+            /** Market Label */
+            market_label: string;
+            /** Opp Def Label */
+            opp_def_label: string | null;
+            /** Opp Def Rank */
+            opp_def_rank: number | null;
+            /** Opp Pace Label */
+            opp_pace_label: string | null;
+            /** Opp Pace Rank */
+            opp_pace_rank: number | null;
+            /** Opponent Abbrev */
+            opponent_abbrev: string | null;
+            /** Player Name */
+            player_name: string;
+            /**
+             * Side
+             * @enum {string}
+             */
+            side: "over" | "under";
+            /** Stat */
+            stat: string;
+            /** Team Abbrev */
+            team_abbrev: string | null;
         };
         /**
          * MlbPropBookMainQuote
@@ -3542,6 +3626,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MlbOddsResponse"];
+                };
+            };
+        };
+    };
+    mlb_props_board_api_mlb_props_board_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MlbPropBoardResponse"];
                 };
             };
         };

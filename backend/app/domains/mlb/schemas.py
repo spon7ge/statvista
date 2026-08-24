@@ -74,6 +74,11 @@ from app.domains.mlb.schemas_team_preview import (
     MlbTeamPreviewResponse,
     MlbTeamPreviewTeam,
 )
+from app.domains.mlb.schemas_prop_board import (
+    MlbPropBoardBookChip,
+    MlbPropBoardResponse,
+    MlbPropBoardRow,
+)
 from app.domains.mlb.schemas_props import (
     MlbPropBooks,
     MlbPropBookMainQuote,
@@ -154,6 +159,9 @@ __all__ = [
     "MlbPlayerCard",
     "MlbPlayerOfTheGame",
     "MlbPlayerOfTheGameStat",
+    "MlbPropBoardBookChip",
+    "MlbPropBoardResponse",
+    "MlbPropBoardRow",
     "MlbPropBooks",
     "MlbPropBookMainQuote",
     "MlbPropBookQuote",

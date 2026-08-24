@@ -14,6 +14,7 @@ from app.domains.mlb.lineup_matchup import get_mlb_lineup_matchup
 from app.domains.mlb.lineups import get_mlb_lineups
 from app.domains.mlb.odds import get_today_odds
 from app.domains.mlb.game_props import get_mlb_props_for_game
+from app.domains.mlb.prop_board import get_mlb_prop_board
 from app.domains.mlb.props import get_mlb_props_today
 from app.domains.mlb.schemas import (
     MlbFuturesResponse,
@@ -22,6 +23,7 @@ from app.domains.mlb.schemas import (
     MlbLineupMatchupResponse,
     MlbLineupsResponse,
     MlbOddsResponse,
+    MlbPropBoardResponse,
     MlbPropsResponse,
     MlbScoreboardResponse,
     MlbTeamPreviewResponse,
@@ -145,6 +147,12 @@ async def mlb_props_today(
             detail=str(exc),
             headers=_NO_STORE,
         ) from exc
+
+
+@router.get("/mlb/props/board", response_model=MlbPropBoardResponse)
+async def mlb_props_board(response: Response) -> MlbPropBoardResponse:
+    response.headers["Cache-Control"] = "no-store"
+    return await get_mlb_prop_board()
 
 
 @router.get("/mlb/props/game/{game_pk}", response_model=MlbGamePropsResponse)
