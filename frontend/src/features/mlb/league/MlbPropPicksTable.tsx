@@ -13,7 +13,6 @@ import prophetXIcon from "@/assets/prophetx-icon.svg?raw";
 import underdogIcon from "@/assets/underdog-icon.svg?raw";
 import { bookDisplayName } from "@/features/mlb/lib/mlbBookLabels";
 import { formatAmericanOdds } from "@/features/mlb/lib/mlbOddsBoard";
-import { formatMlbPropPicksUpdatedAt } from "./MlbPropPicksList";
 import {
   orderedBoardBooks,
   sortMlbPropBoardRows,
@@ -58,7 +57,6 @@ type MlbPropPicksTableProps = {
   rows: ApiMlbPropBoardRow[];
   isLoading?: boolean;
   isError?: boolean;
-  lastUpdatedAt?: number;
   /** When set, sort that hit-rate column highest → lowest. */
   hitRateWindow?: "l5" | "l10" | "l15" | null;
 };
@@ -76,6 +74,13 @@ const COLUMNS: { key: MlbPropBoardSortKey; label: string }[] = [
 
 const HIT_SORT_KEYS = new Set<MlbPropBoardSortKey>(["l5", "l10", "l15", "h2h"]);
 
+const ROW_BOX_BG =
+  "bg-white/[0.04] transition-colors group-hover:bg-white/[0.08]";
+const ROW_BOX_BORDER = "border-white/10 group-hover:border-white/20";
+const ROW_BOX_FIRST = `rounded-l-lg border-y border-l ${ROW_BOX_BG} ${ROW_BOX_BORDER}`;
+const ROW_BOX_MIDDLE = `border-y ${ROW_BOX_BG} ${ROW_BOX_BORDER}`;
+const ROW_BOX_LAST = "rounded-r-lg border-r";
+
 function formatMatchup(row: ApiMlbPropBoardRow): string | null {
   if (!row.team_abbrev || !row.opponent_abbrev) return null;
   return row.home_away === "home"
@@ -84,7 +89,7 @@ function formatMatchup(row: ApiMlbPropBoardRow): string | null {
 }
 
 function hitBoxClass(pct: number | null): string {
-  if (pct == null) return "text-white/45";
+  if (pct == null) return `${ROW_BOX_BG} text-white/45`;
   if (pct >= 67) return "bg-emerald-500/15 text-emerald-300";
   if (pct >= 45) return "bg-amber-500/15 text-amber-300";
   return "bg-rose-500/15 text-rose-300";
@@ -284,14 +289,18 @@ function CompositeCell({ row }: { row: ApiMlbPropBoardRow }) {
 function HitCell({
   testId,
   value,
+  isLast = false,
 }: {
   testId: string;
   value: number | null;
+  isLast?: boolean;
 }) {
   return (
     <td
       data-testid={testId}
-      className={`border-x border-white/[0.06] px-2 py-2.5 text-center ${hitBoxClass(value)}`}
+      className={`border-y border-l px-2 py-2.5 text-center ${ROW_BOX_BORDER} ${
+        isLast ? ROW_BOX_LAST : ""
+      } ${hitBoxClass(value)}`}
     >
       <span className="text-[13px] font-semibold">
         {value == null ? "—" : `${value}%`}
@@ -304,7 +313,6 @@ export function MlbPropPicksTable({
   rows,
   isLoading = false,
   isError = false,
-  lastUpdatedAt,
   hitRateWindow = null,
 }: MlbPropPicksTableProps) {
   const [sort, setSort] = useState<MlbPropBoardSort | null>(null);
@@ -350,12 +358,6 @@ export function MlbPropPicksTable({
 
   return (
     <section className="space-y-3">
-      {lastUpdatedAt ? (
-        <p className="text-right text-[14px] text-white/40">
-          Last updated {formatMlbPropPicksUpdatedAt(lastUpdatedAt)}
-        </p>
-      ) : null}
-
       {isLoading ? (
         <div
           aria-label="Loading MLB prop picks"
@@ -368,7 +370,7 @@ export function MlbPropPicksTable({
       ) : (
         <>
           <div className="overflow-x-auto">
-          <table className="w-full min-w-[64rem] border-collapse text-left">
+          <table className="w-full min-w-[64rem] border-separate border-spacing-x-0 border-spacing-y-1.5 text-left">
             <thead className="sticky top-0">
               <tr className="border-b border-white/10 text-[11px] font-semibold uppercase tracking-wide text-white/70">
                 {COLUMNS.map((column) => {
@@ -406,24 +408,28 @@ export function MlbPropPicksTable({
               {pageRows.map((row) => (
                 <tr
                   key={`${row.player_name}:${row.stat}:${row.side}:${row.line}:${row.game_pk ?? ""}`}
-                  className="border-b border-white/5"
+                  data-testid="board-row"
+                  className="group"
                 >
-                  <td className="px-2 py-2">
+                  <td className={`px-2 py-2 ${ROW_BOX_FIRST}`}>
                     <CompositeCell row={row} />
                   </td>
-                  <td className="px-2 py-2 font-mono text-sm text-white">
+                  <td className={`px-2 py-2 font-mono text-sm text-white ${ROW_BOX_MIDDLE}`}>
                     {row.line}
                   </td>
-                  <td className="px-2 py-2">
+                  <td className={`px-2 py-2 ${ROW_BOX_MIDDLE}`}>
                     <OddsCell row={row} />
                   </td>
-                  <td className="px-2 py-2 font-mono text-sm text-white" data-testid="ip-cell">
+                  <td
+                    className={`px-2 py-2 font-mono text-sm text-white ${ROW_BOX_MIDDLE}`}
+                    data-testid="ip-cell"
+                  >
                     {row.ip_pct == null ? "—" : `${row.ip_pct}%`}
                   </td>
                   <HitCell testId="hit-l5-cell" value={row.hit_l5} />
                   <HitCell testId="hit-l10-cell" value={row.hit_l10} />
                   <HitCell testId="hit-l15-cell" value={row.hit_l15} />
-                  <HitCell testId="hit-h2h-cell" value={row.hit_h2h} />
+                  <HitCell testId="hit-h2h-cell" value={row.hit_h2h} isLast />
                 </tr>
               ))}
             </tbody>

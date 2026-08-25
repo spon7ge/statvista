@@ -2,7 +2,6 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import type { ApiMlbPropBoardRow } from "@/shared/lib/api";
-import { formatMlbPropPicksUpdatedAt } from "./MlbPropPicksList";
 import { MlbPropPicksTable } from "./MlbPropPicksTable";
 
 function fixtureRow(
@@ -36,9 +35,8 @@ function fixtureRow(
 
 describe("MlbPropPicksTable", () => {
   it("renders board columns and no dfs tabs", () => {
-    render(
-      <MlbPropPicksTable rows={[fixtureRow()]} lastUpdatedAt={Date.now()} />,
-    );
+    render(<MlbPropPicksTable rows={[fixtureRow()]} />);
+    expect(screen.queryByText(/Last updated/)).not.toBeInTheDocument();
     expect(screen.getByText("Proposition")).toBeInTheDocument();
     expect(screen.getByText("Line")).toBeInTheDocument();
     expect(screen.getByText("IP")).toBeInTheDocument();
@@ -94,6 +92,30 @@ describe("MlbPropPicksTable", () => {
     expect(screen.getByTestId("hit-l10-cell")).toHaveTextContent("—");
     expect(screen.getByTestId("hit-l15-cell")).toHaveTextContent("—");
     expect(screen.getByTestId("hit-h2h-cell")).toHaveTextContent("—");
+  });
+
+  it("wraps each board row in a boxed card with a gap and hover highlight", () => {
+    render(
+      <MlbPropPicksTable
+        rows={[
+          fixtureRow(),
+          fixtureRow({ player_name: "Mookie Betts", game_pk: 2 }),
+        ]}
+      />,
+    );
+    const table = screen.getByRole("table");
+    expect(table.className).toContain("border-separate");
+    expect(table.className).toContain("border-spacing-y-1.5");
+    const rows = screen.getAllByTestId("board-row");
+    expect(rows).toHaveLength(2);
+    expect(rows[0]).toHaveClass("group");
+    expect(rows[0].querySelector("td")?.className).toContain(
+      "group-hover:bg-white/[0.08]",
+    );
+    expect(rows[0].querySelector("td")?.className).toContain("rounded-l-lg");
+    expect(screen.getAllByTestId("hit-h2h-cell")[0]?.className).toContain(
+      "rounded-r-lg",
+    );
   });
 
   it("paints L5 through H2H as full hit-rate boxes", () => {
@@ -422,16 +444,4 @@ describe("MlbPropPicksTable", () => {
     expect(screen.getByTestId("hit-h2h-cell")).toHaveTextContent("67%");
   });
 
-  it("renders last-updated copy", () => {
-    const updatedAt = Date.UTC(2026, 7, 5, 20, 0);
-    render(
-      <MlbPropPicksTable
-        rows={[fixtureRow()]}
-        lastUpdatedAt={updatedAt}
-      />,
-    );
-    expect(
-      screen.getByText(`Last updated ${formatMlbPropPicksUpdatedAt(updatedAt)}`),
-    ).toBeInTheDocument();
-  });
 });

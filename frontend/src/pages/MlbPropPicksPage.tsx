@@ -24,7 +24,7 @@ function collectMlbBoardTeamOptions(rows: ApiMlbPropBoardRow[]): string[] {
 }
 
 export function MlbPropPicksPage() {
-  const { data, isLoading, isError, dataUpdatedAt } = useMlbPropBoard();
+  const { data, isLoading, isError } = useMlbPropBoard();
   const [selectedTeams, setSelectedTeams] = useState<Set<string>>(
     () => new Set(),
   );
@@ -116,7 +116,6 @@ export function MlbPropPicksPage() {
           rows={filtered}
           isLoading={isLoading}
           isError={showBoardError}
-          lastUpdatedAt={dataUpdatedAt || undefined}
           hitRateWindow={hitRate}
         />
       </section>
