@@ -235,4 +235,66 @@ describe("WinProbabilityPanel", () => {
     );
     expect(heading.closest("section")).not.toHaveClass("border-white/10");
   });
+
+  it("adds a neon halo on each team line when the game is live", () => {
+    const { container } = render(
+      <WinProbabilityPanel detail={buildGameDetailFixture({ status: "live" })} />,
+    );
+
+    const neon = container.querySelectorAll("[data-wp-segment='neon']");
+    expect(neon).toHaveLength(2);
+    neon.forEach((el) => {
+      expect(el.getAttribute("filter")).toMatch(/wp-neon/);
+    });
+  });
+
+  it("adds a neon halo on each team line when the game is final", () => {
+    const { container } = render(
+      <WinProbabilityPanel
+        detail={buildGameDetailFixture({ status: "final", statusLabel: "Final" })}
+      />,
+    );
+
+    expect(container.querySelectorAll("[data-wp-segment='neon']")).toHaveLength(2);
+  });
+
+  it("adds a neon halo at halftime", () => {
+    const { container } = render(
+      <WinProbabilityPanel
+        detail={buildGameDetailFixture({
+          status: "halftime",
+          statusLabel: "Halftime",
+        })}
+      />,
+    );
+
+    expect(container.querySelectorAll("[data-wp-segment='neon']")).toHaveLength(2);
+  });
+
+  it("does not neon the team lines when the game is scheduled", () => {
+    const { container } = render(
+      <WinProbabilityPanel
+        detail={buildGameDetailFixture({ status: "scheduled" })}
+      />,
+    );
+
+    expect(container.querySelectorAll("[data-wp-segment='neon']")).toHaveLength(0);
+  });
+
+  it("does not neon muted future path segments", () => {
+    const { container } = render(
+      <WinProbabilityPanel detail={buildGameDetailFixture()} />,
+    );
+    fireEvent.change(
+      screen.getByRole("slider", { name: /win probability timeline/i }),
+      { target: { value: "0" } },
+    );
+
+    const muted = container.querySelectorAll("[data-wp-segment='muted']");
+    expect(muted.length).toBeGreaterThanOrEqual(2);
+    muted.forEach((el) => {
+      expect(el.getAttribute("data-wp-segment")).toBe("muted");
+      expect(el.getAttribute("filter")).toBeNull();
+    });
+  });
 });

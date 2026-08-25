@@ -141,6 +141,27 @@
   }
 }
 
+@keyframes game-flow-neon-halo {
+  0%,
+  100% {
+    opacity: 0.78;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.game-flow-neon-halo {
+  animation: game-flow-neon-halo 2.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-flow-neon-halo {
+    animation: none;
+    opacity: 0.8;
+  }
+}
+
 .ticker-marquee-track {
   animation: ticker-marquee 80s linear infinite;
 }
