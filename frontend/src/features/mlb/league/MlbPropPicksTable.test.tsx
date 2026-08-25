@@ -29,6 +29,7 @@ function fixtureRow(
     hit_l5: 80,
     hit_l10: 70,
     hit_l15: 60,
+    hit_h2h: 50,
     ...over,
   };
 }
@@ -41,15 +42,21 @@ describe("MlbPropPicksTable", () => {
     expect(screen.getByText("Proposition")).toBeInTheDocument();
     expect(screen.getByText("Line")).toBeInTheDocument();
     expect(screen.getByText("IP")).toBeInTheDocument();
-    expect(screen.getByText("Opp Def Rank")).toBeInTheDocument();
-    expect(screen.getByText("Opp Pace Rank")).toBeInTheDocument();
+    expect(screen.queryByText("Opp Def Rank")).not.toBeInTheDocument();
+    expect(screen.queryByText("Opp Pace Rank")).not.toBeInTheDocument();
     expect(screen.getByText("L5")).toBeInTheDocument();
+    expect(screen.getByText("H2H")).toBeInTheDocument();
     expect(screen.queryByRole("tab", { name: "PrizePicks" })).not.toBeInTheDocument();
   });
 
   it("renders em dash for null ip", () => {
     render(<MlbPropPicksTable rows={[{ ...fixtureRow(), ip_pct: null }]} />);
     expect(screen.getByTestId("ip-cell")).toHaveTextContent("—");
+  });
+
+  it("renders a percent sign next to each IP value", () => {
+    render(<MlbPropPicksTable rows={[fixtureRow({ ip_pct: 53 })]} />);
+    expect(screen.getByTestId("ip-cell")).toHaveTextContent("53%");
   });
 
   it("renders the composite cell and remaining column headers", () => {
@@ -62,6 +69,7 @@ describe("MlbPropPicksTable", () => {
     expect(screen.getByText("Odds")).toBeInTheDocument();
     expect(screen.getByText("L10")).toBeInTheDocument();
     expect(screen.getByText("L15")).toBeInTheDocument();
+    expect(screen.getByText("H2H")).toBeInTheDocument();
   });
 
   it("shows No board yet when there are no rows", () => {
@@ -69,27 +77,42 @@ describe("MlbPropPicksTable", () => {
     expect(screen.getByText("No board yet")).toBeInTheDocument();
   });
 
-  it("renders em dash for null ranks and hit rates", () => {
+  it("renders em dash for null hit rates", () => {
     render(
       <MlbPropPicksTable
         rows={[
           fixtureRow({
-            opp_def_rank: null,
-            opp_def_label: null,
-            opp_pace_rank: null,
-            opp_pace_label: null,
             hit_l5: null,
             hit_l10: null,
             hit_l15: null,
+            hit_h2h: null,
           }),
         ]}
       />,
     );
-    expect(screen.getByTestId("opp-def-cell")).toHaveTextContent("—");
-    expect(screen.getByTestId("opp-pace-cell")).toHaveTextContent("—");
     expect(screen.getByTestId("hit-l5-cell")).toHaveTextContent("—");
     expect(screen.getByTestId("hit-l10-cell")).toHaveTextContent("—");
     expect(screen.getByTestId("hit-l15-cell")).toHaveTextContent("—");
+    expect(screen.getByTestId("hit-h2h-cell")).toHaveTextContent("—");
+  });
+
+  it("paints L5 through H2H as full hit-rate boxes", () => {
+    render(
+      <MlbPropPicksTable
+        rows={[
+          fixtureRow({
+            hit_l5: 90,
+            hit_l10: 65,
+            hit_l15: 33,
+            hit_h2h: 50,
+          }),
+        ]}
+      />,
+    );
+    expect(screen.getByTestId("hit-l5-cell").className).toContain("bg-emerald-500/15");
+    expect(screen.getByTestId("hit-l10-cell").className).toContain("bg-amber-500/15");
+    expect(screen.getByTestId("hit-l15-cell").className).toContain("bg-rose-500/15");
+    expect(screen.getByTestId("hit-h2h-cell").className).toContain("bg-amber-500/15");
   });
 
   it("renders home matchups as opponent @ team", () => {
@@ -219,6 +242,43 @@ describe("MlbPropPicksTable", () => {
     expect(within(odds).getByText("-120")).toBeInTheDocument();
     expect(within(odds).getByText("+1")).toBeInTheDocument();
     expect(within(odds).queryByText("PrizePicks")).not.toBeInTheDocument();
+  });
+
+  it("shows overflow books on hover of the +N down arrow", async () => {
+    const user = userEvent.setup();
+    render(
+      <MlbPropPicksTable
+        rows={[
+          fixtureRow({
+            books: [
+              { book: "prophetx", american: -115, url: null },
+              { book: "novig", american: -110, url: null },
+              { book: "pinnacle", american: -105, url: null },
+              { book: "draftkings", american: -120, url: null },
+              { book: "fanduel", american: -108, url: null },
+              { book: "betmgm", american: -112, url: null },
+            ],
+          }),
+        ]}
+      />,
+    );
+    const odds = screen.getByTestId("odds-cell");
+    expect(within(odds).getByText("+2")).toBeInTheDocument();
+    expect(odds.querySelector('svg[aria-label="FanDuel"]')).toBeNull();
+    expect(odds.querySelector('svg[aria-label="BetMGM"]')).toBeNull();
+    expect(screen.queryByTestId("odds-overflow-panel")).not.toBeInTheDocument();
+
+    const arrow = screen.getByTestId("odds-overflow-arrow");
+    expect(arrow.querySelector("svg")).not.toHaveClass("rotate-180");
+
+    await user.hover(arrow);
+    const panel = await screen.findByTestId("odds-overflow-panel");
+    expect(arrow.querySelector("svg")).toHaveClass("rotate-180");
+    expect(panel.querySelector('svg[aria-label="FanDuel"]')).toBeTruthy();
+    expect(panel.querySelector('svg[aria-label="BetMGM"]')).toBeTruthy();
+    expect(within(panel).getByText("-108")).toBeInTheDocument();
+    expect(within(panel).getByText("-112")).toBeInTheDocument();
+    expect(within(panel).queryByText("-115")).not.toBeInTheDocument();
   });
 
   it("renders asset book marks without a chip box", () => {
@@ -353,7 +413,16 @@ describe("MlbPropPicksTable", () => {
     ]);
   });
 
-  it("renders rank pills and last-updated copy", () => {
+  it("renders a combined H2H hit rate vs the opponent", () => {
+    render(
+      <MlbPropPicksTable
+        rows={[fixtureRow({ hit_h2h: 67 })]}
+      />,
+    );
+    expect(screen.getByTestId("hit-h2h-cell")).toHaveTextContent("67%");
+  });
+
+  it("renders last-updated copy", () => {
     const updatedAt = Date.UTC(2026, 7, 5, 20, 0);
     render(
       <MlbPropPicksTable
@@ -361,8 +430,6 @@ describe("MlbPropPicksTable", () => {
         lastUpdatedAt={updatedAt}
       />,
     );
-    expect(screen.getByTestId("opp-def-cell")).toHaveTextContent("12th BOS");
-    expect(screen.getByTestId("opp-pace-cell")).toHaveTextContent("4th BOS");
     expect(
       screen.getByText(`Last updated ${formatMlbPropPicksUpdatedAt(updatedAt)}`),
     ).toBeInTheDocument();

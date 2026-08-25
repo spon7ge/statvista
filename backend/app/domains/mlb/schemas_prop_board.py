@@ -43,6 +43,7 @@ class MlbPropBoardRow(BaseModel):
     hit_l5: int | None = None
     hit_l10: int | None = None
     hit_l15: int | None = None
+    hit_h2h: int | None = None
 
 
 class MlbPropBoardResponse(BaseModel):

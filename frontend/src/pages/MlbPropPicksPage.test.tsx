@@ -30,6 +30,7 @@ function row(
     hit_l5: 80,
     hit_l10: 70,
     hit_l15: 60,
+    hit_h2h: 50,
     ...over,
   };
 }

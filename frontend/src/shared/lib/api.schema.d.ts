@@ -1776,6 +1776,8 @@ export interface components {
             game_start_at: string | null;
             /** Headshot Url */
             headshot_url: string | null;
+            /** Hit H2H */
+            hit_h2h: number | null;
             /** Hit L10 */
             hit_l10: number | null;
             /** Hit L15 */

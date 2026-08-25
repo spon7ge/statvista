@@ -5,11 +5,10 @@ export type MlbPropBoardSortKey =
   | "line"
   | "odds"
   | "ip"
-  | "def"
-  | "pace"
   | "l5"
   | "l10"
-  | "l15";
+  | "l15"
+  | "h2h";
 
 export type MlbPropBoardSort = {
   key: MlbPropBoardSortKey;
@@ -100,16 +99,14 @@ function columnValue(
       return firstOddsAmerican(row);
     case "ip":
       return row.ip_pct;
-    case "def":
-      return row.opp_def_rank;
-    case "pace":
-      return row.opp_pace_rank;
     case "l5":
       return row.hit_l5;
     case "l10":
       return row.hit_l10;
     case "l15":
       return row.hit_l15;
+    case "h2h":
+      return row.hit_h2h;
   }
 }
 

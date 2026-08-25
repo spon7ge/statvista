@@ -28,6 +28,7 @@ const row = (over: Partial<ApiMlbPropBoardRow>): ApiMlbPropBoardRow =>
     hit_l5: 60,
     hit_l10: 50,
     hit_l15: 40,
+    hit_h2h: 50,
     ...over,
   }) as ApiMlbPropBoardRow;
 

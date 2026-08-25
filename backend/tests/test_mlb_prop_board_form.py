@@ -1,6 +1,8 @@
 from app.domains.mlb.prop_board_form import (
     actual_for_stat,
+    h2h_rate,
     hit_rates,
+    opponent_abbrev_from_split,
     qualifying_splits,
 )
 
@@ -147,3 +149,77 @@ def test_actual_for_stat_maps_canonical_fields():
     assert actual_for_stat("runs_allowed", pitching) == 3
     assert actual_for_stat("pitches_thrown", pitching) == 92
     assert actual_for_stat("pitching_outs", pitching) == 19
+
+
+def test_h2h_rate_pools_this_and_last_season_games():
+    this_season = [
+        {
+            "opponent": {"name": "Boston Red Sox"},
+            "stat": {"plateAppearances": 4, "hits": 3},
+        },
+        {
+            "opponent": {"name": "Boston Red Sox"},
+            "stat": {"plateAppearances": 4, "hits": 0},
+        },
+    ]
+    last_season = [
+        {
+            "opponent": {"name": "Boston Red Sox"},
+            "stat": {"plateAppearances": 4, "hits": 2},
+        },
+    ]
+    assert h2h_rate("hits", "over", 1.5, this_season + last_season, "BOS") == 67
+
+
+def test_h2h_rate_only_counts_games_against_that_opponent():
+    splits = [
+        {
+            "opponent": {"name": "Boston Red Sox"},
+            "stat": {"plateAppearances": 4, "hits": 3},
+        },
+        {
+            "opponent": {"name": "Boston Red Sox"},
+            "stat": {"plateAppearances": 4, "hits": 0},
+        },
+        {
+            "opponent": {"name": "Tampa Bay Rays"},
+            "stat": {"plateAppearances": 4, "hits": 3},
+        },
+        {
+            "stat": {"plateAppearances": 0, "hits": 0},
+            "opponent": {"name": "Boston Red Sox"},
+        },
+    ]
+    assert h2h_rate("hits", "over", 1.5, splits, "BOS") == 50
+
+
+def test_h2h_rate_null_without_opponent_or_matchups():
+    splits = [
+        {
+            "opponent": {"name": "Boston Red Sox"},
+            "stat": {"plateAppearances": 4, "hits": 3},
+        }
+    ]
+    assert h2h_rate("hits", "over", 1.5, splits, None) is None
+    assert h2h_rate("hits", "over", 1.5, splits, "TB") is None
+    assert h2h_rate("hits", "over", 1.5, [], "BOS") is None
+
+
+def test_h2h_rate_resolves_opponent_id_via_map():
+    splits = [
+        {
+            "opponent": {"id": 111},
+            "stat": {"plateAppearances": 4, "hits": 2},
+        }
+    ]
+    assert h2h_rate("hits", "over", 1.5, splits, "BOS", {111: "BOS"}) == 100
+
+
+def test_opponent_abbrev_from_split_prefers_stamped_then_name():
+    assert opponent_abbrev_from_split({"opponent_abbrev": "BOS"}) == "BOS"
+    assert opponent_abbrev_from_split(
+        {"opponent": {"name": "Boston Red Sox"}}
+    ) == "BOS"
+    assert opponent_abbrev_from_split(
+        {"opponent": {"id": 147}}, {147: "NYY"}
+    ) == "NYY"

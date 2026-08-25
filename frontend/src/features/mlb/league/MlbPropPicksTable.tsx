@@ -1,4 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { ChevronDown } from "lucide-react";
 import type { ApiMlbPropBoardRow } from "@/shared/lib/api";
 import betMgmIcon from "@/assets/betmgm-icon.svg?raw";
 import caesarsIcon from "@/assets/caesars-icon.svg?raw";
@@ -66,12 +68,13 @@ const COLUMNS: { key: MlbPropBoardSortKey; label: string }[] = [
   { key: "line", label: "Line" },
   { key: "odds", label: "Odds" },
   { key: "ip", label: "IP" },
-  { key: "def", label: "Opp Def Rank" },
-  { key: "pace", label: "Opp Pace Rank" },
   { key: "l5", label: "L5" },
   { key: "l10", label: "L10" },
   { key: "l15", label: "L15" },
+  { key: "h2h", label: "H2H" },
 ];
+
+const HIT_SORT_KEYS = new Set<MlbPropBoardSortKey>(["l5", "l10", "l15", "h2h"]);
 
 function formatMatchup(row: ApiMlbPropBoardRow): string | null {
   if (!row.team_abbrev || !row.opponent_abbrev) return null;
@@ -80,24 +83,11 @@ function formatMatchup(row: ApiMlbPropBoardRow): string | null {
     : `${row.team_abbrev} @ ${row.opponent_abbrev}`;
 }
 
-function dashOr(value: string | number | null | undefined): string {
-  if (value == null || value === "") return "—";
-  return String(value);
-}
-
-function hitToneClass(pct: number | null): string {
+function hitBoxClass(pct: number | null): string {
   if (pct == null) return "text-white/45";
-  if (pct >= 67) return "bg-emerald-500/20 text-emerald-300";
-  if (pct >= 45) return "bg-amber-500/20 text-amber-300";
-  return "bg-rose-500/20 text-rose-300";
-}
-
-function rankToneClass(rank: number | null): string {
-  if (rank == null) return "";
-  // Rank 1 is toughest (warm); easier clubs cool toward green.
-  if (rank <= 10) return "bg-rose-500/20 text-rose-200";
-  if (rank <= 20) return "bg-amber-500/20 text-amber-200";
-  return "bg-emerald-500/20 text-emerald-200";
+  if (pct >= 67) return "bg-emerald-500/15 text-emerald-300";
+  if (pct >= 45) return "bg-amber-500/15 text-amber-300";
+  return "bg-rose-500/15 text-rose-300";
 }
 
 function BookMark({ book, label }: { book: string; label: string }) {
@@ -167,12 +157,76 @@ function postedAmerican(
   return american;
 }
 
+function OddsOverflow({ chips }: { chips: ApiMlbPropBoardRow["books"] }) {
+  const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLSpanElement>(null);
+  const [pos, setPos] = useState({ top: 0, left: 0 });
+
+  function show() {
+    const rect = triggerRef.current?.getBoundingClientRect();
+    if (rect) {
+      setPos({ top: rect.bottom + 4, left: rect.left });
+    }
+    setOpen(true);
+  }
+
+  if (chips.length === 0) return null;
+
+  return (
+    <>
+      <span
+        ref={triggerRef}
+        className="inline-flex items-center gap-0.5 text-[11px] font-medium text-white/45"
+        onMouseEnter={show}
+        onMouseLeave={() => setOpen(false)}
+      >
+        <span>+{chips.length}</span>
+        <button
+          type="button"
+          data-testid="odds-overflow-arrow"
+          aria-label={`${chips.length} more books`}
+          className="inline-flex bg-transparent p-0 text-white/45 hover:text-white/70"
+          onFocus={show}
+          onBlur={() => setOpen(false)}
+        >
+          <ChevronDown
+            className={`size-3 transition-transform ${open ? "rotate-180" : ""}`}
+            strokeWidth={2}
+            aria-hidden
+          />
+        </button>
+      </span>
+      {open
+        ? // Portal so the table's overflow-x-auto wrapper cannot clip the tooltip.
+          createPortal(
+            <div
+              role="tooltip"
+              data-testid="odds-overflow-panel"
+              className="pointer-events-none fixed z-50 flex min-w-[4.5rem] flex-col gap-1.5 rounded-lg border border-white/10 bg-[#1c1e22] px-2.5 py-2 shadow-lg"
+              style={{ top: pos.top, left: pos.left }}
+            >
+              {chips.map((chip) => (
+                <BookChip
+                  key={chip.book}
+                  book={chip.book}
+                  american={chip.american}
+                  url={chip.url}
+                />
+              ))}
+            </div>,
+            document.body,
+          )
+        : null}
+    </>
+  );
+}
+
 function OddsCell({ row }: { row: ApiMlbPropBoardRow }) {
   const books = orderedBoardBooks(row.books).filter(
     (chip) => postedAmerican(chip.book, chip.american) != null,
   );
   const visible = books.slice(0, VISIBLE_ODDS_CHIPS);
-  const overflow = books.length - visible.length;
+  const overflow = books.slice(VISIBLE_ODDS_CHIPS);
   return (
     <div data-testid="odds-cell" className="flex flex-wrap items-center gap-1">
       {visible.map((chip) => (
@@ -183,9 +237,7 @@ function OddsCell({ row }: { row: ApiMlbPropBoardRow }) {
           url={chip.url}
         />
       ))}
-      {overflow > 0 ? (
-        <span className="text-[11px] font-medium text-white/45">+{overflow}</span>
-      ) : null}
+      <OddsOverflow chips={overflow} />
     </div>
   );
 }
@@ -229,30 +281,6 @@ function CompositeCell({ row }: { row: ApiMlbPropBoardRow }) {
   );
 }
 
-function RankCell({
-  testId,
-  rank,
-  label,
-}: {
-  testId: string;
-  rank: number | null;
-  label: string | null;
-}) {
-  return (
-    <td className="px-2 py-2" data-testid={testId}>
-      {rank == null || !label ? (
-        <span className="text-white/45">—</span>
-      ) : (
-        <span
-          className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium ${rankToneClass(rank)}`}
-        >
-          {label}
-        </span>
-      )}
-    </td>
-  );
-}
-
 function HitCell({
   testId,
   value,
@@ -261,10 +289,11 @@ function HitCell({
   value: number | null;
 }) {
   return (
-    <td className="px-2 py-2 text-center" data-testid={testId}>
-      <span
-        className={`inline-flex min-w-[2.25rem] justify-center rounded-md px-1.5 py-0.5 text-[12px] font-medium ${hitToneClass(value)}`}
-      >
+    <td
+      data-testid={testId}
+      className={`border-x border-white/[0.06] px-2 py-2.5 text-center ${hitBoxClass(value)}`}
+    >
+      <span className="text-[13px] font-semibold">
         {value == null ? "—" : `${value}%`}
       </span>
     </td>
@@ -352,13 +381,19 @@ export function MlbPropPicksTable({
                   return (
                     <th
                       key={column.key}
-                      className="px-2 py-2 font-semibold"
+                      className={`px-2 py-2 font-semibold ${
+                        HIT_SORT_KEYS.has(column.key) ? "text-center" : ""
+                      }`}
                       aria-sort={ariaSort}
                     >
                       <button
                         type="button"
                         onClick={() => onSort(column.key)}
-                        className="bg-transparent p-0 text-left uppercase tracking-wide text-white/70 hover:text-white"
+                        className={`bg-transparent p-0 uppercase tracking-wide text-white/70 hover:text-white ${
+                          HIT_SORT_KEYS.has(column.key)
+                            ? "w-full text-center"
+                            : "text-left"
+                        }`}
                       >
                         {column.label}
                       </button>
@@ -383,21 +418,12 @@ export function MlbPropPicksTable({
                     <OddsCell row={row} />
                   </td>
                   <td className="px-2 py-2 font-mono text-sm text-white" data-testid="ip-cell">
-                    {dashOr(row.ip_pct)}
+                    {row.ip_pct == null ? "—" : `${row.ip_pct}%`}
                   </td>
-                  <RankCell
-                    testId="opp-def-cell"
-                    rank={row.opp_def_rank}
-                    label={row.opp_def_label}
-                  />
-                  <RankCell
-                    testId="opp-pace-cell"
-                    rank={row.opp_pace_rank}
-                    label={row.opp_pace_label}
-                  />
                   <HitCell testId="hit-l5-cell" value={row.hit_l5} />
                   <HitCell testId="hit-l10-cell" value={row.hit_l10} />
                   <HitCell testId="hit-l15-cell" value={row.hit_l15} />
+                  <HitCell testId="hit-h2h-cell" value={row.hit_h2h} />
                 </tr>
               ))}
             </tbody>

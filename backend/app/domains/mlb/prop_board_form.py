@@ -6,6 +6,7 @@ from typing import Any
 
 from app.domains.mlb.prop_board_ranks import is_pitcher_stat
 from app.domains.mlb.schemas_prop_board import Side
+from app.domains.mlb.team_names import abbrev_from_team_name, canonical_mlb_abbrev
 
 # Stats API gameLog splits are oldest-first. Sort by date descending so
 # L5/L10/L15 are the most recent qualifying games. Missing dates sort last.
@@ -155,3 +156,47 @@ def hit_rates(
     newest_first = sorted(qualifying, key=_date_key, reverse=True)
     l5, l10, l15 = (_window_pct(stat, side, line, newest_first[:n]) for n in _WINDOWS)
     return l5, l10, l15
+
+
+def opponent_abbrev_from_split(
+    split: dict[str, Any],
+    id_to_abbrev: dict[int, str] | None = None,
+) -> str | None:
+    stamped = canonical_mlb_abbrev(split.get("opponent_abbrev"))
+    if stamped:
+        return stamped
+    opponent = split.get("opponent")
+    if not isinstance(opponent, dict):
+        return None
+    from_label = canonical_mlb_abbrev(opponent.get("abbreviation"))
+    if from_label:
+        return from_label
+    team_id = opponent.get("id")
+    if team_id is not None and id_to_abbrev:
+        try:
+            mapped = id_to_abbrev.get(int(team_id))
+        except (TypeError, ValueError):
+            mapped = None
+        if mapped:
+            return canonical_mlb_abbrev(mapped)
+    return abbrev_from_team_name(opponent.get("name"))
+
+
+def h2h_rate(
+    stat: str,
+    side: Side,
+    line: float,
+    splits: list[dict[str, Any]],
+    opponent_abbrev: str | None,
+    id_to_abbrev: dict[int, str] | None = None,
+) -> int | None:
+    """Hit rate of this side vs this line against opponent across the given games."""
+    opp = canonical_mlb_abbrev(opponent_abbrev)
+    if not opp:
+        return None
+    vs_opp = [
+        split
+        for split in qualifying_splits(stat, splits)
+        if opponent_abbrev_from_split(split, id_to_abbrev) == opp
+    ]
+    return _window_pct(stat, side, line, vs_opp)

@@ -29,7 +29,7 @@ from app.domains.mlb.prop_board_cluster import (
     ip_pct_for_side,
     round_line,
 )
-from app.domains.mlb.prop_board_form import hit_rates
+from app.domains.mlb.prop_board_form import h2h_rate, hit_rates, opponent_abbrev_from_split
 from app.domains.mlb.prop_board_ranks import (
     TeamRankRow,
     build_team_rank_index,
@@ -199,6 +199,11 @@ async def load_enrichment(clusters: list[Cluster] | None = None) -> Enrichment:
 
     async with httpx.AsyncClient(timeout=STATS_TIMEOUT_SECONDS) as client:
         season = current_mlb_season_year()
+        id_to_abbrev: dict[int, str] = {}
+        try:
+            id_to_abbrev = await fetch_team_abbrev_map(client, season)
+        except Exception as exc:
+            logger.warning("MLB board team abbrev map skipped: %s", exc)
         try:
             ranks = await _load_team_ranks(client, season)
         except Exception as exc:
@@ -213,6 +218,7 @@ async def load_enrichment(clusters: list[Cluster] | None = None) -> Enrichment:
                 players,
                 stats_needed,
                 missing_person,
+                id_to_abbrev,
             )
             if logs_failed:
                 warnings.append("gamelogs_unavailable")
@@ -245,13 +251,21 @@ async def get_mlb_prop_board() -> MlbPropBoardResponse:
         )
         group = "pitching" if is_pitcher_stat(cluster.stat) else "hitting"
         splits = ctx.get(f"splits_{group}") or []
+        splits_prev = ctx.get(f"splits_{group}_prev") or []
         skip_hits = cluster.player_key in missing_person
         sides: tuple[Side, ...] = ("over", "under")
         for side in sides:
-            if skip_hits or not splits:
-                l5 = l10 = l15 = None
+            if skip_hits:
+                l5 = l10 = l15 = h2h = None
             else:
                 l5, l10, l15 = hit_rates(cluster.stat, side, cluster.line, splits)
+                h2h = h2h_rate(
+                    cluster.stat,
+                    side,
+                    cluster.line,
+                    splits + splits_prev,
+                    opponent,
+                )
             chips = _chips_for_side(cluster, side)
             if not chips:
                 continue
@@ -277,6 +291,7 @@ async def get_mlb_prop_board() -> MlbPropBoardResponse:
                     hit_l5=l5,
                     hit_l10=l10,
                     hit_l15=l15,
+                    hit_h2h=h2h,
                 )
             )
 
@@ -459,6 +474,8 @@ def _player_context(
             "game_start_at": None if game is None else game.get("game_start_at"),
             "splits_hitting": [],
             "splits_pitching": [],
+            "splits_hitting_prev": [],
+            "splits_pitching_prev": [],
         }
     return out
 
@@ -516,6 +533,20 @@ def _annotate_splits_with_abbrev(
     return annotated
 
 
+def _stamp_opponent_abbrev(
+    splits: list[dict[str, Any]],
+    id_to_abbrev: dict[int, str] | None,
+) -> list[dict[str, Any]]:
+    stamped: list[dict[str, Any]] = []
+    for split in splits:
+        row = dict(split)
+        abbrev = opponent_abbrev_from_split(row, id_to_abbrev)
+        if abbrev:
+            row["opponent_abbrev"] = abbrev
+        stamped.append(row)
+    return stamped
+
+
 async def _load_team_ranks(
     client: httpx.AsyncClient, season: int
 ) -> dict[str, TeamRankRow]:
@@ -537,6 +568,7 @@ async def _attach_game_logs(
     players: dict[str, str],
     stats_needed: dict[str, set[str]],
     missing_person: set[str],
+    id_to_abbrev: dict[int, str] | None = None,
 ) -> bool:
     sem = asyncio.Semaphore(_PERSON_LOOKUP_CONCURRENCY)
     logs_failed = False
@@ -558,11 +590,21 @@ async def _attach_game_logs(
             ctx = player_ctx.setdefault(player_key, {})
             for group in groups:
                 try:
-                    ctx[f"splits_{group}"] = await _cached_game_log(
-                        client, person_id, season, group
+                    ctx[f"splits_{group}"] = _stamp_opponent_abbrev(
+                        await _cached_game_log(client, person_id, season, group),
+                        id_to_abbrev,
                     )
                 except MlbStatsRequestError:
                     logs_failed = True
+                try:
+                    ctx[f"splits_{group}_prev"] = _stamp_opponent_abbrev(
+                        await _cached_game_log(
+                            client, person_id, season - 1, group
+                        ),
+                        id_to_abbrev,
+                    )
+                except MlbStatsRequestError:
+                    ctx[f"splits_{group}_prev"] = []
 
     await asyncio.gather(*(one(key, name) for key, name in players.items()))
     return logs_failed

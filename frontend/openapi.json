@@ -4176,6 +4176,17 @@
             ],
             "title": "Headshot Url"
           },
+          "hit_h2h": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hit H2H"
+          },
           "hit_l10": {
             "anyOf": [
               {
@@ -4346,7 +4357,8 @@
           "opp_pace_label",
           "hit_l5",
           "hit_l10",
-          "hit_l15"
+          "hit_l15",
+          "hit_h2h"
         ],
         "title": "MlbPropBoardRow",
         "type": "object"

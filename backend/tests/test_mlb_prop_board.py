@@ -221,7 +221,13 @@ async def test_missing_person_id_keeps_hit_rates_null(monkeypatch):
         lambda *_: (ctx, {}, [], {"aaron judge"}),
     )
     body = await get_mlb_prop_board()
-    assert all(r.hit_l5 is None and r.hit_l10 is None and r.hit_l15 is None for r in body.rows)
+    assert all(
+        r.hit_l5 is None
+        and r.hit_l10 is None
+        and r.hit_l15 is None
+        and r.hit_h2h is None
+        for r in body.rows
+    )
 
 
 def _empty(*_a, **_k):
@@ -311,9 +317,22 @@ async def test_assembler_fills_hit_rates_from_enrichment_splits(monkeypatch):
     ]
     ctx = {
         "aaron judge": {
+            "opponent_abbrev": "BOS",
             "splits_hitting": [
-                {"stat": {"plateAppearances": 4, "hits": 3}},
-                {"stat": {"plateAppearances": 4, "hits": 0}},
+                {
+                    "opponent": {"name": "Boston Red Sox"},
+                    "stat": {"plateAppearances": 4, "hits": 3},
+                },
+                {
+                    "opponent": {"name": "Boston Red Sox"},
+                    "stat": {"plateAppearances": 4, "hits": 0},
+                },
+            ],
+            "splits_hitting_prev": [
+                {
+                    "opponent": {"name": "Boston Red Sox"},
+                    "stat": {"plateAppearances": 4, "hits": 2},
+                },
             ],
         }
     }
@@ -327,9 +346,18 @@ async def test_assembler_fills_hit_rates_from_enrichment_splits(monkeypatch):
     under = next(r for r in body.rows if r.side == "under")
     assert over.hit_l5 == 50
     assert under.hit_l5 == 50
+    assert over.hit_h2h == 67
+    assert under.hit_h2h == 33
 
 
-def test_annotate_splits_resolves_team_id_to_abbrev():
+def test_stamp_opponent_abbrev_writes_canonical_code():
+    from app.domains.mlb.prop_board import _stamp_opponent_abbrev
+
+    rows = _stamp_opponent_abbrev(
+        [{"opponent": {"name": "Boston Red Sox"}, "stat": {"hits": 1}}],
+        {},
+    )
+    assert rows[0]["opponent_abbrev"] == "BOS"
     from app.domains.mlb.prop_board import _annotate_splits_with_abbrev
 
     rows = _annotate_splits_with_abbrev(
@@ -381,12 +409,16 @@ async def test_load_enrichment_soft_fails_ranks_and_missing_person(monkeypatch):
     async def boom_ranks(*_a, **_k):
         raise RuntimeError("ranks down")
 
+    async def ok_map(*_a, **_k):
+        return {}
+
     async def no_person(*_a, **_k):
         return None
 
     monkeypatch.setattr("app.domains.mlb.prop_board.get_mlb_player_index", boom_roster)
     monkeypatch.setattr("app.domains.mlb.prop_board.get_today_scoreboard", boom_board)
     monkeypatch.setattr("app.domains.mlb.prop_board._load_team_ranks", boom_ranks)
+    monkeypatch.setattr("app.domains.mlb.prop_board.fetch_team_abbrev_map", ok_map)
     monkeypatch.setattr("app.domains.mlb.prop_board.search_person_id", no_person)
     _person_cache.clear()
 
@@ -437,6 +469,9 @@ async def test_load_enrichment_warns_when_game_log_get_fails(monkeypatch):
     async def ok_ranks(*_a, **_k):
         return {}
 
+    async def ok_map(*_a, **_k):
+        return {}
+
     async def person_id(*_a, **_k):
         return 592450
 
@@ -446,6 +481,7 @@ async def test_load_enrichment_warns_when_game_log_get_fails(monkeypatch):
     monkeypatch.setattr("app.domains.mlb.prop_board.get_mlb_player_index", ok_roster)
     monkeypatch.setattr("app.domains.mlb.prop_board.get_today_scoreboard", ok_board)
     monkeypatch.setattr("app.domains.mlb.prop_board._load_team_ranks", ok_ranks)
+    monkeypatch.setattr("app.domains.mlb.prop_board.fetch_team_abbrev_map", ok_map)
     monkeypatch.setattr("app.domains.mlb.prop_board.search_person_id", person_id)
 
     ctx, _ranks, warnings, missing = await load_enrichment([_hits_cluster()])
@@ -469,10 +505,16 @@ async def test_load_enrichment_empty_success_logs_do_not_warn(monkeypatch):
     async def ok_ranks(*_a, **_k):
         return {}
 
+    async def ok_map(*_a, **_k):
+        return {}
+
     async def person_id(*_a, **_k):
         return 592450
 
-    async def empty_logs(*_a, **_k):
+    seasons: list[int] = []
+
+    async def empty_logs(_client, _person_id, season, _group):
+        seasons.append(season)
         return []
 
     _log_cache.clear()
@@ -480,12 +522,16 @@ async def test_load_enrichment_empty_success_logs_do_not_warn(monkeypatch):
     monkeypatch.setattr("app.domains.mlb.prop_board.get_mlb_player_index", ok_roster)
     monkeypatch.setattr("app.domains.mlb.prop_board.get_today_scoreboard", ok_board)
     monkeypatch.setattr("app.domains.mlb.prop_board._load_team_ranks", ok_ranks)
+    monkeypatch.setattr("app.domains.mlb.prop_board.fetch_team_abbrev_map", ok_map)
     monkeypatch.setattr("app.domains.mlb.prop_board.search_person_id", person_id)
     monkeypatch.setattr("app.domains.mlb.prop_board.fetch_game_log_splits", empty_logs)
 
-    _ctx, _ranks, warnings, missing = await load_enrichment([_hits_cluster()])
+    ctx, _ranks, warnings, missing = await load_enrichment([_hits_cluster()])
     assert "gamelogs_unavailable" not in warnings
     assert missing == set()
+    assert len(seasons) == 2
+    assert seasons[0] == seasons[1] + 1
+    assert ctx["aaron judge"]["splits_hitting_prev"] == []
 
 
 @pytest.mark.asyncio
@@ -505,6 +551,9 @@ async def test_load_enrichment_reuses_cached_person_id(monkeypatch):
     async def ok_ranks(*_a, **_k):
         return {}
 
+    async def ok_map(*_a, **_k):
+        return {}
+
     async def person_id(*_a, **_k):
         calls["n"] += 1
         return 592450
@@ -514,10 +563,10 @@ async def test_load_enrichment_reuses_cached_person_id(monkeypatch):
 
     _log_cache.clear()
     _person_cache.clear()
-    _person_cache.clear()
     monkeypatch.setattr("app.domains.mlb.prop_board.get_mlb_player_index", ok_roster)
     monkeypatch.setattr("app.domains.mlb.prop_board.get_today_scoreboard", ok_board)
     monkeypatch.setattr("app.domains.mlb.prop_board._load_team_ranks", ok_ranks)
+    monkeypatch.setattr("app.domains.mlb.prop_board.fetch_team_abbrev_map", ok_map)
     monkeypatch.setattr("app.domains.mlb.prop_board.search_person_id", person_id)
     monkeypatch.setattr("app.domains.mlb.prop_board.fetch_game_log_splits", empty_logs)
 
