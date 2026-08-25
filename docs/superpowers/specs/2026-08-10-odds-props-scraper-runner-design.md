@@ -1,12 +1,11 @@
-# Odds/props scraper runner (no PrizePicks)
+# Odds/props scraper runner
 
 ## Goal
 
-One CLI that runs all WNBA/MLB **odds/props** scrapers sequentially, excluding PrizePicks.
+One CLI that runs all WNBA/MLB **odds/props** scrapers sequentially, including PrizePicks.
 
 ## Non-goals
 
-- PrizePicks (`wnba_prizepick`, `mlb_prizepick`)
 - RotoWire / lineup scrapers
 - Parallel scraper execution
 - Changing individual scraper behavior
@@ -27,10 +26,12 @@ One CLI that runs all WNBA/MLB **odds/props** scrapers sequentially, excluding P
 | WNBA | `wnba_prophetx` | |
 | WNBA | `wnba_underdog` | |
 | WNBA | `bball_pinnacle` | env `PINNACLE_LEAGUES=wnba` for that step |
+| WNBA | `wnba_prizepick` | last so DataDome/browser fallback does not block HTTP scrapers |
 | MLB | `mlb_novig` | |
 | MLB | `mlb_prophetx` | |
 | MLB | `mlb_underdog` | |
 | MLB | `mlb_pinnacle` | |
+| MLB | `mlb_prizepick` | last so DataDome/browser fallback does not block HTTP scrapers |
 
 ## Tests
 
