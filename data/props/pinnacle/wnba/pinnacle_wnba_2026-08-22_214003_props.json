@@ -1,0 +1,67 @@
+{
+  "fetched_at": "2026-08-22T21:40:55-07:00",
+  "source": "pinnacle_selenium",
+  "sport": "basketball",
+  "league": "wnba",
+  "list_page": "https://www.pinnacle.com/en/basketball/wnba/matchups/#all",
+  "parallel_workers_configured": 5,
+  "parallel_workers_effective": 2,
+  "games_per_worker_target": 2,
+  "arcadia_timeout_s": 90.0,
+  "arcadia_poll_s": 0.22,
+  "snapshot_kind": "props",
+  "games": [
+    {
+      "matchup_id": 1634172760,
+      "source_url": "https://www.pinnacle.com/en/basketball/wnba/indiana-fever-vs-chicago-sky/1634172760/#period:0",
+      "path": "/en/basketball/wnba/indiana-fever-vs-chicago-sky/1634172760/",
+      "league": "WNBA",
+      "start_time": "2026-08-23T23:00:00Z",
+      "label": "Indiana Fever vs Chicago Sky",
+      "participants": [
+        "Indiana Fever",
+        "Chicago Sky"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1634180691,
+      "source_url": "https://www.pinnacle.com/en/basketball/wnba/las-vegas-aces-vs-toronto-tempo/1634180691/#period:0",
+      "path": "/en/basketball/wnba/las-vegas-aces-vs-toronto-tempo/1634180691/",
+      "league": "WNBA",
+      "start_time": "2026-08-23T23:00:00Z",
+      "label": "Las Vegas Aces vs Toronto Tempo",
+      "participants": [
+        "Las Vegas Aces",
+        "Toronto Tempo"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1634172521,
+      "source_url": "https://www.pinnacle.com/en/basketball/wnba/seattle-storm-vs-dallas-wings/1634172521/#period:0",
+      "path": "/en/basketball/wnba/seattle-storm-vs-dallas-wings/1634172521/",
+      "league": "WNBA",
+      "start_time": "2026-08-23T20:00:00Z",
+      "label": "Seattle Storm vs Dallas Wings",
+      "participants": [
+        "Seattle Storm",
+        "Dallas Wings"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1634180690,
+      "source_url": "https://www.pinnacle.com/en/basketball/wnba/washington-mystics-vs-portland-fire/1634180690/#period:0",
+      "path": "/en/basketball/wnba/washington-mystics-vs-portland-fire/1634180690/",
+      "league": "WNBA",
+      "start_time": "2026-08-23T23:00:00Z",
+      "label": "Washington Mystics vs Portland Fire",
+      "participants": [
+        "Washington Mystics",
+        "Portland Fire"
+      ],
+      "props": []
+    }
+  ]
+}

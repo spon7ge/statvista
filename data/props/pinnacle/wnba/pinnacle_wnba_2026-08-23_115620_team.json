@@ -1,0 +1,1986 @@
+{
+  "fetched_at": "2026-08-23T11:56:29-07:00",
+  "source": "pinnacle_selenium",
+  "sport": "basketball",
+  "league": "wnba",
+  "list_page": "https://www.pinnacle.com/en/basketball/wnba/matchups/#all",
+  "parallel_workers_configured": 5,
+  "parallel_workers_effective": 2,
+  "games_per_worker_target": 2,
+  "arcadia_timeout_s": 90.0,
+  "arcadia_poll_s": 0.22,
+  "snapshot_kind": "team",
+  "games": [
+    {
+      "matchup_id": 1634172760,
+      "source_url": "https://www.pinnacle.com/en/basketball/wnba/indiana-fever-vs-chicago-sky/1634172760/#all",
+      "path": "/en/basketball/wnba/indiana-fever-vs-chicago-sky/1634172760/",
+      "league": "WNBA",
+      "start_time": "2026-08-23T23:00:00Z",
+      "label": "Indiana Fever vs Chicago Sky",
+      "participants": [
+        "Indiana Fever",
+        "Chicago Sky"
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Chicago Sky",
+                "american": 112,
+                "decimal": 2.12
+              },
+              {
+                "side": "away",
+                "team": "Indiana Fever",
+                "american": -130,
+                "decimal": 1.769
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Chicago Sky",
+                "american": 112,
+                "decimal": 2.12
+              },
+              {
+                "side": "away",
+                "team": "Indiana Fever",
+                "american": -136,
+                "decimal": 1.735
+              }
+            ]
+          }
+        ],
+        "spread": [
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Chicago Sky",
+                "points": 2.0,
+                "american": -110,
+                "decimal": 1.909
+              },
+              {
+                "side": "away",
+                "team": "Indiana Fever",
+                "points": -2.0,
+                "american": -106,
+                "decimal": 1.943
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Chicago Sky",
+                "points": 3.5,
+                "american": -143,
+                "decimal": 1.699
+              },
+              {
+                "side": "away",
+                "team": "Indiana Fever",
+                "points": -3.5,
+                "american": 118,
+                "decimal": 2.18
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Chicago Sky",
+                "points": 3.0,
+                "american": -133,
+                "decimal": 1.752
+              },
+              {
+                "side": "away",
+                "team": "Indiana Fever",
+                "points": -3.0,
+                "american": 109,
+                "decimal": 2.09
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Chicago Sky",
+                "points": 2.5,
+                "american": -122,
+                "decimal": 1.82
+              },
+              {
+                "side": "away",
+                "team": "Indiana Fever",
+                "points": -2.5,
+                "american": 101,
+                "decimal": 2.01
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Chicago Sky",
+                "points": 1.5,
+                "american": -104,
+                "decimal": 1.962
+              },
+              {
+                "side": "away",
+                "team": "Indiana Fever",
+                "points": -1.5,
+                "american": -117,
+                "decimal": 1.855
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Chicago Sky",
+                "points": 1.0,
+                "american": 102,
+                "decimal": 2.02
+              },
+              {
+                "side": "away",
+                "team": "Indiana Fever",
+                "points": -1.0,
+                "american": -124,
+                "decimal": 1.806
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Chicago Sky",
+                "points": -1.0,
+                "american": 113,
+                "decimal": 2.13
+              },
+              {
+                "side": "away",
+                "team": "Indiana Fever",
+                "points": 1.0,
+                "american": -137,
+                "decimal": 1.73
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Chicago Sky",
+                "points": 1.0,
+                "american": -107,
+                "decimal": 1.935
+              },
+              {
+                "side": "away",
+                "team": "Indiana Fever",
+                "points": -1.0,
+                "american": -113,
+                "decimal": 1.885
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Chicago Sky",
+                "points": 2.0,
+                "american": -132,
+                "decimal": 1.758
+              },
+              {
+                "side": "away",
+                "team": "Indiana Fever",
+                "points": -2.0,
+                "american": 105,
+                "decimal": 2.05
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Chicago Sky",
+                "points": 1.5,
+                "american": -119,
+                "decimal": 1.84
+              },
+              {
+                "side": "away",
+                "team": "Indiana Fever",
+                "points": -1.5,
+                "american": -105,
+                "decimal": 1.952
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Chicago Sky",
+                "points": 0.5,
+                "american": -100,
+                "decimal": 2.0
+              },
+              {
+                "side": "away",
+                "team": "Indiana Fever",
+                "points": -0.5,
+                "american": -125,
+                "decimal": 1.8
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Chicago Sky",
+                "points": 0.0,
+                "american": 110,
+                "decimal": 2.1
+              },
+              {
+                "side": "away",
+                "team": "Indiana Fever",
+                "points": -0.0,
+                "american": -138,
+                "decimal": 1.725
+              }
+            ],
+            "is_alternate": true
+          }
+        ],
+        "total": [
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 186.5,
+                "american": -114,
+                "decimal": 1.877
+              },
+              {
+                "side": "under",
+                "points": 186.5,
+                "american": -106,
+                "decimal": 1.943
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 185.0,
+                "american": -135,
+                "decimal": 1.741
+              },
+              {
+                "side": "under",
+                "points": 185.0,
+                "american": 107,
+                "decimal": 2.07
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 185.5,
+                "american": -128,
+                "decimal": 1.781
+              },
+              {
+                "side": "under",
+                "points": 185.5,
+                "american": 102,
+                "decimal": 2.02
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 186.0,
+                "american": -122,
+                "decimal": 1.82
+              },
+              {
+                "side": "under",
+                "points": 186.0,
+                "american": -103,
+                "decimal": 1.971
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 187.0,
+                "american": -110,
+                "decimal": 1.909
+              },
+              {
+                "side": "under",
+                "points": 187.0,
+                "american": -114,
+                "decimal": 1.877
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 187.5,
+                "american": -105,
+                "decimal": 1.952
+              },
+              {
+                "side": "under",
+                "points": 187.5,
+                "american": -120,
+                "decimal": 1.833
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 188.0,
+                "american": 101,
+                "decimal": 2.01
+              },
+              {
+                "side": "under",
+                "points": 188.0,
+                "american": -127,
+                "decimal": 1.787
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 96.5,
+                "american": -107,
+                "decimal": 1.935
+              },
+              {
+                "side": "under",
+                "points": 96.5,
+                "american": -113,
+                "decimal": 1.885
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 95.5,
+                "american": -136,
+                "decimal": 1.735
+              },
+              {
+                "side": "under",
+                "points": 95.5,
+                "american": 108,
+                "decimal": 2.08
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 96.0,
+                "american": -122,
+                "decimal": 1.82
+              },
+              {
+                "side": "under",
+                "points": 96.0,
+                "american": -103,
+                "decimal": 1.971
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 97.0,
+                "american": 102,
+                "decimal": 2.02
+              },
+              {
+                "side": "under",
+                "points": 97.0,
+                "american": -128,
+                "decimal": 1.781
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 97.5,
+                "american": 112,
+                "decimal": 2.12
+              },
+              {
+                "side": "under",
+                "points": 97.5,
+                "american": -141,
+                "decimal": 1.709
+              }
+            ],
+            "is_alternate": true
+          }
+        ]
+      }
+    },
+    {
+      "matchup_id": 1634180691,
+      "source_url": "https://www.pinnacle.com/en/basketball/wnba/las-vegas-aces-vs-toronto-tempo/1634180691/#all",
+      "path": "/en/basketball/wnba/las-vegas-aces-vs-toronto-tempo/1634180691/",
+      "league": "WNBA",
+      "start_time": "2026-08-23T23:00:00Z",
+      "label": "Las Vegas Aces vs Toronto Tempo",
+      "participants": [
+        "Las Vegas Aces",
+        "Toronto Tempo"
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Toronto Tempo",
+                "american": 406,
+                "decimal": 5.06
+              },
+              {
+                "side": "away",
+                "team": "Las Vegas Aces",
+                "american": -555,
+                "decimal": 1.18
+              }
+            ]
+          }
+        ],
+        "spread": [
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Toronto Tempo",
+                "points": 11.0,
+                "american": -110,
+                "decimal": 1.909
+              },
+              {
+                "side": "away",
+                "team": "Las Vegas Aces",
+                "points": -11.0,
+                "american": -110,
+                "decimal": 1.909
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Toronto Tempo",
+                "points": 12.5,
+                "american": -145,
+                "decimal": 1.69
+              },
+              {
+                "side": "away",
+                "team": "Las Vegas Aces",
+                "points": -12.5,
+                "american": 115,
+                "decimal": 2.15
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Toronto Tempo",
+                "points": 12.0,
+                "american": -134,
+                "decimal": 1.746
+              },
+              {
+                "side": "away",
+                "team": "Las Vegas Aces",
+                "points": -12.0,
+                "american": 107,
+                "decimal": 2.07
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Toronto Tempo",
+                "points": 11.5,
+                "american": -123,
+                "decimal": 1.813
+              },
+              {
+                "side": "away",
+                "team": "Las Vegas Aces",
+                "points": -11.5,
+                "american": -102,
+                "decimal": 1.98
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Toronto Tempo",
+                "points": 10.5,
+                "american": -103,
+                "decimal": 1.971
+              },
+              {
+                "side": "away",
+                "team": "Las Vegas Aces",
+                "points": -10.5,
+                "american": -122,
+                "decimal": 1.82
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Toronto Tempo",
+                "points": 10.0,
+                "american": 106,
+                "decimal": 2.06
+              },
+              {
+                "side": "away",
+                "team": "Las Vegas Aces",
+                "points": -10.0,
+                "american": -133,
+                "decimal": 1.752
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Toronto Tempo",
+                "points": 9.5,
+                "american": 114,
+                "decimal": 2.14
+              },
+              {
+                "side": "away",
+                "team": "Las Vegas Aces",
+                "points": -9.5,
+                "american": -144,
+                "decimal": 1.694
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Toronto Tempo",
+                "points": 6.5,
+                "american": -110,
+                "decimal": 1.909
+              },
+              {
+                "side": "away",
+                "team": "Las Vegas Aces",
+                "points": -6.5,
+                "american": -110,
+                "decimal": 1.909
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Toronto Tempo",
+                "points": 7.5,
+                "american": -136,
+                "decimal": 1.735
+              },
+              {
+                "side": "away",
+                "team": "Las Vegas Aces",
+                "points": -7.5,
+                "american": 108,
+                "decimal": 2.08
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Toronto Tempo",
+                "points": 7.0,
+                "american": -124,
+                "decimal": 1.806
+              },
+              {
+                "side": "away",
+                "team": "Las Vegas Aces",
+                "points": -7.0,
+                "american": -101,
+                "decimal": 1.99
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Toronto Tempo",
+                "points": 6.0,
+                "american": -101,
+                "decimal": 1.99
+              },
+              {
+                "side": "away",
+                "team": "Las Vegas Aces",
+                "points": -6.0,
+                "american": -124,
+                "decimal": 1.806
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Toronto Tempo",
+                "points": 5.5,
+                "american": 108,
+                "decimal": 2.08
+              },
+              {
+                "side": "away",
+                "team": "Las Vegas Aces",
+                "points": -5.5,
+                "american": -136,
+                "decimal": 1.735
+              }
+            ],
+            "is_alternate": true
+          }
+        ],
+        "total": [
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 180.5,
+                "american": -109,
+                "decimal": 1.917
+              },
+              {
+                "side": "under",
+                "points": 180.5,
+                "american": -111,
+                "decimal": 1.901
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 179.0,
+                "american": -130,
+                "decimal": 1.769
+              },
+              {
+                "side": "under",
+                "points": 179.0,
+                "american": 104,
+                "decimal": 2.04
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 179.5,
+                "american": -124,
+                "decimal": 1.806
+              },
+              {
+                "side": "under",
+                "points": 179.5,
+                "american": -102,
+                "decimal": 1.98
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 180.0,
+                "american": -117,
+                "decimal": 1.855
+              },
+              {
+                "side": "under",
+                "points": 180.0,
+                "american": -107,
+                "decimal": 1.935
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 181.0,
+                "american": -106,
+                "decimal": 1.943
+              },
+              {
+                "side": "under",
+                "points": 181.0,
+                "american": -119,
+                "decimal": 1.84
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 181.5,
+                "american": -100,
+                "decimal": 2.0
+              },
+              {
+                "side": "under",
+                "points": 181.5,
+                "american": -125,
+                "decimal": 1.8
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 182.0,
+                "american": 105,
+                "decimal": 2.05
+              },
+              {
+                "side": "under",
+                "points": 182.0,
+                "american": -132,
+                "decimal": 1.758
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 89.0,
+                "american": -110,
+                "decimal": 1.909
+              },
+              {
+                "side": "under",
+                "points": 89.0,
+                "american": -110,
+                "decimal": 1.909
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 88.0,
+                "american": -132,
+                "decimal": 1.758
+              },
+              {
+                "side": "under",
+                "points": 88.0,
+                "american": 105,
+                "decimal": 2.05
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 88.5,
+                "american": -122,
+                "decimal": 1.82
+              },
+              {
+                "side": "under",
+                "points": 88.5,
+                "american": -103,
+                "decimal": 1.971
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 89.5,
+                "american": -104,
+                "decimal": 1.962
+              },
+              {
+                "side": "under",
+                "points": 89.5,
+                "american": -121,
+                "decimal": 1.826
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 90.0,
+                "american": 104,
+                "decimal": 2.04
+              },
+              {
+                "side": "under",
+                "points": 90.0,
+                "american": -131,
+                "decimal": 1.763
+              }
+            ],
+            "is_alternate": true
+          }
+        ]
+      }
+    },
+    {
+      "matchup_id": 1634172521,
+      "source_url": "https://www.pinnacle.com/en/basketball/wnba/seattle-storm-vs-dallas-wings/1634172521/#all",
+      "path": "/en/basketball/wnba/seattle-storm-vs-dallas-wings/1634172521/",
+      "league": "WNBA",
+      "start_time": "2026-08-23T20:00:00Z",
+      "label": "Seattle Storm vs Dallas Wings",
+      "participants": [
+        "Seattle Storm",
+        "Dallas Wings"
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Dallas Wings",
+                "american": -364,
+                "decimal": 1.275
+              },
+              {
+                "side": "away",
+                "team": "Seattle Storm",
+                "american": 295,
+                "decimal": 3.95
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Dallas Wings",
+                "american": -270,
+                "decimal": 1.37
+              },
+              {
+                "side": "away",
+                "team": "Seattle Storm",
+                "american": 215,
+                "decimal": 3.15
+              }
+            ]
+          }
+        ],
+        "spread": [
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Dallas Wings",
+                "points": -8.0,
+                "american": -108,
+                "decimal": 1.926
+              },
+              {
+                "side": "away",
+                "team": "Seattle Storm",
+                "points": 8.0,
+                "american": -108,
+                "decimal": 1.926
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Dallas Wings",
+                "points": -6.5,
+                "american": -146,
+                "decimal": 1.685
+              },
+              {
+                "side": "away",
+                "team": "Seattle Storm",
+                "points": 6.5,
+                "american": 114,
+                "decimal": 2.14
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Dallas Wings",
+                "points": -7.0,
+                "american": -135,
+                "decimal": 1.741
+              },
+              {
+                "side": "away",
+                "team": "Seattle Storm",
+                "points": 7.0,
+                "american": 106,
+                "decimal": 2.06
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Dallas Wings",
+                "points": -7.5,
+                "american": -124,
+                "decimal": 1.806
+              },
+              {
+                "side": "away",
+                "team": "Seattle Storm",
+                "points": 7.5,
+                "american": -103,
+                "decimal": 1.971
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Dallas Wings",
+                "points": -8.5,
+                "american": -103,
+                "decimal": 1.971
+              },
+              {
+                "side": "away",
+                "team": "Seattle Storm",
+                "points": 8.5,
+                "american": -123,
+                "decimal": 1.813
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Dallas Wings",
+                "points": -9.0,
+                "american": 105,
+                "decimal": 2.05
+              },
+              {
+                "side": "away",
+                "team": "Seattle Storm",
+                "points": 9.0,
+                "american": -134,
+                "decimal": 1.746
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Dallas Wings",
+                "points": -9.5,
+                "american": 113,
+                "decimal": 2.13
+              },
+              {
+                "side": "away",
+                "team": "Seattle Storm",
+                "points": 9.5,
+                "american": -145,
+                "decimal": 1.69
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Dallas Wings",
+                "points": -4.5,
+                "american": -113,
+                "decimal": 1.885
+              },
+              {
+                "side": "away",
+                "team": "Seattle Storm",
+                "points": 4.5,
+                "american": -107,
+                "decimal": 1.935
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Dallas Wings",
+                "points": -3.5,
+                "american": -143,
+                "decimal": 1.699
+              },
+              {
+                "side": "away",
+                "team": "Seattle Storm",
+                "points": 3.5,
+                "american": 108,
+                "decimal": 2.08
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Dallas Wings",
+                "points": -4.0,
+                "american": -131,
+                "decimal": 1.763
+              },
+              {
+                "side": "away",
+                "team": "Seattle Storm",
+                "points": 4.0,
+                "american": -101,
+                "decimal": 1.99
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Dallas Wings",
+                "points": -5.0,
+                "american": -107,
+                "decimal": 1.935
+              },
+              {
+                "side": "away",
+                "team": "Seattle Storm",
+                "points": 5.0,
+                "american": -124,
+                "decimal": 1.806
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Dallas Wings",
+                "points": -5.5,
+                "american": 103,
+                "decimal": 2.03
+              },
+              {
+                "side": "away",
+                "team": "Seattle Storm",
+                "points": 5.5,
+                "american": -137,
+                "decimal": 1.73
+              }
+            ],
+            "is_alternate": true
+          }
+        ],
+        "total": [
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 176.0,
+                "american": -107,
+                "decimal": 1.935
+              },
+              {
+                "side": "under",
+                "points": 176.0,
+                "american": -113,
+                "decimal": 1.885
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 174.5,
+                "american": -135,
+                "decimal": 1.741
+              },
+              {
+                "side": "under",
+                "points": 174.5,
+                "american": 102,
+                "decimal": 2.02
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 175.0,
+                "american": -127,
+                "decimal": 1.787
+              },
+              {
+                "side": "under",
+                "points": 175.0,
+                "american": -104,
+                "decimal": 1.962
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 175.5,
+                "american": -119,
+                "decimal": 1.84
+              },
+              {
+                "side": "under",
+                "points": 175.5,
+                "american": -111,
+                "decimal": 1.901
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 176.5,
+                "american": -106,
+                "decimal": 1.943
+              },
+              {
+                "side": "under",
+                "points": 176.5,
+                "american": -125,
+                "decimal": 1.8
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 177.0,
+                "american": 100,
+                "decimal": 2.0
+              },
+              {
+                "side": "under",
+                "points": 177.0,
+                "american": -133,
+                "decimal": 1.752
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 177.5,
+                "american": 106,
+                "decimal": 2.06
+              },
+              {
+                "side": "under",
+                "points": 177.5,
+                "american": -140,
+                "decimal": 1.714
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 91.5,
+                "american": -108,
+                "decimal": 1.926
+              },
+              {
+                "side": "under",
+                "points": 91.5,
+                "american": -112,
+                "decimal": 1.893
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 90.5,
+                "american": -134,
+                "decimal": 1.746
+              },
+              {
+                "side": "under",
+                "points": 90.5,
+                "american": 101,
+                "decimal": 2.01
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 91.0,
+                "american": -123,
+                "decimal": 1.813
+              },
+              {
+                "side": "under",
+                "points": 91.0,
+                "american": -107,
+                "decimal": 1.935
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 92.0,
+                "american": -102,
+                "decimal": 1.98
+              },
+              {
+                "side": "under",
+                "points": 92.0,
+                "american": -130,
+                "decimal": 1.769
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 92.5,
+                "american": 107,
+                "decimal": 2.07
+              },
+              {
+                "side": "under",
+                "points": 92.5,
+                "american": -142,
+                "decimal": 1.704
+              }
+            ],
+            "is_alternate": true
+          }
+        ]
+      }
+    },
+    {
+      "matchup_id": 1634180690,
+      "source_url": "https://www.pinnacle.com/en/basketball/wnba/washington-mystics-vs-portland-fire/1634180690/#all",
+      "path": "/en/basketball/wnba/washington-mystics-vs-portland-fire/1634180690/",
+      "league": "WNBA",
+      "start_time": "2026-08-23T23:00:00Z",
+      "label": "Washington Mystics vs Portland Fire",
+      "participants": [
+        "Washington Mystics",
+        "Portland Fire"
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Portland Fire",
+                "american": 130,
+                "decimal": 2.3
+              },
+              {
+                "side": "away",
+                "team": "Washington Mystics",
+                "american": -158,
+                "decimal": 1.633
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Portland Fire",
+                "american": 143,
+                "decimal": 2.43
+              },
+              {
+                "side": "away",
+                "team": "Washington Mystics",
+                "american": -169,
+                "decimal": 1.592
+              }
+            ]
+          }
+        ],
+        "spread": [
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Portland Fire",
+                "points": 2.0,
+                "american": -114,
+                "decimal": 1.877
+              },
+              {
+                "side": "away",
+                "team": "Washington Mystics",
+                "points": -2.0,
+                "american": -107,
+                "decimal": 1.935
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Portland Fire",
+                "points": 3.0,
+                "american": -141,
+                "decimal": 1.709
+              },
+              {
+                "side": "away",
+                "team": "Washington Mystics",
+                "points": -3.0,
+                "american": 112,
+                "decimal": 2.12
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Portland Fire",
+                "points": 2.5,
+                "american": -127,
+                "decimal": 1.787
+              },
+              {
+                "side": "away",
+                "team": "Washington Mystics",
+                "points": -2.5,
+                "american": 101,
+                "decimal": 2.01
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Portland Fire",
+                "points": 1.5,
+                "american": -105,
+                "decimal": 1.952
+              },
+              {
+                "side": "away",
+                "team": "Washington Mystics",
+                "points": -1.5,
+                "american": -119,
+                "decimal": 1.84
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Portland Fire",
+                "points": 1.0,
+                "american": 105,
+                "decimal": 2.05
+              },
+              {
+                "side": "away",
+                "team": "Washington Mystics",
+                "points": -1.0,
+                "american": -132,
+                "decimal": 1.758
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Portland Fire",
+                "points": 4.0,
+                "american": -114,
+                "decimal": 1.877
+              },
+              {
+                "side": "away",
+                "team": "Washington Mystics",
+                "points": -4.0,
+                "american": -102,
+                "decimal": 1.98
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Portland Fire",
+                "points": 5.5,
+                "american": -154,
+                "decimal": 1.649
+              },
+              {
+                "side": "away",
+                "team": "Washington Mystics",
+                "points": -5.5,
+                "american": 120,
+                "decimal": 2.2
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Portland Fire",
+                "points": 5.0,
+                "american": -143,
+                "decimal": 1.699
+              },
+              {
+                "side": "away",
+                "team": "Washington Mystics",
+                "points": -5.0,
+                "american": 111,
+                "decimal": 2.11
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Portland Fire",
+                "points": 4.5,
+                "american": -131,
+                "decimal": 1.763
+              },
+              {
+                "side": "away",
+                "team": "Washington Mystics",
+                "points": -4.5,
+                "american": 102,
+                "decimal": 2.02
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Portland Fire",
+                "points": 3.5,
+                "american": -109,
+                "decimal": 1.917
+              },
+              {
+                "side": "away",
+                "team": "Washington Mystics",
+                "points": -3.5,
+                "american": -117,
+                "decimal": 1.855
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Portland Fire",
+                "points": 3.0,
+                "american": -100,
+                "decimal": 2.0
+              },
+              {
+                "side": "away",
+                "team": "Washington Mystics",
+                "points": -3.0,
+                "american": -128,
+                "decimal": 1.781
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Portland Fire",
+                "points": 2.5,
+                "american": 108,
+                "decimal": 2.08
+              },
+              {
+                "side": "away",
+                "team": "Washington Mystics",
+                "points": -2.5,
+                "american": -138,
+                "decimal": 1.725
+              }
+            ],
+            "is_alternate": true
+          }
+        ],
+        "total": [
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 79.0,
+                "american": -110,
+                "decimal": 1.909
+              },
+              {
+                "side": "under",
+                "points": 79.0,
+                "american": -110,
+                "decimal": 1.909
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 78.0,
+                "american": -135,
+                "decimal": 1.741
+              },
+              {
+                "side": "under",
+                "points": 78.0,
+                "american": 107,
+                "decimal": 2.07
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 78.5,
+                "american": -123,
+                "decimal": 1.813
+              },
+              {
+                "side": "under",
+                "points": 78.5,
+                "american": -102,
+                "decimal": 1.98
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 79.5,
+                "american": -102,
+                "decimal": 1.98
+              },
+              {
+                "side": "under",
+                "points": 79.5,
+                "american": -123,
+                "decimal": 1.813
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 80.0,
+                "american": 108,
+                "decimal": 2.08
+              },
+              {
+                "side": "under",
+                "points": 80.0,
+                "american": -136,
+                "decimal": 1.735
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 165.0,
+                "american": -111,
+                "decimal": 1.901
+              },
+              {
+                "side": "under",
+                "points": 165.0,
+                "american": -109,
+                "decimal": 1.917
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 163.5,
+                "american": -134,
+                "decimal": 1.746
+              },
+              {
+                "side": "under",
+                "points": 163.5,
+                "american": 101,
+                "decimal": 2.01
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 164.0,
+                "american": -128,
+                "decimal": 1.781
+              },
+              {
+                "side": "under",
+                "points": 164.0,
+                "american": -103,
+                "decimal": 1.971
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 166.0,
+                "american": -104,
+                "decimal": 1.962
+              },
+              {
+                "side": "under",
+                "points": 166.0,
+                "american": -128,
+                "decimal": 1.781
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 166.5,
+                "american": 103,
+                "decimal": 2.03
+              },
+              {
+                "side": "under",
+                "points": 166.5,
+                "american": -136,
+                "decimal": 1.735
+              }
+            ],
+            "is_alternate": true
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,7 +1,24 @@
-statvista - todo list
-1. Fix is either friendlier headers / caching for espn scrapes
+GOAL:
+- implement a rag model for mlb
+    - datasets:
+        1. lahman database - season level batting/pitching/fielding/team back to 1871
+        2. retrosheet - play by play/event data 
+        3. mlb stats api - live data
+        3. baseball savant/statcast - pybaseball
+        4. chadwick bureau register - entity resolution: build canonical player/team/game table key on chadwick IDs with an alias 
+        5. offical mlb rulebook pdf + cba - the rules corpus
+        6. wikipedia/wikidata - good for bios,nicknames, and entity linking
+- temporal metadata, on every chunk. every chunk gets season,game_date,as_of, team_id, player_ids[], game_pk, source, and author_tier. use date filters and a recency boost at query time
+- Chunking per source type
+    - rules
+    - articles
+    - box scores/game logs
+    - statcast
+    
 
 start backend: PYTHONPATH=..:. uvicorn app.main:app --reload --port 8000
+
+
 start frontend: npm run dev
 
 venv -> .\statvista\Scripts\Activate.ps1

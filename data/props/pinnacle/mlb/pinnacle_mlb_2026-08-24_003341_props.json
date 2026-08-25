@@ -1,0 +1,258 @@
+{
+  "fetched_at": "2026-08-24T00:33:54-07:00",
+  "source": "pinnacle_selenium",
+  "sport": "baseball",
+  "league": "mlb",
+  "list_page": "https://www.pinnacle.com/en/baseball/mlb/matchups/#all",
+  "parallel_workers_configured": 5,
+  "parallel_workers_effective": 5,
+  "games_per_worker_target": 2,
+  "arcadia_timeout_s": 90.0,
+  "arcadia_poll_s": 0.22,
+  "snapshot_kind": "props",
+  "games": [
+    {
+      "matchup_id": 1634210962,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/boston-red-sox-vs-miami-marlins/1634210962/#all",
+      "path": "/en/baseball/mlb/boston-red-sox-vs-miami-marlins/1634210962/",
+      "league": "MLB",
+      "start_time": "2026-08-24T22:40:00Z",
+      "label": "Boston Red Sox vs Miami Marlins",
+      "participants": [
+        "Boston Red Sox",
+        "Miami Marlins"
+      ],
+      "props": [
+        {
+          "stat": "strikeouts",
+          "player": "Ranger Suarez",
+          "line": 5.5,
+          "market_id": 1634695365,
+          "decimal_over": 2.24,
+          "decimal_under": 1.633,
+          "american_over": 124,
+          "american_under": -158
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Sandy Alcantara",
+          "line": 4.5,
+          "market_id": 1634695371,
+          "decimal_over": 1.833,
+          "decimal_under": 1.943,
+          "american_over": -120,
+          "american_under": -106
+        }
+      ]
+    },
+    {
+      "matchup_id": 1634218870,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/chicago-cubs-vs-arizona-diamondbacks/1634218870/#all",
+      "path": "/en/baseball/mlb/chicago-cubs-vs-arizona-diamondbacks/1634218870/",
+      "league": "MLB",
+      "start_time": "2026-08-25T01:40:00Z",
+      "label": "Chicago Cubs vs Arizona Diamondbacks",
+      "participants": [
+        "Chicago Cubs",
+        "Arizona Diamondbacks"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1634215940,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/cincinnati-reds-vs-san-francisco-giants/1634215940/#all",
+      "path": "/en/baseball/mlb/cincinnati-reds-vs-san-francisco-giants/1634215940/",
+      "league": "MLB",
+      "start_time": "2026-08-25T01:45:00Z",
+      "label": "Cincinnati Reds vs San Francisco Giants",
+      "participants": [
+        "Cincinnati Reds",
+        "San Francisco Giants"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1634218869,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/cleveland-guardians-vs-los-angeles-angels/1634218869/#all",
+      "path": "/en/baseball/mlb/cleveland-guardians-vs-los-angeles-angels/1634218869/",
+      "league": "MLB",
+      "start_time": "2026-08-25T01:38:00Z",
+      "label": "Cleveland Guardians vs Los Angeles Angels",
+      "participants": [
+        "Cleveland Guardians",
+        "Los Angeles Angels"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1634210964,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/colorado-rockies-vs-washington-nationals/1634210964/#all",
+      "path": "/en/baseball/mlb/colorado-rockies-vs-washington-nationals/1634210964/",
+      "league": "MLB",
+      "start_time": "2026-08-24T22:45:00Z",
+      "label": "Colorado Rockies vs Washington Nationals",
+      "participants": [
+        "Colorado Rockies",
+        "Washington Nationals"
+      ],
+      "props": [
+        {
+          "stat": "strikeouts",
+          "player": "Cade Cavalli",
+          "line": 6.5,
+          "market_id": 1634695368,
+          "decimal_over": 2.04,
+          "decimal_under": 1.752,
+          "american_over": 104,
+          "american_under": -133
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Ryan Feltner",
+          "line": 3.5,
+          "market_id": 1634695374,
+          "decimal_over": 1.704,
+          "decimal_under": 2.12,
+          "american_over": -142,
+          "american_under": 112
+        }
+      ]
+    },
+    {
+      "matchup_id": 1634215771,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/minnesota-twins-vs-athletics/1634215771/#all",
+      "path": "/en/baseball/mlb/minnesota-twins-vs-athletics/1634215771/",
+      "league": "MLB",
+      "start_time": "2026-08-25T01:40:00Z",
+      "label": "Minnesota Twins vs Athletics",
+      "participants": [
+        "Minnesota Twins",
+        "Athletics"
+      ],
+      "props": [
+        {
+          "stat": "strikeouts",
+          "player": "Jeffrey Springs",
+          "line": 3.5,
+          "market_id": 1634695380,
+          "decimal_over": 1.901,
+          "decimal_under": 1.87,
+          "american_over": -111,
+          "american_under": -115
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Zebby Matthews",
+          "line": 4.5,
+          "market_id": 1634695383,
+          "decimal_over": 2.08,
+          "decimal_under": 1.725,
+          "american_over": 108,
+          "american_under": -138
+        }
+      ]
+    },
+    {
+      "matchup_id": 1634215939,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/philadelphia-phillies-vs-seattle-mariners/1634215939/#all",
+      "path": "/en/baseball/mlb/philadelphia-phillies-vs-seattle-mariners/1634215939/",
+      "league": "MLB",
+      "start_time": "2026-08-25T01:40:00Z",
+      "label": "Philadelphia Phillies vs Seattle Mariners",
+      "participants": [
+        "Philadelphia Phillies",
+        "Seattle Mariners"
+      ],
+      "props": [
+        {
+          "stat": "strikeouts",
+          "player": "Logan Gilbert",
+          "line": 5.5,
+          "market_id": 1634695395,
+          "decimal_over": 1.641,
+          "decimal_under": 2.17,
+          "american_over": -156,
+          "american_under": 117
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Zack Wheeler",
+          "line": 7.5,
+          "market_id": 1634695398,
+          "decimal_over": 2.17,
+          "decimal_under": 1.641,
+          "american_over": 117,
+          "american_under": -156
+        }
+      ]
+    },
+    {
+      "matchup_id": 1634215770,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/pittsburgh-pirates-vs-san-diego-padres/1634215770/#all",
+      "path": "/en/baseball/mlb/pittsburgh-pirates-vs-san-diego-padres/1634215770/",
+      "league": "MLB",
+      "start_time": "2026-08-25T01:40:00Z",
+      "label": "Pittsburgh Pirates vs San Diego Padres",
+      "participants": [
+        "Pittsburgh Pirates",
+        "San Diego Padres"
+      ],
+      "props": [
+        {
+          "stat": "strikeouts",
+          "player": "Braxton Ashcraft",
+          "line": 5.5,
+          "market_id": 1634695377,
+          "decimal_over": 2.25,
+          "decimal_under": 1.599,
+          "american_over": 125,
+          "american_under": -167
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Robbie Ray",
+          "line": 5.5,
+          "market_id": 1634695386,
+          "decimal_over": 1.833,
+          "decimal_under": 1.943,
+          "american_over": -120,
+          "american_under": -106
+        }
+      ]
+    },
+    {
+      "matchup_id": 1634215917,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/tampa-bay-rays-vs-detroit-tigers/1634215917/#all",
+      "path": "/en/baseball/mlb/tampa-bay-rays-vs-detroit-tigers/1634215917/",
+      "league": "MLB",
+      "start_time": "2026-08-24T22:40:00Z",
+      "label": "Tampa Bay Rays vs Detroit Tigers",
+      "participants": [
+        "Tampa Bay Rays",
+        "Detroit Tigers"
+      ],
+      "props": [
+        {
+          "stat": "strikeouts",
+          "player": "Drew Rasmussen",
+          "line": 4.5,
+          "market_id": 1634695389,
+          "decimal_over": 1.685,
+          "decimal_under": 2.14,
+          "american_over": -146,
+          "american_under": 114
+        },
+        {
+          "stat": "strikeouts",
+          "player": "Framber Valdez",
+          "line": 3.5,
+          "market_id": 1634695392,
+          "decimal_over": 1.515,
+          "decimal_under": 2.44,
+          "american_over": -194,
+          "american_under": 144
+        }
+      ]
+    }
+  ]
+}

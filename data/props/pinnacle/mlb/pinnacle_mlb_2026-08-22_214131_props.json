@@ -1,0 +1,127 @@
+{
+  "fetched_at": "2026-08-22T21:43:12-07:00",
+  "source": "pinnacle_selenium",
+  "sport": "baseball",
+  "league": "mlb",
+  "list_page": "https://www.pinnacle.com/en/baseball/mlb/matchups/#all",
+  "parallel_workers_configured": 5,
+  "parallel_workers_effective": 5,
+  "games_per_worker_target": 2,
+  "arcadia_timeout_s": 90.0,
+  "arcadia_poll_s": 0.22,
+  "snapshot_kind": "props",
+  "games": [
+    {
+      "matchup_id": 1634182867,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/atlanta-braves-vs-milwaukee-brewers/1634182867/#all",
+      "path": "/en/baseball/mlb/atlanta-braves-vs-milwaukee-brewers/1634182867/",
+      "league": "MLB",
+      "start_time": "2026-08-23T23:10:00Z",
+      "label": "Atlanta Braves vs Milwaukee Brewers",
+      "participants": [
+        "Atlanta Braves",
+        "Milwaukee Brewers"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1634182864,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/chicago-cubs-vs-seattle-mariners/1634182864/#all",
+      "path": "/en/baseball/mlb/chicago-cubs-vs-seattle-mariners/1634182864/",
+      "league": "MLB",
+      "start_time": "2026-08-23T20:10:00Z",
+      "label": "Chicago Cubs vs Seattle Mariners",
+      "participants": [
+        "Chicago Cubs",
+        "Seattle Mariners"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1634180771,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/cincinnati-reds-vs-arizona-diamondbacks/1634180771/#all",
+      "path": "/en/baseball/mlb/cincinnati-reds-vs-arizona-diamondbacks/1634180771/",
+      "league": "MLB",
+      "start_time": "2026-08-23T20:15:00Z",
+      "label": "Cincinnati Reds vs Arizona Diamondbacks",
+      "participants": [
+        "Cincinnati Reds",
+        "Arizona Diamondbacks"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1634182977,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/cleveland-guardians-vs-colorado-rockies/1634182977/#all",
+      "path": "/en/baseball/mlb/cleveland-guardians-vs-colorado-rockies/1634182977/",
+      "league": "MLB",
+      "start_time": "2026-08-23T19:10:00Z",
+      "label": "Cleveland Guardians vs Colorado Rockies",
+      "participants": [
+        "Cleveland Guardians",
+        "Colorado Rockies"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1634182866,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/minnesota-twins-vs-san-diego-padres/1634182866/#all",
+      "path": "/en/baseball/mlb/minnesota-twins-vs-san-diego-padres/1634182866/",
+      "league": "MLB",
+      "start_time": "2026-08-23T20:10:00Z",
+      "label": "Minnesota Twins vs San Diego Padres",
+      "participants": [
+        "Minnesota Twins",
+        "San Diego Padres"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1634180767,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/st-louis-cardinals-vs-philadelphia-phillies/1634180767/#all",
+      "path": "/en/baseball/mlb/st-louis-cardinals-vs-philadelphia-phillies/1634180767/",
+      "league": "MLB",
+      "start_time": "2026-08-23T17:35:00Z",
+      "label": "St. Louis Cardinals vs Philadelphia Phillies",
+      "participants": [
+        "St. Louis Cardinals",
+        "Philadelphia Phillies"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1634182860,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/tampa-bay-rays-vs-baltimore-orioles/1634182860/#all",
+      "slug": "tampa-bay-rays-vs-baltimore-orioles",
+      "error": "Message: invalid session id: session deleted as the browser has closed the connection\nfrom disconnected: Unable to receive message from renderer\n  (Session info: chrome=152.0.7977.54); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception\nStacktrace:\n0   chromedriver                        0x00000001030a3404 chromedriver + 3470340\n1   chromedriver                        0x0000000102d999bc chromedriver + 285116\n2   chromedriver                        0x0000000102d89c30 chromedriver + 220208\n3   chromedriver                        0x0000000102d89950 chromedriver + 219472\n4   chromedriver                        0x0000000102d876a4 chromedriver + 210596\n5   chromedriver                        0x0000000102d88170 chromedriver + 213360\n6   chromedriver                        0x0000000102d9ce48 chromedriver + 298568\n7   chromedriver                        0x0000000102e22264 chromedriver + 844388\n8   chromedriver                        0x0000000102e217b0 chromedriver + 841648\n9   chromedriver                        0x0000000102dd7fbc chromedriver + 540604\n10  chromedriver                        0x000000010307378c chromedriver + 3274636\n11  chromedriver                        0x00000001030767c4 chromedriver + 3286980\n12  chromedriver                        0x000000010305d308 chromedriver + 3183368\n13  chromedriver                        0x0000000103077094 chromedriver + 3289236\n14  chromedriver                        0x0000000103051178 chromedriver + 3133816\n15  chromedriver                        0x0000000103092894 chromedriver + 3401876\n16  chromedriver                        0x00000001030929f4 chromedriver + 3402228\n17  chromedriver                        0x00000001030a30c0 chromedriver + 3469504\n18  libsystem_pthread.dylib             0x000000019b3802e0 _pthread_start + 132\n19  libsystem_pthread.dylib             0x000000019b37b0f8 thread_start + 4\n",
+      "props": [],
+      "league": "MLB"
+    },
+    {
+      "matchup_id": 1634182861,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/toronto-blue-jays-vs-new-york-yankees/1634182861/#all",
+      "path": "/en/baseball/mlb/toronto-blue-jays-vs-new-york-yankees/1634182861/",
+      "league": "MLB",
+      "start_time": "2026-08-23T17:35:00Z",
+      "label": "Toronto Blue Jays vs New York Yankees",
+      "participants": [
+        "Toronto Blue Jays",
+        "New York Yankees"
+      ],
+      "props": []
+    },
+    {
+      "matchup_id": 1634180768,
+      "source_url": "https://www.pinnacle.com/en/baseball/mlb/washington-nationals-vs-miami-marlins/1634180768/#all",
+      "path": "/en/baseball/mlb/washington-nationals-vs-miami-marlins/1634180768/",
+      "league": "MLB",
+      "start_time": "2026-08-23T17:40:00Z",
+      "label": "Washington Nationals vs Miami Marlins",
+      "participants": [
+        "Washington Nationals",
+        "Miami Marlins"
+      ],
+      "props": []
+    }
+  ]
+}

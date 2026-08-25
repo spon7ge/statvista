@@ -1,0 +1,363 @@
+{
+  "fetched_at": "2026-08-24T00:34:59-07:00",
+  "source": "pinnacle_selenium",
+  "sport": "basketball",
+  "league": "wnba",
+  "list_page": "https://www.pinnacle.com/en/basketball/wnba/matchups/#all",
+  "parallel_workers_configured": 5,
+  "parallel_workers_effective": 1,
+  "games_per_worker_target": 2,
+  "arcadia_timeout_s": 90.0,
+  "arcadia_poll_s": 0.22,
+  "snapshot_kind": "props",
+  "games": [
+    {
+      "matchup_id": 1634218873,
+      "source_url": "https://www.pinnacle.com/en/basketball/wnba/atlanta-dream-vs-los-angeles-sparks/1634218873/#all",
+      "path": "/en/basketball/wnba/atlanta-dream-vs-los-angeles-sparks/1634218873/",
+      "league": "WNBA",
+      "start_time": "2026-08-25T02:00:00Z",
+      "label": "Atlanta Dream vs Los Angeles Sparks",
+      "participants": [
+        "Atlanta Dream",
+        "Los Angeles Sparks"
+      ],
+      "props": [
+        {
+          "stat": "points",
+          "player": "Allisha Gray",
+          "line": 19.5,
+          "market_id": 1634695482,
+          "decimal_over": 1.909,
+          "decimal_under": 1.847,
+          "american_over": -110,
+          "american_under": -118
+        },
+        {
+          "stat": "points",
+          "player": "Angel Reese",
+          "line": 17.5,
+          "market_id": 1634695485,
+          "decimal_over": 1.847,
+          "decimal_under": 1.909,
+          "american_over": -118,
+          "american_under": -110
+        },
+        {
+          "stat": "rebounds",
+          "player": "Angel Reese",
+          "line": 12.5,
+          "market_id": 1634695491,
+          "decimal_over": 1.758,
+          "decimal_under": 2.0,
+          "american_over": -132,
+          "american_under": 100
+        },
+        {
+          "stat": "points",
+          "player": "Cameron Brink",
+          "line": 9.5,
+          "market_id": 1634695494,
+          "decimal_over": 2.0,
+          "decimal_under": 1.758,
+          "american_over": -100,
+          "american_under": -132
+        },
+        {
+          "stat": "rebounds",
+          "player": "Cameron Brink",
+          "line": 5.5,
+          "market_id": 1634695497,
+          "decimal_over": 1.741,
+          "decimal_under": 2.02,
+          "american_over": -135,
+          "american_under": 102
+        },
+        {
+          "stat": "rebounds",
+          "player": "Dearica Hamby",
+          "line": 6.5,
+          "market_id": 1634695500,
+          "decimal_over": 2.12,
+          "decimal_under": 1.676,
+          "american_over": 112,
+          "american_under": -148
+        },
+        {
+          "stat": "points",
+          "player": "Erica Wheeler",
+          "line": 8.5,
+          "market_id": 1634695503,
+          "decimal_over": 2.02,
+          "decimal_under": 1.758,
+          "american_over": 102,
+          "american_under": -132
+        },
+        {
+          "stat": "assists",
+          "player": "Jordin Canada",
+          "line": 7.5,
+          "market_id": 1634695506,
+          "decimal_over": 1.649,
+          "decimal_under": 2.16,
+          "american_over": -154,
+          "american_under": 116
+        },
+        {
+          "stat": "points",
+          "player": "Naz Hillmon",
+          "line": 8.5,
+          "market_id": 1634695509,
+          "decimal_over": 1.909,
+          "decimal_under": 1.847,
+          "american_over": -110,
+          "american_under": -118
+        },
+        {
+          "stat": "points",
+          "player": "Nneka Ogwumike",
+          "line": 14.5,
+          "market_id": 1634695512,
+          "decimal_over": 1.98,
+          "decimal_under": 1.781,
+          "american_over": -102,
+          "american_under": -128
+        },
+        {
+          "stat": "points",
+          "player": "Rae Burrell",
+          "line": 15.5,
+          "market_id": 1634695515,
+          "decimal_over": 2.0,
+          "decimal_under": 1.769,
+          "american_over": 100,
+          "american_under": -130
+        },
+        {
+          "stat": "points",
+          "player": "Rhyne Howard",
+          "line": 19.5,
+          "market_id": 1634695521,
+          "decimal_over": 1.909,
+          "decimal_under": 1.847,
+          "american_over": -110,
+          "american_under": -118
+        },
+        {
+          "stat": "assists",
+          "player": "Angel Reese",
+          "line": 3.5,
+          "market_id": 1634695524,
+          "decimal_over": 2.34,
+          "decimal_under": 1.556,
+          "american_over": 134,
+          "american_under": -180
+        },
+        {
+          "stat": "points",
+          "player": "Dearica Hamby",
+          "line": 13.5,
+          "market_id": 1634695527,
+          "decimal_over": 1.833,
+          "decimal_under": 1.926,
+          "american_over": -120,
+          "american_under": -108
+        },
+        {
+          "stat": "points",
+          "player": "Jordin Canada",
+          "line": 11.5,
+          "market_id": 1634695530,
+          "decimal_over": 1.87,
+          "decimal_under": 1.885,
+          "american_over": -115,
+          "american_under": -113
+        }
+      ]
+    },
+    {
+      "matchup_id": 1634215927,
+      "source_url": "https://www.pinnacle.com/en/basketball/wnba/golden-state-valkyries-vs-minnesota-lynx/1634215927/#all",
+      "path": "/en/basketball/wnba/golden-state-valkyries-vs-minnesota-lynx/1634215927/",
+      "league": "WNBA",
+      "start_time": "2026-08-25T00:00:00Z",
+      "label": "Golden State Valkyries vs Minnesota Lynx",
+      "participants": [
+        "Golden State Valkyries",
+        "Minnesota Lynx"
+      ],
+      "props": [
+        {
+          "stat": "points",
+          "player": "Cecilia Zandalasini",
+          "line": 8.5,
+          "market_id": 1634695413,
+          "decimal_over": 2.0,
+          "decimal_under": 1.769,
+          "american_over": 100,
+          "american_under": -130
+        },
+        {
+          "stat": "points",
+          "player": "Courtney Williams",
+          "line": 12.5,
+          "market_id": 1634695416,
+          "decimal_over": 1.781,
+          "decimal_under": 1.98,
+          "american_over": -128,
+          "american_under": -102
+        },
+        {
+          "stat": "rebounds",
+          "player": "Courtney Williams",
+          "line": 4.5,
+          "market_id": 1634695419,
+          "decimal_over": 2.02,
+          "decimal_under": 1.735,
+          "american_over": 102,
+          "american_under": -136
+        },
+        {
+          "stat": "points",
+          "player": "Janelle Salaun",
+          "line": 11.5,
+          "market_id": 1634695425,
+          "decimal_over": 1.769,
+          "decimal_under": 2.0,
+          "american_over": -130,
+          "american_under": 100
+        },
+        {
+          "stat": "points",
+          "player": "Kayla McBride",
+          "line": 17.5,
+          "market_id": 1634695428,
+          "decimal_over": 2.16,
+          "decimal_under": 1.649,
+          "american_over": 116,
+          "american_under": -154
+        },
+        {
+          "stat": "rebounds",
+          "player": "Napheesa Collier",
+          "line": 7.5,
+          "market_id": 1634695434,
+          "decimal_over": 1.649,
+          "decimal_under": 2.16,
+          "american_over": -154,
+          "american_under": 116
+        },
+        {
+          "stat": "points",
+          "player": "Natasha Howard",
+          "line": 12.5,
+          "market_id": 1634695437,
+          "decimal_over": 1.909,
+          "decimal_under": 1.847,
+          "american_over": -110,
+          "american_under": -118
+        },
+        {
+          "stat": "rebounds",
+          "player": "Natasha Howard",
+          "line": 7.5,
+          "market_id": 1634695440,
+          "decimal_over": 2.0,
+          "decimal_under": 1.758,
+          "american_over": 100,
+          "american_under": -132
+        },
+        {
+          "stat": "assists",
+          "player": "Olivia Miles",
+          "line": 6.5,
+          "market_id": 1634695446,
+          "decimal_over": 1.877,
+          "decimal_under": 1.877,
+          "american_over": -114,
+          "american_under": -114
+        },
+        {
+          "stat": "points",
+          "player": "Olivia Miles",
+          "line": 18.5,
+          "market_id": 1634695449,
+          "decimal_over": 1.87,
+          "decimal_under": 1.885,
+          "american_over": -115,
+          "american_under": -113
+        },
+        {
+          "stat": "rebounds",
+          "player": "Olivia Miles",
+          "line": 4.5,
+          "market_id": 1634695455,
+          "decimal_over": 2.16,
+          "decimal_under": 1.633,
+          "american_over": 116,
+          "american_under": -158
+        },
+        {
+          "stat": "points",
+          "player": "Tiffany Hayes",
+          "line": 9.5,
+          "market_id": 1634695458,
+          "decimal_over": 1.926,
+          "decimal_under": 1.833,
+          "american_over": -108,
+          "american_under": -120
+        },
+        {
+          "stat": "assists",
+          "player": "Veronica Burton",
+          "line": 5.5,
+          "market_id": 1634695464,
+          "decimal_over": 1.633,
+          "decimal_under": 2.18,
+          "american_over": -158,
+          "american_under": 118
+        },
+        {
+          "stat": "points",
+          "player": "Veronica Burton",
+          "line": 13.5,
+          "market_id": 1634695467,
+          "decimal_over": 1.926,
+          "decimal_under": 1.833,
+          "american_over": -108,
+          "american_under": -120
+        },
+        {
+          "stat": "points",
+          "player": "Gabby Williams",
+          "line": 13.5,
+          "market_id": 1634695470,
+          "decimal_over": 1.885,
+          "decimal_under": 1.87,
+          "american_over": -113,
+          "american_under": -115
+        },
+        {
+          "stat": "assists",
+          "player": "Napheesa Collier",
+          "line": 2.5,
+          "market_id": 1634695473,
+          "decimal_over": 1.617,
+          "decimal_under": 2.21,
+          "american_over": -162,
+          "american_under": 121
+        },
+        {
+          "stat": "points",
+          "player": "Napheesa Collier",
+          "line": 19.5,
+          "market_id": 1634695476,
+          "decimal_over": 1.847,
+          "decimal_under": 1.909,
+          "american_over": -118,
+          "american_under": -110
+        }
+      ]
+    }
+  ]
+}
