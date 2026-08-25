@@ -13,7 +13,7 @@ function exploreItemsFor(league: LeagueSlug): readonly string[] {
   const researchTab = league === "nba" ? "Playoff race" : "Arbitrage";
   return [
     "Matchups",
-    "Prop Picks",
+    "Props",
     "Leaders",
     "Standings",
     researchTab,
@@ -31,7 +31,7 @@ export function LeagueSubnav({ league }: LeagueSubnavProps) {
 
   function itemPath(item: string): string | null {
     if (item === "Matchups") return `/${league}/matchups`;
-    if (item === "Prop Picks" && league !== "nba")
+    if (item === "Props" && league !== "nba")
       return `/${league}/prop_picks`;
     if (item === "Leaders" && (league === "wnba" || league === "mlb"))
       return `/${league}/leaders`;
@@ -44,7 +44,7 @@ export function LeagueSubnav({ league }: LeagueSubnavProps) {
 
   function isActive(item: string): boolean {
     if (item === "Matchups") return pathname.endsWith("/matchups");
-    if (item === "Prop Picks") return pathname.includes("/prop_picks");
+    if (item === "Props") return pathname.includes("/prop_picks");
     if (item === "Leaders") return pathname.endsWith("/leaders");
     if (item === "Standings") return pathname.endsWith("/standings");
     if (item === "Futures") return pathname.endsWith("/futures");

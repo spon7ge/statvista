@@ -127,10 +127,10 @@ describe("AppRouter", () => {
     });
     renderWithProviders(["/wnba/prop_picks"]);
     expect(
-      await screen.findByRole("heading", { name: "Prop Picks" }),
+      await screen.findByRole("heading", { name: "WNBA Props" }),
     ).toBeInTheDocument();
     expect(await screen.findByText("Rhyne Howard")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Prop Picks" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Props" })).toHaveAttribute(
       "aria-current",
       "page",
     );
@@ -519,7 +519,7 @@ describe("AppRouter", () => {
     ).toBeInTheDocument();
     expect(await screen.findByText("No board yet")).toBeInTheDocument();
     expect(screen.queryByRole("tab", { name: "PrizePicks" })).not.toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Prop Picks" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Props" })).toHaveAttribute(
       "aria-current",
       "page",
     );

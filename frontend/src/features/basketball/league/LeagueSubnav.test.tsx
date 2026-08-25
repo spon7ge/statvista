@@ -13,7 +13,7 @@ function renderSubnav(path: string, league: "wnba" | "nba" | "mlb" = "wnba") {
 }
 
 describe("LeagueSubnav", () => {
-  it("links Matchups, Prop Picks, Leaders, and Standings on WNBA; disables others", () => {
+  it("links Matchups, Props, Leaders, and Standings on WNBA; disables others", () => {
     renderSubnav("/wnba/standings");
     const standings = screen.getByRole("link", { name: "Standings" });
     expect(standings).toHaveAttribute("href", "/wnba/standings");
@@ -26,23 +26,23 @@ describe("LeagueSubnav", () => {
       "href",
       "/wnba/matchups",
     );
-    expect(screen.getByRole("link", { name: "Prop Picks" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Props" })).toHaveAttribute(
       "href",
       "/wnba/prop_picks",
     );
   });
 
-  it("marks Prop Picks active on /wnba/prop_picks", () => {
+  it("marks Props active on /wnba/prop_picks", () => {
     renderSubnav("/wnba/prop_picks");
-    expect(screen.getByRole("link", { name: "Prop Picks" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Props" })).toHaveAttribute(
       "aria-current",
       "page",
     );
   });
 
-  it("marks Prop Picks active on /mlb/prop_picks/player/:slug", () => {
+  it("marks Props active on /mlb/prop_picks/player/:slug", () => {
     renderSubnav("/mlb/prop_picks/player/aaron-judge", "mlb");
-    expect(screen.getByRole("link", { name: "Prop Picks" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Props" })).toHaveAttribute(
       "aria-current",
       "page",
     );
