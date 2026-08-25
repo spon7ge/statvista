@@ -1,5 +1,13 @@
-import { useEffect, useState, type MouseEvent } from "react";
+import { useEffect, useId, useState, type MouseEvent } from "react";
 import { GameSection } from "@/shared/ui/GameSection";
+import {
+  GameFlowNeonFilter,
+  NeonFilamentPath,
+  NeonHaloPath,
+  neonGlowColor,
+  neonMarkerStyle,
+  shouldNeonGameFlow,
+} from "@/shared/ui/GameFlowNeon";
 import type { MlbGameDetailView } from "../lib/types";
 import {
   buildSplitSeriesPaths,
@@ -31,6 +39,16 @@ export function MlbWinProbability({
   const [activeIndex, setActiveIndex] = useState(
     Math.max(points.length - 1, 0),
   );
+  const reactId = useId();
+  const neonFilterId = `wp-neon-${reactId.replace(/:/g, "")}`;
+  const showNeon = shouldNeonGameFlow(detail.status);
+  const pulseNeon = showNeon && detail.status !== "final";
+  const homeStroke = showNeon
+    ? neonGlowColor(detail.home.color)
+    : detail.home.color;
+  const awayStroke = showNeon
+    ? neonGlowColor(detail.away.color)
+    : detail.away.color;
 
   useEffect(() => {
     setActiveIndex(Math.max((data?.points.length ?? 0) - 1, 0));
@@ -58,7 +76,7 @@ export function MlbWinProbability({
 
   const vividProps = {
     fill: "none" as const,
-    strokeWidth: compact ? 2 : 1.5,
+    strokeWidth: showNeon ? (compact ? 2.25 : 2) : compact ? 2 : 1.5,
     strokeLinejoin: "round" as const,
     strokeLinecap: "round" as const,
     "data-wp-segment": "vivid",
@@ -109,6 +127,11 @@ export function MlbWinProbability({
             className="w-full overflow-visible"
             onMouseMove={handleChartPointerMove}
           >
+            {showNeon ? (
+              <defs>
+                <GameFlowNeonFilter id={neonFilterId} />
+              </defs>
+            ) : null}
             <line
               x1={geometry.padLeft}
               x2={geometry.padLeft + geometry.plotWidth}
@@ -118,19 +141,41 @@ export function MlbWinProbability({
               strokeDasharray="4 4"
             />
 
+            {showNeon && paths.awayVivid ? (
+              <NeonHaloPath
+                d={paths.awayVivid}
+                stroke={awayStroke}
+                filterId={neonFilterId}
+                pulse={pulseNeon}
+              />
+            ) : null}
+            {showNeon && paths.homeVivid ? (
+              <NeonHaloPath
+                d={paths.homeVivid}
+                stroke={homeStroke}
+                filterId={neonFilterId}
+                pulse={pulseNeon}
+              />
+            ) : null}
             {paths.awayVivid ? (
               <path
                 d={paths.awayVivid}
-                stroke={detail.away.color}
+                stroke={awayStroke}
                 {...vividProps}
               />
             ) : null}
             {paths.homeVivid ? (
               <path
                 d={paths.homeVivid}
-                stroke={detail.home.color}
+                stroke={homeStroke}
                 {...vividProps}
               />
+            ) : null}
+            {showNeon && paths.awayVivid ? (
+              <NeonFilamentPath d={paths.awayVivid} />
+            ) : null}
+            {showNeon && paths.homeVivid ? (
+              <NeonFilamentPath d={paths.homeVivid} />
             ) : null}
             {paths.awayMuted ? (
               <path d={paths.awayMuted} {...mutedProps} />
@@ -156,19 +201,21 @@ export function MlbWinProbability({
                   cx={scrubX}
                   cy={awayY}
                   r={4}
-                  fill={detail.away.color}
+                  fill={awayStroke}
                   stroke="#FFFFFF"
                   strokeWidth={1.5}
                   pointerEvents="none"
+                  style={showNeon ? neonMarkerStyle(awayStroke) : undefined}
                 />
                 <circle
                   cx={scrubX}
                   cy={homeY}
                   r={4}
-                  fill={detail.home.color}
+                  fill={homeStroke}
                   stroke="#FFFFFF"
                   strokeWidth={1.5}
                   pointerEvents="none"
+                  style={showNeon ? neonMarkerStyle(homeStroke) : undefined}
                 />
                 <text
                   x={labelX}

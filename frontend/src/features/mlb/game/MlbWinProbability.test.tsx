@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { MlbWinProbability } from "./MlbWinProbability";
 import { mlbLiveDetail } from "../lib/testFixtures";
+import type { MlbWinProbability as MlbWinProbabilityData } from "../lib/types";
 
 describe("MlbWinProbability", () => {
   it("shows unavailable message when win probability is null", () => {
@@ -74,5 +75,76 @@ describe("MlbWinProbability", () => {
       "viewBox",
       "0 0 640 520",
     );
+  });
+
+  it("adds a neon halo on each team line when the game is live", () => {
+    const { container } = render(
+      <MlbWinProbability detail={mlbLiveDetail} />,
+    );
+
+    const neon = container.querySelectorAll("[data-wp-segment='neon']");
+    expect(neon).toHaveLength(2);
+    neon.forEach((el) => {
+      expect(el.getAttribute("filter")).toMatch(/wp-neon/);
+    });
+  });
+
+  it("adds a neon halo on each team line when the game is final", () => {
+    const { container } = render(
+      <MlbWinProbability detail={{ ...mlbLiveDetail, status: "final" }} />,
+    );
+
+    expect(container.querySelectorAll("[data-wp-segment='neon']")).toHaveLength(
+      2,
+    );
+  });
+
+  it("adds a neon halo at halftime", () => {
+    const { container } = render(
+      <MlbWinProbability
+        detail={{ ...mlbLiveDetail, status: "halftime" }}
+      />,
+    );
+
+    expect(container.querySelectorAll("[data-wp-segment='neon']")).toHaveLength(
+      2,
+    );
+  });
+
+  it("does not neon the team lines when the game is scheduled", () => {
+    const { container } = render(
+      <MlbWinProbability
+        detail={{ ...mlbLiveDetail, status: "scheduled" }}
+      />,
+    );
+
+    expect(container.querySelectorAll("[data-wp-segment='neon']")).toHaveLength(
+      0,
+    );
+  });
+
+  it("does not neon muted future path segments", () => {
+    const winProbability: MlbWinProbabilityData = {
+      awayAbbrev: mlbLiveDetail.away.abbrev,
+      homeAbbrev: mlbLiveDetail.home.abbrev,
+      points: [
+        { playId: "p1", label: "Top 1", homeWinPct: 0.44 },
+        { playId: "p2", label: "Top 3", homeWinPct: 0.48 },
+      ],
+      stakes: null,
+    };
+    const { container } = render(
+      <MlbWinProbability detail={{ ...mlbLiveDetail, winProbability }} />,
+    );
+    fireEvent.change(
+      screen.getByRole("slider", { name: /win probability timeline/i }),
+      { target: { value: "0" } },
+    );
+
+    const muted = container.querySelectorAll("[data-wp-segment='muted']");
+    expect(muted.length).toBeGreaterThanOrEqual(2);
+    muted.forEach((el) => {
+      expect(el.getAttribute("filter")).toBeNull();
+    });
   });
 });

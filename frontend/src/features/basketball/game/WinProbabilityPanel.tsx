@@ -1,6 +1,13 @@
 import { useEffect, useId, useState, type MouseEvent } from "react";
 import { GameSection } from "@/shared/ui/GameSection";
-import { neonGlowColor } from "../lib/neonGlowColor";
+import {
+  GameFlowNeonFilter,
+  NeonFilamentPath,
+  NeonHaloPath,
+  neonGlowColor,
+  neonMarkerStyle,
+  shouldNeonGameFlow,
+} from "@/shared/ui/GameFlowNeon";
 import type { GameDetail } from "../lib/types";
 import {
   buildSplitSeriesPaths,
@@ -10,37 +17,6 @@ import {
   xForIndex,
   yForPct,
 } from "../lib/winProbabilityPaths";
-
-function shouldNeonGameFlow(status: GameDetail["status"]): boolean {
-  return status === "live" || status === "halftime" || status === "final";
-}
-
-function NeonHaloPath({
-  d,
-  stroke,
-  filterId,
-  pulse,
-}: {
-  d: string;
-  stroke: string;
-  filterId: string;
-  pulse: boolean;
-}) {
-  return (
-    <path
-      d={d}
-      fill="none"
-      stroke={stroke}
-      strokeWidth={6.5}
-      strokeLinejoin="round"
-      strokeLinecap="round"
-      filter={`url(#${filterId})`}
-      className={pulse ? "game-flow-neon-halo" : undefined}
-      pointerEvents="none"
-      data-wp-segment="neon"
-    />
-  );
-}
 
 export function WinProbabilityPanel({ detail }: { detail: GameDetail }) {
   const data = detail.winProbability;
@@ -141,29 +117,7 @@ export function WinProbabilityPanel({ detail }: { detail: GameDetail }) {
           >
             {showNeon ? (
               <defs>
-                <filter
-                  id={neonFilterId}
-                  x="-80%"
-                  y="-80%"
-                  width="260%"
-                  height="260%"
-                >
-                  <feGaussianBlur
-                    in="SourceGraphic"
-                    stdDeviation="1.6"
-                    result="tight"
-                  />
-                  <feGaussianBlur
-                    in="SourceGraphic"
-                    stdDeviation="5"
-                    result="bloom"
-                  />
-                  <feMerge>
-                    <feMergeNode in="bloom" />
-                    <feMergeNode in="tight" />
-                    <feMergeNode in="SourceGraphic" />
-                  </feMerge>
-                </filter>
+                <GameFlowNeonFilter id={neonFilterId} />
               </defs>
             ) : null}
             <line
@@ -206,26 +160,10 @@ export function WinProbabilityPanel({ detail }: { detail: GameDetail }) {
               />
             ) : null}
             {showNeon && paths.awayVivid ? (
-              <path
-                d={paths.awayVivid}
-                fill="none"
-                stroke="rgba(255,255,255,0.55)"
-                strokeWidth={0.8}
-                strokeLinejoin="round"
-                strokeLinecap="round"
-                pointerEvents="none"
-              />
+              <NeonFilamentPath d={paths.awayVivid} />
             ) : null}
             {showNeon && paths.homeVivid ? (
-              <path
-                d={paths.homeVivid}
-                fill="none"
-                stroke="rgba(255,255,255,0.55)"
-                strokeWidth={0.8}
-                strokeLinejoin="round"
-                strokeLinecap="round"
-                pointerEvents="none"
-              />
+              <NeonFilamentPath d={paths.homeVivid} />
             ) : null}
             {paths.awayMuted ? (
               <path d={paths.awayMuted} {...mutedProps} />
@@ -255,11 +193,7 @@ export function WinProbabilityPanel({ detail }: { detail: GameDetail }) {
                   stroke="#FFFFFF"
                   strokeWidth={1.5}
                   pointerEvents="none"
-                  style={
-                    showNeon
-                      ? { filter: `drop-shadow(0 0 7px ${awayStroke})` }
-                      : undefined
-                  }
+                  style={showNeon ? neonMarkerStyle(awayStroke) : undefined}
                 />
                 <circle
                   cx={scrubX}
@@ -269,11 +203,7 @@ export function WinProbabilityPanel({ detail }: { detail: GameDetail }) {
                   stroke="#FFFFFF"
                   strokeWidth={1.5}
                   pointerEvents="none"
-                  style={
-                    showNeon
-                      ? { filter: `drop-shadow(0 0 7px ${homeStroke})` }
-                      : undefined
-                  }
+                  style={showNeon ? neonMarkerStyle(homeStroke) : undefined}
                 />
                 <text
                   x={labelX}
