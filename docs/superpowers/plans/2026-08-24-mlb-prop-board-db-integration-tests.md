@@ -4,7 +4,7 @@
 
 **Goal:** Add a Testcontainers Postgres suite so `GET /api/mlb/props/board` is tested against real `odds.*` snapshot tables (latest-per-quote, league filter, unique keys, fixed SELECT count) without mocking the DB driver.
 
-**Architecture:** Session-scoped `postgres:15-alpine` container; apply `db/migrations/*odds*.sql`; point `SUPABASE_DB_URL` at the container and `get_engine.cache_clear()`; `TRUNCATE` `odds.*` before each test; `TestClient` hits the real route; `load_enrichment` is stubbed. Production board code does not change.
+**Architecture:** Session-scoped `postgres:15-alpine` container; apply the MLB board snapshot migrations listed in Global Constraints; point `SUPABASE_DB_URL` at the container and `get_engine.cache_clear()`; `TRUNCATE` `odds.*` before each test; `TestClient` hits the real route; `load_enrichment` is stubbed. Production board code does not change.
 
 **Tech Stack:** pytest, FastAPI `TestClient`, Testcontainers Postgres 15, SQLAlchemy/`src.utils.db.get_engine`, existing `odds.*` migrations.
 
@@ -14,7 +14,7 @@
 
 - Surface is **`GET /api/mlb/props/board` only** — do not add WNBA `/props/today` or persist/upsert tests
 - Database is **ephemeral Postgres 15 via Testcontainers** (session-scoped), image `postgres:15-alpine`
-- Schema is **odds-only**: apply `db/migrations/*odds*.sql` in filename order
+- Schema is **MLB board snapshot tables only**: apply these files in filename order — `027_odds_mlb_underdogs.sql`, `028_odds_mlb_prizepicks.sql`, `029_odds_mlb_prophetx.sql`, `031_odds_mlb_pinnacle.sql`, `032_odds_mlb_prophetx_is_main.sql`, `033_odds_mlb_novig.sql`, `039_odds_mlb_parlay_api_odds.sql`. Do **not** glob all `*odds*.sql` (022 vs 035 `wnba_novig` conflict on empty Postgres).
 - Isolation: **`TRUNCATE` every table in schema `odds` before each test** (`RESTART IDENTITY CASCADE`); do not hard-code table names
 - HTTP: `TestClient` hits the real route; **`load_enrichment` stubbed** (no ESPN / scoreboard / Stats API)
 - Writes: **SQL inserts** through the same SQLAlchemy engine; production `maybe_persist_*` is out of scope
@@ -56,7 +56,7 @@ Pytest is always run from **repo root** (so `src.*` imports resolve). CI already
 - Modify: `backend/README.md` (append subsection at end of file)
 
 **Interfaces:**
-- Consumes: `app.main.app`, `src.utils.db.get_engine`, `db/migrations/*odds*.sql`
+- Consumes: `app.main.app`, `src.utils.db.get_engine`, MLB board `db/migrations/027|028|029|031|032|033|039_odds_mlb_*.sql`
 - Produces:
   - pytest marker `integration`
   - session fixture `odds_db_url: str` (container SQLAlchemy URL)
@@ -128,7 +128,7 @@ Create `backend/tests/integration/conftest.py` with this exact behavior:
 
 1. If Docker is not reachable, `pytest.skip("Docker is not running")` **before** starting a container.
 2. Start `PostgresContainer("postgres:15-alpine")` for the session. If start or migrate raises, **do not skip** — let the test fail.
-3. Apply every `db/migrations/*odds*.sql` path in **filename sort order** (repo root is `Path(__file__).resolve().parents[3]`).
+3. Apply only the MLB board migration files listed in Global Constraints, in **filename sort order** (repo root is `Path(__file__).resolve().parents[3]`). Do not glob `*odds*.sql`.
 4. Set `os.environ["SUPABASE_DB_URL"]` to the container URL only after the container is up. Assert the host is `localhost` or `127.0.0.1`. Then `from src.utils.db import get_engine` and `get_engine.cache_clear()`.
 5. Autouse function fixture: `TRUNCATE` all `pg_tables` with `schemaname = 'odds'` (`RESTART IDENTITY CASCADE`). Skip the `TRUNCATE` statement when the list is empty.
 6. Autouse: monkeypatch `app.domains.mlb.prop_board.load_enrichment` to an async function that returns `({}, {}, [], set())`.
@@ -148,7 +148,18 @@ from sqlalchemy.engine.url import make_url
 from testcontainers.postgres import PostgresContainer
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
-_ODDS_MIGRATIONS = sorted((_REPO_ROOT / "db" / "migrations").glob("*odds*.sql"))
+_ODDS_MIGRATIONS = [
+    _REPO_ROOT / "db" / "migrations" / name
+    for name in (
+        "027_odds_mlb_underdogs.sql",
+        "028_odds_mlb_prizepicks.sql",
+        "029_odds_mlb_prophetx.sql",
+        "031_odds_mlb_pinnacle.sql",
+        "032_odds_mlb_prophetx_is_main.sql",
+        "033_odds_mlb_novig.sql",
+        "039_odds_mlb_parlay_api_odds.sql",
+    )
+]
 
 
 def _docker_reachable() -> bool:
@@ -743,7 +754,7 @@ git commit -m "Assert MLB snapshot PK collisions and fixed board SELECT count."
 | Spec requirement | Task |
 | --- | --- |
 | Testcontainers Postgres 15 session container | Task 1 |
-| Odds-only `*odds*.sql` migrations, filename order | Task 1 |
+| MLB board snapshot migrations (explicit file list, not `*odds*.sql`) | Task 1 |
 | `SUPABASE_DB_URL` + `get_engine.cache_clear()`, local host guard | Task 1 |
 | Truncate all `odds.*` before each test | Task 1 |
 | Stub `load_enrichment` | Task 1 |

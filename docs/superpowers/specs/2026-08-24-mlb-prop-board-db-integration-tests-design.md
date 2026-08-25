@@ -15,7 +15,7 @@ Add a real-Postgres integration suite for the highest-value API ↔ database pat
 | --- | --- |
 | Surface | `GET /api/mlb/props/board` only |
 | Database | Ephemeral Postgres 15 via Testcontainers (session-scoped) |
-| Schema | Odds-only: apply `db/migrations/*odds*.sql` in filename order |
+| Schema | MLB board tables only (not every `*odds*.sql`): apply `027_odds_mlb_underdogs.sql`, `028_odds_mlb_prizepicks.sql`, `029_odds_mlb_prophetx.sql`, `031_odds_mlb_pinnacle.sql`, `032_odds_mlb_prophetx_is_main.sql`, `033_odds_mlb_novig.sql`, `039_odds_mlb_parlay_api_odds.sql` in that filename order. Skip other odds migrations (022 Parlay `wnba_novig` vs 035 scraper `wnba_novig` is a known empty-DB conflict, out of this spec). |
 | Isolation | `TRUNCATE` every table in schema `odds` before each test |
 | HTTP | `TestClient` hits the real route; `load_enrichment` stubbed (no ESPN / scoreboard / Stats API) |
 | Writes | Seed with SQL inserts through the same SQLAlchemy engine. Production persist/upsert is out of scope |
@@ -38,7 +38,7 @@ Add a real-Postgres integration suite for the highest-value API ↔ database pat
 ```text
 pytest (mark: integration)
   → Testcontainers Postgres 15
-  → apply db/migrations/*odds*.sql
+  → apply MLB board odds migrations (027, 028, 029, 031, 032, 033, 039)
   → set SUPABASE_DB_URL + get_engine.cache_clear()
   → TestClient GET /api/mlb/props/board
         → get_mlb_prop_board()

@@ -102,3 +102,22 @@ npm run dev
 ```
 
 Vite proxies `/api` requests to the backend.
+
+## Integration tests (API ↔ Postgres)
+
+`backend/tests/integration/` starts ephemeral Postgres 15 via Testcontainers and hits `GET /api/mlb/props/board` against real `odds.*` tables. Docker must be running.
+
+From repo root:
+
+```bash
+pip install -r backend/requirements-dev.txt
+PYTHONPATH=backend python -m pytest backend/tests/integration/ -v
+```
+
+Skip them (unit tests only):
+
+```bash
+PYTHONPATH=backend python -m pytest backend/tests/ -m "not integration" -q
+```
+
+If Docker is not running, integration tests skip; unit tests still pass.
