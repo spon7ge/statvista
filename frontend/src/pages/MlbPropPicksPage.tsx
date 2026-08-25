@@ -6,6 +6,7 @@ import { MlbPropPicksHeader } from "@/features/mlb/league/MlbPropPicksHeader";
 import { MlbPropPicksTable } from "@/features/mlb/league/MlbPropPicksTable";
 import {
   collectMlbBoardBookmakerOptions,
+  collectMlbBoardGameOptions,
   collectMlbBoardPropositionOptions,
   filterMlbPropBoardRows,
   type MlbHitRateWindow,
@@ -38,11 +39,15 @@ export function MlbPropPicksPage() {
   const [selectedBooks, setSelectedBooks] = useState<Set<string>>(
     () => new Set(),
   );
+  const [selectedGames, setSelectedGames] = useState<Set<string>>(
+    () => new Set(),
+  );
   const [hitRate, setHitRate] = useState<MlbHitRateWindow | null>(null);
 
   const rows = data?.rows ?? [];
   const markets = useMemo(() => collectMlbBoardPropositionOptions(rows), [rows]);
   const books = useMemo(() => collectMlbBoardBookmakerOptions(rows), [rows]);
+  const games = useMemo(() => collectMlbBoardGameOptions(rows), [rows]);
   const filtered = useMemo(
     () =>
       filterMlbPropBoardRows(rows, {
@@ -51,6 +56,7 @@ export function MlbPropPicksPage() {
         markets: selectedMarkets,
         sides: selectedSides,
         books: selectedBooks,
+        games: selectedGames,
       }),
     [
       rows,
@@ -59,6 +65,7 @@ export function MlbPropPicksPage() {
       selectedMarkets,
       selectedSides,
       selectedBooks,
+      selectedGames,
     ],
   );
 
@@ -68,6 +75,7 @@ export function MlbPropPicksPage() {
     setSelectedMarkets(new Set());
     setSelectedSides(new Set());
     setSelectedBooks(new Set());
+    setSelectedGames(new Set());
     setHitRate(null);
   }
 
@@ -107,6 +115,9 @@ export function MlbPropPicksPage() {
               books={books}
               selectedBooks={selectedBooks}
               onBooksChange={setSelectedBooks}
+              games={games}
+              selectedGames={selectedGames}
+              onGamesChange={setSelectedGames}
               hitRate={hitRate}
               onHitRateChange={setHitRate}
             />

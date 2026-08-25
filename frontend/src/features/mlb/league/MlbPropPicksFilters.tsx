@@ -194,6 +194,9 @@ export type MlbPropPicksFiltersProps = {
   books?: MlbPropositionOption[];
   selectedBooks?: Set<string>;
   onBooksChange?: (next: Set<string>) => void;
+  games?: MlbPropositionOption[];
+  selectedGames?: Set<string>;
+  onGamesChange?: (next: Set<string>) => void;
   hitRate?: MlbHitRateWindow | null;
   onHitRateChange?: (next: MlbHitRateWindow | null) => void;
   /** `banner` = white pills on green; `pill` = dark-page capsules; default = square. */
@@ -217,6 +220,9 @@ export function MlbPropPicksFilters({
   books = [],
   selectedBooks = new Set(),
   onBooksChange,
+  games = [],
+  selectedGames = new Set(),
+  onGamesChange,
   hitRate = null,
   onHitRateChange,
   tone = "default",
@@ -228,10 +234,22 @@ export function MlbPropPicksFilters({
     selectedMarkets.size > 0 ||
     selectedSides.size > 0 ||
     selectedBooks.size > 0 ||
+    selectedGames.size > 0 ||
     hitRate != null;
   const onBanner = tone === "banner";
   const onPill = tone === "pill";
   const split = layout === "split";
+
+  const gameControl =
+    games.length > 0 ? (
+      <MultiSelectFilter
+        label="Game"
+        tone={tone}
+        options={games}
+        selected={selectedGames}
+        onChange={onGamesChange ?? (() => {})}
+      />
+    ) : null;
 
   const teamControl =
     teams.length > 0 ? (
@@ -341,6 +359,7 @@ export function MlbPropPicksFilters({
         aria-label="MLB prop picks filters"
       >
         <div className="flex min-w-0 flex-wrap items-center gap-2">
+          {gameControl}
           {teamControl}
           {extraFilters}
           {clearControl}
@@ -355,6 +374,7 @@ export function MlbPropPicksFilters({
       className="flex flex-wrap items-center gap-2"
       aria-label="MLB prop picks filters"
     >
+      {gameControl}
       {teamControl}
       {extraFilters}
       {searchControl}

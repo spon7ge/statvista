@@ -106,8 +106,13 @@ function BookMark({ book, label }: { book: string; label: string }) {
     );
   }
   const short = BOOK_SHORT[book] ?? label.slice(0, 3).toUpperCase();
+  const boldMark = book === "pinnacle" || book === "bet365";
   return (
-    <span className="text-[10px] font-semibold tracking-wide text-white/70">
+    <span
+      className={`text-[10px] tracking-wide text-white/70 ${
+        boldMark ? "font-bold" : "font-semibold"
+      }`}
+    >
       {short}
     </span>
   );
@@ -277,7 +282,7 @@ function CompositeCell({ row }: { row: ApiMlbPropBoardRow }) {
         </p>
         <p
           data-testid="board-row-market"
-          className="truncate text-[12px] text-white/70"
+          className="truncate text-sm font-bold text-white"
         >
           {row.market_label}
         </p>

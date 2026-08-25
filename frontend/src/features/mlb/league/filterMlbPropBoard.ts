@@ -11,6 +11,7 @@ export type MlbPropBoardFilterSelection = {
   markets?: Set<string>;
   sides?: Set<MlbPropBoardSide>;
   books?: Set<string>;
+  games?: Set<string>;
 };
 
 export type MlbPropositionOption = { value: string; label: string };
@@ -58,21 +59,63 @@ export function collectMlbBoardBookmakerOptions(
     .map((value) => ({ value, label: bookDisplayName(value) }));
 }
 
+function formatMlbBoardMatchup(row: ApiMlbPropBoardRow): string | null {
+  if (!row.team_abbrev || !row.opponent_abbrev) return null;
+  return row.home_away === "home"
+    ? `${row.opponent_abbrev} @ ${row.team_abbrev}`
+    : `${row.team_abbrev} @ ${row.opponent_abbrev}`;
+}
+
+export function collectMlbBoardGameOptions(
+  rows: ApiMlbPropBoardRow[],
+): MlbPropositionOption[] {
+  const byPk = new Map<
+    string,
+    { label: string; start: string | null }
+  >();
+  for (const row of rows) {
+    if (row.game_pk == null) continue;
+    const value = String(row.game_pk);
+    if (byPk.has(value)) continue;
+    const label = formatMlbBoardMatchup(row);
+    if (!label) continue;
+    byPk.set(value, { label, start: row.game_start_at });
+  }
+  return [...byPk.entries()]
+    .sort((a, b) => {
+      const aStart = a[1].start;
+      const bStart = b[1].start;
+      if (aStart && bStart && aStart !== bStart) {
+        return aStart.localeCompare(bStart);
+      }
+      if (aStart && !bStart) return -1;
+      if (!aStart && bStart) return 1;
+      return a[1].label.localeCompare(b[1].label);
+    })
+    .map(([value, { label }]) => ({ value, label }));
+}
+
 /**
- * Filters research-board rows by team, player name, market, side, and book.
+ * Filters research-board rows by game, team, player name, market, side, and book.
  * Does not reorder (hit-rate highest→lowest is a sort on the table).
  * When books are selected, Odds chips are trimmed to those books.
  * Rows with no posted American (empty Odds) are omitted; PrizePicks counts as posted.
  */
 export function filterMlbPropBoardRows(
   rows: ApiMlbPropBoardRow[],
-  { teams, query, markets, sides, books }: MlbPropBoardFilterSelection,
+  { teams, query, markets, sides, books, games }: MlbPropBoardFilterSelection,
 ): ApiMlbPropBoardRow[] {
   const q = query.trim().toLowerCase();
   const marketFilter = markets ?? new Set<string>();
   const sideFilter = sides ?? new Set<MlbPropBoardSide>();
   const bookFilter = books ?? new Set<string>();
+  const gameFilter = games ?? new Set<string>();
   return rows.flatMap((row) => {
+    if (gameFilter.size > 0) {
+      if (row.game_pk == null || !gameFilter.has(String(row.game_pk))) {
+        return [];
+      }
+    }
     if (teams.size > 0 && (!row.team_abbrev || !teams.has(row.team_abbrev))) {
       return [];
     }

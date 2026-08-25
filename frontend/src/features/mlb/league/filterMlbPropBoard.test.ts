@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   collectMlbBoardBookmakerOptions,
+  collectMlbBoardGameOptions,
   collectMlbBoardPropositionOptions,
   filterMlbPropBoardRows,
 } from "./filterMlbPropBoard";
@@ -184,5 +185,73 @@ describe("filterMlbPropBoardRows", () => {
       { value: "draftkings", label: "DraftKings" },
       { value: "underdog", label: "Underdog" },
     ]);
+  });
+
+  it("collects unique games for the day, labeled as away @ home and ordered by start", () => {
+    expect(
+      collectMlbBoardGameOptions([
+        row({
+          player_name: "Mookie Betts",
+          team_abbrev: "LAD",
+          opponent_abbrev: "SF",
+          home_away: "away",
+          game_pk: 2,
+          game_start_at: "2026-08-23T23:10:00Z",
+        }),
+        row({
+          player_name: "Aaron Judge",
+          team_abbrev: "NYY",
+          opponent_abbrev: "BOS",
+          home_away: "away",
+          game_pk: 1,
+          game_start_at: "2026-08-23T20:10:00Z",
+        }),
+        row({
+          player_name: "Dansby Swanson",
+          team_abbrev: "CHC",
+          opponent_abbrev: "MIL",
+          home_away: "home",
+          game_pk: 3,
+          game_start_at: "2026-08-23T17:10:00Z",
+        }),
+        row({
+          player_name: "Juan Soto",
+          team_abbrev: "NYY",
+          opponent_abbrev: "BOS",
+          home_away: "away",
+          game_pk: 1,
+          game_start_at: "2026-08-23T20:10:00Z",
+        }),
+        row({
+          player_name: "No Game",
+          game_pk: null,
+          team_abbrev: "CHC",
+          opponent_abbrev: "MIL",
+        }),
+      ]),
+    ).toEqual([
+      { value: "3", label: "MIL @ CHC" },
+      { value: "1", label: "NYY @ BOS" },
+      { value: "2", label: "LAD @ SF" },
+    ]);
+  });
+
+  it("filters by selected games and omits rows with no game when a game filter is active", () => {
+    const rows = [
+      row({ player_name: "Aaron Judge", game_pk: 1 }),
+      row({
+        player_name: "Mookie Betts",
+        team_abbrev: "LAD",
+        game_pk: 2,
+      }),
+      row({ player_name: "No Game", game_pk: null }),
+    ];
+    expect(
+      filterMlbPropBoardRows(rows, {
+        teams: new Set(),
+        query: "",
+        games: new Set(["1"]),
+      }).map((r) => r.player_name),
+    ).toEqual(["Aaron Judge"]);
   });
 });

@@ -63,7 +63,13 @@ describe("MlbPropPicksTable", () => {
       "Aaron Judge · NYY @ BOS",
     );
     expect(screen.getByTestId("board-row-name")).toHaveTextContent("Aaron Judge");
-    expect(screen.getByText("Over 1.5 Hits")).toBeInTheDocument();
+    expect(screen.getByTestId("board-row-name")).toHaveClass(
+      "font-bold",
+      "text-white",
+    );
+    const market = screen.getByTestId("board-row-market");
+    expect(market).toHaveTextContent("Over 1.5 Hits");
+    expect(market).toHaveClass("truncate", "text-sm", "font-bold", "text-white");
     expect(screen.getByText("Odds")).toBeInTheDocument();
     expect(screen.getByText("L10")).toBeInTheDocument();
     expect(screen.getByText("L15")).toBeInTheDocument();
@@ -301,6 +307,24 @@ describe("MlbPropPicksTable", () => {
     expect(within(panel).getByText("-108")).toBeInTheDocument();
     expect(within(panel).getByText("-112")).toBeInTheDocument();
     expect(within(panel).queryByText("-115")).not.toBeInTheDocument();
+  });
+
+  it("renders PIN and 365 book marks in bold", () => {
+    render(
+      <MlbPropPicksTable
+        rows={[
+          fixtureRow({
+            books: [
+              { book: "pinnacle", american: -105, url: null },
+              { book: "bet365", american: -110, url: null },
+            ],
+          }),
+        ]}
+      />,
+    );
+    const odds = screen.getByTestId("odds-cell");
+    expect(within(odds).getByText("PIN")).toHaveClass("font-bold");
+    expect(within(odds).getByText("365")).toHaveClass("font-bold");
   });
 
   it("renders asset book marks without a chip box", () => {

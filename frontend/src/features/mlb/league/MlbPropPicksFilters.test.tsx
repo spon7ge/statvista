@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 import { MlbPropPicksFilters } from "./MlbPropPicksFilters";
 
 describe("MlbPropPicksFilters", () => {
-  it("renders Team, Bookmaker, Proposition, Over/Under, and Hit rate next to player search", async () => {
+  it("renders Game, Team, Bookmaker, Proposition, Over/Under, and Hit rate next to player search", async () => {
     const user = userEvent.setup();
     const onTeamsChange = vi.fn();
     const onQueryChange = vi.fn();
@@ -12,6 +12,7 @@ describe("MlbPropPicksFilters", () => {
     const onSidesChange = vi.fn();
     const onHitRateChange = vi.fn();
     const onBooksChange = vi.fn();
+    const onGamesChange = vi.fn();
     const onClear = vi.fn();
 
     const { rerender } = render(
@@ -22,6 +23,12 @@ describe("MlbPropPicksFilters", () => {
         onTeamsChange={onTeamsChange}
         onQueryChange={onQueryChange}
         onClear={onClear}
+        games={[
+          { value: "1", label: "NYY @ BOS" },
+          { value: "2", label: "LAD @ SF" },
+        ]}
+        selectedGames={new Set()}
+        onGamesChange={onGamesChange}
         markets={[
           { value: "hits", label: "Hits" },
           { value: "strikeouts", label: "Strikeouts" },
@@ -41,6 +48,7 @@ describe("MlbPropPicksFilters", () => {
       />,
     );
 
+    expect(screen.getByRole("button", { name: "Game" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Team" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Bookmaker" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Proposition" })).toBeInTheDocument();
@@ -69,6 +77,10 @@ describe("MlbPropPicksFilters", () => {
     await user.click(screen.getByRole("option", { name: "DraftKings" }));
     expect(onBooksChange).toHaveBeenCalledWith(new Set(["draftkings"]));
 
+    await user.click(screen.getByRole("button", { name: "Game" }));
+    await user.click(screen.getByRole("option", { name: "NYY @ BOS" }));
+    expect(onGamesChange).toHaveBeenCalledWith(new Set(["1"]));
+
     rerender(
       <MlbPropPicksFilters
         teams={["LAD", "NYY"]}
@@ -77,6 +89,12 @@ describe("MlbPropPicksFilters", () => {
         onTeamsChange={onTeamsChange}
         onQueryChange={onQueryChange}
         onClear={onClear}
+        games={[
+          { value: "1", label: "NYY @ BOS" },
+          { value: "2", label: "LAD @ SF" },
+        ]}
+        selectedGames={new Set(["1"])}
+        onGamesChange={onGamesChange}
         markets={[{ value: "hits", label: "Hits" }]}
         selectedMarkets={new Set(["hits"])}
         onMarketsChange={onMarketsChange}
@@ -93,6 +111,7 @@ describe("MlbPropPicksFilters", () => {
       />,
     );
 
+    expect(screen.getByRole("button", { name: "Game (1)" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Team (1)" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Bookmaker (1)" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Proposition (1)" })).toBeInTheDocument();
@@ -133,6 +152,7 @@ describe("MlbPropPicksFilters", () => {
     );
 
     expect(screen.getByRole("searchbox", { name: "Search player" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Game" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Team" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Bookmaker" })).not.toBeInTheDocument();
   });

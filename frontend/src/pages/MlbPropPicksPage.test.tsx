@@ -43,6 +43,7 @@ const betts = row({
   market_label: "Under 0.5 Hits",
   side: "under",
   line: 0.5,
+  game_pk: 2,
 });
 
 const mockUseMlbPropBoard = vi.fn();
@@ -109,6 +110,7 @@ describe("MlbPropPicksPage", () => {
     expect(screen.queryByRole("link", { name: /View \d+ props?/ })).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Team" })).toBeInTheDocument();
     const filters = screen.getByLabelText("MLB prop picks filters");
+    expect(within(filters).getByRole("button", { name: "Game" })).toBeInTheDocument();
     expect(within(filters).getByRole("button", { name: "Proposition" })).toBeInTheDocument();
     expect(within(filters).getByRole("button", { name: "Bookmaker" })).toBeInTheDocument();
     expect(within(filters).getByRole("button", { name: "Over/Under" })).toBeInTheDocument();
@@ -126,6 +128,22 @@ describe("MlbPropPicksPage", () => {
 
     await user.click(screen.getByRole("button", { name: "Team" }));
     await user.click(screen.getByRole("option", { name: "NYY" }));
+
+    expect(screen.getByText("Aaron Judge")).toBeInTheDocument();
+    expect(screen.queryByText("Mookie Betts")).not.toBeInTheDocument();
+  });
+
+  it("filters the board by game via MlbPropPicksFilters", async () => {
+    const user = userEvent.setup();
+    mockBoard([judge, betts]);
+
+    renderPage();
+    expect(screen.getByText("Aaron Judge")).toBeInTheDocument();
+    expect(screen.getByText("Mookie Betts")).toBeInTheDocument();
+
+    const filters = screen.getByLabelText("MLB prop picks filters");
+    await user.click(within(filters).getByRole("button", { name: "Game" }));
+    await user.click(screen.getByRole("option", { name: "NYY @ BOS" }));
 
     expect(screen.getByText("Aaron Judge")).toBeInTheDocument();
     expect(screen.queryByText("Mookie Betts")).not.toBeInTheDocument();
