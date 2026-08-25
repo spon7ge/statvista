@@ -1,4 +1,4 @@
-"""Run all WNBA/MLB odds/props scrapers (excludes PrizePicks).
+"""Run all WNBA/MLB odds/props scrapers.
 
 Usage:
   python -m src.scrapers.run_all_odds
@@ -27,7 +27,8 @@ class ScraperJob:
     env: dict[str, str] | None = None
 
 
-# PrizePicks intentionally omitted.
+# PrizePicks last per league so DataDome/browser fallback does not block
+# the HTTP scrapers if a captcha solve is needed.
 SCRAPER_JOBS: tuple[ScraperJob, ...] = (
     ScraperJob("wnba_novig", "wnba", "src.scrapers.wnba_novig"),
     ScraperJob("wnba_prophetx", "wnba", "src.scrapers.wnba_prophetx"),
@@ -38,10 +39,12 @@ SCRAPER_JOBS: tuple[ScraperJob, ...] = (
         "src.scrapers.bball_pinnacle",
         env={"PINNACLE_LEAGUES": "wnba"},
     ),
+    ScraperJob("wnba_prizepick", "wnba", "src.scrapers.wnba_prizepick"),
     ScraperJob("mlb_novig", "mlb", "src.scrapers.mlb_novig"),
     ScraperJob("mlb_prophetx", "mlb", "src.scrapers.mlb_prophetx"),
     ScraperJob("mlb_underdog", "mlb", "src.scrapers.mlb_underdog"),
     ScraperJob("mlb_pinnacle", "mlb", "src.scrapers.mlb_pinnacle"),
+    ScraperJob("mlb_prizepick", "mlb", "src.scrapers.mlb_prizepick"),
 )
 
 KNOWN_NAMES = {job.name for job in SCRAPER_JOBS}
@@ -119,7 +122,7 @@ def _parse_only(raw: str | None) -> list[str] | None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Run WNBA/MLB odds/props scrapers (excludes PrizePicks).",
+        description="Run WNBA/MLB odds/props scrapers.",
     )
     parser.add_argument(
         "--league",
