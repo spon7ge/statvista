@@ -309,18 +309,28 @@ def profile_dir_path() -> str:
 
 
 # Prefer real installed browsers over Playwright's bundled Chromium (DataDome).
+# Windows entries use env vars so Program Files / AppData layouts resolve.
 _SYSTEM_CHROMIUM_CANDIDATES: tuple[str, ...] = (
     "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
     "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser",
     "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
     "/Applications/Chromium.app/Contents/MacOS/Chromium",
     "/Applications/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+    r"%PROGRAMFILES%\BraveSoftware\Brave-Browser\Application\brave.exe",
+    r"%PROGRAMFILES(X86)%\BraveSoftware\Brave-Browser\Application\brave.exe",
+    r"%LOCALAPPDATA%\BraveSoftware\Brave-Browser\Application\brave.exe",
+    r"%PROGRAMFILES%\Google\Chrome\Application\chrome.exe",
+    r"%PROGRAMFILES(X86)%\Google\Chrome\Application\chrome.exe",
+    r"%LOCALAPPDATA%\Google\Chrome\Application\chrome.exe",
+    r"%PROGRAMFILES(X86)%\Microsoft\Edge\Application\msedge.exe",
+    r"%PROGRAMFILES%\Microsoft\Edge\Application\msedge.exe",
 )
 
 
 def detect_system_chromium_executable() -> str | None:
     """Return the first installed Chromium-based browser binary, if any."""
-    for path in _SYSTEM_CHROMIUM_CANDIDATES:
+    for raw in _SYSTEM_CHROMIUM_CANDIDATES:
+        path = os.path.expandvars(os.path.expanduser(raw))
         if os.path.isfile(path) and os.access(path, os.X_OK):
             return path
     return None
@@ -923,8 +933,10 @@ def _playwright_fetch_url(page: Any, api_url: str) -> tuple[int, str]:
 
 def brave_cdp_launch_command(*, port: int = 9222) -> str:
     """Shell command to start Brave with remote debugging on the scraper profile."""
-    exe = detect_system_chromium_executable() or (
-        "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser"
+    exe = detect_system_chromium_executable() or os.path.expandvars(
+        r"%PROGRAMFILES%\BraveSoftware\Brave-Browser\Application\brave.exe"
+        if os.name == "nt"
+        else "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser"
     )
     profile = profile_dir_path()
     return (

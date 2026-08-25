@@ -166,6 +166,29 @@ class TestPlaywrightChannelFromEnv:
         assert pp.playwright_channel_from_env() == "chrome-beta"
 
 
+class TestDetectSystemChromiumExecutable:
+    def test_expands_env_vars(
+        self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    ) -> None:
+        exe = tmp_path / "brave.exe"
+        exe.write_bytes(b"")
+        exe.chmod(0o755)
+        monkeypatch.setenv("PRIZEPICKS_FAKE_BROWSER_DIR", str(tmp_path))
+        monkeypatch.setattr(
+            pp,
+            "_SYSTEM_CHROMIUM_CANDIDATES",
+            ("$PRIZEPICKS_FAKE_BROWSER_DIR/brave.exe",),
+        )
+        detected = pp.detect_system_chromium_executable()
+        assert detected is not None
+        assert Path(detected) == exe
+
+    def test_candidates_include_windows_brave(self) -> None:
+        joined = " ".join(pp._SYSTEM_CHROMIUM_CANDIDATES).lower()
+        assert "bravesoftware" in joined
+        assert "brave.exe" in joined
+
+
 class TestResolvePlaywrightBrowser:
     def test_executable_env_wins(self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
         exe = tmp_path / "Brave Browser"
