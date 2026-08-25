@@ -117,3 +117,71 @@ def test_prizepicks_extra_line_has_null_ip(client):
     assert all(
         any(chip["book"] == "prizepicks" for chip in row["books"]) for row in dfs
     )
+
+
+import pytest
+from sqlalchemy import event
+from sqlalchemy.exc import IntegrityError
+
+from app.domains.mlb.prop_board import collect_board_quotes
+from src.utils.db import get_engine
+
+
+def test_duplicate_prizepicks_primary_key_raises():
+    insert_mlb_prizepicks(
+        player_name="Aaron Judge",
+        stat_type="Hits",
+        line_score=1.5,
+        scraped_at=_T1,
+    )
+    with pytest.raises(IntegrityError):
+        insert_mlb_prizepicks(
+            player_name="Aaron Judge",
+            stat_type="Hits",
+            line_score=1.5,
+            scraped_at=_T1,
+        )
+
+
+def _count_odds_selects(fn):
+    engine = get_engine()
+    seen: list[str] = []
+
+    def _before(conn, cursor, statement, parameters, context, executemany):
+        stmt = " ".join(str(statement).split()).lower()
+        if stmt.startswith("select") and "odds." in stmt:
+            seen.append(str(statement))
+
+    event.listen(engine, "before_cursor_execute", _before)
+    try:
+        fn()
+    finally:
+        event.remove(engine, "before_cursor_execute", _before)
+    return seen
+
+
+def test_collect_board_quotes_select_count_does_not_scale_with_players():
+    insert_mlb_prizepicks(
+        player_name="Aaron Judge",
+        stat_type="Hits",
+        line_score=1.5,
+        scraped_at=_T1,
+    )
+    one = _count_odds_selects(collect_board_quotes)
+
+    insert_mlb_prizepicks(
+        player_name="Mookie Betts",
+        stat_type="Hits",
+        line_score=1.5,
+        scraped_at=_T1,
+    )
+    insert_mlb_prizepicks(
+        player_name="Shohei Ohtani",
+        stat_type="Hits",
+        line_score=1.5,
+        scraped_at=_T1,
+    )
+    many = _count_odds_selects(collect_board_quotes)
+
+    assert one
+    assert many == one
