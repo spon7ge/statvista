@@ -46,8 +46,6 @@ export function sectionHref(league: LeagueSlug, item: string): string | null {
   if (item === "Futures" && (league === "wnba" || league === "mlb")) {
     return `/${league}/futures`;
   }
-  if (item === "MLB Chatbot") return "/mlb/chatbot";
-  if (item === "WNBA Chatbot") return "/wnba/chatbot";
   return null;
 }
 

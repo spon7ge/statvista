@@ -38,13 +38,13 @@ describe("NAV_LEAGUES", () => {
 });
 
 describe("sectionHref", () => {
-  it("returns live hrefs for WNBA explore + chatbot", () => {
+  it("returns live hrefs for WNBA explore; chatbot is disabled", () => {
     expect(sectionHref("wnba", "Matchups")).toBe("/wnba/matchups");
     expect(sectionHref("wnba", "Props")).toBe("/wnba/prop_picks");
     expect(sectionHref("wnba", "Leaders")).toBe("/wnba/leaders");
     expect(sectionHref("wnba", "Standings")).toBe("/wnba/standings");
     expect(sectionHref("wnba", "Futures")).toBe("/wnba/futures");
-    expect(sectionHref("wnba", "WNBA Chatbot")).toBe("/wnba/chatbot");
+    expect(sectionHref("wnba", "WNBA Chatbot")).toBeNull();
     expect(sectionHref("wnba", "EV+")).toBeNull();
     expect(sectionHref("wnba", "Arbitrage")).toBeNull();
   });
