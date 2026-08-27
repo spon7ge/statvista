@@ -54,7 +54,7 @@ export function SeasonLeaders({ detail }: SeasonLeadersProps) {
 
   return (
     <GameSection>
-      <h2 className="text-sm font-semibold text-white">Season leaders</h2>
+      <h2 className="font-semibold text-white">Season leaders</h2>
 
       <div className="mt-4 grid gap-8 md:grid-cols-2">
         <LeaderColumn team={detail.away} leaders={seasonLeaders.away} />

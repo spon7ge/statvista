@@ -42,7 +42,7 @@ export function WinProbabilityPanel({ detail }: { detail: GameDetail }) {
   if (!data) {
     return (
       <GameSection className="!p-3" data-testid="wnba-game-flow">
-        <h2 className="text-[18px] font-semibold text-white">Game flow</h2>
+        <h2 className="font-semibold text-white">Game flow</h2>
         <p className="mt-1.5 text-[18px] text-white/50">
           Win probability unavailable
         </p>
@@ -105,7 +105,7 @@ export function WinProbabilityPanel({ detail }: { detail: GameDetail }) {
 
   return (
     <GameSection className="!p-3" data-testid="wnba-game-flow">
-      <h2 className="text-[18px] font-semibold text-white">Game flow</h2>
+      <h2 className="font-semibold text-white">Game flow</h2>
 
       {points.length > 0 ? (
         <div className="relative mt-2">

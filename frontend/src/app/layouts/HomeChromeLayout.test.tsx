@@ -1,56 +1,11 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { HomeChromeLayout } from "./HomeChromeLayout";
 
-vi.mock("@/features/basketball/hooks/useWnbaScoreboard", () => ({
-  useWnbaScoreboard: () => ({
-    isLoading: false,
-    hasNeverLoaded: false,
-    tickerGames: [
-      {
-        id: "1",
-        league: "wnba",
-        awayAbbrev: "ATL",
-        homeAbbrev: "DAL",
-        awayLogoUrl: null,
-        homeLogoUrl: null,
-        statusLabel: "Q3 7:13",
-        status: "live",
-        awayScore: 36,
-        homeScore: 44,
-      },
-    ],
-    liveGames: [],
-  }),
-}));
-
-vi.mock("@/features/mlb/hooks/useMlbScoreboard", () => ({
-  useMlbScoreboard: () => ({
-    isLoading: false,
-    hasNeverLoaded: false,
-    tickerGames: [
-      {
-        id: "mlb-9",
-        league: "mlb",
-        mlbGamePk: "9",
-        awayAbbrev: "BOS",
-        homeAbbrev: "NYY",
-        awayLogoUrl: null,
-        homeLogoUrl: null,
-        statusLabel: "Top 3rd",
-        status: "live",
-        awayScore: 2,
-        homeScore: 3,
-      },
-    ],
-    liveGames: [],
-  }),
-}));
-
 describe("HomeChromeLayout", () => {
-  it("renders ticker games from merged WNBA and MLB scoreboards", () => {
+  it("renders sidebar and footer without a live ticker", () => {
     render(
       <MemoryRouter initialEntries={["/"]}>
         <Routes>
@@ -60,16 +15,15 @@ describe("HomeChromeLayout", () => {
         </Routes>
       </MemoryRouter>,
     );
-    expect(screen.getAllByText("ATL").length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText("DAL").length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText("BOS").length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText("NYY").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText("home")).toBeInTheDocument();
+    expect(screen.queryByText("No live games")).not.toBeInTheDocument();
+    expect(screen.queryByText("Today")).not.toBeInTheDocument();
     expect(
       screen.getByText(/informational and entertainment purposes only/i),
     ).toBeInTheDocument();
   });
 
-  it("puts a primary sidebar beside the ticker, not HomeNav", () => {
+  it("puts a primary sidebar beside the page, not HomeNav", () => {
     const { container } = render(
       <MemoryRouter initialEntries={["/"]}>
         <Routes>
@@ -91,6 +45,7 @@ describe("HomeChromeLayout", () => {
       "aside",
     );
     expect(sidebar).toHaveClass("hidden", "sm:flex", "w-60");
+    expect(sidebar).not.toHaveClass("border-r");
     const root = container.firstElementChild;
     expect(root).toHaveClass("sm:flex-row");
   });

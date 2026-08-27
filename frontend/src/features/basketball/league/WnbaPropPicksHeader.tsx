@@ -1,4 +1,5 @@
 import { type ReactNode } from "react";
+import { PropPicksLeagueSwitcher } from "@/features/home/PropPicksLeagueSwitcher";
 
 export type WnbaPropAppTab = "prizepicks" | "underdog";
 
@@ -14,12 +15,12 @@ const APP_TABS: { id: WnbaPropAppTab; label: string }[] = [
 type WnbaPropPicksHeaderProps = {
   activeApp: WnbaPropAppTab;
   onAppChange: (app: WnbaPropAppTab) => void;
-  /** Team + search pills on the right of the title. */
+  /** Team + search pills under the league switcher. */
   children?: ReactNode;
 };
 
 /**
- * WNBA Props (left) with Team / search pills (right) + PrizePicks / Underdog tabs.
+ * Props title + league pills, then PrizePicks / Underdog tabs.
  * Format/legs are fixed on the board (4-pick Power/Standard) so they stay off the chrome.
  */
 export function WnbaPropPicksHeader({
@@ -28,17 +29,19 @@ export function WnbaPropPicksHeader({
   children,
 }: WnbaPropPicksHeaderProps) {
   return (
-    <div data-testid="wnba-prop-picks-header" className="relative z-20 space-y-3">
-      <div className="flex min-h-10 items-center justify-between gap-3">
-        <h1 className="min-w-0 shrink-0 text-left text-[28px] leading-none font-bold tracking-tight text-white sm:text-[32px]">
-          WNBA Props
+    <div
+      data-testid="wnba-prop-picks-header"
+      className="relative z-20 flex flex-col gap-4"
+    >
+      <div className="flex items-center justify-between">
+        <h1 className="text-left text-[28px] leading-none font-bold tracking-tight text-white/70">
+          Props
         </h1>
-        {children ? (
-          <div className="flex min-w-0 flex-wrap items-center justify-end gap-2">
-            {children}
-          </div>
-        ) : null}
       </div>
+      <PropPicksLeagueSwitcher />
+      {children ? (
+        <div className="flex flex-wrap items-center gap-2">{children}</div>
+      ) : null}
 
       <div
         role="tablist"

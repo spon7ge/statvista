@@ -51,7 +51,7 @@ export function MlbPlayList({
 export function MlbScoringPlays({ detail }: { detail: MlbGameDetailView }) {
   return (
     <GameSection className="!p-3" data-testid="mlb-scoring-plays">
-      <h2 className="mb-2 text-sm font-semibold text-white">Scoring plays</h2>
+      <h2 className="mb-2 font-semibold text-white">Scoring plays</h2>
       <MlbPlayList
         plays={detail.scoringPlays}
         empty="No scoring plays yet"

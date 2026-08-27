@@ -1,4 +1,5 @@
 import { type ReactNode } from "react";
+import { PropPicksLeagueSwitcher } from "@/features/home/PropPicksLeagueSwitcher";
 
 export type MlbPropAppTab = "prizepicks" | "underdog";
 
@@ -8,21 +9,27 @@ export function appFromSearch(value: string | null): MlbPropAppTab {
 }
 
 type MlbPropPicksHeaderProps = {
-  /** Filter pills under the title (same column as the league subnav). */
+  /** Filter pills under the league switcher. */
   children?: ReactNode;
 };
 
 /**
- * MLB Props title, matching other MLB league pages (Leaders / Standings).
- * Filter pills sit under the title in the same max-w-6xl column as the subnav.
- * PrizePicks / Underdog tabs stay on game-detail Props, not this page.
+ * Props title + horizontal league pills (PrizePicks-style).
+ * Filter pills sit under the switcher. PrizePicks / Underdog tabs stay on
+ * game-detail Props, not this page.
  */
 export function MlbPropPicksHeader({ children }: MlbPropPicksHeaderProps) {
   return (
-    <div data-testid="mlb-prop-picks-header" className="relative z-20 space-y-3">
-      <h1 className="text-left text-[32px] leading-none font-bold tracking-tight text-white sm:text-[36px]">
-        MLB Props
-      </h1>
+    <div
+      data-testid="mlb-prop-picks-header"
+      className="relative z-20 flex flex-col gap-4"
+    >
+      <div className="flex items-center justify-between">
+        <h1 className="text-left text-[28px] leading-none font-bold tracking-tight text-white/70">
+          Props
+        </h1>
+      </div>
+      <PropPicksLeagueSwitcher />
       {children ? (
         <div className="flex flex-wrap items-center gap-2">{children}</div>
       ) : null}

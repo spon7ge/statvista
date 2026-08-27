@@ -165,7 +165,7 @@ export function WnbaGameOddsBoard({ detail, boards, isPending }: Props) {
   return (
     <GameSection data-testid="wnba-game-odds-board">
       <div className="mb-3 flex items-baseline justify-between gap-3">
-        <h2 className="text-[18px] font-semibold text-white">Odds</h2>
+        <h2 className="font-semibold text-white">Odds</h2>
         {asOf ? (
           <p className="text-right text-xs text-white/50">{asOf}</p>
         ) : null}

@@ -24,7 +24,7 @@ describe("InjuryReport", () => {
     );
     const heading = screen.getByRole("heading", { name: /Injury report/i });
     expect(heading).toBeInTheDocument();
-    expect(heading).toHaveClass("text-[18px]");
+    expect(heading).toHaveClass("font-semibold");
     expect(screen.getByText("Nyara Sabally")).toBeInTheDocument();
     expect(screen.getByText(/Out/)).toBeInTheDocument();
     expect(screen.getByText(/Ribs/)).toBeInTheDocument();
@@ -71,8 +71,8 @@ describe("InjuryReport", () => {
 
     const minHeader = screen.getByText("MIN").closest("h3");
     const torHeader = screen.getByText("TOR").closest("h3");
-    expect(minHeader).toHaveClass("text-white", "text-[18px]");
-    expect(torHeader).toHaveClass("text-white", "text-[18px]");
+    expect(minHeader).toHaveClass("text-white", "font-semibold");
+    expect(torHeader).toHaveClass("text-white", "font-semibold");
     expect(
       document.querySelector('img[src="https://example.com/min.png"]'),
     ).toBeTruthy();

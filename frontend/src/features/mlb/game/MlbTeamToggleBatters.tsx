@@ -101,7 +101,7 @@ export function MlbTeamToggleBatters({ detail }: { detail: MlbGameDetailView }) 
   return (
     <GameSection className="!p-3" data-testid="mlb-team-toggle-batters">
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-        <h2 className="text-sm font-semibold text-white">Batters</h2>
+        <h2 className="font-semibold text-white">Batters</h2>
         <div className="flex flex-wrap items-center gap-0.5">
           {(
             [

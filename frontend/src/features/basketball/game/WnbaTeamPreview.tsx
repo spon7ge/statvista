@@ -186,7 +186,7 @@ function TeamLeadersSection({
 
   return (
     <GameSection className="w-full !p-3">
-      <h2 className="text-center text-[18px] font-semibold text-white">
+      <h2 className="text-center font-semibold text-white">
         Team Leaders
       </h2>
       <div className="mt-3 grid grid-cols-5 gap-2">
@@ -225,7 +225,7 @@ function TeamLeadersSection({
 function RosterTable({ rows }: { rows: RosterSeasonRow[] }) {
   return (
     <GameSection className="w-full !p-3">
-      <h2 className="text-[18px] font-semibold text-white">Roster</h2>
+      <h2 className="font-semibold text-white">Roster</h2>
       <div data-testid="wnba-team-roster-table" className="mt-2 overflow-x-auto">
         {rows.length === 0 ? (
           <p className="text-[14px] text-white/55">No season stats available</p>

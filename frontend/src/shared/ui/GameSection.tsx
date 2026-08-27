@@ -1,7 +1,8 @@
 import type { ComponentProps } from "react";
 
-/** Quiet surface matching homepage Live now cards. */
-export const GAME_SECTION_SURFACE = "rounded-xl bg-[#1c1e22] p-4";
+/** Card chrome matching the Game Info reference: rounded-2xl, 13×9 padding, light border. */
+export const GAME_SECTION_SURFACE =
+  "overflow-hidden rounded-2xl border border-white/10 bg-[#1e1e1e] px-[13px] py-[9px]";
 
 export function GameSection({
   children,

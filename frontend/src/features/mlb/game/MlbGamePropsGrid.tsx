@@ -104,7 +104,7 @@ function CategoryCard({
       data-testid={`mlb-game-props-category-${category.stat}`}
     >
       <div className={`${ROW_GRID} mb-2 px-0.5`}>
-        <h3 className="truncate text-[18px] font-semibold text-white">
+        <h3 className="truncate font-semibold text-white">
           {category.label}
         </h3>
         <span className="text-center text-[11px] font-medium uppercase tracking-wide text-white/45">

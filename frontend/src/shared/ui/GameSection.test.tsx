@@ -12,12 +12,19 @@ describe("GameSection", () => {
     const section = screen.getByRole("heading", { name: "Shot chart" }).closest(
       "section",
     );
-    expect(section).toHaveClass("rounded-xl", "bg-[#1c1e22]", "p-4");
-    expect(section).not.toHaveClass("border", "border-white/10");
+    expect(section).toHaveClass(
+      "rounded-2xl",
+      "bg-[#1e1e1e]",
+      "px-[13px]",
+      "py-[9px]",
+      "border-white/10",
+    );
   });
 
-  it("exports GAME_SECTION_SURFACE matching the Live-now card treatment", () => {
-    expect(GAME_SECTION_SURFACE).toBe("rounded-xl bg-[#1c1e22] p-4");
+  it("exports GAME_SECTION_SURFACE matching the Game Info card treatment", () => {
+    expect(GAME_SECTION_SURFACE).toBe(
+      "overflow-hidden rounded-2xl border border-white/10 bg-[#1e1e1e] px-[13px] py-[9px]",
+    );
   });
 
   it("merges an optional className", () => {
@@ -28,7 +35,7 @@ describe("GameSection", () => {
     );
     expect(screen.getByText("inner").closest("section")).toHaveClass(
       "space-y-3",
-      "rounded-xl",
+      "rounded-2xl",
     );
   });
 });

@@ -130,7 +130,7 @@ export function MlbFinalTeamStats({
     >
       <div className="mb-3 grid grid-cols-[1fr_auto_1fr] items-center gap-x-3">
         <TeamMark team={detail.away} align="left" />
-        <h2 className="text-[18px] font-semibold text-white">Team Stats</h2>
+        <h2 className="font-semibold text-white">Team Stats</h2>
         <TeamMark team={detail.home} align="right" />
       </div>
       <div>

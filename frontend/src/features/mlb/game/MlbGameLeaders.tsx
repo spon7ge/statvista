@@ -36,7 +36,7 @@ export function MlbGameLeaders({ detail }: { detail: MlbGameDetailView }) {
 
   return (
     <GameSection data-testid="mlb-game-leaders" className="w-full !p-3">
-      <h2 className="text-center text-[18px] font-semibold text-white">
+      <h2 className="text-center font-semibold text-white">
         Game Leaders
       </h2>
       <div className="mt-3 grid grid-cols-3 gap-2">

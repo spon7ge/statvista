@@ -229,11 +229,11 @@ describe("WinProbabilityPanel", () => {
     render(<WinProbabilityPanel detail={buildGameDetailFixture()} />);
     const heading = screen.getByRole("heading", { name: /game flow/i });
     expect(heading.closest("section")).toHaveClass(
-      "rounded-xl",
-      "bg-[#1c1e22]",
+      "rounded-2xl",
+      "bg-[#1e1e1e]",
       "!p-3",
     );
-    expect(heading.closest("section")).not.toHaveClass("border-white/10");
+    expect(heading.closest("section")).toHaveClass("border-white/10");
   });
 
   it("adds a neon halo on each team line when the game is live", () => {

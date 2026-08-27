@@ -1,6 +1,10 @@
-import type { ReactNode } from "react";
-import { Calendar, Landmark, TvMinimalPlay } from "lucide-react";
 import { GameSection } from "@/shared/ui/GameSection";
+import {
+  GameInfoBroadcastIcon,
+  GameInfoCalendarIcon,
+  GameInfoOfficialsIcon,
+  GameInfoVenueIcon,
+} from "@/shared/ui/GameInfoIcons";
 import type { GameDetail, GameDetailOfficial } from "../lib/types";
 
 /** Format YYYY-MM-DD as a calendar date without UTC timezone shift. */
@@ -87,41 +91,6 @@ export function formatVenueLocation(
   return parts.length ? parts.join(", ") : null;
 }
 
-function InfoRow({
-  icon,
-  children,
-}: {
-  icon: ReactNode;
-  children: ReactNode;
-}) {
-  return (
-    <div className="flex items-start gap-3">
-      <div className="mt-0.5 shrink-0 text-white/50">{icon}</div>
-      <div className="min-w-0 space-y-0.5">{children}</div>
-    </div>
-  );
-}
-
-function WhistleIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-      className="size-4"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M8 14a4 4 0 1 1 8 0v2H8v-2z" />
-      <path d="M10 14V9a2 2 0 1 1 4 0v5" />
-      <path d="M9 18h6" />
-      <circle cx="12" cy="6" r="1.5" fill="currentColor" stroke="none" />
-    </svg>
-  );
-}
-
 function hasOfficials(
   officials: GameDetailOfficial[] | null,
 ): officials is GameDetailOfficial[] {
@@ -138,48 +107,56 @@ export function WnbaGameInfo({ detail }: { detail: GameDetail }) {
   const showOfficials = hasOfficials(detail.officials);
 
   return (
-    <GameSection className="!p-3" data-testid="wnba-game-info">
-      <h2 className="text-[18px] font-semibold text-white">Game Info</h2>
+    <GameSection data-testid="wnba-game-info">
+      <h3 className="mb-[9px] font-semibold">Game Info</h3>
 
-      <div className="mt-4 space-y-4">
+      <div className="space-y-[13px]">
         {showDate ? (
-          <InfoRow icon={<Calendar className="size-4" aria-hidden="true" />}>
-            <p className="text-sm text-white">
-              {formatWnbaGameDate(detail.gameDate!)}
-            </p>
-          </InfoRow>
+          <div className="flex items-center gap-[6px]">
+            <GameInfoCalendarIcon />
+            {formatWnbaGameDate(detail.gameDate!)}
+          </div>
         ) : null}
 
         {showBroadcast ? (
-          <InfoRow icon={<TvMinimalPlay className="size-4" aria-hidden="true" />}>
-            <p className="text-sm text-white">{broadcast}</p>
-          </InfoRow>
+          <p className="flex items-center gap-[6px]">
+            <GameInfoBroadcastIcon />
+            {broadcast}
+          </p>
         ) : null}
 
         {showVenue ? (
-          <InfoRow icon={<Landmark className="size-4" aria-hidden="true" />}>
-            {venue ? <p className="text-sm text-white">{venue}</p> : null}
-            {venueLocation ? (
-              <p className="text-sm text-white/50">{venueLocation}</p>
+          <div>
+            {venue ? (
+              <p className="flex items-center gap-[6px]">
+                <GameInfoVenueIcon />
+                {venue}
+              </p>
+            ) : venueLocation ? (
+              <p className="flex items-center gap-[6px]">
+                <GameInfoVenueIcon />
+                {venueLocation}
+              </p>
             ) : null}
-          </InfoRow>
+            {venue && venueLocation ? (
+              <p className="ml-[29px] text-sm text-white/50">{venueLocation}</p>
+            ) : null}
+          </div>
         ) : null}
 
         {showOfficials ? (
-          <InfoRow icon={<WhistleIcon />}>
-            <div className="space-y-1">
+          <div className="flex gap-[6px]">
+            <GameInfoOfficialsIcon />
+            <div>
               {detail.officials!.map((official, index) => (
-                <p
-                  key={`${official.order}-${official.name}`}
-                  className="text-sm text-white"
-                >
+                <p key={`${official.order}-${official.name}`}>
                   {index === 0
                     ? `${official.name} (Head Official)`
                     : official.name}
                 </p>
               ))}
             </div>
-          </InfoRow>
+          </div>
         ) : null}
       </div>
     </GameSection>

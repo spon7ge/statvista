@@ -42,7 +42,7 @@ export function MlbMatchupPrediction({ detail }: Props) {
 
   return (
     <GameSection data-testid="mlb-matchup-prediction">
-      <h2 className="text-center text-[18px] font-semibold text-white">
+      <h2 className="text-center font-semibold text-white">
         Matchup prediction
       </h2>
 

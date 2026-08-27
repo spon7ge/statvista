@@ -39,7 +39,7 @@ function InjuryColumn({
 }) {
   return (
     <div>
-      <h3 className="mb-2 flex items-center gap-2 text-[18px] font-semibold text-white">
+      <h3 className="mb-2 flex items-center gap-2 font-semibold text-white">
         {team.logoUrl ? (
           <img
             src={team.logoUrl}
@@ -75,7 +75,7 @@ export function InjuryReport({ detail }: InjuryReportProps) {
 
   return (
     <GameSection>
-      <h2 className="text-center text-[18px] font-semibold text-white">
+      <h2 className="text-center font-semibold text-white">
         Injury report
       </h2>
 

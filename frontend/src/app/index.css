@@ -61,15 +61,6 @@
   }
 }
 
-@keyframes ticker-marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-
 /* Three-phase crossfade: NBA → WNBA → MLB (~3.5s each). */
 @keyframes league-logo-fade-a {
   0%,
@@ -162,24 +153,3 @@
   }
 }
 
-.ticker-marquee-track {
-  animation: ticker-marquee 80s linear infinite;
-}
-
-.ticker-marquee:hover .ticker-marquee-track {
-  animation-play-state: paused;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .ticker-marquee-track {
-    animation: none;
-  }
-
-  .ticker-marquee-duplicate {
-    display: none;
-  }
-
-  .ticker-marquee-viewport {
-    overflow-x: auto;
-  }
-}

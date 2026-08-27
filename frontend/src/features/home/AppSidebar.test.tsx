@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { AppSidebar } from "./AppSidebar";
@@ -13,7 +13,7 @@ function renderSidebar(path: string) {
 }
 
 describe("AppSidebar", () => {
-  it("labels primary nav, links Home to /, and keeps Settings", () => {
+  it("labels primary nav, links Home to /, and lists About, Blog, and Settings", () => {
     renderSidebar("/");
     expect(
       screen.getByRole("navigation", { name: "Primary" }),
@@ -26,10 +26,32 @@ describe("AppSidebar", () => {
       "aria-current",
       "page",
     );
-    expect(screen.getByRole("button", { name: "Settings" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Home" })).toHaveClass(
+      "font-semibold",
+    );
     expect(screen.getByRole("link", { name: "statvista" })).toHaveAttribute(
       "href",
       "/",
+    );
+    expect(
+      screen.getByRole("navigation", { name: "Primary" }).firstElementChild,
+    ).toHaveClass("rounded-2xl", "bg-[#1e1e1e]", "px-[13px]", "py-[9px]");
+
+    const siteNav = screen.getByRole("navigation", { name: "Site" });
+    expect(
+      screen.getByRole("navigation", { name: "Primary" }).nextElementSibling,
+    ).toBe(siteNav);
+    expect(siteNav).toHaveClass("rounded-2xl", "bg-[#1e1e1e]");
+    expect(within(siteNav).getByRole("button", { name: "About" })).toHaveClass(
+      "font-semibold",
+    );
+    expect(within(siteNav).getByRole("button", { name: "Blog" })).toBeInTheDocument();
+    expect(
+      within(siteNav).getByRole("button", { name: "Settings" }),
+    ).toBeInTheDocument();
+    const homeRow = screen.getByRole("link", { name: "Home" }).parentElement;
+    expect(homeRow).toContainElement(
+      screen.getByRole("button", { name: "Toggle leagues" }),
     );
   });
 

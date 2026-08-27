@@ -1,7 +1,13 @@
+import { type ReactElement } from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it, vi } from "vitest";
 import { appFromSearch, WnbaPropPicksHeader } from "./WnbaPropPicksHeader";
+
+function renderHeader(ui: ReactElement, path = "/wnba/prop_picks") {
+  return render(<MemoryRouter initialEntries={[path]}>{ui}</MemoryRouter>);
+}
 
 describe("appFromSearch", () => {
   it("defaults to prizepicks and accepts underdog", () => {
@@ -13,18 +19,21 @@ describe("appFromSearch", () => {
 });
 
 describe("WnbaPropPicksHeader", () => {
-  it("places WNBA Props on the left without a green banner", async () => {
+  it("places Props on the left with league pills and DFS tabs", async () => {
     const user = userEvent.setup();
     const onAppChange = vi.fn();
-    render(
+    renderHeader(
       <WnbaPropPicksHeader activeApp="prizepicks" onAppChange={onAppChange} />,
     );
 
-    const heading = screen.getByRole("heading", { name: "WNBA Props" });
-    expect(heading).toHaveClass("text-left");
+    const heading = screen.getByRole("heading", { name: "Props" });
+    expect(heading).toHaveClass("text-left", "text-[28px]", "font-bold");
     expect(
       screen.getByTestId("wnba-prop-picks-header").querySelector("div.rounded-3xl"),
     ).toBeNull();
+    expect(
+      screen.getByRole("navigation", { name: "Leagues" }),
+    ).toBeInTheDocument();
 
     const prize = screen.getByRole("tab", { name: "PrizePicks" });
     const underdog = screen.getByRole("tab", { name: "Underdog" });
@@ -39,7 +48,7 @@ describe("WnbaPropPicksHeader", () => {
   });
 
   it("keeps tab ids for panels", () => {
-    render(
+    renderHeader(
       <WnbaPropPicksHeader activeApp="prizepicks" onAppChange={vi.fn()} />,
     );
 
@@ -53,13 +62,13 @@ describe("WnbaPropPicksHeader", () => {
     );
   });
 
-  it("renders children to the right of the title", () => {
-    render(
+  it("renders children under the league switcher", () => {
+    renderHeader(
       <WnbaPropPicksHeader activeApp="prizepicks" onAppChange={vi.fn()}>
         <span>Team filter</span>
       </WnbaPropPicksHeader>,
     );
     expect(screen.getByText("Team filter")).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "WNBA Props" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Props" })).toBeInTheDocument();
   });
 });

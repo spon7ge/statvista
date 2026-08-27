@@ -142,7 +142,7 @@ describe("LeaguePropPicksPage", () => {
       format: "power",
       legs: 4,
     });
-    expect(screen.getByRole("heading", { name: "WNBA Props" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Props" })).toBeInTheDocument();
     expect(screen.getByRole("tab", { name: "PrizePicks" })).toHaveAttribute(
       "aria-selected",
       "true",

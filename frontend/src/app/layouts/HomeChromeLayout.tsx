@@ -2,19 +2,12 @@ import { useEffect, useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { AppSidebar } from "@/features/home/AppSidebar";
-import { LiveTicker } from "@/features/home/LiveTicker";
-import { mergeLeagueScoreboards } from "@/features/home/lib/mergeLeagueScoreboards";
 import { SiteFooter } from "@/shared/ui/SiteFooter";
-import { StatvistaBarsMark } from "@/shared/ui/StatvistaBarsMark";
-import { useMlbScoreboard } from "@/features/mlb/hooks/useMlbScoreboard";
-import { useWnbaScoreboard } from "@/features/basketball/hooks/useWnbaScoreboard";
+import { StatvistaWordmark } from "@/shared/ui/StatvistaWordmark";
 
 export function HomeChromeLayout() {
   const { pathname } = useLocation();
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const wnba = useWnbaScoreboard();
-  const mlb = useMlbScoreboard();
-  const { tickerGames, hasNeverLoaded } = mergeLeagueScoreboards([wnba, mlb]);
 
   useEffect(() => {
     setDrawerOpen(false);
@@ -42,15 +35,12 @@ export function HomeChromeLayout() {
         >
           <Menu className="size-5" strokeWidth={1.75} aria-hidden />
         </button>
-        <Link to="/" className="flex items-center gap-2 text-white no-underline">
-          <StatvistaBarsMark />
-          <span className="text-[18px] font-semibold tracking-tight">
-            statvista
-          </span>
+        <Link to="/" className="text-white no-underline">
+          <StatvistaWordmark />
         </Link>
       </header>
 
-      <aside className="hidden w-60 shrink-0 flex-col self-stretch border-r border-white/10 sm:flex">
+      <aside className="hidden w-60 shrink-0 flex-col self-stretch sm:flex">
         <AppSidebar />
       </aside>
 
@@ -64,7 +54,7 @@ export function HomeChromeLayout() {
           />
           <div
             id="app-sidebar-drawer"
-            className="fixed inset-y-0 left-0 z-50 w-60 border-r border-white/10 bg-background sm:hidden"
+            className="fixed inset-y-0 left-0 z-50 w-60 bg-background sm:hidden"
           >
             <AppSidebar />
           </div>
@@ -72,7 +62,6 @@ export function HomeChromeLayout() {
       ) : null}
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <LiveTicker games={tickerGames} isError={hasNeverLoaded} />
         <main className="flex-1">
           <Outlet />
         </main>

@@ -35,7 +35,7 @@ export function MatchupPrediction({ detail }: MatchupPredictionProps) {
 
   return (
     <GameSection data-testid="wnba-matchup-prediction">
-      <h2 className="text-center text-[18px] font-semibold text-white">
+      <h2 className="text-center font-semibold text-white">
         Matchup prediction
       </h2>
 

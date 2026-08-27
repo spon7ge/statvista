@@ -97,9 +97,9 @@ describe("MlbPropPicksPage", () => {
     renderPage();
 
     expect(mockUseMlbPropBoard).toHaveBeenCalledWith();
-    expect(screen.getByRole("heading", { name: "MLB Props" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Props" })).toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { name: "MLB Props" }).closest("section"),
+      screen.getByRole("heading", { name: "Props" }).closest("section"),
     ).toHaveClass("max-w-6xl");
     expect(screen.queryByRole("tab", { name: "PrizePicks" })).not.toBeInTheDocument();
     expect(screen.queryByRole("tab", { name: "Underdog" })).not.toBeInTheDocument();

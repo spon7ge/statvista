@@ -1,6 +1,11 @@
-import type { ReactNode } from "react";
-import { Building2, Calendar, Cloud, Wind } from "lucide-react";
 import { GameSection } from "@/shared/ui/GameSection";
+import {
+  GameInfoCalendarIcon,
+  GameInfoCloudIcon,
+  GameInfoOfficialsIcon,
+  GameInfoVenueIcon,
+  GameInfoWindIcon,
+} from "@/shared/ui/GameInfoIcons";
 import type {
   MlbGameDetailView,
   MlbGameUmpires,
@@ -48,40 +53,6 @@ function hasUmpires(umpires: MlbGameUmpires | null): umpires is MlbGameUmpires {
   );
 }
 
-function InfoRow({
-  icon,
-  children,
-}: {
-  icon: ReactNode;
-  children: ReactNode;
-}) {
-  return (
-    <div className="flex items-start gap-3">
-      <div className="mt-0.5 shrink-0 text-white/50">{icon}</div>
-      <div className="min-w-0 space-y-0.5">{children}</div>
-    </div>
-  );
-}
-
-function UmpireMaskIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-      className="size-4"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M12 3c-3.5 0-6 2.2-6 5.5v3c0 3.3 2.5 5.5 6 5.5s6-2.2 6-5.5v-3C18 5.2 15.5 3 12 3z" />
-      <path d="M8 9.5h8" />
-      <path d="M9.5 13h5" />
-    </svg>
-  );
-}
-
 const UMPIRE_LINES: {
   key: keyof MlbGameUmpires;
   label: string;
@@ -101,57 +72,68 @@ export function MlbGameInfo({ detail }: MlbGameInfoProps) {
 
   return (
     <GameSection data-testid="mlb-game-info">
-      <h2 className="text-[18px] font-semibold text-white">Game Info</h2>
+      <h3 className="mb-[9px] font-semibold">Game Info</h3>
 
-      <div className="mt-4 space-y-4">
+      <div className="space-y-[13px]">
         {showDate ? (
-          <InfoRow icon={<Calendar className="size-4" aria-hidden="true" />}>
-            <p className="text-sm text-white">
-              {formatMlbGameDate(detail.gameDate!)}
-            </p>
-          </InfoRow>
+          <div className="flex items-center gap-[6px]">
+            <GameInfoCalendarIcon />
+            {formatMlbGameDate(detail.gameDate!)}
+          </div>
         ) : null}
 
         {showVenue ? (
-          <InfoRow icon={<Building2 className="size-4" aria-hidden="true" />}>
+          <div>
             {detail.venue?.trim() ? (
-              <p className="text-sm text-white">{detail.venue.trim()}</p>
+              <p className="flex items-center gap-[6px]">
+                <GameInfoVenueIcon />
+                {detail.venue.trim()}
+              </p>
+            ) : venueLocation ? (
+              <p className="flex items-center gap-[6px]">
+                <GameInfoVenueIcon />
+                {venueLocation}
+              </p>
             ) : null}
-            {venueLocation ? (
-              <p className="text-sm text-white/50">{venueLocation}</p>
+            {detail.venue?.trim() && venueLocation ? (
+              <p className="ml-[29px] text-sm text-white/50">{venueLocation}</p>
             ) : null}
-          </InfoRow>
+          </div>
         ) : null}
 
         {showWeather ? (
-          <InfoRow icon={<Cloud className="size-4" aria-hidden="true" />}>
+          <div className="flex gap-[13px]">
             {detail.weather?.tempF?.trim() ? (
-              <p className="text-sm text-white">{`${detail.weather.tempF.trim()}°`}</p>
+              <p className="flex items-center gap-[6px]">
+                <GameInfoCloudIcon />
+                {`${detail.weather.tempF.trim()}°`}
+              </p>
             ) : null}
             {detail.weather?.wind?.trim() ? (
-              <div className="flex items-center gap-2 text-sm text-white">
-                <Wind className="size-3.5 shrink-0 text-white/50" aria-hidden="true" />
-                <span>{detail.weather.wind.trim()}</span>
-              </div>
+              <p className="flex items-center gap-[6px]">
+                <GameInfoWindIcon />
+                {detail.weather.wind.trim()}
+              </p>
             ) : null}
-          </InfoRow>
+          </div>
         ) : null}
 
         {showUmpires ? (
-          <InfoRow icon={<UmpireMaskIcon />}>
-            <div className="space-y-1">
+          <div className="flex gap-[6px]">
+            <GameInfoOfficialsIcon />
+            <div>
               {UMPIRE_LINES.map(({ key, label }) => {
                 const name = detail.umpires?.[key]?.trim();
                 if (!name) return null;
                 return (
-                  <p key={key} className="text-sm">
+                  <p key={key}>
                     <span className="text-white/50">{`${label}: `}</span>
-                    <span className="text-white">{name}</span>
+                    {name}
                   </p>
                 );
               })}
             </div>
-          </InfoRow>
+          </div>
         ) : null}
       </div>
     </GameSection>

@@ -35,7 +35,7 @@ function StarterColumn({
 }) {
   return (
     <div>
-      <h3 className="mb-3 flex items-center gap-2 text-[18px]">
+      <h3 className="mb-3 flex items-center gap-2">
         {team.logoUrl ? (
           <img src={team.logoUrl} alt="" className="size-6 shrink-0 object-contain" />
         ) : null}
@@ -62,7 +62,7 @@ export function ProjectedStarters({ detail }: ProjectedStartersProps) {
 
   return (
     <GameSection>
-      <h2 className="text-center text-[18px] font-semibold text-white">
+      <h2 className="text-center font-semibold text-white">
         Projected Starters
       </h2>
 

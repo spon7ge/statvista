@@ -127,7 +127,7 @@ describe("AppRouter", () => {
     });
     renderWithProviders(["/wnba/prop_picks"]);
     expect(
-      await screen.findByRole("heading", { name: "WNBA Props" }),
+      await screen.findByRole("heading", { name: "Props" }),
     ).toBeInTheDocument();
     expect(await screen.findByText("Rhyne Howard")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Props" })).toHaveAttribute(
@@ -527,7 +527,7 @@ describe("AppRouter", () => {
     renderWithProviders(["/mlb/prop_picks"]);
 
     expect(
-      await screen.findByRole("heading", { name: "MLB Props" }),
+      await screen.findByRole("heading", { name: "Props" }),
     ).toBeInTheDocument();
     expect(await screen.findByText("No board yet")).toBeInTheDocument();
     expect(screen.queryByRole("tab", { name: "PrizePicks" })).not.toBeInTheDocument();
@@ -562,7 +562,7 @@ describe("AppRouter", () => {
 
     renderWithProviders(["/mlb/prop_picks/player/aaron-judge?app=prizepicks"]);
     expect(
-      await screen.findByRole("heading", { name: "MLB Props" }),
+      await screen.findByRole("heading", { name: "Props" }),
     ).toBeInTheDocument();
     expect(await screen.findByText("No board yet")).toBeInTheDocument();
     expect(screen.queryByTestId("mlb-player-props-odds-grid")).not.toBeInTheDocument();
@@ -679,7 +679,7 @@ describe("AppRouter", () => {
     expect(
       await screen.findByText(/Golden State Valkyries/i),
     ).toBeInTheDocument();
-    expect(screen.getByText("No live games")).toBeInTheDocument(); // chrome ticker still present
+    expect(screen.queryByText("No live games")).not.toBeInTheDocument();
   });
 
   it("renders WNBA standings at /wnba/standings", async () => {

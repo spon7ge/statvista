@@ -117,8 +117,8 @@ describe("ShotChart", () => {
   it("wraps content in the quiet GameSection surface", () => {
     render(<ShotChart detail={detail} />);
     expect(screen.getByTestId("wnba-shot-chart")).toHaveClass(
-      "rounded-xl",
-      "bg-[#1c1e22]",
+      "rounded-2xl",
+      "bg-[#1e1e1e]",
       "!p-3",
     );
   });

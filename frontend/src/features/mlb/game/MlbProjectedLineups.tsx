@@ -167,7 +167,7 @@ function PitcherCard({
     <div className="rounded-lg border border-white bg-[#45484d] p-3">
       <h3
         aria-label={formatPitcherTitle(pitcher.hand, pitcher.name)}
-        className="text-center text-[18px] font-semibold text-white"
+        className="text-center font-semibold text-white"
       >
         <span>{pitcher.name ?? "TBD"}</span>
         {handLetter ? (
@@ -303,7 +303,7 @@ export function MlbProjectedLineups({
             data-testid="mlb-projected-lineups"
           >
             <div className="mb-3 flex flex-col items-center gap-2">
-              <h2 className="text-center text-[18px] font-semibold leading-snug text-white">
+              <h2 className="text-center font-semibold leading-snug text-white">
                 Projected Rotowire Lineups
               </h2>
               <div className="flex items-center justify-center gap-1">

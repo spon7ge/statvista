@@ -22,6 +22,9 @@ describe("WnbaGameInfo", () => {
         }}
       />,
     );
+    expect(screen.getByRole("heading", { name: "Game Info" })).toHaveClass(
+      "font-semibold",
+    );
     expect(screen.getByText("August 10, 2026")).toBeInTheDocument();
     expect(screen.getByText("USA")).toBeInTheDocument();
     expect(screen.getByText("Climate Pledge Arena")).toBeInTheDocument();

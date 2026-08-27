@@ -312,7 +312,7 @@ export function MlbHitChart({ detail }: { detail: MlbGameDetailView }) {
 
   return (
     <GameSection className="!p-3 min-w-0" data-testid="mlb-hit-chart">
-      <h2 className="text-[18px] font-semibold text-white">Hit chart</h2>
+      <h2 className="font-semibold text-white">Hit chart</h2>
 
       <div className="mt-2.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
         <div

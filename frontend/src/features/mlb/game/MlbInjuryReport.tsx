@@ -109,7 +109,7 @@ export function MlbInjuryReport({ detail }: MlbInjuryReportProps) {
     >
       <div className="mb-3 grid grid-cols-[1fr_auto_1fr] items-center gap-x-3">
         <TeamMark team={detail.away} align="left" />
-        <h2 className="text-center text-[18px] font-semibold text-white">
+        <h2 className="text-center font-semibold text-white">
           Injuries
         </h2>
         <TeamMark team={detail.home} align="right" />

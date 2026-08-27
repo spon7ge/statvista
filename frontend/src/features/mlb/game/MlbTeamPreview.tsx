@@ -236,7 +236,7 @@ function TeamLeadersSection({
 
   return (
     <GameSection className="w-full !p-3">
-      <h2 className="text-center text-[18px] font-semibold text-white">
+      <h2 className="text-center font-semibold text-white">
         {title}
       </h2>
       <div className="mt-3 grid grid-cols-3 gap-2">
@@ -287,7 +287,7 @@ function SeasonTable({
 }) {
   return (
     <GameSection className="w-full !p-3">
-      <h2 className="text-[18px] font-semibold text-white">{title}</h2>
+      <h2 className="font-semibold text-white">{title}</h2>
       <div data-testid={testId} className="mt-2 overflow-x-auto">
         {rows.length === 0 ? (
           <p className="text-[14px] text-white/55">No season stats available</p>

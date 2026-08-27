@@ -36,8 +36,10 @@ const minimalDetail: MlbGameDetailView = {
 describe("MlbGameInfo", () => {
   it("renders date, venue, weather, and umpires", () => {
     render(<MlbGameInfo detail={fullDetail} />);
-    expect(screen.getByTestId("mlb-game-info")).toBeInTheDocument();
-    expect(screen.getByText("Game Info")).toBeInTheDocument();
+    expect(screen.getByTestId("mlb-game-info")).toHaveClass("rounded-2xl");
+    expect(screen.getByRole("heading", { name: "Game Info" })).toHaveClass(
+      "font-semibold",
+    );
     expect(screen.getByText("August 7, 2026")).toBeInTheDocument();
     expect(screen.getByText("Yankee Stadium")).toBeInTheDocument();
     expect(screen.getByText("Bronx, New York")).toBeInTheDocument();
