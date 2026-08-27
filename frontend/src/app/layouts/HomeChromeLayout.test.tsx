@@ -67,4 +67,30 @@ describe("HomeChromeLayout", () => {
       screen.getByText(/informational and entertainment purposes only/i),
     ).toBeInTheDocument();
   });
+
+  it("puts a primary sidebar beside the ticker, not HomeNav", () => {
+    const { container } = render(
+      <MemoryRouter initialEntries={["/"]}>
+        <Routes>
+          <Route element={<HomeChromeLayout />}>
+            <Route path="/" element={<div>home</div>} />
+          </Route>
+        </Routes>
+      </MemoryRouter>,
+    );
+    expect(
+      screen.getByRole("navigation", { name: "Primary" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Home" })).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /^leagues$/i }),
+    ).not.toBeInTheDocument();
+
+    const sidebar = screen.getByRole("navigation", { name: "Primary" }).closest(
+      "aside",
+    );
+    expect(sidebar).toHaveClass("hidden", "sm:flex", "w-60");
+    const root = container.firstElementChild;
+    expect(root).toHaveClass("sm:flex-row");
+  });
 });
