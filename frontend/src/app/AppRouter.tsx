@@ -6,6 +6,7 @@ import { LeagueMatchupsPage } from "@/pages/LeagueMatchupsPage";
 import { LeagueLeadersPage } from "@/pages/LeagueLeadersPage";
 import { LeagueStandingsPage } from "@/pages/LeagueStandingsPage";
 import { LeagueFuturesPage } from "@/pages/LeagueFuturesPage";
+import { LeagueChatbotPage } from "@/pages/LeagueChatbotPage";
 import { LeaguePlayerPage } from "@/pages/LeaguePlayerPage";
 import { LeaguePropPicksPage } from "@/pages/LeaguePropPicksPage";
 import { WnbaPlayerPropsPage } from "@/pages/WnbaPlayerPropsPage";
@@ -34,6 +35,10 @@ export function AppRouter() {
         <Route path="/wnba/leaders" element={<LeagueLeadersPage />} />
         <Route path="/wnba/standings" element={<LeagueStandingsPage />} />
         <Route path="/wnba/futures" element={<LeagueFuturesPage />} />
+        <Route
+          path="/wnba/chatbot"
+          element={<LeagueChatbotPage league="wnba" />}
+        />
         <Route path="/wnba/player/:playerId" element={<LeaguePlayerPage />} />
 
         <Route
@@ -52,6 +57,10 @@ export function AppRouter() {
         <Route path="/mlb/leaders" element={<MlbLeadersPage />} />
         <Route path="/mlb/standings" element={<MlbStandingsPage />} />
         <Route path="/mlb/futures" element={<MlbFuturesPage />} />
+        <Route
+          path="/mlb/chatbot"
+          element={<LeagueChatbotPage league="mlb" />}
+        />
         <Route path="/mlb/games/:gamePk" element={<MlbGameDetailPage />} />
       </Route>
       <Route path="*" element={<NotFoundPage />} />

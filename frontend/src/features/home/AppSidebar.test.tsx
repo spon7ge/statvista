@@ -81,8 +81,10 @@ describe("AppSidebar", () => {
       "/wnba/matchups",
     );
     expect(screen.queryByRole("link", { name: "MLB Chatbot" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "WNBA Chatbot" })).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "WNBA Chatbot" })).toBeDisabled();
+    expect(screen.getByRole("link", { name: "WNBA Chatbot" })).toHaveAttribute(
+      "href",
+      "/wnba/chatbot",
+    );
     expect(screen.getByText("Explore")).toBeInTheDocument();
     expect(screen.getByText("Learn")).toBeInTheDocument();
   });

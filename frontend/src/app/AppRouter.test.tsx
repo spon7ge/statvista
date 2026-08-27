@@ -493,6 +493,18 @@ describe("AppRouter", () => {
     );
   });
 
+  it("renders MLB Chatbot at /mlb/chatbot", async () => {
+    renderWithProviders(["/mlb/chatbot"]);
+    expect(
+      await screen.findByRole("heading", { name: "MLB Chatbot" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("MLB Chatbot coming soon.")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "MLB Chatbot" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+  });
+
   it("renders MLB prop picks at /mlb/prop_picks", async () => {
     fetchMock.mockImplementation(async (input: RequestInfo) => {
       const url = String(input);
@@ -759,6 +771,18 @@ describe("AppRouter", () => {
     expect(await screen.findByText("New York Liberty")).toBeInTheDocument();
     expect(screen.getByText("+250")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Futures" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+  });
+
+  it("renders WNBA Chatbot at /wnba/chatbot", async () => {
+    renderWithProviders(["/wnba/chatbot"]);
+    expect(
+      await screen.findByRole("heading", { name: "WNBA Chatbot" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("WNBA Chatbot coming soon.")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "WNBA Chatbot" })).toHaveAttribute(
       "aria-current",
       "page",
     );

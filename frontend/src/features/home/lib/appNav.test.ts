@@ -44,7 +44,7 @@ describe("sectionHref", () => {
     expect(sectionHref("wnba", "Leaders")).toBe("/wnba/leaders");
     expect(sectionHref("wnba", "Standings")).toBe("/wnba/standings");
     expect(sectionHref("wnba", "Futures")).toBe("/wnba/futures");
-    expect(sectionHref("wnba", "WNBA Chatbot")).toBeNull();
+    expect(sectionHref("wnba", "WNBA Chatbot")).toBe("/wnba/chatbot");
     expect(sectionHref("wnba", "EV+")).toBeNull();
     expect(sectionHref("wnba", "Arbitrage")).toBeNull();
   });
