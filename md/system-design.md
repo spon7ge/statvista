@@ -40,7 +40,7 @@ Two backend families exist. The **live website mainly uses the WNBA and MLB upst
 | MLB upstream | `/api/mlb/scoreboard/*`, `/api/mlb/odds/today` | Yes (home + game Preview odds) |
 | DB-backed (silver / gold) | `/api/games/{date}/slate`, `/api/props`, … | No |
 
-Shared chrome (`HomeChromeLayout`) wraps most routes with nav, live ticker, and footer.
+Shared chrome (`HomeChromeLayout`) wraps most routes with a left sidebar (mobile hamburger drawer), live ticker in the content column, and footer.
 
 ---
 
@@ -65,7 +65,7 @@ Shared chrome (`HomeChromeLayout`) wraps most routes with nav, live ticker, and 
 ```text
 main.tsx
   QueryClientProvider → BrowserRouter → AppRouter
-    HomeChromeLayout (HomeNav + LiveTicker + SiteFooter)
+    HomeChromeLayout (AppSidebar + LiveTicker + SiteFooter)
       /                    HomePage
       /games/:espnEventId  GameDetailPage
       /wnba/matchups       LeagueMatchupsPage (league="wnba")

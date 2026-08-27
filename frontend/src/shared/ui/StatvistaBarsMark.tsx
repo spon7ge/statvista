@@ -2,7 +2,7 @@ type StatvistaBarsMarkProps = {
   className?: string;
 };
 
-/** Brand mark: three ascending bars (same geometry as next to “statvista” in HomeNav). */
+/** Brand mark: three ascending bars (same geometry as next to “statvista” in the app sidebar). */
 export function StatvistaBarsMark({
   className = "size-4",
 }: StatvistaBarsMarkProps) {
