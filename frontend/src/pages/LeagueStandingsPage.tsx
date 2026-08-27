@@ -1,4 +1,3 @@
-import { LeagueSubnav } from "@/features/basketball/league/LeagueSubnav";
 import { StandingsGrid } from "@/features/basketball/league/StandingsGrid";
 import { WnbaStandingsHeader } from "@/features/basketball/league/WnbaStandingsHeader";
 import { useWnbaStandings } from "@/features/basketball/hooks/useWnbaStandings";
@@ -9,7 +8,6 @@ export function LeagueStandingsPage() {
 
   return (
     <div className="space-y-0">
-      <LeagueSubnav league="wnba" />
       <section className="mx-auto max-w-6xl space-y-6 px-4 pb-16 sm:px-6 sm:pb-20">
         <WnbaStandingsHeader season={season} />
         <StandingsGrid

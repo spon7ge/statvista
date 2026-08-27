@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import { useParams } from "react-router-dom";
-import { LeagueSubnav } from "@/features/basketball/league/LeagueSubnav";
 import { WnbaPlayerHeaderBanner } from "@/features/basketball/league/WnbaPlayerHeaderBanner";
 import { PlayerHeader } from "@/features/basketball/league/PlayerHeader";
 import { PlayerRecentGames } from "@/features/basketball/league/PlayerRecentGames";
@@ -54,7 +53,6 @@ export function LeaguePlayerPage() {
 
   return (
     <div className="space-y-0">
-      <LeagueSubnav league="wnba" />
       {body}
     </div>
   );

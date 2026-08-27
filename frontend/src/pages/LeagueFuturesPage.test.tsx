@@ -59,9 +59,5 @@ describe("LeagueFuturesPage", () => {
     renderPage();
     expect(await screen.findByText("Finals Winner")).toBeInTheDocument();
     expect(screen.getByText("New York Liberty")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Futures" })).toHaveAttribute(
-      "aria-current",
-      "page",
-    );
   });
 });

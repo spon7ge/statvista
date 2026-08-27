@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import { LeagueSubnav } from "@/features/basketball/league/LeagueSubnav";
 import { useWnbaProps } from "@/features/basketball/hooks/useWnbaProps";
 import {
   appFromSearch,
@@ -134,7 +133,6 @@ export function WnbaPlayerPropsPage() {
 
   return (
     <div className="space-y-0 pb-8">
-      <LeagueSubnav league="wnba" />
       {body}
     </div>
   );

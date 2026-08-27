@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { LeagueHero } from "@/features/basketball/league/LeagueHero";
-import { LeagueSubnav } from "@/features/basketball/league/LeagueSubnav";
 import { MatchupsPanel } from "@/features/basketball/league/MatchupsPanel";
 import {
   isValidEtDate,
@@ -30,7 +29,6 @@ export function LeagueMatchupsPage({ league }: LeagueMatchupsPageProps) {
   return (
     <div className="space-y-0 pb-8">
       <LeagueHero league="nba" />
-      <LeagueSubnav league="nba" />
       <p className="mx-auto max-w-6xl px-4 text-sm text-white/40 sm:px-6">
         NBA matchups coming soon.
       </p>
@@ -62,7 +60,6 @@ function WnbaMatchupsPage() {
   return (
     <div className="space-y-0">
       <LeagueHero league="wnba" dateEt={data?.date ?? selectedDate} />
-      <LeagueSubnav league="wnba" />
       <MatchupsPanel
         games={matchupGames}
         isLoading={isLoading}
@@ -101,7 +98,6 @@ function MlbMatchupsPage() {
   return (
     <div className="space-y-0">
       <LeagueHero league="mlb" dateEt={data?.date ?? selectedDate} />
-      <LeagueSubnav league="mlb" />
       <MatchupsPanel
         games={matchupGames}
         isLoading={isLoading}

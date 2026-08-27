@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react";
-import { LeagueSubnav } from "@/features/basketball/league/LeagueSubnav";
 import { useMlbPropBoard } from "@/features/mlb/hooks/useMlbPropBoard";
 import { MlbPropPicksFilters } from "@/features/mlb/league/MlbPropPicksFilters";
 import { MlbPropPicksHeader } from "@/features/mlb/league/MlbPropPicksHeader";
@@ -86,7 +85,6 @@ export function MlbPropPicksPage() {
 
   return (
     <div className="space-y-0 pb-8">
-      <LeagueSubnav league="mlb" />
       <section className="mx-auto max-w-6xl space-y-6 px-4 pb-16 sm:px-6 sm:pb-20">
         <MlbPropPicksHeader>
           {showBoardFilters ? (

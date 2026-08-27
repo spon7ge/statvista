@@ -77,7 +77,7 @@ describe("MlbFuturesPage", () => {
     });
   });
 
-  it("renders header, board, and active Futures subnav", () => {
+  it("renders header, board, and World Series tab", () => {
     renderPage();
 
     expect(
@@ -85,14 +85,6 @@ describe("MlbFuturesPage", () => {
     ).toBeInTheDocument();
     expect(screen.getByText("World Series Winner")).toBeInTheDocument();
     expect(screen.getByText("New York Yankees")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Futures" })).toHaveAttribute(
-      "href",
-      "/mlb/futures",
-    );
-    expect(screen.getByRole("link", { name: "Futures" })).toHaveAttribute(
-      "aria-current",
-      "page",
-    );
     expect(screen.getByRole("tab", { name: "World Series" })).toHaveAttribute(
       "aria-selected",
       "true",

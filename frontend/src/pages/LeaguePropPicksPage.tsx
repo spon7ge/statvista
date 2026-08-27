@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { LeagueSubnav } from "@/features/basketball/league/LeagueSubnav";
 import { useWnbaProps } from "@/features/basketball/hooks/useWnbaProps";
 import { useWnbaScoreboard } from "@/features/basketball/hooks/useWnbaScoreboard";
 import { WnbaPropPicksFilters } from "@/features/basketball/league/WnbaPropPicksFilters";
@@ -93,7 +92,6 @@ export function LeaguePropPicksPage() {
 
   return (
     <div className="space-y-0 pb-8">
-      <LeagueSubnav league="wnba" />
       <section className="mx-auto max-w-6xl space-y-6 px-4 pb-16 sm:px-6 sm:pb-20">
         <WnbaPropPicksHeader
           activeApp={app}

@@ -59,9 +59,5 @@ describe("LeagueLeadersPage", () => {
     expect(await screen.findByText("Points")).toBeInTheDocument();
     expect(screen.getByText("A'ja Wilson")).toBeInTheDocument();
     expect(screen.getByText("Data: stats.wnba.com")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Leaders" })).toHaveAttribute(
-      "aria-current",
-      "page",
-    );
   });
 });

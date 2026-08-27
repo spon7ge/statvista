@@ -83,7 +83,6 @@ describe("LeaguePlayerPage", () => {
     ).toBeInTheDocument();
     expect(screen.getByText("Recent games")).toBeInTheDocument();
     expect(screen.getByText("Data: stats.wnba.com")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Leaders" })).toBeInTheDocument();
   });
 
   it("shows Player not found on 404", async () => {

@@ -66,9 +66,5 @@ describe("LeagueStandingsPage", () => {
     expect(await screen.findByText("Eastern Conference")).toBeInTheDocument();
     expect(screen.getByText("Indiana Fever")).toBeInTheDocument();
     expect(screen.getByText("Data: ESPN")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Standings" })).toHaveAttribute(
-      "aria-current",
-      "page",
-    );
   });
 });
