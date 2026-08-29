@@ -1,0 +1,1010 @@
+{
+  "fetched_at": "2026-08-26T14:09:13-07:00",
+  "source": "pinnacle_selenium",
+  "sport": "basketball",
+  "league": "wnba",
+  "list_page": "https://www.pinnacle.com/en/basketball/wnba/matchups/#all",
+  "parallel_workers_configured": 5,
+  "parallel_workers_effective": 1,
+  "games_per_worker_target": 2,
+  "arcadia_timeout_s": 90.0,
+  "arcadia_poll_s": 0.22,
+  "snapshot_kind": "team",
+  "games": [
+    {
+      "matchup_id": 1634341903,
+      "source_url": "https://www.pinnacle.com/en/basketball/wnba/golden-state-valkyries-vs-connecticut-sun/1634341903/#all",
+      "path": "/en/basketball/wnba/golden-state-valkyries-vs-connecticut-sun/1634341903/",
+      "league": "WNBA",
+      "start_time": "2026-08-26T23:00:00Z",
+      "label": "Golden State Valkyries vs Connecticut Sun",
+      "participants": [
+        "Golden State Valkyries",
+        "Connecticut Sun"
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Connecticut Sun",
+                "american": 727,
+                "decimal": 8.27
+              },
+              {
+                "side": "away",
+                "team": "Golden State Valkyries",
+                "american": -1021,
+                "decimal": 1.098
+              }
+            ]
+          }
+        ],
+        "spread": [
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Connecticut Sun",
+                "points": 14.0,
+                "american": -106,
+                "decimal": 1.943
+              },
+              {
+                "side": "away",
+                "team": "Golden State Valkyries",
+                "points": -14.0,
+                "american": -110,
+                "decimal": 1.909
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Connecticut Sun",
+                "points": 15.5,
+                "american": -139,
+                "decimal": 1.719
+              },
+              {
+                "side": "away",
+                "team": "Golden State Valkyries",
+                "points": -15.5,
+                "american": 114,
+                "decimal": 2.14
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Connecticut Sun",
+                "points": 15.0,
+                "american": -128,
+                "decimal": 1.781
+              },
+              {
+                "side": "away",
+                "team": "Golden State Valkyries",
+                "points": -15.0,
+                "american": 106,
+                "decimal": 2.06
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Connecticut Sun",
+                "points": 14.5,
+                "american": -118,
+                "decimal": 1.847
+              },
+              {
+                "side": "away",
+                "team": "Golden State Valkyries",
+                "points": -14.5,
+                "american": -103,
+                "decimal": 1.971
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Connecticut Sun",
+                "points": 13.5,
+                "american": 102,
+                "decimal": 2.02
+              },
+              {
+                "side": "away",
+                "team": "Golden State Valkyries",
+                "points": -13.5,
+                "american": -123,
+                "decimal": 1.813
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Connecticut Sun",
+                "points": 13.0,
+                "american": 110,
+                "decimal": 2.1
+              },
+              {
+                "side": "away",
+                "team": "Golden State Valkyries",
+                "points": -13.0,
+                "american": -134,
+                "decimal": 1.746
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Connecticut Sun",
+                "points": 12.5,
+                "american": 119,
+                "decimal": 2.19
+              },
+              {
+                "side": "away",
+                "team": "Golden State Valkyries",
+                "points": -12.5,
+                "american": -145,
+                "decimal": 1.69
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Connecticut Sun",
+                "points": 7.5,
+                "american": -107,
+                "decimal": 1.935
+              },
+              {
+                "side": "away",
+                "team": "Golden State Valkyries",
+                "points": -7.5,
+                "american": -113,
+                "decimal": 1.885
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Connecticut Sun",
+                "points": 8.5,
+                "american": -134,
+                "decimal": 1.746
+              },
+              {
+                "side": "away",
+                "team": "Golden State Valkyries",
+                "points": -8.5,
+                "american": 107,
+                "decimal": 2.07
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Connecticut Sun",
+                "points": 8.0,
+                "american": -121,
+                "decimal": 1.826
+              },
+              {
+                "side": "away",
+                "team": "Golden State Valkyries",
+                "points": -8.0,
+                "american": -103,
+                "decimal": 1.971
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Connecticut Sun",
+                "points": 7.0,
+                "american": 102,
+                "decimal": 2.02
+              },
+              {
+                "side": "away",
+                "team": "Golden State Valkyries",
+                "points": -7.0,
+                "american": -128,
+                "decimal": 1.781
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Connecticut Sun",
+                "points": 6.5,
+                "american": 112,
+                "decimal": 2.12
+              },
+              {
+                "side": "away",
+                "team": "Golden State Valkyries",
+                "points": -6.5,
+                "american": -141,
+                "decimal": 1.709
+              }
+            ],
+            "is_alternate": true
+          }
+        ],
+        "total": [
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 151.5,
+                "american": -113,
+                "decimal": 1.885
+              },
+              {
+                "side": "under",
+                "points": 151.5,
+                "american": -107,
+                "decimal": 1.935
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 150.0,
+                "american": -137,
+                "decimal": 1.73
+              },
+              {
+                "side": "under",
+                "points": 150.0,
+                "american": 109,
+                "decimal": 2.09
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 150.5,
+                "american": -129,
+                "decimal": 1.775
+              },
+              {
+                "side": "under",
+                "points": 150.5,
+                "american": 103,
+                "decimal": 2.03
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 151.0,
+                "american": -122,
+                "decimal": 1.82
+              },
+              {
+                "side": "under",
+                "points": 151.0,
+                "american": -103,
+                "decimal": 1.971
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 152.0,
+                "american": -109,
+                "decimal": 1.917
+              },
+              {
+                "side": "under",
+                "points": 152.0,
+                "american": -115,
+                "decimal": 1.87
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 152.5,
+                "american": -103,
+                "decimal": 1.971
+              },
+              {
+                "side": "under",
+                "points": 152.5,
+                "american": -121,
+                "decimal": 1.826
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 153.0,
+                "american": 102,
+                "decimal": 2.02
+              },
+              {
+                "side": "under",
+                "points": 153.0,
+                "american": -128,
+                "decimal": 1.781
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 72.5,
+                "american": -117,
+                "decimal": 1.855
+              },
+              {
+                "side": "under",
+                "points": 72.5,
+                "american": -104,
+                "decimal": 1.962
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 71.5,
+                "american": -143,
+                "decimal": 1.699
+              },
+              {
+                "side": "under",
+                "points": 71.5,
+                "american": 114,
+                "decimal": 2.14
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 72.0,
+                "american": -131,
+                "decimal": 1.763
+              },
+              {
+                "side": "under",
+                "points": 72.0,
+                "american": 104,
+                "decimal": 2.04
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 73.0,
+                "american": -108,
+                "decimal": 1.926
+              },
+              {
+                "side": "under",
+                "points": 73.0,
+                "american": -116,
+                "decimal": 1.862
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 73.5,
+                "american": 101,
+                "decimal": 2.01
+              },
+              {
+                "side": "under",
+                "points": 73.5,
+                "american": -127,
+                "decimal": 1.787
+              }
+            ],
+            "is_alternate": true
+          }
+        ]
+      }
+    },
+    {
+      "matchup_id": 1634365566,
+      "source_url": "https://www.pinnacle.com/en/basketball/wnba/toronto-tempo-vs-seattle-storm/1634365566/#all",
+      "path": "/en/basketball/wnba/toronto-tempo-vs-seattle-storm/1634365566/",
+      "league": "WNBA",
+      "start_time": "2026-08-27T02:00:00Z",
+      "label": "Toronto Tempo vs Seattle Storm",
+      "participants": [
+        "Toronto Tempo",
+        "Seattle Storm"
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Seattle Storm",
+                "american": -218,
+                "decimal": 1.459
+              },
+              {
+                "side": "away",
+                "team": "Toronto Tempo",
+                "american": 176,
+                "decimal": 2.76
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Seattle Storm",
+                "american": -262,
+                "decimal": 1.382
+              },
+              {
+                "side": "away",
+                "team": "Toronto Tempo",
+                "american": 218,
+                "decimal": 3.18
+              }
+            ]
+          }
+        ],
+        "spread": [
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Seattle Storm",
+                "points": -3.5,
+                "american": -111,
+                "decimal": 1.901
+              },
+              {
+                "side": "away",
+                "team": "Toronto Tempo",
+                "points": 3.5,
+                "american": -109,
+                "decimal": 1.917
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Seattle Storm",
+                "points": -2.5,
+                "american": -137,
+                "decimal": 1.73
+              },
+              {
+                "side": "away",
+                "team": "Toronto Tempo",
+                "points": 2.5,
+                "american": 109,
+                "decimal": 2.09
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Seattle Storm",
+                "points": -3.0,
+                "american": -125,
+                "decimal": 1.8
+              },
+              {
+                "side": "away",
+                "team": "Toronto Tempo",
+                "points": 3.0,
+                "american": -100,
+                "decimal": 2.0
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Seattle Storm",
+                "points": -4.0,
+                "american": -102,
+                "decimal": 1.98
+              },
+              {
+                "side": "away",
+                "team": "Toronto Tempo",
+                "points": 4.0,
+                "american": -123,
+                "decimal": 1.813
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Seattle Storm",
+                "points": -4.5,
+                "american": 108,
+                "decimal": 2.08
+              },
+              {
+                "side": "away",
+                "team": "Toronto Tempo",
+                "points": 4.5,
+                "american": -136,
+                "decimal": 1.735
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Seattle Storm",
+                "points": -6.5,
+                "american": -107,
+                "decimal": 1.935
+              },
+              {
+                "side": "away",
+                "team": "Toronto Tempo",
+                "points": 6.5,
+                "american": -109,
+                "decimal": 1.917
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Seattle Storm",
+                "points": -5.0,
+                "american": -140,
+                "decimal": 1.714
+              },
+              {
+                "side": "away",
+                "team": "Toronto Tempo",
+                "points": 5.0,
+                "american": 115,
+                "decimal": 2.15
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Seattle Storm",
+                "points": -5.5,
+                "american": -129,
+                "decimal": 1.775
+              },
+              {
+                "side": "away",
+                "team": "Toronto Tempo",
+                "points": 5.5,
+                "american": 107,
+                "decimal": 2.07
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Seattle Storm",
+                "points": -6.0,
+                "american": -119,
+                "decimal": 1.84
+              },
+              {
+                "side": "away",
+                "team": "Toronto Tempo",
+                "points": 6.0,
+                "american": -102,
+                "decimal": 1.98
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Seattle Storm",
+                "points": -7.0,
+                "american": 101,
+                "decimal": 2.01
+              },
+              {
+                "side": "away",
+                "team": "Toronto Tempo",
+                "points": 7.0,
+                "american": -122,
+                "decimal": 1.82
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Seattle Storm",
+                "points": -7.5,
+                "american": 109,
+                "decimal": 2.09
+              },
+              {
+                "side": "away",
+                "team": "Toronto Tempo",
+                "points": 7.5,
+                "american": -133,
+                "decimal": 1.752
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Seattle Storm",
+                "points": -8.0,
+                "american": 118,
+                "decimal": 2.18
+              },
+              {
+                "side": "away",
+                "team": "Toronto Tempo",
+                "points": 8.0,
+                "american": -143,
+                "decimal": 1.699
+              }
+            ],
+            "is_alternate": true
+          }
+        ],
+        "total": [
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 85.0,
+                "american": -106,
+                "decimal": 1.943
+              },
+              {
+                "side": "under",
+                "points": 85.0,
+                "american": -115,
+                "decimal": 1.87
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 84.0,
+                "american": -128,
+                "decimal": 1.781
+              },
+              {
+                "side": "under",
+                "points": 84.0,
+                "american": 102,
+                "decimal": 2.02
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 84.5,
+                "american": -117,
+                "decimal": 1.855
+              },
+              {
+                "side": "under",
+                "points": 84.5,
+                "american": -107,
+                "decimal": 1.935
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 85.5,
+                "american": 101,
+                "decimal": 2.01
+              },
+              {
+                "side": "under",
+                "points": 85.5,
+                "american": -127,
+                "decimal": 1.787
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 86.0,
+                "american": 110,
+                "decimal": 2.1
+              },
+              {
+                "side": "under",
+                "points": 86.0,
+                "american": -138,
+                "decimal": 1.725
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 174.0,
+                "american": -110,
+                "decimal": 1.909
+              },
+              {
+                "side": "under",
+                "points": 174.0,
+                "american": -110,
+                "decimal": 1.909
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 172.5,
+                "american": -133,
+                "decimal": 1.752
+              },
+              {
+                "side": "under",
+                "points": 172.5,
+                "american": 105,
+                "decimal": 2.05
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 173.0,
+                "american": -125,
+                "decimal": 1.8
+              },
+              {
+                "side": "under",
+                "points": 173.0,
+                "american": -100,
+                "decimal": 2.0
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 173.5,
+                "american": -118,
+                "decimal": 1.847
+              },
+              {
+                "side": "under",
+                "points": 173.5,
+                "american": -106,
+                "decimal": 1.943
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 174.5,
+                "american": -106,
+                "decimal": 1.943
+              },
+              {
+                "side": "under",
+                "points": 174.5,
+                "american": -118,
+                "decimal": 1.847
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 175.0,
+                "american": 100,
+                "decimal": 2.0
+              },
+              {
+                "side": "under",
+                "points": 175.0,
+                "american": -126,
+                "decimal": 1.794
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 175.5,
+                "american": 106,
+                "decimal": 2.06
+              },
+              {
+                "side": "under",
+                "points": 175.5,
+                "american": -134,
+                "decimal": 1.746
+              }
+            ],
+            "is_alternate": true
+          }
+        ]
+      }
+    }
+  ]
+}

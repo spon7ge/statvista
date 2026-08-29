@@ -1,13 +1,28 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { ChevronDown, Home, Info, Newspaper, Settings } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  Calendar,
+  ChevronDown,
+  Home,
+  Info,
+  Layers,
+  LayoutList,
+  Newspaper,
+  Settings,
+} from "lucide-react";
+import { CHROME_TITLE_TOP } from "@/app/layouts/chrome";
 import { StatvistaWordmark } from "@/shared/ui/StatvistaWordmark";
 import {
   NAV_LEAGUES,
   activeLeagueFromPath,
+  homeLegsHref,
+  homeMatchupsHref,
+  homePropsHref,
   isActiveSection,
   sectionsFor,
 } from "./lib/appNav";
+import { prefetchPropsBoard } from "./lib/prefetchPropsBoard";
 
 /** Matches Statmuse card: rounded-2xl, px-3.25 (13px), py-2.25 (9px). */
 const SIDEBAR_PANEL =
@@ -30,10 +45,26 @@ export function AppSidebar() {
   const [leaguesOpen, setLeaguesOpen] = useState(true);
   const activeLeague = activeLeagueFromPath(pathname);
   const homeActive = pathname === "/";
+  const propsHref = homePropsHref(pathname);
+  const propsActive = isActiveSection(pathname, "Props");
+  const legsHref = homeLegsHref(pathname);
+  const legsActive = isActiveSection(pathname, "Legs");
+  const matchupsHref = homeMatchupsHref(pathname);
+  const matchupsActive = isActiveSection(pathname, "Matchups");
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    prefetchPropsBoard(queryClient, propsHref);
+  }, [queryClient, propsHref]);
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-background px-3 py-4">
-      <Link to="/" className="mb-4 block text-white no-underline">
+    <div
+      className={`flex h-full min-h-0 flex-col bg-background px-3 pb-4 ${CHROME_TITLE_TOP}`}
+    >
+      <Link
+        to="/"
+        className="mb-4 flex min-h-7 items-center text-white no-underline"
+      >
         <StatvistaWordmark />
       </Link>
 
@@ -94,11 +125,24 @@ export function AppSidebar() {
                         <p className="text-[10px] font-medium tracking-[0.14em] text-white/35 uppercase">
                           Explore
                         </p>
-                        {explore.map((item) =>
-                          item.href ? (
+                        {explore.map((item) => {
+                          const href = item.href;
+                          if (!href) {
+                            return (
+                              <button
+                                key={item.label}
+                                type="button"
+                                disabled
+                                className={rowClass(false, false)}
+                              >
+                                {item.label}
+                              </button>
+                            );
+                          }
+                          return (
                             <Link
                               key={item.label}
-                              to={item.href}
+                              to={href}
                               aria-current={
                                 isActiveSection(pathname, item.label)
                                   ? "page"
@@ -108,20 +152,17 @@ export function AppSidebar() {
                                 isActiveSection(pathname, item.label),
                                 true,
                               )}
+                              onPointerEnter={
+                                item.label === "Props"
+                                  ? () =>
+                                      prefetchPropsBoard(queryClient, href)
+                                  : undefined
+                              }
                             >
                               {item.label}
                             </Link>
-                          ) : (
-                            <button
-                              key={item.label}
-                              type="button"
-                              disabled
-                              className={rowClass(false, false)}
-                            >
-                              {item.label}
-                            </button>
-                          ),
-                        )}
+                          );
+                        })}
                       </div>
                     ) : null}
                     {learn.length > 0 ? (
@@ -163,6 +204,44 @@ export function AppSidebar() {
                 );
               })
             : null}
+
+          <Link
+            to={propsHref}
+            aria-current={propsActive ? "page" : undefined}
+            className={rowClass(propsActive, true)}
+            onPointerEnter={() => prefetchPropsBoard(queryClient, propsHref)}
+          >
+            <LayoutList
+              className="size-[22px] shrink-0"
+              strokeWidth={2}
+              aria-hidden
+            />
+            Props
+          </Link>
+          <Link
+            to={legsHref}
+            aria-current={legsActive ? "page" : undefined}
+            className={rowClass(legsActive, true)}
+          >
+            <Layers
+              className="size-[22px] shrink-0"
+              strokeWidth={2}
+              aria-hidden
+            />
+            Legs
+          </Link>
+          <Link
+            to={matchupsHref}
+            aria-current={matchupsActive ? "page" : undefined}
+            className={rowClass(matchupsActive, true)}
+          >
+            <Calendar
+              className="size-[22px] shrink-0"
+              strokeWidth={2}
+              aria-hidden
+            />
+            Matchups
+          </Link>
         </div>
       </nav>
 

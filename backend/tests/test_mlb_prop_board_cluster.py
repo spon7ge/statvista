@@ -1,6 +1,7 @@
 from app.domains.mlb.prop_board_cluster import (
     BoardQuote,
     cluster_quotes,
+    devig_pct_for_side,
     ip_pct_for_side,
 )
 
@@ -33,7 +34,7 @@ def test_split_mains_make_two_clusters():
     assert {q.book for q in c95.quotes} == {"prophetx", "draftkings"}
 
 
-def test_ip_uses_prophetx_over_draftkings():
+def test_ip_is_consensus_raw_implied():
     cluster = cluster_quotes(
         [
             _q(book="draftkings", over_american=100, under_american=-120),
@@ -42,11 +43,8 @@ def test_ip_uses_prophetx_over_draftkings():
     )[0]
     over = ip_pct_for_side(cluster, "over")
     under = ip_pct_for_side(cluster, "under")
-    assert over is not None and under is not None
-    # ProphetX de-vig is 58/42; DraftKings would be 48/52. Pin PX so a
-    # DK-first IP order cannot pass on complementarity alone.
-    assert (over, under) == (58, 42)
-    assert over + under == 100
+    # Raw implied: PX -150 → 60%, DK +100 → 50% → 55. Under: +130 → 43.5, -120 → 54.5 → 49.
+    assert (over, under) == (55, 49)
 
 
 def test_dfs_only_cluster_has_null_ip():
@@ -54,3 +52,13 @@ def test_dfs_only_cluster_has_null_ip():
         [_q(book="prizepicks", over_american=None, under_american=None)]
     )[0]
     assert ip_pct_for_side(cluster, "over") is None
+
+
+def test_devig_pct_for_side_even_juice():
+    assert devig_pct_for_side(-110, -110, "over") == 50
+    assert devig_pct_for_side(-110, -110, "under") == 50
+
+
+def test_devig_pct_for_side_needs_both_americans():
+    assert devig_pct_for_side(-122, None, "over") is None
+    assert devig_pct_for_side(None, 102, "under") is None

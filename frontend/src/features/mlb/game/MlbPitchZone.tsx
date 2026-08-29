@@ -1,14 +1,14 @@
+import strikeZoneUrl from "@/assets/strike-zone.svg";
 import { GameSection } from "@/shared/ui/GameSection";
 import type { MlbPitch, MlbSituation } from "../lib/types";
 
-// Backend maps Gameday coords so the strike zone is the unit square [-1, 1]²
-// (x right, y up). The drawn box must match that square exactly.
-export const ZONE_CENTER_X = 62;
-export const ZONE_CENTER_Y = 60;
-export const ZONE_SCALE = 40;
-const STRIKE_SIZE = ZONE_SCALE * 2;
-const STRIKE_LEFT = ZONE_CENTER_X - ZONE_SCALE;
-const STRIKE_TOP = ZONE_CENTER_Y - ZONE_SCALE;
+// strike-zone.svg inner 3×3 grid (viewBox 0 0 982 412.9).
+// Cells start at (430.2, 118.3), each 40.5 × 48.5.
+export const ZONE_CENTER_X = 430.2 + (40.5 * 3) / 2;
+export const ZONE_CENTER_Y = 118.3 + (48.5 * 3) / 2;
+export const ZONE_SCALE_X = (40.5 * 3) / 2;
+export const ZONE_SCALE_Y = (48.5 * 3) / 2;
+const MARKER_R = 14;
 /** Just outside the unit square so ball markers clear the stroke. */
 const BALL_OUTSIDE = 1.08;
 
@@ -35,8 +35,8 @@ function plotPitch(pitch: MlbPitch): { cx: number; cy: number } | null {
     ({ x, y } = ensureBallOutsideZone(x, y));
   }
   return {
-    cx: ZONE_CENTER_X + x * ZONE_SCALE,
-    cy: ZONE_CENTER_Y - y * ZONE_SCALE,
+    cx: ZONE_CENTER_X + x * ZONE_SCALE_X,
+    cy: ZONE_CENTER_Y - y * ZONE_SCALE_Y,
   };
 }
 
@@ -93,52 +93,17 @@ export function MlbPitchZone({ situation }: { situation: MlbSituation }) {
     <GameSection className="!p-2.5" data-testid="mlb-pitch-zone">
       <div className="flex justify-center">
         <svg
-          viewBox="0 0 124 120"
-          className="aspect-[124/120] w-full max-w-[16rem]"
+          viewBox="0 0 982 412.9"
+          className="w-full"
           role="img"
           aria-label="Pitch strike zone"
           data-testid="mlb-pitch-zone-svg"
         >
-          <rect
-            x={STRIKE_LEFT}
-            y={STRIKE_TOP}
-            width={STRIKE_SIZE}
-            height={STRIKE_SIZE}
-            fill="rgba(255,255,255,0.06)"
-            stroke="rgba(255,255,255,0.4)"
-            strokeWidth="1.5"
-          />
-          <line
-            x1={STRIKE_LEFT + STRIKE_SIZE / 3}
-            y1={STRIKE_TOP}
-            x2={STRIKE_LEFT + STRIKE_SIZE / 3}
-            y2={STRIKE_TOP + STRIKE_SIZE}
-            stroke="rgba(255,255,255,0.18)"
-            strokeWidth="0.75"
-          />
-          <line
-            x1={STRIKE_LEFT + (2 * STRIKE_SIZE) / 3}
-            y1={STRIKE_TOP}
-            x2={STRIKE_LEFT + (2 * STRIKE_SIZE) / 3}
-            y2={STRIKE_TOP + STRIKE_SIZE}
-            stroke="rgba(255,255,255,0.18)"
-            strokeWidth="0.75"
-          />
-          <line
-            x1={STRIKE_LEFT}
-            y1={STRIKE_TOP + STRIKE_SIZE / 3}
-            x2={STRIKE_LEFT + STRIKE_SIZE}
-            y2={STRIKE_TOP + STRIKE_SIZE / 3}
-            stroke="rgba(255,255,255,0.18)"
-            strokeWidth="0.75"
-          />
-          <line
-            x1={STRIKE_LEFT}
-            y1={STRIKE_TOP + (2 * STRIKE_SIZE) / 3}
-            x2={STRIKE_LEFT + STRIKE_SIZE}
-            y2={STRIKE_TOP + (2 * STRIKE_SIZE) / 3}
-            stroke="rgba(255,255,255,0.18)"
-            strokeWidth="0.75"
+          <image
+            href={strikeZoneUrl}
+            width={982}
+            height={412.9}
+            data-testid="mlb-pitch-zone-batter-silhouette"
           />
 
           {pitches.map((pitch) => {
@@ -149,16 +114,18 @@ export function MlbPitchZone({ situation }: { situation: MlbSituation }) {
                 <circle
                   cx={point.cx}
                   cy={point.cy}
-                  r={6}
+                  r={MARKER_R}
                   fill={pitchFill(pitch.isStrike)}
                   data-testid="mlb-pitch-marker"
                 />
                 <text
                   x={point.cx}
-                  y={point.cy + 0.4}
+                  y={point.cy + 1}
                   textAnchor="middle"
                   dominantBaseline="middle"
-                  className="fill-black text-[8px] font-bold"
+                  fill="#000"
+                  fontSize={16}
+                  fontWeight={700}
                 >
                   {pitch.number}
                 </text>

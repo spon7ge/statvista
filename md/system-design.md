@@ -40,7 +40,7 @@ Two backend families exist. The **live website mainly uses the WNBA and MLB upst
 | MLB upstream | `/api/mlb/scoreboard/*`, `/api/mlb/odds/today` | Yes (home + game Preview odds) |
 | DB-backed (silver / gold) | `/api/games/{date}/slate`, `/api/props`, … | No |
 
-Shared chrome (`HomeChromeLayout`) wraps most routes with a left sidebar (mobile hamburger drawer) and footer.
+Shared chrome (`HomeChromeLayout`) wraps most routes with a left sidebar (mobile hamburger drawer) and footer. The sidebar lists Home, then leagues, then **Props, Legs, and Matchups** shortcuts (current league's board/legs/slate, else MLB; NBA Props and Legs fall back to MLB). Legs is a top-level shortcut (`/mlb/legs`, `/wnba/legs`; empty recommended-legs shell), not nested under Explore. Props links prefetch the destination board on hover; the sidebar also warms that board on mount. Client React Query keeps MLB `/props/board` and WNBA `/props/today` fresh for 15 minutes (`staleTime` matches the poll; no refetch on window focus).
 
 ---
 
@@ -70,6 +70,7 @@ main.tsx
       /games/:espnEventId  GameDetailPage
       /wnba/matchups       LeagueMatchupsPage (league="wnba")
       /wnba/prop_picks     LeaguePropPicksPage
+      /wnba/legs           LeagueLegsPage
       /wnba/prop_picks/player/:playerSlug  WnbaPlayerPropsPage
       /wnba/leaders        LeagueLeadersPage
       /wnba/standings      LeagueStandingsPage
@@ -79,6 +80,7 @@ main.tsx
       /nba/matchups        LeagueMatchupsPage (placeholder)
       /mlb/matchups        LeagueMatchupsPage (league="mlb", live slate)
       /mlb/prop_picks      MlbPropPicksPage
+      /mlb/legs            LeagueLegsPage
       /mlb/prop_picks/player/:playerSlug  replace-redirect → /mlb/prop_picks
       /mlb/leaders         MlbLeadersPage
       /mlb/standings       MlbStandingsPage
@@ -106,8 +108,9 @@ main.tsx
 | Route | Page job | Hook(s) | API | Upstream / notes |
 |-------|----------|---------|-----|------------------|
 | `/` | Brand, LIVE NOW, explainer, league CTAs | `useWnbaScoreboard`, `useMlbScoreboard` | WNBA + MLB scoreboard today | Client merge via `mergeLeagueScoreboards` |
-| `/wnba/matchups?date=` | Daily slate (no team-lines odds pill) | `useWnbaScoreboard(date)` | scoreboard (`/today` or `?date=`) | Cards → `/games/:espnEventId` (Preview odds board uses `GET /api/wnba/odds/today`) |
+| `/wnba/matchups?date=` | Daily slate (no team-lines odds pill); Props-style header with MLB/WNBA/NBA league pills | `useWnbaScoreboard(date)` | scoreboard (`/today` or `?date=`) | Cards → `/games/:espnEventId` (Preview odds board uses `GET /api/wnba/odds/today`) |
 | `/wnba/prop_picks` | DFS **player board**: PrizePicks / Underdog tabs (format/legs defaults hidden — power/4 vs standard/4); one card per player with **View X props** CTA; sort by unique-stat count desc; Team multi-select + player name search | `useWnbaProps` | `GET /api/wnba/props/today?app=&format=&legs=` | Client `groupWnbaPropPlayers` aggregates rows; PrizePicks seed from latest Supabase snapshot only (`fetch_latest_prizepicks("wnba")`, no Parlay PP fallback; empty → `prizepicks_unavailable`); Underdog from Supabase snapshot; each row carries `books_main` (per-book main O/U) for detail grid; Parlay books served from live indexes (DK/FD + cmp); live Parlay fetch also throttled-writes `odds.wnba_parlay_api_odds`; ProphetX/Novig/Pinnacle from Supabase scrapers; client hide finals + prior-day tips; paginates 20 **players** per page |
+| `/wnba/legs` | Empty **recommended legs** shell (PrizePicks / Underdog); league pills | — | none | Placeholder; no API yet |
 | `/wnba/prop_picks/player/:playerSlug?app=` | Per-player main-line odds grid (BettingPros-style) | `useWnbaProps` | same `GET /api/wnba/props/today?app=&format=&legs=` | `findPlayerBySlug` + `uniqueStatRows`; `WnbaPlayerPropsOddsGrid` reads `books_main` (ProphetX, Novig, DraftKings, FanDuel, BetMGM, Caesars, Kalshi, Fliff, bet365, Pinnacle — main lines only, NL when missing; no OPEN/BEST); unknown slug → empty state + link back to board |
 | `/wnba/leaders` | Season leaderboards | `useWnbaLeaders` | `GET /api/wnba/leaders` | stats.wnba.com `leagueleaders` via outbound cache; WNBA hub pages (Leaders, Standings, Futures, Prop Picks, Player) use MLB-style colored banners with basketball sport mark |
 | `/wnba/standings` | East / West standings | `useWnbaStandings` | `GET /api/wnba/standings` | ESPN `site.web.api` via `app.core.outbound_cache` (memory + `data/cache/outbound`, TTL + SWR) |
@@ -115,9 +118,10 @@ main.tsx
 | `/wnba/chatbot` | League Learn tab Chatbot | — | none | Coming soon placeholder |
 | `/wnba/player/:id` | Bio, averages, recent games | `useWnbaPlayer` | `GET /api/wnba/player/{id}` | stats.wnba.com (info + dash + gamelog) |
 | `/games/:espnEventId` | Game detail: scheduled → MLB-parity pregame (broadcast header with record + last 10; centered Preview / Away / Home / **Props**); Preview two-column (left: Projected Starters → Game Info → Matchup Prediction → Game Leaders PPG/RPG/APG; right: multi-book Odds board → Team Stats + `#rank` → Injuries); Away/Home → team preview (PPG/RPG/APG/BPG/SPG leaders + roster averages incl. SH-EFF, SC-EFF, PPEP, RTG, +/-); **Props** tab has PrizePicks / Underdog sub-tabs and shows the matchup-scoped **Player Props** category-card grid (Line / Over / Under, book name under odds); live/halftime or final → broadcast header + Summary \| Box (Scoring plays \| All plays; Summary right rail: linescore, team stats, win probability, shot chart, Game Info; Box: stacked away/home box score) | `useGameDetail`, `useWnbaOdds`, `useWnbaGameProps(espnEventId, app)`, `useWnbaTeamPreview(espnEventId, side)` | `GET /api/wnba/games/{id}`, `GET /api/wnba/odds/today` (Preview `book_boards`), `GET /api/wnba/props/game/{id}?app=prizepicks\|underdog` (Props tab only), `GET /api/wnba/games/{id}/team-preview?side=` (Away/Home) | ESPN summary + standings/team stats/roster for enrichment (standings + roster JSON via `app.core.outbound_cache`); RotoWire starters; Preview odds prefer `book_boards` (ProphetX → Novig → Pinnacle) with soft-fail per book and fallback to legacy `games[]`; game-scoped props reuse today's props assembly filtered to away/home abbrevs; soft-fail empty sections; no Player of the Game or pitch zone |
-| `/nba/matchups` | Placeholder | — | none | “NBA matchups coming soon” |
-| `/mlb/matchups?date=` | Daily slate (no team-lines odds pill) | `useMlbScoreboard(date)` | scoreboard (`/today` or `?date=`) | Stats API schedule; cards → `/mlb/games/:gamePk` (Preview odds board still uses `GET /api/mlb/odds/today`) |
-| `/mlb/prop_picks` | Sportsbook **research table**: one row per player + market + exact line + side; composite cell (headshot / **name · matchup** / market below); columns **Proposition**, **Line**, **DFS** (PrizePicks/Underdog logo + American; PrizePicks -137; no de-vig %), **Odds** (sportsbooks only — logo + American + de-vig % when two-way); IP, L5/L10/L15, H2H (this season + last season vs opponent, pooled); **Game** (day's slate, away @ home) + Team + **Bookmaker** + **Proposition** (market) + **Over/Under** + **Hit rate** (L5/L10/L15 highest→lowest) + player name search; no PrizePicks/Underdog tabs | `useMlbPropBoard` | `GET /api/mlb/props/board` | Client `filterMlbPropBoardRows` (game + team + book + market + side + name; selected books trim `dfs` or `books` chips; drop rows with no posted chip in either list); default sort game start / name / stat / Over then Under / line; hit-rate control sorts L5/L10/L15 desc; **30 rows per page** with Previous/Next; empty copy “No board yet” |
+| `/nba/matchups` | Placeholder; same Matchups league-pill header as WNBA/MLB | — | none | “NBA matchups coming soon” |
+| `/mlb/matchups?date=` | Daily slate (no team-lines odds pill); Props-style header with MLB/WNBA/NBA league pills | `useMlbScoreboard(date)` | scoreboard (`/today` or `?date=`) | Stats API schedule; cards → `/mlb/games/:gamePk` (Preview odds board still uses `GET /api/mlb/odds/today`) |
+| `/mlb/prop_picks` | Sportsbook **research table**: one row per player + market + **PrizePicks/Underdog line** + side; composite cell (overlapping headshot + team logo; **name · matchup**; market below); columns **Proposition**, **Line**, **DFS** (PrizePicks/Underdog logo + American; PrizePicks -137; no implied %), **Odds** (sportsbooks only — this side: logo + that book’s line + American, even when the number differs from DFS); **IP** (average raw implied of Odds Americans), L5/L10/L15, H2H (this season + last season vs opponent, pooled; colored cells); **Game** (day's slate, away @ home) + Team + **Bookmaker** + **Proposition** (market) + **Over/Under** + **Hit rate** (L5/L10/L15 highest→lowest) + player name search; no PrizePicks/Underdog tabs | `useMlbPropBoard` | `GET /api/mlb/props/board` | Client `filterMlbPropBoardRows` (game + team + book + market + side + name; selected books trim `dfs` or `books` chips; drop rows with no PrizePicks/Underdog line); default sort game start / name / stat / Over then Under / line; hit-rate control sorts L5/L10/L15 desc; **30 rows per page** with Previous/Next; empty copy “No board yet” |
+| `/mlb/legs` | Empty **recommended legs** shell (PrizePicks / Underdog); league pills | — | none | Placeholder; no API yet |
 | `/mlb/prop_picks/player/:playerSlug` | Removed | — | — | Replace-redirect to `/mlb/prop_picks`. `MlbPlayerPropsOddsGrid` remains for shared book-column patterns; game-detail Props still uses `GET /api/mlb/props/game/{gamePk}` |
 | `/mlb/leaders` | Season leaderboards | `useMlbLeaders` | `GET /api/mlb/leaders` | MLB Stats API season `/stats` (sorted; includes GP) |
 | `/mlb/standings` | Division standings | `useMlbStandings` | `GET /api/mlb/standings` | Stats API standings |
@@ -137,7 +141,7 @@ main.tsx
 
 ```text
 LeaguePropPicksPage
-  → useWnbaProps({ app, format, legs })
+  → useWnbaProps({ app, format, legs })  (staleTime 15m; sidebar prefetches prizepicks/power/4)
   → GET /api/wnba/props/today?app=&format=&legs=
   → wnba.props.get_wnba_props_today()
        ├─ seed: Parlay PrizePicks (fallback odds.wnba_prizepicks) or odds.wnba_underdogs
@@ -146,11 +150,12 @@ LeaguePropPicksPage
   → client excludePastGameProps(scoreboard) + filterWnbaPropPicks (Stat/Team/Side; page size 20)
 
 MlbPropPicksPage
-  → useMlbPropBoard()
+  → useMlbPropBoard()  (staleTime 15m; sidebar prefetches GET /api/mlb/props/board)
   → GET /api/mlb/props/board
   → mlb.prop_board.get_mlb_prop_board()
        ├─ cluster sportsbook mains + PrizePicks/Underdog mains by (player, stat, exact line)
-       ├─ emit Over + Under rows; IP from PX → Novig → Pinnacle → DK two-way
+       ├─ skip clusters with no PrizePicks/Underdog; DFS rows attach each book's main (any line)
+       ├─ emit Over + Under rows; dfs vs books; IP = average raw implied of Odds Americans
        ├─ opp def/pace ranks + L5/L10/L15 (soft-fail warnings)
        └─ GET /api/mlb/props/today unchanged (still feeds game-detail Props)
   → client filterMlbPropBoardRows (team + market + side + name) + sortable research table
@@ -229,7 +234,7 @@ Feature-level history lives under `docs/superpowers/specs/` and `docs/superpower
 | GET | `/api/mlb/scoreboard?date=` | `mlb_scoreboard` |
 | GET | `/api/mlb/odds/today` | `mlb_odds` (Sharp `league=mlb`) |
 | GET | `/api/mlb/props/today` | `mlb.props` (+ `prop_fair`, `prop_formats`, `prop_stat_keys`, `books_main`; PP/UD from Supabase; Parlay books from `fetch_latest_parlay_api_odds("mlb")` / `odds.mlb_parlay_api_odds` only) |
-| GET | `/api/mlb/props/board` | `mlb.prop_board` (sportsbook + DFS mains clustered by exact line; `dfs` vs `books` chip lists; IP / ranks / L5–L15; 200 even when enrichments fail) |
+| GET | `/api/mlb/props/board` | `mlb.prop_board` (DFS-anchored rows; sportsbook mains attached on `books` even when the line differs; `dfs` vs `books`; IP / ranks / L5–L15; 200 even when enrichments fail) |
 | GET | `/api/mlb/props/game/{game_pk}?app=` | `mlb.game_props` (+ same props assembly as today; Parlay from `odds.mlb_parlay_api_odds` snapshot, not live indexes) |
 | GET | `/api/mlb/games/{game_pk}/team-preview?side=` | `mlb.team_preview` (+ leaders boards, team season player splits) |
 | GET | `/api/mlb/leaders` | `mlb.leaders` (MLB Stats API) |

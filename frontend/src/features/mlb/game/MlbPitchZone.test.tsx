@@ -4,7 +4,8 @@ import {
   MlbPitchZone,
   ZONE_CENTER_X,
   ZONE_CENTER_Y,
-  ZONE_SCALE,
+  ZONE_SCALE_X,
+  ZONE_SCALE_Y,
 } from "./MlbPitchZone";
 import { mlbLiveDetail } from "../lib/testFixtures";
 
@@ -22,8 +23,8 @@ function markerPoint(index = 0): { cx: number; cy: number } {
 
 function isInsideStrikeBox(cx: number, cy: number): boolean {
   return (
-    Math.abs(cx - ZONE_CENTER_X) <= ZONE_SCALE &&
-    Math.abs(cy - ZONE_CENTER_Y) <= ZONE_SCALE
+    Math.abs(cx - ZONE_CENTER_X) <= ZONE_SCALE_X &&
+    Math.abs(cy - ZONE_CENTER_Y) <= ZONE_SCALE_Y
   );
 }
 
@@ -37,8 +38,11 @@ describe("MlbPitchZone", () => {
     expect(screen.getByText(/95\.2 mph/i)).toBeInTheDocument();
     expect(screen.getByText(/Spin:\s*2286 rpm,\s*63 deg/i)).toBeInTheDocument();
     expect(
-      screen.queryByTestId("mlb-pitch-zone-batter-silhouette"),
-    ).not.toBeInTheDocument();
+      screen.getByTestId("mlb-pitch-zone-batter-silhouette"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId("mlb-pitch-zone-batter-silhouette").getAttribute("href"),
+    ).toMatch(/strike-zone/);
     expect(screen.getByTestId("mlb-pitch-zone-svg")).toBeInTheDocument();
   });
 
@@ -119,7 +123,7 @@ describe("MlbPitchZone", () => {
     render(<MlbPitchZone situation={situation} />);
 
     const { cx, cy } = markerPoint();
-    expect(cx).toBeCloseTo(ZONE_CENTER_X + ZONE_SCALE, 0);
+    expect(cx).toBeCloseTo(ZONE_CENTER_X + ZONE_SCALE_X, 0);
     expect(cy).toBeCloseTo(ZONE_CENTER_Y, 0);
   });
 });

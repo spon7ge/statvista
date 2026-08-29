@@ -68,37 +68,32 @@ export function MatchupsPanel({
   const gameLabel = games.length === 1 ? "game" : "games";
 
   return (
-    <section className="mx-auto max-w-6xl space-y-8 px-4 pb-16 sm:px-6 sm:pb-20">
+    <section className="space-y-8">
       <header>
-        <div className="flex items-center justify-between gap-4">
-          <h2 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-            Matchups
-          </h2>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              aria-label="Previous day"
-              onClick={onPrevDay}
-              className="flex size-8 items-center justify-center rounded-md border border-white/10 text-white/70 hover:bg-white/5"
-            >
-              <ChevronLeft aria-hidden="true" className="size-4" strokeWidth={1.75} />
-            </button>
-            <button
-              type="button"
-              onClick={onGoToday}
-              className="min-w-14 text-center text-sm font-medium text-white/55 hover:text-white/80"
-            >
-              {navLabel}
-            </button>
-            <button
-              type="button"
-              aria-label="Next day"
-              onClick={onNextDay}
-              className="flex size-8 items-center justify-center rounded-md border border-white/10 text-white/70 hover:bg-white/5"
-            >
-              <ChevronRight aria-hidden="true" className="size-4" strokeWidth={1.75} />
-            </button>
-          </div>
+        <div className="flex items-center justify-end gap-2">
+          <button
+            type="button"
+            aria-label="Previous day"
+            onClick={onPrevDay}
+            className="flex size-8 items-center justify-center rounded-md border border-white/10 text-white/70 hover:bg-white/5"
+          >
+            <ChevronLeft aria-hidden="true" className="size-4" strokeWidth={1.75} />
+          </button>
+          <button
+            type="button"
+            onClick={onGoToday}
+            className="min-w-14 text-center text-sm font-medium text-white/55 hover:text-white/80"
+          >
+            {navLabel}
+          </button>
+          <button
+            type="button"
+            aria-label="Next day"
+            onClick={onNextDay}
+            className="flex size-8 items-center justify-center rounded-md border border-white/10 text-white/70 hover:bg-white/5"
+          >
+            <ChevronRight aria-hidden="true" className="size-4" strokeWidth={1.75} />
+          </button>
         </div>
         <p className="mt-2 text-sm text-white/40">
           {games.length} {gameLabel} · open a card for box score, play-by-play

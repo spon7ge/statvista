@@ -2,11 +2,20 @@ import { type ReactElement } from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { describe, expect, it, vi } from "vitest";
+import { CHROME_TITLE_TOP } from "@/app/layouts/chrome";
 import { appFromSearch, WnbaPropPicksHeader } from "./WnbaPropPicksHeader";
 
 function renderHeader(ui: ReactElement, path = "/wnba/prop_picks") {
-  return render(<MemoryRouter initialEntries={[path]}>{ui}</MemoryRouter>);
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  return render(
+    <QueryClientProvider client={client}>
+      <MemoryRouter initialEntries={[path]}>{ui}</MemoryRouter>
+    </QueryClientProvider>,
+  );
 }
 
 describe("appFromSearch", () => {
@@ -28,6 +37,7 @@ describe("WnbaPropPicksHeader", () => {
 
     const heading = screen.getByRole("heading", { name: "Props" });
     expect(heading).toHaveClass("text-left", "text-[28px]", "font-bold");
+    expect(screen.getByTestId("wnba-prop-picks-header")).toHaveClass(CHROME_TITLE_TOP);
     expect(
       screen.getByTestId("wnba-prop-picks-header").querySelector("div.rounded-3xl"),
     ).toBeNull();

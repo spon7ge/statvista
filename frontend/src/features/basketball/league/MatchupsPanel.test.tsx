@@ -44,12 +44,14 @@ function renderPanel(games: MatchupGame[], props = {}) {
 describe("MatchupsPanel", () => {
   it("splits live and rest and shows count", () => {
     renderPanel([live, finalGame]);
-    expect(screen.getByRole("heading", { name: "Matchups" })).toBeInTheDocument();
     expect(
       screen.getByText(
         "2 games · open a card for box score, play-by-play & win probability",
       ),
     ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", { name: "Matchups" }),
+    ).not.toBeInTheDocument();
     expect(screen.getByText("Live now")).toBeInTheDocument();
     expect(screen.getByText("Rest of the slate")).toBeInTheDocument();
     expect(screen.getByText("Live now").nextElementSibling).toHaveClass(

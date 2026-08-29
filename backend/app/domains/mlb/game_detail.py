@@ -827,6 +827,7 @@ def _team_stat_line(team: dict) -> MlbTeamStatLine:
         slg=text(batting.get("slg")),
         era=text(pitching.get("era")),
         k=_int_or_none(pitching.get("strikeOuts")),
+        bb=_int_or_none(pitching.get("baseOnBalls")),
     )
 
 

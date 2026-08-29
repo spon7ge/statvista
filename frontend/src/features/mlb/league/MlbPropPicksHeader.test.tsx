@@ -1,13 +1,20 @@
 import { render, screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { describe, expect, it } from "vitest";
+import { CHROME_TITLE_TOP } from "@/app/layouts/chrome";
 import { MlbPropPicksHeader } from "./MlbPropPicksHeader";
 
 function renderHeader(path = "/mlb/prop_picks") {
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
   return render(
-    <MemoryRouter initialEntries={[path]}>
-      <MlbPropPicksHeader />
-    </MemoryRouter>,
+    <QueryClientProvider client={client}>
+      <MemoryRouter initialEntries={[path]}>
+        <MlbPropPicksHeader />
+      </MemoryRouter>
+    </QueryClientProvider>,
   );
 }
 
@@ -17,6 +24,7 @@ describe("MlbPropPicksHeader", () => {
 
     const heading = screen.getByRole("heading", { name: "Props" });
     expect(heading).toHaveClass("text-left", "text-[28px]", "font-bold");
+    expect(screen.getByTestId("mlb-prop-picks-header")).toHaveClass(CHROME_TITLE_TOP);
     expect(
       screen.getByTestId("mlb-prop-picks-header").querySelector("div.rounded-3xl"),
     ).toBeNull();
@@ -45,12 +53,17 @@ describe("MlbPropPicksHeader", () => {
   });
 
   it("renders filter children under the league switcher", () => {
+    const client = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     render(
-      <MemoryRouter initialEntries={["/mlb/prop_picks"]}>
-        <MlbPropPicksHeader>
-          <span>Team filter</span>
-        </MlbPropPicksHeader>
-      </MemoryRouter>,
+      <QueryClientProvider client={client}>
+        <MemoryRouter initialEntries={["/mlb/prop_picks"]}>
+          <MlbPropPicksHeader>
+            <span>Team filter</span>
+          </MlbPropPicksHeader>
+        </MemoryRouter>
+      </QueryClientProvider>,
     );
     expect(screen.getByText("Team filter")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Props" })).toBeInTheDocument();

@@ -170,7 +170,7 @@ def test_normalize_final_additions_from_mutated_payload():
             "obp": ".250",
             "slg": ".300",
         },
-        "pitching": {"era": "5.00", "strikeOuts": 8},
+        "pitching": {"era": "5.00", "strikeOuts": 8, "baseOnBalls": 3},
     }
     payload["liveData"]["boxscore"]["teams"]["home"]["teamStats"] = {
         "batting": {
@@ -183,7 +183,7 @@ def test_normalize_final_additions_from_mutated_payload():
             "obp": ".360",
             "slg": ".500",
         },
-        "pitching": {"era": "1.00", "strikeOuts": 10},
+        "pitching": {"era": "1.00", "strikeOuts": 10, "baseOnBalls": 1},
     }
 
     detail = normalize_mlb_live_feed(
@@ -211,6 +211,8 @@ def test_normalize_final_additions_from_mutated_payload():
     assert detail.team_stats is not None
     assert detail.team_stats.home.hr == 1
     assert detail.team_stats.away.avg == ".188"
+    assert detail.team_stats.away.bb == 3
+    assert detail.team_stats.home.bb == 1
 
 
 def test_normalize_box_notes_and_enriched_pitchers():

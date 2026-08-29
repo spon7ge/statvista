@@ -14,16 +14,20 @@ describe("MlbFinalTeamStats", () => {
 
     const avgHome = screen.getByTestId("mlb-team-stat-avg-home");
     expect(avgHome).toHaveTextContent(".268");
-    expect(avgHome).toHaveClass("rounded-full");
+    expect(avgHome).toHaveClass("rounded-2xl");
     expect(avgHome).toHaveStyle({ backgroundColor: mlbFinalDetail.home.color });
 
     const kAway = screen.getByTestId("mlb-team-stat-k-away");
     expect(kAway).toHaveTextContent("10");
-    expect(kAway).toHaveClass("rounded-full");
+    expect(kAway).toHaveClass("rounded-2xl");
 
     const eraHome = screen.getByTestId("mlb-team-stat-era-home");
     expect(eraHome).toHaveTextContent("3.20");
-    expect(eraHome).toHaveClass("rounded-full");
+    expect(eraHome).toHaveClass("rounded-2xl");
+
+    const bbHome = screen.getByTestId("mlb-team-stat-bb-home");
+    expect(bbHome).toHaveTextContent("2");
+    expect(bbHome).toHaveClass("rounded-2xl");
   });
 
   it("shows white team abbrev and logo in the header", () => {
@@ -54,6 +58,11 @@ describe("MlbFinalTeamStats", () => {
     expect(
       section.querySelector('img[src="https://example.com/lad.svg"]'),
     ).toBeTruthy();
+
+    const awayMark = screen.getByTestId("mlb-team-stats-away-mark");
+    const homeMark = screen.getByTestId("mlb-team-stats-home-mark");
+    expect(awayMark.firstElementChild?.tagName).toBe("IMG");
+    expect(homeMark.lastElementChild?.tagName).toBe("IMG");
   });
 
   it("does not mark a leader for tied, missing, or invalid values", () => {

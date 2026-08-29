@@ -27,8 +27,7 @@ from app.domains.mlb.prop_board_cluster import (
     BoardQuote,
     Cluster,
     cluster_quotes,
-    devig_pct_for_side,
-    ip_pct_for_side,
+    consensus_ip_pct,
     round_line,
 )
 from app.domains.mlb.prop_board_form import h2h_rate, hit_rates, opponent_abbrev_from_split
@@ -245,7 +244,11 @@ async def get_mlb_prop_board() -> MlbPropBoardResponse:
     warnings.extend(extra_warnings)
 
     rows: list[MlbPropBoardRow] = []
+    sportsbook_mains = _sportsbook_mains(quotes)
     for cluster in clusters:
+        has_dfs = any(quote.book in DFS_CHIP_ORDER for quote in cluster.quotes)
+        if not has_dfs:
+            continue
         ctx = player_ctx.get(cluster.player_key) or {}
         opponent = ctx.get("opponent_abbrev")
         def_r, def_l, pace_r, pace_l = def_and_pace_ranks(
@@ -268,8 +271,15 @@ async def get_mlb_prop_board() -> MlbPropBoardResponse:
                     splits + splits_prev,
                     opponent,
                 )
-            dfs_chips, book_chips = _chips_for_side(cluster, side)
-            if not dfs_chips and not book_chips:
+            dfs_chips, book_chips = _chips_for_side(
+                cluster,
+                side,
+                sportsbook_mains=sportsbook_mains.get(
+                    (cluster.player_key, cluster.stat), {}
+                ),
+                attach_player_mains=has_dfs,
+            )
+            if not dfs_chips:
                 continue
             rows.append(
                 MlbPropBoardRow(
@@ -286,7 +296,9 @@ async def get_mlb_prop_board() -> MlbPropBoardResponse:
                     game_start_at=ctx.get("game_start_at"),
                     dfs=dfs_chips,
                     books=book_chips,
-                    ip_pct=ip_pct_for_side(cluster, side),
+                    ip_pct=consensus_ip_pct(
+                        [chip.american for chip in book_chips]
+                    ),
                     opp_def_rank=def_r,
                     opp_def_label=def_l,
                     opp_pace_rank=pace_r,
@@ -424,12 +436,22 @@ def _parse_line(raw: Any) -> float | None:
         return None
 
 
+def _sportsbook_mains(
+    quotes: list[BoardQuote],
+) -> dict[tuple[str, str], dict[str, BoardQuote]]:
+    mains: dict[tuple[str, str], dict[str, BoardQuote]] = {}
+    for quote in quotes:
+        if quote.book not in SPORTSBOOK_CHIP_ORDER:
+            continue
+        mains.setdefault((quote.player_key, quote.stat), {})[quote.book] = quote
+    return mains
+
+
 def _chip_for_quote(
     quote: BoardQuote,
     side: Side,
     *,
     allow_missing_american: bool,
-    include_devig: bool,
 ) -> MlbPropBoardBookChip | None:
     american = quote.over_american if side == "over" else quote.under_american
     if american is None and not allow_missing_american:
@@ -438,18 +460,19 @@ def _chip_for_quote(
         book=quote.book,
         american=american,
         url=quote.url,
-        devig_pct=(
-            None
-            if not include_devig
-            else devig_pct_for_side(
-                quote.over_american, quote.under_american, side
-            )
-        ),
+        line=quote.line,
+        over_american=quote.over_american,
+        under_american=quote.under_american,
+        devig_pct=None,
     )
 
 
 def _chips_for_side(
-    cluster: Cluster, side: Side
+    cluster: Cluster,
+    side: Side,
+    *,
+    sportsbook_mains: dict[str, BoardQuote],
+    attach_player_mains: bool,
 ) -> tuple[list[MlbPropBoardBookChip], list[MlbPropBoardBookChip]]:
     by_book = {quote.book: quote for quote in cluster.quotes}
     dfs: list[MlbPropBoardBookChip] = []
@@ -462,19 +485,18 @@ def _chips_for_side(
             quote,
             side,
             allow_missing_american=book == "prizepicks",
-            include_devig=False,
         )
         if chip is not None:
             dfs.append(chip)
+    book_quotes = sportsbook_mains if attach_player_mains else by_book
     for book in SPORTSBOOK_CHIP_ORDER:
-        quote = by_book.get(book)
+        quote = book_quotes.get(book)
         if quote is None:
             continue
         chip = _chip_for_quote(
             quote,
             side,
             allow_missing_american=False,
-            include_devig=True,
         )
         if chip is not None:
             books.append(chip)

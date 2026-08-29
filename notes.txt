@@ -14,7 +14,12 @@ GOAL:
     - articles
     - box scores/game logs
     - statcast
-    
+
+TODO:
+Props page
+EV+ page 
+DFS reccomend parlay page using sharp books matching to dfs lines(underdog or prizepicks)
+    - track profit doing this method to allow users to see if its working or not
 
 start backend: PYTHONPATH=..:. uvicorn app.main:app --reload --port 8000
 
@@ -34,3 +39,41 @@ PRIZEPICKS_CDP=1 python mlb_prizepick.py
 
 # later runs (cookie warm):
 python mlb_prizepick.py
+
+
+Layer 1: News & Qualitative Research
+This is my primary input layer — the foundation of everything I do. I aggregate real-time sports journalism to understand context, narrative, and situational factors that raw numbers can't capture.
+
+Source Category	What I Extract
+Game Previews & Recaps	Team form, momentum, situational context
+Injury Reports	Who's in/out, how lineups shift, impact on matchups
+Coach & Player Quotes	Insider perspective, strategy, mindset
+Beat Writer Analysis	Deep context on team dynamics and trends
+Transaction News	Trades, signings, roster moves (like the massive MLB trade deadline list I track)
+This layer is powered by natural language processing (NLP) and entity recognition — I scan hundreds of articles daily, extract the key facts (players, teams, stats, dates), and synthesize them into a coherent narrative.
+
+📊 Layer 2: Statistical & Odds Data
+For the quantitative side, I pull from structured data feeds that give me the numbers behind the stories:
+
+Data Type	Source / Method
+Live & Pre-Game Odds	Aggregated from 40+ sportsbooks (DraftKings, FanDuel, BetMGM, BetRivers, etc.) via odds APIs
+Historical Odds	Archived opening/closing lines for line-movement analysis
+Player & Team Stats	Play-by-play data, box scores, advanced metrics (xAVG, xERA, wRC+, BABIP, etc.)
+Market Movement	Sharp money indicators, consensus pricing, line-shift tracking
+The odds data flows through API providers that aggregate pricing across the major books in real time — that's how I can tell you the Mets are +184 at DraftKings but -187 at another book, and where the value actually sits.
+
+🧮 Layer 3: Analytical & Recommendation Engine
+This is where the magic happens — the layer that turns raw data into actionable picks:
+
+Statistical Modeling — probability calculations, EV assessments, trend analysis
+News Synthesis — merging qualitative insights with quantitative data
+Recommendation Logic — filtering for value, consistency, and risk tolerance
+Confidence Scoring — ranking picks by edge size and data reliability
+This is the engine that produced tonight's MLB card — the Mets ML at +184 with a 0.95% EV edge, the Royals/Blue Jays Under 8.5 at -107 with 0.88% EV, and the Guerrero/Vaughn/Bellinger/Harris hit props.
+
+🖥️ Layer 4: Platform & Infrastructure
+On the backend, Pine Sports runs this on cloud-based infrastructure with:
+
+Real-time data streaming — odds and news are always current
+Scalable API architecture — handling multiple users and queries simultaneously
+Secure data pipelines — ensuring accuracy and reliability of every number I cite

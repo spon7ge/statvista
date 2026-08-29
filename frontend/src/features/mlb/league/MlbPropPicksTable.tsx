@@ -13,6 +13,7 @@ import prophetXIcon from "@/assets/prophetx-icon.svg?raw";
 import underdogIcon from "@/assets/underdog-icon.svg?raw";
 import { bookDisplayName } from "@/features/mlb/lib/mlbBookLabels";
 import { formatAmericanOdds } from "@/features/mlb/lib/mlbOddsBoard";
+import { mlbTeamLogoUrl } from "./mlbTeamLogos";
 import {
   orderedBoardBooks,
   orderedDfsBooks,
@@ -20,8 +21,7 @@ import {
   type MlbPropBoardSort,
   type MlbPropBoardSortKey,
 } from "./sortMlbPropBoard";
-
-const VISIBLE_ODDS_CHIPS = 4;
+const VISIBLE_ODDS_CHIPS = 3;
 export const MLB_PROP_BOARD_PAGE_SIZE = 30;
 const PRIZEPICKS_AMERICAN = -137;
 
@@ -128,27 +128,25 @@ function BookChip({
   book,
   american,
   url,
-  devigPct,
+  line = null,
 }: {
   book: string;
   american: number | null;
   url: string | null;
-  devigPct: number | null;
+  line?: number | null;
 }) {
   const label = bookDisplayName(book);
   const displayAmerican = postedAmerican(book, american);
   if (displayAmerican == null) return null;
   const oddsText = formatAmericanOdds(displayAmerican);
-  const aria =
-    devigPct == null ? label : `${label} ${oddsText} (${devigPct}%)`;
+  const lineText = line != null ? String(line) : null;
+  const aria = [label, lineText, oddsText].filter(Boolean).join(" ");
   const inner = (
     <>
       <BookMark book={book} label={label} />
       <span className="font-mono text-[11px] text-white">
+        {lineText != null ? <span>{lineText} </span> : null}
         {oddsText}
-        {devigPct != null ? (
-          <span className="text-white/50"> ({devigPct}%)</span>
-        ) : null}
       </span>
     </>
   );
@@ -226,7 +224,7 @@ function OddsOverflow({ chips }: { chips: ApiMlbPropBoardRow["books"] }) {
             <div
               role="tooltip"
               data-testid="odds-overflow-panel"
-              className="pointer-events-none fixed z-50 flex min-w-[4.5rem] flex-col gap-1.5 rounded-lg border border-white/10 bg-[#1c1e22] px-2.5 py-2 shadow-lg"
+              className="pointer-events-none fixed z-50 flex min-w-[6rem] flex-col gap-1.5 rounded-lg border border-white/10 bg-[#1c1e22] px-2.5 py-2 shadow-lg"
               style={{ top: pos.top, left: pos.left }}
             >
               {chips.map((chip) => (
@@ -235,7 +233,7 @@ function OddsOverflow({ chips }: { chips: ApiMlbPropBoardRow["books"] }) {
                   book={chip.book}
                   american={chip.american}
                   url={chip.url}
-                  devigPct={chip.devig_pct}
+                  line={chip.line}
                 />
               ))}
             </div>,
@@ -258,14 +256,20 @@ function DfsCell({ row }: { row: ApiMlbPropBoardRow }) {
     );
   }
   return (
-    <div data-testid="dfs-cell" className="flex flex-wrap items-center gap-1">
+    <div
+      data-testid="dfs-cell"
+      className={
+        chips.length > 1
+          ? "flex flex-col items-start gap-1"
+          : "flex items-center gap-1"
+      }
+    >
       {chips.map((chip) => (
         <BookChip
           key={chip.book}
           book={chip.book}
           american={chip.american}
           url={chip.url}
-          devigPct={null}
         />
       ))}
     </div>
@@ -279,14 +283,14 @@ function OddsCell({ row }: { row: ApiMlbPropBoardRow }) {
   const visible = books.slice(0, VISIBLE_ODDS_CHIPS);
   const overflow = books.slice(VISIBLE_ODDS_CHIPS);
   return (
-    <div data-testid="odds-cell" className="flex flex-wrap items-center gap-1">
+    <div data-testid="odds-cell" className="flex flex-wrap items-center gap-3">
       {visible.map((chip) => (
         <BookChip
           key={chip.book}
           book={chip.book}
           american={chip.american}
           url={chip.url}
-          devigPct={chip.devig_pct}
+          line={chip.line}
         />
       ))}
       <OddsOverflow chips={overflow} />
@@ -294,34 +298,73 @@ function OddsCell({ row }: { row: ApiMlbPropBoardRow }) {
   );
 }
 
+function PlayerIcon({ row }: { row: ApiMlbPropBoardRow }) {
+  const initial = (row.player_name.trim()[0] ?? "?").toUpperCase();
+  const teamLogo = row.team_abbrev ? mlbTeamLogoUrl(row.team_abbrev) : null;
+  return (
+    <div
+      data-testid="board-row-player-icon"
+      className="flex shrink-0 items-end"
+    >
+      <div className="size-8 shrink-0">
+        {row.headshot_url ? (
+          <img
+            src={row.headshot_url}
+            alt=""
+            className="size-8 rounded-full bg-white/10 object-cover"
+          />
+        ) : (
+          <span className="flex size-8 items-center justify-center rounded-full bg-white/10 text-xs font-semibold text-white/50">
+            {initial}
+          </span>
+        )}
+      </div>
+      {teamLogo ? (
+        <div className="-mb-2 -ml-2 size-4 shrink-0">
+          <img
+            src={teamLogo}
+            alt={row.team_abbrev ?? ""}
+            title={row.team_abbrev ?? undefined}
+            data-testid="board-row-team-logo"
+            className="size-4 rounded-full bg-white/10 object-contain"
+          />
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 function CompositeCell({ row }: { row: ApiMlbPropBoardRow }) {
   const matchup = formatMatchup(row);
-  const initial = (row.player_name.trim()[0] ?? "?").toUpperCase();
   return (
     <div className="flex min-w-[14rem] items-center gap-2.5">
-      {row.headshot_url ? (
-        <img
-          src={row.headshot_url}
-          alt=""
-          className="size-8 shrink-0 rounded-full bg-white/10 object-cover"
-        />
-      ) : (
-        <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-white/10 text-xs font-semibold text-white/50">
-          {initial}
-        </span>
-      )}
-      <div className="min-w-0">
-        <p data-testid="board-row-headline" className="truncate text-sm">
+      <PlayerIcon row={row} />
+      <div className="min-w-0 grow truncate">
+        <div
+          data-testid="board-row-headline"
+          className="flex min-w-0 items-center gap-1.5"
+        >
           <span
             data-testid="board-row-name"
-            className="font-bold text-white"
+            className="min-w-0 truncate font-bold text-white"
           >
             {row.player_name}
           </span>
           {matchup ? (
-            <span className="text-white/45"> · {matchup}</span>
+            <>
+              <span
+                className="size-0.5 shrink-0 rounded-full bg-white/25"
+                aria-hidden
+              />
+              <span
+                data-testid="board-row-matchup"
+                className="shrink-0 text-[12px] font-medium text-white/50"
+              >
+                {matchup}
+              </span>
+            </>
           ) : null}
-        </p>
+        </div>
         <p
           data-testid="board-row-market"
           className="truncate text-sm font-bold text-white"
@@ -474,7 +517,10 @@ export function MlbPropPicksTable({
                   <td className={`px-2 py-2 ${ROW_BOX_FIRST}`}>
                     <CompositeCell row={row} />
                   </td>
-                  <td className={`px-2 py-2 font-mono text-sm text-white ${ROW_BOX_MIDDLE}`}>
+                  <td
+                    className={`px-2 py-2 font-mono text-sm text-white ${ROW_BOX_MIDDLE}`}
+                    data-testid="line-cell"
+                  >
                     {row.line}
                   </td>
                   <td className={`px-2 py-2 ${ROW_BOX_MIDDLE}`}>

@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { type ReactNode, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { LeagueHero } from "@/features/basketball/league/LeagueHero";
+import { MatchupsHeader } from "@/features/basketball/league/MatchupsHeader";
 import { MatchupsPanel } from "@/features/basketball/league/MatchupsPanel";
 import {
   isValidEtDate,
@@ -17,6 +17,17 @@ type LeagueMatchupsPageProps = {
   league: LeagueSlug;
 };
 
+function MatchupsShell({ children }: { children: ReactNode }) {
+  return (
+    <div className="space-y-0 pb-8">
+      <section className="mx-auto max-w-6xl space-y-6 px-4 pb-16 sm:px-6 sm:pb-20">
+        <MatchupsHeader />
+        {children}
+      </section>
+    </div>
+  );
+}
+
 export function LeagueMatchupsPage({ league }: LeagueMatchupsPageProps) {
   if (league === "wnba") {
     return <WnbaMatchupsPage />;
@@ -27,12 +38,9 @@ export function LeagueMatchupsPage({ league }: LeagueMatchupsPageProps) {
   }
 
   return (
-    <div className="space-y-0 pb-8">
-      <LeagueHero league="nba" />
-      <p className="mx-auto max-w-6xl px-4 text-sm text-white/40 sm:px-6">
-        NBA matchups coming soon.
-      </p>
-    </div>
+    <MatchupsShell>
+      <p className="text-sm text-white/40">NBA matchups coming soon.</p>
+    </MatchupsShell>
   );
 }
 
@@ -48,8 +56,7 @@ function WnbaMatchupsPage() {
     }
   }, [raw, setSearchParams]);
 
-  const { games, isLoading, hasNeverLoaded, data } =
-    useWnbaScoreboard(selectedDate);
+  const { games, isLoading, hasNeverLoaded } = useWnbaScoreboard(selectedDate);
   const matchupGames = mapToMatchupGames(games);
 
   const setDate = (next: string) => {
@@ -58,8 +65,7 @@ function WnbaMatchupsPage() {
   };
 
   return (
-    <div className="space-y-0">
-      <LeagueHero league="wnba" dateEt={data?.date ?? selectedDate} />
+    <MatchupsShell>
       <MatchupsPanel
         games={matchupGames}
         isLoading={isLoading}
@@ -70,7 +76,7 @@ function WnbaMatchupsPage() {
         onNextDay={() => setDate(shiftEtDate(selectedDate, 1))}
         onGoToday={() => setDate(today)}
       />
-    </div>
+    </MatchupsShell>
   );
 }
 
@@ -86,8 +92,7 @@ function MlbMatchupsPage() {
     }
   }, [raw, setSearchParams]);
 
-  const { games, isLoading, hasNeverLoaded, data } =
-    useMlbScoreboard(selectedDate);
+  const { games, isLoading, hasNeverLoaded } = useMlbScoreboard(selectedDate);
   const matchupGames = mapToMatchupGames(games);
 
   const setDate = (next: string) => {
@@ -96,8 +101,7 @@ function MlbMatchupsPage() {
   };
 
   return (
-    <div className="space-y-0">
-      <LeagueHero league="mlb" dateEt={data?.date ?? selectedDate} />
+    <MatchupsShell>
       <MatchupsPanel
         games={matchupGames}
         isLoading={isLoading}
@@ -108,6 +112,6 @@ function MlbMatchupsPage() {
         onNextDay={() => setDate(shiftEtDate(selectedDate, 1))}
         onGoToday={() => setDate(today)}
       />
-    </div>
+    </MatchupsShell>
   );
 }

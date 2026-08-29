@@ -78,6 +78,7 @@ class MlbTeamStatLine(BaseModel):
     slg: str | None = None
     era: str | None = None
     k: int | None = None
+    bb: int | None = None
 
 
 class MlbTeamStatsPair(BaseModel):

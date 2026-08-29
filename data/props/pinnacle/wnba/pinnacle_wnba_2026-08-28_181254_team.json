@@ -1,0 +1,1010 @@
+{
+  "fetched_at": "2026-08-28T18:13:01-07:00",
+  "source": "pinnacle_selenium",
+  "sport": "basketball",
+  "league": "wnba",
+  "list_page": "https://www.pinnacle.com/en/basketball/wnba/matchups/#all",
+  "parallel_workers_configured": 5,
+  "parallel_workers_effective": 1,
+  "games_per_worker_target": 2,
+  "arcadia_timeout_s": 90.0,
+  "arcadia_poll_s": 0.22,
+  "snapshot_kind": "team",
+  "games": [
+    {
+      "matchup_id": 1634530087,
+      "source_url": "https://www.pinnacle.com/en/basketball/wnba/toronto-tempo-vs-las-vegas-aces/1634530087/#all",
+      "path": "/en/basketball/wnba/toronto-tempo-vs-las-vegas-aces/1634530087/",
+      "league": "WNBA",
+      "start_time": "2026-08-29T02:00:00Z",
+      "label": "Toronto Tempo vs Las Vegas Aces",
+      "participants": [
+        "Toronto Tempo",
+        "Las Vegas Aces"
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Las Vegas Aces",
+                "american": -991,
+                "decimal": 1.101
+              },
+              {
+                "side": "away",
+                "team": "Toronto Tempo",
+                "american": 709,
+                "decimal": 8.09
+              }
+            ]
+          }
+        ],
+        "spread": [
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Las Vegas Aces",
+                "points": -14.0,
+                "american": -104,
+                "decimal": 1.962
+              },
+              {
+                "side": "away",
+                "team": "Toronto Tempo",
+                "points": 14.0,
+                "american": -112,
+                "decimal": 1.893
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Las Vegas Aces",
+                "points": -12.5,
+                "american": -137,
+                "decimal": 1.73
+              },
+              {
+                "side": "away",
+                "team": "Toronto Tempo",
+                "points": 12.5,
+                "american": 113,
+                "decimal": 2.13
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Las Vegas Aces",
+                "points": -13.0,
+                "american": -126,
+                "decimal": 1.794
+              },
+              {
+                "side": "away",
+                "team": "Toronto Tempo",
+                "points": 13.0,
+                "american": 104,
+                "decimal": 2.04
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Las Vegas Aces",
+                "points": -13.5,
+                "american": -116,
+                "decimal": 1.862
+              },
+              {
+                "side": "away",
+                "team": "Toronto Tempo",
+                "points": 13.5,
+                "american": -104,
+                "decimal": 1.962
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Las Vegas Aces",
+                "points": -14.5,
+                "american": 103,
+                "decimal": 2.03
+              },
+              {
+                "side": "away",
+                "team": "Toronto Tempo",
+                "points": 14.5,
+                "american": -125,
+                "decimal": 1.8
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Las Vegas Aces",
+                "points": -15.0,
+                "american": 112,
+                "decimal": 2.12
+              },
+              {
+                "side": "away",
+                "team": "Toronto Tempo",
+                "points": 15.0,
+                "american": -136,
+                "decimal": 1.735
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Las Vegas Aces",
+                "points": -15.5,
+                "american": 121,
+                "decimal": 2.21
+              },
+              {
+                "side": "away",
+                "team": "Toronto Tempo",
+                "points": 15.5,
+                "american": -147,
+                "decimal": 1.68
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Las Vegas Aces",
+                "points": -8.0,
+                "american": -112,
+                "decimal": 1.893
+              },
+              {
+                "side": "away",
+                "team": "Toronto Tempo",
+                "points": 8.0,
+                "american": -108,
+                "decimal": 1.926
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Las Vegas Aces",
+                "points": -7.0,
+                "american": -139,
+                "decimal": 1.719
+              },
+              {
+                "side": "away",
+                "team": "Toronto Tempo",
+                "points": 7.0,
+                "american": 111,
+                "decimal": 2.11
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Las Vegas Aces",
+                "points": -7.5,
+                "american": -126,
+                "decimal": 1.794
+              },
+              {
+                "side": "away",
+                "team": "Toronto Tempo",
+                "points": 7.5,
+                "american": 100,
+                "decimal": 2.0
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Las Vegas Aces",
+                "points": -8.5,
+                "american": -103,
+                "decimal": 1.971
+              },
+              {
+                "side": "away",
+                "team": "Toronto Tempo",
+                "points": 8.5,
+                "american": -122,
+                "decimal": 1.82
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Las Vegas Aces",
+                "points": -9.0,
+                "american": 108,
+                "decimal": 2.08
+              },
+              {
+                "side": "away",
+                "team": "Toronto Tempo",
+                "points": 9.0,
+                "american": -136,
+                "decimal": 1.735
+              }
+            ],
+            "is_alternate": true
+          }
+        ],
+        "total": [
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 174.0,
+                "american": -106,
+                "decimal": 1.943
+              },
+              {
+                "side": "under",
+                "points": 174.0,
+                "american": -114,
+                "decimal": 1.877
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 172.5,
+                "american": -128,
+                "decimal": 1.781
+              },
+              {
+                "side": "under",
+                "points": 172.5,
+                "american": 102,
+                "decimal": 2.02
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 173.0,
+                "american": -121,
+                "decimal": 1.826
+              },
+              {
+                "side": "under",
+                "points": 173.0,
+                "american": -103,
+                "decimal": 1.971
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 173.5,
+                "american": -115,
+                "decimal": 1.87
+              },
+              {
+                "side": "under",
+                "points": 173.5,
+                "american": -109,
+                "decimal": 1.917
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 174.5,
+                "american": -102,
+                "decimal": 1.98
+              },
+              {
+                "side": "under",
+                "points": 174.5,
+                "american": -123,
+                "decimal": 1.813
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 175.0,
+                "american": 104,
+                "decimal": 2.04
+              },
+              {
+                "side": "under",
+                "points": 175.0,
+                "american": -131,
+                "decimal": 1.763
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 175.5,
+                "american": 110,
+                "decimal": 2.1
+              },
+              {
+                "side": "under",
+                "points": 175.5,
+                "american": -138,
+                "decimal": 1.725
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 85.5,
+                "american": -105,
+                "decimal": 1.952
+              },
+              {
+                "side": "under",
+                "points": 85.5,
+                "american": -115,
+                "decimal": 1.87
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 84.5,
+                "american": -127,
+                "decimal": 1.787
+              },
+              {
+                "side": "under",
+                "points": 84.5,
+                "american": 101,
+                "decimal": 2.01
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 85.0,
+                "american": -116,
+                "decimal": 1.862
+              },
+              {
+                "side": "under",
+                "points": 85.0,
+                "american": -108,
+                "decimal": 1.926
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 86.0,
+                "american": 103,
+                "decimal": 2.03
+              },
+              {
+                "side": "under",
+                "points": 86.0,
+                "american": -129,
+                "decimal": 1.775
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 86.5,
+                "american": 111,
+                "decimal": 2.11
+              },
+              {
+                "side": "under",
+                "points": 86.5,
+                "american": -140,
+                "decimal": 1.714
+              }
+            ],
+            "is_alternate": true
+          }
+        ]
+      }
+    },
+    {
+      "matchup_id": 1634530189,
+      "source_url": "https://www.pinnacle.com/en/basketball/wnba/washington-mystics-vs-los-angeles-sparks/1634530189/#all",
+      "path": "/en/basketball/wnba/washington-mystics-vs-los-angeles-sparks/1634530189/",
+      "league": "WNBA",
+      "start_time": "2026-08-29T02:00:00Z",
+      "label": "Washington Mystics vs Los Angeles Sparks",
+      "participants": [
+        "Washington Mystics",
+        "Los Angeles Sparks"
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Los Angeles Sparks",
+                "american": 177,
+                "decimal": 2.77
+              },
+              {
+                "side": "away",
+                "team": "Washington Mystics",
+                "american": -210,
+                "decimal": 1.476
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Los Angeles Sparks",
+                "american": 152,
+                "decimal": 2.52
+              },
+              {
+                "side": "away",
+                "team": "Washington Mystics",
+                "american": -187,
+                "decimal": 1.535
+              }
+            ]
+          }
+        ],
+        "spread": [
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Los Angeles Sparks",
+                "points": 5.0,
+                "american": -105,
+                "decimal": 1.952
+              },
+              {
+                "side": "away",
+                "team": "Washington Mystics",
+                "points": -5.0,
+                "american": -111,
+                "decimal": 1.901
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Los Angeles Sparks",
+                "points": 6.5,
+                "american": -137,
+                "decimal": 1.73
+              },
+              {
+                "side": "away",
+                "team": "Washington Mystics",
+                "points": -6.5,
+                "american": 113,
+                "decimal": 2.13
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Los Angeles Sparks",
+                "points": 6.0,
+                "american": -127,
+                "decimal": 1.787
+              },
+              {
+                "side": "away",
+                "team": "Washington Mystics",
+                "points": -6.0,
+                "american": 105,
+                "decimal": 2.05
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Los Angeles Sparks",
+                "points": 5.5,
+                "american": -117,
+                "decimal": 1.855
+              },
+              {
+                "side": "away",
+                "team": "Washington Mystics",
+                "points": -5.5,
+                "american": -104,
+                "decimal": 1.962
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Los Angeles Sparks",
+                "points": 4.5,
+                "american": 103,
+                "decimal": 2.03
+              },
+              {
+                "side": "away",
+                "team": "Washington Mystics",
+                "points": -4.5,
+                "american": -124,
+                "decimal": 1.806
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Los Angeles Sparks",
+                "points": 4.0,
+                "american": 111,
+                "decimal": 2.11
+              },
+              {
+                "side": "away",
+                "team": "Washington Mystics",
+                "points": -4.0,
+                "american": -135,
+                "decimal": 1.741
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Los Angeles Sparks",
+                "points": 3.5,
+                "american": 120,
+                "decimal": 2.2
+              },
+              {
+                "side": "away",
+                "team": "Washington Mystics",
+                "points": -3.5,
+                "american": -146,
+                "decimal": 1.685
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Los Angeles Sparks",
+                "points": 2.5,
+                "american": -107,
+                "decimal": 1.935
+              },
+              {
+                "side": "away",
+                "team": "Washington Mystics",
+                "points": -2.5,
+                "american": -114,
+                "decimal": 1.877
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Los Angeles Sparks",
+                "points": 3.5,
+                "american": -131,
+                "decimal": 1.763
+              },
+              {
+                "side": "away",
+                "team": "Washington Mystics",
+                "points": -3.5,
+                "american": 104,
+                "decimal": 2.04
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Los Angeles Sparks",
+                "points": 3.0,
+                "american": -120,
+                "decimal": 1.833
+              },
+              {
+                "side": "away",
+                "team": "Washington Mystics",
+                "points": -3.0,
+                "american": -105,
+                "decimal": 1.952
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Los Angeles Sparks",
+                "points": 2.0,
+                "american": 102,
+                "decimal": 2.02
+              },
+              {
+                "side": "away",
+                "team": "Washington Mystics",
+                "points": -2.0,
+                "american": -128,
+                "decimal": 1.781
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "home",
+                "team": "Los Angeles Sparks",
+                "points": 1.5,
+                "american": 111,
+                "decimal": 2.11
+              },
+              {
+                "side": "away",
+                "team": "Washington Mystics",
+                "points": -1.5,
+                "american": -140,
+                "decimal": 1.714
+              }
+            ],
+            "is_alternate": true
+          }
+        ],
+        "total": [
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 166.5,
+                "american": -115,
+                "decimal": 1.87
+              },
+              {
+                "side": "under",
+                "points": 166.5,
+                "american": -106,
+                "decimal": 1.943
+              }
+            ]
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 165.0,
+                "american": -137,
+                "decimal": 1.73
+              },
+              {
+                "side": "under",
+                "points": 165.0,
+                "american": 109,
+                "decimal": 2.09
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 165.5,
+                "american": -129,
+                "decimal": 1.775
+              },
+              {
+                "side": "under",
+                "points": 165.5,
+                "american": 103,
+                "decimal": 2.03
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 166.0,
+                "american": -123,
+                "decimal": 1.813
+              },
+              {
+                "side": "under",
+                "points": 166.0,
+                "american": -102,
+                "decimal": 1.98
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 167.0,
+                "american": -111,
+                "decimal": 1.901
+              },
+              {
+                "side": "under",
+                "points": 167.0,
+                "american": -113,
+                "decimal": 1.885
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 167.5,
+                "american": -105,
+                "decimal": 1.952
+              },
+              {
+                "side": "under",
+                "points": 167.5,
+                "american": -120,
+                "decimal": 1.833
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 0,
+            "lines": [
+              {
+                "side": "over",
+                "points": 168.0,
+                "american": 101,
+                "decimal": 2.01
+              },
+              {
+                "side": "under",
+                "points": 168.0,
+                "american": -126,
+                "decimal": 1.794
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 81.0,
+                "american": -105,
+                "decimal": 1.952
+              },
+              {
+                "side": "under",
+                "points": 81.0,
+                "american": -115,
+                "decimal": 1.87
+              }
+            ]
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 80.0,
+                "american": -128,
+                "decimal": 1.781
+              },
+              {
+                "side": "under",
+                "points": 80.0,
+                "american": 102,
+                "decimal": 2.02
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 80.5,
+                "american": -117,
+                "decimal": 1.855
+              },
+              {
+                "side": "under",
+                "points": 80.5,
+                "american": -108,
+                "decimal": 1.926
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 81.5,
+                "american": 101,
+                "decimal": 2.01
+              },
+              {
+                "side": "under",
+                "points": 81.5,
+                "american": -127,
+                "decimal": 1.787
+              }
+            ],
+            "is_alternate": true
+          },
+          {
+            "period": 1,
+            "lines": [
+              {
+                "side": "over",
+                "points": 82.0,
+                "american": 110,
+                "decimal": 2.1
+              },
+              {
+                "side": "under",
+                "points": 82.0,
+                "american": -138,
+                "decimal": 1.725
+              }
+            ],
+            "is_alternate": true
+          }
+        ]
+      }
+    }
+  ]
+}

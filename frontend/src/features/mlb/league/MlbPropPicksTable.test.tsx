@@ -19,7 +19,7 @@ function fixtureRow(
     line: 1.5,
     game_pk: 1,
     game_start_at: "2026-08-23T23:10:00Z",
-    dfs: [],
+    dfs: [{ book: "prizepicks", american: null, url: null }],
     books: [{ book: "prophetx", american: -115, url: null }],
     ip_pct: 53,
     opp_def_rank: 12,
@@ -63,21 +63,31 @@ describe("MlbPropPicksTable", () => {
 
   it("renders the composite cell and remaining column headers", () => {
     render(<MlbPropPicksTable rows={[fixtureRow()]} />);
-    expect(screen.getByTestId("board-row-headline")).toHaveTextContent(
-      "Aaron Judge · NYY @ BOS",
-    );
     expect(screen.getByTestId("board-row-name")).toHaveTextContent("Aaron Judge");
-    expect(screen.getByTestId("board-row-name")).toHaveClass(
-      "font-bold",
-      "text-white",
-    );
+    expect(screen.getByTestId("board-row-name")).toHaveClass("font-bold");
+    expect(screen.getByTestId("board-row-matchup")).toHaveTextContent("NYY @ BOS");
     const market = screen.getByTestId("board-row-market");
     expect(market).toHaveTextContent("Over 1.5 Hits");
-    expect(market).toHaveClass("truncate", "text-sm", "font-bold", "text-white");
+    expect(market).toHaveClass("truncate", "text-sm", "font-bold");
+    expect(screen.getByTestId("line-cell")).toHaveTextContent("1.5");
     expect(screen.getByText("Odds")).toBeInTheDocument();
     expect(screen.getByText("L10")).toBeInTheDocument();
     expect(screen.getByText("L15")).toBeInTheDocument();
     expect(screen.getByText("H2H")).toBeInTheDocument();
+  });
+
+  it("overlaps the team logo on the player headshot", () => {
+    render(
+      <MlbPropPicksTable
+        rows={[fixtureRow({ headshot_url: "https://example.com/judge.png" })]}
+      />,
+    );
+    const icon = screen.getByTestId("board-row-player-icon");
+    expect(icon.querySelector('img[src="https://example.com/judge.png"]')).toBeTruthy();
+    expect(screen.getByTestId("board-row-team-logo")).toHaveAttribute(
+      "src",
+      "https://www.mlbstatic.com/team-logos/147.svg",
+    );
   });
 
   it("shows No board yet when there are no rows", () => {
@@ -145,6 +155,7 @@ describe("MlbPropPicksTable", () => {
     expect(screen.getByTestId("hit-l10-cell").className).toContain("bg-amber-500/15");
     expect(screen.getByTestId("hit-l15-cell").className).toContain("bg-rose-500/15");
     expect(screen.getByTestId("hit-h2h-cell").className).toContain("bg-amber-500/15");
+    expect(screen.queryByTestId("hit-l5-cell-indicator")).not.toBeInTheDocument();
   });
 
   it("renders home matchups as opponent @ team", () => {
@@ -159,9 +170,7 @@ describe("MlbPropPicksTable", () => {
         ]}
       />,
     );
-    expect(screen.getByTestId("board-row-headline")).toHaveTextContent(
-      "Aaron Judge · BOS @ NYY",
-    );
+    expect(screen.getByTestId("board-row-matchup")).toHaveTextContent("BOS @ NYY");
   });
 
   it("sorts by game start, name, stat, Over then Under, then line by default", () => {
@@ -251,7 +260,7 @@ describe("MlbPropPicksTable", () => {
     ]);
   });
 
-  it("shows four odds chips plus overflow and omits DFS American", () => {
+  it("shows three odds chips plus overflow and omits DFS American", () => {
     render(
       <MlbPropPicksTable
         rows={[
@@ -272,8 +281,8 @@ describe("MlbPropPicksTable", () => {
     expect(within(odds).getByText("-115")).toBeInTheDocument();
     expect(within(odds).getByText("-110")).toBeInTheDocument();
     expect(within(odds).getByText("-105")).toBeInTheDocument();
-    expect(within(odds).getByText("-120")).toBeInTheDocument();
-    expect(within(odds).getByText("+1")).toBeInTheDocument();
+    expect(within(odds).queryByText("-120")).not.toBeInTheDocument();
+    expect(within(odds).getByText("+2")).toBeInTheDocument();
     expect(odds.querySelector('svg[aria-label="PrizePicks"]')).toBeNull();
     expect(screen.getByTestId("dfs-cell").querySelector('svg[aria-label="PrizePicks"]')).toBeTruthy();
   });
@@ -297,7 +306,8 @@ describe("MlbPropPicksTable", () => {
       />,
     );
     const odds = screen.getByTestId("odds-cell");
-    expect(within(odds).getByText("+2")).toBeInTheDocument();
+    expect(within(odds).getByText("+3")).toBeInTheDocument();
+    expect(odds.querySelector('svg[aria-label="DraftKings"]')).toBeNull();
     expect(odds.querySelector('svg[aria-label="FanDuel"]')).toBeNull();
     expect(odds.querySelector('svg[aria-label="BetMGM"]')).toBeNull();
     expect(screen.queryByTestId("odds-overflow-panel")).not.toBeInTheDocument();
@@ -308,8 +318,10 @@ describe("MlbPropPicksTable", () => {
     await user.hover(arrow);
     const panel = await screen.findByTestId("odds-overflow-panel");
     expect(arrow.querySelector("svg")).toHaveClass("rotate-180");
+    expect(panel.querySelector('svg[aria-label="DraftKings"]')).toBeTruthy();
     expect(panel.querySelector('svg[aria-label="FanDuel"]')).toBeTruthy();
     expect(panel.querySelector('svg[aria-label="BetMGM"]')).toBeTruthy();
+    expect(within(panel).getByText("-120")).toBeInTheDocument();
     expect(within(panel).getByText("-108")).toBeInTheDocument();
     expect(within(panel).getByText("-112")).toBeInTheDocument();
     expect(within(panel).queryByText("-115")).not.toBeInTheDocument();
@@ -363,7 +375,7 @@ describe("MlbPropPicksTable", () => {
     expect(cells[0].querySelector('svg[aria-label="ProphetX"]')).toBeTruthy();
     expect(cells[0].querySelector('svg[aria-label="Novig"]')).toBeTruthy();
     expect(cells[0].querySelector('svg[aria-label="DraftKings"]')).toBeTruthy();
-    expect(cells[0].querySelector('svg[aria-label="FanDuel"]')).toBeTruthy();
+    expect(cells[0].querySelector('svg[aria-label="FanDuel"]')).toBeNull();
     expect(cells[1].querySelector('svg[aria-label="Fliff"]')).toBeTruthy();
     expect(cells[1].querySelector('svg[aria-label="BetMGM"]')).toBeTruthy();
     expect(cells[1].querySelector('svg[aria-label="Caesars"]')).toBeTruthy();
@@ -397,24 +409,85 @@ describe("MlbPropPicksTable", () => {
     expect(within(dfs).queryByText("(54%)")).not.toBeInTheDocument();
     const odds = screen.getByTestId("odds-cell");
     expect(odds.querySelector('svg[aria-label="PrizePicks"]')).toBeNull();
-    expect(odds).toHaveTextContent("-122 (54%)");
+    expect(odds).toHaveTextContent("-122");
+    expect(odds).not.toHaveTextContent("(55%)");
   });
 
-  it("renders em dash in DFS when only a sportsbook line is present", () => {
+  it("renders this side's sportsbook line and odds without implied percent", () => {
     render(
       <MlbPropPicksTable
         rows={[
           fixtureRow({
-            line: 20.5,
-            dfs: [],
-            books: [{ book: "pinnacle", american: -108, url: null }],
+            line: 3.5,
+            stat: "total_bases",
+            market_label: "Over 3.5 Total Bases",
+            dfs: [{ book: "prizepicks", american: null, url: null }],
+            books: [
+              {
+                book: "prophetx",
+                american: 114,
+                url: null,
+                line: 3.5,
+                over_american: 114,
+                under_american: -154,
+                devig_pct: 47,
+              },
+              {
+                book: "pinnacle",
+                american: -128,
+                url: null,
+                line: 1.5,
+                over_american: -128,
+                under_american: -104,
+                devig_pct: 54,
+              },
+            ],
           }),
         ]}
       />,
     );
-    expect(screen.getByTestId("dfs-cell")).toHaveTextContent("—");
-    expect(within(screen.getByTestId("odds-cell")).getByText("PIN")).toBeInTheDocument();
-    expect(within(screen.getByTestId("odds-cell")).getByText("-108")).toBeInTheDocument();
+    const odds = screen.getByTestId("odds-cell");
+    expect(odds).toHaveTextContent("3.5");
+    expect(odds).toHaveTextContent("+114");
+    expect(odds).not.toHaveTextContent("(47%)");
+    expect(odds).toHaveTextContent("1.5");
+    expect(odds).toHaveTextContent("-128");
+    expect(odds).not.toHaveTextContent("(56%)");
+    expect(odds).not.toHaveTextContent("-154");
+    expect(odds).not.toHaveTextContent("-104");
+    expect(odds).not.toHaveTextContent("O 3.5");
+    expect(odds).not.toHaveTextContent("U 1.5");
+    expect(screen.getByTestId("dfs-cell")).toHaveTextContent("-137");
+  });
+
+  it("does not render the opposite side on an under row", () => {
+    render(
+      <MlbPropPicksTable
+        rows={[
+          fixtureRow({
+            side: "under",
+            market_label: "Under 3.5 Total Bases",
+            line: 3.5,
+            books: [
+              {
+                book: "prophetx",
+                american: -154,
+                url: null,
+                line: 3.5,
+                over_american: 114,
+                under_american: -154,
+                devig_pct: 53,
+              },
+            ],
+          }),
+        ]}
+      />,
+    );
+    const odds = screen.getByTestId("odds-cell");
+    expect(odds).toHaveTextContent("3.5");
+    expect(odds).toHaveTextContent("-154");
+    expect(odds).not.toHaveTextContent("(61%)");
+    expect(odds).not.toHaveTextContent("+114");
   });
 
   it("renders PrizePicks mark and -137 for every PrizePicks chip", () => {
@@ -447,6 +520,26 @@ describe("MlbPropPicksTable", () => {
     const dfs = screen.getByTestId("dfs-cell");
     expect(dfs.querySelector('svg[aria-label="Underdog"]')).toBeTruthy();
     expect(within(dfs).getByText("-105")).toBeInTheDocument();
+  });
+
+  it("stacks PrizePicks above Underdog when both are posted", () => {
+    render(
+      <MlbPropPicksTable
+        rows={[
+          fixtureRow({
+            dfs: [
+              { book: "underdog", american: -105, url: null },
+              { book: "prizepicks", american: null, url: null },
+            ],
+            books: [],
+          }),
+        ]}
+      />,
+    );
+    const dfs = screen.getByTestId("dfs-cell");
+    expect(dfs).toHaveClass("flex-col");
+    expect(dfs.querySelector('svg[aria-label="PrizePicks"]')).toBeTruthy();
+    expect(dfs.querySelector('svg[aria-label="Underdog"]')).toBeTruthy();
   });
 
   it("hides book marks when that book has no posted American for the line", () => {

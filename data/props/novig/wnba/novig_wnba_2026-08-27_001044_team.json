@@ -1,0 +1,144 @@
+{
+  "source": "novig",
+  "fetched_at": "2026-08-27T00:10:44-07:00",
+  "league": "wnba",
+  "snapshot_kind": "team",
+  "games": [
+    {
+      "event_id": "01a03e06-a44c-7f33-ac8f-7de7a37410d7",
+      "name": "Golden State Valkyries @ New York Liberty",
+      "scheduled": "2026-08-28T00:00:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "e94f3165-2406-47ad-8924-08518f54a712",
+          "name": "New York Liberty",
+          "seq": 0
+        },
+        {
+          "id": "66c8262d-7593-486d-a3ec-eb152fb4303f",
+          "name": "Golden State Valkyries",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "GSV",
+            "competitor_id": null,
+            "american": 133,
+            "line": null,
+            "stake": null
+          },
+          {
+            "name": "NY",
+            "competitor_id": null,
+            "american": -141,
+            "line": null,
+            "stake": null
+          }
+        ],
+        "spread": [
+          {
+            "name": "GSV +2.5",
+            "competitor_id": null,
+            "american": -104,
+            "line": 2.5,
+            "stake": null
+          },
+          {
+            "name": "NY -2.5",
+            "competitor_id": null,
+            "american": -108,
+            "line": -2.5,
+            "stake": null
+          }
+        ],
+        "total": [
+          {
+            "name": "Over 163.5",
+            "competitor_id": null,
+            "american": -100,
+            "line": 163.5,
+            "stake": null
+          },
+          {
+            "name": "Under 163.5",
+            "competitor_id": null,
+            "american": -117,
+            "line": 163.5,
+            "stake": null
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "01a03e3d-feba-7e92-a95c-992ff7e19323",
+      "name": "Washington Mystics @ Phoenix Mercury",
+      "scheduled": "2026-08-28T02:00:00+00:00",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": "73088c48-54ca-47a7-915a-f164506e261d",
+          "name": "Phoenix Mercury",
+          "seq": 0
+        },
+        {
+          "id": "088d1ab8-11dc-455b-80e1-b6bb9abf5bd3",
+          "name": "Washington Mystics",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "WSH",
+            "competitor_id": null,
+            "american": -186,
+            "line": null,
+            "stake": null
+          },
+          {
+            "name": "PHX",
+            "competitor_id": null,
+            "american": 163,
+            "line": null,
+            "stake": null
+          }
+        ],
+        "spread": [
+          {
+            "name": "PHX +3.5",
+            "competitor_id": null,
+            "american": -100,
+            "line": 3.5,
+            "stake": null
+          },
+          {
+            "name": "WSH -3.5",
+            "competitor_id": null,
+            "american": -122,
+            "line": -3.5,
+            "stake": null
+          }
+        ],
+        "total": [
+          {
+            "name": "Under 167.5",
+            "competitor_id": null,
+            "american": -113,
+            "line": 167.5,
+            "stake": null
+          },
+          {
+            "name": "Over 167.5",
+            "competitor_id": null,
+            "american": -100,
+            "line": 167.5,
+            "stake": null
+          }
+        ]
+      }
+    }
+  ]
+}

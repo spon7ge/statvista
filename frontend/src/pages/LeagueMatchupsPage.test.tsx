@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -7,6 +7,15 @@ import { LeagueMatchupsPage } from "./LeagueMatchupsPage";
 
 vi.mock("@/features/basketball/hooks/useWnbaScoreboard", () => ({
   useWnbaScoreboard: (dateEt?: string) => ({
+    games: [],
+    isLoading: false,
+    hasNeverLoaded: false,
+    data: { date: dateEt ?? "2026-08-01", games: [], fetched_at: "" },
+  }),
+}));
+
+vi.mock("@/features/mlb/hooks/useMlbScoreboard", () => ({
+  useMlbScoreboard: (dateEt?: string) => ({
     games: [],
     isLoading: false,
     hasNeverLoaded: false,
@@ -35,6 +44,14 @@ function renderAt(path: string) {
             path="/wnba/matchups"
             element={<LeagueMatchupsPage league="wnba" />}
           />
+          <Route
+            path="/mlb/matchups"
+            element={<LeagueMatchupsPage league="mlb" />}
+          />
+          <Route
+            path="/nba/matchups"
+            element={<LeagueMatchupsPage league="nba" />}
+          />
         </Routes>
       </MemoryRouter>
     </QueryClientProvider>,
@@ -56,5 +73,34 @@ describe("LeagueMatchupsPage date nav", () => {
     useWnbaOdds.mockClear();
     renderAt("/wnba/matchups");
     expect(useWnbaOdds).not.toHaveBeenCalled();
+  });
+
+  it("switches to MLB and NBA matchups from the header pills", async () => {
+    const user = userEvent.setup();
+    renderAt("/wnba/matchups");
+    const header = screen.getByTestId("matchups-header");
+    expect(
+      within(header).getByRole("link", { name: "WNBA" }),
+    ).toHaveAttribute("aria-current", "page");
+
+    await user.click(within(header).getByRole("link", { name: "MLB" }));
+    expect(screen.getByRole("button", { name: "Today" })).toBeInTheDocument();
+    expect(
+      within(screen.getByTestId("matchups-header")).getByRole("link", {
+        name: "MLB",
+      }),
+    ).toHaveAttribute("aria-current", "page");
+
+    await user.click(
+      within(screen.getByTestId("matchups-header")).getByRole("link", {
+        name: "NBA",
+      }),
+    );
+    expect(screen.getByText(/NBA matchups coming soon/i)).toBeInTheDocument();
+    expect(
+      within(screen.getByTestId("matchups-header")).getByRole("link", {
+        name: "NBA",
+      }),
+    ).toHaveAttribute("aria-current", "page");
   });
 });

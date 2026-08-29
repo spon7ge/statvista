@@ -7,8 +7,6 @@ from app.domains.mlb.prop_fair import american_to_fair_pct
 
 Side = Literal["over", "under"]
 
-# Sharp books first so IP prefers ProphetX/Novig/Pinnacle over DraftKings.
-IP_BOOK_ORDER = ("prophetx", "novig", "pinnacle", "draftkings")
 BOOK_CHIP_ORDER = (
     "prophetx",
     "novig",
@@ -93,17 +91,23 @@ def devig_pct_for_side(
     return int(round(fair * 100))
 
 
-def ip_pct_for_side(cluster: Cluster, side: Side) -> int | None:
-    by_book = {q.book: q for q in cluster.quotes}
-    chosen = None
-    for book in IP_BOOK_ORDER:
-        q = by_book.get(book)
-        if q is None:
-            continue
-        if q.over_american is None or q.under_american is None:
-            continue
-        chosen = q
-        break
-    if chosen is None:
+def consensus_ip_pct(americans: list[int | None]) -> int | None:
+    """Average raw implied % of offered Americans (no de-vig)."""
+    vals = [
+        american_to_fair_pct(american)
+        for american in americans
+        if american is not None
+    ]
+    if not vals:
         return None
-    return devig_pct_for_side(chosen.over_american, chosen.under_american, side)
+    return int(round(sum(vals) / len(vals)))
+
+
+def ip_pct_for_side(cluster: Cluster, side: Side) -> int | None:
+    americans: list[int | None] = []
+    for quote in cluster.quotes:
+        if quote.book in DFS_CHIP_ORDER:
+            continue
+        american = quote.over_american if side == "over" else quote.under_american
+        americans.append(american)
+    return consensus_ip_pct(americans)

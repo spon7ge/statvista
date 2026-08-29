@@ -4094,6 +4094,39 @@
             ],
             "title": "Devig Pct"
           },
+          "line": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Line"
+          },
+          "over_american": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Over American"
+          },
+          "under_american": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Under American"
+          },
           "url": {
             "anyOf": [
               {
@@ -4110,7 +4143,10 @@
           "book",
           "american",
           "url",
-          "devig_pct"
+          "devig_pct",
+          "line",
+          "over_american",
+          "under_american"
         ],
         "title": "MlbPropBoardBookChip",
         "type": "object"
@@ -6030,6 +6066,17 @@
             ],
             "title": "Avg"
           },
+          "bb": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bb"
+          },
           "era": {
             "anyOf": [
               {
@@ -6140,7 +6187,8 @@
           "obp",
           "slg",
           "era",
-          "k"
+          "k",
+          "bb"
         ],
         "title": "MlbTeamStatLine",
         "type": "object"

@@ -75,6 +75,12 @@ def _px_two_way(*, player_name: str, line: float, scraped_at) -> None:
 
 
 def test_prophetx_and_draftkings_share_line_chips(client):
+    insert_mlb_prizepicks(
+        player_name="Mookie Betts",
+        stat_type="Hits",
+        line_score=1.5,
+        scraped_at=_T1,
+    )
     _px_two_way(player_name="Mookie Betts", line=1.5, scraped_at=_T1)
     for side, american in (("over", -115), ("under", -105)):
         insert_mlb_parlay(
@@ -110,14 +116,16 @@ def test_prizepicks_extra_line_has_null_ip(client):
     )
     body = client.get("/api/mlb/props/board").json()
     lines = sorted({row["line"] for row in body["rows"]})
-    assert lines == [1.5, 2.0]
+    assert lines == [2.0]
     dfs = [row for row in body["rows"] if row["line"] == 2.0]
     assert dfs
-    assert all(row["ip_pct"] is None for row in dfs)
+    over = next(row for row in dfs if row["side"] == "over")
+    assert over["ip_pct"] == 52
     assert all(
         any(chip["book"] == "prizepicks" for chip in row["dfs"]) for row in dfs
     )
-    assert all(row["books"] == [] for row in dfs)
+    px = next(chip for chip in over["books"] if chip["book"] == "prophetx")
+    assert px["line"] == 1.5
 
 
 import pytest

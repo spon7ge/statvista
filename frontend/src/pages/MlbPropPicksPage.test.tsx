@@ -21,7 +21,7 @@ function row(
     line: 1.5,
     game_pk: 1,
     game_start_at: "2026-08-23T23:10:00Z",
-    dfs: [],
+    dfs: [{ book: "prizepicks", american: null, url: null }],
     books: [{ book: "prophetx", american: -115, url: null }],
     ip_pct: 53,
     opp_def_rank: 12,
@@ -101,7 +101,7 @@ describe("MlbPropPicksPage", () => {
     expect(screen.getByRole("heading", { name: "Props" })).toBeInTheDocument();
     expect(
       screen.getByRole("heading", { name: "Props" }).closest("section"),
-    ).toHaveClass("max-w-6xl");
+    ).toHaveClass("max-w-6xl", "md:pr-[150px]");
     expect(screen.queryByRole("tab", { name: "PrizePicks" })).not.toBeInTheDocument();
     expect(screen.queryByRole("tab", { name: "Underdog" })).not.toBeInTheDocument();
     expect(screen.getByText("Aaron Judge")).toBeInTheDocument();

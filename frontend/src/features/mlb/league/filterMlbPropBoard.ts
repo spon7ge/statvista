@@ -99,7 +99,9 @@ export function collectMlbBoardGameOptions(
  * Filters research-board rows by game, team, player name, market, side, and book.
  * Does not reorder (hit-rate highest→lowest is a sort on the table).
  * When books are selected, Odds chips are trimmed to those books.
- * Rows with no posted American (empty Odds) are omitted; PrizePicks counts as posted.
+ * Rows with no PrizePicks/Underdog line are omitted. PrizePicks counts as posted.
+ * A sportsbook counts as posted when this side's American is set.
+ * When books are selected, Odds/DFS chips are trimmed to those books.
  */
 export function filterMlbPropBoardRows(
   rows: ApiMlbPropBoardRow[],
@@ -126,9 +128,8 @@ export function filterMlbPropBoardRows(
     const postedDfs = dfs.filter(
       (chip) => chip.book === "prizepicks" || chip.american != null,
     );
-    const postedBooks = row.books.filter(
-      (chip) => chip.american != null,
-    );
+    if (postedDfs.length === 0) return [];
+    const postedBooks = row.books.filter((chip) => chip.american != null);
     const visibleDfs =
       bookFilter.size > 0
         ? postedDfs.filter((chip) => bookFilter.has(chip.book))

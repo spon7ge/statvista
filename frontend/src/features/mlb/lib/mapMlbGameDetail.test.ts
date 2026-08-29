@@ -304,6 +304,7 @@ describe("mapMlbGameDetail", () => {
           r: 4,
           h: 8,
           k: 10,
+          bb: 3,
           sb: 1,
           lob: 6,
           era: "4.50",
@@ -316,6 +317,7 @@ describe("mapMlbGameDetail", () => {
           r: 5,
           h: 9,
           k: 8,
+          bb: 2,
           sb: 0,
           lob: 4,
           era: "3.20",
@@ -350,6 +352,7 @@ describe("mapMlbGameDetail", () => {
     expect(view.plays[0].scoringTeam).toBe("home");
     expect(view.plays[0].batterSummary).toBe("2-3 | HR, RBI, 2 R");
     expect(view.teamStats?.home.hr).toBe(1);
+    expect(view.teamStats?.home.bb).toBe(2);
   });
 
   it("maps game info venue location, weather, and umpires", () => {

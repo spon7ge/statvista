@@ -37,6 +37,7 @@ export function activeLeagueFromPath(pathname: string): LeagueSlug | null {
 export function sectionHref(league: LeagueSlug, item: string): string | null {
   if (item === "Matchups") return `/${league}/matchups`;
   if (item === "Props" && league !== "nba") return `/${league}/prop_picks`;
+  if (item === "Legs" && league !== "nba") return `/${league}/legs`;
   if (item === "Leaders" && (league === "wnba" || league === "mlb")) {
     return `/${league}/leaders`;
   }
@@ -54,6 +55,7 @@ export function sectionHref(league: LeagueSlug, item: string): string | null {
 export function isActiveSection(pathname: string, item: string): boolean {
   if (item === "Matchups") return pathname.endsWith("/matchups");
   if (item === "Props") return pathname.includes("/prop_picks");
+  if (item === "Legs") return pathname.endsWith("/legs");
   if (item === "Leaders") return pathname.endsWith("/leaders");
   if (item === "Standings") return pathname.endsWith("/standings");
   if (item === "Futures") return pathname.endsWith("/futures");
@@ -61,6 +63,31 @@ export function isActiveSection(pathname: string, item: string): boolean {
     return pathname.endsWith("/chatbot");
   }
   return false;
+}
+
+const DEFAULT_PROPS_HREF = "/mlb/prop_picks";
+const DEFAULT_LEGS_HREF = "/mlb/legs";
+const DEFAULT_MATCHUPS_HREF = "/mlb/matchups";
+
+/** Home-row Props shortcut: current league's board, else MLB. */
+export function homePropsHref(pathname: string): string {
+  const league = activeLeagueFromPath(pathname);
+  if (!league) return DEFAULT_PROPS_HREF;
+  return sectionHref(league, "Props") ?? DEFAULT_PROPS_HREF;
+}
+
+/** Home-row Legs shortcut: current league's legs, else MLB. */
+export function homeLegsHref(pathname: string): string {
+  const league = activeLeagueFromPath(pathname);
+  if (!league) return DEFAULT_LEGS_HREF;
+  return sectionHref(league, "Legs") ?? DEFAULT_LEGS_HREF;
+}
+
+/** Home-row Matchups shortcut: current league's slate, else MLB. */
+export function homeMatchupsHref(pathname: string): string {
+  const league = activeLeagueFromPath(pathname);
+  if (!league) return DEFAULT_MATCHUPS_HREF;
+  return sectionHref(league, "Matchups") ?? DEFAULT_MATCHUPS_HREF;
 }
 
 function exploreLabels(league: LeagueSlug): readonly string[] {

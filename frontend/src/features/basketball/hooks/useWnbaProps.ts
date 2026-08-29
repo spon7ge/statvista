@@ -1,12 +1,30 @@
-import { useQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery, type QueryClient } from "@tanstack/react-query";
 import { fetchWnbaProps, type WnbaPropsParams } from "@/shared/lib/api";
 
-const REFETCH_MS = 15 * 60_000;
+/** Board lines move slowly; keep client cache aligned with the poll. */
+export const WNBA_PROPS_STALE_MS = 15 * 60_000;
 
-export function useWnbaProps({ app, format, legs }: WnbaPropsParams) {
-  return useQuery({
-    queryKey: ["wnba", "props", app, format, legs],
-    queryFn: () => fetchWnbaProps({ app, format, legs }),
-    refetchInterval: REFETCH_MS,
+/** Default PrizePicks board (power / 4-pick) used by `/wnba/prop_picks`. */
+export const WNBA_DEFAULT_PROPS: WnbaPropsParams = {
+  app: "prizepicks",
+  format: "power",
+  legs: 4,
+};
+
+export function wnbaPropsQueryOptions(params: WnbaPropsParams) {
+  return queryOptions({
+    queryKey: ["wnba", "props", params.app, params.format, params.legs],
+    queryFn: () => fetchWnbaProps(params),
+    staleTime: WNBA_PROPS_STALE_MS,
+    refetchInterval: WNBA_PROPS_STALE_MS,
+    refetchOnWindowFocus: false,
   });
+}
+
+export function useWnbaProps(params: WnbaPropsParams) {
+  return useQuery(wnbaPropsQueryOptions(params));
+}
+
+export function prefetchWnbaDefaultProps(client: QueryClient) {
+  return client.prefetchQuery(wnbaPropsQueryOptions(WNBA_DEFAULT_PROPS));
 }

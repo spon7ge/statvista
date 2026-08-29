@@ -49,6 +49,7 @@ function mapTeamStatLine(
     r: line.r,
     h: line.h,
     k: line.k,
+    bb: line.bb ?? null,
     sb: line.sb,
     lob: line.lob,
     era: line.era,

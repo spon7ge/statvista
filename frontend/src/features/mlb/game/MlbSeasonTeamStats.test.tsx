@@ -59,6 +59,8 @@ describe("MlbSeasonTeamStats", () => {
     });
     expect(screen.getByTestId("mlb-season-stat-bb-away")).toBeInTheDocument();
     expect(screen.getByTestId("mlb-season-stat-so-away")).toBeInTheDocument();
+    expect(screen.getByText("K")).toBeInTheDocument();
+    expect(screen.queryByText("SO")).not.toBeInTheDocument();
   });
 
   it("shows team logo and abbrev in the header", () => {
@@ -83,6 +85,12 @@ describe("MlbSeasonTeamStats", () => {
     expect(section.querySelector('img[src="https://example.com/phi.svg"]')).toBeTruthy();
     expect(screen.getByText("WSH")).toBeInTheDocument();
     expect(screen.getByText("PHI")).toBeInTheDocument();
+    expect(screen.getByTestId("mlb-team-stats-away-mark").firstElementChild?.tagName).toBe(
+      "IMG",
+    );
+    expect(screen.getByTestId("mlb-team-stats-home-mark").lastElementChild?.tagName).toBe(
+      "IMG",
+    );
   });
 
   it("shows league rank beside stat value when rank is present", () => {

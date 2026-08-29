@@ -52,11 +52,15 @@ async def test_assembler_splits_lines_and_null_ip_for_dfs_only(monkeypatch):
     monkeypatch.setattr("app.domains.mlb.prop_board.load_enrichment", lambda *_: ({}, {}, [], set()))
     body = await get_mlb_prop_board()
     lines = sorted({r.line for r in body.rows})
-    assert lines == [1.5, 2.0]
+    assert lines == [2.0]
     dfs = [r for r in body.rows if r.line == 2.0]
-    assert all(r.ip_pct is None for r in dfs)
-    assert all(r.books == [] for r in dfs)
+    over = next(r for r in dfs if r.side == "over")
+    assert over.ip_pct == 52
     assert all(any(c.book == "prizepicks" for c in r.dfs) for r in dfs)
+    assert [c.book for c in over.books] == ["prophetx"]
+    assert over.books[0].line == 1.5
+    assert over.books[0].over_american == -110
+    assert over.books[0].under_american == -110
     assert {r.side for r in body.rows} == {"over", "under"}
 
 
@@ -107,22 +111,34 @@ async def test_assembler_splits_dfs_and_sportsbook_lines(monkeypatch):
     )
     body = await get_mlb_prop_board()
     lines = sorted({r.line for r in body.rows})
-    assert lines == [19.5, 20.5]
+    assert lines == [19.5]
     over_195 = next(r for r in body.rows if r.line == 19.5 and r.side == "over")
     assert [c.book for c in over_195.dfs] == ["prizepicks", "underdog"]
     assert [c.american for c in over_195.dfs] == [None, -105]
     assert all(c.devig_pct is None for c in over_195.dfs)
-    assert [c.book for c in over_195.books] == ["prophetx"]
-    assert over_195.books[0].devig_pct == 50
-    over_205 = next(r for r in body.rows if r.line == 20.5 and r.side == "over")
-    assert over_205.dfs == []
-    assert [c.book for c in over_205.books] == ["pinnacle"]
+    assert [c.book for c in over_195.books] == ["prophetx", "pinnacle"]
+    assert over_195.books[0].line == 19.5
+    assert over_195.books[0].devig_pct is None
+    assert over_195.ip_pct == 52
+    pin = next(c for c in over_195.books if c.book == "pinnacle")
+    assert pin.line == 20.5
+    assert pin.over_american == -108
+    assert pin.under_american == -112
 
 
 @pytest.mark.asyncio
 async def test_assembler_market_label_chips_and_sort(monkeypatch):
     start = datetime(2026, 8, 23, 20, 10, tzinfo=timezone.utc)
     quotes = [
+        BoardQuote(
+            player_name="Betts",
+            player_key="mookie betts",
+            stat="hits",
+            line=1.5,
+            book="prizepicks",
+            over_american=None,
+            under_american=None,
+        ),
         BoardQuote(
             player_name="Betts",
             player_key="mookie betts",
@@ -183,7 +199,10 @@ async def test_assembler_market_label_chips_and_sort(monkeypatch):
     betts_over = next(r for r in body.rows if r.player_name == "Betts" and r.side == "over")
     assert [c.book for c in betts_over.books] == ["prophetx", "draftkings"]
     assert betts_over.books[0].american == -110
+    assert betts_over.books[0].devig_pct is None
     assert betts_over.books[1].american == -115
+    assert betts_over.books[1].devig_pct is None
+    assert betts_over.ip_pct == 53
     names_in_order = [r.player_name for r in body.rows]
     assert names_in_order[:2] == ["Betts", "Betts"]
     assert names_in_order[2:] == ["Judge", "Judge"]
@@ -239,7 +258,7 @@ async def test_chips_skip_books_without_american_on_that_side(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_assembler_omits_side_with_no_odds_chips(monkeypatch):
+async def test_assembler_omits_sportsbook_only_rows(monkeypatch):
     quotes = [
         BoardQuote(
             player_name="Betts",
@@ -257,13 +276,21 @@ async def test_assembler_omits_side_with_no_odds_chips(monkeypatch):
         lambda *_: ({}, {}, [], set()),
     )
     body = await get_mlb_prop_board()
-    assert [r.side for r in body.rows] == ["over"]
-    assert [c.book for c in body.rows[0].books] == ["fanduel"]
+    assert body.rows == []
 
 
 @pytest.mark.asyncio
 async def test_missing_person_id_keeps_hit_rates_null(monkeypatch):
     quotes = [
+        BoardQuote(
+            player_name="Judge",
+            player_key="aaron judge",
+            stat="hits",
+            line=1.5,
+            book="prizepicks",
+            over_american=None,
+            under_american=None,
+        ),
         BoardQuote(
             player_name="Judge",
             player_key="aaron judge",
@@ -285,6 +312,7 @@ async def test_missing_person_id_keeps_hit_rates_null(monkeypatch):
         lambda *_: (ctx, {}, [], {"aaron judge"}),
     )
     body = await get_mlb_prop_board()
+    assert body.rows
     assert all(
         r.hit_l5 is None
         and r.hit_l10 is None
@@ -369,6 +397,15 @@ def test_collect_board_quotes_mains_and_dfs_skip_unknown(monkeypatch):
 @pytest.mark.asyncio
 async def test_assembler_fills_hit_rates_from_enrichment_splits(monkeypatch):
     quotes = [
+        BoardQuote(
+            player_name="Judge",
+            player_key="aaron judge",
+            stat="hits",
+            line=1.5,
+            book="prizepicks",
+            over_american=None,
+            under_american=None,
+        ),
         BoardQuote(
             player_name="Judge",
             player_key="aaron judge",

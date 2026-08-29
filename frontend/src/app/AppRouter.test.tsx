@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AppRouter } from "@/app/AppRouter";
@@ -70,11 +70,17 @@ describe("AppRouter", () => {
   it("renders WNBA matchups hub at /wnba/matchups", async () => {
     renderWithProviders(["/wnba/matchups"]);
     expect(
-      await screen.findByRole("heading", { name: /women.?s basketball/i }),
+      await screen.findByRole("heading", { name: "Matchups" }),
     ).toBeInTheDocument();
+    expect(screen.getByTestId("matchups-header")).toBeInTheDocument();
+    const header = screen.getByTestId("matchups-header");
+    expect(within(header).getByRole("link", { name: "WNBA" })).toHaveAttribute(
+      "href",
+      "/wnba/matchups",
+    );
     expect(
-      screen.getByRole("heading", { name: "Matchups" }),
-    ).toBeInTheDocument();
+      screen.queryByRole("heading", { name: /women.?s basketball/i }),
+    ).not.toBeInTheDocument();
   });
 
   it("renders WNBA prop picks at /wnba/prop_picks", async () => {
@@ -130,7 +136,7 @@ describe("AppRouter", () => {
       await screen.findByRole("heading", { name: "Props" }),
     ).toBeInTheDocument();
     expect(await screen.findByText("Rhyne Howard")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Props" })).toHaveAttribute(
+    expect(screen.getAllByRole("link", { name: "Props" })[0]).toHaveAttribute(
       "aria-current",
       "page",
     );
@@ -343,21 +349,34 @@ describe("AppRouter", () => {
   it("renders NBA coming-soon hub at /nba/matchups", async () => {
     renderWithProviders(["/nba/matchups"]);
     expect(
-      await screen.findByRole("heading", { name: /men.?s basketball/i }),
+      await screen.findByRole("heading", { name: "Matchups" }),
     ).toBeInTheDocument();
     expect(screen.getByText(/coming soon/i)).toBeInTheDocument();
+    expect(
+      within(screen.getByTestId("matchups-header")).getByRole("link", {
+        name: "NBA",
+      }),
+    ).toHaveAttribute("href", "/nba/matchups");
+    expect(
+      screen.queryByRole("heading", { name: /men.?s basketball/i }),
+    ).not.toBeInTheDocument();
   });
 
   it("renders MLB matchups hub at /mlb/matchups", async () => {
     renderWithProviders(["/mlb/matchups"]);
     expect(
-      await screen.findByRole("heading", { name: /major league baseball/i }),
-    ).toBeInTheDocument();
-    expect(
       await screen.findByRole("heading", { name: /^matchups$/i }),
     ).toBeInTheDocument();
     expect(
+      within(screen.getByTestId("matchups-header")).getByRole("link", {
+        name: "MLB",
+      }),
+    ).toHaveAttribute("href", "/mlb/matchups");
+    expect(
       screen.queryByText(/MLB matchups coming soon/i),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", { name: /major league baseball/i }),
     ).not.toBeInTheDocument();
   });
 
@@ -493,6 +512,17 @@ describe("AppRouter", () => {
     );
   });
 
+  it("renders MLB Legs at /mlb/legs", async () => {
+    renderWithProviders(["/mlb/legs"]);
+    expect(
+      await screen.findByRole("heading", { name: "Legs" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Legs" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+  });
+
   it("renders MLB Chatbot at /mlb/chatbot", async () => {
     renderWithProviders(["/mlb/chatbot"]);
     expect(
@@ -531,7 +561,7 @@ describe("AppRouter", () => {
     ).toBeInTheDocument();
     expect(await screen.findByText("No board yet")).toBeInTheDocument();
     expect(screen.queryByRole("tab", { name: "PrizePicks" })).not.toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Props" })).toHaveAttribute(
+    expect(screen.getAllByRole("link", { name: "Props" })[0]).toHaveAttribute(
       "aria-current",
       "page",
     );

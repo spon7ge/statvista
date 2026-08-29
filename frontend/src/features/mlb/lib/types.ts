@@ -19,6 +19,7 @@ export type MlbTeamStatLine = {
   r: number | null;
   h: number | null;
   k: number | null;
+  bb: number | null;
   sb: number | null;
   lob: number | null;
   era: string | null;

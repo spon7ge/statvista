@@ -70,6 +70,15 @@ export function formatAmericanOdds(odds: number): string {
   return odds > 0 ? `+${odds}` : `${odds}`;
 }
 
+/** Raw implied win % from American odds (vig still in). */
+export function impliedPctFromAmerican(american: number): number {
+  const p =
+    american > 0
+      ? 100 / (american + 100)
+      : Math.abs(american) / (Math.abs(american) + 100);
+  return Math.round(p * 100);
+}
+
 export function findMlbOddsGame(
   games: ApiMlbOddsResponse["games"] | undefined,
   awayAbbrev: string,

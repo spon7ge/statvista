@@ -43,3 +43,6 @@ def test_board_row_requires_side_and_line():
     dumped = row.model_dump()
     assert dumped["dfs"] == []
     assert "dfs" in dumped
+    assert dumped["books"][0]["line"] is None
+    assert dumped["books"][0]["over_american"] is None
+    assert dumped["books"][0]["under_american"] is None

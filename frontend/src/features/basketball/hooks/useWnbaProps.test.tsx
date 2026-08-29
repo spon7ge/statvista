@@ -1,7 +1,7 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useWnbaProps } from "./useWnbaProps";
+import { WNBA_PROPS_STALE_MS, useWnbaProps } from "./useWnbaProps";
 
 const fetchWnbaProps = vi.fn();
 
@@ -51,5 +51,10 @@ describe("useWnbaProps", () => {
         queryKey: ["wnba", "props", "prizepicks", "power", 4],
       }),
     ).toHaveLength(1);
+    const query = client.getQueryCache().find({
+      queryKey: ["wnba", "props", "prizepicks", "power", 4],
+    });
+    expect(query?.options.staleTime).toBe(WNBA_PROPS_STALE_MS);
+    expect(query?.options.refetchOnWindowFocus).toBe(false);
   });
 });

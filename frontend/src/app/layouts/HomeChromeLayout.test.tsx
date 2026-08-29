@@ -1,19 +1,37 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import { type ReactNode } from "react";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HomeChromeLayout } from "./HomeChromeLayout";
+
+vi.mock("@/features/home/lib/prefetchPropsBoard", () => ({
+  prefetchPropsBoard: vi.fn(),
+}));
+
+function renderChrome(ui: ReactNode, path: string) {
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  return render(
+    <QueryClientProvider client={client}>
+      <MemoryRouter initialEntries={[path]}>
+        {ui}
+      </MemoryRouter>
+    </QueryClientProvider>,
+  );
+}
 
 describe("HomeChromeLayout", () => {
   it("renders sidebar and footer without a live ticker", () => {
-    render(
-      <MemoryRouter initialEntries={["/"]}>
-        <Routes>
-          <Route element={<HomeChromeLayout />}>
-            <Route path="/" element={<div>home</div>} />
-          </Route>
-        </Routes>
-      </MemoryRouter>,
+    renderChrome(
+      <Routes>
+        <Route element={<HomeChromeLayout />}>
+          <Route path="/" element={<div>home</div>} />
+        </Route>
+      </Routes>,
+      "/",
     );
     expect(screen.getByText("home")).toBeInTheDocument();
     expect(screen.queryByText("No live games")).not.toBeInTheDocument();
@@ -24,14 +42,13 @@ describe("HomeChromeLayout", () => {
   });
 
   it("puts a primary sidebar beside the page, not HomeNav", () => {
-    const { container } = render(
-      <MemoryRouter initialEntries={["/"]}>
-        <Routes>
-          <Route element={<HomeChromeLayout />}>
-            <Route path="/" element={<div>home</div>} />
-          </Route>
-        </Routes>
-      </MemoryRouter>,
+    const { container } = renderChrome(
+      <Routes>
+        <Route element={<HomeChromeLayout />}>
+          <Route path="/" element={<div>home</div>} />
+        </Route>
+      </Routes>,
+      "/",
     );
     expect(
       screen.getByRole("navigation", { name: "Primary" }),
@@ -52,14 +69,13 @@ describe("HomeChromeLayout", () => {
 
   it("opens a mobile drawer from the hamburger and closes on Escape", async () => {
     const user = userEvent.setup();
-    render(
-      <MemoryRouter initialEntries={["/wnba/matchups"]}>
-        <Routes>
-          <Route element={<HomeChromeLayout />}>
-            <Route path="/wnba/matchups" element={<div>matchups</div>} />
-          </Route>
-        </Routes>
-      </MemoryRouter>,
+    renderChrome(
+      <Routes>
+        <Route element={<HomeChromeLayout />}>
+          <Route path="/wnba/matchups" element={<div>matchups</div>} />
+        </Route>
+      </Routes>,
+      "/wnba/matchups",
     );
 
     const bar = screen.getByRole("banner");
@@ -86,15 +102,14 @@ describe("HomeChromeLayout", () => {
 
   it("closes the drawer after navigating a sidebar link", async () => {
     const user = userEvent.setup();
-    render(
-      <MemoryRouter initialEntries={["/"]}>
-        <Routes>
-          <Route element={<HomeChromeLayout />}>
-            <Route path="/" element={<div>home</div>} />
-            <Route path="/wnba/matchups" element={<div>matchups</div>} />
-          </Route>
-        </Routes>
-      </MemoryRouter>,
+    renderChrome(
+      <Routes>
+        <Route element={<HomeChromeLayout />}>
+          <Route path="/" element={<div>home</div>} />
+          <Route path="/wnba/matchups" element={<div>matchups</div>} />
+        </Route>
+      </Routes>,
+      "/",
     );
     await user.click(screen.getByRole("button", { name: "Open menu" }));
     const drawer = document.getElementById("app-sidebar-drawer");

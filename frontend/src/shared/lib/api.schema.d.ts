@@ -1753,6 +1753,12 @@ export interface components {
             book: string;
             /** Devig Pct */
             devig_pct: number | null;
+            /** Line */
+            line: number | null;
+            /** Over American */
+            over_american: number | null;
+            /** Under American */
+            under_american: number | null;
             /** Url */
             url: string | null;
         };
@@ -2205,6 +2211,8 @@ export interface components {
         MlbTeamStatLine: {
             /** Avg */
             avg: string | null;
+            /** Bb */
+            bb: number | null;
             /** Era */
             era: string | null;
             /** H */

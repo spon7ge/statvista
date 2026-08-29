@@ -1,0 +1,149 @@
+{
+  "source": "prophetx",
+  "fetched_at": "2026-08-27T14:26:37-07:00",
+  "league": "wnba",
+  "tournament_id": 1600000176,
+  "snapshot_kind": "team",
+  "games": [
+    {
+      "event_id": 13002516,
+      "name": "Golden State Valkyries at New York Liberty",
+      "scheduled": "2026-08-28T00:00:00Z",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": 13000005,
+          "name": "New York Liberty",
+          "abbreviation": "NY",
+          "seq": 0
+        },
+        {
+          "id": 13000013,
+          "name": "Golden State Valkyries",
+          "abbreviation": "GSV",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "New York Liberty",
+            "competitor_id": 13000005,
+            "american": -144,
+            "line": null,
+            "stake": 1473.24
+          },
+          {
+            "name": "Golden State Valkyries",
+            "competitor_id": 13000013,
+            "american": 136,
+            "line": null,
+            "stake": 1563.09
+          }
+        ],
+        "spread": [
+          {
+            "name": "New York Liberty -3.5",
+            "competitor_id": 13000005,
+            "american": 106,
+            "line": -3.5,
+            "stake": 205.83
+          },
+          {
+            "name": "Golden State Valkyries +3.5",
+            "competitor_id": 13000013,
+            "american": -115,
+            "line": 3.5,
+            "stake": 262.78
+          }
+        ],
+        "total": [
+          {
+            "name": "over 162",
+            "competitor_id": null,
+            "american": -103,
+            "line": 162,
+            "stake": 19.76
+          },
+          {
+            "name": "under 162",
+            "competitor_id": null,
+            "american": 101,
+            "line": 162,
+            "stake": 206.12
+          }
+        ]
+      }
+    },
+    {
+      "event_id": 13002517,
+      "name": "Washington Mystics at Phoenix Mercury",
+      "scheduled": "2026-08-28T02:00:00Z",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": 13000011,
+          "name": "Phoenix Mercury",
+          "abbreviation": "PHX",
+          "seq": 0
+        },
+        {
+          "id": 13000006,
+          "name": "Washington Mystics",
+          "abbreviation": "WSH",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "Phoenix Mercury",
+            "competitor_id": 13000011,
+            "american": 166,
+            "line": null,
+            "stake": 748.01
+          },
+          {
+            "name": "Washington Mystics",
+            "competitor_id": 13000006,
+            "american": -174,
+            "line": null,
+            "stake": 722.75
+          }
+        ],
+        "spread": [
+          {
+            "name": "Phoenix Mercury +4",
+            "competitor_id": 13000011,
+            "american": 104,
+            "line": 4,
+            "stake": 94.56
+          },
+          {
+            "name": "Washington Mystics -4",
+            "competitor_id": 13000006,
+            "american": -109,
+            "line": -4,
+            "stake": 209.74
+          }
+        ],
+        "total": [
+          {
+            "name": "over 166",
+            "competitor_id": null,
+            "american": -111,
+            "line": 166,
+            "stake": 58.71
+          },
+          {
+            "name": "under 166",
+            "competitor_id": null,
+            "american": 100,
+            "line": 166,
+            "stake": 115.27
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,322 @@
+{
+  "source": "prophetx",
+  "fetched_at": "2026-08-28T18:12:45-07:00",
+  "league": "wnba",
+  "tournament_id": 1600000176,
+  "snapshot_kind": "team",
+  "games": [
+    {
+      "event_id": 13002518,
+      "name": "Portland Fire at Atlanta Dream",
+      "scheduled": "2026-08-28T23:30:00Z",
+      "status": "live",
+      "competitors": [
+        {
+          "id": 13000001,
+          "name": "Atlanta Dream",
+          "abbreviation": "ATL",
+          "seq": 0
+        },
+        {
+          "id": 13000014,
+          "name": "Portland Fire",
+          "abbreviation": "POR",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "Atlanta Dream",
+            "competitor_id": 13000001,
+            "american": 300,
+            "line": null,
+            "stake": 50.0
+          },
+          {
+            "name": "Portland Fire",
+            "competitor_id": 13000014,
+            "american": -380,
+            "line": null,
+            "stake": 8.81
+          }
+        ],
+        "spread": [
+          {
+            "name": "Atlanta Dream -12.5",
+            "competitor_id": 13000001,
+            "american": -105,
+            "line": -12.5,
+            "stake": 317.0
+          }
+        ]
+      }
+    },
+    {
+      "event_id": 13002519,
+      "name": "Connecticut Sun at Indiana Fever",
+      "scheduled": "2026-08-28T23:30:00Z",
+      "status": "live",
+      "competitors": [
+        {
+          "id": 13000004,
+          "name": "Indiana Fever",
+          "abbreviation": "IND",
+          "seq": 0
+        },
+        {
+          "id": 13000003,
+          "name": "Connecticut Sun",
+          "abbreviation": "CONN",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "Connecticut Sun",
+            "competitor_id": 13000003,
+            "american": 9500,
+            "line": null,
+            "stake": 559.38
+          }
+        ],
+        "spread": [
+          {
+            "name": "Indiana Fever -16.5",
+            "competitor_id": 13000004,
+            "american": -182,
+            "line": -16.5,
+            "stake": 833.0
+          },
+          {
+            "name": "Connecticut Sun +16.5",
+            "competitor_id": 13000003,
+            "american": -148,
+            "line": 16.5,
+            "stake": 949.0
+          }
+        ],
+        "total": [
+          {
+            "name": "under 177.5",
+            "competitor_id": null,
+            "american": 118,
+            "line": 177.5,
+            "stake": 1976.32
+          }
+        ]
+      }
+    },
+    {
+      "event_id": 13002520,
+      "name": "Toronto Tempo at Las Vegas Aces",
+      "scheduled": "2026-08-29T02:00:00Z",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": 13000008,
+          "name": "Las Vegas Aces",
+          "abbreviation": "LV",
+          "seq": 0
+        },
+        {
+          "id": 13000015,
+          "name": "Toronto Tempo",
+          "abbreviation": "TOR",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "Las Vegas Aces",
+            "competitor_id": 13000008,
+            "american": -840,
+            "line": null,
+            "stake": 261.39
+          },
+          {
+            "name": "Toronto Tempo",
+            "competitor_id": 13000015,
+            "american": 730,
+            "line": null,
+            "stake": 372.25
+          }
+        ],
+        "spread": [
+          {
+            "name": "Las Vegas Aces -14",
+            "competitor_id": 13000008,
+            "american": 106,
+            "line": -14,
+            "stake": 559.0
+          },
+          {
+            "name": "Toronto Tempo +14",
+            "competitor_id": 13000015,
+            "american": -112,
+            "line": 14,
+            "stake": 214.64
+          }
+        ],
+        "total": [
+          {
+            "name": "over 175",
+            "competitor_id": null,
+            "american": 115,
+            "line": 175,
+            "stake": 724.0
+          },
+          {
+            "name": "under 175",
+            "competitor_id": null,
+            "american": -120,
+            "line": 175,
+            "stake": 70.59
+          }
+        ]
+      }
+    },
+    {
+      "event_id": 13002521,
+      "name": "Washington Mystics at Los Angeles Sparks",
+      "scheduled": "2026-08-29T02:00:00Z",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": 13000009,
+          "name": "Los Angeles Sparks",
+          "abbreviation": "LA",
+          "seq": 0
+        },
+        {
+          "id": 13000006,
+          "name": "Washington Mystics",
+          "abbreviation": "WSH",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "Los Angeles Sparks",
+            "competitor_id": 13000009,
+            "american": 198,
+            "line": null,
+            "stake": 916.89
+          },
+          {
+            "name": "Washington Mystics",
+            "competitor_id": 13000006,
+            "american": -205,
+            "line": null,
+            "stake": 1274.99
+          }
+        ],
+        "spread": [
+          {
+            "name": "Los Angeles Sparks +6.5",
+            "competitor_id": 13000009,
+            "american": -132,
+            "line": 6.5,
+            "stake": 177.23
+          },
+          {
+            "name": "Washington Mystics -6.5",
+            "competitor_id": 13000006,
+            "american": 123,
+            "line": -6.5,
+            "stake": 939.39
+          }
+        ],
+        "total": [
+          {
+            "name": "over 167.5",
+            "competitor_id": null,
+            "american": -105,
+            "line": 167.5,
+            "stake": 91.65
+          },
+          {
+            "name": "under 167.5",
+            "competitor_id": null,
+            "american": -101,
+            "line": 167.5,
+            "stake": 812.44
+          }
+        ]
+      }
+    },
+    {
+      "event_id": 13002522,
+      "name": "Chicago Sky at New York Liberty",
+      "scheduled": "2026-08-29T17:00:00Z",
+      "status": "not_started",
+      "competitors": [
+        {
+          "id": 13000005,
+          "name": "New York Liberty",
+          "abbreviation": "NY",
+          "seq": 0
+        },
+        {
+          "id": 13000002,
+          "name": "Chicago Sky",
+          "abbreviation": "CHI",
+          "seq": 1
+        }
+      ],
+      "team_markets": {
+        "moneyline": [
+          {
+            "name": "New York Liberty",
+            "competitor_id": 13000005,
+            "american": -380,
+            "line": null,
+            "stake": 151.05
+          },
+          {
+            "name": "Chicago Sky",
+            "competitor_id": 13000002,
+            "american": 350,
+            "line": null,
+            "stake": 1555.55
+          }
+        ],
+        "spread": [
+          {
+            "name": "New York Liberty -8.5",
+            "competitor_id": 13000005,
+            "american": -111,
+            "line": -8.5,
+            "stake": 159.13
+          },
+          {
+            "name": "Chicago Sky +8.5",
+            "competitor_id": 13000002,
+            "american": -102,
+            "line": 8.5,
+            "stake": 102.54
+          }
+        ],
+        "total": [
+          {
+            "name": "over 179.5",
+            "competitor_id": null,
+            "american": -102,
+            "line": 179.5,
+            "stake": 43.25
+          },
+          {
+            "name": "under 179.5",
+            "competitor_id": null,
+            "american": -114,
+            "line": 179.5,
+            "stake": 43.09
+          }
+        ]
+      }
+    }
+  ]
+}

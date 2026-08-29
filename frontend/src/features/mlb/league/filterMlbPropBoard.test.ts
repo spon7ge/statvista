@@ -20,7 +20,7 @@ const row = (over: Partial<ApiMlbPropBoardRow>): ApiMlbPropBoardRow =>
     line: 1.5,
     game_pk: 1,
     game_start_at: null,
-    dfs: [],
+    dfs: [{ book: "prizepicks", american: null, url: null }],
     books: [{ book: "prophetx", american: -115, url: null }],
     ip_pct: 53,
     opp_def_rank: 2,
@@ -169,7 +169,51 @@ describe("filterMlbPropBoardRows", () => {
       filterMlbPropBoardRows(rows, { teams: new Set(), query: "" }).map(
         (r) => r.player_name,
       ),
-    ).toEqual(["Mookie Betts", "Freddie Freeman"]);
+    ).toEqual(["Mookie Betts"]);
+  });
+
+  it("omits sportsbook-only rows with no PrizePicks or Underdog line", () => {
+    const rows = [
+      row({
+        player_name: "Pinnacle Only",
+        dfs: [],
+        books: [{ book: "pinnacle", american: -108, url: null }],
+      }),
+      row({
+        player_name: "Has DFS",
+        dfs: [{ book: "underdog", american: -105, url: null }],
+        books: [{ book: "pinnacle", american: -108, url: null }],
+      }),
+    ];
+    expect(
+      filterMlbPropBoardRows(rows, { teams: new Set(), query: "" }).map(
+        (r) => r.player_name,
+      ),
+    ).toEqual(["Has DFS"]);
+  });
+
+  it("keeps a sportsbook whose main line differs from the DFS line", () => {
+    const rows = [
+      row({
+        line: 3.5,
+        dfs: [{ book: "prizepicks", american: null, url: null }],
+        books: [
+          {
+            book: "pinnacle",
+            american: -128,
+            url: null,
+            line: 1.5,
+            over_american: -128,
+            under_american: -104,
+          },
+        ],
+      }),
+    ];
+    expect(
+      filterMlbPropBoardRows(rows, { teams: new Set(), query: "" }).map(
+        (r) => r.player_name,
+      ),
+    ).toEqual(["Aaron Judge"]);
   });
 
   it("filters PrizePicks on dfs and clears Odds", () => {
@@ -228,6 +272,7 @@ describe("filterMlbPropBoardRows", () => {
       ]),
     ).toEqual([
       { value: "draftkings", label: "DraftKings" },
+      { value: "prizepicks", label: "PrizePicks" },
       { value: "underdog", label: "Underdog" },
     ]);
   });
