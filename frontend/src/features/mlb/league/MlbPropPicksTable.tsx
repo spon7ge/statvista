@@ -15,6 +15,7 @@ import { bookDisplayName } from "@/features/mlb/lib/mlbBookLabels";
 import { formatAmericanOdds } from "@/features/mlb/lib/mlbOddsBoard";
 import {
   orderedBoardBooks,
+  orderedDfsBooks,
   sortMlbPropBoardRows,
   type MlbPropBoardSort,
   type MlbPropBoardSortKey,
@@ -61,15 +62,20 @@ type MlbPropPicksTableProps = {
   hitRateWindow?: "l5" | "l10" | "l15" | null;
 };
 
-const COLUMNS: { key: MlbPropBoardSortKey; label: string }[] = [
-  { key: "player", label: "Proposition" },
-  { key: "line", label: "Line" },
-  { key: "odds", label: "Odds" },
-  { key: "ip", label: "IP" },
-  { key: "l5", label: "L5" },
-  { key: "l10", label: "L10" },
-  { key: "l15", label: "L15" },
-  { key: "h2h", label: "H2H" },
+const COLUMNS: {
+  key: MlbPropBoardSortKey | "dfs";
+  label: string;
+  sortable: boolean;
+}[] = [
+  { key: "player", label: "Proposition", sortable: true },
+  { key: "line", label: "Line", sortable: true },
+  { key: "dfs", label: "DFS", sortable: false },
+  { key: "odds", label: "Odds", sortable: true },
+  { key: "ip", label: "IP", sortable: true },
+  { key: "l5", label: "L5", sortable: true },
+  { key: "l10", label: "L10", sortable: true },
+  { key: "l15", label: "L15", sortable: true },
+  { key: "h2h", label: "H2H", sortable: true },
 ];
 
 const HIT_SORT_KEYS = new Set<MlbPropBoardSortKey>(["l5", "l10", "l15", "h2h"]);
@@ -122,19 +128,27 @@ function BookChip({
   book,
   american,
   url,
+  devigPct,
 }: {
   book: string;
   american: number | null;
   url: string | null;
+  devigPct: number | null;
 }) {
   const label = bookDisplayName(book);
   const displayAmerican = postedAmerican(book, american);
   if (displayAmerican == null) return null;
+  const oddsText = formatAmericanOdds(displayAmerican);
+  const aria =
+    devigPct == null ? label : `${label} ${oddsText} (${devigPct}%)`;
   const inner = (
     <>
       <BookMark book={book} label={label} />
       <span className="font-mono text-[11px] text-white">
-        {formatAmericanOdds(displayAmerican)}
+        {oddsText}
+        {devigPct != null ? (
+          <span className="text-white/50"> ({devigPct}%)</span>
+        ) : null}
       </span>
     </>
   );
@@ -146,14 +160,14 @@ function BookChip({
         target="_blank"
         rel="noreferrer"
         className={`${className} hover:opacity-80`}
-        aria-label={label}
+        aria-label={aria}
       >
         {inner}
       </a>
     );
   }
   return (
-    <span className={className} aria-label={label}>
+    <span className={className} aria-label={aria}>
       {inner}
     </span>
   );
@@ -221,6 +235,7 @@ function OddsOverflow({ chips }: { chips: ApiMlbPropBoardRow["books"] }) {
                   book={chip.book}
                   american={chip.american}
                   url={chip.url}
+                  devigPct={chip.devig_pct}
                 />
               ))}
             </div>,
@@ -228,6 +243,32 @@ function OddsOverflow({ chips }: { chips: ApiMlbPropBoardRow["books"] }) {
           )
         : null}
     </>
+  );
+}
+
+function DfsCell({ row }: { row: ApiMlbPropBoardRow }) {
+  const chips = orderedDfsBooks(row.dfs ?? []).filter(
+    (chip) => postedAmerican(chip.book, chip.american) != null,
+  );
+  if (chips.length === 0) {
+    return (
+      <div data-testid="dfs-cell" className="font-mono text-sm text-white">
+        —
+      </div>
+    );
+  }
+  return (
+    <div data-testid="dfs-cell" className="flex flex-wrap items-center gap-1">
+      {chips.map((chip) => (
+        <BookChip
+          key={chip.book}
+          book={chip.book}
+          american={chip.american}
+          url={chip.url}
+          devigPct={null}
+        />
+      ))}
+    </div>
   );
 }
 
@@ -245,6 +286,7 @@ function OddsCell({ row }: { row: ApiMlbPropBoardRow }) {
           book={chip.book}
           american={chip.american}
           url={chip.url}
+          devigPct={chip.devig_pct}
         />
       ))}
       <OddsOverflow chips={overflow} />
@@ -379,6 +421,19 @@ export function MlbPropPicksTable({
             <thead className="sticky top-0">
               <tr className="border-b border-white/10 text-[11px] font-semibold uppercase tracking-wide text-white/70">
                 {COLUMNS.map((column) => {
+                  const isHit =
+                    column.sortable &&
+                    HIT_SORT_KEYS.has(column.key as MlbPropBoardSortKey);
+                  if (!column.sortable) {
+                    return (
+                      <th
+                        key={column.key}
+                        className="px-2 py-2 font-semibold"
+                      >
+                        {column.label}
+                      </th>
+                    );
+                  }
                   const active = sort?.key === column.key;
                   const ariaSort = !active
                     ? "none"
@@ -389,17 +444,17 @@ export function MlbPropPicksTable({
                     <th
                       key={column.key}
                       className={`px-2 py-2 font-semibold ${
-                        HIT_SORT_KEYS.has(column.key) ? "text-center" : ""
+                        isHit ? "text-center" : ""
                       }`}
                       aria-sort={ariaSort}
                     >
                       <button
                         type="button"
-                        onClick={() => onSort(column.key)}
+                        onClick={() =>
+                          onSort(column.key as MlbPropBoardSortKey)
+                        }
                         className={`bg-transparent p-0 uppercase tracking-wide text-white/70 hover:text-white ${
-                          HIT_SORT_KEYS.has(column.key)
-                            ? "w-full text-center"
-                            : "text-left"
+                          isHit ? "w-full text-center" : "text-left"
                         }`}
                       >
                         {column.label}
@@ -421,6 +476,9 @@ export function MlbPropPicksTable({
                   </td>
                   <td className={`px-2 py-2 font-mono text-sm text-white ${ROW_BOX_MIDDLE}`}>
                     {row.line}
+                  </td>
+                  <td className={`px-2 py-2 ${ROW_BOX_MIDDLE}`}>
+                    <DfsCell row={row} />
                   </td>
                   <td className={`px-2 py-2 ${ROW_BOX_MIDDLE}`}>
                     <OddsCell row={row} />
