@@ -138,6 +138,9 @@ describe("GameDetailPage", () => {
       "href",
       "/wnba/matchups",
     );
+    expect(
+      screen.getByRole("link", { name: /back/i }).closest(".max-w-6xl"),
+    ).toHaveClass("md:pr-[150px]");
     expect(screen.queryByTestId("wnba-live-center")).not.toBeInTheDocument();
   });
 

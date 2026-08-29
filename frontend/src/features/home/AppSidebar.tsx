@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import {
+  ArrowLeftRight,
   Calendar,
-  ChevronDown,
-  Home,
   Info,
   Layers,
   LayoutList,
@@ -14,13 +13,12 @@ import {
 import { CHROME_TITLE_TOP } from "@/app/layouts/chrome";
 import { StatvistaWordmark } from "@/shared/ui/StatvistaWordmark";
 import {
-  NAV_LEAGUES,
-  activeLeagueFromPath,
+  LANDING_HREF,
+  homeArbitrageHref,
   homeLegsHref,
   homeMatchupsHref,
   homePropsHref,
   isActiveSection,
-  sectionsFor,
 } from "./lib/appNav";
 import { prefetchPropsBoard } from "./lib/prefetchPropsBoard";
 
@@ -42,15 +40,14 @@ function rowClass(active: boolean, enabled: boolean): string {
 
 export function AppSidebar() {
   const { pathname } = useLocation();
-  const [leaguesOpen, setLeaguesOpen] = useState(true);
-  const activeLeague = activeLeagueFromPath(pathname);
-  const homeActive = pathname === "/";
   const propsHref = homePropsHref(pathname);
   const propsActive = isActiveSection(pathname, "Props");
   const legsHref = homeLegsHref(pathname);
   const legsActive = isActiveSection(pathname, "Legs");
+  const arbitrageHref = homeArbitrageHref(pathname);
+  const arbitrageActive = isActiveSection(pathname, "Arbitrage");
   const matchupsHref = homeMatchupsHref(pathname);
-  const matchupsActive = isActiveSection(pathname, "Matchups");
+  const matchupsActive = isActiveSection(pathname, "Games");
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -62,8 +59,8 @@ export function AppSidebar() {
       className={`flex h-full min-h-0 flex-col bg-background px-3 pb-4 ${CHROME_TITLE_TOP}`}
     >
       <Link
-        to="/"
-        className="mb-4 flex min-h-7 items-center text-white no-underline"
+        to={LANDING_HREF}
+        className="mb-4 flex min-h-8 items-center text-white no-underline"
       >
         <StatvistaWordmark />
       </Link>
@@ -71,140 +68,6 @@ export function AppSidebar() {
       <div className="min-h-0 flex-1 space-y-2 overflow-y-auto">
       <nav aria-label="Primary">
         <div className={`${SIDEBAR_PANEL} space-y-[9px]`}>
-          <div className="flex items-center">
-            <Link
-              to="/"
-              aria-current={homeActive ? "page" : undefined}
-              className={`flex-1 ${rowClass(homeActive, true)}`}
-            >
-              <Home
-                className="size-[22px] shrink-0"
-                strokeWidth={2}
-                aria-hidden
-              />
-              <span className="flex-1">Home</span>
-            </Link>
-            <button
-              type="button"
-              aria-label="Toggle leagues"
-              aria-expanded={leaguesOpen}
-              onClick={() => setLeaguesOpen((open) => !open)}
-              className="flex w-[31px] shrink-0 cursor-pointer justify-end text-white"
-            >
-              <ChevronDown
-                className={`size-[18px] transition-transform ${leaguesOpen ? "rotate-180" : ""}`}
-                strokeWidth={2}
-                aria-hidden
-              />
-            </button>
-          </div>
-
-          {leaguesOpen
-            ? NAV_LEAGUES.map((league) => {
-                const leagueActive = activeLeague === league.id;
-                const sections = leagueActive ? sectionsFor(league.id) : [];
-                const explore = sections.filter((s) => s.group === "explore");
-                const learn = sections.filter((s) => s.group === "learn");
-                return (
-                  <div key={league.id} className="pl-[13px]">
-                    <Link
-                      to={league.href}
-                      aria-current={leagueActive ? "page" : undefined}
-                      className={rowClass(leagueActive, true)}
-                    >
-                      <img
-                        src={league.icon}
-                        alt=""
-                        aria-hidden
-                        className="size-[22px] shrink-0 object-contain"
-                      />
-                      {league.label}
-                    </Link>
-                    {explore.length > 0 ? (
-                      <div className="mt-[9px] space-y-[9px] pl-[13px]">
-                        <p className="text-[10px] font-medium tracking-[0.14em] text-white/35 uppercase">
-                          Explore
-                        </p>
-                        {explore.map((item) => {
-                          const href = item.href;
-                          if (!href) {
-                            return (
-                              <button
-                                key={item.label}
-                                type="button"
-                                disabled
-                                className={rowClass(false, false)}
-                              >
-                                {item.label}
-                              </button>
-                            );
-                          }
-                          return (
-                            <Link
-                              key={item.label}
-                              to={href}
-                              aria-current={
-                                isActiveSection(pathname, item.label)
-                                  ? "page"
-                                  : undefined
-                              }
-                              className={rowClass(
-                                isActiveSection(pathname, item.label),
-                                true,
-                              )}
-                              onPointerEnter={
-                                item.label === "Props"
-                                  ? () =>
-                                      prefetchPropsBoard(queryClient, href)
-                                  : undefined
-                              }
-                            >
-                              {item.label}
-                            </Link>
-                          );
-                        })}
-                      </div>
-                    ) : null}
-                    {learn.length > 0 ? (
-                      <div className="mt-[9px] space-y-[9px] border-t border-white/10 pt-[9px] pl-[13px]">
-                        <p className="text-[10px] font-medium tracking-[0.14em] text-white/35 uppercase">
-                          Learn
-                        </p>
-                        {learn.map((item) =>
-                          item.href ? (
-                            <Link
-                              key={item.label}
-                              to={item.href}
-                              aria-current={
-                                isActiveSection(pathname, item.label)
-                                  ? "page"
-                                  : undefined
-                              }
-                              className={rowClass(
-                                isActiveSection(pathname, item.label),
-                                true,
-                              )}
-                            >
-                              {item.label}
-                            </Link>
-                          ) : (
-                            <button
-                              key={item.label}
-                              type="button"
-                              disabled
-                              className={rowClass(false, false)}
-                            >
-                              {item.label}
-                            </button>
-                          ),
-                        )}
-                      </div>
-                    ) : null}
-                  </div>
-                );
-              })
-            : null}
-
           <Link
             to={propsHref}
             aria-current={propsActive ? "page" : undefined}
@@ -231,6 +94,18 @@ export function AppSidebar() {
             Legs
           </Link>
           <Link
+            to={arbitrageHref}
+            aria-current={arbitrageActive ? "page" : undefined}
+            className={rowClass(arbitrageActive, true)}
+          >
+            <ArrowLeftRight
+              className="size-[22px] shrink-0"
+              strokeWidth={2}
+              aria-hidden
+            />
+            Arbitrage
+          </Link>
+          <Link
             to={matchupsHref}
             aria-current={matchupsActive ? "page" : undefined}
             className={rowClass(matchupsActive, true)}
@@ -240,7 +115,7 @@ export function AppSidebar() {
               strokeWidth={2}
               aria-hidden
             />
-            Matchups
+            Games
           </Link>
         </div>
       </nav>

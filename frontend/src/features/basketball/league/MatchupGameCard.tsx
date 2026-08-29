@@ -22,9 +22,6 @@ function TeamRow({
         logoUrl={team.logoUrl}
         sizeClassName="size-8"
       />
-      <span className="w-10 shrink-0 text-[18px] font-semibold text-white">
-        {team.abbrev}
-      </span>
       <span className="min-w-0 flex-1">
         <span className="block truncate text-[18px] text-white">{team.name}</span>
         {team.record ? (

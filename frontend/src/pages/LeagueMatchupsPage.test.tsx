@@ -59,6 +59,13 @@ function renderAt(path: string) {
 }
 
 describe("LeagueMatchupsPage date nav", () => {
+  it("uses the same right inset as MLB Props on desktop", () => {
+    renderAt("/mlb/matchups");
+    expect(
+      screen.getByRole("heading", { name: "Games" }).closest("section"),
+    ).toHaveClass("max-w-6xl", "md:pr-[150px]");
+  });
+
   it("writes ?date when moving off today and clears it returning", async () => {
     const user = userEvent.setup();
     renderAt("/wnba/matchups");
@@ -96,7 +103,7 @@ describe("LeagueMatchupsPage date nav", () => {
         name: "NBA",
       }),
     );
-    expect(screen.getByText(/NBA matchups coming soon/i)).toBeInTheDocument();
+    expect(screen.getByText(/NBA games coming soon/i)).toBeInTheDocument();
     expect(
       within(screen.getByTestId("matchups-header")).getByRole("link", {
         name: "NBA",

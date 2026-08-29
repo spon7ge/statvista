@@ -53,7 +53,8 @@ describe("HomeChromeLayout", () => {
     expect(
       screen.getByRole("navigation", { name: "Primary" }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Home" })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Home" })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Games" })).toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: /^leagues$/i }),
     ).not.toBeInTheDocument();
@@ -82,7 +83,7 @@ describe("HomeChromeLayout", () => {
     expect(bar).toHaveClass("sm:hidden");
     expect(within(bar).getByRole("link", { name: "statvista" })).toHaveAttribute(
       "href",
-      "/",
+      "/mlb/matchups",
     );
 
     const open = screen.getByRole("button", { name: "Open menu" });
@@ -93,7 +94,7 @@ describe("HomeChromeLayout", () => {
     expect(open).toHaveAttribute("aria-expanded", "true");
     const drawer = document.getElementById("app-sidebar-drawer");
     expect(drawer).toBeTruthy();
-    expect(within(drawer!).getByRole("link", { name: "WNBA" })).toBeInTheDocument();
+    expect(within(drawer!).getByRole("link", { name: "Games" })).toBeInTheDocument();
 
     await user.keyboard("{Escape}");
     expect(screen.queryByLabelText("Close menu")).not.toBeInTheDocument();
@@ -106,14 +107,14 @@ describe("HomeChromeLayout", () => {
       <Routes>
         <Route element={<HomeChromeLayout />}>
           <Route path="/" element={<div>home</div>} />
-          <Route path="/wnba/matchups" element={<div>matchups</div>} />
+          <Route path="/mlb/matchups" element={<div>matchups</div>} />
         </Route>
       </Routes>,
       "/",
     );
     await user.click(screen.getByRole("button", { name: "Open menu" }));
     const drawer = document.getElementById("app-sidebar-drawer");
-    await user.click(within(drawer!).getByRole("link", { name: "WNBA" }));
+    await user.click(within(drawer!).getByRole("link", { name: "Games" }));
     expect(screen.queryByLabelText("Close menu")).not.toBeInTheDocument();
     expect(screen.getByText("matchups")).toBeInTheDocument();
   });

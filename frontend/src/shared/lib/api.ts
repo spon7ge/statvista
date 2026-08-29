@@ -27,14 +27,6 @@ export type ApiGameDetailBoxScore = Schemas["GameDetailBoxScore"];
 export type ApiWnbaGameDetail = Schemas["WnbaGameDetail"];
 export type WnbaScoreboardResponse = Schemas["WnbaScoreboardResponse"];
 
-export type ApiWnbaLeaderRow = Schemas["WnbaLeaderRow"];
-export type ApiWnbaLeaderCategory = Schemas["WnbaLeaderCategory"];
-export type ApiWnbaLeadersResponse = Schemas["WnbaLeadersResponse"];
-
-export type ApiWnbaStandingsRow = Schemas["WnbaStandingsRow"];
-export type ApiWnbaStandingsConference = Schemas["WnbaStandingsConference"];
-export type ApiWnbaStandingsResponse = Schemas["WnbaStandingsResponse"];
-
 export type ApiWnbaOddsGame = Schemas["WnbaOddsGame"];
 export type ApiWnbaOddsResponse = Schemas["WnbaOddsResponse"];
 
@@ -51,13 +43,6 @@ export type WnbaPropsParams = {
   legs: number;
 };
 
-export type ApiWnbaFuturesEntry = Schemas["WnbaFuturesEntry"];
-export type ApiWnbaFuturesMarket = Schemas["WnbaFuturesMarket"];
-export type ApiWnbaFuturesResponse = Schemas["WnbaFuturesResponse"];
-
-export type ApiWnbaPlayerAverages = Schemas["WnbaPlayerAverages"];
-export type ApiWnbaPlayerGame = Schemas["WnbaPlayerGame"];
-export type ApiWnbaPlayerResponse = Schemas["WnbaPlayerResponse"];
 export type ApiWnbaTeamPreviewResponse = Schemas["WnbaTeamPreviewResponse"];
 
 export type WnbaTeamPreviewParams = {
@@ -94,16 +79,6 @@ export type ApiMlbPropBoardRow = Schemas["MlbPropBoardRow"];
 export type ApiMlbPropBoardResponse = Schemas["MlbPropBoardResponse"];
 export type ApiMlbGamePropsResponse = Schemas["MlbGamePropsResponse"];
 export type ApiMlbTeamPreviewResponse = Schemas["MlbTeamPreviewResponse"];
-export type ApiMlbLeaderRow = Schemas["MlbLeaderRow"];
-export type ApiMlbLeaderCategory = Schemas["MlbLeaderCategory"];
-export type ApiMlbLeadersResponse = Schemas["MlbLeadersResponse"];
-export type ApiMlbStandingsRow = Schemas["MlbStandingsRow"];
-export type ApiMlbStandingsDivision = Schemas["MlbStandingsDivision"];
-export type ApiMlbStandingsLeague = Schemas["MlbStandingsLeague"];
-export type ApiMlbStandingsResponse = Schemas["MlbStandingsResponse"];
-export type ApiMlbFuturesEntry = Schemas["MlbFuturesEntry"];
-export type ApiMlbFuturesMarket = Schemas["MlbFuturesMarket"];
-export type ApiMlbFuturesResponse = Schemas["MlbFuturesResponse"];
 
 export type MlbPropsParams = {
   app: string;
@@ -170,28 +145,6 @@ export async function fetchGameDetail(
   return res.json();
 }
 
-export async function fetchWnbaLeaders(): Promise<ApiWnbaLeadersResponse> {
-  const res = await fetch(`${API_BASE}/api/wnba/leaders`, {
-    headers: { Accept: "application/json" },
-    cache: "no-store",
-  });
-  if (!res.ok) {
-    throw new Error(`Leaders request failed: ${res.status}`);
-  }
-  return res.json();
-}
-
-export async function fetchWnbaStandings(): Promise<ApiWnbaStandingsResponse> {
-  const res = await fetch(`${API_BASE}/api/wnba/standings`, {
-    headers: { Accept: "application/json" },
-    cache: "no-store",
-  });
-  if (!res.ok) {
-    throw new Error(`Standings request failed: ${res.status}`);
-  }
-  return res.json();
-}
-
 export async function fetchWnbaOdds(): Promise<ApiWnbaOddsResponse> {
   const res = await fetch(`${API_BASE}/api/wnba/odds/today`, {
     headers: { Accept: "application/json" },
@@ -241,30 +194,6 @@ export async function fetchWnbaGameProps({
   return res.json();
 }
 
-export async function fetchWnbaFutures(): Promise<ApiWnbaFuturesResponse> {
-  const res = await fetch(`${API_BASE}/api/wnba/futures`, {
-    headers: { Accept: "application/json" },
-    cache: "no-store",
-  });
-  if (!res.ok) {
-    throw new Error(`Futures request failed: ${res.status}`);
-  }
-  return res.json();
-}
-
-export async function fetchWnbaPlayer(
-  playerId: string,
-): Promise<ApiWnbaPlayerResponse> {
-  const res = await fetch(`${API_BASE}/api/wnba/player/${playerId}`, {
-    headers: { Accept: "application/json" },
-    cache: "no-store",
-  });
-  if (!res.ok) {
-    throw new Error(`Player request failed: ${res.status}`);
-  }
-  return res.json();
-}
-
 export async function fetchWnbaTeamPreview({
   espnEventId,
   side,
@@ -300,39 +229,6 @@ export async function fetchMlbScoreboardByDate(
   );
   if (!res.ok) {
     throw new Error(`MLB scoreboard request failed: ${res.status}`);
-  }
-  return res.json();
-}
-
-export async function fetchMlbLeaders(): Promise<ApiMlbLeadersResponse> {
-  const res = await fetch(`${API_BASE}/api/mlb/leaders`, {
-    headers: { Accept: "application/json" },
-    cache: "no-store",
-  });
-  if (!res.ok) {
-    throw new Error(`MLB leaders failed: ${res.status}`);
-  }
-  return res.json();
-}
-
-export async function fetchMlbStandings(): Promise<ApiMlbStandingsResponse> {
-  const res = await fetch(`${API_BASE}/api/mlb/standings`, {
-    headers: { Accept: "application/json" },
-    cache: "no-store",
-  });
-  if (!res.ok) {
-    throw new Error(`MLB standings failed: ${res.status}`);
-  }
-  return res.json();
-}
-
-export async function fetchMlbFutures(): Promise<ApiMlbFuturesResponse> {
-  const res = await fetch(`${API_BASE}/api/mlb/futures`, {
-    headers: { Accept: "application/json" },
-    cache: "no-store",
-  });
-  if (!res.ok) {
-    throw new Error(`MLB futures failed: ${res.status}`);
   }
   return res.json();
 }

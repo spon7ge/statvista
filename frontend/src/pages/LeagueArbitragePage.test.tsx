@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { describe, expect, it } from "vitest";
-import { LeagueLegsPage } from "./LeagueLegsPage";
+import { LeagueArbitragePage } from "./LeagueArbitragePage";
 
 function renderPage(path: string) {
   const client = new QueryClient({
@@ -11,25 +11,25 @@ function renderPage(path: string) {
   return render(
     <QueryClientProvider client={client}>
       <MemoryRouter initialEntries={[path]}>
-        <LeagueLegsPage />
+        <LeagueArbitragePage />
       </MemoryRouter>
     </QueryClientProvider>,
   );
 }
 
-describe("LeagueLegsPage", () => {
-  it("renders an empty Legs shell with league pills", () => {
-    renderPage("/mlb/legs");
-    expect(screen.getByRole("heading", { name: "Legs" })).toHaveClass(
+describe("LeagueArbitragePage", () => {
+  it("renders an empty Arbitrage shell with league pills", () => {
+    renderPage("/mlb/arbitrage");
+    expect(screen.getByRole("heading", { name: "Arbitrage" })).toHaveClass(
       "text-white",
     );
     expect(screen.getByRole("link", { name: "MLB" })).toHaveAttribute(
       "href",
-      "/mlb/legs",
+      "/mlb/arbitrage",
     );
     expect(screen.getByRole("link", { name: "WNBA" })).toHaveAttribute(
       "href",
-      "/wnba/legs",
+      "/wnba/arbitrage",
     );
     expect(screen.getByRole("button", { name: "NBA" })).toBeDisabled();
     expect(screen.queryByRole("list")).not.toBeInTheDocument();

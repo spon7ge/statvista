@@ -4,13 +4,8 @@ import type { LeagueSlug } from "@/shared/lib/types";
 
 const MLB_LOGO = "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png";
 
-export type NavGroup = "explore" | "learn";
-
-export type NavSection = {
-  label: string;
-  href: string | null;
-  group: NavGroup;
-};
+/** First screen after joining: MLB matchups (NBA/WNBA via league pills). */
+export const LANDING_HREF = "/mlb/matchups";
 
 export type NavLeague = {
   id: LeagueSlug;
@@ -35,92 +30,50 @@ export function activeLeagueFromPath(pathname: string): LeagueSlug | null {
 }
 
 export function sectionHref(league: LeagueSlug, item: string): string | null {
-  if (item === "Matchups") return `/${league}/matchups`;
+  if (item === "Games") return `/${league}/matchups`;
   if (item === "Props" && league !== "nba") return `/${league}/prop_picks`;
   if (item === "Legs" && league !== "nba") return `/${league}/legs`;
-  if (item === "Leaders" && (league === "wnba" || league === "mlb")) {
-    return `/${league}/leaders`;
-  }
-  if (item === "Standings" && (league === "wnba" || league === "mlb")) {
-    return `/${league}/standings`;
-  }
-  if (item === "Futures" && (league === "wnba" || league === "mlb")) {
-    return `/${league}/futures`;
-  }
-  if (item === "MLB Chatbot") return "/mlb/chatbot";
-  if (item === "WNBA Chatbot") return "/wnba/chatbot";
+  if (item === "Arbitrage" && league !== "nba") return `/${league}/arbitrage`;
   return null;
 }
 
 export function isActiveSection(pathname: string, item: string): boolean {
-  if (item === "Matchups") return pathname.endsWith("/matchups");
+  if (item === "Games") return pathname.endsWith("/matchups");
   if (item === "Props") return pathname.includes("/prop_picks");
   if (item === "Legs") return pathname.endsWith("/legs");
-  if (item === "Leaders") return pathname.endsWith("/leaders");
-  if (item === "Standings") return pathname.endsWith("/standings");
-  if (item === "Futures") return pathname.endsWith("/futures");
-  if (item === "MLB Chatbot" || item === "WNBA Chatbot") {
-    return pathname.endsWith("/chatbot");
-  }
+  if (item === "Arbitrage") return pathname.endsWith("/arbitrage");
   return false;
 }
 
 const DEFAULT_PROPS_HREF = "/mlb/prop_picks";
 const DEFAULT_LEGS_HREF = "/mlb/legs";
-const DEFAULT_MATCHUPS_HREF = "/mlb/matchups";
+const DEFAULT_ARBITRAGE_HREF = "/mlb/arbitrage";
+const DEFAULT_MATCHUPS_HREF = LANDING_HREF;
 
-/** Home-row Props shortcut: current league's board, else MLB. */
+/** Sidebar Props shortcut: current league's board, else MLB. */
 export function homePropsHref(pathname: string): string {
   const league = activeLeagueFromPath(pathname);
   if (!league) return DEFAULT_PROPS_HREF;
   return sectionHref(league, "Props") ?? DEFAULT_PROPS_HREF;
 }
 
-/** Home-row Legs shortcut: current league's legs, else MLB. */
+/** Sidebar Legs shortcut: current league's legs, else MLB. */
 export function homeLegsHref(pathname: string): string {
   const league = activeLeagueFromPath(pathname);
   if (!league) return DEFAULT_LEGS_HREF;
   return sectionHref(league, "Legs") ?? DEFAULT_LEGS_HREF;
 }
 
-/** Home-row Matchups shortcut: current league's slate, else MLB. */
+/** Sidebar Arbitrage shortcut: current league's arb, else MLB. */
+export function homeArbitrageHref(pathname: string): string {
+  const league = activeLeagueFromPath(pathname);
+  if (!league) return DEFAULT_ARBITRAGE_HREF;
+  return sectionHref(league, "Arbitrage") ?? DEFAULT_ARBITRAGE_HREF;
+}
+
+/** Sidebar Games shortcut: current league's slate, else MLB. */
 export function homeMatchupsHref(pathname: string): string {
   const league = activeLeagueFromPath(pathname);
   if (!league) return DEFAULT_MATCHUPS_HREF;
-  return sectionHref(league, "Matchups") ?? DEFAULT_MATCHUPS_HREF;
-}
-
-function exploreLabels(league: LeagueSlug): readonly string[] {
-  const researchTab = league === "nba" ? "Playoff race" : "Arbitrage";
-  const afterProps = league === "nba" ? [] : (["EV+"] as const);
-  return [
-    "Matchups",
-    "Props",
-    ...afterProps,
-    "Leaders",
-    "Standings",
-    researchTab,
-    "Futures",
-  ];
-}
-
-function learnLabels(league: LeagueSlug): readonly string[] {
-  if (league === "mlb") return ["MLB Chatbot"];
-  if (league === "wnba") return ["WNBA Chatbot"];
-  return ["How it works", "Glossary"];
-}
-
-export function sectionsFor(league: LeagueSlug): readonly NavSection[] {
-  return [
-    ...exploreLabels(league).map((label) => ({
-      label,
-      href: sectionHref(league, label),
-      group: "explore" as const,
-    })),
-    ...learnLabels(league).map((label) => ({
-      label,
-      href: sectionHref(league, label),
-      group: "learn" as const,
-    })),
-  ];
+  return sectionHref(league, "Games") ?? DEFAULT_MATCHUPS_HREF;
 }

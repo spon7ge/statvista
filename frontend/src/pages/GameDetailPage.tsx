@@ -6,9 +6,14 @@ import { WnbaLiveCenter } from "@/features/basketball/game/WnbaLiveCenter";
 import { WnbaPregameCenter } from "@/features/basketball/game/WnbaPregameCenter";
 import { GAME_SECTION_SURFACE } from "@/shared/ui/GameSection";
 
+const PAGE_SHELL =
+  "mx-auto max-w-6xl space-y-4 px-4 py-6 sm:px-6 md:pr-[150px]";
+const PAGE_EMPTY =
+  "mx-auto max-w-6xl space-y-3 px-4 py-10 text-center sm:px-6 md:pr-[150px]";
+
 function GameDetailSkeleton() {
   return (
-    <div className="mx-auto max-w-6xl space-y-4 px-4 py-6 sm:px-6" aria-hidden>
+    <div className={PAGE_SHELL} aria-hidden>
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <span className="h-4 w-16 animate-pulse rounded bg-white/10" />
@@ -36,7 +41,7 @@ function GameDetailSkeleton() {
 
 function UnableToLoadGame() {
   return (
-    <div className="mx-auto max-w-6xl space-y-3 px-4 py-10 text-center sm:px-6">
+    <div className={PAGE_EMPTY}>
       <p className="text-sm text-white/60">Unable to load game</p>
       <BackLink />
     </div>
@@ -83,7 +88,7 @@ export function GameDetailPage() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl space-y-4 px-4 py-6 sm:px-6">
+    <div className={PAGE_SHELL}>
       <BackLink />
       {center}
     </div>

@@ -138,6 +138,14 @@ describe("MatchupGameCard", () => {
     expect(screen.queryByRole("presentation")).not.toBeInTheDocument();
   });
 
+  it("does not show team abbrev labels beside the logo", () => {
+    renderCard(liveGame);
+    expect(screen.queryByText("GS")).not.toBeInTheDocument();
+    expect(screen.queryByText("PHX")).not.toBeInTheDocument();
+    expect(screen.getByText("Golden State Valkyries")).toBeInTheDocument();
+    expect(screen.getByText("Phoenix Mercury")).toBeInTheDocument();
+  });
+
   it("shows DraftKings odds pill and caption when odds are present", () => {
     renderCard({
       ...liveGame,

@@ -10,7 +10,7 @@ Interactive basketball and baseball analytics — live scoreboards, matchup boar
 
 ## Screenshots
 
-Home landing with a live ticker and a merged LIVE NOW board:
+Games (the landing screen after `/` redirects to MLB):
 
 ![statvista home landing](assets/screenshots/home.png)
 
@@ -28,10 +28,11 @@ MLB game center — live situation, pitch tracking, team stats, and hit chart:
 
 statvista is a React + FastAPI research site that turns public sports feeds into readable boards:
 
-- **Home** — brand hero, live ticker, and a merged LIVE NOW board (WNBA + MLB)
-- **WNBA** — matchups with odds, DFS/US prop picks, leaders, standings, futures, player pages, and full game centers (shot chart, team stats, play-by-play, game flow)
-- **MLB** — dated matchups with odds, plus live and final game detail (situation, pitch tracking, hit chart, win probability)
-- **NBA** — matchups hub scaffolded; historical prop research pipeline still in the repo
+- **Games** — dated slates for MLB and WNBA (`/` redirects here); NBA is a placeholder
+- **Props, Legs, Arbitrage** — league-scoped boards (NBA Props/Legs/Arbitrage fall back to MLB)
+- **WNBA** — games with odds, DFS/US prop picks, and full game centers (shot chart, team stats, play-by-play, game flow)
+- **MLB** — dated games with odds, a DFS-anchored prop research table, plus live and final game detail (situation, pitch tracking, hit chart, win probability)
+- **NBA** — games hub scaffolded; historical prop research pipeline still in the repo
 
 The website read path talks to live upstream APIs (and Supabase odds snapshots). A separate Postgres medallion + quantile-ML path remains for research / batch props — see linked docs below.
 

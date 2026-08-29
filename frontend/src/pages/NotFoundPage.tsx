@@ -9,10 +9,10 @@ export function NotFoundPage() {
         <h1 className="text-2xl font-bold tracking-tight">Page not found</h1>
         <p className="text-white/55">That route does not exist.</p>
         <Link
-          to="/"
+          to="/mlb/matchups"
           className="inline-flex items-center gap-1 text-sm font-medium text-white hover:underline"
         >
-          Back to home
+          Back to games
           <ArrowRight className="size-4" />
         </Link>
       </main>

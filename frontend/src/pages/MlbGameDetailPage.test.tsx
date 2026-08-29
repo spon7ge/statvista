@@ -128,6 +128,9 @@ describe("MlbGameDetailPage", () => {
       "href",
       "/mlb/matchups",
     );
+    expect(
+      screen.getByRole("link", { name: /back/i }).closest(".max-w-6xl"),
+    ).toHaveClass("md:pr-[150px]");
   });
 
   it("shows pregame center for scheduled MLB games", async () => {
@@ -148,6 +151,9 @@ describe("MlbGameDetailPage", () => {
       "href",
       "/mlb/matchups",
     );
+    expect(
+      screen.getByRole("link", { name: /back/i }).closest(".max-w-6xl"),
+    ).toHaveClass("md:pr-[150px]");
   });
 
   it("shows final center for final MLB games", async () => {

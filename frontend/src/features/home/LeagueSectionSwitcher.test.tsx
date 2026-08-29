@@ -13,7 +13,10 @@ vi.mock("./lib/prefetchPropsBoard", () => ({
   prefetchPropsBoard,
 }));
 
-function renderSwitcher(path: string, section: "Props" | "Matchups" | "Legs") {
+function renderSwitcher(
+  path: string,
+  section: "Props" | "Games" | "Legs" | "Arbitrage",
+) {
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   });
@@ -46,7 +49,7 @@ describe("LeagueSectionSwitcher", () => {
   });
 
   it("links all three leagues on matchups, including NBA", () => {
-    renderSwitcher("/wnba/matchups", "Matchups");
+    renderSwitcher("/wnba/matchups", "Games");
     const leagues = screen.getByRole("navigation", { name: "Leagues" });
     expect(within(leagues).getByRole("link", { name: "WNBA" })).toHaveAttribute(
       "aria-current",
@@ -79,6 +82,20 @@ describe("LeagueSectionSwitcher", () => {
     expect(within(leagues).getByRole("button", { name: "NBA" })).toBeDisabled();
   });
 
+  it("links MLB and WNBA on Arbitrage and disables NBA", () => {
+    renderSwitcher("/mlb/arbitrage", "Arbitrage");
+    const leagues = screen.getByRole("navigation", { name: "Leagues" });
+    expect(within(leagues).getByRole("link", { name: "MLB" })).toHaveAttribute(
+      "href",
+      "/mlb/arbitrage",
+    );
+    expect(within(leagues).getByRole("link", { name: "WNBA" })).toHaveAttribute(
+      "href",
+      "/wnba/arbitrage",
+    );
+    expect(within(leagues).getByRole("button", { name: "NBA" })).toBeDisabled();
+  });
+
   it("prefetches the other league board when hovering a Props pill", async () => {
     const user = userEvent.setup();
     renderSwitcher("/mlb/prop_picks", "Props");
@@ -90,9 +107,9 @@ describe("LeagueSectionSwitcher", () => {
     );
   });
 
-  it("does not prefetch on Matchups pills", async () => {
+  it("does not prefetch on Games pills", async () => {
     const user = userEvent.setup();
-    renderSwitcher("/mlb/matchups", "Matchups");
+    renderSwitcher("/mlb/matchups", "Games");
     await user.hover(screen.getByRole("link", { name: "WNBA" }));
     expect(prefetchPropsBoard).not.toHaveBeenCalled();
   });

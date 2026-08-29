@@ -20,7 +20,7 @@ Document how the live statvista website is structured today: routes, shared chro
 
 ## 1. Overview & boundaries
 
-statvista’s public site is a React + Vite app talking to a FastAPI service over `/api`. The product surface today is primarily **WNBA** (home, league hubs, game detail, prop picks, player pages). **MLB** adds live scoreboard on the home chrome, a live matchups hub (dated slate), game detail, and a DFS prop-picks **player board** (View X props → per-player odds grid). NBA is scaffolded (`/nba/matchups` placeholder).
+statvista’s public site is a React + Vite app talking to a FastAPI service over `/api`. `/` replace-redirects to **MLB games**. The product surface is **Props, Legs, Arbitrage, and Games** (plus game detail). **WNBA** has a live games slate, prop picks, and game detail. **MLB** adds a live games hub (dated slate), game detail, and a DFS-anchored prop-picks research table. NBA is scaffolded (`/nba/matchups` placeholder).
 
 ### Read-path model
 
@@ -37,10 +37,10 @@ Two backend families exist. The **live website mainly uses the WNBA and MLB upst
 | Family | Examples | Used by current React pages? |
 |--------|----------|------------------------------|
 | WNBA upstream | `/api/wnba/scoreboard/*`, `props/today`, `games/{id}`, … | Yes |
-| MLB upstream | `/api/mlb/scoreboard/*`, `/api/mlb/odds/today` | Yes (home + game Preview odds) |
+| MLB upstream | `/api/mlb/scoreboard/*`, `/api/mlb/odds/today` | Yes (matchups + game Preview odds) |
 | DB-backed (silver / gold) | `/api/games/{date}/slate`, `/api/props`, … | No |
 
-Shared chrome (`HomeChromeLayout`) wraps most routes with a left sidebar (mobile hamburger drawer) and footer. The sidebar lists Home, then leagues, then **Props, Legs, and Matchups** shortcuts (current league's board/legs/slate, else MLB; NBA Props and Legs fall back to MLB). Legs is a top-level shortcut (`/mlb/legs`, `/wnba/legs`; empty recommended-legs shell), not nested under Explore. Props links prefetch the destination board on hover; the sidebar also warms that board on mount. Client React Query keeps MLB `/props/board` and WNBA `/props/today` fresh for 15 minutes (`staleTime` matches the poll; no refetch on window focus).
+Shared chrome (`HomeChromeLayout`) wraps most routes with a left sidebar (mobile hamburger drawer) and footer. The sidebar lists **Props, Legs, Arbitrage, and Games** (current league's board/legs/arb/slate, else MLB; NBA Props, Legs, and Arbitrage fall back to MLB). League switching is the MLB/WNBA/NBA pill row on those pages, not the sidebar. Wordmark and `/` land on `/mlb/matchups`. Props links prefetch the destination board on hover; the sidebar also warms that board on mount. Client React Query keeps MLB `/props/board` and WNBA `/props/today` fresh for 15 minutes (`staleTime` matches the poll; no refetch on window focus).
 
 ---
 
@@ -66,27 +66,20 @@ Shared chrome (`HomeChromeLayout`) wraps most routes with a left sidebar (mobile
 main.tsx
   QueryClientProvider → BrowserRouter → AppRouter
     HomeChromeLayout (AppSidebar + SiteFooter)
-      /                    HomePage
+      /                    Navigate → /mlb/matchups
       /games/:espnEventId  GameDetailPage
       /wnba/matchups       LeagueMatchupsPage (league="wnba")
       /wnba/prop_picks     LeaguePropPicksPage
       /wnba/legs           LeagueLegsPage
+      /wnba/arbitrage      LeagueArbitragePage
       /wnba/prop_picks/player/:playerSlug  WnbaPlayerPropsPage
-      /wnba/leaders        LeagueLeadersPage
-      /wnba/standings      LeagueStandingsPage
-      /wnba/futures        LeagueFuturesPage
-      /wnba/chatbot        LeagueChatbotPage (league="wnba")
-      /wnba/player/:id     LeaguePlayerPage
       /nba/matchups        LeagueMatchupsPage (placeholder)
       /mlb/matchups        LeagueMatchupsPage (league="mlb", live slate)
       /mlb/prop_picks      MlbPropPicksPage
       /mlb/legs            LeagueLegsPage
+      /mlb/arbitrage       LeagueArbitragePage
       /mlb/prop_picks/player/:playerSlug  replace-redirect → /mlb/prop_picks
-      /mlb/leaders         MlbLeadersPage
-      /mlb/standings       MlbStandingsPage
-      /mlb/futures         MlbFuturesPage
-      /mlb/chatbot         LeagueChatbotPage (league="mlb")
-      /mlb/games/:gamePk   MlbGameStubPage (coming soon)
+      /mlb/games/:gamePk   MlbGameDetailPage
     * → NotFoundPage
 ```
 
@@ -99,7 +92,7 @@ main.tsx
 | `hooks/useWnba*.ts`, `useMlbScoreboard.ts`, `useGameDetail.ts` | TanStack Query wrappers |
 | `lib/api.ts` | Typed `fetch` helpers + `VITE_API_BASE_URL` |
 
-**Chrome data:** Home (LIVE NOW) merges WNBA + MLB scoreboards via `mergeLeagueScoreboards`. Each league has its own query key; failures in one league do not clear the other. While any game is live in either league, the relevant scoreboard refetches about every 18 seconds. The layout itself does not fetch scoreboards.
+**Chrome data:** The layout itself does not fetch scoreboards. Games pages load each league's scoreboard independently.
 
 ---
 
@@ -107,26 +100,19 @@ main.tsx
 
 | Route | Page job | Hook(s) | API | Upstream / notes |
 |-------|----------|---------|-----|------------------|
-| `/` | Brand, LIVE NOW, explainer, league CTAs | `useWnbaScoreboard`, `useMlbScoreboard` | WNBA + MLB scoreboard today | Client merge via `mergeLeagueScoreboards` |
+| `/` | Landing | — | — | Replace-redirect to `/mlb/matchups` |
 | `/wnba/matchups?date=` | Daily slate (no team-lines odds pill); Props-style header with MLB/WNBA/NBA league pills | `useWnbaScoreboard(date)` | scoreboard (`/today` or `?date=`) | Cards → `/games/:espnEventId` (Preview odds board uses `GET /api/wnba/odds/today`) |
 | `/wnba/prop_picks` | DFS **player board**: PrizePicks / Underdog tabs (format/legs defaults hidden — power/4 vs standard/4); one card per player with **View X props** CTA; sort by unique-stat count desc; Team multi-select + player name search | `useWnbaProps` | `GET /api/wnba/props/today?app=&format=&legs=` | Client `groupWnbaPropPlayers` aggregates rows; PrizePicks seed from latest Supabase snapshot only (`fetch_latest_prizepicks("wnba")`, no Parlay PP fallback; empty → `prizepicks_unavailable`); Underdog from Supabase snapshot; each row carries `books_main` (per-book main O/U) for detail grid; Parlay books served from live indexes (DK/FD + cmp); live Parlay fetch also throttled-writes `odds.wnba_parlay_api_odds`; ProphetX/Novig/Pinnacle from Supabase scrapers; client hide finals + prior-day tips; paginates 20 **players** per page |
 | `/wnba/legs` | Empty **recommended legs** shell (PrizePicks / Underdog); league pills | — | none | Placeholder; no API yet |
+| `/wnba/arbitrage` | Empty **arbitrage** shell; league pills | — | none | Placeholder; no API yet |
 | `/wnba/prop_picks/player/:playerSlug?app=` | Per-player main-line odds grid (BettingPros-style) | `useWnbaProps` | same `GET /api/wnba/props/today?app=&format=&legs=` | `findPlayerBySlug` + `uniqueStatRows`; `WnbaPlayerPropsOddsGrid` reads `books_main` (ProphetX, Novig, DraftKings, FanDuel, BetMGM, Caesars, Kalshi, Fliff, bet365, Pinnacle — main lines only, NL when missing; no OPEN/BEST); unknown slug → empty state + link back to board |
-| `/wnba/leaders` | Season leaderboards | `useWnbaLeaders` | `GET /api/wnba/leaders` | stats.wnba.com `leagueleaders` via outbound cache; WNBA hub pages (Leaders, Standings, Futures, Prop Picks, Player) use MLB-style colored banners with basketball sport mark |
-| `/wnba/standings` | East / West standings | `useWnbaStandings` | `GET /api/wnba/standings` | ESPN `site.web.api` via `app.core.outbound_cache` (memory + `data/cache/outbound`, TTL + SWR) |
-| `/wnba/futures` | Championship / award futures | `useWnbaFutures` | `GET /api/wnba/futures` | ESPN core futures API |
-| `/wnba/chatbot` | League Learn tab Chatbot | — | none | Coming soon placeholder |
-| `/wnba/player/:id` | Bio, averages, recent games | `useWnbaPlayer` | `GET /api/wnba/player/{id}` | stats.wnba.com (info + dash + gamelog) |
 | `/games/:espnEventId` | Game detail: scheduled → MLB-parity pregame (broadcast header with record + last 10; centered Preview / Away / Home / **Props**); Preview two-column (left: Projected Starters → Game Info → Matchup Prediction → Game Leaders PPG/RPG/APG; right: multi-book Odds board → Team Stats + `#rank` → Injuries); Away/Home → team preview (PPG/RPG/APG/BPG/SPG leaders + roster averages incl. SH-EFF, SC-EFF, PPEP, RTG, +/-); **Props** tab has PrizePicks / Underdog sub-tabs and shows the matchup-scoped **Player Props** category-card grid (Line / Over / Under, book name under odds); live/halftime or final → broadcast header + Summary \| Box (Scoring plays \| All plays; Summary right rail: linescore, team stats, win probability, shot chart, Game Info; Box: stacked away/home box score) | `useGameDetail`, `useWnbaOdds`, `useWnbaGameProps(espnEventId, app)`, `useWnbaTeamPreview(espnEventId, side)` | `GET /api/wnba/games/{id}`, `GET /api/wnba/odds/today` (Preview `book_boards`), `GET /api/wnba/props/game/{id}?app=prizepicks\|underdog` (Props tab only), `GET /api/wnba/games/{id}/team-preview?side=` (Away/Home) | ESPN summary + standings/team stats/roster for enrichment (standings + roster JSON via `app.core.outbound_cache`); RotoWire starters; Preview odds prefer `book_boards` (ProphetX → Novig → Pinnacle) with soft-fail per book and fallback to legacy `games[]`; game-scoped props reuse today's props assembly filtered to away/home abbrevs; soft-fail empty sections; no Player of the Game or pitch zone |
-| `/nba/matchups` | Placeholder; same Matchups league-pill header as WNBA/MLB | — | none | “NBA matchups coming soon” |
+| `/nba/matchups` | Placeholder; same Games league-pill header as WNBA/MLB | — | none | “NBA games coming soon” |
 | `/mlb/matchups?date=` | Daily slate (no team-lines odds pill); Props-style header with MLB/WNBA/NBA league pills | `useMlbScoreboard(date)` | scoreboard (`/today` or `?date=`) | Stats API schedule; cards → `/mlb/games/:gamePk` (Preview odds board still uses `GET /api/mlb/odds/today`) |
 | `/mlb/prop_picks` | Sportsbook **research table**: one row per player + market + **PrizePicks/Underdog line** + side; composite cell (overlapping headshot + team logo; **name · matchup**; market below); columns **Proposition**, **Line**, **DFS** (PrizePicks/Underdog logo + American; PrizePicks -137; no implied %), **Odds** (sportsbooks only — this side: logo + that book’s line + American, even when the number differs from DFS); **IP** (average raw implied of Odds Americans), L5/L10/L15, H2H (this season + last season vs opponent, pooled; colored cells); **Game** (day's slate, away @ home) + Team + **Bookmaker** + **Proposition** (market) + **Over/Under** + **Hit rate** (L5/L10/L15 highest→lowest) + player name search; no PrizePicks/Underdog tabs | `useMlbPropBoard` | `GET /api/mlb/props/board` | Client `filterMlbPropBoardRows` (game + team + book + market + side + name; selected books trim `dfs` or `books` chips; drop rows with no PrizePicks/Underdog line); default sort game start / name / stat / Over then Under / line; hit-rate control sorts L5/L10/L15 desc; **30 rows per page** with Previous/Next; empty copy “No board yet” |
 | `/mlb/legs` | Empty **recommended legs** shell (PrizePicks / Underdog); league pills | — | none | Placeholder; no API yet |
+| `/mlb/arbitrage` | Empty **arbitrage** shell; league pills | — | none | Placeholder; no API yet |
 | `/mlb/prop_picks/player/:playerSlug` | Removed | — | — | Replace-redirect to `/mlb/prop_picks`. `MlbPlayerPropsOddsGrid` remains for shared book-column patterns; game-detail Props still uses `GET /api/mlb/props/game/{gamePk}` |
-| `/mlb/leaders` | Season leaderboards | `useMlbLeaders` | `GET /api/mlb/leaders` | MLB Stats API season `/stats` (sorted; includes GP) |
-| `/mlb/standings` | Division standings | `useMlbStandings` | `GET /api/mlb/standings` | Stats API standings |
-| `/mlb/futures` | Season futures | `useMlbFutures` | `GET /api/mlb/futures` | ESPN core futures API |
-| `/mlb/chatbot` | League Learn tab Chatbot | — | none | Coming soon placeholder |
 | `/mlb/games/:gamePk` | Game detail: pregame broadcast header (Preview shows RotoWire lineups when matched with right-rail odds board beside lineups; Preview / Away / Home / **Props** tabs; Preview keeps team odds board beside lineups (no player props grid); **Props** tab has PrizePicks / Underdog sub-tabs and shows the matchup-scoped **Player Props** category-card grid (Line / Over / Under, book name under odds); Away/Home tabs show **team preview** (Team Batting/Pitching Leaders + full active-roster season batting/pitching tables); under lineups: season Team Stats (with league `#N` ranks) + Injuries; right rail Odds → Game Info → Matchup prediction (ESPN) when present, then Game Leaders — HR/AVG/OPS batter cards (best active-roster hitter per category, value + muted `#N`, last name + team logo, ESPN headshots)), live Summary/Box center (ESPN-style matchup + pitch zone above play feed, linescore/team stats/win prob/hit chart in Summary right rail, box score side-by-side in Box tab), or final Summary/Box center (optional fan-vote Player of the Game card from MLB Play above Play feed when winner published; hidden when null) | `useMlbGameDetail(gamePk)`, `useMlbLineups(date)`, `useMlbLineupMatchup`, `useMlbOdds`, `useMlbGameProps(gamePk, app)`, `useMlbTeamPreview(gamePk, side)` | `GET /api/mlb/games/{gamePk}`, `GET /api/mlb/lineups?date=` (Preview tab), `GET /api/mlb/lineups/matchup?date=&away=&home=`, `GET /api/mlb/odds/today` (Preview odds board), `GET /api/mlb/props/game/{gamePk}?app=prizepicks\|underdog` (Props tab only), `GET /api/mlb/games/{gamePk}/team-preview?side=away|home` (Away/Home tabs) | MLB Stats API (+ ESPN when available); RotoWire projected lineups for Preview, matched by abbrev with both sides' pitcher + 9 batters complete; Stats API enriches the matched lineup with season pitching and career BvP; Preview right-rail odds board stacks matched books from `odds/today` `book_boards` (ProphetX → Novig → Pinnacle only) with Money / Total / Spread columns per away/home row pair and a subtle book name under each pair; falls back to legacy `games[]` when `book_boards` is empty; game-scoped props reuse the same assembly as `props/today` (PX/Novig/Pinnacle scrapers + Parlay books from `odds.mlb_parlay_api_odds` snapshot only — no live Parlay fallback), filtered to away/home abbrevs; DFS line anchors Over/Under pills with best American odds across ProphetX, Novig, DK, FD, Pinnacle at the exact line (Props→PrizePicks → PrizePicks line; Props→Underdog → Underdog line); soft empty/error on props fetch (`parlay_unavailable` when Parlay snapshot empty); Preview soft-merges season YTD team hitting/pitching (Stats) + league competition ranks + injuries (ESPN) under projected lineups even when lineups are unavailable; Preview Matchup prediction from ESPN summary `predictor` when available (hidden when null); Game Leaders from game detail payload (`game_leaders`; best roster batter per HR/AVG/OPS with league rank; hidden when null); Final soft-merges MLB Play fan-vote `player_of_the_game` on game detail (null when absent or not final); halftime falls back to compact header; game detail payload also includes optional `venue_city`, `venue_state`, `weather`, and `umpires` for Game Info UI |
 
 ### Cross-cutting API behavior
@@ -224,10 +210,6 @@ Feature-level history lives under `docs/superpowers/specs/` and `docs/superpower
 | GET | `/api/wnba/odds/today` | `parlay_odds` (+ `book_boards`: ProphetX → Novig → Pinnacle from Supabase team snapshots; legacy `games[]` retained) |
 | GET | `/api/wnba/props/today` | `wnba.props` (+ `prop_fair`, `prop_formats`, snapshots) |
 | GET | `/api/wnba/props/game/{espn_event_id}` | `wnba.game_props` (+ `get_today_props`, game detail, roster headshots) |
-| GET | `/api/wnba/leaders` | `wnba_leaders` |
-| GET | `/api/wnba/standings` | `wnba_standings` |
-| GET | `/api/wnba/futures` | `wnba_futures` |
-| GET | `/api/wnba/player/{player_id}` | `wnba_player` |
 | GET | `/api/wnba/games/{espn_event_id}` | `wnba_game_detail` (+ scheduled record/last_10, season_team_stats ranks, game_leaders) |
 | GET | `/api/wnba/games/{espn_event_id}/team-preview?side=` | `wnba.team_preview` (PPG/RPG/APG/BPG/SPG leaders + roster averages incl. SH-EFF, SC-EFF, PPEP, RTG, +/-) |
 | GET | `/api/mlb/scoreboard/today` | `mlb_scoreboard` (MLB Stats API) |
@@ -237,8 +219,5 @@ Feature-level history lives under `docs/superpowers/specs/` and `docs/superpower
 | GET | `/api/mlb/props/board` | `mlb.prop_board` (DFS-anchored rows; sportsbook mains attached on `books` even when the line differs; `dfs` vs `books`; IP / ranks / L5–L15; 200 even when enrichments fail) |
 | GET | `/api/mlb/props/game/{game_pk}?app=` | `mlb.game_props` (+ same props assembly as today; Parlay from `odds.mlb_parlay_api_odds` snapshot, not live indexes) |
 | GET | `/api/mlb/games/{game_pk}/team-preview?side=` | `mlb.team_preview` (+ leaders boards, team season player splits) |
-| GET | `/api/mlb/leaders` | `mlb.leaders` (MLB Stats API) |
-| GET | `/api/mlb/standings` | `mlb.standings` (MLB Stats API) |
-| GET | `/api/mlb/futures` | `mlb_futures` |
 
 Health (ops, not UI): `GET /api/health`.

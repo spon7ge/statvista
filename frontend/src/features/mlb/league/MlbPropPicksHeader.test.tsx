@@ -23,7 +23,7 @@ describe("MlbPropPicksHeader", () => {
     renderHeader();
 
     const heading = screen.getByRole("heading", { name: "Props" });
-    expect(heading).toHaveClass("text-left", "text-[28px]", "font-bold");
+    expect(heading).toHaveClass("text-left", "text-[28px]", "font-bold", "text-white");
     expect(screen.getByTestId("mlb-prop-picks-header")).toHaveClass(CHROME_TITLE_TOP);
     expect(
       screen.getByTestId("mlb-prop-picks-header").querySelector("div.rounded-3xl"),

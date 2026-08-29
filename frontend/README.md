@@ -1,6 +1,6 @@
 # statvista Frontend
 
-React + TypeScript home landing for statvista, built with [Vite](https://vite.dev/).
+React + TypeScript app for statvista, built with [Vite](https://vite.dev/). `/` redirects to MLB games.
 
 ## Stack
 
@@ -34,7 +34,7 @@ From the `frontend/` directory:
 npm run dev
 ```
 
-Open http://localhost:5173/ for the home landing.
+Open http://localhost:5173/ — it redirects to MLB games.
 
 ## API base URL
 
@@ -76,7 +76,7 @@ frontend/src/
   features/
     basketball/        # WNBA (+ future NBA) game, league UI, hooks
     mlb/               # MLB game UI + hooks
-    home/              # landing marketing sections
+    home/              # app chrome (sidebar, league switcher)
   pages/               # thin route composers
   shared/
     ui/                # cross-feature chrome (GameSection, avatars, footer)

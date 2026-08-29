@@ -20,7 +20,7 @@ type LeagueMatchupsPageProps = {
 function MatchupsShell({ children }: { children: ReactNode }) {
   return (
     <div className="space-y-0 pb-8">
-      <section className="mx-auto max-w-6xl space-y-6 px-4 pb-16 sm:px-6 sm:pb-20">
+      <section className="mx-auto max-w-6xl space-y-6 px-4 pb-16 sm:px-6 sm:pb-20 md:pr-[150px]">
         <MatchupsHeader />
         {children}
       </section>
@@ -39,7 +39,7 @@ export function LeagueMatchupsPage({ league }: LeagueMatchupsPageProps) {
 
   return (
     <MatchupsShell>
-      <p className="text-sm text-white/40">NBA matchups coming soon.</p>
+      <p className="text-sm text-white/40">NBA games coming soon.</p>
     </MatchupsShell>
   );
 }

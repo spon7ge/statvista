@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { AppSidebar } from "@/features/home/AppSidebar";
+import { LANDING_HREF } from "@/features/home/lib/appNav";
 import { SiteFooter } from "@/shared/ui/SiteFooter";
 import { StatvistaWordmark } from "@/shared/ui/StatvistaWordmark";
 
@@ -35,7 +36,7 @@ export function HomeChromeLayout() {
         >
           <Menu className="size-5" strokeWidth={1.75} aria-hidden />
         </button>
-        <Link to="/" className="text-white no-underline">
+        <Link to={LANDING_HREF} className="text-white no-underline">
           <StatvistaWordmark />
         </Link>
       </header>

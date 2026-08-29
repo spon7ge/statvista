@@ -19,7 +19,7 @@ function MatchupSkeletons() {
   return (
     <div
       className="grid grid-cols-1 gap-3 md:grid-cols-2"
-      aria-label="Loading matchups"
+      aria-label="Loading games"
     >
       {Array.from({ length: 3 }, (_, index) => (
         <div
@@ -109,7 +109,7 @@ export function MatchupsPanel({
             role={isError ? "status" : undefined}
             className="py-8 text-center text-sm text-white/40"
           >
-            {isError ? "Unable to load matchups" : "No games on this slate"}
+            {isError ? "Unable to load games" : "No games on this slate"}
           </p>
         )
       ) : (

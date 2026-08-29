@@ -4,7 +4,7 @@ type StatvistaWordmarkProps = {
 
 /** Sidebar/header lockup: colored bars + statvista word, sized like the reference title. */
 export function StatvistaWordmark({
-  className = "w-[150px] mx-[22px]",
+  className = "w-[186px] mx-[15px]",
 }: StatvistaWordmarkProps) {
   return (
     <svg

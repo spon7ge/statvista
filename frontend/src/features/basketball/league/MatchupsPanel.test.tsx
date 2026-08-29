@@ -50,7 +50,7 @@ describe("MatchupsPanel", () => {
       ),
     ).toBeInTheDocument();
     expect(
-      screen.queryByRole("heading", { name: "Matchups" }),
+      screen.queryByRole("heading", { name: "Games" }),
     ).not.toBeInTheDocument();
     expect(screen.getByText("Live now")).toBeInTheDocument();
     expect(screen.getByText("Rest of the slate")).toBeInTheDocument();
@@ -115,10 +115,10 @@ describe("MatchupsPanel", () => {
     expect(screen.getByText("Rest of the slate")).toBeInTheDocument();
   });
 
-  it("announces an error when matchups cannot load", () => {
+  it("announces an error when games cannot load", () => {
     renderPanel([], { isError: true });
     expect(screen.getByRole("status")).toHaveTextContent(
-      "Unable to load matchups",
+      "Unable to load games",
     );
   });
 });

@@ -24,13 +24,13 @@ function pillClass(active: boolean, enabled: boolean): string {
   return PILL;
 }
 
-export type LeagueSection = "Props" | "Matchups" | "Legs";
+export type LeagueSection = "Props" | "Games" | "Legs" | "Arbitrage";
 
 type LeagueSectionSwitcherProps = {
   section: LeagueSection;
 };
 
-/** Horizontal league pills under a section title (Props, Matchups, Legs). */
+/** Horizontal league pills under a section title (Props, Games, Legs, Arbitrage). */
 export function LeagueSectionSwitcher({ section }: LeagueSectionSwitcherProps) {
   const { pathname } = useLocation();
   const queryClient = useQueryClient();

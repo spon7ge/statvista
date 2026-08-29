@@ -19,11 +19,11 @@ function renderHeader(path = "/mlb/matchups") {
 }
 
 describe("MatchupsHeader", () => {
-  it("places Matchups on the left with league pills for MLB, WNBA, and NBA", () => {
+  it("places Games on the left with league pills for MLB, WNBA, and NBA", () => {
     renderHeader();
 
-    const heading = screen.getByRole("heading", { name: "Matchups" });
-    expect(heading).toHaveClass("text-left", "text-[28px]", "font-bold");
+    const heading = screen.getByRole("heading", { name: "Games" });
+    expect(heading).toHaveClass("text-left", "text-[28px]", "font-bold", "text-white");
     expect(screen.getByTestId("matchups-header")).toHaveClass(CHROME_TITLE_TOP);
 
     const leagues = screen.getByRole("navigation", { name: "Leagues" });

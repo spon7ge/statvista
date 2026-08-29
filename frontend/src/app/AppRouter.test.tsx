@@ -43,11 +43,16 @@ describe("AppRouter", () => {
     vi.restoreAllMocks();
   });
 
-  it("renders home at /", () => {
+  it("redirects / to MLB matchups", async () => {
     renderWithProviders(["/"]);
     expect(
-      screen.getByRole("heading", { name: /statvista/i }),
+      await screen.findByRole("heading", { name: /^games$/i }),
     ).toBeInTheDocument();
+    expect(
+      within(screen.getByTestId("matchups-header")).getByRole("link", {
+        name: "MLB",
+      }),
+    ).toHaveAttribute("aria-current", "page");
   });
 
   it("renders not found at /about", () => {
@@ -70,7 +75,7 @@ describe("AppRouter", () => {
   it("renders WNBA matchups hub at /wnba/matchups", async () => {
     renderWithProviders(["/wnba/matchups"]);
     expect(
-      await screen.findByRole("heading", { name: "Matchups" }),
+      await screen.findByRole("heading", { name: "Games" }),
     ).toBeInTheDocument();
     expect(screen.getByTestId("matchups-header")).toBeInTheDocument();
     const header = screen.getByTestId("matchups-header");
@@ -349,7 +354,7 @@ describe("AppRouter", () => {
   it("renders NBA coming-soon hub at /nba/matchups", async () => {
     renderWithProviders(["/nba/matchups"]);
     expect(
-      await screen.findByRole("heading", { name: "Matchups" }),
+      await screen.findByRole("heading", { name: "Games" }),
     ).toBeInTheDocument();
     expect(screen.getByText(/coming soon/i)).toBeInTheDocument();
     expect(
@@ -365,7 +370,7 @@ describe("AppRouter", () => {
   it("renders MLB matchups hub at /mlb/matchups", async () => {
     renderWithProviders(["/mlb/matchups"]);
     expect(
-      await screen.findByRole("heading", { name: /^matchups$/i }),
+      await screen.findByRole("heading", { name: /^games$/i }),
     ).toBeInTheDocument();
     expect(
       within(screen.getByTestId("matchups-header")).getByRole("link", {
@@ -380,138 +385,6 @@ describe("AppRouter", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("renders MLB leaders at /mlb/leaders", async () => {
-    fetchMock.mockImplementation(async (input: RequestInfo) => {
-      const url = String(input);
-      if (url.includes("/api/mlb/leaders")) {
-        return {
-          ok: true,
-          json: async () => ({
-            season: 2026,
-            pace: "season",
-            categories: [],
-          }),
-        };
-      }
-      return {
-        ok: true,
-        json: async () => ({ date: "2026-07-29", fetched_at: "", games: [] }),
-      };
-    });
-    renderWithProviders(["/mlb/leaders"]);
-    expect(
-      await screen.findByRole("heading", { name: "MLB 2026 Leaders" }),
-    ).toBeInTheDocument();
-    expect(screen.getByText("Data: statsapi.mlb.com")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Leaders" })).toHaveAttribute(
-      "aria-current",
-      "page",
-    );
-  });
-
-  it("renders MLB standings at /mlb/standings", async () => {
-    fetchMock.mockImplementation(async (input: RequestInfo) => {
-      const url = String(input);
-      if (url.includes("/api/mlb/standings")) {
-        return {
-          ok: true,
-          json: async () => ({
-            season: 2026,
-            leagues: [
-              {
-                key: "al",
-                label: "American League",
-                divisions: [
-                  {
-                    key: "al_east",
-                    label: "AL East",
-                    teams: [
-                      {
-                        rank: 1,
-                        team_id: "139",
-                        abbrev: "TB",
-                        name: "Rays",
-                        logo_url: null,
-                        wins: 69,
-                        losses: 46,
-                        wl: "69-46",
-                        pct: ".600",
-                        gb: "-",
-                        l10: "7-3",
-                        streak: "W4",
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
-          }),
-        };
-      }
-      return {
-        ok: true,
-        json: async () => ({ date: "2026-07-29", fetched_at: "", games: [] }),
-      };
-    });
-    renderWithProviders(["/mlb/standings"]);
-    expect(
-      await screen.findByRole("heading", { name: "MLB 2026 Standings" }),
-    ).toBeInTheDocument();
-    expect(screen.getByText("Data: statsapi.mlb.com")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Standings" })).toHaveAttribute(
-      "aria-current",
-      "page",
-    );
-  });
-
-  it("renders MLB futures at /mlb/futures", async () => {
-    fetchMock.mockImplementation(async (input: RequestInfo) => {
-      const url = String(input);
-      if (url.includes("/api/mlb/futures")) {
-        return {
-          ok: true,
-          json: async () => ({
-            season: 2026,
-            as_of: "2026-08-08T00:00:00Z",
-            markets: [
-              {
-                id: "2761",
-                name: "MLB  - World Series - Winner",
-                display_name: "World Series Winner",
-                provider: "DraftKings",
-                entries: [
-                  {
-                    team_id: "10",
-                    abbrev: "NYY",
-                    name: "New York Yankees",
-                    logo_url: null,
-                    odds_american: "+450",
-                  },
-                ],
-              },
-            ],
-            error: null,
-          }),
-        };
-      }
-      return {
-        ok: true,
-        json: async () => ({ date: "2026-07-29", fetched_at: "", games: [] }),
-      };
-    });
-    renderWithProviders(["/mlb/futures"]);
-    expect(
-      await screen.findByRole("heading", { name: "MLB 2026 Futures" }),
-    ).toBeInTheDocument();
-    expect(await screen.findByText("World Series Winner")).toBeInTheDocument();
-    expect(await screen.findByText("New York Yankees")).toBeInTheDocument();
-    expect(screen.getByText("+450")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Futures" })).toHaveAttribute(
-      "aria-current",
-      "page",
-    );
-  });
-
   it("renders MLB Legs at /mlb/legs", async () => {
     renderWithProviders(["/mlb/legs"]);
     expect(
@@ -523,13 +396,12 @@ describe("AppRouter", () => {
     );
   });
 
-  it("renders MLB Chatbot at /mlb/chatbot", async () => {
-    renderWithProviders(["/mlb/chatbot"]);
+  it("renders MLB Arbitrage at /mlb/arbitrage", async () => {
+    renderWithProviders(["/mlb/arbitrage"]);
     expect(
-      await screen.findByRole("heading", { name: "MLB Chatbot" }),
+      await screen.findByRole("heading", { name: "Arbitrage" }),
     ).toBeInTheDocument();
-    expect(screen.getByText("MLB Chatbot coming soon.")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "MLB Chatbot" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Arbitrage" })).toHaveAttribute(
       "aria-current",
       "page",
     );
@@ -706,154 +578,16 @@ describe("AppRouter", () => {
       };
     });
     renderWithProviders(["/games/401857098"]);
-    expect(
-      await screen.findByText(/Golden State Valkyries/i),
-    ).toBeInTheDocument();
+    expect(await screen.findByTestId("wnba-live-center")).toBeInTheDocument();
     expect(screen.queryByText("No live games")).not.toBeInTheDocument();
   });
 
-  it("renders WNBA standings at /wnba/standings", async () => {
-    fetchMock.mockImplementation(async (input: RequestInfo) => {
-      const url = String(input);
-      if (url.includes("/api/wnba/standings")) {
-        return {
-          ok: true,
-          json: async () => ({
-            season: 2026,
-            conferences: [],
-          }),
-        };
-      }
-      return {
-        ok: true,
-        json: async () => ({ date: "2026-07-29", fetched_at: "", games: [] }),
-      };
-    });
-    renderWithProviders(["/wnba/standings"]);
-    expect(
-      await screen.findByText(/2026 regular season/i),
-    ).toBeInTheDocument();
-    expect(screen.getByText("Data: ESPN")).toBeInTheDocument();
-  });
-
-  it("renders WNBA leaders at /wnba/leaders", async () => {
-    fetchMock.mockImplementation(async (input: RequestInfo) => {
-      const url = String(input);
-      if (url.includes("/api/wnba/leaders")) {
-        return {
-          ok: true,
-          json: async () => ({
-            season: 2026,
-            pace: "per_game",
-            categories: [],
-          }),
-        };
-      }
-      return {
-        ok: true,
-        json: async () => ({ date: "2026-07-29", fetched_at: "", games: [] }),
-      };
-    });
+  it("renders not found for retired WNBA hub routes", () => {
     renderWithProviders(["/wnba/leaders"]);
     expect(
-      await screen.findByText(/2026 season · per game/i),
+      screen.getByRole("heading", { name: /page not found/i }),
     ).toBeInTheDocument();
-    expect(screen.getByText("Data: stats.wnba.com")).toBeInTheDocument();
   });
-
-  it("renders WNBA futures at /wnba/futures", async () => {
-    fetchMock.mockImplementation(async (input: RequestInfo) => {
-      const url = String(input);
-      if (url.includes("/api/wnba/futures")) {
-        return {
-          ok: true,
-          json: async () => ({
-            season: 2026,
-            as_of: "2026-08-01T00:00:00Z",
-            markets: [
-              {
-                id: "8146",
-                name: "WNBA - Winner",
-                display_name: "Finals Winner",
-                provider: "DraftKings",
-                entries: [
-                  {
-                    team_id: "8",
-                    abbrev: "NYL",
-                    name: "New York Liberty",
-                    logo_url: null,
-                    odds_american: "+250",
-                  },
-                ],
-              },
-            ],
-            error: null,
-          }),
-        };
-      }
-      return {
-        ok: true,
-        json: async () => ({ date: "2026-07-29", fetched_at: "", games: [] }),
-      };
-    });
-    renderWithProviders(["/wnba/futures"]);
-    expect(await screen.findByText("Finals Winner")).toBeInTheDocument();
-    expect(await screen.findByText("New York Liberty")).toBeInTheDocument();
-    expect(screen.getByText("+250")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Futures" })).toHaveAttribute(
-      "aria-current",
-      "page",
-    );
-  });
-
-  it("renders WNBA Chatbot at /wnba/chatbot", async () => {
-    renderWithProviders(["/wnba/chatbot"]);
-    expect(
-      await screen.findByRole("heading", { name: "WNBA Chatbot" }),
-    ).toBeInTheDocument();
-    expect(screen.getByText("WNBA Chatbot coming soon.")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "WNBA Chatbot" })).toHaveAttribute(
-      "aria-current",
-      "page",
-    );
-  });
-
-  it("renders WNBA player page at /wnba/player/:playerId", async () => {
-    fetchMock.mockImplementation(async (input: RequestInfo) => {
-      const url = String(input);
-      if (url.includes("/api/wnba/player/1628932")) {
-        return {
-          ok: true,
-          json: async () => ({
-            player_id: "1628932",
-            name: "A'ja Wilson",
-            position: "C",
-            team_name: "Las Vegas Aces",
-            team_abbrev: "LVA",
-            headshot_url: null,
-            season: 2026,
-            averages: {
-              pts: "26.2",
-              reb: "10.1",
-              ast: "2.5",
-              fg_pct: "52.0",
-              fg3_pct: "33.0",
-            },
-            games: [],
-            source_label: "stats.wnba.com",
-          }),
-        };
-      }
-      return {
-        ok: true,
-        json: async () => ({ date: "2026-07-29", fetched_at: "", games: [] }),
-      };
-    });
-    renderWithProviders(["/wnba/player/1628932"]);
-    expect(await screen.findByText("A'ja Wilson")).toBeInTheDocument();
-    expect(screen.getByText("Data: stats.wnba.com")).toBeInTheDocument();
-  });
-
 
   it("renders win probability beneath shot chart and play-by-play", async () => {
     fetchMock.mockImplementation(async (url: string) => {
