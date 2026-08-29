@@ -19,6 +19,7 @@ function fixtureRow(
     line: 1.5,
     game_pk: 1,
     game_start_at: "2026-08-23T23:10:00Z",
+    dfs: [],
     books: [{ book: "prophetx", american: -115, url: null }],
     ip_pct: 53,
     opp_def_rank: 12,

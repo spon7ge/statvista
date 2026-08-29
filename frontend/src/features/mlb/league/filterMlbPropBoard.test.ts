@@ -20,6 +20,7 @@ const row = (over: Partial<ApiMlbPropBoardRow>): ApiMlbPropBoardRow =>
     line: 1.5,
     game_pk: 1,
     game_start_at: null,
+    dfs: [],
     books: [{ book: "prophetx", american: -115, url: null }],
     ip_pct: 53,
     opp_def_rank: 2,

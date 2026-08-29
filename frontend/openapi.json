@@ -4142,6 +4142,13 @@
             "title": "Books",
             "type": "array"
           },
+          "dfs": {
+            "items": {
+              "$ref": "#/components/schemas/MlbPropBoardBookChip"
+            },
+            "title": "Dfs",
+            "type": "array"
+          },
           "game_pk": {
             "anyOf": [
               {
@@ -4349,6 +4356,7 @@
           "line",
           "game_pk",
           "game_start_at",
+          "dfs",
           "books",
           "ip_pct",
           "opp_def_rank",

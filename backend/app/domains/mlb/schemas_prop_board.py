@@ -34,6 +34,7 @@ class MlbPropBoardRow(BaseModel):
     line: float
     game_pk: int | None = None
     game_start_at: datetime | None = None
+    dfs: list[MlbPropBoardBookChip] = Field(default_factory=list)
     books: list[MlbPropBoardBookChip] = Field(default_factory=list)
     ip_pct: int | None = None
     opp_def_rank: int | None = None

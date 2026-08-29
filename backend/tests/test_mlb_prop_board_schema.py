@@ -39,3 +39,7 @@ def test_board_row_requires_side_and_line():
     )
     assert row.side == "over"
     assert row.books[0].book == "prophetx"
+    assert row.dfs == []
+    dumped = row.model_dump()
+    assert dumped["dfs"] == []
+    assert "dfs" in dumped

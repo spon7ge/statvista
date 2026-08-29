@@ -1770,6 +1770,8 @@ export interface components {
         MlbPropBoardRow: {
             /** Books */
             books: components["schemas"]["MlbPropBoardBookChip"][];
+            /** Dfs */
+            dfs: components["schemas"]["MlbPropBoardBookChip"][];
             /** Game Pk */
             game_pk: number | null;
             /** Game Start At */
