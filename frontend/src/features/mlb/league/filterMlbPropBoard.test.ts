@@ -147,19 +147,22 @@ describe("filterMlbPropBoardRows", () => {
 
   it("drops rows with no posted American odds", () => {
     const rows = [
-      row({ player_name: "Aaron Judge", books: [] }),
+      row({ player_name: "Aaron Judge", books: [], dfs: [] }),
       row({
         player_name: "Juan Soto",
         books: [{ book: "fanduel", american: null, url: null }],
+        dfs: [],
       }),
       row({
         player_name: "Mookie Betts",
-        books: [{ book: "prizepicks", american: null, url: null }],
+        books: [],
+        dfs: [{ book: "prizepicks", american: null, url: null }],
       }),
       row({
         player_name: "Freddie Freeman",
         team_abbrev: "LAD",
         books: [{ book: "draftkings", american: -120, url: null }],
+        dfs: [],
       }),
     ];
     expect(
@@ -169,14 +172,55 @@ describe("filterMlbPropBoardRows", () => {
     ).toEqual(["Mookie Betts", "Freddie Freeman"]);
   });
 
+  it("filters PrizePicks on dfs and clears Odds", () => {
+    const rows = [
+      row({
+        player_name: "Aaron Judge",
+        dfs: [{ book: "prizepicks", american: null, url: null }],
+        books: [{ book: "prophetx", american: -115, url: null }],
+      }),
+      row({
+        player_name: "Mookie Betts",
+        team_abbrev: "LAD",
+        dfs: [],
+        books: [{ book: "draftkings", american: -120, url: null }],
+      }),
+    ];
+    const out = filterMlbPropBoardRows(rows, {
+      teams: new Set(),
+      query: "",
+      books: new Set(["prizepicks"]),
+    });
+    expect(out).toHaveLength(1);
+    expect(out[0].player_name).toBe("Aaron Judge");
+    expect(out[0].dfs.map((chip) => chip.book)).toEqual(["prizepicks"]);
+    expect(out[0].books).toEqual([]);
+  });
+
+  it("filters DraftKings on books and clears DFS", () => {
+    const rows = [
+      row({
+        player_name: "Aaron Judge",
+        dfs: [{ book: "prizepicks", american: null, url: null }],
+        books: [{ book: "draftkings", american: -120, url: null }],
+      }),
+    ];
+    const out = filterMlbPropBoardRows(rows, {
+      teams: new Set(),
+      query: "",
+      books: new Set(["draftkings"]),
+    });
+    expect(out).toHaveLength(1);
+    expect(out[0].books.map((chip) => chip.book)).toEqual(["draftkings"]);
+    expect(out[0].dfs).toEqual([]);
+  });
+
   it("collects unique bookmaker options in chip order", () => {
     expect(
       collectMlbBoardBookmakerOptions([
         row({
-          books: [
-            { book: "underdog", american: -105, url: null },
-            { book: "draftkings", american: -120, url: null },
-          ],
+          dfs: [{ book: "underdog", american: -105, url: null }],
+          books: [{ book: "draftkings", american: -120, url: null }],
         }),
         row({
           books: [{ book: "draftkings", american: -110, url: null }],

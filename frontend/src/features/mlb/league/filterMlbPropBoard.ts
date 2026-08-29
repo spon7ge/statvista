@@ -42,7 +42,7 @@ export function collectMlbBoardBookmakerOptions(
 ): MlbPropositionOption[] {
   const seen = new Set<string>();
   for (const row of rows) {
-    for (const chip of row.books) {
+    for (const chip of [...(row.dfs ?? []), ...row.books]) {
       if (chip.book) seen.add(chip.book);
     }
   }
@@ -122,14 +122,22 @@ export function filterMlbPropBoardRows(
     if (q && !row.player_name.toLowerCase().includes(q)) return [];
     if (marketFilter.size > 0 && !marketFilter.has(row.stat)) return [];
     if (sideFilter.size > 0 && !sideFilter.has(row.side)) return [];
-    const posted = row.books.filter(
+    const dfs = row.dfs ?? [];
+    const postedDfs = dfs.filter(
       (chip) => chip.book === "prizepicks" || chip.american != null,
     );
-    const visible =
+    const postedBooks = row.books.filter(
+      (chip) => chip.american != null,
+    );
+    const visibleDfs =
       bookFilter.size > 0
-        ? posted.filter((chip) => bookFilter.has(chip.book))
-        : posted;
-    if (visible.length === 0) return [];
-    return [{ ...row, books: visible }];
+        ? postedDfs.filter((chip) => bookFilter.has(chip.book))
+        : postedDfs;
+    const visibleBooks =
+      bookFilter.size > 0
+        ? postedBooks.filter((chip) => bookFilter.has(chip.book))
+        : postedBooks;
+    if (visibleDfs.length === 0 && visibleBooks.length === 0) return [];
+    return [{ ...row, dfs: visibleDfs, books: visibleBooks }];
   });
 }

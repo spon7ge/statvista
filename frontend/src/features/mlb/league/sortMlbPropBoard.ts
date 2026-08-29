@@ -30,6 +30,8 @@ export const BOOK_CHIP_ORDER = [
   "underdog",
 ] as const;
 
+export const DFS_CHIP_ORDER = ["prizepicks", "underdog"] as const;
+
 export function orderedBoardBooks(
   books: ApiMlbPropBoardRow["books"],
 ): ApiMlbPropBoardRow["books"] {
@@ -39,6 +41,20 @@ export function orderedBoardBooks(
   return [...books].sort((a, b) => {
     const aRank = rank.get(a.book) ?? BOOK_CHIP_ORDER.length;
     const bRank = rank.get(b.book) ?? BOOK_CHIP_ORDER.length;
+    if (aRank !== bRank) return aRank - bRank;
+    return a.book.localeCompare(b.book);
+  });
+}
+
+export function orderedDfsBooks(
+  dfs: ApiMlbPropBoardRow["dfs"],
+): ApiMlbPropBoardRow["dfs"] {
+  const rank = new Map<string, number>(
+    DFS_CHIP_ORDER.map((book, index) => [book, index]),
+  );
+  return [...dfs].sort((a, b) => {
+    const aRank = rank.get(a.book) ?? DFS_CHIP_ORDER.length;
+    const bRank = rank.get(b.book) ?? DFS_CHIP_ORDER.length;
     if (aRank !== bRank) return aRank - bRank;
     return a.book.localeCompare(b.book);
   });
