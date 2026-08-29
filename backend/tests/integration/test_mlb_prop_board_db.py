@@ -115,8 +115,9 @@ def test_prizepicks_extra_line_has_null_ip(client):
     assert dfs
     assert all(row["ip_pct"] is None for row in dfs)
     assert all(
-        any(chip["book"] == "prizepicks" for chip in row["books"]) for row in dfs
+        any(chip["book"] == "prizepicks" for chip in row["dfs"]) for row in dfs
     )
+    assert all(row["books"] == [] for row in dfs)
 
 
 import pytest

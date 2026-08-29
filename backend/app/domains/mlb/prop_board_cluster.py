@@ -23,6 +23,10 @@ BOOK_CHIP_ORDER = (
     "prizepicks",
     "underdog",
 )
+DFS_CHIP_ORDER = ("prizepicks", "underdog")
+SPORTSBOOK_CHIP_ORDER = tuple(
+    book for book in BOOK_CHIP_ORDER if book not in DFS_CHIP_ORDER
+)
 
 
 def round_line(line: float) -> float:
@@ -72,6 +76,23 @@ def cluster_quotes(quotes: list[BoardQuote]) -> list[Cluster]:
     return clusters
 
 
+def devig_pct_for_side(
+    over_american: int | None,
+    under_american: int | None,
+    side: Side,
+) -> int | None:
+    """Multiplicative de-vig of a two-way American market, as a 0–100 int."""
+    if over_american is None or under_american is None:
+        return None
+    p_over = american_to_fair_pct(over_american) / 100.0
+    p_under = american_to_fair_pct(under_american) / 100.0
+    total = p_over + p_under
+    if total <= 0:
+        return None
+    fair = p_over / total if side == "over" else p_under / total
+    return int(round(fair * 100))
+
+
 def ip_pct_for_side(cluster: Cluster, side: Side) -> int | None:
     by_book = {q.book: q for q in cluster.quotes}
     chosen = None
@@ -85,10 +106,4 @@ def ip_pct_for_side(cluster: Cluster, side: Side) -> int | None:
         break
     if chosen is None:
         return None
-    p_over = american_to_fair_pct(chosen.over_american) / 100.0
-    p_under = american_to_fair_pct(chosen.under_american) / 100.0
-    total = p_over + p_under
-    if total <= 0:
-        return None
-    fair = p_over / total if side == "over" else p_under / total
-    return int(round(fair * 100))
+    return devig_pct_for_side(chosen.over_american, chosen.under_american, side)

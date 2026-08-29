@@ -18,6 +18,8 @@ class MlbPropBoardBookChip(BaseModel):
     book: str
     american: int | None = None
     url: str | None = None
+    # Two-way de-vig for this book at this line; null when the other side is missing.
+    devig_pct: int | None = None
 
 
 class MlbPropBoardRow(BaseModel):

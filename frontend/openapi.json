@@ -4083,6 +4083,17 @@
             "title": "Book",
             "type": "string"
           },
+          "devig_pct": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Devig Pct"
+          },
           "url": {
             "anyOf": [
               {
@@ -4098,7 +4109,8 @@
         "required": [
           "book",
           "american",
-          "url"
+          "url",
+          "devig_pct"
         ],
         "title": "MlbPropBoardBookChip",
         "type": "object"

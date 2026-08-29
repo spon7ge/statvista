@@ -55,7 +55,68 @@ async def test_assembler_splits_lines_and_null_ip_for_dfs_only(monkeypatch):
     assert lines == [1.5, 2.0]
     dfs = [r for r in body.rows if r.line == 2.0]
     assert all(r.ip_pct is None for r in dfs)
+    assert all(r.books == [] for r in dfs)
+    assert all(any(c.book == "prizepicks" for c in r.dfs) for r in dfs)
     assert {r.side for r in body.rows} == {"over", "under"}
+
+
+@pytest.mark.asyncio
+async def test_assembler_splits_dfs_and_sportsbook_lines(monkeypatch):
+    quotes = [
+        BoardQuote(
+            player_name="Judge",
+            player_key="aaron judge",
+            stat="hits",
+            line=19.5,
+            book="prizepicks",
+            over_american=None,
+            under_american=None,
+        ),
+        BoardQuote(
+            player_name="Judge",
+            player_key="aaron judge",
+            stat="hits",
+            line=19.5,
+            book="underdog",
+            over_american=-105,
+            under_american=-115,
+        ),
+        BoardQuote(
+            player_name="Judge",
+            player_key="aaron judge",
+            stat="hits",
+            line=19.5,
+            book="prophetx",
+            over_american=-110,
+            under_american=-110,
+        ),
+        BoardQuote(
+            player_name="Judge",
+            player_key="aaron judge",
+            stat="hits",
+            line=20.5,
+            book="pinnacle",
+            over_american=-108,
+            under_american=-112,
+        ),
+    ]
+    monkeypatch.setattr("app.domains.mlb.prop_board.collect_board_quotes", lambda: quotes)
+    monkeypatch.setattr(
+        "app.domains.mlb.prop_board.load_enrichment",
+        lambda *_: ({}, {}, [], set()),
+    )
+    body = await get_mlb_prop_board()
+    lines = sorted({r.line for r in body.rows})
+    assert lines == [19.5, 20.5]
+    over_195 = next(r for r in body.rows if r.line == 19.5 and r.side == "over")
+    assert [c.book for c in over_195.dfs] == ["prizepicks", "underdog"]
+    assert [c.american for c in over_195.dfs] == [None, -105]
+    assert all(c.devig_pct is None for c in over_195.dfs)
+    assert [c.book for c in over_195.books] == ["prophetx"]
+    assert over_195.books[0].devig_pct == 50
+    over_205 = next(r for r in body.rows if r.line == 20.5 and r.side == "over")
+    assert over_205.dfs == []
+    assert [c.book for c in over_205.books] == ["pinnacle"]
 
 
 @pytest.mark.asyncio
@@ -168,10 +229,13 @@ async def test_chips_skip_books_without_american_on_that_side(monkeypatch):
     body = await get_mlb_prop_board()
     over = next(r for r in body.rows if r.side == "over")
     under = next(r for r in body.rows if r.side == "under")
-    assert [c.book for c in over.books] == ["draftkings", "fanduel", "prizepicks"]
-    assert [c.american for c in over.books] == [-115, -108, None]
-    assert [c.book for c in under.books] == ["draftkings", "prizepicks"]
-    assert [c.american for c in under.books] == [-105, None]
+    assert [c.book for c in over.books] == ["draftkings", "fanduel"]
+    assert [c.american for c in over.books] == [-115, -108]
+    assert [c.book for c in over.dfs] == ["prizepicks"]
+    assert [c.american for c in over.dfs] == [None]
+    assert [c.book for c in under.books] == ["draftkings"]
+    assert [c.american for c in under.books] == [-105]
+    assert [c.book for c in under.dfs] == ["prizepicks"]
 
 
 @pytest.mark.asyncio

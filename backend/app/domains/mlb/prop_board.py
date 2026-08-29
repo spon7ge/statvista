@@ -22,10 +22,12 @@ from app.core.odds_snapshots import (
 from app.domains.betting.player_match_keys import match_player_key
 from app.domains.mlb.leaders import current_mlb_season_year
 from app.domains.mlb.prop_board_cluster import (
-    BOOK_CHIP_ORDER,
+    DFS_CHIP_ORDER,
+    SPORTSBOOK_CHIP_ORDER,
     BoardQuote,
     Cluster,
     cluster_quotes,
+    devig_pct_for_side,
     ip_pct_for_side,
     round_line,
 )
@@ -266,8 +268,8 @@ async def get_mlb_prop_board() -> MlbPropBoardResponse:
                     splits + splits_prev,
                     opponent,
                 )
-            chips = _chips_for_side(cluster, side)
-            if not chips:
+            dfs_chips, book_chips = _chips_for_side(cluster, side)
+            if not dfs_chips and not book_chips:
                 continue
             rows.append(
                 MlbPropBoardRow(
@@ -282,7 +284,8 @@ async def get_mlb_prop_board() -> MlbPropBoardResponse:
                     line=cluster.line,
                     game_pk=ctx.get("game_pk"),
                     game_start_at=ctx.get("game_start_at"),
-                    books=chips,
+                    dfs=dfs_chips,
+                    books=book_chips,
                     ip_pct=ip_pct_for_side(cluster, side),
                     opp_def_rank=def_r,
                     opp_def_label=def_l,
@@ -421,21 +424,61 @@ def _parse_line(raw: Any) -> float | None:
         return None
 
 
-def _chips_for_side(cluster: Cluster, side: Side) -> list[MlbPropBoardBookChip]:
+def _chip_for_quote(
+    quote: BoardQuote,
+    side: Side,
+    *,
+    allow_missing_american: bool,
+    include_devig: bool,
+) -> MlbPropBoardBookChip | None:
+    american = quote.over_american if side == "over" else quote.under_american
+    if american is None and not allow_missing_american:
+        return None
+    return MlbPropBoardBookChip(
+        book=quote.book,
+        american=american,
+        url=quote.url,
+        devig_pct=(
+            None
+            if not include_devig
+            else devig_pct_for_side(
+                quote.over_american, quote.under_american, side
+            )
+        ),
+    )
+
+
+def _chips_for_side(
+    cluster: Cluster, side: Side
+) -> tuple[list[MlbPropBoardBookChip], list[MlbPropBoardBookChip]]:
     by_book = {quote.book: quote for quote in cluster.quotes}
-    chips: list[MlbPropBoardBookChip] = []
-    for book in BOOK_CHIP_ORDER:
+    dfs: list[MlbPropBoardBookChip] = []
+    books: list[MlbPropBoardBookChip] = []
+    for book in DFS_CHIP_ORDER:
         quote = by_book.get(book)
         if quote is None:
             continue
-        american = quote.over_american if side == "over" else quote.under_american
-        # PrizePicks has no American in the feed; the table still shows -137.
-        if american is None and book != "prizepicks":
-            continue
-        chips.append(
-            MlbPropBoardBookChip(book=book, american=american, url=quote.url)
+        chip = _chip_for_quote(
+            quote,
+            side,
+            allow_missing_american=book == "prizepicks",
+            include_devig=False,
         )
-    return chips
+        if chip is not None:
+            dfs.append(chip)
+    for book in SPORTSBOOK_CHIP_ORDER:
+        quote = by_book.get(book)
+        if quote is None:
+            continue
+        chip = _chip_for_quote(
+            quote,
+            side,
+            allow_missing_american=False,
+            include_devig=True,
+        )
+        if chip is not None:
+            books.append(chip)
+    return dfs, books
 
 
 def _row_sort_key(row: MlbPropBoardRow) -> tuple:

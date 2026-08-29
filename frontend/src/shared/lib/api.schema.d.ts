@@ -1751,6 +1751,8 @@ export interface components {
             american: number | null;
             /** Book */
             book: string;
+            /** Devig Pct */
+            devig_pct: number | null;
             /** Url */
             url: string | null;
         };
