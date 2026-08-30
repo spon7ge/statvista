@@ -1,11 +1,20 @@
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useMlbLegs } from "@/features/mlb/hooks/useMlbLegs";
 import { bookDisplayName } from "@/features/mlb/lib/mlbBookLabels";
-import type { ApiMlbLegsPlay, ApiMlbLegsResponse } from "@/shared/lib/api";
+import type {
+  ApiLegsResponse,
+  ApiMlbLegsPlay,
+  LegsParams,
+} from "@/shared/lib/api";
 
 type LegsApp = "prizepicks" | "underdog";
 type LegsFormat = "power" | "flex" | "standard";
+
+type LegsQuery = {
+  data: ApiLegsResponse | undefined;
+  isLoading: boolean;
+  isError: boolean;
+};
 
 const APP_TABS: { id: LegsApp; label: string }[] = [
   { id: "prizepicks", label: "PrizePicks" },
@@ -73,13 +82,13 @@ function formatLabel(format: LegsFormat): string {
 }
 
 function isLegsEnvelope(
-  data: ApiMlbLegsResponse | undefined,
-): data is ApiMlbLegsResponse {
+  data: ApiLegsResponse | undefined,
+): data is ApiLegsResponse {
   return Array.isArray(data?.entries);
 }
 
 function emptyCopy(
-  data: ApiMlbLegsResponse | undefined,
+  data: ApiLegsResponse | undefined,
   app: LegsApp,
   legs: number,
 ): string | null {
@@ -183,11 +192,15 @@ function PlayRow({ leg }: { leg: ApiMlbLegsPlay }) {
   );
 }
 
-/** PrizePicks / Underdog controls, chrome, and complete N-pick entries for MLB Legs. */
-export function MlbLegsBoard() {
+/** PrizePicks / Underdog controls, chrome, and complete N-pick entries. */
+export function LegsBoard({
+  useLegs,
+}: {
+  useLegs: (params: LegsParams) => LegsQuery;
+}) {
   const [params, setSearchParams] = useSearchParams();
   const { app, format, legs } = parseSelection(params);
-  const { data, isLoading, isError } = useMlbLegs({ app, format, legs });
+  const { data, isLoading, isError } = useLegs({ app, format, legs });
 
   useEffect(() => {
     const next = selectionSearch({ app, format, legs });
@@ -241,11 +254,11 @@ export function MlbLegsBoard() {
         {APP_TABS.map((tab) => (
           <button
             key={tab.id}
-            id={`mlb-legs-${tab.id}-tab`}
+            id={`legs-${tab.id}-tab`}
             type="button"
             role="tab"
             aria-selected={app === tab.id}
-            aria-controls={`mlb-legs-${tab.id}-panel`}
+            aria-controls={`legs-${tab.id}-panel`}
             className={`border-b-2 px-5 py-2 text-[18px] font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white ${
               app === tab.id
                 ? "border-white text-white"
@@ -259,9 +272,9 @@ export function MlbLegsBoard() {
       </div>
 
       <div
-        id={`mlb-legs-${app}-panel`}
+        id={`legs-${app}-panel`}
         role="tabpanel"
-        aria-labelledby={`mlb-legs-${app}-tab`}
+        aria-labelledby={`legs-${app}-tab`}
         className="space-y-6"
       >
         <div className="flex flex-wrap items-center gap-4">
@@ -273,7 +286,7 @@ export function MlbLegsBoard() {
             {formatOptionsFor(app).map((option) => (
               <RadioChip
                 key={option}
-                name="mlb-legs-format"
+                name="legs-format"
                 value={option}
                 checked={format === option}
                 onChange={() => onFormatChange(option)}
@@ -290,7 +303,7 @@ export function MlbLegsBoard() {
             {sizeOptions.map((n) => (
               <RadioChip
                 key={n}
-                name="mlb-legs-size"
+                name="legs-size"
                 value={String(n)}
                 checked={legs === n}
                 onChange={() => write({ app, format, legs: n })}
@@ -358,7 +371,7 @@ function BreakEvenChrome({
   format,
 }: {
   app: LegsApp;
-  data: ApiMlbLegsResponse;
+  data: ApiLegsResponse;
   format: LegsFormat;
 }) {
   const tableBe = pct(data.base_break_even);

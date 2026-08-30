@@ -1,12 +1,14 @@
 import { useLocation } from "react-router-dom";
 import { CHROME_PAGE_X, CHROME_TITLE_TOP } from "@/app/layouts/chrome";
 import { LeagueSectionSwitcher } from "@/features/home/LeagueSectionSwitcher";
-import { MlbLegsBoard } from "@/features/mlb/league/MlbLegsBoard";
+import { useMlbLegs } from "@/features/mlb/hooks/useMlbLegs";
+import { useWnbaLegs } from "@/features/basketball/hooks/useWnbaLegs";
+import { LegsBoard } from "@/features/legs/LegsBoard";
 
-/** MLB priced-leg board; WNBA stays an empty shell (no fetch). */
 export function LeagueLegsPage() {
   const { pathname } = useLocation();
   const isMlb = pathname.startsWith("/mlb");
+  const isWnba = pathname.startsWith("/wnba");
 
   return (
     <div className="space-y-0 pb-8">
@@ -22,7 +24,8 @@ export function LeagueLegsPage() {
           </div>
           <LeagueSectionSwitcher section="Legs" />
         </div>
-        {isMlb ? <MlbLegsBoard /> : null}
+        {isMlb ? <LegsBoard useLegs={useMlbLegs} /> : null}
+        {isWnba ? <LegsBoard useLegs={useWnbaLegs} /> : null}
       </section>
     </div>
   );

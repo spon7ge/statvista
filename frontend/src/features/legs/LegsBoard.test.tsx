@@ -5,16 +5,12 @@ import { MemoryRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import type { components } from "@/shared/lib/api.schema";
-import { MlbLegsBoard } from "./MlbLegsBoard";
+import { LegsBoard } from "./LegsBoard";
 
 type MlbLegsResponse = components["schemas"]["MlbLegsResponse"];
 type MlbLegsPlay = components["schemas"]["LegsPlay"];
 
-const mockUseMlbLegs = vi.fn();
-
-vi.mock("@/features/mlb/hooks/useMlbLegs", () => ({
-  useMlbLegs: (...args: unknown[]) => mockUseMlbLegs(...args),
-}));
+const mockUseLegs = vi.fn();
 
 function play(over: Partial<MlbLegsPlay> = {}): MlbLegsPlay {
   return {
@@ -99,17 +95,17 @@ function renderBoard(path = "/mlb/legs?app=prizepicks&format=power&legs=4") {
   const ui: ReactElement = (
     <QueryClientProvider client={client}>
       <MemoryRouter initialEntries={[path]}>
-        <MlbLegsBoard />
+        <LegsBoard useLegs={mockUseLegs} />
       </MemoryRouter>
     </QueryClientProvider>
   );
   return render(ui);
 }
 
-describe("MlbLegsBoard", () => {
+describe("LegsBoard", () => {
   beforeEach(() => {
-    mockUseMlbLegs.mockReset();
-    mockUseMlbLegs.mockReturnValue({
+    mockUseLegs.mockReset();
+    mockUseLegs.mockReturnValue({
       data: envelope(),
       isLoading: false,
       isError: false,
@@ -123,7 +119,16 @@ describe("MlbLegsBoard", () => {
     expect(screen.getAllByText("Aaron Judge").length).toBeGreaterThan(0);
     expect(screen.getByText(/Generated/)).toBeInTheDocument();
     expect(screen.getByText(/research only/i)).toBeInTheDocument();
-    expect(mockUseMlbLegs).toHaveBeenCalledWith({
+    expect(document.getElementById("legs-prizepicks-tab")).toBeInTheDocument();
+    expect(screen.getByRole("radio", { name: "Power" })).toHaveAttribute(
+      "name",
+      "legs-format",
+    );
+    expect(screen.getByRole("radio", { name: "4-pick" })).toHaveAttribute(
+      "name",
+      "legs-size",
+    );
+    expect(mockUseLegs).toHaveBeenCalledWith({
       app: "prizepicks",
       format: "power",
       legs: 4,
@@ -131,7 +136,7 @@ describe("MlbLegsBoard", () => {
   });
 
   it("shows complete N-pick empty copy when entries are empty", () => {
-    mockUseMlbLegs.mockReturnValue({
+    mockUseLegs.mockReturnValue({
       data: envelope({
         entries: [],
         legs_surfaced: 0,
@@ -187,7 +192,7 @@ describe("MlbLegsBoard", () => {
   });
 
   it("does not show a same-game Flex banner", () => {
-    mockUseMlbLegs.mockReturnValue({
+    mockUseLegs.mockReturnValue({
       data: envelope({
         format: "flex",
         flex_same_game_warning: true,
@@ -227,7 +232,7 @@ describe("MlbLegsBoard", () => {
   });
 
   it("shows Underdog PLAY chrome as break_even_min–break_even_max", () => {
-    mockUseMlbLegs.mockReturnValue({
+    mockUseLegs.mockReturnValue({
       data: envelope({
         app: "underdog",
         format: "standard",
