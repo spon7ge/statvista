@@ -101,7 +101,10 @@ describe("MlbPropPicksPage", () => {
     expect(screen.getByRole("heading", { name: "Props" })).toBeInTheDocument();
     expect(
       screen.getByRole("heading", { name: "Props" }).closest("section"),
-    ).toHaveClass("max-w-6xl", "md:pr-[150px]");
+    ).toHaveClass("max-w-6xl", "sm:pl-2", "md:pr-[150px]");
+    expect(
+      screen.getByRole("heading", { name: "Props" }).closest("section"),
+    ).not.toHaveClass("mx-auto");
     expect(screen.queryByRole("tab", { name: "PrizePicks" })).not.toBeInTheDocument();
     expect(screen.queryByRole("tab", { name: "Underdog" })).not.toBeInTheDocument();
     expect(screen.getByText("Aaron Judge")).toBeInTheDocument();

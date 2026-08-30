@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { CHROME_PAGE_X } from "@/app/layouts/chrome";
 import { useWnbaProps } from "@/features/basketball/hooks/useWnbaProps";
 import { useWnbaScoreboard } from "@/features/basketball/hooks/useWnbaScoreboard";
 import { WnbaPropPicksFilters } from "@/features/basketball/league/WnbaPropPicksFilters";
@@ -92,7 +93,7 @@ export function LeaguePropPicksPage() {
 
   return (
     <div className="space-y-0 pb-8">
-      <section className="mx-auto max-w-6xl space-y-6 px-4 pb-16 sm:px-6 sm:pb-20">
+      <section className={`max-w-6xl space-y-6 pb-16 sm:pb-20 ${CHROME_PAGE_X}`}>
         <WnbaPropPicksHeader
           activeApp={app}
           onAppChange={onAppChange}

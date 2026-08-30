@@ -1,0 +1,28 @@
+{
+  "fetched_at": "2026-08-29T19:54:22-07:00",
+  "source": "pinnacle_selenium",
+  "sport": "basketball",
+  "league": "wnba",
+  "list_page": "https://www.pinnacle.com/en/basketball/wnba/matchups/#all",
+  "parallel_workers_configured": 5,
+  "parallel_workers_effective": 1,
+  "games_per_worker_target": 2,
+  "arcadia_timeout_s": 90.0,
+  "arcadia_poll_s": 0.22,
+  "snapshot_kind": "props",
+  "games": [
+    {
+      "matchup_id": 1634659780,
+      "source_url": "https://www.pinnacle.com/en/basketball/wnba/minnesota-lynx-vs-atlanta-dream/1634659780/#period:0",
+      "path": "/en/basketball/wnba/minnesota-lynx-vs-atlanta-dream/1634659780/",
+      "league": "WNBA",
+      "start_time": "2026-08-30T19:00:00Z",
+      "label": "Minnesota Lynx vs Atlanta Dream",
+      "participants": [
+        "Minnesota Lynx",
+        "Atlanta Dream"
+      ],
+      "props": []
+    }
+  ]
+}

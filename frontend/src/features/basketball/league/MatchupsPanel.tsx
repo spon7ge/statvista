@@ -65,7 +65,6 @@ export function MatchupsPanel({
   const navLabel = formatMatchupNavLabel(selectedDate, todayDate);
   const live = games.filter((game) => isInProgressStatus(game.status));
   const rest = games.filter((game) => !isInProgressStatus(game.status));
-  const gameLabel = games.length === 1 ? "game" : "games";
 
   return (
     <section className="space-y-8">
@@ -95,10 +94,6 @@ export function MatchupsPanel({
             <ChevronRight aria-hidden="true" className="size-4" strokeWidth={1.75} />
           </button>
         </div>
-        <p className="mt-2 text-sm text-white/40">
-          {games.length} {gameLabel} · open a card for box score, play-by-play
-          &amp; win probability
-        </p>
       </header>
 
       {games.length === 0 ? (

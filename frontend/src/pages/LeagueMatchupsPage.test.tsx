@@ -63,7 +63,10 @@ describe("LeagueMatchupsPage date nav", () => {
     renderAt("/mlb/matchups");
     expect(
       screen.getByRole("heading", { name: "Games" }).closest("section"),
-    ).toHaveClass("max-w-6xl", "md:pr-[150px]");
+    ).toHaveClass("max-w-6xl", "sm:pl-2", "md:pr-[150px]");
+    expect(
+      screen.getByRole("heading", { name: "Games" }).closest("section"),
+    ).not.toHaveClass("mx-auto");
   });
 
   it("writes ?date when moving off today and clears it returning", async () => {

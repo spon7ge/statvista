@@ -42,13 +42,11 @@ function renderPanel(games: MatchupGame[], props = {}) {
 }
 
 describe("MatchupsPanel", () => {
-  it("splits live and rest and shows count", () => {
+  it("splits live and rest of the slate", () => {
     renderPanel([live, finalGame]);
     expect(
-      screen.getByText(
-        "2 games · open a card for box score, play-by-play & win probability",
-      ),
-    ).toBeInTheDocument();
+      screen.queryByText(/open a card for box score/i),
+    ).not.toBeInTheDocument();
     expect(
       screen.queryByRole("heading", { name: "Games" }),
     ).not.toBeInTheDocument();

@@ -1,4 +1,5 @@
 import { Link, useParams } from "react-router-dom";
+import { CHROME_PAGE_RIGHT, CHROME_PAGE_X } from "@/app/layouts/chrome";
 import { useMlbGameDetail } from "@/features/mlb/hooks/useMlbGameDetail";
 import { mapMlbGameDetail } from "@/features/mlb/lib/mapMlbGameDetail";
 import { MlbFinalCenter } from "@/features/mlb/game/MlbFinalCenter";
@@ -7,10 +8,8 @@ import { MlbPregameCenter } from "@/features/mlb/game/MlbPregameCenter";
 import type { MlbGameDetailView } from "@/features/mlb/lib/types";
 import { GAME_SECTION_SURFACE } from "@/shared/ui/GameSection";
 
-const PAGE_SHELL =
-  "mx-auto max-w-6xl space-y-4 px-4 py-6 sm:px-6 md:pr-[150px]";
-const PAGE_EMPTY =
-  "mx-auto max-w-6xl space-y-3 px-4 py-10 text-center sm:px-6 md:pr-[150px]";
+const PAGE_SHELL = `max-w-6xl space-y-4 py-6 ${CHROME_PAGE_X} ${CHROME_PAGE_RIGHT}`;
+const PAGE_EMPTY = `max-w-6xl space-y-3 py-10 text-center ${CHROME_PAGE_X} ${CHROME_PAGE_RIGHT}`;
 
 function attributionLabel(sources: string[]): string {
   return sources.includes("espn")

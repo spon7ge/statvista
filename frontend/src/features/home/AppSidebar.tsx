@@ -56,7 +56,7 @@ export function AppSidebar() {
 
   return (
     <div
-      className={`flex h-full min-h-0 flex-col bg-background px-3 pb-4 ${CHROME_TITLE_TOP}`}
+      className={`flex h-full min-h-0 flex-col bg-background pl-3 pr-1 pb-4 ${CHROME_TITLE_TOP}`}
     >
       <Link
         to={LANDING_HREF}

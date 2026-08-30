@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { CHROME_PAGE_RIGHT, CHROME_PAGE_X } from "@/app/layouts/chrome";
 import { useMlbPropBoard } from "@/features/mlb/hooks/useMlbPropBoard";
 import { MlbPropPicksFilters } from "@/features/mlb/league/MlbPropPicksFilters";
 import { MlbPropPicksHeader } from "@/features/mlb/league/MlbPropPicksHeader";
@@ -85,7 +86,9 @@ export function MlbPropPicksPage() {
 
   return (
     <div className="space-y-0 pb-8">
-      <section className="mx-auto max-w-6xl space-y-6 px-4 pb-16 sm:px-6 sm:pb-20 md:pr-[150px]">
+      <section
+        className={`max-w-6xl space-y-6 pb-16 sm:pb-20 ${CHROME_PAGE_X} ${CHROME_PAGE_RIGHT}`}
+      >
         <MlbPropPicksHeader>
           {showBoardFilters ? (
             <MlbPropPicksFilters

@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
+import { CHROME_PAGE_X } from "@/app/layouts/chrome";
 import { useWnbaProps } from "@/features/basketball/hooks/useWnbaProps";
 import {
   appFromSearch,
@@ -85,7 +86,7 @@ export function WnbaPlayerPropsPage() {
   if (showLoading) {
     body = (
       <div
-        className="mx-auto max-w-6xl space-y-4 px-4 pb-16 sm:px-6 sm:pb-20"
+        className={`max-w-6xl space-y-4 pb-16 sm:pb-20 ${CHROME_PAGE_X}`}
         aria-label="Loading WNBA player props"
       >
         <div className="h-20 animate-pulse rounded-xl bg-[#1c1e22]" />
@@ -94,7 +95,7 @@ export function WnbaPlayerPropsPage() {
     );
   } else if (showError) {
     body = (
-      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+      <div className={`max-w-6xl py-10 ${CHROME_PAGE_X}`}>
         <p className="text-sm text-white/60">Prop lines unavailable</p>
         <Link
           to={boardHref}
@@ -106,7 +107,7 @@ export function WnbaPlayerPropsPage() {
     );
   } else if (!player) {
     body = (
-      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+      <div className={`max-w-6xl py-10 ${CHROME_PAGE_X}`}>
         <p className="text-sm text-white/60">Player not found</p>
         <Link
           to={boardHref}
@@ -118,7 +119,7 @@ export function WnbaPlayerPropsPage() {
     );
   } else {
     body = (
-      <div className="mx-auto max-w-6xl space-y-6 px-4 pb-16 sm:px-6 sm:pb-20">
+      <div className={`max-w-6xl space-y-6 pb-16 sm:pb-20 ${CHROME_PAGE_X}`}>
         <Link
           to={boardHref}
           className="inline-block text-sm font-medium text-white/55 hover:text-white hover:underline"
