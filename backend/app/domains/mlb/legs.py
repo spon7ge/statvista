@@ -4,11 +4,11 @@ from __future__ import annotations
 
 import logging
 import time
-from collections import Counter
 from datetime import datetime, timezone
 from typing import Any
 
 from app.core import odds_snapshots
+from app.domains.betting.legs_pack import PackablePlay, pack_entries
 from app.domains.betting.legs_payouts import (
     base_break_even,
     base_required_margin_pts,
@@ -46,6 +46,7 @@ from app.domains.mlb.props import (
 from app.domains.mlb.schemas_legs import (
     MlbLegsBookExcluded,
     MlbLegsBookUsed,
+    MlbLegsEntry,
     MlbLegsPlay,
     MlbLegsRejectedSummary,
     MlbLegsResponse,
@@ -80,6 +81,7 @@ def _empty_rejected_summary() -> MlbLegsRejectedSummary:
         insufficient_sharp=0,
         below_threshold=0,
         unpriceable_payout=0,
+        unpacked_remainder=0,
     )
 
 
@@ -311,14 +313,14 @@ def _envelope(
     dfs_age: float | None,
     lines_seeded: int,
     legs_evaluated: int,
-    plays: list[MlbLegsPlay],
+    entries: list[MlbLegsEntry],
     rejected: MlbLegsRejectedSummary,
     warnings: list[str],
 ) -> MlbLegsResponse:
     reject_dump = rejected.model_dump()
-    surfaced = len(plays)
+    packed_plays = [play for entry in entries for play in entry.legs]
+    surfaced = sum(len(e.legs) for e in entries)
     assert legs_evaluated == surfaced + sum(reject_dump.values())
-    assert surfaced == len(plays)
     ratio = None
     if legs_evaluated > 0:
         ratio = (
@@ -326,10 +328,7 @@ def _envelope(
         ) / legs_evaluated
         if legs_evaluated >= 20 and ratio >= 0.95:
             warnings.append("coverage_funnel_collapsed")
-    be_values = [play.break_even for play in plays]
-    top = plays[: min(6, len(plays))]
-    game_counts = Counter(play.game_id for play in top if play.game_id)
-    flex_warn = format == "flex" and any(count >= 3 for count in game_counts.values())
+    be_values = [play.break_even for play in packed_plays]
     return MlbLegsResponse(
         generated_at=now,
         slate=f"MLB {now.date().isoformat()}",
@@ -345,8 +344,8 @@ def _envelope(
         legs_evaluated=legs_evaluated,
         legs_surfaced=surfaced,
         coverage_funnel_ratio=ratio,
-        flex_same_game_warning=flex_warn,
-        legs=plays,
+        flex_same_game_warning=False,
+        entries=entries,
         rejected_summary=rejected,
         warnings=warnings,
         disclaimers=list(LEGS_DISCLAIMERS),
@@ -392,7 +391,7 @@ async def get_mlb_legs(*, app: str, format: str, legs: int) -> MlbLegsResponse:
             dfs_age=dfs_age,
             lines_seeded=0,
             legs_evaluated=0,
-            plays=[],
+            entries=[],
             rejected=_empty_rejected_summary(),
             warnings=warnings,
         )
@@ -413,7 +412,7 @@ async def get_mlb_legs(*, app: str, format: str, legs: int) -> MlbLegsResponse:
             dfs_age=dfs_age,
             lines_seeded=lines_seeded,
             legs_evaluated=0,
-            plays=[],
+            entries=[],
             rejected=_empty_rejected_summary(),
             warnings=warnings,
         )
@@ -471,7 +470,7 @@ async def get_mlb_legs(*, app: str, format: str, legs: int) -> MlbLegsResponse:
         "below_threshold": 0,
         "unpriceable_payout": 0,
     }
-    plays: list[MlbLegsPlay] = []
+    packable: list[PackablePlay] = []
     evaluated = 0
 
     for (player_key, stat_key, line_f), bucket in seeded.items():
@@ -506,50 +505,58 @@ async def get_mlb_legs(*, app: str, format: str, legs: int) -> MlbLegsResponse:
             continue
         assert isinstance(result, PlayResult)
         by_book = {quote.book: quote for quote in quotes}
-        plays.append(
-            MlbLegsPlay(
-                rank=0,
-                player=player,
-                team=team,
-                matchup=matchup,
-                market=str(bucket["stat_label"]),
-                dfs_line=float(bucket["line"]),
-                side=result.side,
-                variant="standard",
-                game_id=game_id,
-                sharp_anchor=result.sharp_anchor,
-                fair_prob=result.fair_prob,
-                break_even=result.break_even,
-                required_margin_pts=result.required_margin_pts,
-                margin_pts=result.margin_pts,
-                book_disagreement_pts=result.book_disagreement_pts,
-                payout_multiplier=(
-                    1.0
-                    if result.payout_multiplier is None
-                    else float(result.payout_multiplier)
-                ),
-                books_used=[
-                    _book_used(by_book[name], result.side)
-                    for name in result.books_used
-                    if name in by_book
-                ],
-                books_excluded=[
-                    MlbLegsBookExcluded(
-                        book=name,
-                        reason=_exclude_reason(by_book[name], line_f)
+        packable.append(
+            PackablePlay(
+                player_key=player_key,
+                play=MlbLegsPlay(
+                    rank=0,
+                    player=player,
+                    team=team,
+                    matchup=matchup,
+                    market=str(bucket["stat_label"]),
+                    dfs_line=float(bucket["line"]),
+                    side=result.side,
+                    variant="standard",
+                    game_id=game_id,
+                    sharp_anchor=result.sharp_anchor,
+                    fair_prob=result.fair_prob,
+                    break_even=result.break_even,
+                    required_margin_pts=result.required_margin_pts,
+                    margin_pts=result.margin_pts,
+                    book_disagreement_pts=result.book_disagreement_pts,
+                    payout_multiplier=(
+                        1.0
+                        if result.payout_multiplier is None
+                        else float(result.payout_multiplier)
+                    ),
+                    books_used=[
+                        _book_used(by_book[name], result.side)
+                        for name in result.books_used
                         if name in by_book
-                        else "excluded",
-                    )
-                    for name in result.books_excluded
-                ],
+                    ],
+                    books_excluded=[
+                        MlbLegsBookExcluded(
+                            book=name,
+                            reason=_exclude_reason(by_book[name], line_f)
+                            if name in by_book
+                            else "excluded",
+                        )
+                        for name in result.books_excluded
+                    ],
+                ),
             )
         )
 
-    plays.sort(
-        key=lambda play: (-play.margin_pts, -play.fair_prob, play.player.casefold())
+    packable.sort(
+        key=lambda item: (
+            -item.play.margin_pts,
+            -item.play.fair_prob,
+            item.play.player.casefold(),
+        )
     )
-    for rank, play in enumerate(plays, start=1):
-        play.rank = rank
+    packed, unpacked = pack_entries(packable, n=legs, format=format)
+    rejected_counts["unpacked_remainder"] = unpacked
+    entries = [MlbLegsEntry(rank=pe.rank, legs=pe.legs) for pe in packed]
 
     response = _envelope(
         now=now,
@@ -559,7 +566,7 @@ async def get_mlb_legs(*, app: str, format: str, legs: int) -> MlbLegsResponse:
         dfs_age=dfs_age,
         lines_seeded=lines_seeded,
         legs_evaluated=evaluated,
-        plays=plays,
+        entries=entries,
         rejected=MlbLegsRejectedSummary(**rejected_counts),
         warnings=warnings,
     )

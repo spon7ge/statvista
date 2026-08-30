@@ -97,6 +97,7 @@ from app.domains.mlb.schemas_leaders import (
 from app.domains.mlb.schemas_legs import (
     MlbLegsBookExcluded,
     MlbLegsBookUsed,
+    MlbLegsEntry,
     MlbLegsPlay,
     MlbLegsRejectedSummary,
     MlbLegsResponse,
@@ -140,6 +141,7 @@ __all__ = [
     "MlbLeadersResponse",
     "MlbLegsBookExcluded",
     "MlbLegsBookUsed",
+    "MlbLegsEntry",
     "MlbLegsPlay",
     "MlbLegsRejectedSummary",
     "MlbLegsResponse",

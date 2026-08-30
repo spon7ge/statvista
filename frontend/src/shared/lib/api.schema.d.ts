@@ -1409,6 +1409,13 @@ export interface components {
             /** Weight */
             weight: number;
         };
+        /** MlbLegsEntry */
+        MlbLegsEntry: {
+            /** Legs */
+            legs: components["schemas"]["MlbLegsPlay"][];
+            /** Rank */
+            rank: number;
+        };
         /** MlbLegsPlay */
         MlbLegsPlay: {
             /** Book Disagreement Pts */
@@ -1465,6 +1472,8 @@ export interface components {
             insufficient_coverage: number;
             /** Insufficient Sharp */
             insufficient_sharp: number;
+            /** Unpacked Remainder */
+            unpacked_remainder: number;
             /** Unpriceable Payout */
             unpriceable_payout: number;
         };
@@ -1486,6 +1495,8 @@ export interface components {
             dfs_snapshot_age_minutes: number | null;
             /** Disclaimers */
             disclaimers: string[];
+            /** Entries */
+            entries: components["schemas"]["MlbLegsEntry"][];
             /** Flex Same Game Warning */
             flex_same_game_warning: boolean;
             /** Format */
@@ -1495,8 +1506,6 @@ export interface components {
              * Format: date-time
              */
             generated_at: string;
-            /** Legs */
-            legs: components["schemas"]["MlbLegsPlay"][];
             /** Legs Evaluated */
             legs_evaluated: number;
             /** Legs Surfaced */

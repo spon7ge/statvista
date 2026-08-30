@@ -20,6 +20,7 @@ class MlbLegsRejectedSummary(BaseModel):
     insufficient_sharp: int
     below_threshold: int
     unpriceable_payout: int
+    unpacked_remainder: int
 
 
 class MlbLegsBookUsed(BaseModel):
@@ -65,6 +66,12 @@ class MlbLegsPlay(BaseModel):
     books_excluded: list[MlbLegsBookExcluded] = Field(default_factory=list)
 
 
+class MlbLegsEntry(BaseModel):
+    model_config = _RESPONSE_CONFIG
+    rank: int
+    legs: list[MlbLegsPlay]
+
+
 class MlbLegsResponse(BaseModel):
     model_config = _RESPONSE_CONFIG
 
@@ -83,7 +90,7 @@ class MlbLegsResponse(BaseModel):
     legs_surfaced: int
     coverage_funnel_ratio: float | None = None
     flex_same_game_warning: bool
-    legs: list[MlbLegsPlay] = Field(default_factory=list)
+    entries: list[MlbLegsEntry] = Field(default_factory=list)
     rejected_summary: MlbLegsRejectedSummary
     warnings: list[str] = Field(default_factory=list)
     disclaimers: list[str] = Field(default_factory=list)

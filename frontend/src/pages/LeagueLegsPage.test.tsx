@@ -52,15 +52,26 @@ function envelope(over: Partial<MlbLegsResponse> = {}): MlbLegsResponse {
     dfs_snapshot_age_minutes: 12,
     lines_seeded: 40,
     legs_evaluated: 40,
-    legs_surfaced: 1,
+    legs_surfaced: 4,
     coverage_funnel_ratio: 0.1,
     flex_same_game_warning: false,
-    legs: [play()],
+    entries: [
+      {
+        rank: 1,
+        legs: [
+          play({ rank: 1 }),
+          play({ rank: 2 }),
+          play({ rank: 3 }),
+          play({ rank: 4 }),
+        ],
+      },
+    ],
     rejected_summary: {
       below_threshold: 30,
       insufficient_coverage: 5,
       insufficient_sharp: 4,
       unpriceable_payout: 0,
+      unpacked_remainder: 0,
     },
     warnings: [],
     disclaimers: [],
@@ -115,7 +126,7 @@ describe("LeagueLegsPage", () => {
     expect(screen.queryByRole("list")).not.toBeInTheDocument();
   });
 
-  it("renders a mocked PLAY player on /mlb/legs", () => {
+  it("renders Entry 1 and a mocked PLAY player on /mlb/legs", () => {
     mockUseMlbLegs.mockReturnValue({
       data: envelope(),
       isLoading: false,
@@ -124,6 +135,23 @@ describe("LeagueLegsPage", () => {
     });
     renderPage("/mlb/legs");
     expect(mockUseMlbLegs).toHaveBeenCalled();
-    expect(screen.getByText("Aaron Judge")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Entry 1" })).toBeInTheDocument();
+    expect(screen.getAllByText("Aaron Judge").length).toBeGreaterThan(0);
+    expect(
+      screen.queryByText(/No legs cleared the margin/i),
+    ).not.toBeInTheDocument();
+  });
+
+  it("shows layout-only example cards on /mlb/legs?example=1", () => {
+    mockUseMlbLegs.mockReturnValue({
+      data: envelope(),
+      isLoading: false,
+      isError: false,
+      isFetched: true,
+    });
+    renderPage("/mlb/legs?example=1");
+    expect(screen.getByText(/layout-only/i)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Entry 1" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Entry 2" })).toBeInTheDocument();
   });
 });

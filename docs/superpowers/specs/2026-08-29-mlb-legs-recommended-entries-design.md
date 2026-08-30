@@ -1,7 +1,7 @@
 # MLB Legs — recommended complete entries
 
 Date: 2026-08-29  
-Status: Draft  
+Status: Approved  
 Product: statvista  
 Related: `docs/superpowers/specs/2026-08-29-mlb-legs-pricer-design.md` (pricing unchanged); `/mlb/legs`; `GET /api/mlb/legs`
 

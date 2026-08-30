@@ -65,15 +65,26 @@ function envelope(over: Partial<MlbLegsResponse> = {}): MlbLegsResponse {
     dfs_snapshot_age_minutes: 12,
     lines_seeded: 40,
     legs_evaluated: 40,
-    legs_surfaced: 1,
+    legs_surfaced: 4,
     coverage_funnel_ratio: 0.1,
     flex_same_game_warning: false,
-    legs: [play()],
+    entries: [
+      {
+        rank: 1,
+        legs: [
+          play({ rank: 1 }),
+          play({ rank: 2 }),
+          play({ rank: 3 }),
+          play({ rank: 4 }),
+        ],
+      },
+    ],
     rejected_summary: {
       below_threshold: 30,
       insufficient_coverage: 5,
       insufficient_sharp: 4,
       unpriceable_payout: 0,
+      unpacked_remainder: 0,
     },
     warnings: [],
     disclaimers: [],
@@ -106,15 +117,61 @@ describe("MlbLegsBoard", () => {
     });
   });
 
-  it("renders a mocked PLAY player", () => {
+  it("renders Entry 1 and a mocked PLAY player", () => {
     renderBoard();
-    expect(screen.getByText("Aaron Judge")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Entry 1" })).toBeInTheDocument();
+    expect(screen.getAllByText("Aaron Judge").length).toBeGreaterThan(0);
     expect(screen.getByText(/Generated/)).toBeInTheDocument();
+    expect(screen.getByText(/research only/i)).toBeInTheDocument();
     expect(mockUseMlbLegs).toHaveBeenCalledWith({
       app: "prizepicks",
       format: "power",
       legs: 4,
     });
+  });
+
+  it("shows complete N-pick empty copy when entries are empty", () => {
+    mockUseMlbLegs.mockReturnValue({
+      data: envelope({
+        entries: [],
+        legs_surfaced: 0,
+        lines_seeded: 40,
+        warnings: [],
+      }),
+      isLoading: false,
+      isError: false,
+      isFetched: true,
+    });
+    renderBoard();
+
+    expect(screen.getByText(/complete 4-pick/i)).toBeInTheDocument();
+    expect(
+      screen.queryByText(/No legs cleared the margin/i),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", { name: "Entry 1" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("shows layout-only example cards for ?example=1", () => {
+    renderBoard("/mlb/legs?app=prizepicks&format=power&legs=4&example=1");
+
+    expect(screen.getByText(/layout-only/i)).toBeInTheDocument();
+    expect(screen.getByText(/not live pricing/i)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Entry 1" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Entry 2" })).toBeInTheDocument();
+  });
+
+  it("preserves example=1 when changing format chips", async () => {
+    const user = userEvent.setup();
+    renderBoard("/mlb/legs?app=prizepicks&format=power&legs=4&example=1");
+
+    await user.click(screen.getByRole("radio", { name: "Flex" }));
+
+    expect(screen.getByRole("radio", { name: "Flex" })).toBeChecked();
+    expect(screen.getByText(/layout-only/i)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Entry 1" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Entry 2" })).toBeInTheDocument();
   });
 
   it("offers Flex 6 only — no Flex 3 control", async () => {
@@ -138,13 +195,22 @@ describe("MlbLegsBoard", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("shows the same-game warning when flex_same_game_warning is true", () => {
+  it("does not show a same-game Flex banner", () => {
     mockUseMlbLegs.mockReturnValue({
       data: envelope({
         format: "flex",
         flex_same_game_warning: true,
         base_break_even: 0.542,
         base_required_margin_pts: 3.0,
+        entries: [
+          {
+            rank: 1,
+            legs: Array.from({ length: 6 }, (_, i) =>
+              play({ rank: i + 1, player: `Player ${i + 1}` }),
+            ),
+          },
+        ],
+        legs_surfaced: 6,
       }),
       isLoading: false,
       isError: false,
@@ -152,18 +218,17 @@ describe("MlbLegsBoard", () => {
     });
     renderBoard("/mlb/legs?app=prizepicks&format=flex&legs=6");
 
-    const warning = screen.getByRole("alert");
-    expect(warning).toHaveTextContent(/one game/i);
-    expect(warning).toHaveTextContent(/3/i);
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    expect(screen.queryByText(/one game/i)).not.toBeInTheDocument();
   });
 
   it("shows book hold, devig method, and weight in the expand panel", async () => {
     const user = userEvent.setup();
     renderBoard();
 
-    await user.click(screen.getByText("Aaron Judge"));
+    await user.click(screen.getAllByText("Aaron Judge")[0]);
 
-    const audit = screen.getByText(/Over -120 \/ Under 100/);
+    const audit = screen.getAllByText(/Over -120 \/ Under 100/)[0];
     expect(audit).toHaveTextContent("1.5");
     expect(audit).toHaveTextContent(/hold 4\.0%/i);
     expect(audit).toHaveTextContent(/multiplicative/i);

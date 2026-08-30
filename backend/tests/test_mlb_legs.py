@@ -222,6 +222,10 @@ def legs_io(monkeypatch):
     return state
 
 
+def _packed_plays(body):
+    return [leg for entry in body.entries for leg in entry.legs]
+
+
 def _assert_identity(body) -> None:
     rejected = body.rejected_summary
     dump = rejected.model_dump()
@@ -230,9 +234,10 @@ def _assert_identity(body) -> None:
         "insufficient_sharp",
         "below_threshold",
         "unpriceable_payout",
+        "unpacked_remainder",
     }
     assert body.legs_evaluated == body.legs_surfaced + sum(dump.values())
-    assert body.legs_surfaced == len(body.legs)
+    assert body.legs_surfaced == sum(len(e.legs) for e in body.entries)
 
 
 def test_route_rejects_prizepicks_flex_3(client):
@@ -259,7 +264,8 @@ def test_route_prizepicks_power_4_is_empty_without_dfs(client, legs_io):
     assert r.status_code == 200
     body = r.json()
     assert body["payouts_assumed"] is True
-    assert body["legs"] == []
+    assert body["entries"] == []
+    assert "legs" not in body
     assert body["lines_seeded"] == 0
     assert "prizepicks_unavailable" in body["warnings"]
 
@@ -277,7 +283,8 @@ async def test_stale_dfs_keeps_lines_seeded_skips_play(legs_io):
 
     assert body.lines_seeded == 1
     assert body.legs_evaluated == 0
-    assert body.legs == []
+    assert body.entries == []
+    assert body.rejected_summary.unpacked_remainder == 0
     assert body.legs_surfaced == 0
     assert "dfs_snapshot_stale" in body.warnings
     assert body.dfs_snapshot_age_minutes is not None
@@ -308,10 +315,10 @@ async def test_live_game_dropped_before_pricer(legs_io):
 
     assert body.lines_seeded == 2
     assert body.legs_evaluated == 1
-    players = {leg.player for leg in body.legs}
+    assert body.entries == []
+    assert body.rejected_summary.unpacked_remainder == 1
+    players = {leg.player for leg in _packed_plays(body)}
     assert "Aaron Judge" not in players
-    assert any(leg.player == "Juan Soto" for leg in body.legs)
-    assert body.legs[0].game_id == "222"
     _assert_identity(body)
 
 
@@ -333,8 +340,11 @@ async def test_demon_dropped_from_seed(legs_io):
 
     assert body.lines_seeded == 1
     assert body.legs_evaluated == 1
-    assert all(leg.variant == "standard" for leg in body.legs)
-    assert all(leg.market != "Home Runs" for leg in body.legs)
+    assert body.entries == []
+    assert body.rejected_summary.unpacked_remainder == 1
+    packed = _packed_plays(body)
+    assert all(leg.variant == "standard" for leg in packed)
+    assert all(leg.market != "Home Runs" for leg in packed)
     _assert_identity(body)
 
 
@@ -468,13 +478,12 @@ async def test_identity_on_mixed_fixture(legs_io):
     assert body.rejected_summary.insufficient_coverage == 1
     assert body.rejected_summary.below_threshold == 1
     assert body.rejected_summary.unpriceable_payout == 0
-    assert body.legs_surfaced == 1
-    assert body.legs[0].player == "Aaron Judge"
-    assert body.legs[0].rank == 1
-    assert body.legs[0].sharp_anchor == "pinnacle"
+    assert body.rejected_summary.unpacked_remainder == 1
+    assert body.entries == []
+    assert body.legs_surfaced == 0
     assert body.coverage_funnel_ratio == pytest.approx(2 / 4)
-    assert body.break_even_min is not None
-    assert body.break_even_max is not None
+    assert body.break_even_min is None
+    assert body.break_even_max is None
     _assert_identity(body)
 
 
@@ -509,9 +518,73 @@ async def test_flex_same_game_warning_when_top_cluster(legs_io):
 
     body = await get_mlb_legs(app="prizepicks", format="flex", legs=6)
 
-    assert body.legs_surfaced == 3
-    assert body.flex_same_game_warning is True
-    assert {leg.game_id for leg in body.legs} == {"111"}
+    assert body.entries == []
+    assert body.flex_same_game_warning is False
+    assert body.rejected_summary.unpacked_remainder == 3
+    assert body.legs_surfaced == 0
+    _assert_identity(body)
+
+
+@pytest.mark.asyncio
+async def test_flex_packs_six_skips_third_same_game(legs_io):
+    from app.domains.mlb.legs import get_mlb_legs
+
+    seeds = [
+        _pp("Aaron Judge", "Total Bases", 1.5),
+        _pp("Giancarlo Stanton", "Home Runs", 0.5),
+        _pp("Anthony Volpe", "Hits", 1.5),
+        _pp("Juan Soto", "Hits", 1.5),
+        _pp("Mookie Betts", "Runs", 0.5),
+        _pp("Kyle Tucker", "Total Bases", 1.5),
+        _pp("Ronald Acuna", "Stolen Bases", 0.5),
+    ]
+    legs_io["pp"] = seeds
+    pin = []
+    parlay = []
+    for player, px_stat, pin_stat, line in (
+        ("Aaron Judge", "total_bases", "batter_total_bases", 1.5),
+        ("Giancarlo Stanton", "home_runs", "batter_home_runs", 0.5),
+        ("Anthony Volpe", "hits", "batter_hits", 1.5),
+        ("Juan Soto", "hits", "batter_hits", 1.5),
+        ("Mookie Betts", "runs", "batter_runs", 0.5),
+        ("Kyle Tucker", "total_bases", "batter_total_bases", 1.5),
+        ("Ronald Acuna", "stolen_bases", "batter_stolen_bases", 0.5),
+    ):
+        books = _play_books(player, px_stat, pin_stat, line)
+        pin.extend(books["pin"])
+        parlay.extend(books["parlay"])
+    legs_io["pin"] = pin
+    legs_io["parlay"] = parlay
+    legs_io["roster"] = _roster(
+        ("Aaron Judge", "NYY"),
+        ("Giancarlo Stanton", "NYY"),
+        ("Anthony Volpe", "NYY"),
+        ("Juan Soto", "NYM"),
+        ("Mookie Betts", "LAD"),
+        ("Kyle Tucker", "HOU"),
+        ("Ronald Acuna", "ATL"),
+    )
+    legs_io["scoreboard"] = _scoreboard(
+        _game("111", "NYY", "BOS", "scheduled"),
+        _game("222", "NYM", "PHI", "scheduled"),
+        _game("333", "LAD", "SF", "scheduled"),
+        _game("444", "HOU", "TEX", "scheduled"),
+        _game("555", "ATL", "MIA", "scheduled"),
+    )
+
+    body = await get_mlb_legs(app="prizepicks", format="flex", legs=6)
+
+    assert len(body.entries) == 1
+    assert len(body.entries[0].legs) == 6
+    packed_players = {leg.player for leg in body.entries[0].legs}
+    same_game = [
+        name
+        for name in ("Aaron Judge", "Giancarlo Stanton", "Anthony Volpe")
+        if name in packed_players
+    ]
+    assert len(same_game) == 2
+    assert body.flex_same_game_warning is False
+    assert body.rejected_summary.unpacked_remainder == 1
     _assert_identity(body)
 
 

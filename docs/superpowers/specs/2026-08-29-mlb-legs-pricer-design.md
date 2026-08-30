@@ -296,6 +296,8 @@ HTTP **200** for empty PLAY. OpenAPI regen. `md/system-design.md` row.
 
 ## UI
 
+PLAY legs are packed into complete N-pick **`entries`** cards (no public flat PLAY list); see `docs/superpowers/specs/2026-08-29-mlb-legs-recommended-entries-design.md`.
+
 - **MLB:** board. **WNBA:** empty shell, no fetch.
 
 Chrome: title Legs; league pills; PrizePicks | Underdog; format + legs (**no Flex 3**; Flex is 6-pick only). Muted: **Assumed payouts** · `base_required_margin_pts`. PrizePicks: show `base_break_even`. Underdog: show PLAY **`break_even_min`–`break_even_max`** (not a single envelope BE that matches no row). Non-monotonicity sentence matches **current app**.

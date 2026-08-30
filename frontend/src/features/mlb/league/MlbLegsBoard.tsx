@@ -3,6 +3,10 @@ import { useSearchParams } from "react-router-dom";
 import { useMlbLegs } from "@/features/mlb/hooks/useMlbLegs";
 import { bookDisplayName } from "@/features/mlb/lib/mlbBookLabels";
 import type { ApiMlbLegsPlay, ApiMlbLegsResponse } from "@/shared/lib/api";
+import {
+  EXAMPLE_LAYOUT_BANNER,
+  mlbLegsExampleEnvelope,
+} from "./mlbLegsExample";
 
 type LegsApp = "prizepicks" | "underdog";
 type LegsFormat = "power" | "flex" | "standard";
@@ -75,12 +79,13 @@ function formatLabel(format: LegsFormat): string {
 function isLegsEnvelope(
   data: ApiMlbLegsResponse | undefined,
 ): data is ApiMlbLegsResponse {
-  return Array.isArray(data?.legs) && Array.isArray(data?.warnings);
+  return Array.isArray(data?.entries);
 }
 
 function emptyCopy(
   data: ApiMlbLegsResponse | undefined,
   app: LegsApp,
+  legs: number,
 ): string | null {
   if (!isLegsEnvelope(data)) return null;
   if (data.warnings.includes("dfs_snapshot_stale")) {
@@ -95,10 +100,23 @@ function emptyCopy(
       ? "No Underdog snapshot available."
       : "No PrizePicks snapshot available.";
   }
-  if (data.legs.length === 0) {
-    return "No legs cleared the margin for this entry.";
+  if (data.entries.length === 0) {
+    return `No complete ${legs}-pick entry for this format.`;
   }
   return null;
+}
+
+function selectionSearch(
+  next: { app: LegsApp; format: LegsFormat; legs: number },
+  example: boolean,
+): URLSearchParams {
+  const params = new URLSearchParams({
+    app: next.app,
+    format: next.format,
+    legs: String(next.legs),
+  });
+  if (example) params.set("example", "1");
+  return params;
 }
 
 function RadioChip({
@@ -170,36 +188,27 @@ function PlayRow({ leg }: { leg: ApiMlbLegsPlay }) {
   );
 }
 
-/** PrizePicks / Underdog controls, chrome, and PLAY shortlist for MLB Legs. */
+/** PrizePicks / Underdog controls, chrome, and complete N-pick entries for MLB Legs. */
 export function MlbLegsBoard() {
   const [params, setSearchParams] = useSearchParams();
   const { app, format, legs } = parseSelection(params);
+  const exampleMode = params.get("example") === "1";
   const { data, isLoading, isError } = useMlbLegs({ app, format, legs });
 
   useEffect(() => {
-    const next = new URLSearchParams({
-      app,
-      format,
-      legs: String(legs),
-    });
+    const next = selectionSearch({ app, format, legs }, exampleMode);
     if (
       params.get("app") !== app ||
       params.get("format") !== format ||
-      params.get("legs") !== String(legs)
+      params.get("legs") !== String(legs) ||
+      (params.get("example") === "1") !== exampleMode
     ) {
       setSearchParams(next, { replace: true });
     }
-  }, [app, format, legs, params, setSearchParams]);
+  }, [app, format, legs, exampleMode, params, setSearchParams]);
 
   function write(next: { app: LegsApp; format: LegsFormat; legs: number }) {
-    setSearchParams(
-      {
-        app: next.app,
-        format: next.format,
-        legs: String(next.legs),
-      },
-      { replace: true },
-    );
+    setSearchParams(selectionSearch(next, exampleMode), { replace: true });
   }
 
   function onAppChange(next: LegsApp) {
@@ -223,11 +232,13 @@ export function MlbLegsBoard() {
   }
 
   const sizeOptions = format === "flex" ? ([6] as const) : POWER_UD_SIZES;
-  const envelope = isLegsEnvelope(data) ? data : undefined;
-  const showLoading = isLoading && !envelope;
-  const showError = isError && !envelope;
-  const emptyMessage = emptyCopy(envelope, app);
-  const plays = envelope?.legs ?? [];
+  const liveEnvelope = isLegsEnvelope(data) ? data : undefined;
+  const envelope = exampleMode
+    ? mlbLegsExampleEnvelope({ app, format, legs })
+    : liveEnvelope;
+  const showLoading = !exampleMode && isLoading && !envelope;
+  const showError = !exampleMode && isError && !envelope;
+  const emptyMessage = emptyCopy(envelope, app, legs);
 
   return (
     <div className="space-y-6">
@@ -299,6 +310,16 @@ export function MlbLegsBoard() {
           </div>
         </div>
 
+        <p className="text-[14px] text-white/50">
+          Recommended entries for this size. Research only — not a lock.
+        </p>
+
+        {exampleMode ? (
+          <p className="rounded-xl border border-white/15 bg-white/[0.04] px-4 py-3 text-[14px] text-white/70">
+            {EXAMPLE_LAYOUT_BANNER}
+          </p>
+        ) : null}
+
         {envelope ? (
           <div className="space-y-2">
             <p className="text-[18px] font-medium text-white">
@@ -310,16 +331,6 @@ export function MlbLegsBoard() {
             </p>
             <BreakEvenChrome app={app} data={envelope} format={format} />
           </div>
-        ) : null}
-
-        {envelope?.flex_same_game_warning ? (
-          <p
-            role="alert"
-            className="rounded-xl border border-amber-400/40 bg-amber-400/10 px-4 py-3 text-[14px] text-amber-100"
-          >
-            The top 6 include 3 or more legs from one game. Correlation is not
-            priced; these are not independent.
-          </p>
         ) : null}
 
         {showLoading ? (
@@ -336,16 +347,21 @@ export function MlbLegsBoard() {
           <p className="text-[18px] text-white/50">{emptyMessage}</p>
         ) : null}
 
-        {plays.length > 0 ? (
-          <ul className="space-y-2">
-            {plays.map((leg) => (
-              <PlayRow
-                key={`${leg.rank}-${leg.player}-${leg.market}-${leg.dfs_line}-${leg.side}`}
-                leg={leg}
-              />
-            ))}
-          </ul>
-        ) : null}
+        {(envelope?.entries ?? []).map((entry) => (
+          <section key={entry.rank} aria-label={`Entry ${entry.rank}`}>
+            <h2 className="text-[18px] font-medium text-white">
+              Entry {entry.rank}
+            </h2>
+            <ul className="space-y-2">
+              {entry.legs.map((leg) => (
+                <PlayRow
+                  key={`${entry.rank}-${leg.rank}-${leg.player}-${leg.market}`}
+                  leg={leg}
+                />
+              ))}
+            </ul>
+          </section>
+        ))}
       </div>
     </div>
   );
@@ -378,13 +394,13 @@ function BreakEvenChrome({
   let note: string;
   if (app === "underdog") {
     note =
-      "2-pick is the hardest Underdog entry. 4-pick is harder than 3-pick. Priced legs for this entry type — not a parlay.";
+      "2-pick is the hardest Underdog entry. 4-pick is harder than 3-pick. Complete entries for this size — not a parlay.";
   } else if (format === "flex") {
     note =
       "54.2% is the break-even for an independent 6-leg Flex entry.";
   } else {
     note =
-      "3-pick Power is the hardest PrizePicks Power. Priced legs for this entry type — not a parlay.";
+      "3-pick Power is the hardest PrizePicks Power. Complete entries for this size — not a parlay.";
   }
 
   return (
