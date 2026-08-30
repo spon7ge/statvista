@@ -20,7 +20,7 @@ Document how the live statvista website is structured today: routes, shared chro
 
 ## 1. Overview & boundaries
 
-statvista’s public site is a React + Vite app talking to a FastAPI service over `/api`. `/` replace-redirects to **MLB games**. The product surface is **Props, Legs, Arbitrage, and Games** (plus game detail). **WNBA** has a live games slate, prop picks, and game detail. **MLB** adds a live games hub (dated slate), game detail, a DFS-anchored prop-picks research table, and a **priced Legs** shortlist (`GET /api/mlb/legs`). NBA is scaffolded (`/nba/matchups` placeholder).
+statvista’s public site is a React + Vite app talking to a FastAPI service over `/api`. `/` replace-redirects to **MLB games**. The product surface is **Props, Legs, Arbitrage, and Games** (plus game detail). **WNBA** has a live games slate, prop picks, game detail, and a **priced Legs** shortlist (`GET /api/wnba/legs`). **MLB** adds a live games hub (dated slate), game detail, a DFS-anchored prop-picks research table, and a **priced Legs** shortlist (`GET /api/mlb/legs`). NBA is scaffolded (`/nba/matchups` placeholder).
 
 ### Read-path model
 
@@ -70,7 +70,7 @@ main.tsx
       /games/:espnEventId  GameDetailPage
       /wnba/matchups       LeagueMatchupsPage (league="wnba")
       /wnba/prop_picks     LeaguePropPicksPage
-      /wnba/legs           LeagueLegsPage (empty shell; no fetch)
+      /wnba/legs           LeagueLegsPage (LegsBoard via useWnbaLegs)
       /wnba/arbitrage      LeagueArbitragePage
       /wnba/prop_picks/player/:playerSlug  WnbaPlayerPropsPage
       /nba/matchups        LeagueMatchupsPage (placeholder)
@@ -89,7 +89,7 @@ main.tsx
 |-------|------|
 | `pages/` | Route composition |
 | `features/{home,basketball,mlb}/` | UI by domain |
-| `hooks/useWnba*.ts`, `useMlbScoreboard.ts`, `useMlbLegs.ts`, `useGameDetail.ts` | TanStack Query wrappers |
+| `hooks/useWnba*.ts`, `useWnbaLegs.ts`, `useMlbScoreboard.ts`, `useMlbLegs.ts`, `useGameDetail.ts` | TanStack Query wrappers |
 | `lib/api.ts` | Typed `fetch` helpers + `VITE_API_BASE_URL` |
 
 **Chrome data:** The layout itself does not fetch scoreboards. Games pages load each league's scoreboard independently.
@@ -103,7 +103,7 @@ main.tsx
 | `/` | Landing | — | — | Replace-redirect to `/mlb/matchups` |
 | `/wnba/matchups?date=` | Daily slate (no team-lines odds pill); Props-style header with MLB/WNBA/NBA league pills | `useWnbaScoreboard(date)` | scoreboard (`/today` or `?date=`) | Cards → `/games/:espnEventId` (Preview odds board uses `GET /api/wnba/odds/today`) |
 | `/wnba/prop_picks` | DFS **player board**: PrizePicks / Underdog tabs (format/legs defaults hidden — power/4 vs standard/4); one card per player with **View X props** CTA; sort by unique-stat count desc; Team multi-select + player name search | `useWnbaProps` | `GET /api/wnba/props/today?app=&format=&legs=` | Client `groupWnbaPropPlayers` aggregates rows; PrizePicks seed from latest Supabase snapshot only (`fetch_latest_prizepicks("wnba")`, no Parlay PP fallback; empty → `prizepicks_unavailable`); Underdog from Supabase snapshot; each row carries `books_main` (per-book main O/U) for detail grid; Parlay books served from live indexes (DK/FD + cmp); live Parlay fetch also throttled-writes `odds.wnba_parlay_api_odds`; ProphetX/Novig/Pinnacle from Supabase scrapers; client hide finals + prior-day tips; paginates 20 **players** per page |
-| `/wnba/legs` | Empty **Legs** shell; league pills | — | none | Placeholder; no WNBA legs API. Must not call `GET /api/mlb/legs` |
+| `/wnba/legs` | **Priced complete entries** (same product as MLB): PrizePicks / Underdog; Power 2–6 or Flex 6; UD Standard 2–6. Greedy packer emits complete N-pick `entries`. | `useWnbaLegs({ app, format, legs })` | `GET /api/wnba/legs?app=&format=&legs=` | `wnba.legs.get_wnba_legs()` + shared `legs_pricer` / `legs_payouts` / `legs_pack`. WNBA DFS + PX/Novig/Pinnacle alts + `odds.wnba_parlay_api_odds`. Drop live/halftime/final. `game_id` = ESPN event id. Default `?app=prizepicks&format=power&legs=4`. Spec: `docs/superpowers/specs/2026-08-30-wnba-legs-design.md` |
 | `/wnba/arbitrage` | Empty **arbitrage** shell; league pills | — | none | Placeholder; no API yet |
 | `/wnba/prop_picks/player/:playerSlug?app=` | Per-player main-line odds grid (BettingPros-style) | `useWnbaProps` | same `GET /api/wnba/props/today?app=&format=&legs=` | `findPlayerBySlug` + `uniqueStatRows`; `WnbaPlayerPropsOddsGrid` reads `books_main` (ProphetX, Novig, DraftKings, FanDuel, BetMGM, Caesars, Kalshi, Fliff, bet365, Pinnacle — main lines only, NL when missing; no OPEN/BEST); unknown slug → empty state + link back to board |
 | `/games/:espnEventId` | Game detail: scheduled → MLB-parity pregame (broadcast header with record + last 10; centered Preview / Away / Home / **Props**); Preview two-column (left: Projected Starters → Game Info → Matchup Prediction → Game Leaders PPG/RPG/APG; right: multi-book Odds board → Team Stats + `#rank` → Injuries); Away/Home → team preview (PPG/RPG/APG/BPG/SPG leaders + roster averages incl. SH-EFF, SC-EFF, PPEP, RTG, +/-); **Props** tab has PrizePicks / Underdog sub-tabs and shows the matchup-scoped **Player Props** category-card grid (Line / Over / Under, book name under odds); live/halftime or final → broadcast header + Summary \| Box (Scoring plays \| All plays; Summary right rail: linescore, team stats, win probability, shot chart, Game Info; Box: stacked away/home box score) | `useGameDetail`, `useWnbaOdds`, `useWnbaGameProps(espnEventId, app)`, `useWnbaTeamPreview(espnEventId, side)` | `GET /api/wnba/games/{id}`, `GET /api/wnba/odds/today` (Preview `book_boards`), `GET /api/wnba/props/game/{id}?app=prizepicks\|underdog` (Props tab only), `GET /api/wnba/games/{id}/team-preview?side=` (Away/Home) | ESPN summary + standings/team stats/roster for enrichment (standings + roster JSON via `app.core.outbound_cache`); RotoWire starters; Preview odds prefer `book_boards` (ProphetX → Novig → Pinnacle) with soft-fail per book and fallback to legacy `games[]`; game-scoped props reuse today's props assembly filtered to away/home abbrevs; soft-fail empty sections; no Player of the Game or pitch zone |
@@ -146,7 +146,7 @@ MlbPropPicksPage
        └─ GET /api/mlb/props/today unchanged (still feeds game-detail Props)
   → client filterMlbPropBoardRows (team + market + side + name) + sortable research table
 
-LeagueLegsPage (MLB only)
+LeagueLegsPage (MLB)
   → useMlbLegs({ app, format, legs })  (staleTime 5m)
   → GET /api/mlb/legs?app=&format=&legs=
   → mlb.legs.get_mlb_legs()
@@ -156,7 +156,19 @@ LeagueLegsPage (MLB only)
        ├─ drop live/final games; attach gamePk
        ├─ legs_pricer (log-odds, coverage gates, favorite side only)
        └─ legs_pack (greedy complete-N cards; Flex max 2 per game_id; unpacked_remainder)
-  → entries[] cards or threshold/stale/empty; WNBA path does not fetch
+  → entries[] cards or threshold/stale/empty
+
+LeagueLegsPage (WNBA)
+  → useWnbaLegs({ app, format, legs })  (staleTime 5m)
+  → GET /api/wnba/legs?app=&format=&legs=
+  → wnba.legs.get_wnba_legs()
+       ├─ seed PrizePicks or Underdog (standard only); lines_seeded
+       ├─ abort PLAY if DFS snapshot age > 60 min
+       ├─ exact-line two-ways: PX/Novig/Pinnacle (alts) + Parlay from `odds.wnba_parlay_api_odds`
+       ├─ drop live/halftime/final; attach ESPN event id as `game_id`
+       ├─ legs_pricer (log-odds, coverage gates, favorite side only)
+       └─ legs_pack (greedy complete-N cards; Flex max 2 per game_id; unpacked_remainder)
+  → entries[] cards or threshold/stale/empty
 ```
 
 ---
@@ -221,6 +233,7 @@ Feature-level history lives under `docs/superpowers/specs/` and `docs/superpower
 | GET | `/api/wnba/scoreboard?date=` | `wnba_scoreboard` |
 | GET | `/api/wnba/odds/today` | `parlay_odds` (+ `book_boards`: ProphetX → Novig → Pinnacle from Supabase team snapshots; legacy `games[]` retained) |
 | GET | `/api/wnba/props/today` | `wnba.props` (+ `prop_fair`, `prop_formats`, snapshots) |
+| GET | `/api/wnba/legs?app=&format=&legs=` | `wnba.legs` + `betting.legs_pricer` / `legs_payouts` / `legs_pack` (complete-N `entries`; 5 min cache; 422 on invalid combo; 200 empty slate) |
 | GET | `/api/wnba/props/game/{espn_event_id}` | `wnba.game_props` (+ `get_today_props`, game detail, roster headshots) |
 | GET | `/api/wnba/games/{espn_event_id}` | `wnba_game_detail` (+ scheduled record/last_10, season_team_stats ranks, game_leaders) |
 | GET | `/api/wnba/games/{espn_event_id}/team-preview?side=` | `wnba.team_preview` (PPG/RPG/APG/BPG/SPG leaders + roster averages incl. SH-EFF, SC-EFF, PPEP, RTG, +/-) |
