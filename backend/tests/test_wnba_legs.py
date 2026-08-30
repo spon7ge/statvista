@@ -292,6 +292,22 @@ async def test_live_and_halftime_dropped_before_pricer(legs_io):
 
 
 @pytest.mark.asyncio
+async def test_espn_roster_lv_locks_against_canonical_lva_live(legs_io):
+    """ESPN stores LV; scoreboard is LVA. Join must canonicalize or live lock misses."""
+    from app.domains.wnba.legs import get_wnba_legs
+
+    legs_io["pp"] = [_pp("A'ja Wilson", "Points", 22.5)]
+    legs_io.update(_play_books("A'ja Wilson"))
+    legs_io["roster"] = _roster(("A'ja Wilson", "LV"))
+    legs_io["scoreboard"] = _scoreboard(_game("401", "LVA", "NYL", "live"))
+    body = await get_wnba_legs(app="prizepicks", format="power", legs=4)
+    assert body.lines_seeded == 1
+    assert body.legs_evaluated == 0
+    assert body.entries == []
+    _assert_identity(body)
+
+
+@pytest.mark.asyncio
 async def test_demon_dropped_from_seed(legs_io):
     from app.domains.wnba.legs import get_wnba_legs
 

@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 from typing import Any
 
 from app.core import odds_snapshots
+from app.core.wnba_abbrevs import canonical_abbrev
 from app.domains.betting.legs_pack import PackablePlay, pack_entries
 from app.domains.betting.legs_payouts import (
     base_break_even,
@@ -297,10 +298,11 @@ def _book_used(quote: BookQuote, side: str) -> WnbaLegsBookUsed:
 
 
 def _team_game_index(games: list[WnbaGame]) -> dict[str, WnbaGame]:
+    # ESPN roster stores raw tricodes (LV); scoreboard is usually canonical (LVA).
     by_team: dict[str, WnbaGame] = {}
     for game in games:
-        by_team[game.away.abbrev.upper()] = game
-        by_team[game.home.abbrev.upper()] = game
+        by_team[canonical_abbrev(game.away.abbrev)] = game
+        by_team[canonical_abbrev(game.home.abbrev)] = game
     return by_team
 
 
@@ -476,7 +478,7 @@ async def get_wnba_legs(*, app: str, format: str, legs: int) -> WnbaLegsResponse
     for (player_key, stat_key, line_f), bucket in seeded.items():
         player = str(bucket["player"])
         entry = roster.get(norm_player_name(player)) or roster.get(player_key) or {}
-        team = str(entry.get("team_abbrev") or "").upper()
+        team = canonical_abbrev(str(entry.get("team_abbrev") or ""))
         game = team_games.get(team) if team else None
         if game is not None and game.status in _LOCKED:
             continue
