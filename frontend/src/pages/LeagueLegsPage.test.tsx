@@ -9,9 +9,14 @@ type MlbLegsResponse = components["schemas"]["MlbLegsResponse"];
 type MlbLegsPlay = components["schemas"]["MlbLegsPlay"];
 
 const mockUseMlbLegs = vi.fn();
+const mockUseWnbaLegs = vi.fn();
 
 vi.mock("@/features/mlb/hooks/useMlbLegs", () => ({
   useMlbLegs: (...args: unknown[]) => mockUseMlbLegs(...args),
+}));
+
+vi.mock("@/features/basketball/hooks/useWnbaLegs", () => ({
+  useWnbaLegs: (...args: unknown[]) => mockUseWnbaLegs(...args),
 }));
 
 function play(over: Partial<MlbLegsPlay> = {}): MlbLegsPlay {
@@ -101,6 +106,13 @@ describe("LeagueLegsPage", () => {
       isError: false,
       isFetched: true,
     });
+    mockUseWnbaLegs.mockReset();
+    mockUseWnbaLegs.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: false,
+      isFetched: true,
+    });
   });
 
   it("renders Legs chrome with league pills", () => {
@@ -119,11 +131,17 @@ describe("LeagueLegsPage", () => {
     expect(screen.getByRole("button", { name: "NBA" })).toBeDisabled();
   });
 
-  it("does not fetch MLB legs on /wnba/legs", () => {
+  it("fetches WNBA legs, not MLB, on /wnba/legs", () => {
+    mockUseWnbaLegs.mockReturnValue({
+      data: envelope({ slate: "WNBA 2026-08-30" }),
+      isLoading: false,
+      isError: false,
+      isFetched: true,
+    });
     renderPage("/wnba/legs");
-    expect(screen.getByRole("heading", { name: "Legs" })).toBeInTheDocument();
     expect(mockUseMlbLegs).not.toHaveBeenCalled();
-    expect(screen.queryByRole("list")).not.toBeInTheDocument();
+    expect(mockUseWnbaLegs).toHaveBeenCalled();
+    expect(screen.getByRole("heading", { name: "Entry 1" })).toBeInTheDocument();
   });
 
   it("renders Entry 1 and a mocked PLAY player on /mlb/legs", () => {
