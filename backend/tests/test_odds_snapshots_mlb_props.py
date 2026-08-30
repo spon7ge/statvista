@@ -34,7 +34,10 @@ def test_fetch_latest_prophetx_reads_latest_mlb_snapshot():
         svc.fetch_latest_prophetx()
 
     sql, league = fetch_rows.call_args.args
-    assert "player_name, stat_name, line_score, side, american_price, scraped_at" in sql
+    assert (
+        "player_name, stat_name, line_score, side, american_price, stake, scraped_at"
+        in sql
+    )
     assert "FROM odds.mlb_prophetx" in sql
     assert "DISTINCT ON" in sql
     assert "scraped_at DESC" in sql
@@ -48,7 +51,10 @@ def test_fetch_latest_novig_reads_latest_mlb_snapshot():
         svc.fetch_latest_novig()
 
     sql, league = fetch_rows.call_args.args
-    assert "player_name, stat_name, line_score, side, american_price, scraped_at" in sql
+    assert (
+        "player_name, stat_name, line_score, side, american_price, stake, scraped_at"
+        in sql
+    )
     assert "FROM odds.mlb_novig" in sql
     assert "DISTINCT ON" in sql
     assert "scraped_at DESC" in sql

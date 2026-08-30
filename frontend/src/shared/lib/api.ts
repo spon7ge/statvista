@@ -79,8 +79,16 @@ export type ApiMlbPropBoardRow = Schemas["MlbPropBoardRow"];
 export type ApiMlbPropBoardResponse = Schemas["MlbPropBoardResponse"];
 export type ApiMlbGamePropsResponse = Schemas["MlbGamePropsResponse"];
 export type ApiMlbTeamPreviewResponse = Schemas["MlbTeamPreviewResponse"];
+export type ApiMlbLegsResponse = Schemas["MlbLegsResponse"];
+export type ApiMlbLegsPlay = Schemas["MlbLegsPlay"];
 
 export type MlbPropsParams = {
+  app: string;
+  format: string;
+  legs: number;
+};
+
+export type MlbLegsParams = {
   app: string;
   format: string;
   legs: number;
@@ -260,6 +268,26 @@ export async function fetchMlbProps({
   });
   if (!res.ok) {
     throw new Error(`MLB props request failed: ${res.status}`);
+  }
+  return res.json();
+}
+
+export async function fetchMlbLegs({
+  app,
+  format,
+  legs,
+}: MlbLegsParams): Promise<ApiMlbLegsResponse> {
+  const qs = new URLSearchParams({
+    app,
+    format,
+    legs: String(legs),
+  });
+  const res = await fetch(`${API_BASE}/api/mlb/legs?${qs}`, {
+    headers: { Accept: "application/json" },
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    throw new Error(`MLB legs request failed: ${res.status}`);
   }
   return res.json();
 }

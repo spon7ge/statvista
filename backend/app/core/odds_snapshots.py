@@ -212,20 +212,40 @@ def _is_missing_is_main_column(exc: BaseException) -> bool:
     )
 
 
+def _is_missing_stake_column(exc: BaseException) -> bool:
+    """True when the SELECT failed because ``stake`` is not on the table."""
+    text = str(exc).lower()
+    if "stake" not in text:
+        return False
+    name = type(exc).__name__.lower()
+    return (
+        "undefinedcolumn" in name
+        or "programmingerror" in name
+        or "does not exist" in text
+        or "undefined column" in text
+    )
+
+
 def _fetch_player_prop_snapshot(
     table: str, league: str, *, mains_only: bool = False
 ) -> list[dict[str, Any]]:
-    """Latest player-prop rows; prefer ``is_main``, else select without it.
+    """Latest player-prop rows; prefer ``is_main`` and ``stake``, else retry without.
 
     Pinnacle player tables have no ``is_main`` column — those fetchers stay
     on the base column list and callers balance-pick mains from row dicts.
+    When ``is_main`` is absent, ``mains_only`` is ignored (no SQL filter) so
+    callers can still balance-pick mains from row dicts.
 
-    ``mains_only`` filters ``is_main = true`` in SQL. Quote identity still
-    omits ``line_score`` (same DISTINCT ON as fair/edge); the filter is what
-    keeps a later-scraped alt from winning the collapse. Changing identity
-    cols would also change upserts/change-filters, so it stays out of this PR.
+    ``mains_only`` filters ``is_main = true`` in SQL when the column exists.
+    Quote identity still omits ``line_score`` (same DISTINCT ON as fair/edge);
+    the filter is what keeps a later-scraped alt from winning the collapse.
+    Changing identity cols would also change upserts/change-filters, so it
+    stays out of this PR.
     """
     base_cols = (
+        "player_name, stat_name, line_score, side, american_price, stake, scraped_at"
+    )
+    base_cols_no_stake = (
         "player_name, stat_name, line_score, side, american_price, scraped_at"
     )
     extra_where = "AND is_main = true" if mains_only else ""
@@ -235,14 +255,58 @@ def _fetch_player_prop_snapshot(
     try:
         return _fetch_rows(sql_with, league, reraise=True)
     except Exception as exc:
-        if not _is_missing_is_main_column(exc):
-            logger.warning("odds snapshot query failed: %s", exc)
-            return []
-        logger.warning(
-            "odds.%s has no is_main column; selecting without it (balance-pick mains)",
-            table,
-        )
-        return _fetch_rows(_latest_snapshot_sql(table, base_cols), league)
+        if _is_missing_is_main_column(exc):
+            logger.warning(
+                "odds.%s has no is_main column; selecting without it "
+                "(balance-pick mains)",
+                table,
+            )
+            try:
+                return _fetch_rows(
+                    _latest_snapshot_sql(table, base_cols),
+                    league,
+                    reraise=True,
+                )
+            except Exception as exc2:
+                if not _is_missing_stake_column(exc2):
+                    logger.warning("odds snapshot query failed: %s", exc2)
+                    return []
+                logger.warning(
+                    "odds.%s has no stake column; selecting without it",
+                    table,
+                )
+                return _fetch_rows(
+                    _latest_snapshot_sql(table, base_cols_no_stake),
+                    league,
+                )
+        if _is_missing_stake_column(exc):
+            logger.warning(
+                "odds.%s has no stake column; selecting without it",
+                table,
+            )
+            try:
+                return _fetch_rows(
+                    _latest_snapshot_sql(
+                        table, f"{base_cols_no_stake}, is_main", extra_where=extra_where
+                    ),
+                    league,
+                    reraise=True,
+                )
+            except Exception as exc2:
+                if not _is_missing_is_main_column(exc2):
+                    logger.warning("odds snapshot query failed: %s", exc2)
+                    return []
+                logger.warning(
+                    "odds.%s has no is_main column; selecting without it "
+                    "(balance-pick mains)",
+                    table,
+                )
+                return _fetch_rows(
+                    _latest_snapshot_sql(table, base_cols_no_stake),
+                    league,
+                )
+        logger.warning("odds snapshot query failed: %s", exc)
+        return []
 
 
 def fetch_latest_pinnacle_team(league: str = "wnba") -> list[dict]:

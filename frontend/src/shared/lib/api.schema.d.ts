@@ -212,6 +212,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/mlb/legs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Mlb Legs */
+        get: operations["mlb_legs_api_mlb_legs_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/mlb/lineups": {
         parameters: {
             query?: never;
@@ -1362,6 +1379,140 @@ export interface components {
             pace: "season";
             /** Season */
             season: number;
+        };
+        /** MlbLegsBookExcluded */
+        MlbLegsBookExcluded: {
+            /** Book */
+            book: string;
+            /** Reason */
+            reason: string;
+        };
+        /** MlbLegsBookUsed */
+        MlbLegsBookUsed: {
+            /** Book */
+            book: string;
+            /**
+             * Devig
+             * @enum {string}
+             */
+            devig: "multiplicative" | "power";
+            /** Devigged Prob */
+            devigged_prob: number;
+            /** Hold */
+            hold: number;
+            /** Line */
+            line: number;
+            /** Over */
+            over: number;
+            /** Under */
+            under: number;
+            /** Weight */
+            weight: number;
+        };
+        /** MlbLegsPlay */
+        MlbLegsPlay: {
+            /** Book Disagreement Pts */
+            book_disagreement_pts: number;
+            /** Books Excluded */
+            books_excluded: components["schemas"]["MlbLegsBookExcluded"][];
+            /** Books Used */
+            books_used: components["schemas"]["MlbLegsBookUsed"][];
+            /** Break Even */
+            break_even: number;
+            /** Dfs Line */
+            dfs_line: number;
+            /** Fair Prob */
+            fair_prob: number;
+            /** Game Id */
+            game_id: string | null;
+            /** Margin Pts */
+            margin_pts: number;
+            /** Market */
+            market: string;
+            /** Matchup */
+            matchup: string;
+            /** Payout Multiplier */
+            payout_multiplier: number;
+            /** Player */
+            player: string;
+            /** Rank */
+            rank: number;
+            /** Required Margin Pts */
+            required_margin_pts: number;
+            /**
+             * Sharp Anchor
+             * @enum {string}
+             */
+            sharp_anchor: "pinnacle" | "exchange_only";
+            /**
+             * Side
+             * @enum {string}
+             */
+            side: "over" | "under";
+            /** Team */
+            team: string;
+            /**
+             * Variant
+             * @constant
+             */
+            variant: "standard";
+        };
+        /** MlbLegsRejectedSummary */
+        MlbLegsRejectedSummary: {
+            /** Below Threshold */
+            below_threshold: number;
+            /** Insufficient Coverage */
+            insufficient_coverage: number;
+            /** Insufficient Sharp */
+            insufficient_sharp: number;
+            /** Unpriceable Payout */
+            unpriceable_payout: number;
+        };
+        /** MlbLegsResponse */
+        MlbLegsResponse: {
+            /** App */
+            app: string;
+            /** Base Break Even */
+            base_break_even: number;
+            /** Base Required Margin Pts */
+            base_required_margin_pts: number;
+            /** Break Even Max */
+            break_even_max: number | null;
+            /** Break Even Min */
+            break_even_min: number | null;
+            /** Coverage Funnel Ratio */
+            coverage_funnel_ratio: number | null;
+            /** Dfs Snapshot Age Minutes */
+            dfs_snapshot_age_minutes: number | null;
+            /** Disclaimers */
+            disclaimers: string[];
+            /** Flex Same Game Warning */
+            flex_same_game_warning: boolean;
+            /** Format */
+            format: string;
+            /**
+             * Generated At
+             * Format: date-time
+             */
+            generated_at: string;
+            /** Legs */
+            legs: components["schemas"]["MlbLegsPlay"][];
+            /** Legs Evaluated */
+            legs_evaluated: number;
+            /** Legs Surfaced */
+            legs_surfaced: number;
+            /** Lines Seeded */
+            lines_seeded: number;
+            /**
+             * Payouts Assumed
+             * @default true
+             */
+            payouts_assumed: boolean;
+            rejected_summary: components["schemas"]["MlbLegsRejectedSummary"];
+            /** Slate */
+            slate: string;
+            /** Warnings */
+            warnings: string[];
         };
         /** MlbLinescore */
         MlbLinescore: {
@@ -3556,6 +3707,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MlbLeadersResponse"];
+                };
+            };
+        };
+    };
+    mlb_legs_api_mlb_legs_get: {
+        parameters: {
+            query: {
+                app: "prizepicks" | "underdog";
+                format: string;
+                legs: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MlbLegsResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

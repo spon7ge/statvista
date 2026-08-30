@@ -3,3 +3,9 @@
  * on the same row (e.g. Props, Games). Keep these in lockstep.
  */
 export const CHROME_TITLE_TOP = "pt-8";
+
+/** Horizontal page pad: hug the sidebar; keep a normal right gutter. */
+export const CHROME_PAGE_X = "px-4 sm:pl-2 sm:pr-6";
+
+/** Extra right inset used on Props, Games, and game detail. */
+export const CHROME_PAGE_RIGHT = "md:pr-[150px]";

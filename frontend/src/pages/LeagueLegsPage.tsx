@@ -1,11 +1,16 @@
-import { CHROME_TITLE_TOP } from "@/app/layouts/chrome";
+import { useLocation } from "react-router-dom";
+import { CHROME_PAGE_X, CHROME_TITLE_TOP } from "@/app/layouts/chrome";
 import { LeagueSectionSwitcher } from "@/features/home/LeagueSectionSwitcher";
+import { MlbLegsBoard } from "@/features/mlb/league/MlbLegsBoard";
 
-/** Empty shell for recommended PrizePicks / Underdog legs. */
+/** MLB priced-leg board; WNBA stays an empty shell (no fetch). */
 export function LeagueLegsPage() {
+  const { pathname } = useLocation();
+  const isMlb = pathname.startsWith("/mlb");
+
   return (
     <div className="space-y-0 pb-8">
-      <section className="mx-auto max-w-6xl space-y-6 px-4 pb-16 sm:px-6 sm:pb-20">
+      <section className={`max-w-6xl space-y-6 pb-16 sm:pb-20 ${CHROME_PAGE_X}`}>
         <div
           data-testid="league-legs-header"
           className={`relative z-20 flex flex-col gap-4 ${CHROME_TITLE_TOP}`}
@@ -17,6 +22,7 @@ export function LeagueLegsPage() {
           </div>
           <LeagueSectionSwitcher section="Legs" />
         </div>
+        {isMlb ? <MlbLegsBoard /> : null}
       </section>
     </div>
   );
