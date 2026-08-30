@@ -11,7 +11,7 @@ Document how the live statvista website is structured today: routes, shared chro
 
 ## Non-goals
 
-- Airflow DAGs, dbt medallion transforms, model training, or scraper internals (see root `README.md`)
+- Airflow DAGs, dbt medallion transforms, model training, or scraper internals (see `models/README.md`, `docker/README.md`)
 - Full catalog of unused DB-backed dashboard routes beyond noting they exist
 - Deployment / hosting runbooks
 - MLB Statcast (not in current slice)
@@ -209,7 +209,7 @@ When you add or change a page:
 2. Keep `lib/api.ts` + OpenAPI types in sync.
 3. Prefer shared hooks / query keys for scoreboard-like shared data.
 
-Feature-level history lives under `docs/superpowers/specs/` and `docs/superpowers/plans/`. Full platform (ETL / ML) overview remains in the root `README.md`.
+Feature-level history lives under `docs/superpowers/specs/` and `docs/superpowers/plans/`. Clone, local run, and a short product pitch live in the root `README.md`.
 
 ---
 

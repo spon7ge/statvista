@@ -1,40 +1,80 @@
 # statvista
 
-Interactive basketball and baseball analytics — live scoreboards, matchup boards, prop context, and game centers for fans who want a clearer view of the slate.
+statvista is a research site for **MLB** and **WNBA**. It shows today’s games, sportsbook vs DFS player props, and recommended PrizePicks / Underdog legs — so you can compare lines in one place.
 
-**Status:** Not publicly deployed yet. Run locally to try the current build.
+**Status:** Not publicly deployed. Run it locally.
 
 > Educational project only. Sports betting involves risk. Gamble responsibly.
 
 ---
 
-## Screenshots
+## Run locally
 
-Games (the landing screen after `/` redirects to MLB):
+Needs **Python 3**, **Node.js**, and two terminals. Vite proxies `/api` to port 8000, so you do not set `VITE_API_BASE_URL` for local dev.
 
-![statvista home landing](assets/screenshots/home.png)
+### 1. Clone
 
-WNBA game center — shot chart, team stats, scoring plays, and game flow:
+```bash
+git clone https://github.com/spon7ge/statvista.git
+cd statvista
+```
 
-![WNBA game center](assets/screenshots/wnba-game-center.png)
+### 2. API
 
-MLB game center — live situation, pitch tracking, team stats, and hit chart:
+```bash
+cd backend
+python3 -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+PYTHONPATH=..:. uvicorn app.main:app --reload --port 8000
+```
 
-![MLB game center](assets/screenshots/mlb-game-center.png)
+Optional: a repo-root `.env` with `SUPABASE_DB_URL` (and odds keys if you have them). Games still load from public APIs without it; **Props** and **Legs** need the snapshots in that database.
+
+### 3. Site
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173) — `/` lands on the MLB slate.
+
+API docs: [http://localhost:8000/docs](http://localhost:8000/docs)
 
 ---
 
 ## What it does
 
-statvista is a React + FastAPI research site that turns public sports feeds into readable boards:
+Sidebar: **Props**, **Legs**, **Arbitrage**, **Games**. League pills switch MLB / WNBA (NBA is a placeholder).
 
-- **Games** — dated slates for MLB and WNBA (`/` redirects here); NBA is a placeholder
-- **Props, Legs, Arbitrage** — league-scoped boards (NBA Props/Legs/Arbitrage fall back to MLB)
-- **WNBA** — games with odds, DFS/US prop picks, and full game centers (shot chart, team stats, play-by-play, game flow)
-- **MLB** — dated games with odds, a DFS-anchored prop research table, plus live and final game detail (situation, pitch tracking, hit chart, win probability)
-- **NBA** — games hub scaffolded; historical prop research pipeline still in the repo
+| Page | What you get |
+|------|----------------|
+| **Games** | Dated slates and game centers (lineups, odds, live/final detail) |
+| **Props** | DFS-anchored player lines next to sportsbook odds |
+| **Legs** | MLB only: complete PrizePicks / Underdog entries priced vs sharp books |
+| **Arbitrage** | Shell — not wired yet |
 
-The website read path talks to live upstream APIs (and Supabase odds snapshots). A separate Postgres medallion + quantile-ML path remains for research / batch props — see linked docs below.
+Research copy only — not a lock and not a betting ticket.
+
+How each page is wired: **[md/system-design.md](md/system-design.md)**.
+
+---
+
+## Screenshots
+
+Games (landing after `/` → MLB):
+
+![statvista home landing](assets/screenshots/home.png)
+
+WNBA game center:
+
+![WNBA game center](assets/screenshots/wnba-game-center.png)
+
+MLB game center:
+
+![MLB game center](assets/screenshots/mlb-game-center.png)
 
 ---
 
@@ -42,49 +82,20 @@ The website read path talks to live upstream APIs (and Supabase odds snapshots).
 
 | Source | Used for |
 |--------|----------|
-| [ESPN](https://www.espn.com/) | WNBA scoreboard, standings, futures, game summary / win probability; MLB win-probability bridge |
+| [ESPN](https://www.espn.com/) | WNBA scoreboard, standings, game summary / win probability; MLB win-probability bridge |
 | [stats.wnba.com](https://stats.wnba.com/) | Season leaders, player bio / averages / gamelog |
 | [MLB Stats API](https://statsapi.mlb.com/) | MLB scoreboard and live/final game feeds |
-| ParlayAPI / Sharp | WNBA and MLB sportsbook odds (spreads, totals, player props) |
-| Supabase (Postgres) | PrizePicks / Underdog DFS prop snapshots; research warehouse |
-| [RotoWire](https://www.rotowire.com/) | Projected starters for scheduled WNBA games |
-| [NBA Stats API](https://github.com/swar/nba_api) (`nba_api`) | Historical NBA schedules and box scores (research ingest) |
-| [The Odds API](https://the-odds-api.com) | Historical / research player-prop lines |
-| [Basketball-Reference](https://www.basketball-reference.com/wnba/) | WNBA context tables |
+| ParlayAPI / Sharp | Sportsbook odds (spreads, totals, player props) |
+| Supabase (Postgres) | PrizePicks / Underdog snapshots and other odds tables |
+| [RotoWire](https://www.rotowire.com/) | Projected starters / lineups |
 
 ---
 
 ## Tech stack
 
-| Layer | Tools |
-|-------|-------|
-| Frontend | React 19, TypeScript, Vite, TanStack Query, Tailwind |
-| API | FastAPI, Pydantic, OpenAPI → generated TS types |
-| Live adapters | ESPN, stats.wnba.com, MLB Stats API, Parlay/Sharp, RotoWire |
-| Storage | PostgreSQL (Supabase or local Docker) |
-| Research ML | Python, dbt medallion layers, XGBoost quantile models |
+React 19, Vite, TanStack Query, Tailwind · FastAPI + Pydantic · Postgres (Supabase or local)
 
----
-
-## Try it locally
-
-Deep setup lives next to the code:
-
-- [frontend/README.md](frontend/README.md) — React app (`npm run dev`)
-- [backend/README.md](backend/README.md) — FastAPI read path
-- [docker/README.md](docker/README.md) — Compose profiles (Postgres, API, ETL)
-- [models/README.md](models/README.md) — Prop ML methodology
-
-Minimal loop: start the API, set `VITE_API_BASE_URL` if needed, run the frontend, open `http://localhost:5173`.
-
----
-
-## Further reading
-
-| Doc | Contents |
-|-----|----------|
-| [docs/superpowers/specs/2026-08-02-website-api-system-design.md](docs/superpowers/specs/2026-08-02-website-api-system-design.md) | Page ↔ API map for the live site |
-| [docs/superpowers/specs/2026-08-02-portfolio-readme-design.md](docs/superpowers/specs/2026-08-02-portfolio-readme-design.md) | Why this README is shaped this way |
+More setup: [frontend/README.md](frontend/README.md) · [backend/README.md](backend/README.md) · [docker/README.md](docker/README.md) · [models/README.md](models/README.md)
 
 ---
 
