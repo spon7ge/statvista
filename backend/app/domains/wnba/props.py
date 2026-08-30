@@ -267,6 +267,35 @@ def _index_snapshot_rows(
     return index
 
 
+def index_parlay_api_odds_by_book(rows: list[dict[str, Any]]) -> dict[str, SideIndex]:
+    """Group Parlay API snapshot rows into per-sportsbook SideIndexes."""
+    indexes: dict[str, SideIndex] = {}
+    for row in rows:
+        book = str(row.get("sportsbook") or "").lower().strip()
+        player = str(row.get("player_name") or "").strip()
+        stat_raw = str(row.get("market_type") or "").strip()
+        side = str(row.get("side") or "").lower().strip()
+        line_raw = row.get("line_score")
+        if not book or not player or not stat_raw or side not in _VALID_SIDES or line_raw is None:
+            continue
+        stat_key = canonical_stat_key_from_exchange(stat_raw)
+        if stat_key is None:
+            continue
+        american = _parse_american(row.get("american_price"))
+        if american is None:
+            continue
+        try:
+            line_f = float(line_raw)
+        except (TypeError, ValueError):
+            continue
+        key: SideKey = (match_player_key(player), stat_key, side, _line_key(line_f))
+        indexes.setdefault(book, {})[key] = {
+            "american": american,
+            "changed_at": _as_datetime(row.get("scraped_at")),
+        }
+    return indexes
+
+
 def _row_is_main_flag(row: dict[str, Any]) -> bool | None:
     """Return True/False when ``is_main`` is on the row; None if the key is absent."""
     if "is_main" not in row:
