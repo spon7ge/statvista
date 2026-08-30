@@ -80,7 +80,8 @@ export type ApiMlbPropBoardResponse = Schemas["MlbPropBoardResponse"];
 export type ApiMlbGamePropsResponse = Schemas["MlbGamePropsResponse"];
 export type ApiMlbTeamPreviewResponse = Schemas["MlbTeamPreviewResponse"];
 export type ApiMlbLegsResponse = Schemas["MlbLegsResponse"];
-export type ApiMlbLegsPlay = Schemas["MlbLegsPlay"];
+export type ApiLegsPlay = Schemas["LegsPlay"];
+export type ApiMlbLegsPlay = ApiLegsPlay;
 export type ApiWnbaLegsResponse = Schemas["WnbaLegsResponse"];
 export type ApiLegsResponse = ApiMlbLegsResponse | ApiWnbaLegsResponse;
 

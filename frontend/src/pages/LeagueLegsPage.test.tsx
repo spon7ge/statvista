@@ -6,7 +6,7 @@ import type { components } from "@/shared/lib/api.schema";
 import { LeagueLegsPage } from "./LeagueLegsPage";
 
 type MlbLegsResponse = components["schemas"]["MlbLegsResponse"];
-type MlbLegsPlay = components["schemas"]["MlbLegsPlay"];
+type MlbLegsPlay = components["schemas"]["LegsPlay"];
 
 const mockUseMlbLegs = vi.fn();
 const mockUseWnbaLegs = vi.fn();
