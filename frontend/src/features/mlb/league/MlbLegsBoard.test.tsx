@@ -153,25 +153,16 @@ describe("MlbLegsBoard", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("shows layout-only example cards for ?example=1", () => {
+  it("ignores ?example=1 and shows live entries only", () => {
     renderBoard("/mlb/legs?app=prizepicks&format=power&legs=4&example=1");
 
-    expect(screen.getByText(/layout-only/i)).toBeInTheDocument();
-    expect(screen.getByText(/not live pricing/i)).toBeInTheDocument();
+    expect(screen.queryByText(/layout-only/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/not live pricing/i)).not.toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Entry 1" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Entry 2" })).toBeInTheDocument();
-  });
-
-  it("preserves example=1 when changing format chips", async () => {
-    const user = userEvent.setup();
-    renderBoard("/mlb/legs?app=prizepicks&format=power&legs=4&example=1");
-
-    await user.click(screen.getByRole("radio", { name: "Flex" }));
-
-    expect(screen.getByRole("radio", { name: "Flex" })).toBeChecked();
-    expect(screen.getByText(/layout-only/i)).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Entry 1" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Entry 2" })).toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", { name: "Entry 2" }),
+    ).not.toBeInTheDocument();
+    expect(screen.getAllByText("Aaron Judge").length).toBeGreaterThan(0);
   });
 
   it("offers Flex 6 only — no Flex 3 control", async () => {

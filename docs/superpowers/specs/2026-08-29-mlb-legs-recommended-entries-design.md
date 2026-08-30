@@ -39,7 +39,6 @@ Pricing, coverage, break-evens, and Props/`prop_fair` stay as in the pricer spec
 | API | Same `GET /api/mlb/legs?app=&format=&legs=` |
 | Warning | `flex_same_game_warning` remains on the envelope and is **always false** after packing (cap replaces the old top-6 flat-list warning) |
 | Empty | Valid when no complete card (including PLAY pool `< N` or Flex cap blocking a fill) |
-| Example overlay | `?example=1` still layout-only; fixtures are **cards** of size N, labeled not live |
 
 ## Architecture
 
@@ -101,7 +100,7 @@ Copy: complete entries for the **selected size**; research only; not a lock. Fle
 
 Empty vs stale vs missing snapshot vs loading vs error unchanged in spirit; add copy when PLAY may exist but `entries` is empty: no complete N-pick for this format.
 
-`/wnba/legs` still no fetch. `?example=1`: two example cards of size N (enough unique fixture players); keep `example` on the URL when chips change.
+`/wnba/legs` still no fetch. No layout-only `?example=1` overlay — the board always shows live packed entries.
 
 ## Error handling
 

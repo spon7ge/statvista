@@ -3,10 +3,6 @@ import { useSearchParams } from "react-router-dom";
 import { useMlbLegs } from "@/features/mlb/hooks/useMlbLegs";
 import { bookDisplayName } from "@/features/mlb/lib/mlbBookLabels";
 import type { ApiMlbLegsPlay, ApiMlbLegsResponse } from "@/shared/lib/api";
-import {
-  EXAMPLE_LAYOUT_BANNER,
-  mlbLegsExampleEnvelope,
-} from "./mlbLegsExample";
 
 type LegsApp = "prizepicks" | "underdog";
 type LegsFormat = "power" | "flex" | "standard";
@@ -106,17 +102,16 @@ function emptyCopy(
   return null;
 }
 
-function selectionSearch(
-  next: { app: LegsApp; format: LegsFormat; legs: number },
-  example: boolean,
-): URLSearchParams {
-  const params = new URLSearchParams({
+function selectionSearch(next: {
+  app: LegsApp;
+  format: LegsFormat;
+  legs: number;
+}): URLSearchParams {
+  return new URLSearchParams({
     app: next.app,
     format: next.format,
     legs: String(next.legs),
   });
-  if (example) params.set("example", "1");
-  return params;
 }
 
 function RadioChip({
@@ -192,23 +187,22 @@ function PlayRow({ leg }: { leg: ApiMlbLegsPlay }) {
 export function MlbLegsBoard() {
   const [params, setSearchParams] = useSearchParams();
   const { app, format, legs } = parseSelection(params);
-  const exampleMode = params.get("example") === "1";
   const { data, isLoading, isError } = useMlbLegs({ app, format, legs });
 
   useEffect(() => {
-    const next = selectionSearch({ app, format, legs }, exampleMode);
+    const next = selectionSearch({ app, format, legs });
     if (
       params.get("app") !== app ||
       params.get("format") !== format ||
       params.get("legs") !== String(legs) ||
-      (params.get("example") === "1") !== exampleMode
+      params.has("example")
     ) {
       setSearchParams(next, { replace: true });
     }
-  }, [app, format, legs, exampleMode, params, setSearchParams]);
+  }, [app, format, legs, params, setSearchParams]);
 
   function write(next: { app: LegsApp; format: LegsFormat; legs: number }) {
-    setSearchParams(selectionSearch(next, exampleMode), { replace: true });
+    setSearchParams(selectionSearch(next), { replace: true });
   }
 
   function onAppChange(next: LegsApp) {
@@ -232,12 +226,9 @@ export function MlbLegsBoard() {
   }
 
   const sizeOptions = format === "flex" ? ([6] as const) : POWER_UD_SIZES;
-  const liveEnvelope = isLegsEnvelope(data) ? data : undefined;
-  const envelope = exampleMode
-    ? mlbLegsExampleEnvelope({ app, format, legs })
-    : liveEnvelope;
-  const showLoading = !exampleMode && isLoading && !envelope;
-  const showError = !exampleMode && isError && !envelope;
+  const envelope = isLegsEnvelope(data) ? data : undefined;
+  const showLoading = isLoading && !envelope;
+  const showError = isError && !envelope;
   const emptyMessage = emptyCopy(envelope, app, legs);
 
   return (
@@ -313,12 +304,6 @@ export function MlbLegsBoard() {
         <p className="text-[14px] text-white/50">
           Recommended entries for this size. Research only — not a lock.
         </p>
-
-        {exampleMode ? (
-          <p className="rounded-xl border border-white/15 bg-white/[0.04] px-4 py-3 text-[14px] text-white/70">
-            {EXAMPLE_LAYOUT_BANNER}
-          </p>
-        ) : null}
 
         {envelope ? (
           <div className="space-y-2">

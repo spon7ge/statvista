@@ -142,7 +142,7 @@ describe("LeagueLegsPage", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("shows layout-only example cards on /mlb/legs?example=1", () => {
+  it("ignores ?example=1 on /mlb/legs and shows live entries only", () => {
     mockUseMlbLegs.mockReturnValue({
       data: envelope(),
       isLoading: false,
@@ -150,8 +150,10 @@ describe("LeagueLegsPage", () => {
       isFetched: true,
     });
     renderPage("/mlb/legs?example=1");
-    expect(screen.getByText(/layout-only/i)).toBeInTheDocument();
+    expect(screen.queryByText(/layout-only/i)).not.toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Entry 1" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Entry 2" })).toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", { name: "Entry 2" }),
+    ).not.toBeInTheDocument();
   });
 });

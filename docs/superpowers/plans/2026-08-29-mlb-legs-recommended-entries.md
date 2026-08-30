@@ -11,6 +11,8 @@
 **Spec:** `docs/superpowers/specs/2026-08-29-mlb-legs-recommended-entries-design.md`  
 Pricing unchanged: `docs/superpowers/specs/2026-08-29-mlb-legs-pricer-design.md`
 
+The shipped `?example=1` layout overlay was later removed; `/mlb/legs` always shows live packed entries.
+
 ## Global Constraints
 
 - Product name: **statvista**. Research copy only (no locks / guaranteed EV).
