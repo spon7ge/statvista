@@ -2,19 +2,19 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from app.domains.mlb.schemas_legs import MlbLegsPlay
+from app.domains.betting.schemas_legs import LegsPlay
 
 
 @dataclass(frozen=True)
 class PackablePlay:
     player_key: str
-    play: MlbLegsPlay
+    play: LegsPlay
 
 
 @dataclass(frozen=True)
 class PackedEntry:
     rank: int
-    legs: list[MlbLegsPlay]
+    legs: list[LegsPlay]
 
 
 def pack_entries(

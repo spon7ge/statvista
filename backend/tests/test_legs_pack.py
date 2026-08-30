@@ -1,5 +1,16 @@
 from app.domains.betting.legs_pack import PackablePlay, pack_entries
-from app.domains.mlb.schemas_legs import MlbLegsPlay
+from app.domains.betting.schemas_legs import LegsPlay, LegsResponse
+from app.domains.mlb.schemas_legs import MlbLegsPlay, MlbLegsResponse
+from app.domains.wnba.schemas_legs import WnbaLegsPlay, WnbaLegsResponse
+
+
+def test_league_schemas_are_subclasses_of_shared_legs():
+    assert issubclass(MlbLegsPlay, LegsPlay)
+    assert issubclass(WnbaLegsPlay, LegsPlay)
+    assert issubclass(MlbLegsResponse, LegsResponse)
+    assert issubclass(WnbaLegsResponse, LegsResponse)
+    assert set(LegsResponse.model_fields) == set(MlbLegsResponse.model_fields)
+    assert set(LegsResponse.model_fields) == set(WnbaLegsResponse.model_fields)
 
 
 def _item(
