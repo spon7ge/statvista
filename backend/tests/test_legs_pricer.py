@@ -233,3 +233,40 @@ def test_no_sharp_is_insufficient_sharp():
     result = _price(quotes)
     assert isinstance(result, RejectResult)
     assert result.reason == "insufficient_sharp"
+
+
+# Under is the favorite: Over +200 / Under -250, hold ~0.047, fair over ~0.318.
+_DOG_OVER, _DOG_UNDER = 200, -250
+
+
+def _dog_trio():
+    return [
+        _q("pinnacle", _DOG_OVER, _DOG_UNDER),
+        _q("draftkings", _DOG_OVER, _DOG_UNDER),
+        _q("betmgm", _DOG_OVER, _DOG_UNDER),
+    ]
+
+
+def test_offered_over_on_under_favorite_is_below_threshold_not_under_play():
+    result = _price(_dog_trio(), offered_side="over")
+    assert isinstance(result, RejectResult)
+    assert result.reason == "below_threshold"
+
+
+def test_offered_over_longshot_does_not_raise():
+    result = _price(_dog_trio(), offered_side="over")
+    assert isinstance(result, RejectResult)
+    assert result.reason == "below_threshold"
+
+
+def test_omitted_offered_side_still_plays_under_when_under_is_favorite():
+    result = _price(_dog_trio())
+    assert isinstance(result, PlayResult)
+    assert result.side == "under"
+    assert result.fair_prob > 0.5
+
+
+def test_offered_over_still_plays_when_over_is_favorite():
+    result = _price(_fav_trio(), offered_side="over")
+    assert isinstance(result, PlayResult)
+    assert result.side == "over"

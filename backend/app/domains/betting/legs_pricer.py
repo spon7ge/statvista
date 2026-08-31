@@ -140,6 +140,7 @@ def price_line(
     format: str,
     legs: int,
     payout_multiplier: float | None,
+    offered_side: Literal["over", "under"] | None = None,
 ) -> PriceResult:
     included: list[tuple[BookQuote, float, float]] = []
     excluded: list[str] = []
@@ -168,8 +169,14 @@ def price_line(
     p_over = 1.0 / (1.0 + math.exp(-fair_logit))
     p_under = 1.0 - p_over
 
-    if p_over > 0.5:
+    if offered_side == "over":
         side: Literal["over", "under"] = "over"
+        fair_prob = p_over
+    elif offered_side == "under":
+        side = "under"
+        fair_prob = p_under
+    elif p_over > 0.5:
+        side = "over"
         fair_prob = p_over
     elif p_under > 0.5:
         side = "under"
@@ -177,7 +184,7 @@ def price_line(
     else:
         return RejectResult(reason="below_threshold")
 
-    if fair_prob < 0.35:
+    if offered_side is None and fair_prob < 0.35:
         raise RuntimeError("gated fair_prob < 0.35 is unreachable under favorite-only")
 
     p_be = leg_break_even(base_break_even(app, format, legs), payout_multiplier)
