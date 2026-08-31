@@ -492,6 +492,9 @@ async def get_mlb_legs(*, app: str, format: str, legs: int) -> MlbLegsResponse:
             line=line_f,
             now=now,
         )
+        offered_side = (
+            "over" if app == "underdog" and stat_key == "home_runs" else None
+        )
         result = price_line(
             quotes=quotes,
             dfs_line=line_f,
@@ -499,6 +502,7 @@ async def get_mlb_legs(*, app: str, format: str, legs: int) -> MlbLegsResponse:
             format=format,
             legs=legs,
             payout_multiplier=bucket["payout_multiplier"],
+            offered_side=offered_side,
         )
         if isinstance(result, RejectResult):
             rejected_counts[result.reason] += 1

@@ -3,7 +3,7 @@
 Date: 2026-08-29  
 Status: Approved  
 Product: statvista  
-Related: empty Legs shells (`/mlb/legs`, `/wnba/legs`); MLB props assembly (`mlb.props`, `prop_fair`); research table (`GET /api/mlb/props/board`)
+Related: empty Legs shells (`/mlb/legs`, `/wnba/legs`); MLB props assembly (`mlb.props`, `prop_fair`); research table (`GET /api/mlb/props/board`); Underdog HR Over-only amendment (`docs/superpowers/specs/2026-08-31-mlb-legs-underdog-hr-over-only-design.md`)
 
 ## Goal
 
@@ -42,7 +42,7 @@ This is not a tipster feed and not a ranked copy of Props. Props keeps `prop_fai
 | Default URL | `?app=prizepicks&format=power&legs=4` |
 | DFS variants | PrizePicks `odds_type` **standard** only. Goblin/demon dropped, not priced |
 | Underdog modifier | `p_be = base_p_be / min(payout_multiplier, 1.0)`. Raw `m` stays on the audit. Never invert `m` into an implied probability |
-| Grain | **One candidate per `(player, stat, line)`**. Gate the side with `fair_prob > 0.5` only. `legs_evaluated` counts **lines**, not sides |
+| Grain | **One candidate per `(player, stat, line)`**. Gate the side with `fair_prob > 0.5` only **except** Underdog `home_runs` (always Over — see 2026-08-31 amendment). `legs_evaluated` counts **lines**, not sides |
 | Locked games | Server drops live/final games using today’s MLB scoreboard |
 | Stake | Extend ProphetX/Novig latest-snapshot SELECT to include `stake` |
 | Consensus average | **Log-odds** (logit) weighted mean, then sigmoid — not raw probability |
@@ -50,7 +50,7 @@ This is not a tipster feed and not a ranked copy of Props. Props keeps `prop_fai
 | DFS snapshot age | If seed age **> 60 minutes**, do **not** emit PLAY. Envelope `dfs_snapshot_age_minutes` + warning `dfs_snapshot_stale` |
 | Disagreement | `max−min` over included books with **weight ≥ 2.0** only (exclude BetMGM/Caesars from the trigger). If > 4.0 pts, +1.5 on that leg’s effective margin |
 | Hold rail | Exclude a book if two-way hold **> 12%** (`hold_too_high`) |
-| Longshot rail | **Not** a `rejected_summary` key. Internal assertion: gated `fair_prob < 0.35` must not occur (favorite-only). Same treatment as `both_sides_cleared` |
+| Longshot rail | **Not** a `rejected_summary` key. Internal assertion: gated `fair_prob < 0.35` must not occur (favorite-only). Same treatment as `both_sides_cleared`. UD HR Over skips the 0.35 assertion and rejects `below_threshold`. |
 | Cache | In-process **5 minutes** per `(app, format, legs)`. Frontend `staleTime` **5 minutes**. Show `generated_at` in the UI |
 | Dedupe | One row per `(player, stat, line)`. Cross-platform (PP vs UD) is separate requests |
 | Sort | `margin_pts` desc, then `fair_prob` desc, then `player` (deterministic; no jitter across 5-min refreshes) |
@@ -75,7 +75,7 @@ mlb.legs.get_mlb_legs()
         │    sharp/exchange >45 min; supporting >120 min
         ├─ drop live/final games
         └─ legs_pricer per (player, stat, line)
-              favorite side only → PLAY or one reject reason
+              favorite side only (UD home_runs: Over only) → PLAY or one reject reason
 ```
 
 WNBA `/wnba/legs` does not call this API.
@@ -88,7 +88,7 @@ Pure module: `backend/app/domains/betting/legs_pricer.py` (no I/O). Unit-tested.
 
 One DFS **standard** **line**: player, team, matchup, market, line, platform, Underdog `payout_multiplier` (default **1.0** if missing; skip candidate if multiplier `≤ 0`).
 
-Build one two-way consensus `p_over` at that line (log-odds). Set `p_under = 1 - p_over`. **Gated side** = Over if `p_over > 0.5`, Under if `p_under > 0.5`. If `p_over == 0.5`, reject `below_threshold` (no PLAY). Do not evaluate both sides as separate candidates.
+Build one two-way consensus `p_over` at that line (log-odds). Set `p_under = 1 - p_over`. **Gated side** = Over if `p_over > 0.5`, Under if `p_under > 0.5`. If `p_over == 0.5`, reject `below_threshold` (no PLAY). Do not evaluate both sides as separate candidates. Exception: Underdog `home_runs` always evaluates Over (`offered_side="over"`) — see 2026-08-31 amendment.
 
 `both_sides_cleared` and gated `fair_prob < 0.35` are **internal assertions** only. If either fires in v1, fail the test / log; **do not** expose them in `rejected_summary` or the UI. Favorite-only gating makes both unreachable; leftover favorite-longshot bias **understates** the favorite, so v1 is conservative on PLAY (recall, not false precision).
 

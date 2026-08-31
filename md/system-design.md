@@ -154,7 +154,7 @@ LeagueLegsPage (MLB)
        ├─ abort PLAY if DFS snapshot age > 60 min
        ├─ exact-line two-ways: PX/Novig/Pinnacle (alts) + Parlay DK/FD/MGM/Caesars
        ├─ drop live/final games; attach gamePk
-       ├─ legs_pricer (log-odds, coverage gates, favorite side only)
+       ├─ legs_pricer (log-odds, coverage gates, favorite side only; UD home_runs Over only)
        └─ legs_pack (greedy complete-N cards; Flex max 2 per game_id; unpacked_remainder)
   → entries[] cards or threshold/stale/empty
 

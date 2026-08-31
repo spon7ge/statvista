@@ -47,6 +47,56 @@ def _pp(player: str, stat: str, line: float, *, odds_type: str = "standard", scr
     }
 
 
+def _ud(player: str, stat: str, line: float, *, scraped_at=None, payout_multiplier: float = 1.0):
+    return {
+        "player_name": player,
+        "stat_name": stat,
+        "line_score": line,
+        "side": "over",
+        "payout_multiplier": payout_multiplier,
+        "scraped_at": scraped_at if scraped_at is not None else _fresh(),
+    }
+
+
+def _under_fav_books(player: str, stat_px: str, stat_pin: str, line: float):
+    """Pinnacle + DK + MGM with Under as the favorite (swap of _play_books prices)."""
+    return {
+        "px": [],
+        "novig": [],
+        "pin": _two_way_rows(
+            player=player,
+            stat=stat_pin,
+            line=line,
+            over=_FAV_UNDER,
+            under=_FAV_OVER,
+            market_field="market_type",
+            stake=None,
+        ),
+        "parlay": (
+            _two_way_rows(
+                player=player,
+                stat=stat_pin,
+                line=line,
+                over=_FAV_UNDER,
+                under=_FAV_OVER,
+                market_field="market_type",
+                stake=None,
+                sportsbook="draftkings",
+            )
+            + _two_way_rows(
+                player=player,
+                stat=stat_pin,
+                line=line,
+                over=_FAV_UNDER,
+                under=_FAV_OVER,
+                market_field="market_type",
+                stake=None,
+                sportsbook="betmgm",
+            )
+        ),
+    }
+
+
 def _side_row(
     *,
     player: str,
@@ -641,3 +691,52 @@ def test_two_way_at_line_pairs_over_and_under():
         )
         is None
     )
+
+
+@pytest.mark.asyncio
+async def test_underdog_home_runs_do_not_play_under(legs_io):
+    from app.domains.mlb.legs import get_mlb_legs
+
+    legs_io["ud"] = [
+        _ud("Aaron Judge", "home_runs", 0.5),
+        _ud("Giancarlo Stanton", "home_runs", 0.5),
+    ]
+    judge = _under_fav_books("Aaron Judge", "home_runs", "batter_home_runs", 0.5)
+    stanton = _under_fav_books("Giancarlo Stanton", "home_runs", "batter_home_runs", 0.5)
+    legs_io["pin"] = judge["pin"] + stanton["pin"]
+    legs_io["parlay"] = judge["parlay"] + stanton["parlay"]
+    legs_io["roster"] = _roster(("Aaron Judge", "NYY"), ("Giancarlo Stanton", "NYY"))
+    legs_io["scoreboard"] = _scoreboard(_game("111", "NYY", "BOS", "scheduled"))
+
+    body = await get_mlb_legs(app="underdog", format="standard", legs=2)
+
+    packed = _packed_plays(body)
+    assert all(not (leg.market == "Home Runs" and leg.side == "under") for leg in packed)
+    assert body.entries == []
+    assert body.legs_evaluated == 2
+    assert body.rejected_summary.below_threshold == 2
+    _assert_identity(body)
+
+
+@pytest.mark.asyncio
+async def test_prizepicks_home_runs_can_still_play_under(legs_io):
+    from app.domains.mlb.legs import get_mlb_legs
+
+    legs_io["pp"] = [
+        _pp("Aaron Judge", "Home Runs", 0.5),
+        _pp("Giancarlo Stanton", "Home Runs", 0.5),
+    ]
+    judge = _under_fav_books("Aaron Judge", "home_runs", "batter_home_runs", 0.5)
+    stanton = _under_fav_books("Giancarlo Stanton", "home_runs", "batter_home_runs", 0.5)
+    legs_io["pin"] = judge["pin"] + stanton["pin"]
+    legs_io["parlay"] = judge["parlay"] + stanton["parlay"]
+    legs_io["roster"] = _roster(("Aaron Judge", "NYY"), ("Giancarlo Stanton", "NYY"))
+    legs_io["scoreboard"] = _scoreboard(_game("111", "NYY", "BOS", "scheduled"))
+
+    body = await get_mlb_legs(app="prizepicks", format="power", legs=2)
+
+    packed = _packed_plays(body)
+    assert len(body.entries) == 1
+    assert {leg.side for leg in packed} == {"under"}
+    assert all(leg.market == "Home Runs" for leg in packed)
+    _assert_identity(body)
