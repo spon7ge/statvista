@@ -40,4 +40,6 @@ data/cache/
 # PrizePicks browser session (auto-saved by scrapers; do not commit)
 **/.session_cookie.txt
 **/.playwright_storage.json
-data/props/prizepicks/.pw_profile/
+
+# scraper snapshot dumps (local only)
+data/props/
