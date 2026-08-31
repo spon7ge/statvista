@@ -82,7 +82,7 @@ wnba.legs.get_wnba_legs()
 | `wnba.props.index_parlay_api_odds_by_book` | Same contract as MLB’s helper in `mlb.props`; basketball stat keys; snapshot rows only |
 | `GET /api/wnba/legs` | Same query and 422 rules as `GET /api/mlb/legs` |
 | `useWnbaLegs` | Lives next to other WNBA hooks; query key `["wnba","legs",app,format,legs]`; `staleTime` 5 min |
-| `features/legs/LegsBoard` | Move today’s `MlbLegsBoard` here. Accepts the envelope + loading/error from the page. Chrome copy unchanged except `slate` comes from the envelope |
+| `features/legs/LegsBoard` | Shared board. Chrome is format/size chips + chip-row `breakeven`; vertical PLAY cards. Spec: `docs/superpowers/specs/2026-08-31-legs-board-vertical-cards-design.md` |
 
 `LeagueLegsPage`: `/mlb/legs` calls `useMlbLegs` and renders `LegsBoard`; `/wnba/legs` calls `useWnbaLegs` and renders the same `LegsBoard`; NBA path does not fetch.
 
@@ -131,7 +131,7 @@ OpenAPI: add `/api/wnba/legs` to `REQUIRED_WNBA_PATHS`; regen frontend types. Up
 
 `/wnba/legs` fetches `useWnbaLegs`. Default `?app=prizepicks&format=power&legs=4`, `replace: true`.
 
-Shared board: PrizePicks \| Underdog; Power 2–6 or Flex 6 (no Flex 3); UD Standard 2–6. Packed **entries** cards only. Expand = per-book audit. Show `generated_at`. PrizePicks: envelope `base_break_even`. Underdog: packed `break_even_min`–`break_even_max`. Non-monotonicity sentence follows the **selected app**.
+Shared board: PrizePicks \| Underdog; Power 2–6 or Flex 6 (no Flex 3); UD Standard 2–6. Packed **entries** as vertical PLAY cards (headshot, matchup, name, market). Click expands the book audit. Chip-row **`breakeven: {base_break_even}`**. No research/timestamp/payouts notes. Spec: `docs/superpowers/specs/2026-08-31-legs-board-vertical-cards-design.md`.
 
 Empty copy: stale DFS vs missing snapshot vs no complete N-pick vs loading vs error — same as MLB.
 
@@ -156,7 +156,7 @@ Empty copy: stale DFS vs missing snapshot vs no complete N-pick vs loading vs er
 
 - **Pricer / payouts / packer:** existing tests unchanged; no new pricer behavior.
 - **Assembly / route:** default `prizepicks/power/4` envelope; 422 on flex/3 and boosted; DFS age > 60 skips PLAY with `lines_seeded > 0`; empty snapshot warnings; exact-line alts pair, off-line quotes do not; live/halftime/final dropped, scheduled kept; PX stake required, Novig null stake prices; identity; `coverage_funnel_ratio` when evaluated > 0; Flex 6 max 2 per `game_id`; `slate` starts with `WNBA`; WNBA path never reads `league=mlb` snapshots; MLB route tests still pass.
-- **UI:** `/wnba/legs` calls WNBA hook not MLB; `/mlb/legs` still MLB-only; Flex 3 absent; `generated_at` visible; UD min–max BE; empty vs stale vs missing snapshot; NBA empty.
+- **UI:** `/wnba/legs` calls WNBA hook not MLB; `/mlb/legs` still MLB-only; Flex 3 absent; chip-row `breakeven`; vertical PLAY cards; empty vs stale vs missing snapshot; NBA empty.
 - **Contract:** OpenAPI includes `/api/wnba/legs`; `md/system-design.md` updated.
 
 ## Success criteria
@@ -167,7 +167,7 @@ Empty copy: stale DFS vs missing snapshot vs no complete N-pick vs loading vs er
 4. Identity equation holds with `unpacked_remainder`.
 5. Props / `prop_fair` / `/mlb/legs` product behavior unchanged.
 6. NBA Legs stays empty; WNBA Legs does not call `GET /api/mlb/legs`.
-7. `generated_at` shown; server + client cache 5 minutes, caches not shared across leagues.
+7. Server + client cache 5 minutes, caches not shared across leagues.
 
 ## Later (not this spec)
 

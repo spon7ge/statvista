@@ -27,9 +27,7 @@ def base_break_even(app: str, format: str, legs: int) -> float:
 
 def base_required_margin_pts(app: str, format: str, legs: int) -> float:
     validate_legs_query(app, format, legs)
-    if app == "prizepicks" and format == "flex":
-        return 3.0
-    return 4.0
+    return 0.0
 
 
 def leg_break_even(base_p_be: float, payout_multiplier: float | None) -> float:

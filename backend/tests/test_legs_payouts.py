@@ -49,6 +49,6 @@ def test_clamp_boost_keeps_base_discount_raises():
 
 
 def test_margin_bases():
-    assert base_required_margin_pts("prizepicks", "power", 4) == 4.0
-    assert base_required_margin_pts("prizepicks", "flex", 6) == 3.0
-    assert base_required_margin_pts("underdog", "standard", 5) == 4.0
+    assert base_required_margin_pts("prizepicks", "power", 4) == 0.0
+    assert base_required_margin_pts("prizepicks", "flex", 6) == 0.0
+    assert base_required_margin_pts("underdog", "standard", 5) == 0.0

@@ -2,7 +2,10 @@ import { type ReactNode, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { CHROME_PAGE_RIGHT, CHROME_PAGE_X } from "@/app/layouts/chrome";
 import { MatchupsHeader } from "@/features/basketball/league/MatchupsHeader";
-import { MatchupsPanel } from "@/features/basketball/league/MatchupsPanel";
+import {
+  MatchupsDateNav,
+  MatchupsPanel,
+} from "@/features/basketball/league/MatchupsPanel";
 import {
   isValidEtDate,
   parseMatchupDateParam,
@@ -18,13 +21,19 @@ type LeagueMatchupsPageProps = {
   league: LeagueSlug;
 };
 
-function MatchupsShell({ children }: { children: ReactNode }) {
+function MatchupsShell({
+  children,
+  dateNav,
+}: {
+  children: ReactNode;
+  dateNav?: ReactNode;
+}) {
   return (
     <div className="space-y-0 pb-8">
       <section
         className={`max-w-6xl space-y-6 pb-16 sm:pb-20 ${CHROME_PAGE_X} ${CHROME_PAGE_RIGHT}`}
       >
-        <MatchupsHeader />
+        <MatchupsHeader dateNav={dateNav} />
         {children}
       </section>
     </div>
@@ -68,16 +77,21 @@ function WnbaMatchupsPage() {
   };
 
   return (
-    <MatchupsShell>
+    <MatchupsShell
+      dateNav={
+        <MatchupsDateNav
+          selectedDate={selectedDate}
+          todayDate={today}
+          onPrevDay={() => setDate(shiftEtDate(selectedDate, -1))}
+          onNextDay={() => setDate(shiftEtDate(selectedDate, 1))}
+          onGoToday={() => setDate(today)}
+        />
+      }
+    >
       <MatchupsPanel
         games={matchupGames}
         isLoading={isLoading}
         isError={hasNeverLoaded}
-        selectedDate={selectedDate}
-        todayDate={today}
-        onPrevDay={() => setDate(shiftEtDate(selectedDate, -1))}
-        onNextDay={() => setDate(shiftEtDate(selectedDate, 1))}
-        onGoToday={() => setDate(today)}
       />
     </MatchupsShell>
   );
@@ -104,16 +118,21 @@ function MlbMatchupsPage() {
   };
 
   return (
-    <MatchupsShell>
+    <MatchupsShell
+      dateNav={
+        <MatchupsDateNav
+          selectedDate={selectedDate}
+          todayDate={today}
+          onPrevDay={() => setDate(shiftEtDate(selectedDate, -1))}
+          onNextDay={() => setDate(shiftEtDate(selectedDate, 1))}
+          onGoToday={() => setDate(today)}
+        />
+      }
+    >
       <MatchupsPanel
         games={matchupGames}
         isLoading={isLoading}
         isError={hasNeverLoaded}
-        selectedDate={selectedDate}
-        todayDate={today}
-        onPrevDay={() => setDate(shiftEtDate(selectedDate, -1))}
-        onNextDay={() => setDate(shiftEtDate(selectedDate, 1))}
-        onGoToday={() => setDate(today)}
       />
     </MatchupsShell>
   );

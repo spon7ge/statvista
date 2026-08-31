@@ -69,6 +69,15 @@ describe("LeagueMatchupsPage date nav", () => {
     ).not.toHaveClass("mx-auto");
   });
 
+  it("puts the Today control on the same row as league pills", () => {
+    renderAt("/mlb/matchups");
+    const header = screen.getByTestId("matchups-header");
+    expect(
+      within(header).getByRole("navigation", { name: "Leagues" }),
+    ).toBeInTheDocument();
+    expect(within(header).getByRole("button", { name: "Today" })).toBeInTheDocument();
+  });
+
   it("writes ?date when moving off today and clears it returning", async () => {
     const user = userEvent.setup();
     renderAt("/wnba/matchups");

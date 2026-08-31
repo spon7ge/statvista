@@ -1,11 +1,11 @@
+import { type ReactNode } from "react";
 import { CHROME_TITLE_TOP } from "@/app/layouts/chrome";
 import { LeagueSectionSwitcher } from "@/features/home/LeagueSectionSwitcher";
 
 /**
- * Games title + horizontal league pills (same chrome as Props).
- * Date nav stays on the slate panel under this header.
+ * Games title + league pills. Date nav sits on the same row as the pills.
  */
-export function MatchupsHeader() {
+export function MatchupsHeader({ dateNav }: { dateNav?: ReactNode }) {
   return (
     <div
       data-testid="matchups-header"
@@ -16,7 +16,10 @@ export function MatchupsHeader() {
           Games
         </h1>
       </div>
-      <LeagueSectionSwitcher section="Games" />
+      <div className="flex items-center justify-between gap-4">
+        <LeagueSectionSwitcher section="Games" />
+        {dateNav}
+      </div>
     </div>
   );
 }

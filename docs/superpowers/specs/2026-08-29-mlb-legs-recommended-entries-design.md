@@ -94,9 +94,7 @@ OpenAPI regen (`REQUIRED_MLB_PATHS` already lists `/api/mlb/legs`). Update `md/s
 
 ## UI
 
-`/mlb/legs` MLB board: existing app / format / size chips. One block per entry (“Entry 1” …), N rows each, same expand audit as today. Do not render a list outside cards.
-
-Copy: complete entries for the **selected size**; research only; not a lock. Flex 6: no same-game banner (impossible under the cap).
+`/mlb/legs` MLB board: existing app / format / size chips; **breakeven: x%** on that row. One block per entry (“Entry 1” …), N vertical PLAY cards (headshot, matchup, name, market line). Click expands the same book audit. Do not render a list outside cards. Spec: `docs/superpowers/specs/2026-08-31-legs-board-vertical-cards-design.md`.
 
 Empty vs stale vs missing snapshot vs loading vs error unchanged in spirit; add copy when PLAY may exist but `entries` is empty: no complete N-pick for this format.
 

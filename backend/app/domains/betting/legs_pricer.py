@@ -23,8 +23,6 @@ SHARP_MAX_AGE = 45.0
 SUPPORT_MAX_AGE = 120.0
 HOLD_MAX = 0.12
 HOLD_MULT_MAX = 0.05
-DISAGREE_PTS = 4.0
-DISAGREE_ADDER = 1.5
 
 
 @dataclass(frozen=True)
@@ -114,6 +112,14 @@ def _max_age(book: str) -> float:
     return SHARP_MAX_AGE if book in SHARP else SUPPORT_MAX_AGE
 
 
+def exchange_stake_blocks(quote: BookQuote) -> bool:
+    """ProphetX still needs sized two-way stake. Novig no longer stores stake (NULL)."""
+    if quote.book != "prophetx":
+        return False
+    so, su = quote.stake_over, quote.stake_under
+    return so is None or su is None or so <= 0 or su <= 0
+
+
 def _try_fair_over(quote: BookQuote, dfs_line: float) -> float | None:
     if quote.line != dfs_line:
         return None
@@ -121,10 +127,8 @@ def _try_fair_over(quote: BookQuote, dfs_line: float) -> float | None:
         return None
     if quote.age_minutes > _max_age(quote.book):
         return None
-    if quote.book in EXCHANGES:
-        so, su = quote.stake_over, quote.stake_under
-        if so is None or su is None or so <= 0 or su <= 0:
-            return None
+    if exchange_stake_blocks(quote):
+        return None
     p_over = american_to_prob(quote.over)
     p_under = american_to_prob(quote.under)
     if p_over + p_under - 1.0 > HOLD_MAX:
@@ -193,9 +197,8 @@ def price_line(
 
     heavy_ps = [p for _, p, w in included if w >= 2.0]
     book_disagreement_pts = (max(heavy_ps) - min(heavy_ps)) * 100.0
+    # Break-even only: no extra pts gate and disagreement does not raise it.
     required = base_required_margin_pts(app, format, legs)
-    if book_disagreement_pts > DISAGREE_PTS:
-        required = required + DISAGREE_ADDER
     margin_pts = (fair_prob - p_be) * 100.0
     if margin_pts < required:
         return RejectResult(reason="below_threshold")

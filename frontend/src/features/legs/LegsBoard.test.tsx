@@ -30,6 +30,7 @@ function play(over: Partial<MlbLegsPlay> = {}): MlbLegsPlay {
     margin_pts: 5.0,
     book_disagreement_pts: 4.5,
     payout_multiplier: 1,
+    headshot_url: null,
     books_used: [
       {
         book: "pinnacle",
@@ -117,8 +118,12 @@ describe("LegsBoard", () => {
     renderBoard();
     expect(screen.getByRole("heading", { name: "Entry 1" })).toBeInTheDocument();
     expect(screen.getAllByText("Aaron Judge").length).toBeGreaterThan(0);
-    expect(screen.getByText(/Generated/)).toBeInTheDocument();
-    expect(screen.getByText(/research only/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Generated/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/research only/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Assumed payouts/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/PLAY break-even/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/not a parlay/i)).not.toBeInTheDocument();
+    expect(screen.getByText("breakeven: 56.2%")).toBeInTheDocument();
     expect(document.getElementById("legs-prizepicks-tab")).toBeInTheDocument();
     expect(screen.getByRole("radio", { name: "Power" })).toHaveAttribute(
       "name",
@@ -231,11 +236,12 @@ describe("LegsBoard", () => {
     expect(audit).toHaveTextContent(/weight 3/i);
   });
 
-  it("shows Underdog PLAY chrome as break_even_min–break_even_max", () => {
+  it("shows table breakeven on the chip row, not a min–max PLAY range", () => {
     mockUseLegs.mockReturnValue({
       data: envelope({
         app: "underdog",
         format: "standard",
+        base_break_even: 0.541,
         break_even_min: 0.562,
         break_even_max: 0.625,
       }),
@@ -245,8 +251,45 @@ describe("LegsBoard", () => {
     });
     renderBoard("/mlb/legs?app=underdog&format=standard&legs=4");
 
+    expect(screen.getByText("breakeven: 54.1%")).toBeInTheDocument();
+    expect(screen.queryByText(/PLAY break-even/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/hardest Underdog/i)).not.toBeInTheDocument();
+  });
+
+  it("shows a vertical PLAY card with photo, matchup, and market line", () => {
+    mockUseLegs.mockReturnValue({
+      data: envelope({
+        entries: [
+          {
+            rank: 1,
+            legs: [
+              play({
+                rank: 1,
+                player: "Aaron Judge",
+                matchup: "NYY @ BOS",
+                market: "Stolen Bases",
+                dfs_line: 0.5,
+                side: "under",
+                fair_prob: 0.932,
+                margin_pts: 39.1,
+                headshot_url: "https://example.test/judge.png",
+              }),
+            ],
+          },
+        ],
+      }),
+      isLoading: false,
+      isError: false,
+      isFetched: true,
+    });
+    renderBoard();
+
+    const photo = screen.getByRole("img", { name: "Aaron Judge" });
+    expect(photo).toHaveAttribute("src", "https://example.test/judge.png");
+    expect(screen.getByText("NYY @ BOS")).toBeInTheDocument();
+    expect(screen.getByText("Aaron Judge")).toBeInTheDocument();
     expect(
-      screen.getByText("PLAY break-even 56.2%–62.5%"),
+      screen.getByText("Stolen Bases 0.5 Under 93.2% +39.1"),
     ).toBeInTheDocument();
   });
 });

@@ -4,16 +4,56 @@ import { formatMatchupNavLabel } from "@/shared/lib/matchupSlateDate";
 import { MatchupGameCard } from "./MatchupGameCard";
 import type { MatchupGame } from "./types";
 
-type MatchupsPanelProps = {
-  games: MatchupGame[];
-  isLoading?: boolean;
-  isError?: boolean;
+type MatchupsDateNavProps = {
   selectedDate: string;
   todayDate: string;
   onPrevDay: () => void;
   onNextDay: () => void;
   onGoToday: () => void;
 };
+
+type MatchupsPanelProps = {
+  games: MatchupGame[];
+  isLoading?: boolean;
+  isError?: boolean;
+};
+
+export function MatchupsDateNav({
+  selectedDate,
+  todayDate,
+  onPrevDay,
+  onNextDay,
+  onGoToday,
+}: MatchupsDateNavProps) {
+  const navLabel = formatMatchupNavLabel(selectedDate, todayDate);
+  return (
+    <div className="flex shrink-0 items-center gap-2">
+      <button
+        type="button"
+        aria-label="Previous day"
+        onClick={onPrevDay}
+        className="flex size-8 items-center justify-center rounded-md border border-white/10 text-white/70 hover:bg-white/5"
+      >
+        <ChevronLeft aria-hidden="true" className="size-4" strokeWidth={1.75} />
+      </button>
+      <button
+        type="button"
+        onClick={onGoToday}
+        className="min-w-14 text-center text-sm font-medium text-white/55 hover:text-white/80"
+      >
+        {navLabel}
+      </button>
+      <button
+        type="button"
+        aria-label="Next day"
+        onClick={onNextDay}
+        className="flex size-8 items-center justify-center rounded-md border border-white/10 text-white/70 hover:bg-white/5"
+      >
+        <ChevronRight aria-hidden="true" className="size-4" strokeWidth={1.75} />
+      </button>
+    </div>
+  );
+}
 
 function MatchupSkeletons() {
   return (
@@ -56,46 +96,12 @@ export function MatchupsPanel({
   games,
   isLoading = false,
   isError = false,
-  selectedDate,
-  todayDate,
-  onPrevDay,
-  onNextDay,
-  onGoToday,
 }: MatchupsPanelProps) {
-  const navLabel = formatMatchupNavLabel(selectedDate, todayDate);
   const live = games.filter((game) => isInProgressStatus(game.status));
   const rest = games.filter((game) => !isInProgressStatus(game.status));
 
   return (
     <section className="space-y-8">
-      <header>
-        <div className="flex items-center justify-end gap-2">
-          <button
-            type="button"
-            aria-label="Previous day"
-            onClick={onPrevDay}
-            className="flex size-8 items-center justify-center rounded-md border border-white/10 text-white/70 hover:bg-white/5"
-          >
-            <ChevronLeft aria-hidden="true" className="size-4" strokeWidth={1.75} />
-          </button>
-          <button
-            type="button"
-            onClick={onGoToday}
-            className="min-w-14 text-center text-sm font-medium text-white/55 hover:text-white/80"
-          >
-            {navLabel}
-          </button>
-          <button
-            type="button"
-            aria-label="Next day"
-            onClick={onNextDay}
-            className="flex size-8 items-center justify-center rounded-md border border-white/10 text-white/70 hover:bg-white/5"
-          >
-            <ChevronRight aria-hidden="true" className="size-4" strokeWidth={1.75} />
-          </button>
-        </div>
-      </header>
-
       {games.length === 0 ? (
         isLoading ? (
           <MatchupSkeletons />

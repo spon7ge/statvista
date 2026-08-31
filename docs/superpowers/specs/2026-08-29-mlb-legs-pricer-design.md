@@ -42,15 +42,15 @@ This is not a tipster feed and not a ranked copy of Props. Props keeps `prop_fai
 | Default URL | `?app=prizepicks&format=power&legs=4` |
 | DFS variants | PrizePicks `odds_type` **standard** only. Goblin/demon dropped, not priced |
 | Underdog modifier | `p_be = base_p_be / min(payout_multiplier, 1.0)`. Raw `m` stays on the audit. Never invert `m` into an implied probability |
-| Grain | **One candidate per `(player, stat, line)`**. Gate the side with `fair_prob > 0.5` only **except** Underdog `home_runs` (always Over — see 2026-08-31 amendment). `legs_evaluated` counts **lines**, not sides |
+| Grain | **One candidate per `(player, stat, line)`**. Gate the side with `fair_prob > 0.5` only, **except** Underdog Over-only stats (`home_runs`, `singles`, `batter_strikeouts`, `stolen_bases`, `walks`, `doubles` — always Over — see 2026-08-31 amendment). `legs_evaluated` counts **lines**, not sides |
 | Locked games | Server drops live/final games using today’s MLB scoreboard |
-| Stake | Extend ProphetX/Novig latest-snapshot SELECT to include `stake` |
+| Stake | SELECT still includes `stake` when the column exists. **Novig:** NULL/missing stake does not exclude. **ProphetX:** both sides must be `> 0` |
 | Consensus average | **Log-odds** (logit) weighted mean, then sigmoid — not raw probability |
-| Book quote age | Supporting books (DK/FD/MGM/Caesars): **120 minutes**. Sharp/exchange (Pinnacle, sized Novig/PX): **45 minutes**. Book-level only |
+| Book quote age | Supporting books (DK/FD/MGM/Caesars): **120 minutes**. Sharp/exchange (Pinnacle, Novig, sized ProphetX): **45 minutes**. Book-level only |
 | DFS snapshot age | If seed age **> 60 minutes**, do **not** emit PLAY. Envelope `dfs_snapshot_age_minutes` + warning `dfs_snapshot_stale` |
 | Disagreement | `max−min` over included books with **weight ≥ 2.0** only (exclude BetMGM/Caesars from the trigger). If > 4.0 pts, +1.5 on that leg’s effective margin |
 | Hold rail | Exclude a book if two-way hold **> 12%** (`hold_too_high`) |
-| Longshot rail | **Not** a `rejected_summary` key. Internal assertion: gated `fair_prob < 0.35` must not occur (favorite-only). Same treatment as `both_sides_cleared`. UD HR Over skips the 0.35 assertion and rejects `below_threshold`. |
+| Longshot rail | **Not** a `rejected_summary` key. Internal assertion: gated `fair_prob < 0.35` must not occur on the favorite-only path. Underdog Over-only stats may be longshot Overs; that path skips the assertion and rejects `below_threshold` (2026-08-31 amendment). Same treatment as `both_sides_cleared` on the favorite-only path |
 | Cache | In-process **5 minutes** per `(app, format, legs)`. Frontend `staleTime` **5 minutes**. Show `generated_at` in the UI |
 | Dedupe | One row per `(player, stat, line)`. Cross-platform (PP vs UD) is separate requests |
 | Sort | `margin_pts` desc, then `fair_prob` desc, then `player` (deterministic; no jitter across 5-min refreshes) |
@@ -71,11 +71,11 @@ mlb.legs.get_mlb_legs()
         ├─ if DFS age > 60 min → empty PLAY, warning, age in envelope
         ├─ exact-line two-way indexes (PX, Novig, Pinnacle alts;
         │    Parlay DK/FD/BetMGM/Caesars including *_alternate)
-        ├─ pair Over+Under + stake; drop hold>12%;
-        │    sharp/exchange >45 min; supporting >120 min
+        ├─ pair Over+Under; ProphetX needs stake>0 (Novig stake optional);
+        │    drop hold>12%; sharp/exchange >45 min; supporting >120 min
         ├─ drop live/final games
         └─ legs_pricer per (player, stat, line)
-              favorite side only (UD home_runs: Over only) → PLAY or one reject reason
+              favorite side only (UD Over-only stats: Over) → PLAY or one reject reason
 ```
 
 WNBA `/wnba/legs` does not call this API.
@@ -88,7 +88,7 @@ Pure module: `backend/app/domains/betting/legs_pricer.py` (no I/O). Unit-tested.
 
 One DFS **standard** **line**: player, team, matchup, market, line, platform, Underdog `payout_multiplier` (default **1.0** if missing; skip candidate if multiplier `≤ 0`).
 
-Build one two-way consensus `p_over` at that line (log-odds). Set `p_under = 1 - p_over`. **Gated side** = Over if `p_over > 0.5`, Under if `p_under > 0.5`. If `p_over == 0.5`, reject `below_threshold` (no PLAY). Do not evaluate both sides as separate candidates. Exception: Underdog `home_runs` always evaluates Over (`offered_side="over"`) — see 2026-08-31 amendment.
+Build one two-way consensus `p_over` at that line (log-odds). Set `p_under = 1 - p_over`. **Gated side** = Over if `p_over > 0.5`, Under if `p_under > 0.5`. If `p_over == 0.5`, reject `below_threshold` (no PLAY). Do not evaluate both sides as separate candidates. **Exception:** Underdog Over-only stats always evaluate Over (`docs/superpowers/specs/2026-08-31-mlb-legs-underdog-hr-over-only-design.md`).
 
 `both_sides_cleared` and gated `fair_prob < 0.35` are **internal assertions** only. If either fires in v1, fail the test / log; **do not** expose them in `rejected_summary` or the UI. Favorite-only gating makes both unreachable; leftover favorite-longshot bias **understates** the favorite, so v1 is conservative on PLAY (recall, not false precision).
 
@@ -99,7 +99,8 @@ Each book needs **both** Over and Under Americans **at the exact DFS line**. Nev
 | Book | Weight | Include when |
 | --- | --- | --- |
 | Pinnacle | 3.0 | Two-way, age ≤ **45 min**, hold ≤ 12% |
-| Novig, ProphetX | 2.5 | Two-way, stake both sides `> 0`, age ≤ **45 min**, hold ≤ 12% |
+| Novig | 2.5 | Two-way, age ≤ **45 min**, hold ≤ 12%. Stake is not required (feed is often NULL) |
+| ProphetX | 2.5 | Two-way, stake both sides `> 0`, age ≤ **45 min**, hold ≤ 12% |
 | DraftKings, FanDuel | 2.0 | Two-way, age ≤ **120 min**, hold ≤ 12% |
 | BetMGM, Caesars | 1.0 | Two-way, age ≤ **120 min**, hold ≤ 12% |
 | Fliff, Kalshi, bet365 | — | Not loaded for Legs |
@@ -108,7 +109,7 @@ Book-level exclusions (`stale_quote`, `thin_or_one_sided`, `one_sided`, `hold_to
 
 **Independence.** Require all four:
 
-1. At least one **sharp/exchange**: Pinnacle two-way (≤45 min) **or** Novig/ProphetX that passed stake + 45 min.
+1. At least one **sharp/exchange**: Pinnacle two-way (≤45 min) **or** Novig (≤45 min, stake optional) **or** ProphetX that passed stake + 45 min.
 2. At least two additional included books.
 3. Total included ≥ 3.
 4. At least **two** included books with **weight ≥ 2.0** (non-anchor included weight ≥ 2.0).
@@ -192,19 +193,11 @@ If `p_be >= 1`, reject `unpriceable_payout`.
 
 ### Margin gate
 
-Envelope: `base_required_margin_pts` (4.0 Power/UD, 3.0 Flex 6) — **no** disagreement adder.
+PLAY if `fair_prob >= p_be` (`margin_pts >= 0`). No extra pts over break-even. Book disagreement is still reported on the audit and does **not** raise the bar.
 
-Per PLAY leg: `required_margin_pts` is **effective** (base + 1.5 if disagreement tripped).
+Envelope and per-leg `required_margin_pts` are **0.0**.
 
-`margin_pts = (fair_prob - p_be) * 100` using that leg’s `p_be`.
-
-| Selection | `base_required_margin_pts` |
-| --- | --- |
-| Power (any n) | 4.0 |
-| Flex 6 | 3.0 |
-| Underdog standard | 4.0 |
-
-Below effective threshold → `below_threshold`.
+`margin_pts = (fair_prob - p_be) * 100` using that leg’s `p_be`. Below break-even → `below_threshold`.
 
 ### Accounting identity (tested)
 
@@ -260,7 +253,7 @@ Invalid combination (`boosted`, `flex` + not 6) → **422**.
 2. Seed latest PrizePicks or Underdog snapshot; keep PP **standard** only. Set `lines_seeded`.
 3. Compute `dfs_snapshot_age_minutes` from latest seed `scraped_at` vs `generated_at`. If **> 60**, return empty PLAY + `dfs_snapshot_stale` (do not price). Keep `lines_seeded`.
 4. Exact-line two-way indexes: PX, Novig, Pinnacle (`mains_only=False`); Parlay DK/FD/BetMGM/Caesars including `*_alternate`. `match_player_key`. No Fliff/Kalshi/bet365.
-5. Include `stake` on PX/Novig fetches. Missing column → exchanges exclude.
+5. Include `stake` on PX/Novig fetches. Missing column → `None`. Novig still prices; ProphetX without stake is excluded.
 6. Drop sharp/exchange quotes older than **45 minutes** and supporting quotes older than **120 minutes** vs this assemble `generated_at`.
 7. Drop live/final games. Attach `game_id` (MLB `gamePk`) when the player’s game is known; if missing, omit `game_id` (same-game warning treats missing as distinct).
 8. Pricer per **line**; sort PLAY by `margin_pts` desc, `fair_prob` desc, `player` asc; `rank` 1…n. Set `sharp_anchor`. If `format=flex`, set `flex_same_game_warning` when the top `min(6, len(legs))` PLAY rows contain ≥ 3 with the same `game_id`.
@@ -276,7 +269,7 @@ app, format, legs,
 payouts_assumed: true,
 base_break_even,                 # table / Flex 6; no UD modifier
 break_even_min, break_even_max,  # among PLAY legs; null if none
-base_required_margin_pts,        # 4.0 or 3.0; no disagreement adder
+base_required_margin_pts,        # 0.0; PLAY is break-even only
 dfs_snapshot_age_minutes,
 lines_seeded,
 legs_evaluated, legs_surfaced,   # identity with rejected_summary
@@ -300,13 +293,7 @@ PLAY legs are packed into complete N-pick **`entries`** cards (no public flat PL
 
 - **MLB:** board. **WNBA:** empty shell, no fetch.
 
-Chrome: title Legs; league pills; PrizePicks | Underdog; format + legs (**no Flex 3**; Flex is 6-pick only). Muted: **Assumed payouts** · `base_required_margin_pts`. PrizePicks: show `base_break_even`. Underdog: show PLAY **`break_even_min`–`break_even_max`** (not a single envelope BE that matches no row). Non-monotonicity sentence matches **current app**.
-
-Show **`generated_at`** (timestamp) prominently.
-
-URL `replace: true`. Default `?app=prizepicks&format=power&legs=4`.
-
-List: PLAY only. Collapsed: player · matchup, market, line, gated side, fair %, margin. Expand: per-book audit (line, O/U Americans, devigged %, hold, devig method, weight) plus leg-level `sharp_anchor` and effective `required_margin_pts`. Copy: legs for the **selected entry type**, not a parlay — **except Flex 6**, where 54.2% is an independent 6-leg entry. If `flex_same_game_warning`, show a visible warning that the top 6 include ≥ 3 legs from one game (correlation deferred; do not pretend they are independent).
+Chrome: title Legs; league pills; PrizePicks | Underdog; format + legs (**no Flex 3**; Flex is 6-pick only). Chip row far right: **`breakeven: {base_break_even}`**. No research/timestamp/payouts notes. Vertical PLAY cards (headshot, matchup, name, market line); click expands the book audit. See `docs/superpowers/specs/2026-08-31-legs-board-vertical-cards-design.md`.
 
 Empty: threshold-empty vs `dfs_snapshot_stale` (use `lines_seeded` to tell stale-vs-empty) vs missing snapshot vs error vs loading.
 
@@ -319,7 +306,7 @@ Empty: threshold-empty vs `dfs_snapshot_stale` (use `lines_seeded` to tell stale
 | Bad query | 422 |
 | DFS age > 60 min | 200, no PLAY, warning `dfs_snapshot_stale`, age field set |
 | Snapshot / Parlay / scoreboard failure | Soft-fail; never invent books |
-| Exchange without stake / hold > 12% / power unsolved / stale book | Exclude book |
+| ProphetX without stake / hold > 12% / power unsolved / stale book | Exclude book |
 | No sharp/exchange | `insufficient_sharp` |
 | Sharp + only MGM/Caesars as the other two | `insufficient_coverage` |
 | Identity fail | Test failure; do not ship |
@@ -346,7 +333,7 @@ Empty: threshold-empty vs `dfs_snapshot_stale` (use `lines_seeded` to tell stale
 1. Only PLAY legs, or an explicit empty state (threshold, stale DFS, or missing snapshot).
 2. Auditable fair (books, hold, method, weights, line on every probability).
 3. Underdog `p_be = base / min(m, 1.0)`; never `1/m` as implied prob; boosts do not sort to the top via a fake 48.9% BE.
-4. Envelope `base_required_margin_pts` ≠ per-leg `required_margin_pts` when disagreement fires; names do not collide.
+4. PLAY requires `fair_prob >= p_be` only (no extra pts; disagreement is audit-only).
 5. `legs_evaluated == legs_surfaced + sum(rejected_summary.values())`.
 6. DFS snapshot > 60 min does not silently emit PLAY; `lines_seeded` still set.
 7. Flex 3 is not in the picker; Flex 6 remains and warns on ≥3 same-game legs in the top 6.

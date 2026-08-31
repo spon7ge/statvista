@@ -994,6 +994,8 @@ export interface components {
             fair_prob: number;
             /** Game Id */
             game_id: string | null;
+            /** Headshot Url */
+            headshot_url: string | null;
             /** Margin Pts */
             margin_pts: number;
             /** Market */

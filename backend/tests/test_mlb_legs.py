@@ -694,15 +694,28 @@ def test_two_way_at_line_pairs_over_and_under():
 
 
 @pytest.mark.asyncio
-async def test_underdog_home_runs_do_not_play_under(legs_io):
+@pytest.mark.parametrize(
+    "ud_stat, pin_stat, market",
+    [
+        ("home_runs", "batter_home_runs", "Home Runs"),
+        ("singles", "batter_singles", "Singles"),
+        ("batter_strikeouts", "batter_strikeouts", "Hitter Strikeouts"),
+        ("stolen_bases", "batter_stolen_bases", "Stolen Bases"),
+        ("walks", "batter_walks", "Walks"),
+        ("doubles", "batter_doubles", "Doubles"),
+    ],
+)
+async def test_underdog_over_only_markets_do_not_play_under(
+    legs_io, ud_stat, pin_stat, market
+):
     from app.domains.mlb.legs import get_mlb_legs
 
     legs_io["ud"] = [
-        _ud("Aaron Judge", "home_runs", 0.5),
-        _ud("Giancarlo Stanton", "home_runs", 0.5),
+        _ud("Aaron Judge", ud_stat, 0.5),
+        _ud("Giancarlo Stanton", ud_stat, 0.5),
     ]
-    judge = _under_fav_books("Aaron Judge", "home_runs", "batter_home_runs", 0.5)
-    stanton = _under_fav_books("Giancarlo Stanton", "home_runs", "batter_home_runs", 0.5)
+    judge = _under_fav_books("Aaron Judge", ud_stat, pin_stat, 0.5)
+    stanton = _under_fav_books("Giancarlo Stanton", ud_stat, pin_stat, 0.5)
     legs_io["pin"] = judge["pin"] + stanton["pin"]
     legs_io["parlay"] = judge["parlay"] + stanton["parlay"]
     legs_io["roster"] = _roster(("Aaron Judge", "NYY"), ("Giancarlo Stanton", "NYY"))
@@ -711,10 +724,34 @@ async def test_underdog_home_runs_do_not_play_under(legs_io):
     body = await get_mlb_legs(app="underdog", format="standard", legs=2)
 
     packed = _packed_plays(body)
-    assert all(not (leg.market == "Home Runs" and leg.side == "under") for leg in packed)
+    assert all(not (leg.market == market and leg.side == "under") for leg in packed)
     assert body.entries == []
     assert body.legs_evaluated == 2
     assert body.rejected_summary.below_threshold == 2
+    _assert_identity(body)
+
+
+@pytest.mark.asyncio
+async def test_underdog_hits_still_play_under(legs_io):
+    from app.domains.mlb.legs import get_mlb_legs
+
+    legs_io["ud"] = [
+        _ud("Aaron Judge", "hits", 0.5),
+        _ud("Giancarlo Stanton", "hits", 0.5),
+    ]
+    judge = _under_fav_books("Aaron Judge", "hits", "batter_hits", 0.5)
+    stanton = _under_fav_books("Giancarlo Stanton", "hits", "batter_hits", 0.5)
+    legs_io["pin"] = judge["pin"] + stanton["pin"]
+    legs_io["parlay"] = judge["parlay"] + stanton["parlay"]
+    legs_io["roster"] = _roster(("Aaron Judge", "NYY"), ("Giancarlo Stanton", "NYY"))
+    legs_io["scoreboard"] = _scoreboard(_game("111", "NYY", "BOS", "scheduled"))
+
+    body = await get_mlb_legs(app="underdog", format="standard", legs=2)
+
+    packed = _packed_plays(body)
+    assert len(body.entries) == 1
+    assert {leg.side for leg in packed} == {"under"}
+    assert all(leg.market == "Hits" for leg in packed)
     _assert_identity(body)
 
 
@@ -740,3 +777,32 @@ async def test_prizepicks_home_runs_can_still_play_under(legs_io):
     assert {leg.side for leg in packed} == {"under"}
     assert all(leg.market == "Home Runs" for leg in packed)
     _assert_identity(body)
+
+
+@pytest.mark.asyncio
+async def test_play_includes_roster_headshot(legs_io):
+    from app.domains.mlb.legs import get_mlb_legs
+
+    shot = "https://a.espncdn.com/i/headshots/mlb/players/full/33192.png"
+    legs_io["ud"] = [
+        _ud("Aaron Judge", "hits", 0.5),
+        _ud("Giancarlo Stanton", "hits", 0.5),
+    ]
+    judge = _under_fav_books("Aaron Judge", "hits", "batter_hits", 0.5)
+    stanton = _under_fav_books("Giancarlo Stanton", "hits", "batter_hits", 0.5)
+    legs_io["pin"] = judge["pin"] + stanton["pin"]
+    legs_io["parlay"] = judge["parlay"] + stanton["parlay"]
+    legs_io["roster"] = {
+        norm_player_name("Aaron Judge"): {
+            "team_abbrev": "NYY",
+            "headshot_url": shot,
+        },
+        norm_player_name("Giancarlo Stanton"): {"team_abbrev": "NYY"},
+    }
+    legs_io["scoreboard"] = _scoreboard(_game("111", "NYY", "BOS", "scheduled"))
+
+    body = await get_mlb_legs(app="underdog", format="standard", legs=2)
+
+    by_player = {leg.player: leg for leg in _packed_plays(body)}
+    assert by_player["Aaron Judge"].headshot_url == shot
+    assert by_player["Giancarlo Stanton"].headshot_url is None

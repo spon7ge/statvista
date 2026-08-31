@@ -37,6 +37,7 @@ function play(over: Partial<MlbLegsPlay> = {}): MlbLegsPlay {
     margin_pts: 5.0,
     book_disagreement_pts: 1.2,
     payout_multiplier: 1,
+    headshot_url: null,
     books_used: [],
     books_excluded: [],
     ...over,

@@ -958,6 +958,17 @@
             ],
             "title": "Game Id"
           },
+          "headshot_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Headshot Url"
+          },
           "margin_pts": {
             "title": "Margin Pts",
             "type": "number"
@@ -1017,6 +1028,7 @@
           "player",
           "team",
           "matchup",
+          "headshot_url",
           "market",
           "dfs_line",
           "side",

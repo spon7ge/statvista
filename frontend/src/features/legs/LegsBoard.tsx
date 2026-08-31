@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { bookDisplayName } from "@/features/mlb/lib/mlbBookLabels";
 import type {
@@ -60,15 +60,6 @@ function parseSelection(params: URLSearchParams): {
 
 function pct(value: number): string {
   return `${(value * 100).toFixed(1)}%`;
-}
-
-function formatGeneratedAt(iso: string): string {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  }).format(new Date(iso));
 }
 
 function formatOptionsFor(app: LegsApp): LegsFormat[] {
@@ -152,6 +143,7 @@ function RadioChip({
 }
 
 function PlayRow({ leg }: { leg: ApiMlbLegsPlay }) {
+  const [imgFailed, setImgFailed] = useState(false);
   const side = leg.side === "over" ? "Over" : "Under";
   const margin =
     leg.margin_pts >= 0
@@ -159,18 +151,37 @@ function PlayRow({ leg }: { leg: ApiMlbLegsPlay }) {
       : leg.margin_pts.toFixed(1);
   const anchor =
     leg.sharp_anchor === "pinnacle" ? "Pinnacle" : "exchange only";
+  const showImg = Boolean(leg.headshot_url) && !imgFailed;
+  const initial = (leg.player.trim()[0] ?? "?").toUpperCase();
 
   return (
     <li className="rounded-xl border border-white/10 bg-white/[0.04]">
       <details>
-        <summary className="cursor-pointer list-none px-4 py-3 text-[18px] text-white marker:content-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white [&::-webkit-details-marker]:hidden">
-          <span className="font-semibold">
-            {leg.player}
-            <span className="font-normal text-white/55"> · {leg.matchup}</span>
-          </span>
-          <span className="mt-1 block text-[14px] text-white/70">
-            {leg.market} {leg.dfs_line} {side} {pct(leg.fair_prob)} {margin}
-          </span>
+        <summary className="cursor-pointer list-none px-4 py-4 text-white marker:content-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white [&::-webkit-details-marker]:hidden">
+          <div className="flex flex-col items-center text-center">
+            {showImg ? (
+              <img
+                src={leg.headshot_url!}
+                alt={leg.player}
+                className="size-16 rounded-full bg-white/10 object-cover"
+                onError={() => setImgFailed(true)}
+              />
+            ) : (
+              <span
+                aria-hidden="true"
+                className="flex size-16 items-center justify-center rounded-full bg-white/10 text-lg font-semibold text-white/50"
+              >
+                {initial}
+              </span>
+            )}
+            {leg.matchup ? (
+              <p className="mt-2 text-[14px] text-white/45">{leg.matchup}</p>
+            ) : null}
+            <p className="mt-1 text-[18px] font-semibold">{leg.player}</p>
+            <p className="mt-1 text-[14px] text-white/70">
+              {leg.market} {leg.dfs_line} {side} {pct(leg.fair_prob)} {margin}
+            </p>
+          </div>
         </summary>
         <div className="space-y-2 border-t border-white/10 px-4 py-3 text-[14px] text-white/70">
           <p>Sharp anchor: {anchor}</p>
@@ -277,59 +288,49 @@ export function LegsBoard({
         aria-labelledby={`legs-${app}-tab`}
         className="space-y-6"
       >
-        <div className="flex flex-wrap items-center gap-4">
-          <div
-            role="radiogroup"
-            aria-label="Format"
-            className="flex flex-wrap items-center gap-1"
-          >
-            {formatOptionsFor(app).map((option) => (
-              <RadioChip
-                key={option}
-                name="legs-format"
-                value={option}
-                checked={format === option}
-                onChange={() => onFormatChange(option)}
-              >
-                {formatLabel(option)}
-              </RadioChip>
-            ))}
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex flex-wrap items-center gap-4">
+            <div
+              role="radiogroup"
+              aria-label="Format"
+              className="flex flex-wrap items-center gap-1"
+            >
+              {formatOptionsFor(app).map((option) => (
+                <RadioChip
+                  key={option}
+                  name="legs-format"
+                  value={option}
+                  checked={format === option}
+                  onChange={() => onFormatChange(option)}
+                >
+                  {formatLabel(option)}
+                </RadioChip>
+              ))}
+            </div>
+            <div
+              role="radiogroup"
+              aria-label="Entry size"
+              className="flex flex-wrap items-center gap-1"
+            >
+              {sizeOptions.map((n) => (
+                <RadioChip
+                  key={n}
+                  name="legs-size"
+                  value={String(n)}
+                  checked={legs === n}
+                  onChange={() => write({ app, format, legs: n })}
+                >
+                  {`${n}-pick`}
+                </RadioChip>
+              ))}
+            </div>
           </div>
-          <div
-            role="radiogroup"
-            aria-label="Entry size"
-            className="flex flex-wrap items-center gap-1"
-          >
-            {sizeOptions.map((n) => (
-              <RadioChip
-                key={n}
-                name="legs-size"
-                value={String(n)}
-                checked={legs === n}
-                onChange={() => write({ app, format, legs: n })}
-              >
-                {`${n}-pick`}
-              </RadioChip>
-            ))}
-          </div>
-        </div>
-
-        <p className="text-[14px] text-white/50">
-          Recommended entries for this size. Research only — not a lock.
-        </p>
-
-        {envelope ? (
-          <div className="space-y-2">
-            <p className="text-[18px] font-medium text-white">
-              Generated {formatGeneratedAt(envelope.generated_at)}
-            </p>
+          {envelope ? (
             <p className="text-[14px] text-white/50">
-              Assumed payouts · base required margin{" "}
-              {envelope.base_required_margin_pts.toFixed(1)} pts
+              breakeven: {pct(envelope.base_break_even)}
             </p>
-            <BreakEvenChrome app={app} data={envelope} format={format} />
-          </div>
-        ) : null}
+          ) : null}
+        </div>
 
         {showLoading ? (
           <p className="text-[18px] text-white/50" role="status">
@@ -362,49 +363,5 @@ export function LegsBoard({
         ))}
       </div>
     </div>
-  );
-}
-
-function BreakEvenChrome({
-  app,
-  data,
-  format,
-}: {
-  app: LegsApp;
-  data: ApiLegsResponse;
-  format: LegsFormat;
-}) {
-  const tableBe = pct(data.base_break_even);
-  let beLine: string;
-  if (app === "underdog") {
-    if (data.break_even_min != null && data.break_even_max != null) {
-      beLine =
-        data.break_even_min === data.break_even_max
-          ? `PLAY break-even ${pct(data.break_even_min)}`
-          : `PLAY break-even ${pct(data.break_even_min)}–${pct(data.break_even_max)}`;
-    } else {
-      beLine = `Break-even ${tableBe}`;
-    }
-  } else {
-    beLine = `Break-even ${tableBe}`;
-  }
-
-  let note: string;
-  if (app === "underdog") {
-    note =
-      "2-pick is the hardest Underdog entry. 4-pick is harder than 3-pick. Complete entries for this size — not a parlay.";
-  } else if (format === "flex") {
-    note =
-      "54.2% is the break-even for an independent 6-leg Flex entry.";
-  } else {
-    note =
-      "3-pick Power is the hardest PrizePicks Power. Complete entries for this size — not a parlay.";
-  }
-
-  return (
-    <>
-      <p className="text-[14px] text-white/50">{beLine}</p>
-      <p className="text-[14px] text-white/50">{note}</p>
-    </>
   );
 }

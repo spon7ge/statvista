@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
-import { MatchupsPanel } from "./MatchupsPanel";
+import { MatchupsDateNav, MatchupsPanel } from "./MatchupsPanel";
 import type { MatchupGame } from "./types";
 
 const live: MatchupGame = {
@@ -25,19 +25,24 @@ const finalGame: MatchupGame = {
   home: { abbrev: "DAL", name: "Dallas Wings", score: 81 },
 };
 
-const defaultNavProps = {
-  selectedDate: "2026-08-01",
-  todayDate: "2026-08-01",
-  onPrevDay: () => {},
-  onNextDay: () => {},
-  onGoToday: () => {},
-};
-
 function renderPanel(games: MatchupGame[], props = {}) {
   return render(
     <MemoryRouter>
-      <MatchupsPanel games={games} {...defaultNavProps} {...props} />
+      <MatchupsPanel games={games} {...props} />
     </MemoryRouter>,
+  );
+}
+
+function renderDateNav(props = {}) {
+  return render(
+    <MatchupsDateNav
+      selectedDate="2026-08-01"
+      todayDate="2026-08-01"
+      onPrevDay={() => {}}
+      onNextDay={() => {}}
+      onGoToday={() => {}}
+      {...props}
+    />,
   );
 }
 
@@ -67,7 +72,7 @@ describe("MatchupsPanel", () => {
     const onPrevDay = vi.fn();
     const onNextDay = vi.fn();
     const onGoToday = vi.fn();
-    renderPanel([live], {
+    renderDateNav({
       selectedDate: "2026-07-28",
       todayDate: "2026-08-01",
       onPrevDay,
@@ -86,24 +91,12 @@ describe("MatchupsPanel", () => {
   });
 
   it("shows Today label on the slate date", () => {
-    renderPanel([live], {
-      selectedDate: "2026-08-01",
-      todayDate: "2026-08-01",
-      onPrevDay: () => {},
-      onNextDay: () => {},
-      onGoToday: () => {},
-    });
+    renderDateNav();
     expect(screen.getByRole("button", { name: "Today" })).toBeInTheDocument();
   });
 
   it("shows empty slate copy when no games", () => {
-    renderPanel([], {
-      selectedDate: "2026-07-28",
-      todayDate: "2026-08-01",
-      onPrevDay: () => {},
-      onNextDay: () => {},
-      onGoToday: () => {},
-    });
+    renderPanel([]);
     expect(screen.getByText("No games on this slate")).toBeInTheDocument();
   });
 

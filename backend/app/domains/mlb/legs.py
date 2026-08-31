@@ -15,7 +15,6 @@ from app.domains.betting.legs_payouts import (
     validate_legs_query,
 )
 from app.domains.betting.legs_pricer import (
-    EXCHANGES,
     HOLD_MAX,
     HOLD_MULT_MAX,
     SHARP,
@@ -27,6 +26,7 @@ from app.domains.betting.legs_pricer import (
     RejectResult,
     american_to_prob,
     devig_over,
+    exchange_stake_blocks,
     price_line,
 )
 from app.domains.betting.player_match_keys import match_player_key
@@ -60,6 +60,17 @@ logger = logging.getLogger(__name__)
 CACHE_TTL_SECONDS = 300
 _PARLAY_BOOKS = ("draftkings", "fanduel", "betmgm", "caesars")
 _LOCKED = frozenset({"live", "final"})
+# Underdog lists these as Over only (no Under pick).
+UD_OVER_ONLY_STATS = frozenset(
+    {
+        "home_runs",
+        "singles",
+        "batter_strikeouts",
+        "stolen_bases",
+        "walks",
+        "doubles",
+    }
+)
 
 # Spec research copy: not a tipster feed; no locks / guaranteed EV; not a parlay.
 LEGS_DISCLAIMERS = (
@@ -266,10 +277,8 @@ def _exclude_reason(quote: BookQuote, dfs_line: float) -> str:
     max_age = SHARP_MAX_AGE if quote.book in SHARP else SUPPORT_MAX_AGE
     if quote.age_minutes > max_age:
         return "stale_quote"
-    if quote.book in EXCHANGES:
-        so, su = quote.stake_over, quote.stake_under
-        if so is None or su is None or so <= 0 or su <= 0:
-            return "thin_or_one_sided"
+    if exchange_stake_blocks(quote):
+        return "thin_or_one_sided"
     p_over = american_to_prob(quote.over)
     p_under = american_to_prob(quote.under)
     if p_over + p_under - 1.0 > HOLD_MAX:
@@ -477,6 +486,10 @@ async def get_mlb_legs(*, app: str, format: str, legs: int) -> MlbLegsResponse:
         player = str(bucket["player"])
         entry = roster.get(norm_player_name(player)) or roster.get(player_key) or {}
         team = str(entry.get("team_abbrev") or "").upper()
+        raw_shot = entry.get("headshot_url")
+        headshot_url = (
+            raw_shot.strip() if isinstance(raw_shot, str) and raw_shot.strip() else None
+        )
         game = team_games.get(team) if team else None
         if game is not None and game.status in _LOCKED:
             continue
@@ -493,7 +506,9 @@ async def get_mlb_legs(*, app: str, format: str, legs: int) -> MlbLegsResponse:
             now=now,
         )
         offered_side = (
-            "over" if app == "underdog" and stat_key == "home_runs" else None
+            "over"
+            if app == "underdog" and stat_key in UD_OVER_ONLY_STATS
+            else None
         )
         result = price_line(
             quotes=quotes,
@@ -517,6 +532,7 @@ async def get_mlb_legs(*, app: str, format: str, legs: int) -> MlbLegsResponse:
                     player=player,
                     team=team,
                     matchup=matchup,
+                    headshot_url=headshot_url,
                     market=str(bucket["stat_label"]),
                     dfs_line=float(bucket["line"]),
                     side=result.side,

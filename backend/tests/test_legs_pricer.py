@@ -12,7 +12,7 @@ from app.domains.betting.legs_pricer import (
 
 # Strong favorite over: hold ~0.037 (multiplicative), fair over ~0.643.
 _FAV_OVER, _FAV_UNDER = -200, 170
-# Stronger favorite so a 0.90 discount still clears the 4pt gate.
+# Stronger favorite so a 0.90 discount still clears the EV gate.
 _STRONG_OVER, _STRONG_UNDER = -250, 200
 
 
@@ -113,9 +113,22 @@ def test_pinnacle_dk_mgm_plays_when_over_is_favorite():
     assert len(heavy) >= 2
 
 
-def test_exchange_stake_zero_excluded():
+def test_novig_null_stake_is_included():
     quotes = [
-        _q("novig", _FAV_OVER, _FAV_UNDER, so=0.0, su=100.0),
+        _q("novig", _FAV_OVER, _FAV_UNDER, so=None, su=None),
+        _q("draftkings", _FAV_OVER, _FAV_UNDER),
+        _q("fanduel", _FAV_OVER, _FAV_UNDER),
+        _q("betmgm", _FAV_OVER, _FAV_UNDER),
+    ]
+    result = _price(quotes)
+    assert isinstance(result, PlayResult)
+    assert "novig" in result.books_used
+    assert result.sharp_anchor == "exchange_only"
+
+
+def test_prophetx_stake_zero_excluded():
+    quotes = [
+        _q("prophetx", _FAV_OVER, _FAV_UNDER, so=0.0, su=100.0),
         _q("draftkings", _FAV_OVER, _FAV_UNDER),
         _q("fanduel", _FAV_OVER, _FAV_UNDER),
         _q("betmgm", _FAV_OVER, _FAV_UNDER),
@@ -148,10 +161,10 @@ def test_disagreement_ignores_caesars():
     result = _price(quotes)
     assert isinstance(result, PlayResult)
     assert result.book_disagreement_pts == pytest.approx(0.0)
-    assert result.required_margin_pts == 4.0
+    assert result.required_margin_pts == 0.0
 
 
-def test_heavy_book_disagreement_adds_margin():
+def test_heavy_book_disagreement_does_not_block_play():
     quotes = [
         _q("pinnacle", _FAV_OVER, _FAV_UNDER),
         _q("draftkings", -160, 140),
@@ -166,7 +179,23 @@ def test_heavy_book_disagreement_adds_margin():
     expected = (max(pin, dk) - min(pin, dk)) * 100.0
     assert expected > 4.0
     assert result.book_disagreement_pts == pytest.approx(expected)
-    assert result.required_margin_pts == 5.5
+    assert result.required_margin_pts == 0.0
+    assert result.fair_prob >= result.break_even
+
+
+def test_fair_above_break_even_plays_without_extra_margin():
+    # ~57% over vs Power-4 BE ~56.2% — old 2.0-pt gate would reject.
+    quotes = [
+        _q("pinnacle", -145, 125),
+        _q("draftkings", -145, 125),
+        _q("betmgm", -145, 125),
+    ]
+    result = _price(quotes)
+    assert isinstance(result, PlayResult)
+    assert 0.56 < result.fair_prob < 0.58
+    assert result.fair_prob >= result.break_even
+    assert result.margin_pts < 2.0
+    assert result.required_margin_pts == 0.0
 
 
 def test_boost_m_115_does_not_lower_break_even():

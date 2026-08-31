@@ -479,6 +479,10 @@ async def get_wnba_legs(*, app: str, format: str, legs: int) -> WnbaLegsResponse
         player = str(bucket["player"])
         entry = roster.get(norm_player_name(player)) or roster.get(player_key) or {}
         team = canonical_abbrev(str(entry.get("team_abbrev") or ""))
+        raw_shot = entry.get("headshot_url")
+        headshot_url = (
+            raw_shot.strip() if isinstance(raw_shot, str) and raw_shot.strip() else None
+        )
         game = team_games.get(team) if team else None
         if game is not None and game.status in _LOCKED:
             continue
@@ -517,6 +521,7 @@ async def get_wnba_legs(*, app: str, format: str, legs: int) -> WnbaLegsResponse
                     player=player,
                     team=team,
                     matchup=matchup,
+                    headshot_url=headshot_url,
                     market=str(bucket["stat_label"]),
                     dfs_line=float(bucket["line"]),
                     side=result.side,

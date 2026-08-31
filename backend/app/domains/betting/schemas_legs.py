@@ -50,6 +50,7 @@ class LegsPlay(BaseModel):
     player: str
     team: str
     matchup: str
+    headshot_url: str | None = None
     market: str
     dfs_line: float
     side: Side

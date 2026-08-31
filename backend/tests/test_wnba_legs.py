@@ -437,3 +437,46 @@ async def test_flex_packs_six_skips_third_same_game(legs_io):
     assert body.flex_same_game_warning is False
     assert body.rejected_summary.unpacked_remainder == 1
     _assert_identity(body)
+
+
+@pytest.mark.asyncio
+async def test_play_includes_roster_headshot(legs_io):
+    from app.domains.wnba.legs import get_wnba_legs
+
+    shot = "https://a.espncdn.com/i/headshots/wnba/players/full/4433403.png"
+    players = [
+        ("A'ja Wilson", 22.5, "LVA"),
+        ("Jackie Young", 18.5, "LVA"),
+        ("Napheesa Collier", 20.5, "MIN"),
+        ("Breanna Stewart", 21.5, "NYL"),
+    ]
+    legs_io["pp"] = [_pp(name, "Points", line) for name, line, _ in players]
+    pin, parlay = [], []
+    for name, line, _ in players:
+        books = _play_books(name, line)
+        pin.extend(books["pin"])
+        parlay.extend(books["parlay"])
+    legs_io["pin"] = pin
+    legs_io["parlay"] = parlay
+    legs_io["roster"] = {
+        norm_player_name("A'ja Wilson"): {
+            "team_abbrev": "LVA",
+            "headshot_url": shot,
+        },
+        **{
+            norm_player_name(name): {"team_abbrev": team}
+            for name, _, team in players
+            if name != "A'ja Wilson"
+        },
+    }
+    legs_io["scoreboard"] = _scoreboard(
+        _game("401", "LVA", "LAS", "scheduled"),
+        _game("402", "MIN", "SEA", "scheduled"),
+        _game("403", "NYL", "CON", "scheduled"),
+    )
+
+    body = await get_wnba_legs(app="prizepicks", format="power", legs=4)
+
+    by_player = {leg.player: leg for leg in body.entries[0].legs}
+    assert by_player["A'ja Wilson"].headshot_url == shot
+    assert by_player["Jackie Young"].headshot_url is None
