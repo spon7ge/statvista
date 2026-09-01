@@ -2,12 +2,16 @@
 # virtual environment
 nba_model/
 statvista/
+.venv/
+venv/
 
 **/matchup_cache/
 
 # python cache
 __pycache__/
 **/__pycache__/
+.pytest_cache/
+**/.pytest_cache/
 
 # os files
 .DS_Store
@@ -32,14 +36,16 @@ data/raw/season_stats/*_pbp.csv
 data/raw/pbp_season_stats/
 notebooks/pbp_checkpoint.csv
 
-# local gold / season pull caches
+# local gold / season pull caches and backend outbound / player-of-the-game disk cache
 data/cache/
+backend/data/cache/
 .worktrees/
 .superpowers/
 
 # PrizePicks browser session (auto-saved by scrapers; do not commit)
 **/.session_cookie.txt
 **/.playwright_storage.json
+**/.pw_profile/
 
 # scraper snapshot dumps (local only)
 data/props/
