@@ -64,3 +64,30 @@ def test_resolve_jobs_only_unknown_raises():
     assert "wnba_novig" in KNOWN_NAMES
     assert "wnba_prizepick" in KNOWN_NAMES
     assert "mlb_prizepick" in KNOWN_NAMES
+
+
+def test_resolve_jobs_exclude_prizepicks():
+    jobs = resolve_jobs(exclude=["wnba_prizepick", "mlb_prizepick"])
+    names = [j.name for j in jobs]
+    assert "wnba_prizepick" not in names
+    assert "mlb_prizepick" not in names
+    assert names == [
+        "wnba_novig",
+        "wnba_prophetx",
+        "wnba_underdog",
+        "bball_pinnacle",
+        "mlb_novig",
+        "mlb_prophetx",
+        "mlb_underdog",
+        "mlb_pinnacle",
+    ]
+
+
+def test_resolve_jobs_exclude_unknown_raises():
+    with pytest.raises(ValueError, match="Unknown scraper"):
+        resolve_jobs(exclude=["not_a_scraper"])
+
+
+def test_resolve_jobs_exclude_after_only():
+    jobs = resolve_jobs(only=["wnba_novig", "wnba_prizepick"], exclude=["wnba_prizepick"])
+    assert [j.name for j in jobs] == ["wnba_novig"]

@@ -2,7 +2,7 @@
 #
 # Usage:
 #   cp .env.docker.example .env   # set SUPABASE_DB_URL to Supabase
-#   docker compose -f docker-compose.yml -f docker-compose.supabase.yml up -d api
+#   docker compose -f docker-compose.yml -f docker-compose.supabase.yml up -d --build
 
 services:
   postgres:
@@ -11,5 +11,5 @@ services:
   api:
     depends_on: !reset null
 
-  etl:
+  odds:
     depends_on: !reset null

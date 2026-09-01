@@ -1,49 +1,42 @@
 # Docker
 
-Containerized statvista stack: **Postgres**, **FastAPI API**, and **ETL pipeline** (ingest → silver). Live props/slates are run via CLI after silver.
+Containerized **statvista** live stack: **web** (React), **api** (FastAPI), **odds** (HTTP scrapers), and optional **Postgres**.
+
+PrizePicks scrapers are **not** in Docker — they need a real browser (Brave CDP) on the host.
 
 ## Architecture
 
 ```
-┌─────────────┐     ┌──────────────┐     ┌─────────────────────────────┐
-│  postgres   │◄────│     api      │     │  etl (one-shot / scheduled) │
-│  (local)    │     │  FastAPI     │     │  ingest → silver            │
-└─────────────┘     └──────────────┘     └─────────────────────────────┘
-       ▲                    ▲                          ▲
-       │                    │                          │
-       └────────────────────┴──────────────────────────┘
-                    SUPABASE_DB_URL
-              (local Postgres or Supabase)
-
-After silver (CLI live ML):
-  run_live_props.py  → ml.*_live_prop_predictions  → GET /api/live-props
-  run_live_slates.py → ml.*_live_slates            → GET /api/live-slates
+Browser
+  → web :8080  (nginx: static React, /api → api:8000)
+  → api :8000  (FastAPI: ESPN / MLB Stats / RotoWire + odds.* reads)
+  → odds       (loop: Novig, ProphetX, Pinnacle, Underdog → Postgres)
+  → postgres   (local-db profile)  or  hosted Supabase
 ```
 
 | Service | Image | Port | Purpose |
 |---------|-------|------|---------|
-| `postgres` | `postgres:15-alpine` | 5433 (host) | Local dev DB; auto-runs `db/migrations/*.sql` |
-| `api` | `docker/Dockerfile.api` | 8000 | Read-only FastAPI (`/live-props`, `/live-slates`, …) |
-| `etl` | `docker/Dockerfile.etl` | — | Fetch NBA/WNBA raw + PropFinder, then silver |
+| `web` | `docker/Dockerfile.web` | 8080 (host) | React SPA; proxies `/api` to `api` |
+| `api` | `docker/Dockerfile.api` | 8000 | Live FastAPI (`/api/mlb/*`, `/api/wnba/*`, health) |
+| `odds` | `docker/Dockerfile.odds` | — | HTTP odds scrapers every `ODDS_INTERVAL_SECONDS` |
+| `postgres` | `postgres:15-alpine` | 5433 (host) | Local DB; auto-runs `db/migrations/*.sql` |
 
 ## Quick start (local Postgres)
 
 ```bash
-# 1. Configure env
 cp .env.docker.example .env
-# Add API_KEY for odds ingestion (optional for API-only demo)
+docker compose --profile local-db up -d --build
+```
 
-# 2. Start DB + API (includes local Postgres via profile)
-docker compose --profile local-db up -d postgres api
+Site: http://localhost:8080  
+API docs: http://localhost:8000/docs  
+Health: http://localhost:8000/api/health
 
-# 3. Verify API
-curl http://localhost:8000/api/health
-open http://localhost:8000/docs
+Props and Legs stay empty until odds snapshots exist. The `odds` worker fills Novig / ProphetX / Pinnacle / Underdog. PrizePicks still runs on the host:
 
-# 4. Run ETL steps (postgres must be running from step 2)
-docker compose --profile etl run --rm etl full         # ingest → silver
-docker compose --profile etl run --rm etl ingest       # NBA + odds → raw.*
-docker compose --profile etl run --rm etl silver       # raw.* → silver.*
+```bash
+python -m src.scrapers.mlb_prizepick
+python -m src.scrapers.wnba_prizepick
 ```
 
 ## External Supabase
@@ -51,68 +44,58 @@ docker compose --profile etl run --rm etl silver       # raw.* → silver.*
 Skip local Postgres and point at your Supabase project:
 
 ```bash
-# .env — set your Supabase connection string
-SUPABASE_DB_URL=postgresql://postgres:PASSWORD@db.PROJECT.supabase.co:5432/postgres?sslmode=require
-
-docker compose -f docker-compose.yml -f docker-compose.supabase.yml up -d api
-docker compose --profile etl run --rm etl full
+# .env — set SUPABASE_DB_URL to the Supabase connection string
+docker compose -f docker-compose.yml -f docker-compose.supabase.yml up -d --build
 ```
 
-Apply migrations once in Supabase SQL Editor (`db/migrations/`) before first ETL run.
+Apply migrations once in the Supabase SQL Editor (`db/migrations/`) before the first odds run.
 
-## ETL commands
+## Odds worker
 
-The ETL container entrypoint (`docker/etl-entrypoint.sh`):
+Default command is a loop:
 
-| Command | Steps |
-|---------|-------|
-| `ingest` | NBA + WNBA stats → `raw.*`, odds → `raw.*_props_*` via PropFinder |
-| `silver` | NBA + WNBA `python -m src.pipeline.clean` → `silver.*` |
-| `full` | ingest → silver (default) |
-| `shell` | Interactive bash inside container |
+```text
+python -m src.scrapers.run_all_odds --league all --exclude wnba_prizepick,mlb_prizepick
+```
 
-PropFinder league (default `wnba` while NBA is out of season):
+| Variable | Default | Meaning |
+|----------|---------|---------|
+| `ODDS_LEAGUE` | `all` | `wnba`, `mlb`, or `all` |
+| `ODDS_EXCLUDE` | `wnba_prizepick,mlb_prizepick` | Names skipped each cycle |
+| `ODDS_INTERVAL_SECONDS` | `300` | Sleep between cycles |
+
+One-shot (no loop):
 
 ```bash
-HOOPVISTA_PROPFINDER_LEAGUE=all docker compose --profile etl run --rm etl ingest
+docker compose run --rm --entrypoint python odds -m src.scrapers.run_all_odds --exclude wnba_prizepick,mlb_prizepick
 ```
 
-Gold feature builds and model training are manual (not part of this entrypoint).
+## Compose profiles
 
-## Build individually
+| Profile | Extra services | Use case |
+|---------|----------------|----------|
+| *(default)* | `web`, `api`, `odds` | Needs `SUPABASE_DB_URL` or combine with `local-db` |
+| `local-db` | `postgres` | Local Postgres on host port 5433 |
 
-```bash
-docker build -f docker/Dockerfile.api -t hoopvista-api .
-docker build -f docker/Dockerfile.etl -t hoopvista-etl .
-```
-
-## Volumes & mounts
+## Volumes
 
 | Mount | Service | Purpose |
 |-------|---------|---------|
 | `pgdata` | postgres | Persistent local database |
 | `./db/migrations` | postgres | Schema init on first boot |
-| `./data` | etl | Scraper CSV/JSON output |
-| `./src/models/saved_models` | etl | Pre-trained `.joblib` models |
-| `./.env` | etl | API keys and DB URL |
+| `./data/cache` | api | ESPN / outbound HTTP cache |
+| `./data/props` | odds | Scraper JSON output |
 
-## Compose profiles
+## Frontend without Docker
 
-| Profile | Services | Use case |
-|---------|----------|----------|
-| `local-db` | `postgres` + `api` | Local dev stack (recommended) |
-| `etl` | `etl` | Run pipeline jobs |
-| *(default)* | `api` only | Requires external `SUPABASE_DB_URL` or combine with `docker-compose.supabase.yml` |
-
-## Related
-
-- **Frontend dev**: `cd frontend && npm run dev` (proxies `/api` → `localhost:8000`)
+`cd frontend && npm run dev` still proxies `/api` → `localhost:8000`. You can run only `api` (+ `postgres` or Supabase) and keep Vite on the host.
 
 ## Troubleshooting
 
 | Issue | Fix |
 |-------|-----|
-| API `503` / DB host not found | Start postgres first; set `SUPABASE_DB_URL` to `host.docker.internal:5433` in `.env` (see `.env.docker.example`) |
-| SSL error locally | Use `?sslmode=disable` in local URL |
-| ETL ingest fails on odds | Set `API_KEY` in `.env` |
-| PropFinder empty (NBA offseason) | Use `--league wnba` / `HOOPVISTA_PROPFINDER_LEAGUE=wnba` |
+| Bind for 0.0.0.0:8000 failed: port is already allocated | Another process or container owns 8000. Set `API_PORT=8001` in `.env` and `docker compose --profile local-db up -d`. The site on 8080 still talks to the API inside Docker. |
+| API `503` / DB host not found | Start with `--profile local-db`, or set `SUPABASE_DB_URL` |
+| SSL error locally | Use `?sslmode=disable` in the local URL |
+| Props/Legs empty | Wait for an `odds` cycle; run PrizePicks on the host |
+| PrizePicks in the odds container | Leave `ODDS_EXCLUDE` as-is; run those modules locally |

@@ -11,7 +11,7 @@ Document how the live statvista website is structured today: routes, shared chro
 
 ## Non-goals
 
-- Airflow DAGs, dbt medallion transforms, model training, or scraper internals (see `models/README.md`, `docker/README.md`)
+- Airflow DAGs, dbt medallion transforms, model training, or scraper internals (see `models/README.md`)
 - Full catalog of unused DB-backed dashboard routes beyond noting they exist
 - Deployment / hosting runbooks
 - MLB Statcast (not in current slice)

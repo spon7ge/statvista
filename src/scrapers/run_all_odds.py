@@ -4,6 +4,7 @@ Usage:
   python -m src.scrapers.run_all_odds
   python -m src.scrapers.run_all_odds --league wnba
   python -m src.scrapers.run_all_odds --only wnba_novig,mlb_underdog
+  python -m src.scrapers.run_all_odds --exclude wnba_prizepick,mlb_prizepick
   python -m src.scrapers.run_all_odds --fail-fast
 """
 
@@ -50,23 +51,36 @@ SCRAPER_JOBS: tuple[ScraperJob, ...] = (
 KNOWN_NAMES = {job.name for job in SCRAPER_JOBS}
 
 
+def _unknown_names(names: list[str]) -> list[str]:
+    return [name for name in names if name not in KNOWN_NAMES]
+
+
 def resolve_jobs(
     *,
     league: League = "all",
     only: list[str] | None = None,
+    exclude: list[str] | None = None,
 ) -> list[ScraperJob]:
-    """Filter the canonical job list by league and optional name allowlist."""
+    """Filter the canonical job list by league, optional allowlist, then denylist."""
     jobs = list(SCRAPER_JOBS)
     if league != "all":
         jobs = [j for j in jobs if j.league == league]
     if only:
-        unknown = [name for name in only if name not in KNOWN_NAMES]
+        unknown = _unknown_names(only)
         if unknown:
             raise ValueError(
                 f"Unknown scraper name(s): {unknown}; choose from {sorted(KNOWN_NAMES)}"
             )
         allow = set(only)
         jobs = [j for j in jobs if j.name in allow]
+    if exclude:
+        unknown = _unknown_names(exclude)
+        if unknown:
+            raise ValueError(
+                f"Unknown scraper name(s): {unknown}; choose from {sorted(KNOWN_NAMES)}"
+            )
+        deny = set(exclude)
+        jobs = [j for j in jobs if j.name not in deny]
     return jobs
 
 
@@ -85,11 +99,12 @@ def run_all(
     *,
     league: League = "all",
     only: list[str] | None = None,
+    exclude: list[str] | None = None,
     fail_fast: bool = False,
     python: str | None = None,
 ) -> int:
     """Run selected scrapers sequentially. Returns 0 iff all succeeded."""
-    jobs = resolve_jobs(league=league, only=only)
+    jobs = resolve_jobs(league=league, only=only, exclude=exclude)
     if not jobs:
         print("No scrapers selected.", flush=True)
         return 1
@@ -136,6 +151,11 @@ def main(argv: list[str] | None = None) -> int:
         help=f"Comma-separated scraper names. Known: {', '.join(sorted(KNOWN_NAMES))}",
     )
     parser.add_argument(
+        "--exclude",
+        default=None,
+        help="Comma-separated scraper names to skip (e.g. PrizePicks in Docker)",
+    )
+    parser.add_argument(
         "--fail-fast",
         action="store_true",
         help="Stop after the first scraper failure (default: continue)",
@@ -145,6 +165,7 @@ def main(argv: list[str] | None = None) -> int:
         return run_all(
             league=args.league,
             only=_parse_only(args.only),
+            exclude=_parse_only(args.exclude),
             fail_fast=args.fail_fast,
         )
     except ValueError as exc:

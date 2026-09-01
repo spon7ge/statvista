@@ -22,10 +22,23 @@ BOOK_FILE_BASE: dict[str, str] = {
 
 VALID_LEG_COUNTS = {2, 3, 5, 6}
 
-CORS_ORIGINS = [
+DEFAULT_CORS_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "http://localhost:8080",
+    "http://127.0.0.1:8080",
 ]
+
+
+def parse_cors_origins(raw: str | None) -> list[str]:
+    """Parse a comma-separated CORS origin list; empty/missing uses defaults."""
+    if raw is None:
+        return list(DEFAULT_CORS_ORIGINS)
+    origins = [part.strip() for part in raw.split(",") if part.strip()]
+    return origins or list(DEFAULT_CORS_ORIGINS)
+
+
+CORS_ORIGINS = parse_cors_origins(os.environ.get("CORS_ORIGINS"))
 
 # SharpAPI — legacy; WNBA odds/props now use ParlayAPI
 SHARP_API_KEY: str | None = os.environ.get("SHARP_API_KEY") or None

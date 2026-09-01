@@ -1,21 +1,20 @@
-# HoopVista — Docker stack
+# statvista — live site Docker stack
 #
 # Services:
 #   postgres  Local Postgres (optional — use Supabase by overriding SUPABASE_DB_URL)
-#   api       FastAPI backend (read-only DB queries)
-#   etl       Ingest (fetch + PropFinder) → silver (one-shot via `docker compose run`)
+#   api       FastAPI (WNBA/MLB adapters + odds.* reads)
+#   web       nginx: static React app, /api proxied to api
+#   odds      HTTP scrapers on a loop (PrizePicks stays on the host)
 #
 # Quick start:
 #   cp .env.docker.example .env
-#   docker compose --profile local-db up -d postgres api
-#   docker compose --profile etl run --rm etl full
+#   docker compose --profile local-db up -d --build
 #
 # See docker/README.md for full docs.
 
-name: hoopvista
+name: statvista
 
 services:
-  # ── Local Postgres (disable when using external Supabase) ─────────────────────
   postgres:
     image: postgres:15-alpine
     environment:
@@ -37,7 +36,6 @@ services:
     restart: unless-stopped
     profiles: ["local-db"]
 
-  # ── FastAPI backend ─────────────────────────────────────────────────────────
   api:
     build:
       context: .
@@ -51,6 +49,9 @@ services:
       - "host.docker.internal:host-gateway"
     environment:
       SUPABASE_DB_URL: ${SUPABASE_DB_URL:-postgresql://${POSTGRES_USER:-hoopvista}:${POSTGRES_PASSWORD:-hoopvista}@host.docker.internal:${POSTGRES_PORT:-5433}/${POSTGRES_DB:-hoopvista}?sslmode=disable}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173,http://localhost:8080,http://127.0.0.1:8080}
+    volumes:
+      - ./data/cache:/app/data/cache
     depends_on:
       postgres:
         condition: service_healthy
@@ -63,11 +64,27 @@ services:
       start_period: 20s
     restart: unless-stopped
 
-  # ── ETL: ingest → silver ────────────────────────────────────────────────────
-  etl:
+  web:
     build:
       context: .
-      dockerfile: docker/Dockerfile.etl
+      dockerfile: docker/Dockerfile.web
+    ports:
+      - "${WEB_PORT:-8080}:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+
+  odds:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.odds
     env_file:
       - path: .env
         required: false
@@ -75,21 +92,16 @@ services:
       - "host.docker.internal:host-gateway"
     environment:
       SUPABASE_DB_URL: ${SUPABASE_DB_URL:-postgresql://${POSTGRES_USER:-hoopvista}:${POSTGRES_PASSWORD:-hoopvista}@host.docker.internal:${POSTGRES_PORT:-5433}/${POSTGRES_DB:-hoopvista}?sslmode=disable}
-      HOOPVISTA_NBA_SEASON: ${HOOPVISTA_NBA_SEASON:-2025-26}
-      HOOPVISTA_WNBA_SEASON: ${HOOPVISTA_WNBA_SEASON:-2025}
-      HOOPVISTA_SEASON_TYPE: "${HOOPVISTA_SEASON_TYPE:-Regular Season}"
-      HOOPVISTA_PROPFINDER_LEAGUE: ${HOOPVISTA_PROPFINDER_LEAGUE:-wnba}
-      API_KEY: ${API_KEY:-}
-      API_KEY_IO_1: ${API_KEY_IO_1:-}
-      API_KEY_IO_2: ${API_KEY_IO_2:-}
+      ODDS_LEAGUE: ${ODDS_LEAGUE:-all}
+      ODDS_EXCLUDE: ${ODDS_EXCLUDE:-wnba_prizepick,mlb_prizepick}
+      ODDS_INTERVAL_SECONDS: ${ODDS_INTERVAL_SECONDS:-300}
     volumes:
-      - ./data:/app/data
-      - ./src/models/saved_models:/app/src/models/saved_models
+      - ./data/props:/app/data/props
     depends_on:
       postgres:
         condition: service_healthy
         required: false
-    profiles: ["etl"]
+    restart: unless-stopped
 
 volumes:
   pgdata:
