@@ -391,3 +391,65 @@ def test_game_index_maps_team_to_opponent_and_side():
     assert index["IND"]["game_id"] == "401810001"
     assert index["NYL"]["home_away"] == "home"
     assert index["NYL"]["opponent_abbrev"] == "IND"
+
+
+def test_stats_player_id_index_matches_accented_alias_and_allplayers_shape():
+    from app.domains.betting.player_match_keys import match_player_key
+    from app.domains.wnba.prop_board import stats_player_id_index
+
+    rows = [
+        {"PLAYER_NAME": "Janelle Salaün", "PLAYER_ID": 1001},
+        {"DISPLAY_FIRST_LAST": "Jessica Lynn Shepard", "PERSON_ID": 2002},
+        {"PLAYER": "A'ja Wilson", "PLAYER_ID": "1628932"},
+    ]
+    index = stats_player_id_index(rows)
+    assert index[match_player_key("Janelle Salaun")] == "1001"
+    assert index[match_player_key("Jessica Shepard")] == "2002"
+    assert index[match_player_key("A'ja Wilson")] == "1628932"
+
+
+@pytest.mark.asyncio
+async def test_attach_game_logs_uses_allplayers_when_dash_fails(monkeypatch):
+    from app.domains.wnba.prop_board import _attach_game_logs
+
+    async def boom_dash(_season: int):
+        raise RuntimeError("403")
+
+    async def allplayers(_season: int):
+        return {
+            "resultSets": [
+                {
+                    "headers": ["PERSON_ID", "DISPLAY_FIRST_LAST"],
+                    "rowSet": [[1628932, "A'ja Wilson"]],
+                }
+            ]
+        }
+
+    async def gamelog(_player_id: str, _season: int):
+        return {
+            "resultSets": [
+                {
+                    "headers": ["GAME_DATE", "MATCHUP", "MIN", "PTS"],
+                    "rowSet": [["2026-08-28", "LVA vs. TOR", 30, 27]],
+                }
+            ]
+        }
+
+    monkeypatch.setattr(
+        "app.domains.wnba.prop_board.fetch_leaguedashplayerstats", boom_dash
+    )
+    monkeypatch.setattr(
+        "app.domains.wnba.prop_board.fetch_commonallplayers", allplayers
+    )
+    monkeypatch.setattr(
+        "app.domains.wnba.prop_board.fetch_playergamelog", gamelog
+    )
+
+    player_ctx: dict = {}
+    missing: set[str] = set()
+    failed = await _attach_game_logs(
+        player_ctx, {"a'ja wilson": "A'ja Wilson"}, missing
+    )
+    assert failed is False
+    assert missing == set()
+    assert player_ctx["a'ja wilson"]["splits"][0]["PTS"] == 27

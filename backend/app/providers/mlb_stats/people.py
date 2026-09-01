@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import re
 import unicodedata
 from typing import Any, Literal
 
@@ -18,10 +19,24 @@ class MlbStatsRequestError(Exception):
     """Stats API HTTP/network failure, distinct from empty successful results."""
 
 
+_JR_SUFFIX = re.compile(r"\s+jr\.?$")
+
+
 def _norm_name(value: str) -> str:
     nfkd = unicodedata.normalize("NFKD", value)
     ascii_only = "".join(c for c in nfkd if not unicodedata.combining(c))
     return " ".join(ascii_only.lower().split())
+
+
+def _has_jr_suffix(normed: str) -> bool:
+    return bool(_JR_SUFFIX.search(normed))
+
+
+def _is_jr_of_query(person_norm: str, query_norm: str) -> bool:
+    """True when person is ``{query} Jr.`` and the query itself has no Jr."""
+    if _has_jr_suffix(query_norm) or not _has_jr_suffix(person_norm):
+        return False
+    return _JR_SUFFIX.sub("", person_norm).strip() == query_norm
 
 
 def pick_best_person(people: list[dict], query: str) -> dict | None:
@@ -31,9 +46,12 @@ def pick_best_person(people: list[dict], query: str) -> dict | None:
 
     def score(p: dict) -> tuple:
         name = _norm_name(str(p.get("fullName") or ""))
-        exact = 0 if name == q else 1
+        # DFS often omits Jr.; prefer the active son over a retired/other
+        # exact match on the unsuffixed name.
         active = 0 if p.get("active") else 1
-        return (exact, active, name)
+        jr_of_query = 0 if _is_jr_of_query(name, q) else 1
+        exact = 0 if name == q else 1
+        return (jr_of_query, active, exact, name)
 
     return sorted(people, key=score)[0]
 

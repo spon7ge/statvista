@@ -59,8 +59,7 @@ from app.domains.mlb.schemas_prop_board import (
 from app.domains.mlb.scoreboard import get_today_scoreboard
 from app.domains.mlb.standings import fetch_team_abbrev_map
 from app.domains.mlb.team_names import canonical_mlb_abbrev
-from app.providers.espn.mlb_roster import get_mlb_player_index
-from app.providers.espn.wnba_roster import norm_player_name
+from app.providers.espn.mlb_roster import get_mlb_player_index, lookup_roster_player
 from app.providers.mlb_stats.people import (
     STATS_TIMEOUT_SECONDS,
     MlbStatsRequestError,
@@ -523,7 +522,7 @@ def _player_context(
 ) -> dict[str, PlayerCtx]:
     out: dict[str, PlayerCtx] = {}
     for player_key, player_name in players.items():
-        entry = roster.get(norm_player_name(player_name)) or roster.get(player_key)
+        entry = lookup_roster_player(roster, player_name, player_key)
         team = None
         headshot = None
         if entry:

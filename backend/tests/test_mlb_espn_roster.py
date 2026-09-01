@@ -3,6 +3,7 @@ from pathlib import Path
 
 from app.providers.espn.mlb_roster import (
     headshot_url_for,
+    lookup_roster_player,
     roster_player_index,
 )
 from app.providers.espn.wnba_roster import norm_player_name
@@ -41,3 +42,38 @@ def test_roster_player_index_accepts_flat_athlete_list():
     assert entry["espn_id"] == "1"
     assert entry["position"] == "C"
     assert entry["team_abbrev"] == "BOS"
+
+
+def test_lookup_roster_player_finds_jr_when_query_omits_jr():
+    index = {
+        norm_player_name("Fernando Tatis Jr."): {
+            "espn_id": "32512",
+            "position": "RF",
+            "team_abbrev": "SD",
+            "headshot_url": headshot_url_for("32512"),
+        }
+    }
+    hit = lookup_roster_player(index, "Fernando Tatis", "fernando tatis")
+    assert hit is not None
+    assert hit["espn_id"] == "32512"
+    assert hit["team_abbrev"] == "SD"
+
+
+def test_lookup_roster_player_keeps_exact_short_name_if_present():
+    index = {
+        norm_player_name("Luis Garcia"): {
+            "espn_id": "1",
+            "position": "P",
+            "team_abbrev": "HOU",
+            "headshot_url": None,
+        },
+        norm_player_name("Luis García Jr."): {
+            "espn_id": "2",
+            "position": "2B",
+            "team_abbrev": "WSH",
+            "headshot_url": None,
+        },
+    }
+    hit = lookup_roster_player(index, "Luis Garcia", "luis garcia")
+    assert hit is not None
+    assert hit["espn_id"] == "1"

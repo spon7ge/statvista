@@ -25,6 +25,7 @@ HEADSHOT_URL_TEMPLATE = (
 DASH_URL = "https://stats.wnba.com/stats/leaguedashplayerstats"
 INFO_URL = "https://stats.wnba.com/stats/commonplayerinfo"
 GAMELOG_URL = "https://stats.wnba.com/stats/playergamelog"
+ALLPLAYERS_URL = "https://stats.wnba.com/stats/commonallplayers"
 STATS_TIMEOUT_SECONDS = 10.0
 CACHE_TTL_SECONDS = 10 * 60
 
@@ -48,9 +49,16 @@ _refresh_locks: dict[str, asyncio.Lock] = {}  # player_id → lock
 _refresh_locks_loop: asyncio.AbstractEventLoop | None = None
 
 _STATS_HEADERS = {
-    "User-Agent": "Mozilla/5.0",
-    "Referer": "https://www.wnba.com/",
-    "Accept": "application/json",
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/128.0.0.0 Safari/537.36"
+    ),
+    "Referer": "https://www.wnba.com/stats/players/",
+    "Origin": "https://www.wnba.com",
+    "Accept": "application/json, text/plain, */*",
+    "x-nba-stats-origin": "stats",
+    "x-nba-stats-token": "true",
 }
 
 
@@ -383,6 +391,24 @@ def _get_refresh_lock(player_id: str) -> asyncio.Lock:
         lock = asyncio.Lock()
         _refresh_locks[player_id] = lock
     return lock
+
+
+async def fetch_commonallplayers(season: int) -> dict:
+    """Current-season roster list (PERSON_ID + DISPLAY_FIRST_LAST).
+
+    More reliable than leaguedashplayerstats, which often 403s.
+    """
+    params = {
+        "LeagueID": "10",
+        "Season": str(season),
+        "IsOnlyCurrentSeason": "1",
+    }
+    async with httpx.AsyncClient(
+        timeout=STATS_TIMEOUT_SECONDS, headers=_STATS_HEADERS
+    ) as client:
+        res = await client.get(ALLPLAYERS_URL, params=params)
+        res.raise_for_status()
+        return res.json()
 
 
 async def fetch_leaguedashplayerstats(season: int) -> dict:

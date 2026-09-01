@@ -23,6 +23,33 @@ def test_mlb_props_board_route_returns_200(monkeypatch):
     assert res.json()["rows"] == []
 
 
+def test_player_context_resolves_jr_when_dfs_omits_suffix():
+    from app.domains.mlb.prop_board import _player_context
+    from app.providers.espn.wnba_roster import norm_player_name
+
+    roster = {
+        norm_player_name("Fernando Tatis Jr."): {
+            "team_abbrev": "SD",
+            "headshot_url": "https://example.test/tatis.png",
+        }
+    }
+    ctx = _player_context(
+        {"fernando tatis": "Fernando Tatis"},
+        roster,
+        {
+            "SD": {
+                "opponent_abbrev": "CIN",
+                "game_pk": 1,
+                "game_start_at": None,
+                "home_away": "home",
+            }
+        },
+    )
+    assert ctx["fernando tatis"]["team_abbrev"] == "SD"
+    assert ctx["fernando tatis"]["opponent_abbrev"] == "CIN"
+    assert ctx["fernando tatis"]["headshot_url"] == "https://example.test/tatis.png"
+
+
 @pytest.mark.asyncio
 async def test_assembler_splits_lines_and_null_ip_for_dfs_only(monkeypatch):
     quotes = [

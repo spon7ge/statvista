@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import re
 import time
 from typing import Any, TypedDict
 
@@ -24,6 +25,7 @@ HEADSHOT_TMPL = (
 )
 
 _index_cache: dict[str, Any] = {"expires_at": 0.0, "index": {}}
+_JR_SUFFIX = re.compile(r"\s+jr\.?$")
 
 
 class MlbRosterPlayer(TypedDict):
@@ -40,6 +42,30 @@ def clear_mlb_roster_cache() -> None:
 
 def headshot_url_for(espn_id: str) -> str:
     return HEADSHOT_TMPL.format(espn_id=str(espn_id).strip())
+
+
+def lookup_roster_player(
+    index: dict[str, MlbRosterPlayer],
+    player_name: str,
+    player_key: str = "",
+) -> MlbRosterPlayer | None:
+    """Resolve an ESPN roster row; DFS names often omit Jr."""
+    candidates: list[str] = []
+
+    def add(key: str) -> None:
+        if key and key not in candidates:
+            candidates.append(key)
+
+    add(norm_player_name(player_name))
+    add(str(player_key or "").strip())
+    for key in list(candidates):
+        if not _JR_SUFFIX.search(key):
+            add(f"{key} jr.")
+    for key in candidates:
+        hit = index.get(key)
+        if hit is not None:
+            return hit
+    return None
 
 
 def roster_player_index(

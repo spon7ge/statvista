@@ -25,7 +25,12 @@ from app.domains.betting.prop_stat_keys import (
     display_stat_label,
 )
 from app.domains.wnba.leaders import current_wnba_season_year
-from app.domains.wnba.player import fetch_leaguedashplayerstats, fetch_playergamelog, rows_as_dicts
+from app.domains.wnba.player import (
+    fetch_commonallplayers,
+    fetch_leaguedashplayerstats,
+    fetch_playergamelog,
+    rows_as_dicts,
+)
 from app.domains.wnba.prop_board_cluster import (
     DFS_CHIP_ORDER,
     SPORTSBOOK_CHIP_ORDER,
@@ -538,6 +543,40 @@ def _stamp_opponent_abbrev(splits: list[dict[str, Any]]) -> list[dict[str, Any]]
     return stamped
 
 
+def stats_player_id_index(rows: list[dict[str, Any]]) -> dict[str, str]:
+    """Map match_player_key → stats.wnba.com id from dash or commonallplayers rows."""
+    out: dict[str, str] = {}
+    for row in rows:
+        name = str(
+            row.get("PLAYER_NAME")
+            or row.get("DISPLAY_FIRST_LAST")
+            or row.get("PLAYER")
+            or ""
+        ).strip()
+        player_id = str(row.get("PLAYER_ID") or row.get("PERSON_ID") or "").strip()
+        if not name or not player_id:
+            continue
+        out.setdefault(match_player_key(name), player_id)
+    return out
+
+
+async def _stats_name_to_id(season: int) -> dict[str, str]:
+    """Prefer commonallplayers; fall back to leaguedashplayerstats if empty/403."""
+    for fetcher in (fetch_commonallplayers, fetch_leaguedashplayerstats):
+        try:
+            payload = await fetcher(season)
+            index = stats_player_id_index(rows_as_dicts(payload))
+            if index:
+                return index
+        except Exception as exc:
+            logger.warning(
+                "WNBA board player-id source %s failed: %s",
+                fetcher.__name__,
+                exc,
+            )
+    return {}
+
+
 async def _attach_game_logs(
     player_ctx: dict[str, PlayerCtx],
     players: dict[str, str],
@@ -546,16 +585,8 @@ async def _attach_game_logs(
     sem = asyncio.Semaphore(_PERSON_LOOKUP_CONCURRENCY)
     logs_failed = False
     season = current_wnba_season_year()
-    name_to_id: dict[str, str] = {}
-    try:
-        dash = await fetch_leaguedashplayerstats(season)
-        for row in rows_as_dicts(dash):
-            name = str(row.get("PLAYER_NAME") or "").strip()
-            player_id = str(row.get("PLAYER_ID") or "").strip()
-            if not name or not player_id:
-                continue
-            name_to_id.setdefault(match_player_key(name), player_id)
-    except Exception:
+    name_to_id = await _stats_name_to_id(season)
+    if not name_to_id:
         return True
 
     async def one(player_key: str, player_name: str) -> None:
@@ -572,7 +603,13 @@ async def _attach_game_logs(
                 ctx["splits"] = _stamp_opponent_abbrev(
                     await _cached_game_log(player_id, season)
                 )
-            except Exception:
+            except Exception as exc:
+                logger.warning(
+                    "WNBA board gamelog failed %s season=%s: %s",
+                    player_id,
+                    season,
+                    exc,
+                )
                 logs_failed = True
             try:
                 ctx["splits_prev"] = _stamp_opponent_abbrev(

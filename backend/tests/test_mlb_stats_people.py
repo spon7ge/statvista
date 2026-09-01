@@ -17,6 +17,25 @@ def test_pick_best_person_prefers_active_exact():
     assert pick_best_person(people, "James Wood")["id"] == 695578
 
 
+def test_pick_best_person_prefers_active_jr_when_query_omits_jr():
+    """DFS often drops Jr.; exact retired dad must not beat the active son."""
+    people = [
+        {"id": 124492, "fullName": "Bobby Witt", "active": False},
+        {"id": 677951, "fullName": "Bobby Witt Jr.", "active": True},
+    ]
+    assert pick_best_person(people, "Bobby Witt")["id"] == 677951
+    assert pick_best_person(people, "Bobby Witt Jr.")["id"] == 677951
+
+
+def test_pick_best_person_prefers_active_jr_over_other_active_when_query_omits_jr():
+    people = [
+        {"id": 472610, "fullName": "Luis García", "active": True},
+        {"id": 671277, "fullName": "Luis García Jr.", "active": True},
+        {"id": 677651, "fullName": "Luis Garcia", "active": True},
+    ]
+    assert pick_best_person(people, "Luis Garcia")["id"] == 671277
+
+
 @pytest.mark.asyncio
 async def test_search_person_id_reads_people(monkeypatch):
     class FakeResp:
