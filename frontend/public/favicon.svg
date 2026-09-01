@@ -1,34 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
-  <rect width="24" height="24" rx="4" fill="#000"/>
-  <!-- Matches HomeNav brand mark (strokeWidth 1.8) -->
-  <line
-    x1="6"
-    y1="20"
-    x2="6"
-    y2="10"
-    stroke="#fff"
-    stroke-width="1.8"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-  />
-  <line
-    x1="12"
-    y1="20"
-    x2="12"
-    y2="4"
-    stroke="#fff"
-    stroke-width="1.8"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-  />
-  <line
-    x1="18"
-    y1="20"
-    x2="18"
-    y2="14"
-    stroke="#fff"
-    stroke-width="1.8"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-  />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <rect width="32" height="32" rx="6" fill="#000"/>
+  <rect fill="#003ca8" x="3" y="16" width="7" height="14" rx="1.5" />
+  <rect fill="#0086ff" x="12.5" y="8" width="7" height="22" rx="1.5" />
+  <rect fill="#00c1d8" x="22" y="2" width="7" height="28" rx="1.5" />
 </svg>

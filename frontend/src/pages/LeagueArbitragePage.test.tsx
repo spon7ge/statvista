@@ -18,7 +18,7 @@ function renderPage(path: string) {
 }
 
 describe("LeagueArbitragePage", () => {
-  it("renders an empty Arbitrage shell with league pills", () => {
+  it("renders Arbitrage coming soon with league pills", () => {
     renderPage("/mlb/arbitrage");
     expect(screen.getByRole("heading", { name: "Arbitrage" })).toHaveClass(
       "text-white",
@@ -32,6 +32,7 @@ describe("LeagueArbitragePage", () => {
       "/wnba/arbitrage",
     );
     expect(screen.getByRole("button", { name: "NBA" })).toBeDisabled();
+    expect(screen.getByText("Arbitrage coming soon.")).toBeInTheDocument();
     expect(screen.queryByRole("list")).not.toBeInTheDocument();
   });
 });

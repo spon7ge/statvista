@@ -1,7 +1,7 @@
 import { CHROME_PAGE_X, CHROME_TITLE_TOP } from "@/app/layouts/chrome";
 import { LeagueSectionSwitcher } from "@/features/home/LeagueSectionSwitcher";
 
-/** Empty shell for cross-book arbitrage. */
+/** Coming-soon shell for cross-book arbitrage. */
 export function LeagueArbitragePage() {
   return (
     <div className="space-y-0 pb-8">
@@ -17,6 +17,7 @@ export function LeagueArbitragePage() {
           </div>
           <LeagueSectionSwitcher section="Arbitrage" />
         </div>
+        <p className="text-sm text-white/40">Arbitrage coming soon.</p>
       </section>
     </div>
   );
