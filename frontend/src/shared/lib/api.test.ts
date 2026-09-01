@@ -164,6 +164,51 @@ describe("fetchWnbaProps", () => {
   });
 });
 
+describe("fetchWnbaPropBoard", () => {
+  beforeEach(() => {
+    vi.resetModules();
+    fetchMock.mockReset();
+    vi.stubGlobal("fetch", fetchMock);
+  });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
+  });
+
+  it("GETs /api/wnba/props/board with no query string", async () => {
+    vi.stubEnv("VITE_API_BASE_URL", undefined);
+    fetchMock.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        as_of: "2026-08-31T00:00:00Z",
+        rows: [],
+        warnings: [],
+      }),
+    });
+
+    const { fetchWnbaPropBoard } = await import("./api");
+    await fetchWnbaPropBoard();
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/wnba/props/board",
+      expect.objectContaining({
+        headers: { Accept: "application/json" },
+        cache: "no-store",
+      }),
+    );
+  });
+
+  it("throws when the response is not ok", async () => {
+    vi.stubEnv("VITE_API_BASE_URL", undefined);
+    fetchMock.mockResolvedValue({ ok: false, status: 502 });
+
+    const { fetchWnbaPropBoard } = await import("./api");
+    await expect(fetchWnbaPropBoard()).rejects.toThrow(
+      "WNBA prop board request failed: 502",
+    );
+  });
+});
+
 describe("fetchMlbProps", () => {
   beforeEach(() => {
     vi.resetModules();

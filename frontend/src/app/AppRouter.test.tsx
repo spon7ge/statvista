@@ -89,52 +89,47 @@ describe("AppRouter", () => {
   });
 
   it("renders WNBA prop picks at /wnba/prop_picks", async () => {
-    fetchMock.mockResolvedValue({
-      ok: true,
-      json: async () => ({
-        as_of: "now",
-        sportsbooks: [
-          "fanduel",
-          "draftkings",
-          "caesars",
-          "betmgm",
-          "pinnacle",
-          "bet365",
-          "prizepicks",
-          "underdog",
-          "betr",
-          "novig",
-          "sleeper",
-          "betrivers",
-        ],
-        props: [
-          {
-            player_name: "Rhyne Howard",
-            team_abbrev: "ATL",
-            logo_url: "https://a.espncdn.com/i/teamlogos/wnba/500/atl.png",
-            stat: "Assists",
-            market_type: "player_assists",
-            side: "over",
-            model_prediction: null,
-            over_under_pct: null,
-            ev: null,
-            game_date: "2026-07-31",
-            commence_time: "2026-07-31T23:30:00Z",
-            fanduel: { line: 3.5, odds_american: -114 },
-            draftkings: { line: 3.5, odds_american: -120 },
-            caesars: null,
-            betmgm: null,
-            pinnacle: { line: 3.5, odds_american: -108 },
-            bet365: null,
-            prizepicks: { line: 3.5, odds_american: null },
-            underdog: null,
-            betr: null,
-            novig: null,
-            sleeper: null,
-            betrivers: null,
-          },
-        ],
-      }),
+    fetchMock.mockImplementation(async (input: RequestInfo) => {
+      const url = String(input);
+      if (url.includes("/api/wnba/props/board")) {
+        return {
+          ok: true,
+          json: async () => ({
+            as_of: "now",
+            warnings: [],
+            rows: [
+              {
+                player_name: "Rhyne Howard",
+                headshot_url: null,
+                team_abbrev: "ATL",
+                opponent_abbrev: "IND",
+                home_away: "away",
+                stat: "assists",
+                market_label: "Over 3.5 Assists",
+                side: "over",
+                line: 3.5,
+                game_id: "401810001",
+                game_start_at: "2026-07-31T23:30:00Z",
+                dfs: [{ book: "prizepicks", american: null, url: null }],
+                books: [{ book: "prophetx", american: -115, url: null }],
+                ip_pct: 53,
+                opp_def_rank: null,
+                opp_def_label: null,
+                opp_pace_rank: null,
+                opp_pace_label: null,
+                hit_l5: null,
+                hit_l10: null,
+                hit_l15: null,
+                hit_h2h: null,
+              },
+            ],
+          }),
+        };
+      }
+      return {
+        ok: true,
+        json: async () => ({ date: "2026-07-29", fetched_at: "", games: [] }),
+      };
     });
     renderWithProviders(["/wnba/prop_picks"]);
     expect(
@@ -145,119 +140,22 @@ describe("AppRouter", () => {
       "aria-current",
       "page",
     );
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/wnba/props/board",
+      expect.objectContaining({ cache: "no-store" }),
+    );
   });
 
-  it("renders player odds grid at /wnba/prop_picks/player/:playerSlug", async () => {
+  it("redirects /wnba/prop_picks/player/:playerSlug to the research board", async () => {
     fetchMock.mockImplementation(async (input: RequestInfo) => {
       const url = String(input);
-      if (url.includes("/api/wnba/props/today")) {
+      if (url.includes("/api/wnba/props/board")) {
         return {
           ok: true,
           json: async () => ({
             as_of: "now",
-            app: "prizepicks",
-            format: "power",
-            legs: 4,
-            breakeven_pct: 54.3,
-            props: [
-              {
-                player_name: "Caitlin Clark",
-                team_abbrev: "IND",
-                position: "G",
-                headshot_url: null,
-                commence_time: null,
-                stat: "Points",
-                line: 18.5,
-                recommended_side: "over",
-                fair_pct: 58.2,
-                edge_pct: 5.1,
-                alt_edge_pct: null,
-                source_tier: "sharp_consensus",
-                confidence_chips: [],
-                sample_chips: [],
-                recency_chip: null,
-                books: {
-                  prophetx: null,
-                  novig: null,
-                  draftkings: null,
-                  fanduel: null,
-                  pinnacle: null,
-                },
-                books_main: {
-                  prophetx: {
-                    line: 18.5,
-                    over_american: -115,
-                    under_american: -105,
-                    changed_at: null,
-                  },
-                  novig: null,
-                  draftkings: {
-                    line: 19.5,
-                    over_american: -120,
-                    under_american: 100,
-                    changed_at: null,
-                  },
-                  fanduel: null,
-                  betmgm: null,
-                  caesars: null,
-                  kalshi: null,
-                  fliff: null,
-                  bet365: null,
-                  pinnacle: null,
-                },
-                dfs: {
-                  line: 18.5,
-                  changed_at: null,
-                  american: null,
-                  payout_multiplier: null,
-                },
-                fair_explain: "",
-              },
-              {
-                player_name: "Caitlin Clark",
-                team_abbrev: "IND",
-                position: "G",
-                headshot_url: null,
-                commence_time: null,
-                stat: "Assists",
-                line: 8.5,
-                recommended_side: "over",
-                fair_pct: null,
-                edge_pct: null,
-                alt_edge_pct: null,
-                source_tier: "no_sharp_read",
-                confidence_chips: [],
-                sample_chips: [],
-                recency_chip: null,
-                books: {
-                  prophetx: null,
-                  novig: null,
-                  draftkings: null,
-                  fanduel: null,
-                  pinnacle: null,
-                },
-                books_main: {
-                  prophetx: null,
-                  novig: null,
-                  draftkings: null,
-                  fanduel: null,
-                  betmgm: null,
-                  caesars: null,
-                  kalshi: null,
-                  fliff: null,
-                  bet365: null,
-                  pinnacle: null,
-                },
-                dfs: {
-                  line: 8.5,
-                  changed_at: null,
-                  american: null,
-                  payout_multiplier: null,
-                },
-                fair_explain: "",
-              },
-            ],
-            error: null,
+            warnings: [],
+            rows: [],
           }),
         };
       }
@@ -267,88 +165,16 @@ describe("AppRouter", () => {
       };
     });
 
-    renderWithProviders([
-      "/wnba/prop_picks/player/caitlin-clark?app=prizepicks",
-    ]);
-    expect(await screen.findByText(/Caitlin Clark/i)).toBeInTheDocument();
-    expect(screen.getByText(/Points/i)).toBeInTheDocument();
-    expect(screen.getByText(/DraftKings/i)).toBeInTheDocument();
-  });
-
-  it("shows empty state for unknown WNBA player slug", async () => {
-    fetchMock.mockImplementation(async (input: RequestInfo) => {
-      const url = String(input);
-      if (url.includes("/api/wnba/props/today")) {
-        return {
-          ok: true,
-          json: async () => ({
-            as_of: "now",
-            app: "prizepicks",
-            format: "power",
-            legs: 4,
-            breakeven_pct: 54.3,
-            props: [
-              {
-                player_name: "Caitlin Clark",
-                team_abbrev: "IND",
-                position: "G",
-                headshot_url: null,
-                commence_time: null,
-                stat: "Points",
-                line: 18.5,
-                recommended_side: "over",
-                fair_pct: null,
-                edge_pct: null,
-                alt_edge_pct: null,
-                source_tier: "no_sharp_read",
-                confidence_chips: [],
-                sample_chips: [],
-                recency_chip: null,
-                books: {
-                  prophetx: null,
-                  novig: null,
-                  draftkings: null,
-                  fanduel: null,
-                  pinnacle: null,
-                },
-                books_main: {
-                  prophetx: null,
-                  novig: null,
-                  draftkings: null,
-                  fanduel: null,
-                  betmgm: null,
-                  caesars: null,
-                  kalshi: null,
-                  fliff: null,
-                  bet365: null,
-                  pinnacle: null,
-                },
-                dfs: {
-                  line: 18.5,
-                  changed_at: null,
-                  american: null,
-                  payout_multiplier: null,
-                },
-                fair_explain: "",
-              },
-            ],
-            error: null,
-          }),
-        };
-      }
-      return {
-        ok: true,
-        json: async () => ({ date: "2026-07-29", fetched_at: "", games: [] }),
-      };
-    });
-
-    renderWithProviders(["/wnba/prop_picks/player/nobody?app=prizepicks"]);
+    renderWithProviders(["/wnba/prop_picks/player/caitlin-clark?app=prizepicks"]);
     expect(
-      await screen.findByText(/player not found|unavailable/i),
+      await screen.findByRole("heading", { name: "Props" }),
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole("link", { name: /back to prop picks/i }),
-    ).toHaveAttribute("href", expect.stringMatching(/\/wnba\/prop_picks/));
+    expect(await screen.findByText("No board yet")).toBeInTheDocument();
+    expect(screen.queryByTestId("wnba-player-props-odds-grid")).not.toBeInTheDocument();
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/wnba/props/board",
+      expect.objectContaining({ cache: "no-store" }),
+    );
   });
 
   it("renders NBA coming-soon hub at /nba/matchups", async () => {

@@ -9204,6 +9204,359 @@
         "title": "WnbaPlayerResponse",
         "type": "object"
       },
+      "WnbaPropBoardBookChip": {
+        "properties": {
+          "american": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "American"
+          },
+          "book": {
+            "title": "Book",
+            "type": "string"
+          },
+          "devig_pct": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Devig Pct"
+          },
+          "line": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Line"
+          },
+          "over_american": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Over American"
+          },
+          "under_american": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Under American"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url"
+          }
+        },
+        "required": [
+          "book",
+          "american",
+          "url",
+          "devig_pct",
+          "line",
+          "over_american",
+          "under_american"
+        ],
+        "title": "WnbaPropBoardBookChip",
+        "type": "object"
+      },
+      "WnbaPropBoardResponse": {
+        "properties": {
+          "as_of": {
+            "format": "date-time",
+            "title": "As Of",
+            "type": "string"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/WnbaPropBoardRow"
+            },
+            "title": "Rows",
+            "type": "array"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "as_of",
+          "warnings",
+          "rows"
+        ],
+        "title": "WnbaPropBoardResponse",
+        "type": "object"
+      },
+      "WnbaPropBoardRow": {
+        "properties": {
+          "books": {
+            "items": {
+              "$ref": "#/components/schemas/WnbaPropBoardBookChip"
+            },
+            "title": "Books",
+            "type": "array"
+          },
+          "dfs": {
+            "items": {
+              "$ref": "#/components/schemas/WnbaPropBoardBookChip"
+            },
+            "title": "Dfs",
+            "type": "array"
+          },
+          "game_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Game Id"
+          },
+          "game_start_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Game Start At"
+          },
+          "headshot_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Headshot Url"
+          },
+          "hit_h2h": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hit H2H"
+          },
+          "hit_l10": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hit L10"
+          },
+          "hit_l15": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hit L15"
+          },
+          "hit_l5": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hit L5"
+          },
+          "home_away": {
+            "anyOf": [
+              {
+                "enum": [
+                  "away",
+                  "home"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Home Away"
+          },
+          "ip_pct": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ip Pct"
+          },
+          "line": {
+            "title": "Line",
+            "type": "number"
+          },
+          "market_label": {
+            "title": "Market Label",
+            "type": "string"
+          },
+          "opp_def_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Opp Def Label"
+          },
+          "opp_def_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Opp Def Rank"
+          },
+          "opp_pace_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Opp Pace Label"
+          },
+          "opp_pace_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Opp Pace Rank"
+          },
+          "opponent_abbrev": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Opponent Abbrev"
+          },
+          "player_name": {
+            "title": "Player Name",
+            "type": "string"
+          },
+          "side": {
+            "enum": [
+              "over",
+              "under"
+            ],
+            "title": "Side",
+            "type": "string"
+          },
+          "stat": {
+            "title": "Stat",
+            "type": "string"
+          },
+          "team_abbrev": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Team Abbrev"
+          }
+        },
+        "required": [
+          "player_name",
+          "headshot_url",
+          "team_abbrev",
+          "opponent_abbrev",
+          "home_away",
+          "stat",
+          "market_label",
+          "side",
+          "line",
+          "game_id",
+          "game_start_at",
+          "dfs",
+          "books",
+          "ip_pct",
+          "opp_def_rank",
+          "opp_def_label",
+          "opp_pace_rank",
+          "opp_pace_label",
+          "hit_l5",
+          "hit_l10",
+          "hit_l15",
+          "hit_h2h"
+        ],
+        "title": "WnbaPropBoardRow",
+        "type": "object"
+      },
       "WnbaPropBookMainQuote": {
         "description": "A book's main line for a player+stat (may differ from the DFS line).",
         "properties": {
@@ -12224,6 +12577,27 @@
           }
         },
         "summary": "Wnba Player",
+        "tags": [
+          "wnba"
+        ]
+      }
+    },
+    "/api/wnba/props/board": {
+      "get": {
+        "operationId": "wnba_props_board_api_wnba_props_board_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WnbaPropBoardResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Wnba Props Board",
         "tags": [
           "wnba"
         ]

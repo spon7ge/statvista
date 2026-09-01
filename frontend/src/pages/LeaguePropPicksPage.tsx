@@ -1,133 +1,133 @@
 import { useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { CHROME_PAGE_X } from "@/app/layouts/chrome";
-import { useWnbaProps } from "@/features/basketball/hooks/useWnbaProps";
-import { useWnbaScoreboard } from "@/features/basketball/hooks/useWnbaScoreboard";
+import { CHROME_PAGE_RIGHT, CHROME_PAGE_X } from "@/app/layouts/chrome";
+import { useWnbaPropBoard } from "@/features/basketball/hooks/useWnbaPropBoard";
 import { WnbaPropPicksFilters } from "@/features/basketball/league/WnbaPropPicksFilters";
+import { WnbaPropPicksHeader } from "@/features/basketball/league/WnbaPropPicksHeader";
+import { WnbaPropPicksTable } from "@/features/basketball/league/WnbaPropPicksTable";
 import {
-  appFromSearch,
-  WnbaPropPicksHeader,
-  type WnbaPropAppTab,
-} from "@/features/basketball/league/WnbaPropPicksHeader";
-import { WnbaPropPicksList } from "@/features/basketball/league/WnbaPropPicksList";
-import {
-  collectWnbaTeamOptions,
-  excludePastGameProps,
-  filterWnbaPropPlayers,
-} from "@/features/basketball/league/filterWnbaPropPicks";
-import { groupWnbaPropPlayers } from "@/features/basketball/league/groupWnbaPropPlayers";
+  collectWnbaBoardBookmakerOptions,
+  collectWnbaBoardGameOptions,
+  collectWnbaBoardPropositionOptions,
+  filterWnbaPropBoardRows,
+  type WnbaHitRateWindow,
+  type WnbaPropBoardSide,
+} from "@/features/basketball/league/filterWnbaPropBoard";
+import type { ApiWnbaPropBoardRow } from "@/shared/lib/api";
 
-/** Board always fetches 4-pick Power (PP) / Standard (UD); UI no longer exposes legs. */
-const BOARD_LEGS = 4;
-
-function formatForApp(app: WnbaPropAppTab): string {
-  return app === "underdog" ? "standard" : "power";
-}
-
-function appLabel(app: WnbaPropAppTab): string {
-  return app === "underdog" ? "Underdog" : "PrizePicks";
+function collectWnbaBoardTeamOptions(rows: ApiWnbaPropBoardRow[]): string[] {
+  return [
+    ...new Set(
+      rows
+        .map((row) => row.team_abbrev)
+        .filter((abbrev): abbrev is string => Boolean(abbrev)),
+    ),
+  ].sort((a, b) => a.localeCompare(b));
 }
 
 export function LeaguePropPicksPage() {
-  const [params, setSearchParams] = useSearchParams();
-  const app = appFromSearch(params.get("app"));
-  const format = formatForApp(app);
-
-  const { data, isLoading, isError, isFetched, dataUpdatedAt } = useWnbaProps({
-    app,
-    format,
-    legs: BOARD_LEGS,
-  });
-  const { games, data: scoreboard } = useWnbaScoreboard();
-
+  const { data, isLoading, isError } = useWnbaPropBoard();
   const [selectedTeams, setSelectedTeams] = useState<Set<string>>(
     () => new Set(),
   );
   const [query, setQuery] = useState("");
-
-  const props = data?.props ?? [];
-  const activeProps = useMemo(
-    () => excludePastGameProps(props, games, scoreboard?.date),
-    [props, games, scoreboard?.date],
+  const [selectedMarkets, setSelectedMarkets] = useState<Set<string>>(
+    () => new Set(),
   );
-  const showLoading = isLoading && !isFetched;
-  const showError = isError && !data;
-  const apiEmpty = showError || Boolean(data && props.length === 0);
-
-  const filtersActive = selectedTeams.size > 0 || query.trim().length > 0;
-
-  const players = useMemo(
-    () => groupWnbaPropPlayers(activeProps),
-    [activeProps],
+  const [selectedSides, setSelectedSides] = useState<Set<WnbaPropBoardSide>>(
+    () => new Set(),
   );
+  const [selectedBooks, setSelectedBooks] = useState<Set<string>>(
+    () => new Set(),
+  );
+  const [selectedGames, setSelectedGames] = useState<Set<string>>(
+    () => new Set(),
+  );
+  const [hitRate, setHitRate] = useState<WnbaHitRateWindow | null>(null);
+
+  const rows = data?.rows ?? [];
+  const markets = useMemo(() => collectWnbaBoardPropositionOptions(rows), [rows]);
+  const books = useMemo(() => collectWnbaBoardBookmakerOptions(rows), [rows]);
+  const games = useMemo(() => collectWnbaBoardGameOptions(rows), [rows]);
   const filtered = useMemo(
     () =>
-      filterWnbaPropPlayers(players, {
+      filterWnbaPropBoardRows(rows, {
         teams: selectedTeams,
         query,
+        markets: selectedMarkets,
+        sides: selectedSides,
+        books: selectedBooks,
+        games: selectedGames,
       }),
-    [players, selectedTeams, query],
+    [
+      rows,
+      selectedTeams,
+      query,
+      selectedMarkets,
+      selectedSides,
+      selectedBooks,
+      selectedGames,
+    ],
   );
 
   function clearFilters() {
     setSelectedTeams(new Set());
     setQuery("");
+    setSelectedMarkets(new Set());
+    setSelectedSides(new Set());
+    setSelectedBooks(new Set());
+    setSelectedGames(new Set());
+    setHitRate(null);
   }
 
-  function onAppChange(next: WnbaPropAppTab) {
-    setSearchParams({ app: next }, { replace: true });
-    clearFilters();
-  }
-
-  const showBoardFilters =
-    !showLoading && !apiEmpty && activeProps.length > 0;
-  const hidePastEmpty =
-    !showError && !showLoading && props.length > 0 && activeProps.length === 0;
-
-  let emptyMessage: string | undefined;
-  if (apiEmpty && !showError) {
-    emptyMessage = `No ${appLabel(app)} board available.`;
-  } else if (hidePastEmpty) {
-    emptyMessage = "No props for today's remaining games.";
-  }
+  const showBoardError = isError && !data;
+  const showBoardFilters = !isLoading && !showBoardError && rows.length > 0;
 
   return (
     <div className="space-y-0 pb-8">
-      <section className={`max-w-6xl space-y-6 pb-16 sm:pb-20 ${CHROME_PAGE_X}`}>
-        <WnbaPropPicksHeader
-          activeApp={app}
-          onAppChange={onAppChange}
-        >
+      <section
+        className={`max-w-6xl space-y-6 pb-16 sm:pb-20 ${CHROME_PAGE_X} ${CHROME_PAGE_RIGHT}`}
+      >
+        <WnbaPropPicksHeader>
           {showBoardFilters ? (
             <WnbaPropPicksFilters
               tone="pill"
-              teams={collectWnbaTeamOptions(activeProps)}
+              teams={collectWnbaBoardTeamOptions(rows)}
               selectedTeams={selectedTeams}
               query={query}
               onTeamsChange={setSelectedTeams}
               onQueryChange={setQuery}
               onClear={clearFilters}
+              markets={markets}
+              selectedMarkets={selectedMarkets}
+              onMarketsChange={setSelectedMarkets}
+              selectedSides={selectedSides}
+              onSidesChange={(next) =>
+                setSelectedSides(
+                  new Set(
+                    [...next].filter(
+                      (side): side is WnbaPropBoardSide =>
+                        side === "over" || side === "under",
+                    ),
+                  ),
+                )
+              }
+              books={books}
+              selectedBooks={selectedBooks}
+              onBooksChange={setSelectedBooks}
+              games={games}
+              selectedGames={selectedGames}
+              onGamesChange={setSelectedGames}
+              hitRate={hitRate}
+              onHitRateChange={setHitRate}
             />
           ) : null}
         </WnbaPropPicksHeader>
-
-        <div
-          id={`wnba-props-${app}-panel`}
-          role="tabpanel"
-          aria-labelledby={`wnba-props-${app}-tab`}
-        >
-          <WnbaPropPicksList
-            players={filtered}
-            app={app}
-            isLoading={showLoading}
-            isError={showError}
-            filtersActive={
-              filtersActive && !apiEmpty && activeProps.length > 0
-            }
-            emptyMessage={emptyMessage}
-            lastUpdatedAt={dataUpdatedAt || undefined}
-          />
-        </div>
+        <WnbaPropPicksTable
+          rows={filtered}
+          isLoading={isLoading}
+          isError={showBoardError}
+          hitRateWindow={hitRate}
+        />
       </section>
     </div>
   );

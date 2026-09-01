@@ -4,31 +4,22 @@ import { PropPicksLeagueSwitcher } from "@/features/home/PropPicksLeagueSwitcher
 
 export type WnbaPropAppTab = "prizepicks" | "underdog";
 
+/** Shared by game-detail Props tabs; the research board no longer reads `?app=`. */
 export function appFromSearch(value: string | null): WnbaPropAppTab {
   return value === "underdog" ? "underdog" : "prizepicks";
 }
 
-const APP_TABS: { id: WnbaPropAppTab; label: string }[] = [
-  { id: "prizepicks", label: "PrizePicks" },
-  { id: "underdog", label: "Underdog" },
-];
-
 type WnbaPropPicksHeaderProps = {
-  activeApp: WnbaPropAppTab;
-  onAppChange: (app: WnbaPropAppTab) => void;
-  /** Team + search pills under the league switcher. */
+  /** Filter pills under the league switcher. */
   children?: ReactNode;
 };
 
 /**
- * Props title + league pills, then PrizePicks / Underdog tabs.
- * Format/legs are fixed on the board (4-pick Power/Standard) so they stay off the chrome.
+ * Props title + horizontal league pills.
+ * Filter pills sit under the switcher. PrizePicks / Underdog tabs stay on
+ * game-detail Props, not this page.
  */
-export function WnbaPropPicksHeader({
-  activeApp,
-  onAppChange,
-  children,
-}: WnbaPropPicksHeaderProps) {
+export function WnbaPropPicksHeader({ children }: WnbaPropPicksHeaderProps) {
   return (
     <div
       data-testid="wnba-prop-picks-header"
@@ -43,31 +34,6 @@ export function WnbaPropPicksHeader({
       {children ? (
         <div className="flex flex-wrap items-center gap-2">{children}</div>
       ) : null}
-
-      <div
-        role="tablist"
-        aria-label="DFS app"
-        className="flex items-center justify-center gap-1 border-b border-white/10"
-      >
-        {APP_TABS.map((tab) => (
-          <button
-            key={tab.id}
-            id={`wnba-props-${tab.id}-tab`}
-            type="button"
-            role="tab"
-            aria-selected={activeApp === tab.id}
-            aria-controls={`wnba-props-${tab.id}-panel`}
-            className={`border-b-2 px-5 py-2 text-[18px] font-medium transition-colors ${
-              activeApp === tab.id
-                ? "border-white text-white"
-                : "border-transparent text-white/50 hover:text-white/80"
-            }`}
-            onClick={() => onAppChange(tab.id)}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
     </div>
   );
 }

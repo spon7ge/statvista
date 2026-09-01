@@ -4,7 +4,7 @@ import { fetchWnbaProps, type WnbaPropsParams } from "@/shared/lib/api";
 /** Board lines move slowly; keep client cache aligned with the poll. */
 export const WNBA_PROPS_STALE_MS = 15 * 60_000;
 
-/** Default PrizePicks board (power / 4-pick) used by `/wnba/prop_picks`. */
+/** Default PrizePicks board (power / 4-pick) used by game-detail Props. */
 export const WNBA_DEFAULT_PROPS: WnbaPropsParams = {
   app: "prizepicks",
   format: "power",

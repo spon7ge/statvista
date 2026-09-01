@@ -69,6 +69,11 @@ from app.domains.wnba.schemas_legs import (
     WnbaLegsRejectedSummary,
     WnbaLegsResponse,
 )
+from app.domains.wnba.schemas_prop_board import (
+    WnbaPropBoardBookChip,
+    WnbaPropBoardResponse,
+    WnbaPropBoardRow,
+)
 from app.domains.wnba.schemas_prop_picks import (
     WnbaPropBookMainQuote,
     WnbaPropBooks,
@@ -120,6 +125,9 @@ __all__ = [
     "WnbaPlayerAverages",
     "WnbaPlayerGame",
     "WnbaPlayerResponse",
+    "WnbaPropBoardBookChip",
+    "WnbaPropBoardResponse",
+    "WnbaPropBoardRow",
     "WnbaPropBookMainQuote",
     "WnbaPropBookQuote",
     "WnbaPropBooks",

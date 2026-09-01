@@ -11,6 +11,7 @@ from app.domains.wnba.game_props import get_wnba_props_for_game
 from app.domains.wnba.leaders import get_wnba_leaders
 from app.domains.wnba.legs import get_wnba_legs
 from app.domains.wnba.player import get_wnba_player
+from app.domains.wnba.prop_board import get_wnba_prop_board
 from app.domains.wnba.props import get_wnba_props_today
 from app.domains.wnba.schemas import (
     WnbaFuturesResponse,
@@ -18,6 +19,7 @@ from app.domains.wnba.schemas import (
     WnbaGamePropsResponse,
     WnbaLeadersResponse,
     WnbaPlayerResponse,
+    WnbaPropBoardResponse,
     WnbaScoreboardResponse,
     WnbaStandingsResponse,
 )
@@ -187,6 +189,12 @@ async def wnba_team_preview(
             detail="WNBA team preview is temporarily unavailable",
             headers=_NO_STORE,
         ) from exc
+
+
+@router.get("/wnba/props/board", response_model=WnbaPropBoardResponse)
+async def wnba_props_board(response: Response) -> WnbaPropBoardResponse:
+    response.headers["Cache-Control"] = "no-store"
+    return await get_wnba_prop_board()
 
 
 @router.get("/wnba/props/today", response_model=WnbaPropPicksResponse)

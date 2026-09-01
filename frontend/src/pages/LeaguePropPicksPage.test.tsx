@@ -1,88 +1,57 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import type { ApiWnbaPropRow } from "@/shared/lib/api";
+import type { ApiWnbaPropBoardRow } from "@/shared/lib/api";
 import { LeaguePropPicksPage } from "./LeaguePropPicksPage";
 
 function row(
-  partial: Partial<ApiWnbaPropRow> & Pick<ApiWnbaPropRow, "player_name">,
-): ApiWnbaPropRow {
+  over: Partial<ApiWnbaPropBoardRow> = {},
+): ApiWnbaPropBoardRow {
   return {
-    team_abbrev: null,
-    position: null,
+    player_name: "Caitlin Clark",
     headshot_url: null,
-    commence_time: "2026-08-11T23:00:00Z",
-    stat: "Points",
+    team_abbrev: "IND",
+    opponent_abbrev: "NYL",
+    home_away: "away",
+    stat: "points",
+    market_label: "Over 18.5 Points",
+    side: "over",
     line: 18.5,
-    recommended_side: "over",
-    fair_pct: 58.2,
-    edge_pct: 5.1,
-    alt_edge_pct: -2.4,
-    source_tier: "sharp_consensus",
-    confidence_chips: [],
-    sample_chips: [],
-    recency_chip: "fresh_sharp_vs_stale_dfs",
-    books: {
-      prophetx: null,
-      novig: null,
-      draftkings: null,
-      fanduel: null,
-      pinnacle: null,
-    },
-    dfs: {
-      line: 18.5,
-      changed_at: null,
-      american: null,
-      payout_multiplier: null,
-    },
-    fair_explain: "PX+Novig agree within 2pp; 60/40 blend.",
-    ...partial,
+    game_id: "401810001",
+    game_start_at: "2026-08-23T23:10:00Z",
+    dfs: [{ book: "prizepicks", american: null, url: null }],
+    books: [{ book: "prophetx", american: -115, url: null }],
+    ip_pct: 53,
+    opp_def_rank: null,
+    opp_def_label: null,
+    opp_pace_rank: null,
+    opp_pace_label: null,
+    hit_l5: 80,
+    hit_l10: 70,
+    hit_l15: 60,
+    hit_h2h: 50,
+    ...over,
   };
 }
 
-const howardPoints = row({
+const clark = row();
+const howard = row({
   player_name: "Rhyne Howard",
   team_abbrev: "ATL",
-  position: "G",
-  stat: "Points",
-  recommended_side: "over",
-  source_tier: "sharp_consensus",
-});
-
-const howardAssists = row({
-  player_name: "Rhyne Howard",
-  team_abbrev: "ATL",
-  position: "G",
-  stat: "Assists",
+  opponent_abbrev: "CHI",
+  market_label: "Under 4.5 Assists",
+  stat: "assists",
+  side: "under",
   line: 4.5,
-  recommended_side: "over",
-  source_tier: "sharp_consensus",
+  game_id: "401810002",
 });
 
-const loyd = row({
-  player_name: "Jewell Loyd",
-  team_abbrev: "SEA",
-  position: "G",
-  stat: "Assists",
-  recommended_side: "under",
-  source_tier: "no_sharp_read",
-  fair_pct: null,
-  edge_pct: null,
-  alt_edge_pct: null,
-  recency_chip: null,
-});
+const mockUseWnbaPropBoard = vi.fn();
 
-const mockUseWnbaProps = vi.fn();
-const mockUseWnbaScoreboard = vi.fn();
-
-vi.mock("@/features/basketball/hooks/useWnbaProps", () => ({
-  useWnbaProps: (...args: unknown[]) => mockUseWnbaProps(...args),
-}));
-
-vi.mock("@/features/basketball/hooks/useWnbaScoreboard", () => ({
-  useWnbaScoreboard: (...args: unknown[]) => mockUseWnbaScoreboard(...args),
+vi.mock("@/features/basketball/hooks/useWnbaPropBoard", () => ({
+  useWnbaPropBoard: (...args: unknown[]) => mockUseWnbaPropBoard(...args),
 }));
 
 function renderPage(path = "/wnba/prop_picks") {
@@ -98,21 +67,17 @@ function renderPage(path = "/wnba/prop_picks") {
   );
 }
 
-function mockBoard(props: ApiWnbaPropRow[]) {
-  mockUseWnbaProps.mockReturnValue({
+function mockBoard(rows: ApiWnbaPropBoardRow[]) {
+  mockUseWnbaPropBoard.mockReturnValue({
     data: {
       as_of: "now",
-      app: "prizepicks",
-      format: "power",
-      legs: 4,
-      breakeven_pct: 54.3,
-      props,
-      error: null,
+      warnings: [],
+      rows,
     },
     isLoading: false,
     isError: false,
     isFetched: true,
-    dataUpdatedAt: Date.UTC(2026, 7, 5, 20, 0),
+    dataUpdatedAt: Date.UTC(2026, 7, 31, 20, 0),
   });
 }
 
@@ -127,216 +92,72 @@ describe("LeaguePropPicksPage", () => {
       removeListener: vi.fn(),
       dispatchEvent: vi.fn(),
     }));
-    mockUseWnbaScoreboard.mockReturnValue({
-      games: [],
-      data: { date: "2026-08-11", games: [], fetched_at: "" },
-    });
   });
 
-  it("hardcodes prizepicks/power/4 and shows player cards without format or legs", () => {
-    mockBoard([howardPoints, howardAssists, loyd]);
+  it("loads the research board without DFS tabs or View X props", () => {
+    mockBoard([clark, howard]);
     renderPage();
 
-    expect(mockUseWnbaProps).toHaveBeenCalledWith({
-      app: "prizepicks",
-      format: "power",
-      legs: 4,
-    });
+    expect(mockUseWnbaPropBoard).toHaveBeenCalledWith();
     expect(screen.getByRole("heading", { name: "Props" })).toBeInTheDocument();
-    expect(screen.getByRole("tab", { name: "PrizePicks" })).toHaveAttribute(
-      "aria-selected",
-      "true",
-    );
-    expect(screen.getByText("Rhyne Howard")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "View 2 props" })).toHaveAttribute(
-      "href",
-      "/wnba/prop_picks/player/rhyne-howard?app=prizepicks",
-    );
-    expect(screen.getByRole("link", { name: "View 1 prop" })).toBeInTheDocument();
-
-    expect(screen.queryByText(/-pick/)).not.toBeInTheDocument();
-    expect(screen.queryByText(/Breakeven/i)).not.toBeInTheDocument();
     expect(
-      screen.queryByRole("button", { name: "More legs" }),
-    ).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Stat" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Side" })).not.toBeInTheDocument();
+      screen.getByRole("heading", { name: "Props" }).closest("section"),
+    ).toHaveClass("max-w-6xl", "sm:pl-2", "md:pr-[150px]");
+    expect(screen.queryByRole("tab", { name: "PrizePicks" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("tab", { name: "Underdog" })).not.toBeInTheDocument();
+    expect(screen.getByText("Caitlin Clark")).toBeInTheDocument();
+    expect(screen.getByText("Rhyne Howard")).toBeInTheDocument();
+    expect(screen.getByText("Line")).toBeInTheDocument();
+    expect(screen.getByText("IP")).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /View \d+ props?/ })).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Team" })).toBeInTheDocument();
+    const filters = screen.getByLabelText("WNBA prop picks filters");
+    expect(within(filters).getByRole("button", { name: "Game" })).toBeInTheDocument();
+    expect(within(filters).getByRole("button", { name: "Proposition" })).toBeInTheDocument();
+    expect(within(filters).getByRole("button", { name: "Bookmaker" })).toBeInTheDocument();
+    expect(within(filters).getByRole("button", { name: "Over/Under" })).toBeInTheDocument();
+    expect(within(filters).getByRole("button", { name: "Hit rate" })).toBeInTheDocument();
     expect(screen.getByRole("searchbox", { name: "Search player" })).toBeInTheDocument();
   });
 
-  it("refetches via the hook when switching app, keeping legs at 4", async () => {
+  it("filters the board by team", async () => {
     const user = userEvent.setup();
-    mockBoard([howardPoints]);
-
+    mockBoard([clark, howard]);
     renderPage();
-    mockUseWnbaProps.mockClear();
-
-    await user.click(screen.getByRole("tab", { name: "Underdog" }));
-    expect(mockUseWnbaProps).toHaveBeenCalledWith({
-      app: "underdog",
-      format: "standard",
-      legs: 4,
-    });
-  });
-
-  it("initializes the Underdog tab from ?app=underdog", () => {
-    mockBoard([howardPoints]);
-    renderPage("/wnba/prop_picks?app=underdog");
-
-    expect(screen.getByRole("tab", { name: "Underdog" })).toHaveAttribute(
-      "aria-selected",
-      "true",
-    );
-    expect(mockUseWnbaProps).toHaveBeenCalledWith({
-      app: "underdog",
-      format: "standard",
-      legs: 4,
-    });
-  });
-
-  it("filters the board by team via WnbaPropPicksFilters", async () => {
-    const user = userEvent.setup();
-    mockBoard([howardPoints, loyd]);
-
-    renderPage();
-    expect(screen.getByText("Rhyne Howard")).toBeInTheDocument();
-    expect(screen.getByText("Jewell Loyd")).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Team" }));
-    await user.click(screen.getByRole("option", { name: "ATL" }));
+    await user.click(screen.getByRole("option", { name: "IND" }));
 
-    expect(screen.getByText("Rhyne Howard")).toBeInTheDocument();
-    expect(screen.queryByText("Jewell Loyd")).not.toBeInTheDocument();
+    expect(screen.getByText("Caitlin Clark")).toBeInTheDocument();
+    expect(screen.queryByText("Rhyne Howard")).not.toBeInTheDocument();
+  });
+
+  it("filters the board by game", async () => {
+    const user = userEvent.setup();
+    mockBoard([clark, howard]);
+    renderPage();
+
+    const filters = screen.getByLabelText("WNBA prop picks filters");
+    await user.click(within(filters).getByRole("button", { name: "Game" }));
+    await user.click(screen.getByRole("option", { name: "IND @ NYL" }));
+
+    expect(screen.getByText("Caitlin Clark")).toBeInTheDocument();
+    expect(screen.queryByText("Rhyne Howard")).not.toBeInTheDocument();
   });
 
   it("filters the board by player name search", async () => {
     const user = userEvent.setup();
-    mockBoard([howardPoints, loyd]);
-
+    mockBoard([clark, howard]);
     renderPage();
-    await user.type(screen.getByRole("searchbox", { name: "Search player" }), "howard");
+    await user.type(screen.getByRole("searchbox", { name: "Search player" }), "clark");
 
-    expect(screen.getByText("Rhyne Howard")).toBeInTheDocument();
-    expect(screen.queryByText("Jewell Loyd")).not.toBeInTheDocument();
-  });
-
-  it("hides props for final games before grouping", () => {
-    mockUseWnbaScoreboard.mockReturnValue({
-      games: [
-        {
-          status: "final",
-          home: { abbrev: "ATL" },
-          away: { abbrev: "CHI" },
-        },
-      ],
-      data: { date: "2026-08-11", games: [], fetched_at: "" },
-    });
-    mockBoard([howardPoints, howardAssists, loyd]);
-
-    renderPage();
+    expect(screen.getByText("Caitlin Clark")).toBeInTheDocument();
     expect(screen.queryByText("Rhyne Howard")).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "View 2 props" })).not.toBeInTheDocument();
-    expect(screen.getByText("Jewell Loyd")).toBeInTheDocument();
   });
 
-  it("shows hide-past empty copy when API has props but all games are final", () => {
-    mockUseWnbaScoreboard.mockReturnValue({
-      games: [
-        {
-          status: "final",
-          home: { abbrev: "ATL" },
-          away: { abbrev: "CHI" },
-        },
-        {
-          status: "final",
-          home: { abbrev: "SEA" },
-          away: { abbrev: "LV" },
-        },
-      ],
-      data: { date: "2026-08-11", games: [], fetched_at: "" },
-    });
-    mockBoard([howardPoints, loyd]);
-
+  it("shows No board yet when empty", () => {
+    mockBoard([]);
     renderPage();
-    expect(screen.queryByText("Rhyne Howard")).not.toBeInTheDocument();
-    expect(screen.queryByText("Jewell Loyd")).not.toBeInTheDocument();
-    expect(
-      screen.getByText("No props for today's remaining games."),
-    ).toBeInTheDocument();
-    expect(screen.queryByText("Prop lines unavailable")).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Team" })).not.toBeInTheDocument();
-  });
-
-  it("does not render Stat, Side, Tier, or Fresh filter controls", () => {
-    mockBoard([howardPoints, loyd]);
-    renderPage();
-    expect(screen.getByRole("button", { name: "Team" })).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Stat" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Side" })).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: "Tier" }),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: /Fresh sharp vs stale DFS/i }),
-    ).not.toBeInTheDocument();
-  });
-
-  it("shows loading, error, and empty states", () => {
-    mockUseWnbaProps.mockReturnValue({
-      data: undefined,
-      isLoading: true,
-      isError: false,
-      isFetched: false,
-      dataUpdatedAt: 0,
-    });
-    const { rerender } = renderPage();
-    expect(screen.getByLabelText("Loading WNBA prop picks")).toBeInTheDocument();
-
-    mockUseWnbaProps.mockReturnValue({
-      data: undefined,
-      isLoading: false,
-      isError: true,
-      isFetched: true,
-      dataUpdatedAt: 0,
-    });
-    rerender(
-      <QueryClientProvider
-        client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}
-      >
-        <MemoryRouter initialEntries={["/wnba/prop_picks"]}>
-          <LeaguePropPicksPage />
-        </MemoryRouter>
-      </QueryClientProvider>,
-    );
-    expect(screen.getByText("Prop lines unavailable")).toBeInTheDocument();
-
-    mockUseWnbaProps.mockReturnValue({
-      data: {
-        as_of: "now",
-        app: "prizepicks",
-        format: "power",
-        legs: 4,
-        breakeven_pct: 54.3,
-        props: [],
-        error: null,
-      },
-      isLoading: false,
-      isError: false,
-      isFetched: true,
-      dataUpdatedAt: 0,
-    });
-    rerender(
-      <QueryClientProvider
-        client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}
-      >
-        <MemoryRouter initialEntries={["/wnba/prop_picks"]}>
-          <LeaguePropPicksPage />
-        </MemoryRouter>
-      </QueryClientProvider>,
-    );
-    expect(
-      screen.getByText("No PrizePicks board available."),
-    ).toBeInTheDocument();
+    expect(screen.getByText("No board yet")).toBeInTheDocument();
   });
 });

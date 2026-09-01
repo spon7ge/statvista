@@ -9,6 +9,8 @@ export const WNBA_BOOK_LABELS: Record<string, string> = {
   fliff: "Fliff",
   bet365: "bet365",
   pinnacle: "Pinnacle",
+  prizepicks: "PrizePicks",
+  underdog: "Underdog",
   betrivers: "BetRivers",
 };
 

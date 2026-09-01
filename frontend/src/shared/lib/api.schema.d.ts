@@ -581,6 +581,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/wnba/props/board": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Wnba Props Board */
+        get: operations["wnba_props_board_api_wnba_props_board_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/wnba/props/game/{espn_event_id}": {
         parameters: {
             query?: never;
@@ -3131,6 +3148,85 @@ export interface components {
             /** Team Name */
             team_name: string;
         };
+        /** WnbaPropBoardBookChip */
+        WnbaPropBoardBookChip: {
+            /** American */
+            american: number | null;
+            /** Book */
+            book: string;
+            /** Devig Pct */
+            devig_pct: number | null;
+            /** Line */
+            line: number | null;
+            /** Over American */
+            over_american: number | null;
+            /** Under American */
+            under_american: number | null;
+            /** Url */
+            url: string | null;
+        };
+        /** WnbaPropBoardResponse */
+        WnbaPropBoardResponse: {
+            /**
+             * As Of
+             * Format: date-time
+             */
+            as_of: string;
+            /** Rows */
+            rows: components["schemas"]["WnbaPropBoardRow"][];
+            /** Warnings */
+            warnings: string[];
+        };
+        /** WnbaPropBoardRow */
+        WnbaPropBoardRow: {
+            /** Books */
+            books: components["schemas"]["WnbaPropBoardBookChip"][];
+            /** Dfs */
+            dfs: components["schemas"]["WnbaPropBoardBookChip"][];
+            /** Game Id */
+            game_id: string | null;
+            /** Game Start At */
+            game_start_at: string | null;
+            /** Headshot Url */
+            headshot_url: string | null;
+            /** Hit H2H */
+            hit_h2h: number | null;
+            /** Hit L10 */
+            hit_l10: number | null;
+            /** Hit L15 */
+            hit_l15: number | null;
+            /** Hit L5 */
+            hit_l5: number | null;
+            /** Home Away */
+            home_away: ("away" | "home") | null;
+            /** Ip Pct */
+            ip_pct: number | null;
+            /** Line */
+            line: number;
+            /** Market Label */
+            market_label: string;
+            /** Opp Def Label */
+            opp_def_label: string | null;
+            /** Opp Def Rank */
+            opp_def_rank: number | null;
+            /** Opp Pace Label */
+            opp_pace_label: string | null;
+            /** Opp Pace Rank */
+            opp_pace_rank: number | null;
+            /** Opponent Abbrev */
+            opponent_abbrev: string | null;
+            /** Player Name */
+            player_name: string;
+            /**
+             * Side
+             * @enum {string}
+             */
+            side: "over" | "under";
+            /** Stat */
+            stat: string;
+            /** Team Abbrev */
+            team_abbrev: string | null;
+        };
         /**
          * WnbaPropBookMainQuote
          * @description A book's main line for a player+stat (may differ from the DFS line).
@@ -4389,6 +4485,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    wnba_props_board_api_wnba_props_board_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WnbaPropBoardResponse"];
                 };
             };
         };

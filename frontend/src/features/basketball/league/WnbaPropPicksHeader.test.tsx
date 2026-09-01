@@ -1,19 +1,19 @@
-import { type ReactElement } from "react";
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { CHROME_TITLE_TOP } from "@/app/layouts/chrome";
 import { appFromSearch, WnbaPropPicksHeader } from "./WnbaPropPicksHeader";
 
-function renderHeader(ui: ReactElement, path = "/wnba/prop_picks") {
+function renderHeader(path = "/wnba/prop_picks") {
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   });
   return render(
     <QueryClientProvider client={client}>
-      <MemoryRouter initialEntries={[path]}>{ui}</MemoryRouter>
+      <MemoryRouter initialEntries={[path]}>
+        <WnbaPropPicksHeader />
+      </MemoryRouter>
     </QueryClientProvider>,
   );
 }
@@ -28,12 +28,8 @@ describe("appFromSearch", () => {
 });
 
 describe("WnbaPropPicksHeader", () => {
-  it("places Props on the left with league pills and DFS tabs", async () => {
-    const user = userEvent.setup();
-    const onAppChange = vi.fn();
-    renderHeader(
-      <WnbaPropPicksHeader activeApp="prizepicks" onAppChange={onAppChange} />,
-    );
+  it("places Props on the left with league pills and no DFS tabs", () => {
+    renderHeader();
 
     const heading = screen.getByRole("heading", { name: "Props" });
     expect(heading).toHaveClass("text-left", "text-[28px]", "font-bold", "text-white");
@@ -41,42 +37,29 @@ describe("WnbaPropPicksHeader", () => {
     expect(
       screen.getByTestId("wnba-prop-picks-header").querySelector("div.rounded-3xl"),
     ).toBeNull();
+
     expect(
       screen.getByRole("navigation", { name: "Leagues" }),
     ).toBeInTheDocument();
-
-    const prize = screen.getByRole("tab", { name: "PrizePicks" });
-    const underdog = screen.getByRole("tab", { name: "Underdog" });
-    expect(prize).toHaveAttribute("aria-selected", "true");
-    expect(underdog).toHaveAttribute("aria-selected", "false");
-
-    await user.click(underdog);
-    expect(onAppChange).toHaveBeenCalledWith("underdog");
-
+    expect(screen.queryByRole("tab", { name: "PrizePicks" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("tab", { name: "Underdog" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("tablist")).not.toBeInTheDocument();
     expect(screen.queryByText(/-pick/)).not.toBeInTheDocument();
     expect(screen.queryByRole("group", { name: "Legs" })).not.toBeInTheDocument();
   });
 
-  it("keeps tab ids for panels", () => {
-    renderHeader(
-      <WnbaPropPicksHeader activeApp="prizepicks" onAppChange={vi.fn()} />,
-    );
-
-    expect(screen.getByRole("tab", { name: "PrizePicks" })).toHaveAttribute(
-      "id",
-      "wnba-props-prizepicks-tab",
-    );
-    expect(screen.getByRole("tab", { name: "Underdog" })).toHaveAttribute(
-      "aria-controls",
-      "wnba-props-underdog-panel",
-    );
-  });
-
-  it("renders children under the league switcher", () => {
-    renderHeader(
-      <WnbaPropPicksHeader activeApp="prizepicks" onAppChange={vi.fn()}>
-        <span>Team filter</span>
-      </WnbaPropPicksHeader>,
+  it("renders filter children under the league switcher", () => {
+    const client = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
+    render(
+      <QueryClientProvider client={client}>
+        <MemoryRouter initialEntries={["/wnba/prop_picks"]}>
+          <WnbaPropPicksHeader>
+            <span>Team filter</span>
+          </WnbaPropPicksHeader>
+        </MemoryRouter>
+      </QueryClientProvider>,
     );
     expect(screen.getByText("Team filter")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Props" })).toBeInTheDocument();

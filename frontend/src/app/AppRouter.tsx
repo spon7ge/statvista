@@ -3,7 +3,6 @@ import { HomeChromeLayout } from "@/app/layouts/HomeChromeLayout";
 import { GameDetailPage } from "@/pages/GameDetailPage";
 import { LeagueMatchupsPage } from "@/pages/LeagueMatchupsPage";
 import { LeaguePropPicksPage } from "@/pages/LeaguePropPicksPage";
-import { WnbaPlayerPropsPage } from "@/pages/WnbaPlayerPropsPage";
 import { MlbGameDetailPage } from "@/pages/MlbGameDetailPage";
 import { MlbPropPicksPage } from "@/pages/MlbPropPicksPage";
 import { LeagueLegsPage } from "@/pages/LeagueLegsPage";
@@ -26,7 +25,7 @@ export function AppRouter() {
         <Route path="/wnba/arbitrage" element={<LeagueArbitragePage />} />
         <Route
           path="/wnba/prop_picks/player/:playerSlug"
-          element={<WnbaPlayerPropsPage />}
+          element={<Navigate to="/wnba/prop_picks" replace />}
         />
 
         <Route
