@@ -103,7 +103,7 @@ describe("MlbGameDetailPage", () => {
     vi.unstubAllGlobals();
   });
 
-  it("shows live center sections and attribution for live MLB games", async () => {
+  it("shows live center sections for live MLB games", async () => {
     fetchMock.mockResolvedValue({
       ok: true,
       json: async () => mlbDetail("live", ["statsapi", "espn"]),
@@ -121,16 +121,15 @@ describe("MlbGameDetailPage", () => {
     expect(screen.getByTestId("mlb-game-flow")).toBeInTheDocument();
     expect(screen.getByTestId("mlb-hit-chart")).toBeInTheDocument();
     expect(screen.queryByTestId("mlb-live-viz-row")).not.toBeInTheDocument();
-    expect(screen.getByText(/Data: MLB Stats API · ESPN/i)).toBeInTheDocument();
+    expect(
+      screen.queryByText(/Data: MLB Stats API/i),
+    ).not.toBeInTheDocument();
     expect(screen.getAllByText(/Top 3rd/i)).toHaveLength(1);
     expect(screen.getAllByText(/Fenway Park/i).length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByRole("link", { name: /back/i })).toHaveAttribute(
-      "href",
-      "/mlb/matchups",
+    expect(screen.queryByRole("link", { name: /back/i })).not.toBeInTheDocument();
+    expect(screen.getByTestId("mlb-live-center").closest(".max-w-6xl")).toHaveClass(
+      "md:pr-32",
     );
-    expect(
-      screen.getByRole("link", { name: /back/i }).closest(".max-w-6xl"),
-    ).toHaveClass("md:pr-32");
   });
 
   it("shows pregame center for scheduled MLB games", async () => {
@@ -147,12 +146,9 @@ describe("MlbGameDetailPage", () => {
     expect(await screen.findByTestId("mlb-pregame-center")).toBeInTheDocument();
     expect(screen.queryByText("Not live yet")).not.toBeInTheDocument();
     expect(screen.queryByTestId("mlb-live-center")).not.toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /back/i })).toHaveAttribute(
-      "href",
-      "/mlb/matchups",
-    );
+    expect(screen.queryByRole("link", { name: /back/i })).not.toBeInTheDocument();
     expect(
-      screen.getByRole("link", { name: /back/i }).closest(".max-w-6xl"),
+      screen.getByTestId("mlb-pregame-center").closest(".max-w-6xl"),
     ).toHaveClass("md:pr-32");
   });
 
@@ -167,20 +163,16 @@ describe("MlbGameDetailPage", () => {
       screen.queryByText("Final — live center for completed games coming soon"),
     ).not.toBeInTheDocument();
     expect(screen.queryByTestId("mlb-live-center")).not.toBeInTheDocument();
-    expect(screen.getByText(/Data: MLB Stats API · ESPN/i)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /back/i })).toHaveAttribute(
-      "href",
-      "/mlb/matchups",
-    );
+    expect(
+      screen.queryByText(/Data: MLB Stats API/i),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /back/i })).not.toBeInTheDocument();
   });
 
   it("shows Unable to load game when the MLB game request fails", async () => {
     fetchMock.mockResolvedValue({ ok: false, status: 502 });
     renderPage();
     expect(await screen.findByText("Unable to load game")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /back/i })).toHaveAttribute(
-      "href",
-      "/mlb/matchups",
-    );
+    expect(screen.queryByRole("link", { name: /back/i })).not.toBeInTheDocument();
   });
 });
