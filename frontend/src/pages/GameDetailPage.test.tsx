@@ -140,7 +140,7 @@ describe("GameDetailPage", () => {
     );
     expect(
       screen.getByRole("link", { name: /back/i }).closest(".max-w-6xl"),
-    ).toHaveClass("md:pr-[150px]");
+    ).toHaveClass("md:pr-32");
     expect(screen.queryByTestId("wnba-live-center")).not.toBeInTheDocument();
   });
 
@@ -155,11 +155,9 @@ describe("GameDetailPage", () => {
     expect(await screen.findByText("Matchup prediction")).toBeInTheDocument();
     expect(document.querySelector(".bg-\\[\\#141414\\]")).toBeNull();
     expect(screen.getByText("Matchup prediction").closest("section")).toHaveClass(
-      "bg-[#1c1e22]",
+      "bg-c2",
+      "border-line",
     );
-    expect(
-      screen.getByText("Matchup prediction").closest("section"),
-    ).not.toHaveClass("border-white/10");
   });
 
   it("routes live games to WnbaLiveCenter", async () => {

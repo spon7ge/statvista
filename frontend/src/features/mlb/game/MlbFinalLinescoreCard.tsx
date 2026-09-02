@@ -12,9 +12,9 @@ function Decision({
   if (!player) return null;
 
   return (
-    <span className="text-[18px]">
-      <span className="text-white/45">{label}: </span>
-      <span className="font-medium text-white">{player}</span>
+    <span className="text-[16px]">
+      <span className="text-c3">{label}: </span>
+      <span className="font-medium text-c3">{player}</span>
     </span>
   );
 }
@@ -39,7 +39,7 @@ export function MlbFinalLinescoreCard({
       <MlbLinescore detail={detail} embedded />
       {hasDecisions && decisions ? (
         <>
-          <div className="border-t border-white/10" />
+          <div className="border-t border-line" />
           <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-1">
             <Decision label="W" player={decisions.winner} />
             <Decision label="L" player={decisions.loser} />

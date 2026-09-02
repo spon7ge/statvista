@@ -85,7 +85,7 @@ function TeamMark({
         align === "right" ? "justify-end" : ""
       }`}
     >
-      <span className="text-[18px] font-semibold text-white">
+      <span className="text-[16px] font-semibold text-c3">
         {team.abbrev}
       </span>
       {team.logoUrl ? (
@@ -128,7 +128,7 @@ function StatValue({
 
   return (
     <div
-      className={`flex items-center gap-1.5 font-mono text-[18px] tabular-nums text-white ${
+      className={`flex items-center gap-1.5 text-[16px] tabular-nums text-c3 ${
         side === "home" ? "justify-end" : ""
       }`}
     >
@@ -136,7 +136,7 @@ function StatValue({
         <span
           aria-label={`${statKey} ${side} leader`}
           data-testid={`wnba-season-stat-${statKey}-${side}`}
-          className="rounded-full px-2.5 py-0.5 text-white"
+          className="rounded-full px-2.5 py-0.5 text-c3"
           style={{ backgroundColor: color }}
         >
           {display}
@@ -147,7 +147,7 @@ function StatValue({
       {rank != null ? (
         <span
           data-testid={`wnba-season-stat-${statKey}-rank-${side}`}
-          className="text-[14px] text-white/40"
+          className="text-[14px] text-c3"
         >
           {`#${rank}`}
         </span>
@@ -167,7 +167,7 @@ export function WnbaSeasonTeamStats({ detail }: { detail: GameDetail }) {
     >
       <div className="mb-3 grid grid-cols-[1fr_auto_1fr] items-center gap-x-3">
         <TeamMark team={detail.away} align="left" />
-        <h2 className="font-semibold text-white">Team Stats</h2>
+        <h2 className="font-semibold text-c3">Team Stats</h2>
         <TeamMark team={detail.home} align="right" />
       </div>
       <div>
@@ -183,7 +183,7 @@ export function WnbaSeasonTeamStats({ detail }: { detail: GameDetail }) {
           return (
             <div
               key={stat.key}
-              className="grid grid-cols-[1fr_auto_1fr] items-center gap-x-3 border-b border-white/[0.06] py-2 last:border-b-0"
+              className="grid grid-cols-[1fr_auto_1fr] items-center gap-x-3 border-b border-line py-2 last:border-b-0"
             >
               <StatValue
                 side="away"
@@ -195,7 +195,7 @@ export function WnbaSeasonTeamStats({ detail }: { detail: GameDetail }) {
                 isLeader={winningSide === "away"}
                 color={detail.away.color}
               />
-              <span className="min-w-[2.5rem] text-center text-[18px] font-medium tracking-wide text-white/45">
+              <span className="min-w-[2.5rem] text-center text-[16px] font-medium tracking-wide text-c3">
                 {stat.label}
               </span>
               <StatValue

@@ -28,7 +28,7 @@ function TeamMark({
         align === "right" ? "justify-end" : ""
       }`}
     >
-      <span className="text-[18px] font-semibold text-white">{team.abbrev}</span>
+      <span className="text-[16px] font-semibold text-c3">{team.abbrev}</span>
       {team.logoUrl ? (
         <img
           src={team.logoUrl}
@@ -56,14 +56,14 @@ function StatValue({
 }) {
   return (
     <div
-      className={`flex items-center font-mono text-[18px] tabular-nums text-white/85 ${
+      className={`flex items-center text-[16px] tabular-nums text-c3 ${
         side === "home" ? "justify-end" : ""
       }`}
     >
       {isLeader ? (
         <span
           aria-label={`${label} ${side} leader`}
-          className="rounded-full px-2.5 py-0.5 text-white"
+          className="rounded-full px-2.5 py-0.5 text-c3"
           style={{ backgroundColor: color }}
         >
           {value}
@@ -85,7 +85,7 @@ function StatRow({
   const winningSide = leader(stat.awayValue, stat.homeValue);
 
   return (
-    <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-x-3 border-b border-white/[0.06] py-2 last:border-b-0">
+    <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-x-3 border-b border-line py-2 last:border-b-0">
       <StatValue
         side="away"
         value={stat.awayValue}
@@ -93,7 +93,7 @@ function StatRow({
         color={detail.away.color}
         label={stat.label}
       />
-      <span className="min-w-[2.5rem] text-center text-[18px] font-medium tracking-wide text-white/45">
+      <span className="min-w-[2.5rem] text-center text-[16px] font-medium tracking-wide text-c3">
         {stat.label}
       </span>
       <StatValue
@@ -115,7 +115,7 @@ export function WnbaTeamStatsCard({ detail }: { detail: GameDetail }) {
     <GameSection data-testid="wnba-team-stats-card" className="!p-3">
       <div className="mb-3 grid grid-cols-[1fr_auto_1fr] items-center gap-x-3">
         <TeamMark team={detail.away} align="left" />
-        <h2 className="font-semibold text-white">Team Stats</h2>
+        <h2 className="font-semibold text-c3">Team Stats</h2>
         <TeamMark team={detail.home} align="right" />
       </div>
       <div>

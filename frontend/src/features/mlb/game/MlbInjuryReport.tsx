@@ -18,7 +18,7 @@ function InjuryRow({
 }) {
   return (
     <li
-      className={`text-sm text-white/80 ${align === "right" ? "text-right" : ""}`}
+      className={`text-sm text-c3 ${align === "right" ? "text-right" : ""}`}
     >
       <div
         className={`flex items-baseline gap-1.5 ${
@@ -27,13 +27,13 @@ function InjuryRow({
       >
         <span>{injury.name}</span>
         {injury.position ? (
-          <span className="text-white/50">{injury.position}</span>
+          <span className="text-c3">{injury.position}</span>
         ) : null}
       </div>
       <div className="mt-0.5 text-xs">
-        <span className="font-medium text-white">{injury.status}</span>
+        <span className="font-medium text-c3">{injury.status}</span>
         {injury.detail ? (
-          <span className="text-white/50">{` · ${injury.detail}`}</span>
+          <span className="text-c3">{` · ${injury.detail}`}</span>
         ) : null}
       </div>
     </li>
@@ -60,7 +60,7 @@ function TeamMark({
           className="size-5 object-contain"
         />
       ) : null}
-      <h3 className="text-xs font-semibold uppercase tracking-wide text-white">
+      <h3 className="text-xs font-semibold uppercase tracking-wide text-c3">
         {team.abbrev}
       </h3>
     </div>
@@ -85,7 +85,7 @@ function InjuryColumn({
           ))}
         </ul>
       ) : showEmptyPlaceholder ? (
-        <p className="text-sm text-white/40">None listed</p>
+        <p className="text-sm text-c3">None listed</p>
       ) : null}
     </div>
   );
@@ -109,7 +109,7 @@ export function MlbInjuryReport({ detail }: MlbInjuryReportProps) {
     >
       <div className="mb-3 grid grid-cols-[1fr_auto_1fr] items-center gap-x-3">
         <TeamMark team={detail.away} align="left" />
-        <h2 className="text-center font-semibold text-white">
+        <h2 className="text-center font-semibold text-c3">
           Injuries
         </h2>
         <TeamMark team={detail.home} align="right" />

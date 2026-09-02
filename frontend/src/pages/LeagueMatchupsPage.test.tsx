@@ -63,7 +63,7 @@ describe("LeagueMatchupsPage date nav", () => {
     renderAt("/mlb/matchups");
     expect(
       screen.getByRole("heading", { name: "Games" }).closest("section"),
-    ).toHaveClass("max-w-6xl", "sm:pl-2", "md:pr-[150px]");
+    ).toHaveClass("max-w-6xl", "sm:pl-2", "md:pr-32");
     expect(
       screen.getByRole("heading", { name: "Games" }).closest("section"),
     ).not.toHaveClass("mx-auto");

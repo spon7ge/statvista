@@ -50,14 +50,14 @@ function SpinLine({ pitch }: { pitch: MlbPitch }) {
   if (pitch.spinRate != null) parts.push(`${Math.round(pitch.spinRate)} rpm`);
   if (pitch.spinDirection != null)
     parts.push(`${Math.round(pitch.spinDirection)} deg`);
-  return <p className="text-[18px] text-white/45">Spin: {parts.join(", ")}</p>;
+  return <p className="text-[16px] text-c3">Spin: {parts.join(", ")}</p>;
 }
 
 function PitchNumberDot({ pitch }: { pitch: MlbPitch }) {
   return (
     <span
       className={`inline-flex size-6 shrink-0 items-center justify-center rounded-full text-[14px] font-bold text-black ${
-        pitch.isStrike ? "bg-red-400/90" : "bg-green-400/90"
+        pitch.isStrike ? "bg-c4" : "bg-c3"
       }`}
     >
       {pitch.number}
@@ -67,14 +67,14 @@ function PitchNumberDot({ pitch }: { pitch: MlbPitch }) {
 
 function PitchFooterCard({ pitch }: { pitch: MlbPitch }) {
   return (
-    <li className="min-w-0 space-y-0.5 px-2 py-1.5 text-[18px] even:border-l even:border-white/10">
-      <p className="flex items-center gap-1.5 font-semibold text-white">
+    <li className="min-w-0 space-y-0.5 px-2 py-1.5 text-[16px] even:border-l even:border-line">
+      <p className="flex items-center gap-1.5 font-semibold text-c3">
         <PitchNumberDot pitch={pitch} />
         <span className="truncate">{pitch.result ?? "Pitch"}</span>
       </p>
-      <p className="text-white/60">
+      <p className="text-c3">
         {pitch.mph !== null ? (
-          <span className="font-mono tabular-nums">
+          <span className="tabular-nums">
             {pitch.mph.toFixed(1)} mph
           </span>
         ) : null}
@@ -135,9 +135,9 @@ export function MlbPitchZone({ situation }: { situation: MlbSituation }) {
         </svg>
       </div>
 
-      <ul className="mt-2 grid grid-cols-2 border-t border-white/10 pt-1.5">
+      <ul className="mt-2 grid grid-cols-2 border-t border-line pt-1.5">
         {pitches.length === 0 ? (
-          <li className="col-span-2 py-1.5 text-center text-[18px] text-white/40">
+          <li className="col-span-2 py-1.5 text-center text-[16px] text-c3">
             No pitches yet
           </li>
         ) : (

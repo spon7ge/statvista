@@ -10,14 +10,12 @@ export function LeagueArbitragePage() {
           data-testid="league-arbitrage-header"
           className={`relative z-20 flex flex-col gap-4 ${CHROME_TITLE_TOP}`}
         >
-          <div className="flex min-h-7 items-center justify-between">
-            <h1 className="text-left text-[28px] leading-none font-bold tracking-tight text-white">
-              Arbitrage
-            </h1>
+          <div className="chrome-title-row">
+            <h1 className="chrome-title">Arbitrage</h1>
           </div>
           <LeagueSectionSwitcher section="Arbitrage" />
         </div>
-        <p className="text-sm text-white/40">Arbitrage coming soon.</p>
+        <p>Arbitrage coming soon.</p>
       </section>
     </div>
   );

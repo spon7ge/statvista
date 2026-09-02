@@ -5,19 +5,19 @@ React + TypeScript app for statvista, built with [Vite](https://vite.dev/). `/` 
 ## Stack
 
 - React 19 · TypeScript · Vite
-- Tailwind CSS v4 · Geist · lucide-react
+- Tokens in `src/app/tokens.css` (Luxury Adventure Comedy) + semantic CSS in `ui.css`
+- Tailwind CSS v4 for layout only, themed to those tokens
 - React Router
 
 ## Visual language
 
 | Pattern | Usage |
 |---------|--------|
-| Borders | Subtle dark borders separate sections |
-| Spacing | Generous vertical spacing |
-| Typography | Body 18px, subtle/muted 14px; Calibre / Courier stacks |
-| Color accents | League badges are the only color besides white/gray |
-| Cards | Subtle rounded boxes group related information |
-| CTAs | lucide arrow icons on links/actions |
+| Palette | `--c1` espresso ground, `--c2` surfaces, `--c3` parchment type, `--c4` gold accent, `--c5` terracotta (max 2/screen) |
+| Type | Fraunces 600 headings, Public Sans 400/500 UI; scale 12/14/16/20/26/34/46/62 |
+| Radius | 4px everywhere (pills/avatars fully round) |
+| Borders | 1px `--c3` at 10% alpha; one shadow `0 1px 2px rgba(0,0,0,.08)` |
+| Icons | Hand-authored 24×24 stroke SVGs in `shared/ui/Icons.tsx` |
 
 ## Setup
 

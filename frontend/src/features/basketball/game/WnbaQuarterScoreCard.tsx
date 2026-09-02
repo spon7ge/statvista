@@ -17,7 +17,7 @@ function TeamMark({ team }: { team: GameDetailTeam }) {
           onError={() => setLogoFailed(true)}
         />
       ) : null}
-      <span className="font-sans text-[18px] font-semibold tracking-wide text-white">
+      <span className="font-sans text-[16px] font-semibold tracking-wide text-c3">
         {team.abbrev}
       </span>
     </span>
@@ -44,11 +44,11 @@ export function WnbaQuarterScoreCard({ detail }: { detail: GameDetail }) {
     <GameSection className="!p-3" data-testid="wnba-quarter-score-card">
       <div className="overflow-x-auto">
         <table
-          className="w-full min-w-[12rem] border-collapse text-center text-[18px]"
+          className="w-full min-w-[12rem] border-collapse text-center text-[16px]"
           data-testid="wnba-quarter-score-table"
         >
           <thead>
-            <tr className="text-white/40">
+            <tr className="text-c3">
               <th className="w-14 px-1 pb-2 text-left font-medium" scope="col" />
               {periods.map((period) => (
                 <th
@@ -59,12 +59,12 @@ export function WnbaQuarterScoreCard({ detail }: { detail: GameDetail }) {
                   {period.period}
                 </th>
               ))}
-              <th className="px-1.5 pb-2 font-semibold text-white" scope="col">
+              <th className="px-1.5 pb-2 font-semibold text-c3" scope="col">
                 T
               </th>
             </tr>
           </thead>
-          <tbody className="font-mono tabular-nums text-white/70">
+          <tbody className="tabular-nums text-c3">
             {(
               [
                 ["away", detail.away, periods.map((p) => p.away), awayTotal],
@@ -80,7 +80,7 @@ export function WnbaQuarterScoreCard({ detail }: { detail: GameDetail }) {
                     {cellValue(score)}
                   </td>
                 ))}
-                <td className="px-1.5 py-1.5 font-semibold text-white">
+                <td className="px-1.5 py-1.5 font-semibold text-c3">
                   {cellValue(total)}
                 </td>
               </tr>

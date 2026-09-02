@@ -1,8 +1,8 @@
 import type { ComponentProps } from "react";
 
-/** Card chrome matching the Game Info reference: rounded-2xl, 13×9 padding, light border. */
+/** Card chrome: 4px radius, 1px c3/10% border, c2 fill. */
 export const GAME_SECTION_SURFACE =
-  "overflow-hidden rounded-2xl border border-white/10 bg-[#1e1e1e] px-[13px] py-[9px]";
+  "overflow-hidden rounded border border-line bg-c2 px-3 py-2";
 
 export function GameSection({
   children,

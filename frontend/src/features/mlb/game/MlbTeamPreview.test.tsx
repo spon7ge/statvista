@@ -272,7 +272,7 @@ describe("MlbTeamPreview", () => {
   it("gives IP a wide enough column for triple-digit innings", () => {
     render(<MlbTeamPreview data={fixture} isPending={false} error={null} />);
 
-    // Triple-digit IP ("130.1") overflows w-11 at text-[18px] into Hits and
+    // Triple-digit IP ("130.1") overflows w-11 at text-[16px] into Hits and
     // looks like extra decimal places (e.g. 130.1100).
     expect(screen.getByText("130.1").className).toMatch(/\bw-14\b/);
   });

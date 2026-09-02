@@ -40,7 +40,7 @@ Two backend families exist. The **live website mainly uses the WNBA and MLB upst
 | MLB upstream | `/api/mlb/scoreboard/*`, `/api/mlb/odds/today`, `/api/mlb/props/board`, `/api/mlb/legs` | Yes (matchups, Preview odds, prop research table, Legs) |
 | DB-backed (silver / gold) | `/api/games/{date}/slate`, `/api/props`, … | No |
 
-Shared chrome (`HomeChromeLayout`) wraps most routes with a left sidebar (mobile hamburger drawer) and footer. The sidebar lists **Props, Legs, Arbitrage, and Games** (current league's board/legs/arb/slate, else MLB; NBA Props, Legs, and Arbitrage fall back to MLB). League switching is the MLB/WNBA/NBA pill row on those pages, not the sidebar. Wordmark and `/` land on `/mlb/matchups`. Props links prefetch the destination board on hover; the sidebar also warms that board on mount. Client React Query keeps MLB `/props/board` and WNBA `/props/board` fresh for 15 minutes (`staleTime` matches the poll; no refetch on window focus). MLB Legs uses `GET /api/mlb/legs` with a **5-minute** in-process cache and matching client `staleTime` (freshness is the product).
+Shared chrome (`HomeChromeLayout`) wraps most routes with a left sidebar (mobile hamburger drawer) and footer. The sidebar wordmark sits beside the page title. Primary nav is a card: **Home** (chevron folds MLB / WNBA / NBA matchups; default open) then **Props, Legs, Arbitrage, and Games** (current league's board/legs/arb/slate, else MLB; NBA Props, Legs, and Arbitrage fall back to MLB). Page league pills still switch the open section. Wordmark and Home land on `/mlb/matchups`. Props links prefetch the destination board on hover; the sidebar also warms that board on mount. Client React Query keeps MLB `/props/board` and WNBA `/props/board` fresh for 15 minutes (`staleTime` matches the poll; no refetch on window focus). MLB Legs uses `GET /api/mlb/legs` with a **5-minute** in-process cache and matching client `staleTime` (freshness is the product).
 
 ---
 
@@ -52,7 +52,7 @@ Shared chrome (`HomeChromeLayout`) wraps most routes with a left sidebar (mobile
 |-------|--------|
 | UI runtime | React 19 + TypeScript |
 | Bundler | Vite 6 |
-| Styling | Tailwind CSS v4, Geist, lucide-react |
+| Styling | `tokens.css` + `ui.css`; Tailwind v4 layout utilities mapped to those tokens |
 | Routing | React Router (`BrowserRouter` + `AppRouter`) |
 | Data fetching | TanStack Query |
 | API types | OpenAPI → `src/lib/api.schema.d.ts` (`npm run generate:api`) |

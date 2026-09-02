@@ -20,9 +20,9 @@ function renderPage(path: string) {
 describe("LeagueArbitragePage", () => {
   it("renders Arbitrage coming soon with league pills", () => {
     renderPage("/mlb/arbitrage");
-    expect(screen.getByRole("heading", { name: "Arbitrage" })).toHaveClass(
-      "text-white",
-    );
+    const heading = screen.getByRole("heading", { name: "Arbitrage" });
+    expect(heading).toHaveClass("chrome-title");
+    expect(heading.parentElement).toHaveClass("chrome-title-row");
     expect(screen.getByRole("link", { name: "MLB" })).toHaveAttribute(
       "href",
       "/mlb/arbitrage",

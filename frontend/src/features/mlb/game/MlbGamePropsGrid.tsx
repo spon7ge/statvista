@@ -23,11 +23,11 @@ function OddsPill({ quote }: { quote: MlbGamePropBestQuote | null }) {
   }
 
   return (
-    <div className="flex min-w-[4.5rem] flex-col items-center justify-center rounded-lg bg-white/10 px-2 py-1.5 text-center">
-      <span className="font-mono text-sm font-semibold leading-tight text-white">
+    <div className="flex min-w-[4.5rem] flex-col items-center justify-center rounded bg-c2 px-2 py-1.5 text-center">
+      <span className="text-sm font-semibold leading-tight text-c3">
         {formatAmericanOdds(quote.american)}
       </span>
-      <span className="mt-0.5 truncate text-[11px] font-medium leading-tight text-white/45">
+      <span className="mt-0.5 truncate text-[12px] font-medium leading-tight text-c3">
         {bookDisplayName(quote.book)}
       </span>
     </div>
@@ -44,14 +44,14 @@ function PlayerAvatar({ player }: { player: MlbGamePropPlayer }) {
       <img
         src={player.headshot_url!}
         alt=""
-        className="size-8 shrink-0 rounded-full object-cover bg-white/10"
+        className="size-8 shrink-0 rounded-full object-cover bg-c2"
         onError={() => setImgFailed(true)}
       />
     );
   }
 
   return (
-    <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-white/10 text-xs font-semibold text-white/50">
+    <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-c2 text-xs font-semibold text-c3">
       {initial}
     </span>
   );
@@ -63,17 +63,17 @@ function PlayerRowContent({ player }: { player: MlbGamePropPlayer }) {
       <div className="flex min-w-0 items-center gap-2">
         <PlayerAvatar player={player} />
         <div className="min-w-0">
-          <p className="truncate text-sm font-semibold text-white">
+          <p className="truncate text-sm font-semibold text-c3">
             {player.player_name}
           </p>
           {player.team_abbrev ? (
-            <p className="truncate text-[11px] text-white/45">
+            <p className="truncate text-[12px] text-c3">
               {player.team_abbrev}
             </p>
           ) : null}
         </div>
       </div>
-      <span className="text-center font-mono text-sm text-white">
+      <span className="text-center text-sm text-c3">
         {player.line}
       </span>
       <OddsPill quote={player.over} />
@@ -104,16 +104,16 @@ function CategoryCard({
       data-testid={`mlb-game-props-category-${category.stat}`}
     >
       <div className={`${ROW_GRID} mb-2 px-0.5`}>
-        <h3 className="truncate font-semibold text-white">
+        <h3 className="truncate font-semibold text-c3">
           {category.label}
         </h3>
-        <span className="text-center text-[11px] font-medium uppercase tracking-wide text-white/45">
+        <span className="text-center text-[12px] font-medium uppercase tracking-wide text-c3">
           Line
         </span>
-        <span className="min-w-[4.5rem] text-center text-[11px] font-medium uppercase tracking-wide text-white/45">
+        <span className="min-w-[4.5rem] text-center text-[12px] font-medium uppercase tracking-wide text-c3">
           Over
         </span>
-        <span className="min-w-[4.5rem] text-center text-[11px] font-medium uppercase tracking-wide text-white/45">
+        <span className="min-w-[4.5rem] text-center text-[12px] font-medium uppercase tracking-wide text-c3">
           Under
         </span>
       </div>
@@ -127,7 +127,7 @@ function CategoryCard({
                 <button
                   type="button"
                   onClick={() => onPlayerClick(player)}
-                  className={`${ROW_GRID} rounded-lg px-0.5 py-1 text-left transition-colors hover:bg-white/5`}
+                  className={`${ROW_GRID} rounded px-0.5 py-1 text-left transition-colors hover:bg-c2`}
                 >
                   <PlayerRowContent player={player} />
                 </button>
@@ -146,7 +146,7 @@ function CategoryCard({
         <button
           type="button"
           onClick={() => setExpanded((prev) => !prev)}
-          className="mt-3 rounded-md border border-white/10 px-2.5 py-0.5 text-xs text-white/55 hover:text-white"
+          className="mt-3 rounded border border-line px-2.5 py-0.5 text-xs text-c3 hover:text-c4"
         >
           {expanded ? "Show less" : "Show more"}
         </button>
@@ -179,7 +179,7 @@ export function MlbGamePropsGrid({
 }: MlbGamePropsGridProps) {
   if (isPending) {
     return (
-      <p className="text-[18px] text-white/50" data-testid="mlb-game-props-grid">
+      <p className="text-[16px] text-c3" data-testid="mlb-game-props-grid">
         Loading props…
       </p>
     );
@@ -189,7 +189,7 @@ export function MlbGamePropsGrid({
   // (and hard query failures) must not hide categories that already loaded.
   if (categories.length === 0) {
     return (
-      <p className="text-[18px] text-white/50" data-testid="mlb-game-props-grid">
+      <p className="text-[16px] text-c3" data-testid="mlb-game-props-grid">
         {error || "No props available for this matchup"}
       </p>
     );
@@ -199,7 +199,7 @@ export function MlbGamePropsGrid({
     <div className="space-y-3" data-testid="mlb-game-props-grid">
       {error ? (
         <p
-          className="text-sm text-white/40"
+          className="text-sm text-c3"
           data-testid="mlb-game-props-soft-error"
         >
           {softErrorBannerText(error)}

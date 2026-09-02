@@ -21,7 +21,7 @@ function TeamMark({
       {team.logoUrl ? (
         <img src={team.logoUrl} alt="" className="size-6 object-contain" />
       ) : null}
-      <span className="text-[14px] font-semibold text-white">{team.abbrev}</span>
+      <span className="text-[14px] font-semibold text-c3">{team.abbrev}</span>
     </div>
   );
 }
@@ -35,7 +35,7 @@ export function MatchupPrediction({ detail }: MatchupPredictionProps) {
 
   return (
     <GameSection data-testid="wnba-matchup-prediction">
-      <h2 className="text-center font-semibold text-white">
+      <h2 className="text-center font-semibold text-c3">
         Matchup prediction
       </h2>
 
@@ -46,7 +46,7 @@ export function MatchupPrediction({ detail }: MatchupPredictionProps) {
           className="flex h-9 min-w-0 flex-1 overflow-hidden rounded-full"
         >
           <div
-            className="flex h-full items-center justify-center text-[14px] font-semibold text-white"
+            className="flex h-full items-center justify-center text-[14px] font-semibold text-c3"
             style={{
               width: `${prediction.awayWinPct}%`,
               backgroundColor: detail.away.color,
@@ -55,7 +55,7 @@ export function MatchupPrediction({ detail }: MatchupPredictionProps) {
             {`${prediction.awayWinPct}%`}
           </div>
           <div
-            className="flex h-full items-center justify-center text-[14px] font-semibold text-white"
+            className="flex h-full items-center justify-center text-[14px] font-semibold text-c3"
             style={{
               width: `${prediction.homeWinPct}%`,
               backgroundColor: detail.home.color,

@@ -24,12 +24,12 @@ const APP_TABS: { id: LegsApp; label: string }[] = [
 const POWER_UD_SIZES = [2, 3, 4, 5, 6] as const;
 
 const CHIP =
-  "inline-flex cursor-pointer items-center rounded-lg border px-3 py-1.5 text-[14px] font-medium transition-colors focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-white";
+  "inline-flex cursor-pointer items-center rounded border px-3 py-1.5 text-[14px] font-medium transition-colors focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-white";
 
 function chipClass(on: boolean): string {
   return on
-    ? `${CHIP} border-white text-white`
-    : `${CHIP} border-white/15 text-white/50 hover:text-white/80`;
+    ? `${CHIP} border-c4 text-c3`
+    : `${CHIP} border-line text-c3 hover:text-c3`;
 }
 
 function parseApp(value: string | null): LegsApp {
@@ -155,35 +155,35 @@ function PlayRow({ leg }: { leg: ApiMlbLegsPlay }) {
   const initial = (leg.player.trim()[0] ?? "?").toUpperCase();
 
   return (
-    <li className="rounded-xl border border-white/10 bg-white/[0.04]">
+    <li className="rounded border border-line bg-c2">
       <details>
-        <summary className="cursor-pointer list-none px-4 py-4 text-white marker:content-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white [&::-webkit-details-marker]:hidden">
+        <summary className="cursor-pointer list-none px-4 py-4 text-c3 marker:content-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white [&::-webkit-details-marker]:hidden">
           <div className="flex flex-col items-center text-center">
             {showImg ? (
               <img
                 src={leg.headshot_url!}
                 alt={leg.player}
-                className="size-16 rounded-full bg-white/10 object-cover"
+                className="size-16 rounded-full bg-c2 object-cover"
                 onError={() => setImgFailed(true)}
               />
             ) : (
               <span
                 aria-hidden="true"
-                className="flex size-16 items-center justify-center rounded-full bg-white/10 text-lg font-semibold text-white/50"
+                className="flex size-16 items-center justify-center rounded-full bg-c2 text-lg font-semibold text-c3"
               >
                 {initial}
               </span>
             )}
             {leg.matchup ? (
-              <p className="mt-2 text-[14px] text-white/45">{leg.matchup}</p>
+              <p className="mt-2 text-[14px] text-c3">{leg.matchup}</p>
             ) : null}
-            <p className="mt-1 text-[18px] font-semibold">{leg.player}</p>
-            <p className="mt-1 text-[14px] text-white/70">
+            <p className="mt-1 text-[16px] font-semibold">{leg.player}</p>
+            <p className="mt-1 text-[14px] text-c3">
               {leg.market} {leg.dfs_line} {side} {pct(leg.fair_prob)} {margin}
             </p>
           </div>
         </summary>
-        <div className="space-y-2 border-t border-white/10 px-4 py-3 text-[14px] text-white/70">
+        <div className="space-y-2 border-t border-line px-4 py-3 text-[14px] text-c3">
           <p>Sharp anchor: {anchor}</p>
           <p>Effective required margin {leg.required_margin_pts.toFixed(1)} pts</p>
           {leg.books_used.length > 0 ? (
@@ -260,7 +260,7 @@ export function LegsBoard({
       <div
         role="tablist"
         aria-label="DFS app"
-        className="flex items-center justify-center gap-1 border-b border-white/10"
+        className="flex items-center justify-center gap-1 border-b border-line"
       >
         {APP_TABS.map((tab) => (
           <button
@@ -270,10 +270,10 @@ export function LegsBoard({
             role="tab"
             aria-selected={app === tab.id}
             aria-controls={`legs-${tab.id}-panel`}
-            className={`border-b-2 px-5 py-2 text-[18px] font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white ${
+            className={`border-b-2 px-5 py-2 text-[16px] font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white ${
               app === tab.id
-                ? "border-white text-white"
-                : "border-transparent text-white/50 hover:text-white/80"
+                ? "border-c4 text-c3"
+                : "border-transparent text-c3 hover:text-c3"
             }`}
             onClick={() => onAppChange(tab.id)}
           >
@@ -326,29 +326,29 @@ export function LegsBoard({
             </div>
           </div>
           {envelope ? (
-            <p className="text-[14px] text-white/50">
+            <p className="text-[14px] text-c3">
               breakeven: {pct(envelope.base_break_even)}
             </p>
           ) : null}
         </div>
 
         {showLoading ? (
-          <p className="text-[18px] text-white/50" role="status">
+          <p className="text-[16px] text-c3" role="status">
             Loading priced legs…
           </p>
         ) : null}
         {showError ? (
-          <p className="text-[18px] text-white/50" role="status">
+          <p className="text-[16px] text-c3" role="status">
             Could not load priced legs.
           </p>
         ) : null}
         {emptyMessage && !showLoading && !showError ? (
-          <p className="text-[18px] text-white/50">{emptyMessage}</p>
+          <p className="text-[16px] text-c3">{emptyMessage}</p>
         ) : null}
 
         {(envelope?.entries ?? []).map((entry) => (
           <section key={entry.rank} aria-label={`Entry ${entry.rank}`}>
-            <h2 className="text-[18px] font-medium text-white">
+            <h2 className="text-[16px] font-medium text-c3">
               Entry {entry.rank}
             </h2>
             <ul className="space-y-2">

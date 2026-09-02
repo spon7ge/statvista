@@ -66,7 +66,7 @@ function Skeletons({ columnCount }: { columnCount: number }) {
           {Array.from({ length: perCol }, (_, i) => (
             <div
               key={i}
-              className="h-28 animate-pulse rounded-xl bg-[#1c1e22]"
+              className="h-28 animate-pulse rounded bg-c2"
             />
           ))}
         </div>
@@ -95,34 +95,34 @@ function PlayerCard({
   return (
     <article
       data-testid="mlb-prop-row"
-      className="relative rounded-xl bg-[#1c1e22] p-4 ring-2 ring-transparent transition-[box-shadow] hover:ring-[#059669]"
+      className="relative rounded bg-c2 p-4 ring-2 ring-transparent transition-[box-shadow] hover:ring-[#059669]"
     >
-      <StatvistaBarsMark className="pointer-events-none absolute left-3 top-3 size-4 text-white" />
+      <StatvistaBarsMark className="pointer-events-none absolute left-3 top-3 size-4 text-c3" />
       <div className="flex flex-col items-center text-center">
         {showImg ? (
           <img
             src={player.headshot_url!}
             alt={player.player_name}
-            className="size-16 rounded-full object-cover bg-white/10"
+            className="size-16 rounded-full object-cover bg-c2"
             onError={() => setImgFailed(true)}
           />
         ) : (
           <span
             data-testid="mlb-prop-headshot-fallback"
-            className="flex size-16 items-center justify-center rounded-full bg-white/10 text-lg font-semibold text-white/50"
+            className="flex size-16 items-center justify-center rounded-full bg-c2 text-lg font-semibold text-c3"
           >
             {initial}
           </span>
         )}
         {meta ? (
-          <p className="mt-2 text-[14px] text-white/45">{meta}</p>
+          <p className="mt-2 text-[14px] text-c3">{meta}</p>
         ) : null}
-        <p className="mt-1 text-[18px] font-semibold text-white">
+        <p className="mt-1 text-[16px] font-semibold text-c3">
           {player.player_name}
         </p>
         <Link
           to={`/mlb/prop_picks/player/${player.player_slug}?app=${app}`}
-          className="mt-3 inline-flex rounded-full bg-white px-3 py-1.5 text-[14px] font-semibold text-black"
+          className="mt-3 inline-flex rounded-full bg-c2 px-3 py-1.5 text-[14px] font-semibold text-black"
         >
           View {player.prop_count} {player.prop_count === 1 ? "prop" : "props"}
         </Link>
@@ -183,7 +183,7 @@ export function MlbPropPicksList({
     <section className="space-y-3">
       <div className="flex flex-wrap items-baseline justify-end gap-2">
         {lastUpdatedAt ? (
-          <p className="text-[14px] text-white/40">
+          <p className="text-[14px] text-c3">
             Last updated {formatMlbPropPicksUpdatedAt(lastUpdatedAt)}
           </p>
         ) : null}
@@ -192,7 +192,7 @@ export function MlbPropPicksList({
       {isLoading ? (
         <Skeletons columnCount={columnCount} />
       ) : isError || players.length === 0 ? (
-        <p className="px-1 text-[14px] text-white/40">{emptyCopy}</p>
+        <p className="px-1 text-[14px] text-c3">{emptyCopy}</p>
       ) : (
         <>
           <div
@@ -216,7 +216,7 @@ export function MlbPropPicksList({
             ))}
           </div>
           <div className="flex flex-wrap items-center justify-between gap-2 px-1">
-            <p className="text-[14px] text-white/40">
+            <p className="text-[14px] text-c3">
               Showing {start + 1}–{end} of {players.length}
             </p>
             {showPager ? (
@@ -225,11 +225,11 @@ export function MlbPropPicksList({
                   type="button"
                   disabled={safePage <= 0}
                   onClick={() => setPage((p) => Math.max(0, p - 1))}
-                  className="rounded-md border border-white/10 px-2.5 py-0.5 text-[14px] text-white/55 enabled:hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
+                  className="rounded border border-line px-2.5 py-0.5 text-[14px] text-c3 enabled:hover:text-c4 disabled:cursor-not-allowed disabled:opacity-35"
                 >
                   Previous
                 </button>
-                <span className="text-[14px] text-white/35">
+                <span className="text-[14px] text-c3">
                   Page {safePage + 1} of {totalPages}
                 </span>
                 <button
@@ -238,7 +238,7 @@ export function MlbPropPicksList({
                   onClick={() =>
                     setPage((p) => Math.min(totalPages - 1, p + 1))
                   }
-                  className="rounded-md border border-white/10 px-2.5 py-0.5 text-[14px] text-white/55 enabled:hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
+                  className="rounded border border-line px-2.5 py-0.5 text-[14px] text-c3 enabled:hover:text-c4 disabled:cursor-not-allowed disabled:opacity-35"
                 >
                   Next
                 </button>

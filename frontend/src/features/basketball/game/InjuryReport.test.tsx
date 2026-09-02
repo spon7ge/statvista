@@ -71,8 +71,8 @@ describe("InjuryReport", () => {
 
     const minHeader = screen.getByText("MIN").closest("h3");
     const torHeader = screen.getByText("TOR").closest("h3");
-    expect(minHeader).toHaveClass("text-white", "font-semibold");
-    expect(torHeader).toHaveClass("text-white", "font-semibold");
+    expect(minHeader).toHaveClass("text-c3", "font-semibold");
+    expect(torHeader).toHaveClass("text-c3", "font-semibold");
     expect(
       document.querySelector('img[src="https://example.com/min.png"]'),
     ).toBeTruthy();

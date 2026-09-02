@@ -53,7 +53,7 @@ function TeamMark({
       className="size-[18px] object-contain"
     />
   ) : null;
-  const abbrev = <span className="text-white">{team.abbrev}</span>;
+  const abbrev = <span className="text-c3">{team.abbrev}</span>;
 
   return (
     <div
@@ -96,7 +96,7 @@ function Rank({
   return (
     <span
       data-testid={`${testIdPrefix}-${statKey}-rank-${side}`}
-      className="text-[14px] text-white/40"
+      className="text-[14px] text-c3"
     >
       {`#${rank}`}
     </span>
@@ -127,7 +127,7 @@ function StatChip({
       data-testid={
         isLeader ? `${testIdPrefix}-${statKey}-${side}` : undefined
       }
-      className="rounded-2xl px-[9px] text-white"
+      className="rounded px-[9px] text-c3"
       style={
         isLeader ? { backgroundColor: color, color: "#FFFFFF" } : undefined
       }
@@ -184,10 +184,10 @@ export function MlbTeamStatsComparison({
     <GameSection data-testid={testId} className="w-full !p-0">
       <div className="relative flex justify-center py-[9px]">
         <TeamMark team={away} align="left" />
-        <h2 className="whitespace-pre font-semibold text-white">Team Stats</h2>
+        <h2 className="whitespace-pre font-semibold text-c3">Team Stats</h2>
         <TeamMark team={home} align="right" />
       </div>
-      <div className="divide-y divide-white/10 border-t border-white/10">
+      <div className="divide-y divide-line border-t border-line">
         {rows.map((stat) => {
           const winningSide = statLeader(
             stat.awayValue,
@@ -209,7 +209,7 @@ export function MlbTeamStatsComparison({
                 color={away.color}
                 testIdPrefix={leaderTestIdPrefix}
               />
-              <p className="text-white/45">{stat.label}</p>
+              <p className="text-c3">{stat.label}</p>
               <StatChip
                 side="home"
                 statKey={stat.key}

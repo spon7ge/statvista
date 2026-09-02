@@ -27,13 +27,13 @@ describe("MlbMatchupPrediction", () => {
     );
 
     expect(screen.getByText("Matchup prediction")).toBeInTheDocument();
-    expect(screen.getByText(awayAbbrev)).toHaveClass("text-white");
-    expect(screen.getByText(homeAbbrev)).toHaveClass("text-white");
+    expect(screen.getByText(awayAbbrev)).toHaveClass("text-c3");
+    expect(screen.getByText(homeAbbrev)).toHaveClass("text-c3");
     expect(screen.getByText(`${awayWinPct}%`)).toBeInTheDocument();
     expect(screen.getByText(`${homeWinPct}%`)).toBeInTheDocument();
     expect(screen.queryByText("ESPN game projection")).not.toBeInTheDocument();
     expect(screen.getByText("Matchup prediction").closest("section")).toHaveClass(
-      "bg-[#1c1e22]",
+      "bg-c2",
     );
 
     const pill = screen.getByTestId("mlb-matchup-prediction-pill");
@@ -42,7 +42,7 @@ describe("MlbMatchupPrediction", () => {
     expect(segments).toHaveLength(2);
     expect(segments[0]).toHaveStyle({ width: `${awayWinPct}%` });
     expect(segments[0]).toHaveTextContent(`${awayWinPct}%`);
-    expect(segments[0]).toHaveClass("text-white");
+    expect(segments[0]).toHaveClass("text-c3");
     expect(segments[1]).toHaveTextContent(`${homeWinPct}%`);
 
     const imgs = Array.from(

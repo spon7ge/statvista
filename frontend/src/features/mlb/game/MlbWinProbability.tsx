@@ -1,12 +1,10 @@
-import { useEffect, useId, useState, type MouseEvent } from "react";
+import { useEffect, useState, type MouseEvent } from "react";
 import { GameSection } from "@/shared/ui/GameSection";
 import {
-  GameFlowNeonFilter,
-  NeonFilamentPath,
-  NeonHaloPath,
-  neonGlowColor,
-  neonMarkerStyle,
-  shouldNeonGameFlow,
+  FLOW_AWAY,
+  FLOW_HOME,
+  FLOW_MUTED,
+  FLOW_RULE,
 } from "@/shared/ui/GameFlowNeon";
 import type { MlbGameDetailView } from "../lib/types";
 import {
@@ -39,16 +37,8 @@ export function MlbWinProbability({
   const [activeIndex, setActiveIndex] = useState(
     Math.max(points.length - 1, 0),
   );
-  const reactId = useId();
-  const neonFilterId = `wp-neon-${reactId.replace(/:/g, "")}`;
-  const showNeon = shouldNeonGameFlow(detail.status);
-  const pulseNeon = showNeon && detail.status !== "final";
-  const homeStroke = showNeon
-    ? neonGlowColor(detail.home.color)
-    : detail.home.color;
-  const awayStroke = showNeon
-    ? neonGlowColor(detail.away.color)
-    : detail.away.color;
+  const homeStroke = FLOW_HOME;
+  const awayStroke = FLOW_AWAY;
 
   useEffect(() => {
     setActiveIndex(Math.max((data?.points.length ?? 0) - 1, 0));
@@ -57,8 +47,8 @@ export function MlbWinProbability({
   if (!data) {
     return (
       <GameSection className="!p-3" data-testid="mlb-game-flow">
-        <h2 className="font-semibold text-white">Game flow</h2>
-        <p className="mt-1.5 text-[18px] text-white/50">
+        <h2 className="font-semibold text-c3">Game flow</h2>
+        <p className="mt-1.5 text-[16px] text-c3">
           Win probability unavailable
         </p>
       </GameSection>
@@ -76,18 +66,17 @@ export function MlbWinProbability({
 
   const vividProps = {
     fill: "none" as const,
-    strokeWidth: showNeon ? (compact ? 2.25 : 2) : compact ? 2 : 1.5,
-    strokeLinejoin: "round" as const,
-    strokeLinecap: "round" as const,
+    strokeWidth: 1.5,
+    strokeLinejoin: "miter" as const,
+    strokeLinecap: "butt" as const,
     "data-wp-segment": "vivid",
   };
   const mutedProps = {
     fill: "none" as const,
-    strokeWidth: compact ? 2 : 1.5,
-    strokeLinejoin: "round" as const,
-    strokeLinecap: "round" as const,
-    stroke: "rgba(255,255,255,0.28)",
-    opacity: 0.35,
+    strokeWidth: 1.5,
+    strokeLinejoin: "miter" as const,
+    strokeLinecap: "butt" as const,
+    stroke: FLOW_MUTED,
     "data-wp-segment": "muted",
   };
 
@@ -117,7 +106,7 @@ export function MlbWinProbability({
 
   return (
     <GameSection className="!p-3" data-testid="mlb-game-flow">
-      <h2 className="font-semibold text-white">Game flow</h2>
+      <h2 className="font-semibold text-c3">Game flow</h2>
 
       {points.length > 0 ? (
         <div className="relative mt-2">
@@ -127,36 +116,15 @@ export function MlbWinProbability({
             className="w-full overflow-visible"
             onMouseMove={handleChartPointerMove}
           >
-            {showNeon ? (
-              <defs>
-                <GameFlowNeonFilter id={neonFilterId} />
-              </defs>
-            ) : null}
             <line
               x1={geometry.padLeft}
               x2={geometry.padLeft + geometry.plotWidth}
               y1={midY}
               y2={midY}
-              stroke="rgba(255,255,255,0.22)"
+              stroke={FLOW_RULE}
               strokeDasharray="4 4"
             />
 
-            {showNeon && paths.awayVivid ? (
-              <NeonHaloPath
-                d={paths.awayVivid}
-                stroke={awayStroke}
-                filterId={neonFilterId}
-                pulse={pulseNeon}
-              />
-            ) : null}
-            {showNeon && paths.homeVivid ? (
-              <NeonHaloPath
-                d={paths.homeVivid}
-                stroke={homeStroke}
-                filterId={neonFilterId}
-                pulse={pulseNeon}
-              />
-            ) : null}
             {paths.awayVivid ? (
               <path
                 d={paths.awayVivid}
@@ -171,12 +139,7 @@ export function MlbWinProbability({
                 {...vividProps}
               />
             ) : null}
-            {showNeon && paths.awayVivid ? (
-              <NeonFilamentPath d={paths.awayVivid} />
-            ) : null}
-            {showNeon && paths.homeVivid ? (
-              <NeonFilamentPath d={paths.homeVivid} />
-            ) : null}
+
             {paths.awayMuted ? (
               <path d={paths.awayMuted} {...mutedProps} />
             ) : null}
@@ -192,7 +155,7 @@ export function MlbWinProbability({
                     x2={scrubX}
                     y1={trackerTop}
                     y2={geometry.padTop + geometry.plotHeight}
-                    stroke="rgba(255,255,255,0.45)"
+                    stroke={FLOW_RULE}
                     strokeDasharray="3 3"
                     pointerEvents="none"
                   />
@@ -202,47 +165,47 @@ export function MlbWinProbability({
                   cy={awayY}
                   r={4}
                   fill={awayStroke}
-                  stroke="#FFFFFF"
+                  stroke="var(--c1)"
                   strokeWidth={1.5}
                   pointerEvents="none"
-                  style={showNeon ? neonMarkerStyle(awayStroke) : undefined}
+                  
                 />
                 <circle
                   cx={scrubX}
                   cy={homeY}
                   r={4}
                   fill={homeStroke}
-                  stroke="#FFFFFF"
+                  stroke="var(--c1)"
                   strokeWidth={1.5}
                   pointerEvents="none"
-                  style={showNeon ? neonMarkerStyle(homeStroke) : undefined}
+                  
                 />
                 <text
                   x={labelX}
                   y={homeLabelY}
-                  fill="#FFFFFF"
+                  fill="var(--c3)"
                   textAnchor={labelAnchor}
                   dominantBaseline="middle"
                   data-testid="mlb-game-flow-home-pct"
-                  style={{ fontSize: "18px", fontWeight: 600 }}
+                  style={{ fontSize: "16px", fontWeight: 600 }}
                 >
                   {detail.home.abbrev} {Math.round(activePoint.homeWinPct)}%
                 </text>
                 <text
                   x={labelX}
                   y={awayLabelY}
-                  fill="#FFFFFF"
+                  fill="var(--c3)"
                   textAnchor={labelAnchor}
                   dominantBaseline="middle"
                   data-testid="mlb-game-flow-away-pct"
-                  style={{ fontSize: "18px", fontWeight: 600 }}
+                  style={{ fontSize: "16px", fontWeight: 600 }}
                 >
                   {detail.away.abbrev} {Math.round(activePoint.awayWinPct)}%
                 </text>
                 <text
                   x={scrubX}
                   y={clockY}
-                  fill="rgba(255,255,255,0.7)"
+                  fill="var(--c3)"
                   textAnchor="middle"
                   data-wp-clock
                   style={{ fontSize: "12px" }}
@@ -268,7 +231,7 @@ export function MlbWinProbability({
           />
         </div>
       ) : (
-        <p className="mt-1.5 text-[18px] text-white/50">
+        <p className="mt-1.5 text-[16px] text-c3">
           Win probability unavailable
         </p>
       )}

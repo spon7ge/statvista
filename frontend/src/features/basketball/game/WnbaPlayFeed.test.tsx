@@ -134,7 +134,7 @@ describe("WnbaPlayFeed", () => {
   it("uses a white selected toggle pill", () => {
     render(<WnbaPlayFeed detail={detail} />);
     expect(screen.getByRole("button", { name: /scoring plays/i })).toHaveClass(
-      "bg-white",
+      "bg-c2",
       "text-black",
     );
   });

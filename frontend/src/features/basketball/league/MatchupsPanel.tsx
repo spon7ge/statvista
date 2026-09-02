@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { IconChevron } from "@/shared/ui/Icons";
 import { isInProgressStatus } from "@/shared/lib/mapScoreboard";
 import { formatMatchupNavLabel } from "@/shared/lib/matchupSlateDate";
 import { MatchupGameCard } from "./MatchupGameCard";
@@ -32,14 +32,14 @@ export function MatchupsDateNav({
         type="button"
         aria-label="Previous day"
         onClick={onPrevDay}
-        className="flex size-8 items-center justify-center rounded-md border border-white/10 text-white/70 hover:bg-white/5"
+        className="icon-btn"
       >
-        <ChevronLeft aria-hidden="true" className="size-4" strokeWidth={1.75} />
+        <IconChevron className="icon-rotate-90" />
       </button>
       <button
         type="button"
         onClick={onGoToday}
-        className="min-w-14 text-center text-sm font-medium text-white/55 hover:text-white/80"
+        className="min-w-14 text-center text-sm font-medium text-c3"
       >
         {navLabel}
       </button>
@@ -47,9 +47,9 @@ export function MatchupsDateNav({
         type="button"
         aria-label="Next day"
         onClick={onNextDay}
-        className="flex size-8 items-center justify-center rounded-md border border-white/10 text-white/70 hover:bg-white/5"
+        className="icon-btn"
       >
-        <ChevronRight aria-hidden="true" className="size-4" strokeWidth={1.75} />
+        <IconChevron className="icon-rotate-270" />
       </button>
     </div>
   );
@@ -62,10 +62,7 @@ function MatchupSkeletons() {
       aria-label="Loading games"
     >
       {Array.from({ length: 3 }, (_, index) => (
-        <div
-          key={index}
-          className="h-36 animate-pulse rounded-xl bg-[#1c1e22]"
-        />
+        <div key={index} className="h-36 rounded bg-c2" />
       ))}
     </div>
   );
@@ -80,9 +77,7 @@ function Section({
 }) {
   return (
     <section className="space-y-4">
-      <h3 className="text-[11px] font-medium tracking-[0.14em] text-white/35 uppercase">
-        {label}
-      </h3>
+      <h3 className="kicker">{label}</h3>
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
         {games.map((game) => (
           <MatchupGameCard key={game.id} game={game} />
@@ -108,7 +103,7 @@ export function MatchupsPanel({
         ) : (
           <p
             role={isError ? "status" : undefined}
-            className="py-8 text-center text-sm text-white/40"
+            className="py-8 text-center text-sm"
           >
             {isError ? "Unable to load games" : "No games on this slate"}
           </p>

@@ -11,17 +11,17 @@ type InjuryReportProps = {
 
 function InjuryRow({ injury }: { injury: GameDetailInjury }) {
   return (
-    <li className="text-[18px] text-white/80">
+    <li className="text-[16px] text-c3">
       <div className="flex items-baseline gap-1.5">
         <span>{injury.name}</span>
         {injury.position ? (
-          <span className="text-white/50">{injury.position}</span>
+          <span className="text-c3">{injury.position}</span>
         ) : null}
       </div>
-      <div className="mt-0.5 text-[18px]">
-        <span className="font-medium text-white">{injury.status}</span>
+      <div className="mt-0.5 text-[16px]">
+        <span className="font-medium text-c3">{injury.status}</span>
         {injury.detail ? (
-          <span className="text-white/50">{` · ${injury.detail}`}</span>
+          <span className="text-c3">{` · ${injury.detail}`}</span>
         ) : null}
       </div>
     </li>
@@ -39,7 +39,7 @@ function InjuryColumn({
 }) {
   return (
     <div>
-      <h3 className="mb-2 flex items-center gap-2 font-semibold text-white">
+      <h3 className="mb-2 flex items-center gap-2 font-semibold text-c3">
         {team.logoUrl ? (
           <img
             src={team.logoUrl}
@@ -56,7 +56,7 @@ function InjuryColumn({
           ))}
         </ul>
       ) : showEmptyPlaceholder ? (
-        <p className="text-[18px] text-white/40">None listed</p>
+        <p className="text-[16px] text-c3">None listed</p>
       ) : null}
     </div>
   );
@@ -75,7 +75,7 @@ export function InjuryReport({ detail }: InjuryReportProps) {
 
   return (
     <GameSection>
-      <h2 className="text-center font-semibold text-white">
+      <h2 className="text-center font-semibold text-c3">
         Injury report
       </h2>
 

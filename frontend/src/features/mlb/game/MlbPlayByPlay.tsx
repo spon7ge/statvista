@@ -51,7 +51,7 @@ export function MlbPlayByPlay({ detail }: { detail: MlbGameDetailView }) {
     <div className="grid gap-4 lg:grid-cols-2" data-testid="mlb-play-by-play">
       <GameSection className="!p-3">
         <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-          <h2 className="font-semibold text-white">Play-by-play</h2>
+          <h2 className="font-semibold text-c3">Play-by-play</h2>
           <div className="flex flex-wrap items-center gap-0.5">
             {halves.map(({ inning, half }) => {
               const key = halfKey(inning, half);
@@ -63,8 +63,8 @@ export function MlbPlayByPlay({ detail }: { detail: MlbGameDetailView }) {
                   aria-pressed={activeHalf === key}
                   className={`rounded-full px-2 py-0.5 text-xs font-medium transition-colors ${
                     activeHalf === key
-                      ? "bg-white/15 text-white"
-                      : "text-white/50 hover:text-white/80"
+                      ? "bg-c2 text-c3"
+                      : "text-c3 hover:text-c3"
                   }`}
                 >
                   {halfLabel(inning, half)}

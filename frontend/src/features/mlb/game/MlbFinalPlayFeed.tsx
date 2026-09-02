@@ -75,10 +75,10 @@ function StatcastMetrics({ play }: { play: MlbPlay }) {
   return (
     <div
       data-testid="mlb-play-ball-info"
-      className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-[18px] text-white/60"
+      className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-[16px] text-c3"
     >
       {metrics.map((metric) => (
-        <span key={metric} className="font-mono tabular-nums">
+        <span key={metric} className="tabular-nums">
           {metric}
         </span>
       ))}
@@ -99,14 +99,14 @@ function PlayRow({
   const batterSummary = play.batterSummary?.trim() || null;
 
   return (
-    <li className={isFirst ? "" : "border-t border-white/10 pt-3"}>
-      <p className="text-[18px] text-white/90">{play.text}</p>
+    <li className={isFirst ? "" : "border-t border-line pt-3"}>
+      <p className="text-[16px] text-c3">{play.text}</p>
       {event || batterSummary ? (
         <div className="mt-1.5 flex flex-wrap items-center gap-2">
           {event ? (
             <span
               data-testid="mlb-play-event-pill"
-              className="shrink-0 rounded-full bg-white px-2 py-1 text-[14px] font-semibold uppercase tracking-wide"
+              className="shrink-0 rounded-full bg-c2 px-2 py-1 text-[14px] font-semibold uppercase tracking-wide"
               style={{ color: teamColor }}
             >
               {event}
@@ -115,7 +115,7 @@ function PlayRow({
           {batterSummary ? (
             <span
               data-testid="mlb-play-batter-summary"
-              className="text-[18px] text-white/70"
+              className="text-[16px] text-c3"
             >
               {batterSummary}
             </span>
@@ -139,12 +139,12 @@ function HalfInningCard({
 
   return (
     <li
-      className="overflow-hidden rounded-lg"
+      className="overflow-hidden rounded"
       data-testid={`mlb-play-half-${group.half}-${group.inning}`}
       style={{ backgroundColor: teamColor }}
     >
       <div className="bg-black/55 p-3">
-        <h3 className="text-[18px] font-medium uppercase tracking-wide text-white/60">
+        <h3 className="text-[16px] font-medium uppercase tracking-wide text-c3">
           {title}
         </h3>
         <ul className="mt-3 space-y-3">
@@ -175,7 +175,7 @@ export function MlbFinalPlayFeed({
     <GameSection className="!p-3 h-fit self-start" data-testid="mlb-final-play-feed">
       <div className="mb-3 flex justify-center">
         <div
-          className="flex rounded-full bg-white/5 p-0.5"
+          className="flex rounded-full bg-c2 p-0.5"
           role="group"
           aria-label="Play filter"
         >
@@ -183,10 +183,10 @@ export function MlbFinalPlayFeed({
             type="button"
             onClick={() => setFilter("scoring")}
             aria-pressed={filter === "scoring"}
-            className={`rounded-full px-2 py-1 text-[18px] font-medium transition-colors ${
+            className={`rounded-full px-2 py-1 text-[16px] font-medium transition-colors ${
               filter === "scoring"
-                ? "bg-white/15 text-white"
-                : "text-white/50 hover:text-white/80"
+                ? "bg-c2 text-c3"
+                : "text-c3 hover:text-c3"
             }`}
           >
             Scoring plays
@@ -195,10 +195,10 @@ export function MlbFinalPlayFeed({
             type="button"
             onClick={() => setFilter("all")}
             aria-pressed={filter === "all"}
-            className={`rounded-full px-2 py-1 text-[18px] font-medium transition-colors ${
+            className={`rounded-full px-2 py-1 text-[16px] font-medium transition-colors ${
               filter === "all"
-                ? "bg-white/15 text-white"
-                : "text-white/50 hover:text-white/80"
+                ? "bg-c2 text-c3"
+                : "text-c3 hover:text-c3"
             }`}
           >
             All plays
@@ -207,7 +207,7 @@ export function MlbFinalPlayFeed({
       </div>
 
       {plays.length === 0 ? (
-        <p className="text-[18px] text-white/40">No plays available</p>
+        <p className="text-[16px] text-c3">No plays available</p>
       ) : (
         <ul className="space-y-2">
           {playGroups.map((group) => (

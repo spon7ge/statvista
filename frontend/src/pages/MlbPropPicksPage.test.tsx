@@ -101,7 +101,7 @@ describe("MlbPropPicksPage", () => {
     expect(screen.getByRole("heading", { name: "Props" })).toBeInTheDocument();
     expect(
       screen.getByRole("heading", { name: "Props" }).closest("section"),
-    ).toHaveClass("max-w-6xl", "sm:pl-2", "md:pr-[150px]");
+    ).toHaveClass("max-w-6xl", "sm:pl-2", "md:pr-32");
     expect(
       screen.getByRole("heading", { name: "Props" }).closest("section"),
     ).not.toHaveClass("mx-auto");

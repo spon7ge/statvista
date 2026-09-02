@@ -207,7 +207,7 @@ function TeamLeaderHeadshot({ card }: { card: TeamLeaderCard }) {
         src={card.headshotUrl!}
         alt=""
         data-testid={`mlb-team-leader-headshot-${card.key}`}
-        className="mt-2 size-14 rounded-full bg-white/10 object-cover"
+        className="mt-2 size-14 rounded-full bg-c2 object-cover"
         onError={() => setImgFailed(true)}
       />
     );
@@ -216,7 +216,7 @@ function TeamLeaderHeadshot({ card }: { card: TeamLeaderCard }) {
   return (
     <span
       data-testid={`mlb-team-leader-headshot-fallback-${card.key}`}
-      className="mt-2 flex size-14 items-center justify-center rounded-full bg-white/10 text-lg font-semibold text-white/50"
+      className="mt-2 flex size-14 items-center justify-center rounded-full bg-c2 text-lg font-semibold text-c3"
     >
       {initial}
     </span>
@@ -236,7 +236,7 @@ function TeamLeadersSection({
 
   return (
     <GameSection className="w-full !p-3">
-      <h2 className="text-center font-semibold text-white">
+      <h2 className="text-center font-semibold text-c3">
         {title}
       </h2>
       <div className="mt-3 grid grid-cols-3 gap-2">
@@ -244,23 +244,23 @@ function TeamLeadersSection({
           <div
             key={card.key}
             data-testid={`mlb-team-leader-card-${card.key}`}
-            className="flex flex-col items-center rounded-lg p-2 text-center"
+            className="flex flex-col items-center rounded p-2 text-center"
             style={{ backgroundColor: accentColor }}
           >
-            <span className="text-[14px] font-semibold tracking-wide text-white/70">
+            <span className="text-[14px] font-semibold tracking-wide text-c3">
               {card.label}
             </span>
-            <span className="mt-1 font-mono text-[22px] font-semibold tabular-nums text-white">
+            <span className="mt-1 text-[20px] font-semibold tabular-nums text-c3">
               {card.value}
             </span>
             {card.rank != null ? (
               <span
                 data-testid={`mlb-team-leader-rank-${card.key}`}
-                className="text-[14px] text-white/40"
+                className="text-[14px] text-c3"
               >{`#${card.rank}`}</span>
             ) : null}
             <div className="mt-2">
-              <span className="text-[14px] font-semibold uppercase text-white">
+              <span className="text-[14px] font-semibold uppercase text-c3">
                 {card.lastName}
               </span>
             </div>
@@ -287,13 +287,13 @@ function SeasonTable({
 }) {
   return (
     <GameSection className="w-full !p-3">
-      <h2 className="font-semibold text-white">{title}</h2>
+      <h2 className="font-semibold text-c3">{title}</h2>
       <div data-testid={testId} className="mt-2 overflow-x-auto">
         {rows.length === 0 ? (
-          <p className="text-[14px] text-white/55">No season stats available</p>
+          <p className="text-[14px] text-c3">No season stats available</p>
         ) : (
           <div className="min-w-max">
-            <div className="flex items-baseline gap-3 border-b border-white/[0.08] pb-1.5 text-[14px] tracking-wide text-white/40">
+            <div className="flex items-baseline gap-3 border-b border-line pb-1.5 text-[14px] tracking-wide text-c3">
               <span className="w-28 shrink-0">PLAYER</span>
               <div className="flex gap-x-2">
                 {columns.map((col) => (
@@ -310,16 +310,16 @@ function SeasonTable({
               {rows.map((row, index) => (
                 <li
                   key={row.playerId}
-                  className="flex items-baseline gap-3 border-b border-white/[0.06] py-1.5 text-[18px]"
+                  className="flex items-baseline gap-3 border-b border-line py-1.5 text-[16px]"
                 >
-                  <span className="w-28 shrink-0 truncate whitespace-nowrap text-white">
+                  <span className="w-28 shrink-0 truncate whitespace-nowrap text-c3">
                     {row.name}
                   </span>
-                  <div className="flex gap-x-2 font-mono">
+                  <div className="flex gap-x-2 ">
                     {valuesFor(index).map((value, colIndex) => (
                       <span
                         key={`${row.playerId}-${columns[colIndex]}`}
-                        className={`${colWidth(columns[colIndex]!)} text-right tabular-nums text-white`}
+                        className={`${colWidth(columns[colIndex]!)} text-right tabular-nums text-c3`}
                       >
                         {value}
                       </span>
@@ -346,7 +346,7 @@ export function MlbTeamPreview({
 }) {
   if (isPending) {
     return (
-      <div data-testid="mlb-team-preview" className="text-[14px] text-white/55">
+      <div data-testid="mlb-team-preview" className="text-[14px] text-c3">
         Loading…
       </div>
     );
@@ -354,7 +354,7 @@ export function MlbTeamPreview({
 
   if (error) {
     return (
-      <div data-testid="mlb-team-preview" className="text-[14px] text-white/70">
+      <div data-testid="mlb-team-preview" className="text-[14px] text-c3">
         {error}
       </div>
     );
@@ -362,7 +362,7 @@ export function MlbTeamPreview({
 
   if (!data) {
     return (
-      <div data-testid="mlb-team-preview" className="text-[14px] text-white/55">
+      <div data-testid="mlb-team-preview" className="text-[14px] text-c3">
         No season stats available
       </div>
     );

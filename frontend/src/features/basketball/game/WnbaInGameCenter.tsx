@@ -34,7 +34,7 @@ export function WnbaInGameCenter({
           id="wnba-summary-panel"
           role="tabpanel"
           aria-labelledby="wnba-summary-tab"
-          className="grid items-start gap-4 text-[18px] lg:grid-cols-2"
+          className="grid items-start gap-4 text-[16px] lg:grid-cols-2"
         >
           <div className="space-y-4">
             <ShotChart detail={detail} />

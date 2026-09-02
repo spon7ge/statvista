@@ -21,7 +21,7 @@ function BackLink() {
   return (
     <Link
       to="/mlb/matchups"
-      className="inline-flex items-center gap-1 text-sm font-medium text-white/70 no-underline transition-colors hover:text-white"
+      className="inline-flex items-center gap-1 text-sm font-medium text-c3 no-underline transition-colors hover:text-c4"
     >
       ← Back
     </Link>
@@ -33,16 +33,16 @@ function MlbGameDetailSkeleton() {
     <div className={PAGE_SHELL} aria-hidden>
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <span className="h-4 w-16 animate-pulse rounded bg-white/10" />
-          <span className="h-3 w-20 animate-pulse rounded bg-white/10" />
+          <span className="h-4 w-16 animate-pulse rounded bg-c2" />
+          <span className="h-3 w-20 animate-pulse rounded bg-c2" />
         </div>
         <div className={GAME_SECTION_SURFACE}>
-          <span className="mb-3 block h-3 w-40 animate-pulse rounded bg-white/10" />
+          <span className="mb-3 block h-3 w-40 animate-pulse rounded bg-c2" />
           <div className="space-y-3">
             {[0, 1].map((row) => (
               <div key={row} className="flex items-center justify-between gap-3">
-                <span className="h-4 w-40 animate-pulse rounded bg-white/10" />
-                <span className="size-12 shrink-0 animate-pulse rounded-md bg-white/10" />
+                <span className="h-4 w-40 animate-pulse rounded bg-c2" />
+                <span className="size-12 shrink-0 animate-pulse rounded bg-c2" />
               </div>
             ))}
           </div>
@@ -55,7 +55,7 @@ function MlbGameDetailSkeleton() {
 function UnableToLoadMlbGame() {
   return (
     <div className={PAGE_EMPTY}>
-      <p className="text-sm text-white/60">Unable to load game</p>
+      <p className="text-sm text-c3">Unable to load game</p>
       <BackLink />
     </div>
   );
@@ -64,7 +64,7 @@ function UnableToLoadMlbGame() {
 function CompactMlbHeader({ detail }: { detail: MlbGameDetailView }) {
   return (
     <div className={GAME_SECTION_SURFACE}>
-      <div className="flex items-center justify-between gap-3 text-xs text-white/45">
+      <div className="flex items-center justify-between gap-3 text-xs text-c3">
         <span>{detail.statusLabel}</span>
         {detail.venue ? <span>{detail.venue}</span> : null}
       </div>
@@ -77,7 +77,7 @@ function CompactMlbHeader({ detail }: { detail: MlbGameDetailView }) {
             <span style={{ color: team.color }} className="font-medium">
               {team.name}
             </span>
-            <span className="font-mono text-white tabular-nums">
+            <span className="text-c3 tabular-nums">
               {team.score ?? "—"}
             </span>
           </div>
@@ -119,7 +119,7 @@ export function MlbGameDetailPage() {
       <div className={PAGE_SHELL}>
         <BackLink />
         <CompactMlbHeader detail={detail} />
-        <p className="text-sm text-white/60">Not live yet</p>
+        <p className="text-sm text-c3">Not live yet</p>
       </div>
     );
   }
@@ -127,14 +127,14 @@ export function MlbGameDetailPage() {
   const chrome = (
     <div className="flex flex-wrap items-center justify-between gap-3">
       <BackLink />
-      <p className="text-xs text-white/45">
+      <p className="text-xs text-c3">
         {detail.status !== "live" ? (
-          <span className="text-white/80">{detail.statusLabel}</span>
+          <span className="text-c3">{detail.statusLabel}</span>
         ) : null}
         {detail.venue ? (
           <>
             {detail.status !== "live" ? (
-              <span className="mx-1.5 text-white/30" aria-hidden>
+              <span className="mx-1.5 text-c3" aria-hidden>
                 ·
               </span>
             ) : null}
@@ -142,11 +142,11 @@ export function MlbGameDetailPage() {
           </>
         ) : null}
         {(detail.status !== "live" || detail.venue) ? (
-          <span className="mx-1.5 text-white/30" aria-hidden>
+          <span className="mx-1.5 text-c3" aria-hidden>
             ·
           </span>
         ) : null}
-        <span className="text-white/40">
+        <span className="text-c3">
           {attributionLabel(detail.sources)}
         </span>
       </p>

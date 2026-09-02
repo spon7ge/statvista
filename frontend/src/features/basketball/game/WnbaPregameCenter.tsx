@@ -36,7 +36,7 @@ function GamePropsAppTabs({
     <div
       role="tablist"
       aria-label="DFS app"
-      className="flex items-center justify-center gap-1 border-b border-white/10"
+      className="flex items-center justify-center gap-1 border-b border-line"
     >
       {PROPS_APP_TABS.map((tab) => (
         <button
@@ -46,10 +46,10 @@ function GamePropsAppTabs({
           role="tab"
           aria-selected={activeApp === tab.id}
           aria-controls={`wnba-game-props-${tab.id}-panel`}
-          className={`border-b-2 px-5 py-2 text-[18px] font-medium transition-colors ${
+          className={`border-b-2 px-5 py-2 text-[16px] font-medium transition-colors ${
             activeApp === tab.id
-              ? "border-white text-white"
-              : "border-transparent text-white/50 hover:text-white/80"
+              ? "border-c4 text-c3"
+              : "border-transparent text-c3 hover:text-c3"
           }`}
           onClick={() => onAppChange(tab.id)}
         >

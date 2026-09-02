@@ -32,15 +32,35 @@ describe("AppSidebar", () => {
     prefetchPropsBoard.mockReset();
   });
 
-  it("labels primary nav, omits Home and league rows, and lists About, Blog, and Settings", () => {
+  it("lists Home with league fold, then Props, Legs, Arbitrage, Games, and Site", () => {
     renderSidebar("/mlb/matchups");
     expect(
       screen.getByRole("navigation", { name: "Primary" }),
     ).toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Home" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "NBA" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "WNBA" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "MLB" })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Home" })).toHaveAttribute(
+      "href",
+      "/mlb/matchups",
+    );
+    expect(screen.getByRole("button", { name: "Hide leagues" })).toHaveAttribute(
+      "aria-expanded",
+      "true",
+    );
+    expect(screen.getByRole("link", { name: "MLB" })).toHaveAttribute(
+      "href",
+      "/mlb/matchups",
+    );
+    expect(screen.getByRole("link", { name: "MLB" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+    expect(screen.getByRole("link", { name: "WNBA" })).toHaveAttribute(
+      "href",
+      "/wnba/matchups",
+    );
+    expect(screen.getByRole("link", { name: "NBA" })).toHaveAttribute(
+      "href",
+      "/nba/matchups",
+    );
     expect(screen.queryByText("Explore")).not.toBeInTheDocument();
     expect(screen.queryByText("Learn")).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: "statvista" })).toHaveAttribute(
@@ -50,17 +70,20 @@ describe("AppSidebar", () => {
     expect(screen.getByRole("link", { name: "statvista" }).parentElement).toHaveClass(
       CHROME_TITLE_TOP,
     );
+    expect(screen.getByRole("link", { name: "statvista" })).toHaveClass(
+      "chrome-title-row",
+    );
     expect(
       screen.getByRole("navigation", { name: "Primary" }).firstElementChild,
-    ).toHaveClass("rounded-2xl", "bg-[#1e1e1e]", "px-[13px]", "py-[9px]");
+    ).toHaveClass("nav-panel");
 
     const siteNav = screen.getByRole("navigation", { name: "Site" });
     expect(
       screen.getByRole("navigation", { name: "Primary" }).nextElementSibling,
     ).toBe(siteNav);
-    expect(siteNav).toHaveClass("rounded-2xl", "bg-[#1e1e1e]");
+    expect(siteNav).toHaveClass("nav-panel");
     expect(within(siteNav).getByRole("button", { name: "About" })).toHaveClass(
-      "font-semibold",
+      "nav-link",
     );
     expect(within(siteNav).getByRole("button", { name: "Blog" })).toBeInTheDocument();
     expect(
@@ -91,6 +114,20 @@ describe("AppSidebar", () => {
     );
   });
 
+  it("collapses the Home league list from the chevron", async () => {
+    const user = userEvent.setup();
+    renderSidebar("/mlb/matchups");
+    await user.click(screen.getByRole("button", { name: "Hide leagues" }));
+    expect(screen.getByRole("button", { name: "Show leagues" })).toHaveAttribute(
+      "aria-expanded",
+      "false",
+    );
+    expect(screen.queryByRole("link", { name: "MLB" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "WNBA" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "NBA" })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Home" })).toBeInTheDocument();
+  });
+
   it("does not nest Leaders, Standings, Futures, or chatbots", () => {
     renderSidebar("/wnba/matchups");
     expect(screen.queryByRole("link", { name: "Leaders" })).not.toBeInTheDocument();
@@ -114,6 +151,10 @@ describe("AppSidebar", () => {
       "href",
       "/wnba/matchups",
     );
+    expect(screen.getByRole("link", { name: "WNBA" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
     expect(screen.queryByRole("link", { name: /^Game$/ })).not.toBeInTheDocument();
   });
 
@@ -135,14 +176,26 @@ describe("AppSidebar", () => {
       "href",
       "/wnba/matchups",
     );
+    expect(screen.getByRole("link", { name: "WNBA" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
   });
 
-  it("places Props, Legs, Arbitrage, then Games", () => {
+  it("places Home, leagues, then Props, Legs, Arbitrage, then Games", () => {
     renderSidebar("/mlb/matchups");
+    const home = screen.getByRole("link", { name: "Home" });
+    const mlb = screen.getByRole("link", { name: "MLB" });
+    const wnba = screen.getByRole("link", { name: "WNBA" });
+    const nba = screen.getByRole("link", { name: "NBA" });
     const props = screen.getByRole("link", { name: "Props" });
     const legs = screen.getByRole("link", { name: "Legs" });
     const arbitrage = screen.getByRole("link", { name: "Arbitrage" });
     const matchups = screen.getByRole("link", { name: "Games" });
+    expect(home.compareDocumentPosition(mlb) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(mlb.compareDocumentPosition(wnba) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(wnba.compareDocumentPosition(nba) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(nba.compareDocumentPosition(props) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(props.compareDocumentPosition(legs) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(
       legs.compareDocumentPosition(arbitrage) & Node.DOCUMENT_POSITION_FOLLOWING,

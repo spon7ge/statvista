@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { IconChevron } from "@/shared/ui/Icons";
 import type { MlbHitRateWindow, MlbPropositionOption } from "./filterMlbPropBoard";
 
 type FilterOption = { value: string; label: string };
@@ -77,29 +77,27 @@ function MultiSelectFilter({
         onClick={() => setOpen((v) => !v)}
         className={
           onBanner
-            ? `inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[14px] font-semibold shadow-sm ${
+            ? `inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[14px] font-semibold ${
                 selected.size > 0
-                  ? "bg-white text-emerald-900"
-                  : "bg-white/90 text-emerald-800 hover:bg-white"
+                  ? "bg-c2 text-c3"
+                  : "bg-c4 text-c1 hover:bg-c2"
               }`
             : onPill
               ? `inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[14px] font-semibold transition-colors ${
                   selected.size > 0
-                    ? "border-white/25 bg-white/15 text-white"
-                    : "border-white/15 bg-white/10 text-white/80 hover:bg-white/15 hover:text-white"
+                    ? "border-line bg-c2 text-c3"
+                    : "border-line bg-c2 text-c3 hover:bg-c2 hover:text-c4"
                 }`
-              : `inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-[18px] font-medium transition-colors ${
+              : `inline-flex items-center gap-1.5 rounded border px-2.5 py-1.5 text-[16px] font-medium transition-colors ${
                   selected.size > 0
-                    ? "border-white/20 bg-white/10 text-white"
-                    : "border-white/10 bg-transparent text-white/55 hover:text-white"
+                    ? "border-line bg-c2 text-c3"
+                    : "border-line bg-transparent text-c3 hover:text-c4"
                 }`
         }
       >
         {triggerLabel}
-        <ChevronDown
-          className="size-3.5 opacity-70"
-          aria-hidden
-          strokeWidth={1.75}
+        <IconChevron
+          className="size-3.5"
         />
       </button>
       {open ? (
@@ -110,14 +108,14 @@ function MultiSelectFilter({
           aria-multiselectable={!single}
           className={
             onBanner
-              ? "absolute top-full left-0 z-50 mt-1.5 max-h-56 min-w-[10rem] overflow-y-auto rounded-xl border border-black/10 bg-white py-1 shadow-lg"
-              : "absolute top-full left-0 z-20 mt-1.5 max-h-56 min-w-[10rem] overflow-y-auto rounded-lg border border-white/10 bg-black py-0.5"
+              ? "absolute top-full left-0 z-50 mt-1.5 max-h-56 min-w-[10rem] overflow-y-auto rounded border border-line bg-c2 py-1 shadow-lg"
+              : "absolute top-full left-0 z-20 mt-1.5 max-h-56 min-w-[10rem] overflow-y-auto rounded border border-line bg-black py-0.5"
           }
         >
           {options.length === 0 ? (
             <li
               className={`px-2.5 py-1.5 text-[14px] ${
-                onBanner ? "text-zinc-400" : "text-white/40"
+                onBanner ? "text-c3" : "text-c3"
               }`}
             >
               No options
@@ -135,10 +133,10 @@ function MultiSelectFilter({
                       onBanner
                         ? `flex w-full items-center gap-2 px-2.5 py-1.5 text-left text-[14px] ${
                             checked
-                              ? "bg-emerald-50 text-emerald-900"
-                              : "text-zinc-800 hover:bg-zinc-50"
+                              ? "bg-c2 text-c3"
+                              : "text-c3 hover:bg-c2"
                           }`
-                        : "flex w-full items-center gap-2 px-2.5 py-1.5 text-left text-[18px] text-white/80 hover:bg-white/5"
+                        : "flex w-full items-center gap-2 px-2.5 py-1.5 text-left text-[16px] text-c3 hover:bg-c2"
                     }
                     onClick={() => toggle(opt.value)}
                   >
@@ -146,11 +144,11 @@ function MultiSelectFilter({
                       className={`flex size-4 shrink-0 items-center justify-center rounded border text-[14px] ${
                         onBanner
                           ? checked
-                            ? "border-emerald-600 bg-emerald-600 text-white"
-                            : "border-zinc-300 bg-transparent text-transparent"
+                            ? "border-c4 bg-c4 text-c3"
+                            : "border-line bg-transparent text-transparent"
                           : checked
-                            ? "border-white/40 bg-white/15 text-white"
-                            : "border-white/20 bg-transparent text-transparent"
+                            ? "border-line bg-c2 text-c3"
+                            : "border-line bg-transparent text-transparent"
                       }`}
                       aria-hidden
                     >
@@ -325,10 +323,10 @@ export function MlbPropPicksFilters({
       onClick={onClear}
       className={
         onBanner
-          ? "rounded-full bg-white/20 px-3 py-1.5 text-[14px] font-semibold text-white hover:bg-white/30"
+          ? "rounded-full bg-c2 px-3 py-1.5 text-[14px] font-semibold text-c3 hover:bg-c2"
           : onPill
-            ? "rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[14px] font-semibold text-white/80 hover:bg-white/15 hover:text-white"
-            : "px-1.5 text-[14px] text-white/40 transition-colors hover:text-white"
+            ? "rounded-full border border-line bg-c2 px-3 py-1.5 text-[14px] font-semibold text-c3 hover:bg-c2 hover:text-c4"
+            : "px-1.5 text-[14px] text-c3 transition-colors hover:text-c4"
       }
     >
       Clear filters
@@ -344,10 +342,10 @@ export function MlbPropPicksFilters({
       aria-label="Search player"
       className={
         onBanner
-          ? "w-40 rounded-full bg-white px-3 py-1.5 text-[14px] font-semibold text-emerald-900 shadow-sm placeholder:font-medium placeholder:text-emerald-800/50"
+          ? "w-40 rounded-full bg-c2 px-3 py-1.5 text-[14px] font-semibold text-c3 placeholder:font-medium placeholder:text-muted"
           : onPill
-            ? "w-40 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[14px] font-semibold text-white placeholder:font-medium placeholder:text-white/40"
-            : "w-40 rounded-md border border-white/10 bg-transparent px-2.5 py-1.5 text-[18px] text-white placeholder:text-white/40"
+            ? "w-40 rounded-full border border-line bg-c2 px-3 py-1.5 text-[14px] font-semibold text-c3 placeholder:font-medium placeholder:text-muted"
+            : "w-40 rounded border border-line bg-transparent px-2.5 py-1.5 text-[16px] text-c3 placeholder:text-muted"
       }
     />
   );

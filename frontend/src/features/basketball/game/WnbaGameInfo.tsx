@@ -139,7 +139,7 @@ export function WnbaGameInfo({ detail }: { detail: GameDetail }) {
               </p>
             ) : null}
             {venue && venueLocation ? (
-              <p className="ml-[29px] text-sm text-white/50">{venueLocation}</p>
+              <p className="ml-[29px] text-sm text-c3">{venueLocation}</p>
             ) : null}
           </div>
         ) : null}

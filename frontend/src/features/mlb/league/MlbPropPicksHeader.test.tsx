@@ -23,10 +23,11 @@ describe("MlbPropPicksHeader", () => {
     renderHeader();
 
     const heading = screen.getByRole("heading", { name: "Props" });
-    expect(heading).toHaveClass("text-left", "text-[28px]", "font-bold", "text-white");
+    expect(heading).toHaveClass("chrome-title");
+    expect(heading.parentElement).toHaveClass("chrome-title-row");
     expect(screen.getByTestId("mlb-prop-picks-header")).toHaveClass(CHROME_TITLE_TOP);
     expect(
-      screen.getByTestId("mlb-prop-picks-header").querySelector("div.rounded-3xl"),
+      screen.getByTestId("mlb-prop-picks-header").querySelector("div.rounded"),
     ).toBeNull();
 
     const leagues = screen.getByRole("navigation", { name: "Leagues" });

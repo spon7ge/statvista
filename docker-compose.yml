@@ -45,10 +45,8 @@ services:
     env_file:
       - path: .env
         required: false
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     environment:
-      SUPABASE_DB_URL: ${SUPABASE_DB_URL:-postgresql://${POSTGRES_USER:-hoopvista}:${POSTGRES_PASSWORD:-hoopvista}@host.docker.internal:${POSTGRES_PORT:-5433}/${POSTGRES_DB:-hoopvista}?sslmode=disable}
+      SUPABASE_DB_URL: postgresql://${POSTGRES_USER:-hoopvista}:${POSTGRES_PASSWORD:-hoopvista}@postgres:5432/${POSTGRES_DB:-hoopvista}?sslmode=disable
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173,http://localhost:8080,http://127.0.0.1:8080}
     volumes:
       - ./data/cache:/app/data/cache
@@ -88,10 +86,8 @@ services:
     env_file:
       - path: .env
         required: false
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     environment:
-      SUPABASE_DB_URL: ${SUPABASE_DB_URL:-postgresql://${POSTGRES_USER:-hoopvista}:${POSTGRES_PASSWORD:-hoopvista}@host.docker.internal:${POSTGRES_PORT:-5433}/${POSTGRES_DB:-hoopvista}?sslmode=disable}
+      SUPABASE_DB_URL: postgresql://${POSTGRES_USER:-hoopvista}:${POSTGRES_PASSWORD:-hoopvista}@postgres:5432/${POSTGRES_DB:-hoopvista}?sslmode=disable
       ODDS_LEAGUE: ${ODDS_LEAGUE:-all}
       ODDS_EXCLUDE: ${ODDS_EXCLUDE:-wnba_prizepick,mlb_prizepick}
       ODDS_INTERVAL_SECONDS: ${ODDS_INTERVAL_SECONDS:-300}

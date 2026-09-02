@@ -14,20 +14,20 @@ describe("MlbFinalTeamStats", () => {
 
     const avgHome = screen.getByTestId("mlb-team-stat-avg-home");
     expect(avgHome).toHaveTextContent(".268");
-    expect(avgHome).toHaveClass("rounded-2xl");
+    expect(avgHome).toHaveClass("rounded");
     expect(avgHome).toHaveStyle({ backgroundColor: mlbFinalDetail.home.color });
 
     const kAway = screen.getByTestId("mlb-team-stat-k-away");
     expect(kAway).toHaveTextContent("10");
-    expect(kAway).toHaveClass("rounded-2xl");
+    expect(kAway).toHaveClass("rounded");
 
     const eraHome = screen.getByTestId("mlb-team-stat-era-home");
     expect(eraHome).toHaveTextContent("3.20");
-    expect(eraHome).toHaveClass("rounded-2xl");
+    expect(eraHome).toHaveClass("rounded");
 
     const bbHome = screen.getByTestId("mlb-team-stat-bb-home");
     expect(bbHome).toHaveTextContent("2");
-    expect(bbHome).toHaveClass("rounded-2xl");
+    expect(bbHome).toHaveClass("rounded");
   });
 
   it("shows white team abbrev and logo in the header", () => {
@@ -50,8 +50,8 @@ describe("MlbFinalTeamStats", () => {
     const section = screen.getByTestId("mlb-final-team-stats");
     const awayAbbrev = screen.getByText("ARI");
     const homeAbbrev = screen.getByText("LAD");
-    expect(awayAbbrev).toHaveClass("text-white");
-    expect(homeAbbrev).toHaveClass("text-white");
+    expect(awayAbbrev).toHaveClass("text-c3");
+    expect(homeAbbrev).toHaveClass("text-c3");
     expect(
       section.querySelector('img[src="https://example.com/ari.svg"]'),
     ).toBeTruthy();

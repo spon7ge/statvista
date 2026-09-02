@@ -36,7 +36,7 @@ const minimalDetail: MlbGameDetailView = {
 describe("MlbGameInfo", () => {
   it("renders date, venue, weather, and umpires", () => {
     render(<MlbGameInfo detail={fullDetail} />);
-    expect(screen.getByTestId("mlb-game-info")).toHaveClass("rounded-2xl");
+    expect(screen.getByTestId("mlb-game-info")).toHaveClass("rounded");
     expect(screen.getByRole("heading", { name: "Game Info" })).toHaveClass(
       "font-semibold",
     );

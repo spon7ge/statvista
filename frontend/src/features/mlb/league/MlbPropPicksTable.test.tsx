@@ -130,7 +130,7 @@ describe("MlbPropPicksTable", () => {
     expect(rows).toHaveLength(2);
     expect(rows[0]).toHaveClass("group");
     expect(rows[0].querySelector("td")?.className).toContain(
-      "group-hover:bg-white/[0.08]",
+      "group-hover:bg-c2",
     );
     expect(rows[0].querySelector("td")?.className).toContain("rounded-l-lg");
     expect(screen.getAllByTestId("hit-h2h-cell")[0]?.className).toContain(
@@ -151,10 +151,18 @@ describe("MlbPropPicksTable", () => {
         ]}
       />,
     );
-    expect(screen.getByTestId("hit-l5-cell").className).toContain("bg-emerald-500/15");
-    expect(screen.getByTestId("hit-l10-cell").className).toContain("bg-amber-500/15");
-    expect(screen.getByTestId("hit-l15-cell").className).toContain("bg-rose-500/15");
-    expect(screen.getByTestId("hit-h2h-cell").className).toContain("bg-amber-500/15");
+    expect(screen.getByTestId("hit-l5-cell").className).toContain(
+      "bg-emerald-500/15",
+    );
+    expect(screen.getByTestId("hit-l10-cell").className).toContain(
+      "bg-amber-500/15",
+    );
+    expect(screen.getByTestId("hit-l15-cell").className).toContain(
+      "bg-rose-500/15",
+    );
+    expect(screen.getByTestId("hit-h2h-cell").className).toContain(
+      "bg-amber-500/15",
+    );
     expect(screen.queryByTestId("hit-l5-cell-indicator")).not.toBeInTheDocument();
   });
 
@@ -381,8 +389,8 @@ describe("MlbPropPicksTable", () => {
     expect(cells[1].querySelector('svg[aria-label="Caesars"]')).toBeTruthy();
     expect(cells[1].querySelector('svg[aria-label="Underdog"]')).toBeNull();
     expect(dfsCells[1].querySelector('svg[aria-label="Underdog"]')).toBeTruthy();
-    expect(cells[0].querySelector(".bg-white\\/10")).toBeNull();
-    expect(cells[0].querySelector(".rounded-md")).toBeNull();
+    expect(cells[0].querySelector(".bg-c2\\/10")).toBeNull();
+    expect(cells[0].querySelector(".rounded")).toBeNull();
   });
 
   it("renders PrizePicks in DFS at -137 with no de-vig percent", () => {

@@ -279,17 +279,17 @@ function FieldDiagram({
         <div
           role="tooltip"
           data-testid="mlb-hit-chart-tooltip"
-          className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full rounded-md bg-black/90 px-2.5 py-1.5 text-left shadow-lg"
+          className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full rounded bg-black/90 px-2.5 py-1.5 text-left shadow-lg"
           style={{
             left: `${(hitPointToSvg(hovered.x, hovered.y).x / W) * 100}%`,
             top: `${(hitPointToSvg(hovered.x, hovered.y).y / H) * 100}%`,
             marginTop: "-10px",
           }}
         >
-          <p className="text-[15px] font-semibold leading-tight text-white">
+          <p className="text-[15px] font-semibold leading-tight text-c3">
             {tip.name}
           </p>
-          <p className="mt-0.5 text-[13px] leading-tight text-white/70">
+          <p className="mt-0.5 text-[13px] leading-tight text-c3">
             {tip.detail}
           </p>
         </div>
@@ -312,7 +312,7 @@ export function MlbHitChart({ detail }: { detail: MlbGameDetailView }) {
 
   return (
     <GameSection className="!p-3 min-w-0" data-testid="mlb-hit-chart">
-      <h2 className="font-semibold text-white">Hit chart</h2>
+      <h2 className="font-semibold text-c3">Hit chart</h2>
 
       <div className="mt-2.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
         <div
@@ -328,10 +328,10 @@ export function MlbHitChart({ detail }: { detail: MlbGameDetailView }) {
                 type="button"
                 onClick={() => setFilter(key)}
                 aria-pressed={active}
-                className={`rounded-full px-3 py-1 text-[18px] font-medium transition-colors ${
+                className={`rounded-full px-3 py-1 text-[16px] font-medium transition-colors ${
                   active
-                    ? "bg-[#6e2a32] text-white"
-                    : "text-white/55 hover:text-white/85"
+                    ? "bg-c2 text-c4"
+                    : "text-c3 hover:text-c4/85"
                 }`}
               >
                 {label}
@@ -340,7 +340,7 @@ export function MlbHitChart({ detail }: { detail: MlbGameDetailView }) {
           })}
         </div>
 
-        <div className="flex items-center gap-3 text-[18px] text-white/65">
+        <div className="flex items-center gap-3 text-[16px] text-c3">
           {(Object.keys(RESULT_STYLE) as Array<MlbHitPoint["result"]>).map(
             (result) => (
               <span key={result} className="inline-flex items-center gap-1.5">
@@ -356,7 +356,7 @@ export function MlbHitChart({ detail }: { detail: MlbGameDetailView }) {
       </div>
 
       {filtered.length === 0 ? (
-        <p className="mt-4 text-[18px] text-white/40">No hit chart data yet</p>
+        <p className="mt-4 text-[16px] text-c3">No hit chart data yet</p>
       ) : (
         <FieldDiagram
           points={filtered}
@@ -368,7 +368,7 @@ export function MlbHitChart({ detail }: { detail: MlbGameDetailView }) {
         />
       )}
 
-      <p className="mt-2 text-[18px] leading-snug text-white/40">
+      <p className="mt-2 text-[16px] leading-snug text-c3">
         Wall traces this park&apos;s real outfield dimensions; the shaded ring
         past it is home-run territory.
       </p>

@@ -42,12 +42,12 @@ function BattersTable({
   batters: MlbBatterRow[];
 }) {
   if (batters.length === 0) {
-    return <p className="text-xs text-white/50">No batters yet</p>;
+    return <p className="text-xs text-c3">No batters yet</p>;
   }
 
   return (
     <div className="overflow-x-auto">
-      <div className="grid grid-cols-[minmax(6.5rem,1.4fr)_repeat(8,minmax(1.6rem,1fr))] gap-x-1.5 border-b border-white/[0.08] pb-1.5 text-[9px] tracking-wide text-white/40">
+      <div className="grid grid-cols-[minmax(6.5rem,1.4fr)_repeat(8,minmax(1.6rem,1fr))] gap-x-1.5 border-b border-line pb-1.5 text-[12px] tracking-wide text-c3">
         <span>Player</span>
         {COLS.map((col) => (
           <span key={col} className="text-right uppercase">
@@ -59,18 +59,18 @@ function BattersTable({
         {batters.map((batter) => (
           <li
             key={`${team.id}-${batter.name}-${batter.order ?? ""}`}
-            className="grid grid-cols-[minmax(6.5rem,1.4fr)_repeat(8,minmax(1.6rem,1fr))] gap-x-1.5 border-b border-white/[0.06] py-1.5 text-[11px]"
+            className="grid grid-cols-[minmax(6.5rem,1.4fr)_repeat(8,minmax(1.6rem,1fr))] gap-x-1.5 border-b border-line py-1.5 text-[12px]"
           >
-            <span className="truncate text-white">
+            <span className="truncate text-c3">
               {batter.name}
               {batter.position ? (
-                <span className="ml-1 text-white/40">{batter.position}</span>
+                <span className="ml-1 text-c3">{batter.position}</span>
               ) : null}
             </span>
             {batterValues(batter).map((value, index) => (
               <span
                 key={`${batter.name}-${COLS[index]}`}
-                className="text-right tabular-nums text-white/85"
+                className="text-right tabular-nums text-c3"
               >
                 {value}
               </span>
@@ -101,7 +101,7 @@ export function MlbTeamToggleBatters({ detail }: { detail: MlbGameDetailView }) 
   return (
     <GameSection className="!p-3" data-testid="mlb-team-toggle-batters">
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-        <h2 className="font-semibold text-white">Batters</h2>
+        <h2 className="font-semibold text-c3">Batters</h2>
         <div className="flex flex-wrap items-center gap-0.5">
           {(
             [
@@ -116,8 +116,8 @@ export function MlbTeamToggleBatters({ detail }: { detail: MlbGameDetailView }) 
               aria-pressed={side === key}
               className={`rounded-full px-2 py-0.5 text-xs font-medium transition-colors ${
                 side === key
-                  ? "bg-white/15 text-white"
-                  : "text-white/50 hover:text-white/80"
+                  ? "bg-c2 text-c3"
+                  : "text-c3 hover:text-c3"
               }`}
             >
               {label}

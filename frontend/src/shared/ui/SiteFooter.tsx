@@ -5,12 +5,10 @@ const COPYRIGHT = "© Copyright 2026 statvista. All Rights Reserved.";
 
 export function SiteFooter() {
   return (
-    <footer className="mt-auto border-t border-white/10 bg-background px-4 py-8 sm:px-6">
-      <div className="mx-auto max-w-5xl space-y-4 text-center">
-        <p className="text-xs leading-relaxed text-white/45 sm:text-sm">
-          {DISCLAIMER}
-        </p>
-        <p className="text-xs text-white/35">{COPYRIGHT}</p>
+    <footer className="site-footer">
+      <div className="site-footer-inner">
+        <p>{DISCLAIMER}</p>
+        <p>{COPYRIGHT}</p>
       </div>
     </footer>
   );

@@ -3,7 +3,6 @@ import { useState } from "react";
 type TeamAbbrevAvatarProps = {
   abbrev: string;
   logoUrl: string | null;
-  /** Tailwind size classes for the circle/img, e.g. `size-7` or `size-8`. */
   sizeClassName?: string;
 };
 
@@ -30,7 +29,7 @@ export function TeamAbbrevAvatar({
 
   return (
     <span
-      className={`flex ${sizeClassName} shrink-0 items-center justify-center rounded-full bg-white/10 text-[10px] font-bold text-white/70`}
+      className={`flex ${sizeClassName} shrink-0 items-center justify-center rounded-full bg-c2 text-[12px] font-bold text-c3`}
     >
       {letter}
     </span>

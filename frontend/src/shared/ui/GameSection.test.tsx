@@ -13,17 +13,17 @@ describe("GameSection", () => {
       "section",
     );
     expect(section).toHaveClass(
-      "rounded-2xl",
-      "bg-[#1e1e1e]",
-      "px-[13px]",
-      "py-[9px]",
-      "border-white/10",
+      "rounded",
+      "bg-c2",
+      "px-3",
+      "py-2",
+      "border-line",
     );
   });
 
   it("exports GAME_SECTION_SURFACE matching the Game Info card treatment", () => {
     expect(GAME_SECTION_SURFACE).toBe(
-      "overflow-hidden rounded-2xl border border-white/10 bg-[#1e1e1e] px-[13px] py-[9px]",
+      "overflow-hidden rounded border border-line bg-c2 px-3 py-2",
     );
   });
 
@@ -35,7 +35,7 @@ describe("GameSection", () => {
     );
     expect(screen.getByText("inner").closest("section")).toHaveClass(
       "space-y-3",
-      "rounded-2xl",
+      "rounded",
     );
   });
 });

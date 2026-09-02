@@ -1,155 +1,76 @@
+@import "./tokens.css";
+@import "./ui.css";
 @import "tailwindcss";
 
-@font-face {
-  font-family: "Geist";
-  src: url("../../node_modules/geist/dist/fonts/geist-sans/Geist-Variable.woff2") format("woff2");
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Geist Mono";
-  src: url("../../node_modules/geist/dist/fonts/geist-mono/GeistMono-Variable.woff2") format("woff2");
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* Tokens used by the home landing and NotFound page */
-:root {
-  --radius: 0.5rem;
-  --background: #161616;
-  --foreground: oklch(0.98 0 0);
-  --muted-foreground: oklch(0.7 0 0);
-  --border: oklch(1 0 0 / 10%);
-  --font-sans: calibre, calibre-fallback, ui-sans-serif, system-ui, -apple-system,
-    "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji",
-    "Segoe UI Emoji", "Segoe UI Symbol";
-  --font-mono: "Courier New", ui-monospace, SFMono-Regular, Menlo, Monaco,
-    Consolas, "Liberation Mono", "Courier New", monospace;
-  --text-body: 18px;
-  --text-subtle: 14px;
-}
-
 @theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-border: var(--border);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-mono);
-  --text-sm: var(--text-subtle);
-  --text-sm--line-height: 1.4;
-  --text-base: var(--text-body);
-  --text-base--line-height: 1.45;
+  --color-c1: var(--c1);
+  --color-c2: var(--c2);
+  --color-c3: var(--c3);
+  --color-c4: var(--c4);
+  --color-c5: var(--c5);
+  --color-muted: var(--text-muted);
+  --color-line: var(--border-color);
+  --color-background: var(--c1);
+  --color-foreground: var(--c3);
+  --radius-sm: 4px;
+  --radius-md: 4px;
+  --radius-lg: 4px;
+  --radius-xl: 4px;
+  --radius-2xl: 4px;
+  --radius-3xl: 4px;
+  --radius: 4px;
+  --font-sans: "Public Sans", sans-serif;
+  --font-display: "Fraunces", serif;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.08);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 1px 2px rgba(0, 0, 0, 0.08);
+  --shadow-xl: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
 @layer base {
-  * {
-    @apply border-border;
+  html,
+  body,
+  #root {
+    min-height: 100%;
+    background: var(--c1);
+    color: var(--c3);
   }
+
   body {
-    @apply bg-background text-foreground font-sans text-base antialiased;
+    margin: 0;
+    font-family: var(--font-ui);
+    font-size: var(--text-16);
+    font-weight: var(--font-weight-body);
+    line-height: var(--lh-body);
   }
-  .text-muted-foreground {
-    font-size: var(--text-subtle);
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: var(--font-weight-display);
+    line-height: var(--lh-heading);
+    letter-spacing: var(--tracking-heading);
+  }
+
+  button,
+  a,
+  input,
+  select,
+  textarea,
+  summary {
+    transition: var(--transition);
+  }
+
+  :focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-offset);
+  }
+
+  :disabled,
+  [disabled] {
+    color: var(--text-muted);
+    cursor: not-allowed;
   }
 }
-
-/* Three-phase crossfade: NBA → WNBA → MLB (~3.5s each). */
-@keyframes league-logo-fade-a {
-  0%,
-  28% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  33%,
-  95% {
-    opacity: 0;
-    transform: scale(0.96);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes league-logo-fade-b {
-  0%,
-  28% {
-    opacity: 0;
-    transform: scale(0.96);
-  }
-  33%,
-  61% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  66%,
-  100% {
-    opacity: 0;
-    transform: scale(0.96);
-  }
-}
-
-@keyframes league-logo-fade-c {
-  0%,
-  61% {
-    opacity: 0;
-    transform: scale(0.96);
-  }
-  66%,
-  95% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(0.96);
-  }
-}
-
-.league-logo-slide-a {
-  animation: league-logo-fade-a 10.5s ease-in-out infinite;
-}
-
-.league-logo-slide-b {
-  animation: league-logo-fade-b 10.5s ease-in-out infinite;
-}
-
-.league-logo-slide-c {
-  animation: league-logo-fade-c 10.5s ease-in-out infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .league-logo-slide {
-    animation: none;
-  }
-}
-
-@keyframes game-flow-neon-halo {
-  0%,
-  100% {
-    opacity: 0.78;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-.game-flow-neon-halo {
-  animation: game-flow-neon-halo 2.6s ease-in-out infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .game-flow-neon-halo {
-    animation: none;
-    opacity: 0.8;
-  }
-}
-

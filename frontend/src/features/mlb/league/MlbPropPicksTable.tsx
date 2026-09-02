@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { ChevronDown } from "lucide-react";
+import { IconChevron } from "@/shared/ui/Icons";
 import type { ApiMlbPropBoardRow } from "@/shared/lib/api";
 import betMgmIcon from "@/assets/betmgm-icon.svg?raw";
 import caesarsIcon from "@/assets/caesars-icon.svg?raw";
@@ -81,8 +81,8 @@ const COLUMNS: {
 const HIT_SORT_KEYS = new Set<MlbPropBoardSortKey>(["l5", "l10", "l15", "h2h"]);
 
 const ROW_BOX_BG =
-  "bg-white/[0.04] transition-colors group-hover:bg-white/[0.08]";
-const ROW_BOX_BORDER = "border-white/10 group-hover:border-white/20";
+  "bg-c2 transition-colors group-hover:bg-c2";
+const ROW_BOX_BORDER = "border-line group-hover:border-line";
 const ROW_BOX_FIRST = `rounded-l-lg border-y border-l ${ROW_BOX_BG} ${ROW_BOX_BORDER}`;
 const ROW_BOX_MIDDLE = `border-y ${ROW_BOX_BG} ${ROW_BOX_BORDER}`;
 const ROW_BOX_LAST = "rounded-r-lg border-r";
@@ -95,7 +95,7 @@ function formatMatchup(row: ApiMlbPropBoardRow): string | null {
 }
 
 function hitBoxClass(pct: number | null): string {
-  if (pct == null) return `${ROW_BOX_BG} text-white/45`;
+  if (pct == null) return `${ROW_BOX_BG} text-c3`;
   if (pct >= 67) return "bg-emerald-500/15 text-emerald-300";
   if (pct >= 45) return "bg-amber-500/15 text-amber-300";
   return "bg-rose-500/15 text-rose-300";
@@ -106,7 +106,7 @@ function BookMark({ book, label }: { book: string; label: string }) {
   if (svg) {
     return (
       <span
-        className="inline-flex size-3.5 shrink-0 text-white [&_svg]:block [&_svg]:size-3.5"
+        className="inline-flex size-3.5 shrink-0 text-c3 [&_svg]:block [&_svg]:size-3.5"
         dangerouslySetInnerHTML={{ __html: svg }}
       />
     );
@@ -115,7 +115,7 @@ function BookMark({ book, label }: { book: string; label: string }) {
   const boldMark = book === "pinnacle" || book === "bet365";
   return (
     <span
-      className={`text-[10px] tracking-wide text-white/70 ${
+      className={`text-[12px] tracking-wide text-c3 ${
         boldMark ? "font-bold" : "font-semibold"
       }`}
     >
@@ -144,7 +144,7 @@ function BookChip({
   const inner = (
     <>
       <BookMark book={book} label={label} />
-      <span className="font-mono text-[11px] text-white">
+      <span className="font-mono text-[12px] text-c3">
         {lineText != null ? <span>{lineText} </span> : null}
         {oddsText}
       </span>
@@ -198,7 +198,7 @@ function OddsOverflow({ chips }: { chips: ApiMlbPropBoardRow["books"] }) {
     <>
       <span
         ref={triggerRef}
-        className="inline-flex items-center gap-0.5 text-[11px] font-medium text-white/45"
+        className="inline-flex items-center gap-0.5 text-[12px] font-medium text-c3"
         onMouseEnter={show}
         onMouseLeave={() => setOpen(false)}
       >
@@ -207,14 +207,12 @@ function OddsOverflow({ chips }: { chips: ApiMlbPropBoardRow["books"] }) {
           type="button"
           data-testid="odds-overflow-arrow"
           aria-label={`${chips.length} more books`}
-          className="inline-flex bg-transparent p-0 text-white/45 hover:text-white/70"
+          className="inline-flex bg-transparent p-0 text-c3 hover:text-c4"
           onFocus={show}
           onBlur={() => setOpen(false)}
         >
-          <ChevronDown
-            className={`size-3 transition-transform ${open ? "rotate-180" : ""}`}
-            strokeWidth={2}
-            aria-hidden
+          <IconChevron
+            className={`size-3 ${open ? "rotate-180" : ""}`}
           />
         </button>
       </span>
@@ -224,7 +222,7 @@ function OddsOverflow({ chips }: { chips: ApiMlbPropBoardRow["books"] }) {
             <div
               role="tooltip"
               data-testid="odds-overflow-panel"
-              className="pointer-events-none fixed z-50 flex min-w-[6rem] flex-col gap-1.5 rounded-lg border border-white/10 bg-[#1c1e22] px-2.5 py-2 shadow-lg"
+              className="pointer-events-none fixed z-50 flex min-w-[6rem] flex-col gap-1.5 rounded border border-line bg-c2 px-2.5 py-2 shadow-lg"
               style={{ top: pos.top, left: pos.left }}
             >
               {chips.map((chip) => (
@@ -250,7 +248,7 @@ function DfsCell({ row }: { row: ApiMlbPropBoardRow }) {
   );
   if (chips.length === 0) {
     return (
-      <div data-testid="dfs-cell" className="font-mono text-sm text-white">
+      <div data-testid="dfs-cell" className="font-mono text-sm text-c3">
         —
       </div>
     );
@@ -311,10 +309,10 @@ function PlayerIcon({ row }: { row: ApiMlbPropBoardRow }) {
           <img
             src={row.headshot_url}
             alt=""
-            className="size-8 rounded-full bg-white/10 object-cover"
+            className="size-8 rounded-full bg-c2 object-cover"
           />
         ) : (
-          <span className="flex size-8 items-center justify-center rounded-full bg-white/10 text-xs font-semibold text-white/50">
+          <span className="flex size-8 items-center justify-center rounded-full bg-c2 text-xs font-semibold text-c3">
             {initial}
           </span>
         )}
@@ -326,7 +324,7 @@ function PlayerIcon({ row }: { row: ApiMlbPropBoardRow }) {
             alt={row.team_abbrev ?? ""}
             title={row.team_abbrev ?? undefined}
             data-testid="board-row-team-logo"
-            className="size-4 rounded-full bg-white/10 object-contain"
+            className="size-4 rounded-full bg-c2 object-contain"
           />
         </div>
       ) : null}
@@ -346,19 +344,19 @@ function CompositeCell({ row }: { row: ApiMlbPropBoardRow }) {
         >
           <span
             data-testid="board-row-name"
-            className="min-w-0 truncate font-bold text-white"
+            className="min-w-0 truncate font-bold text-c3"
           >
             {row.player_name}
           </span>
           {matchup ? (
             <>
               <span
-                className="size-0.5 shrink-0 rounded-full bg-white/25"
+                className="size-0.5 shrink-0 rounded-full bg-c2"
                 aria-hidden
               />
               <span
                 data-testid="board-row-matchup"
-                className="shrink-0 text-[12px] font-medium text-white/50"
+                className="shrink-0 text-[12px] font-medium text-c3"
               >
                 {matchup}
               </span>
@@ -367,7 +365,7 @@ function CompositeCell({ row }: { row: ApiMlbPropBoardRow }) {
         </div>
         <p
           data-testid="board-row-market"
-          className="truncate text-sm font-bold text-white"
+          className="truncate text-sm font-bold text-c3"
         >
           {row.market_label}
         </p>
@@ -451,18 +449,18 @@ export function MlbPropPicksTable({
       {isLoading ? (
         <div
           aria-label="Loading MLB prop picks"
-          className="h-64 animate-pulse rounded-xl bg-[#1c1e22]"
+          className="h-64 animate-pulse rounded bg-c2"
         />
       ) : isError ? (
-        <p className="px-1 text-[14px] text-white/40">Prop lines unavailable</p>
+        <p className="px-1 text-[14px] text-c3">Prop lines unavailable</p>
       ) : sorted.length === 0 ? (
-        <p className="px-1 text-[14px] text-white/40">No board yet</p>
+        <p className="px-1 text-[14px] text-c3">No board yet</p>
       ) : (
         <>
           <div className="overflow-x-auto">
           <table className="w-full min-w-[64rem] border-separate border-spacing-x-0 border-spacing-y-1.5 text-left">
             <thead className="sticky top-0">
-              <tr className="border-b border-white/10 text-[11px] font-semibold uppercase tracking-wide text-white/70">
+              <tr className="border-b border-line text-[12px] font-semibold uppercase tracking-wide text-c3">
                 {COLUMNS.map((column) => {
                   const isHit =
                     column.sortable &&
@@ -496,7 +494,7 @@ export function MlbPropPicksTable({
                         onClick={() =>
                           onSort(column.key as MlbPropBoardSortKey)
                         }
-                        className={`bg-transparent p-0 uppercase tracking-wide text-white/70 hover:text-white ${
+                        className={`bg-transparent p-0 uppercase tracking-wide text-c3 hover:text-c4 ${
                           isHit ? "w-full text-center" : "text-left"
                         }`}
                       >
@@ -518,7 +516,7 @@ export function MlbPropPicksTable({
                     <CompositeCell row={row} />
                   </td>
                   <td
-                    className={`px-2 py-2 font-mono text-sm text-white ${ROW_BOX_MIDDLE}`}
+                    className={`px-2 py-2 font-mono text-sm text-c3 ${ROW_BOX_MIDDLE}`}
                     data-testid="line-cell"
                   >
                     {row.line}
@@ -530,7 +528,7 @@ export function MlbPropPicksTable({
                     <OddsCell row={row} />
                   </td>
                   <td
-                    className={`px-2 py-2 font-mono text-sm text-white ${ROW_BOX_MIDDLE}`}
+                    className={`px-2 py-2 font-mono text-sm text-c3 ${ROW_BOX_MIDDLE}`}
                     data-testid="ip-cell"
                   >
                     {row.ip_pct == null ? "—" : `${row.ip_pct}%`}
@@ -545,7 +543,7 @@ export function MlbPropPicksTable({
           </table>
         </div>
           <div className="flex flex-wrap items-center justify-between gap-2 px-1">
-            <p className="text-[14px] text-white/40">
+            <p className="text-[14px] text-c3">
               Showing {start + 1}–{end} of {sorted.length}
             </p>
             {showPager ? (
@@ -554,11 +552,11 @@ export function MlbPropPicksTable({
                   type="button"
                   disabled={safePage <= 0}
                   onClick={() => setPage((p) => Math.max(0, p - 1))}
-                  className="rounded-md border border-white/10 px-2.5 py-0.5 text-[14px] text-white/55 enabled:hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
+                  className="rounded border border-line px-2.5 py-0.5 text-[14px] text-c3 enabled:hover:text-c4 disabled:cursor-not-allowed disabled:opacity-35"
                 >
                   Previous
                 </button>
-                <span className="text-[14px] text-white/35">
+                <span className="text-[14px] text-c3">
                   Page {safePage + 1} of {totalPages}
                 </span>
                 <button
@@ -567,7 +565,7 @@ export function MlbPropPicksTable({
                   onClick={() =>
                     setPage((p) => Math.min(totalPages - 1, p + 1))
                   }
-                  className="rounded-md border border-white/10 px-2.5 py-0.5 text-[14px] text-white/55 enabled:hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
+                  className="rounded border border-line px-2.5 py-0.5 text-[14px] text-c3 enabled:hover:text-c4 disabled:cursor-not-allowed disabled:opacity-35"
                 >
                   Next
                 </button>

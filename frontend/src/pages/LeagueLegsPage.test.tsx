@@ -118,9 +118,9 @@ describe("LeagueLegsPage", () => {
 
   it("renders Legs chrome with league pills", () => {
     renderPage("/mlb/legs");
-    expect(screen.getByRole("heading", { name: "Legs" })).toHaveClass(
-      "text-white",
-    );
+    const heading = screen.getByRole("heading", { name: "Legs" });
+    expect(heading).toHaveClass("chrome-title");
+    expect(heading.parentElement).toHaveClass("chrome-title-row");
     expect(screen.getByRole("link", { name: "MLB" })).toHaveAttribute(
       "href",
       "/mlb/legs",

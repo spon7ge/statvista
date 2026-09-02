@@ -96,7 +96,7 @@ export function MlbGameInfo({ detail }: MlbGameInfoProps) {
               </p>
             ) : null}
             {detail.venue?.trim() && venueLocation ? (
-              <p className="ml-[29px] text-sm text-white/50">{venueLocation}</p>
+              <p className="ml-[29px] text-sm text-c3">{venueLocation}</p>
             ) : null}
           </div>
         ) : null}
@@ -127,7 +127,7 @@ export function MlbGameInfo({ detail }: MlbGameInfoProps) {
                 if (!name) return null;
                 return (
                   <p key={key}>
-                    <span className="text-white/50">{`${label}: `}</span>
+                    <span className="text-c3">{`${label}: `}</span>
                     {name}
                   </p>
                 );

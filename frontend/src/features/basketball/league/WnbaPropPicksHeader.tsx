@@ -10,25 +10,17 @@ export function appFromSearch(value: string | null): WnbaPropAppTab {
 }
 
 type WnbaPropPicksHeaderProps = {
-  /** Filter pills under the league switcher. */
   children?: ReactNode;
 };
 
-/**
- * Props title + horizontal league pills.
- * Filter pills sit under the switcher. PrizePicks / Underdog tabs stay on
- * game-detail Props, not this page.
- */
 export function WnbaPropPicksHeader({ children }: WnbaPropPicksHeaderProps) {
   return (
     <div
       data-testid="wnba-prop-picks-header"
       className={`relative z-20 flex flex-col gap-4 ${CHROME_TITLE_TOP}`}
     >
-      <div className="flex min-h-7 items-center justify-between">
-        <h1 className="text-left text-[28px] leading-none font-bold tracking-tight text-white">
-          Props
-        </h1>
+      <div className="chrome-title-row">
+        <h1 className="chrome-title">Props</h1>
       </div>
       <PropPicksLeagueSwitcher />
       {children ? (

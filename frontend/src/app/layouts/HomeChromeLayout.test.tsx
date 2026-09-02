@@ -53,7 +53,7 @@ describe("HomeChromeLayout", () => {
     expect(
       screen.getByRole("navigation", { name: "Primary" }),
     ).toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Home" })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Home" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Games" })).toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: /^leagues$/i }),
@@ -62,10 +62,10 @@ describe("HomeChromeLayout", () => {
     const sidebar = screen.getByRole("navigation", { name: "Primary" }).closest(
       "aside",
     );
-    expect(sidebar).toHaveClass("hidden", "sm:flex", "w-60");
+    expect(sidebar).toHaveClass("site-aside");
     expect(sidebar).not.toHaveClass("border-r");
     const root = container.firstElementChild;
-    expect(root).toHaveClass("sm:flex-row");
+    expect(root).toHaveClass("shell");
   });
 
   it("opens a mobile drawer from the hamburger and closes on Escape", async () => {
@@ -80,7 +80,7 @@ describe("HomeChromeLayout", () => {
     );
 
     const bar = screen.getByRole("banner");
-    expect(bar).toHaveClass("sm:hidden");
+    expect(bar).toHaveClass("site-header");
     expect(within(bar).getByRole("link", { name: "statvista" })).toHaveAttribute(
       "href",
       "/mlb/matchups",

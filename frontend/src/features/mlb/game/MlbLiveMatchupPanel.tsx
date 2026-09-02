@@ -33,7 +33,7 @@ function PlayerHeadshot({
   if (!player?.headshotUrl || failed) {
     return (
       <div
-        className="flex size-20 shrink-0 items-center justify-center rounded-full bg-white/10 text-base font-semibold text-white/50"
+        className="flex size-20 shrink-0 items-center justify-center rounded-full bg-c2 text-base font-semibold text-c3"
         data-testid={testId}
       >
         {player ? player.name.slice(0, 1).toUpperCase() : "?"}
@@ -45,7 +45,7 @@ function PlayerHeadshot({
       src={player.headshotUrl}
       alt={player.name}
       data-testid={testId}
-      className="size-20 shrink-0 rounded-full bg-white/10 object-cover"
+      className="size-20 shrink-0 rounded-full bg-c2 object-cover"
       onError={() => setFailed(true)}
     />
   );
@@ -59,7 +59,7 @@ function OutsDots({ outs }: { outs: number }) {
         <span
           key={index}
           className={`size-2.5 rounded-full ${
-            index < capped ? "bg-white" : "border border-white/40"
+            index < capped ? "bg-c2" : "border border-line"
           }`}
         />
       ))}
@@ -117,7 +117,7 @@ function TeamLabel({
       }`}
     >
       {team.logoUrl ? <TeamLogo url={team.logoUrl} /> : null}
-      <span className="text-[18px] font-semibold text-white">{label}</span>
+      <span className="text-[16px] font-semibold text-c3">{label}</span>
     </div>
   );
 }
@@ -133,13 +133,13 @@ function PlayerNameLine({
 }) {
   return (
     <p
-      className={`flex items-baseline gap-1.5 text-[18px] font-bold text-white ${
+      className={`flex items-baseline gap-1.5 text-[16px] font-bold text-c3 ${
         align === "right" ? "flex-row-reverse" : ""
       }`}
     >
       <span>{name}</span>
       {meta ? (
-        <span className="text-[18px] font-medium text-white/50">{meta}</span>
+        <span className="text-[16px] font-medium text-c3">{meta}</span>
       ) : null}
     </p>
   );
@@ -154,7 +154,7 @@ export function MlbLiveMatchupPanel({
   if (!situation) {
     return (
       <GameSection className="!p-2.5">
-        <p className="text-[18px] text-white/40">Matchup unavailable</p>
+        <p className="text-[16px] text-c3">Matchup unavailable</p>
       </GameSection>
     );
   }
@@ -186,7 +186,7 @@ export function MlbLiveMatchupPanel({
             className="h-20 w-[6.5rem] shrink-0"
           />
           <OutsDots outs={situation.outs} />
-          <p className="font-mono text-[22px] font-semibold tabular-nums text-white">
+          <p className="text-[20px] font-semibold tabular-nums text-c3">
             {situation.balls} - {situation.strikes}
           </p>
         </div>
@@ -207,11 +207,11 @@ export function MlbLiveMatchupPanel({
                 align="left"
               />
               {atBat.summary ? (
-                <p className="text-[18px] text-white/45">{atBat.summary}</p>
+                <p className="text-[16px] text-c3">{atBat.summary}</p>
               ) : null}
             </>
           ) : (
-            <p className="text-[18px] text-white/40">Batter TBD</p>
+            <p className="text-[16px] text-c3">Batter TBD</p>
           )}
         </div>
 
@@ -224,11 +224,11 @@ export function MlbLiveMatchupPanel({
                 align="right"
               />
               {pitcher.summary ? (
-                <p className="text-[18px] text-white/45">{pitcher.summary}</p>
+                <p className="text-[16px] text-c3">{pitcher.summary}</p>
               ) : null}
             </>
           ) : (
-            <p className="text-[18px] text-white/40">Pitcher TBD</p>
+            <p className="text-[16px] text-c3">Pitcher TBD</p>
           )}
         </div>
       </div>

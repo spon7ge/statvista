@@ -15,7 +15,8 @@ Needs [Docker Desktop](https://www.docker.com/products/docker-desktop/). From th
 ```bash
 git clone https://github.com/spon7ge/statvista.git
 cd statvista
-cp .env.docker.example .env
+# Only if you do not already have a .env (this overwrites):
+test -f .env || cp .env.docker.example .env
 docker compose --profile local-db up -d --build
 ```
 
@@ -40,7 +41,7 @@ docker compose --profile local-db up -d
 
 API docs then: [http://localhost:8001/docs](http://localhost:8001/docs)
 
-PrizePicks scrapers need a real browser, so they stay on the host:
+PrizePicks scrapers need a real browser, so they stay on the host (`.env` uses `localhost:5433` so they can reach Docker Postgres):
 
 ```bash
 python -m src.scrapers.mlb_prizepick

@@ -8,6 +8,7 @@ import {
   homeMatchupsHref,
   homePropsHref,
   isActiveSection,
+  orderedNavLeagues,
   sectionHref,
 } from "./appNav";
 
@@ -24,6 +25,12 @@ describe("activeLeagueFromPath", () => {
 
   it("treats /games/:id as WNBA", () => {
     expect(activeLeagueFromPath("/games/401857098")).toBe("wnba");
+  });
+});
+
+describe("orderedNavLeagues", () => {
+  it("lists MLB, WNBA, then NBA", () => {
+    expect(orderedNavLeagues().map((l) => l.id)).toEqual(["mlb", "wnba", "nba"]);
   });
 });
 

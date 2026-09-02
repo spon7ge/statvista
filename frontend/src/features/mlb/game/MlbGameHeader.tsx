@@ -28,7 +28,7 @@ function TeamRow({ team }: { team: MlbGameDetailTeam }) {
           {team.name}
         </span>
       </span>
-      <span className="shrink-0 font-mono text-xl font-semibold tracking-tight text-white tabular-nums">
+      <span className="shrink-0 text-xl font-semibold tracking-tight text-c3 tabular-nums">
         {team.score ?? "–"}
       </span>
     </div>
@@ -40,27 +40,27 @@ export function MlbGameHeader({ detail }: { detail: MlbGameDetailView }) {
 
   return (
     <GameSection>
-      <p className="mb-3 flex items-center gap-2 text-[14px] text-white/55">
+      <p className="mb-3 flex items-center gap-2 text-[14px] text-c3">
         {inProgress ? (
           <span
-            className="size-1.5 shrink-0 animate-pulse rounded-full bg-red-500"
+            className="size-1.5 shrink-0 animate-pulse rounded-full bg-c4"
             aria-hidden
           />
         ) : (
           <span
-            className="size-1.5 shrink-0 rounded-full bg-white/25"
+            className="size-1.5 shrink-0 rounded-full bg-c2"
             aria-hidden
           />
         )}
         <span>
           <span
-            className={inProgress ? "text-red-400" : "text-white/80"}
+            className={inProgress ? "text-c4" : "text-c3"}
           >
             {detail.statusLabel}
           </span>
           {detail.venue ? (
             <>
-              <span className="mx-1.5 text-white/30" aria-hidden>
+              <span className="mx-1.5 text-c3" aria-hidden>
                 ·
               </span>
               <span>{detail.venue}</span>

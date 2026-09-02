@@ -23,7 +23,8 @@ describe("MatchupsHeader", () => {
     renderHeader();
 
     const heading = screen.getByRole("heading", { name: "Games" });
-    expect(heading).toHaveClass("text-left", "text-[28px]", "font-bold", "text-white");
+    expect(heading).toHaveClass("chrome-title");
+    expect(heading.parentElement).toHaveClass("chrome-title-row");
     expect(screen.getByTestId("matchups-header")).toHaveClass(CHROME_TITLE_TOP);
 
     const leagues = screen.getByRole("navigation", { name: "Leagues" });

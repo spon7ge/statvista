@@ -78,14 +78,14 @@ function PlayCard({
 }) {
   const backgroundColor = teamColorFor(detail, play.teamId);
   const lightCard = relativeLuminance(backgroundColor) > 0.45;
-  const primary = lightCard ? "text-black" : "text-white";
-  const secondary = lightCard ? "text-black/55" : "text-white/70";
+  const primary = lightCard ? "text-black" : "text-c3";
+  const secondary = lightCard ? "text-black/55" : "text-c3";
   const { headline, assist } = splitPlayText(play.text);
 
   return (
     <li
       data-testid={`wnba-play-card-${play.id}`}
-      className="rounded-2xl px-4 py-3"
+      className="rounded px-4 py-3"
       style={{ backgroundColor }}
     >
       <div className="flex items-start justify-between gap-3">
@@ -132,7 +132,7 @@ export function WnbaPlayFeed({ detail }: { detail: GameDetail }) {
     >
       <div className="mb-3 flex justify-center">
         <div
-          className="flex rounded-full bg-white/10 p-1"
+          className="flex rounded-full bg-c2 p-1"
           role="group"
           aria-label="Play filter"
         >
@@ -142,8 +142,8 @@ export function WnbaPlayFeed({ detail }: { detail: GameDetail }) {
             aria-pressed={filter === "scoring"}
             className={`rounded-full px-4 py-1.5 text-[14px] font-semibold transition-colors ${
               filter === "scoring"
-                ? "bg-white text-black"
-                : "text-white/80 hover:text-white"
+                ? "bg-c2 text-black"
+                : "text-c3 hover:text-c4"
             }`}
           >
             Scoring Plays
@@ -154,8 +154,8 @@ export function WnbaPlayFeed({ detail }: { detail: GameDetail }) {
             aria-pressed={filter === "all"}
             className={`rounded-full px-4 py-1.5 text-[14px] font-semibold transition-colors ${
               filter === "all"
-                ? "bg-white text-black"
-                : "text-white/80 hover:text-white"
+                ? "bg-c2 text-black"
+                : "text-c3 hover:text-c4"
             }`}
           >
             All Plays
@@ -164,7 +164,7 @@ export function WnbaPlayFeed({ detail }: { detail: GameDetail }) {
       </div>
 
       {plays.length === 0 ? (
-        <p className="text-[15px] text-white/40">No plays available</p>
+        <p className="text-[15px] text-c3">No plays available</p>
       ) : (
         <ul className="space-y-2">
           {plays.map((play) => (

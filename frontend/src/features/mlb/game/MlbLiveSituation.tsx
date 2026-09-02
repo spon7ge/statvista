@@ -17,7 +17,7 @@ function CountDots({
   const capped = Math.min(Math.max(filled, 0), total);
   return (
     <div className="flex items-center gap-1.5">
-      <span className="w-9 text-[10px] font-medium text-white/45">{label}</span>
+      <span className="w-9 text-[12px] font-medium text-c3">{label}</span>
       <span className="flex gap-1" aria-label={`${capped} ${label}`}>
         {Array.from({ length: total }, (_, index) => (
           <span
@@ -25,7 +25,7 @@ function CountDots({
             className={`size-2 rounded-full ${
               index < capped
                 ? filledClassName
-                : "border border-white/30 bg-transparent"
+                : "border border-line bg-transparent"
             }`}
           />
         ))}
@@ -57,20 +57,20 @@ function CallValueCard({
   stakes: { label: string; homeWinDelta: number };
 }) {
   return (
-    <div className="rounded-lg bg-[#45484d] px-3 py-2.5">
+    <div className="rounded bg-c2 px-3 py-2.5">
       <div className="flex items-start justify-between gap-2">
-        <p className="text-[10px] font-medium uppercase tracking-wide text-white/40">
+        <p className="text-[12px] font-medium uppercase tracking-wide text-c3">
           CALL VALUE
         </p>
-        <span className="rounded-md bg-red-500/20 px-1.5 py-0.5 text-[10px] font-semibold text-red-300">
+        <span className="rounded bg-c4 px-1.5 py-0.5 text-[12px] font-semibold text-c4">
           {formatStakesBadge(stakes.homeWinDelta)}
         </span>
       </div>
-      <p className="mt-2 text-base font-semibold text-white">{stakes.label}</p>
-      <p className="mt-0.5 text-xs text-white/45">
+      <p className="mt-2 text-base font-semibold text-c3">{stakes.label}</p>
+      <p className="mt-0.5 text-xs text-c3">
         {formatHomeDeltaLine(stakes.homeWinDelta)}
       </p>
-      <p className="mt-2 text-[10px] text-white/30">
+      <p className="mt-2 text-[12px] text-c3">
         Data: ESPN win probability
       </p>
     </div>
@@ -86,12 +86,12 @@ function AtBatBlock({ player }: { player: MlbPlayerCard }) {
   const stats = playerStatsLine(player);
   return (
     <div>
-      <p className="text-[10px] font-medium uppercase tracking-wide text-white/40">
+      <p className="text-[12px] font-medium uppercase tracking-wide text-c3">
         AT BAT
       </p>
-      <p className="text-sm font-semibold text-white">{player.name}</p>
+      <p className="text-sm font-semibold text-c3">{player.name}</p>
       {stats ? (
-        <p className="font-mono text-xs text-white/45 tabular-nums">{stats}</p>
+        <p className="text-xs text-c3 tabular-nums">{stats}</p>
       ) : null}
     </div>
   );
@@ -100,11 +100,11 @@ function AtBatBlock({ player }: { player: MlbPlayerCard }) {
 function OnDeckLine({ player }: { player: MlbPlayerCard }) {
   const stats = playerStatsLine(player);
   return (
-    <p className="text-xs text-white/55">
-      <span className="font-semibold text-white">ON DECK</span>{" "}
-      <span className="font-medium text-white">{player.name}</span>
+    <p className="text-xs text-c3">
+      <span className="font-semibold text-c3">ON DECK</span>{" "}
+      <span className="font-medium text-c3">{player.name}</span>
       {stats ? (
-        <span className="font-mono text-white/45 tabular-nums">
+        <span className="text-c3 tabular-nums">
           {" "}
           · {stats}
         </span>
@@ -117,12 +117,12 @@ function PitchingBlock({ player }: { player: MlbPlayerCard }) {
   const stats = playerStatsLine(player);
   return (
     <div>
-      <p className="text-[10px] font-medium uppercase tracking-wide text-white/40">
+      <p className="text-[12px] font-medium uppercase tracking-wide text-c3">
         PITCHING
       </p>
-      <p className="text-sm font-semibold text-white">{player.name}</p>
+      <p className="text-sm font-semibold text-c3">{player.name}</p>
       {stats ? (
-        <p className="font-mono text-xs text-white/45 tabular-nums">{stats}</p>
+        <p className="text-xs text-c3 tabular-nums">{stats}</p>
       ) : null}
     </div>
   );
@@ -133,7 +133,7 @@ function SituationPanel({ detail }: { detail: MlbGameDetailView }) {
   if (!situation) {
     return (
       <GameSection className="!p-2.5">
-        <p className="text-xs text-white/40">Situation unavailable</p>
+        <p className="text-xs text-c3">Situation unavailable</p>
       </GameSection>
     );
   }
@@ -149,19 +149,19 @@ function SituationPanel({ detail }: { detail: MlbGameDetailView }) {
             label="Balls"
             filled={situation.balls}
             total={3}
-            filledClassName="bg-white"
+            filledClassName="bg-c2"
           />
           <CountDots
             label="Strk"
             filled={situation.strikes}
             total={2}
-            filledClassName="bg-white"
+            filledClassName="bg-c2"
           />
           <CountDots
             label="Out"
             filled={situation.outs}
             total={2}
-            filledClassName="bg-red-400"
+            filledClassName="bg-c4"
           />
         </div>
       </div>
@@ -190,7 +190,7 @@ export function MlbLiveSituation({
     <MlbPitchZone situation={detail.situation} />
   ) : (
     <GameSection className="!p-2.5">
-      <p className="text-xs text-white/40">Pitch zone unavailable</p>
+      <p className="text-xs text-c3">Pitch zone unavailable</p>
     </GameSection>
   );
 

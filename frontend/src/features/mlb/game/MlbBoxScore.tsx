@@ -65,7 +65,7 @@ function TeamHeader({ team }: { team: MlbGameDetailTeam }) {
           className="size-6 object-contain"
         />
       ) : null}
-      <span className="text-[18px] font-semibold text-white">
+      <span className="text-[16px] font-semibold text-c3">
         {team.abbrev}
       </span>
     </div>
@@ -75,10 +75,10 @@ function TeamHeader({ team }: { team: MlbGameDetailTeam }) {
 function NoteLines({ notes }: { notes: MlbBoxNoteLine[] }) {
   if (notes.length === 0) return null;
   return (
-    <ul className="space-y-1 text-[11px] leading-snug text-white/70">
+    <ul className="space-y-1 text-[12px] leading-snug text-c3">
       {notes.map((note) => (
         <li key={`${note.label}:${note.value}`}>
-          <span className="font-semibold text-white/90">{note.label}:</span>{" "}
+          <span className="font-semibold text-c3">{note.label}:</span>{" "}
           <span>{note.value}</span>
         </li>
       ))}
@@ -131,10 +131,10 @@ function PitchingFootnotes({ pitchers }: { pitchers: MlbPitcherRow[] }) {
   if (lines.length === 0) return null;
 
   return (
-    <ul className="space-y-1 text-[11px] leading-snug text-white/70">
+    <ul className="space-y-1 text-[12px] leading-snug text-c3">
       {lines.map((line) => (
         <li key={line.label}>
-          <span className="font-semibold text-white/90">{line.label}:</span>{" "}
+          <span className="font-semibold text-c3">{line.label}:</span>{" "}
           <span>{line.value}</span>
         </li>
       ))}
@@ -151,11 +151,11 @@ function BatterTable({
 }) {
   if (batters.length === 0) return null;
   return (
-    <div className="w-full overflow-x-auto rounded-xl bg-[#1c1e22] p-3">
+    <div className="w-full overflow-x-auto rounded bg-c2 p-3">
       <div className="mb-2">
         <TeamHeader team={team} />
       </div>
-      <div className="flex items-baseline justify-between gap-2 border-b border-white/[0.08] pb-1.5 text-[14px] tracking-wide text-white/40">
+      <div className="flex items-baseline justify-between gap-2 border-b border-line pb-1.5 text-[14px] tracking-wide text-c3">
         <span className="min-w-0 flex-1">Batters</span>
         <div className="flex shrink-0 gap-x-0">
           {BATTER_COLS.map((col) => (
@@ -169,19 +169,19 @@ function BatterTable({
         {batters.map((batter) => (
           <li
             key={`${team.id}-${batter.name}-${batter.order ?? ""}`}
-            className="flex items-baseline justify-between gap-2 border-b border-white/[0.06] py-1.5 text-[18px]"
+            className="flex items-baseline justify-between gap-2 border-b border-line py-1.5 text-[16px]"
           >
-            <span className="min-w-0 flex-1 whitespace-nowrap text-white">
+            <span className="min-w-0 flex-1 whitespace-nowrap text-c3">
               {batter.name}
               {batter.position ? (
-                <span className="ml-1 text-white/40">{batter.position}</span>
+                <span className="ml-1 text-c3">{batter.position}</span>
               ) : null}
             </span>
             <div className="flex shrink-0 gap-x-0">
               {batterValues(batter).map((value, index) => (
                 <span
                   key={`${batter.name}-${BATTER_COLS[index]}`}
-                  className="w-7 text-right tabular-nums text-white/85"
+                  className="w-7 text-right tabular-nums text-c3"
                 >
                   {value}
                 </span>
@@ -205,8 +205,8 @@ function PitcherTable({
 }) {
   if (pitchers.length === 0) return null;
   return (
-    <div className="w-full overflow-x-auto rounded-xl bg-[#1c1e22] p-3">
-      <div className="flex items-baseline justify-between gap-2 border-b border-white/[0.08] pb-1.5 text-[14px] tracking-wide text-white/40">
+    <div className="w-full overflow-x-auto rounded bg-c2 p-3">
+      <div className="flex items-baseline justify-between gap-2 border-b border-line pb-1.5 text-[14px] tracking-wide text-c3">
         <span className="min-w-0 flex-1">Pitchers</span>
         <div className="flex shrink-0 gap-x-0">
           {PITCHER_COLS.map((col) => (
@@ -223,12 +223,12 @@ function PitcherTable({
         {pitchers.map((pitcher) => (
           <li
             key={`${team.id}-${pitcher.name}`}
-            className="flex items-baseline justify-between gap-2 border-b border-white/[0.06] py-1.5 text-[18px]"
+            className="flex items-baseline justify-between gap-2 border-b border-line py-1.5 text-[16px]"
           >
-            <span className="min-w-0 flex-1 whitespace-nowrap text-white">
+            <span className="min-w-0 flex-1 whitespace-nowrap text-c3">
               {pitcher.name}
               {pitcher.decision ? (
-                <span className="ml-1 text-white/55">
+                <span className="ml-1 text-c3">
                   {formatPitcherDecision(pitcher.decision)}
                 </span>
               ) : null}
@@ -237,7 +237,7 @@ function PitcherTable({
               {pitcherValues(pitcher).map((value, index) => (
                 <span
                   key={`${pitcher.name}-${PITCHER_COLS[index]}`}
-                  className={`text-right tabular-nums text-white/85 ${
+                  className={`text-right tabular-nums text-c3 ${
                     PITCHER_COLS[index] === "ERA" ? "w-9" : "w-7"
                   }`}
                 >
@@ -248,13 +248,13 @@ function PitcherTable({
           </li>
         ))}
         {totals ? (
-          <li className="flex items-baseline justify-between gap-2 border-t border-white/[0.12] pt-1.5 text-[18px] font-medium">
-            <span className="min-w-0 flex-1 text-white/90">Totals</span>
+          <li className="flex items-baseline justify-between gap-2 border-t border-line pt-1.5 text-[16px] font-medium">
+            <span className="min-w-0 flex-1 text-c3">Totals</span>
             <div className="flex shrink-0 gap-x-0">
               {totalsValues(totals).map((value, index) => (
                 <span
                   key={`totals-${PITCHER_COLS[index]}`}
-                  className={`text-right tabular-nums text-white/85 ${
+                  className={`text-right tabular-nums text-c3 ${
                     PITCHER_COLS[index] === "ERA" ? "w-9" : "w-7"
                   }`}
                 >

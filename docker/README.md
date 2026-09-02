@@ -24,7 +24,8 @@ Browser
 ## Quick start (local Postgres)
 
 ```bash
-cp .env.docker.example .env
+# Only if you do not already have a .env (this overwrites):
+test -f .env || cp .env.docker.example .env
 docker compose --profile local-db up -d --build
 ```
 
@@ -95,6 +96,7 @@ docker compose run --rm --entrypoint python odds -m src.scrapers.run_all_odds --
 | Issue | Fix |
 |-------|-----|
 | Bind for 0.0.0.0:8000 failed: port is already allocated | Another process or container owns 8000. Set `API_PORT=8001` in `.env` and `docker compose --profile local-db up -d`. The site on 8080 still talks to the API inside Docker. |
+| `could not translate host name "host.docker.internal"` | Host scrapers must use `localhost:5433` in `.env` (see `.env.docker.example`). Recreate api/odds after changing compose so containers use the `postgres` hostname. |
 | API `503` / DB host not found | Start with `--profile local-db`, or set `SUPABASE_DB_URL` |
 | SSL error locally | Use `?sslmode=disable` in the local URL |
 | Props/Legs empty | Wait for an `odds` cycle; run PrizePicks on the host |

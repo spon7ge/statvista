@@ -12,11 +12,11 @@ type SeasonLeadersProps = {
 function LeaderRow({ leader }: { leader: GameDetailSeasonLeader }) {
   return (
     <li className="flex items-baseline gap-3 text-sm">
-      <span className="w-16 shrink-0 text-white/45">{leader.label}</span>
-      <span className="min-w-0 flex-1 truncate font-medium text-white">
+      <span className="w-16 shrink-0 text-c3">{leader.label}</span>
+      <span className="min-w-0 flex-1 truncate font-medium text-c3">
         {leader.name}
       </span>
-      <span className="shrink-0 font-medium text-white">{leader.value}</span>
+      <span className="shrink-0 font-medium text-c3">{leader.value}</span>
     </li>
   );
 }
@@ -34,7 +34,7 @@ function LeaderColumn({
         <span className="font-semibold" style={{ color: team.color }}>
           {team.abbrev}
         </span>
-        <span className="truncate text-white/45">{team.name}</span>
+        <span className="truncate text-c3">{team.name}</span>
       </h3>
       <ul className="space-y-2">
         {leaders.map((leader) => (
@@ -54,7 +54,7 @@ export function SeasonLeaders({ detail }: SeasonLeadersProps) {
 
   return (
     <GameSection>
-      <h2 className="font-semibold text-white">Season leaders</h2>
+      <h2 className="font-semibold text-c3">Season leaders</h2>
 
       <div className="mt-4 grid gap-8 md:grid-cols-2">
         <LeaderColumn team={detail.away} leaders={seasonLeaders.away} />

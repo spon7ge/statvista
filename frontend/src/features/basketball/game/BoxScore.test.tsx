@@ -114,8 +114,8 @@ describe("BoxScore", () => {
     const home = screen.getByTestId("wnba-box-team-home");
     expect(away.tagName.toLowerCase()).toBe("section");
     expect(home.tagName.toLowerCase()).toBe("section");
-    expect(away).toHaveClass("rounded-2xl", "bg-[#1e1e1e]", "!p-3");
-    expect(home).toHaveClass("rounded-2xl", "bg-[#1e1e1e]", "!p-3");
+    expect(away).toHaveClass("rounded", "bg-c2", "!p-3");
+    expect(home).toHaveClass("rounded", "bg-c2", "!p-3");
     expect(away).not.toBe(home);
     expect(
       away.compareDocumentPosition(home) & Node.DOCUMENT_POSITION_FOLLOWING,
@@ -169,7 +169,7 @@ describe("BoxScore", () => {
       />,
     );
     const section = screen.getByTestId("wnba-box-team-away");
-    expect(section).toHaveClass("rounded-2xl", "bg-[#1e1e1e]", "!p-3");
-    expect(section).toHaveClass("border-white/10");
+    expect(section).toHaveClass("rounded", "bg-c2", "!p-3");
+    expect(section).toHaveClass("border-line");
   });
 });

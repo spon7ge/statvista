@@ -1,10 +1,10 @@
-import { ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import draftKingsLogo from "@/assets/draftkings.png";
 import fanDuelLogo from "@/assets/fanduel.png";
 import { gameDetailHref } from "@/shared/lib/gameDetailHref";
 import { isInProgressStatus } from "@/shared/lib/mapScoreboard";
 import { TeamAbbrevAvatar } from "@/shared/ui/TeamAbbrevAvatar";
+import { IconChevron } from "@/shared/ui/Icons";
 import { formatOddsPill } from "@/shared/lib/mergeMatchupOdds";
 import type { MatchupGame, MatchupOdds, MatchupTeam } from "./types";
 
@@ -16,20 +16,20 @@ function TeamRow({
   showScore: boolean;
 }) {
   return (
-    <div className="flex items-center gap-2.5">
+    <div className="flex items-center gap-2">
       <TeamAbbrevAvatar
         abbrev={team.abbrev}
         logoUrl={team.logoUrl}
         sizeClassName="size-8"
       />
       <span className="min-w-0 flex-1">
-        <span className="block truncate text-[18px] text-white">{team.name}</span>
+        <span className="block truncate text-[16px] text-c3">{team.name}</span>
         {team.record ? (
-          <span className="block text-[14px] text-white/40">{team.record}</span>
+          <span className="block text-[14px] text-c3">{team.record}</span>
         ) : null}
       </span>
       {showScore ? (
-        <span className="shrink-0 font-mono text-[18px] font-semibold tracking-tight text-white">
+        <span className="shrink-0 text-[16px] font-semibold tracking-tight text-c3">
           {team.score ?? "–"}
         </span>
       ) : null}
@@ -41,14 +41,14 @@ function OddsByCaption({ sportsbook }: { sportsbook?: string | null }) {
   const book = (sportsbook || "draftkings").toLowerCase();
   if (book === "pinnacle") {
     return (
-      <p className="mt-1 text-right text-[14px] tracking-wide text-white/35">
+      <p className="mt-1 text-right text-[14px] tracking-wide text-c3">
         Odds by Pinnacle
       </p>
     );
   }
   const isFanDuel = book === "fanduel";
   return (
-    <p className="mt-1 flex items-center justify-end gap-1 text-[14px] tracking-wide text-white/35">
+    <p className="mt-1 flex items-center justify-end gap-1 text-[14px] tracking-wide text-c3">
       <span>Odds by</span>
       <img
         src={isFanDuel ? fanDuelLogo : draftKingsLogo}
@@ -75,7 +75,7 @@ function OddsBlock({
       data-sportsbook={(sportsbook || "draftkings").toLowerCase()}
       className="shrink-0 text-right"
     >
-      <span className="inline-flex max-w-[11rem] rounded-full border border-white/10 bg-white/[0.03] px-2.5 py-1 font-mono text-[14px] text-white/70 sm:max-w-none">
+      <span className="inline-flex max-w-[11rem] rounded-full border border-line bg-c2 px-2 py-1 text-[14px] text-c3 sm:max-w-none">
         {label}
       </span>
       <OddsByCaption sportsbook={sportsbook} />
@@ -89,7 +89,6 @@ export function MatchupGameCard({ game }: { game: MatchupGame }) {
   const venueLabel = game.venue
     ? [game.venue, game.venueCity].filter(Boolean).join(" · ")
     : null;
-  const baseClassName = "block rounded-xl bg-[#1c1e22] p-4";
   const odds: MatchupOdds | null | undefined = game.odds;
   const oddsLabel = odds ? formatOddsPill(odds) : null;
 
@@ -98,17 +97,14 @@ export function MatchupGameCard({ game }: { game: MatchupGame }) {
       <div className="min-w-0 flex-1">
         <div className="mb-4 flex items-start justify-between gap-3">
           <span
-            className={`flex shrink-0 items-center gap-2 text-[18px] ${
-              isLive ? "text-red-400" : "text-white/45"
+            className={`flex shrink-0 items-center gap-2 text-[16px] ${
+              isLive ? "status-live" : "text-c3"
             }`}
           >
-            {isLive ? (
-              <span className="size-1.5 animate-pulse rounded-full bg-red-500" />
-            ) : null}
             {game.statusLabel}
           </span>
           {venueLabel ? (
-            <span className="truncate text-right text-[14px] text-white/35">
+            <span className="truncate text-right text-[14px] text-c3">
               {venueLabel}
             </span>
           ) : null}
@@ -145,25 +141,18 @@ export function MatchupGameCard({ game }: { game: MatchupGame }) {
           </div>
         )}
       </div>
-      <ChevronRight
-        aria-hidden="true"
-        className="size-4 shrink-0 text-white/25"
-        strokeWidth={1.75}
-      />
+      <IconChevron className="icon-rotate-270 shrink-0" />
     </div>
   );
 
   const href = gameDetailHref(game);
   if (href) {
     return (
-      <Link
-        to={href}
-        className={`${baseClassName} transition-colors hover:bg-[#45484d]`}
-      >
+      <Link to={href} className="card">
         {content}
       </Link>
     );
   }
 
-  return <article className={baseClassName}>{content}</article>;
+  return <article className="card">{content}</article>;
 }

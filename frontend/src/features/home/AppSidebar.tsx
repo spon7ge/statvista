@@ -1,45 +1,38 @@
-import { useEffect } from "react";
+import { useEffect, useId, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
-import {
-  ArrowLeftRight,
-  Calendar,
-  Info,
-  Layers,
-  LayoutList,
-  Newspaper,
-  Settings,
-} from "lucide-react";
 import { CHROME_TITLE_TOP } from "@/app/layouts/chrome";
 import { StatvistaWordmark } from "@/shared/ui/StatvistaWordmark";
 import {
+  IconCalendar,
+  IconChevron,
+  IconGear,
+  IconHome,
+  IconInfo,
+  IconLayers,
+  IconList,
+  IconSwap,
+} from "@/shared/ui/Icons";
+import {
   LANDING_HREF,
+  activeLeagueFromPath,
   homeArbitrageHref,
   homeLegsHref,
   homeMatchupsHref,
   homePropsHref,
   isActiveSection,
+  orderedNavLeagues,
 } from "./lib/appNav";
 import { prefetchPropsBoard } from "./lib/prefetchPropsBoard";
 
-/** Matches Statmuse card: rounded-2xl, px-3.25 (13px), py-2.25 (9px). */
-const SIDEBAR_PANEL =
-  "overflow-hidden rounded-2xl bg-[#1e1e1e] px-[13px] py-[9px]";
-
-function rowClass(active: boolean, enabled: boolean): string {
-  const base =
-    "flex w-full items-center gap-[13px] text-base font-semibold no-underline";
-  if (!enabled) {
-    return `${base} cursor-not-allowed text-left text-white/25`;
-  }
-  if (active) {
-    return `${base} text-white`;
-  }
-  return `${base} text-white transition-colors hover:text-white/70`;
+function rowClass(active: boolean): string {
+  return active ? "nav-link is-active" : "nav-link";
 }
 
 export function AppSidebar() {
   const { pathname } = useLocation();
+  const [leaguesOpen, setLeaguesOpen] = useState(true);
+  const leaguesId = useId();
   const propsHref = homePropsHref(pathname);
   const propsActive = isActiveSection(pathname, "Props");
   const legsHref = homeLegsHref(pathname);
@@ -48,6 +41,7 @@ export function AppSidebar() {
   const arbitrageActive = isActiveSection(pathname, "Arbitrage");
   const matchupsHref = homeMatchupsHref(pathname);
   const matchupsActive = isActiveSection(pathname, "Games");
+  const activeLeague = activeLeagueFromPath(pathname);
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -55,96 +49,104 @@ export function AppSidebar() {
   }, [queryClient, propsHref]);
 
   return (
-    <div
-      className={`flex h-full min-h-0 flex-col bg-background pl-3 pr-1 pb-4 ${CHROME_TITLE_TOP}`}
-    >
-      <Link
-        to={LANDING_HREF}
-        className="mb-4 flex min-h-8 items-center text-white no-underline"
-      >
+    <div className={`sidebar ${CHROME_TITLE_TOP}`}>
+      <Link to={LANDING_HREF} className="nav-brand chrome-title-row">
         <StatvistaWordmark />
       </Link>
 
-      <div className="min-h-0 flex-1 space-y-2 overflow-y-auto">
-      <nav aria-label="Primary">
-        <div className={`${SIDEBAR_PANEL} space-y-[9px]`}>
-          <Link
-            to={propsHref}
-            aria-current={propsActive ? "page" : undefined}
-            className={rowClass(propsActive, true)}
-            onPointerEnter={() => prefetchPropsBoard(queryClient, propsHref)}
-          >
-            <LayoutList
-              className="size-[22px] shrink-0"
-              strokeWidth={2}
-              aria-hidden
-            />
-            Props
-          </Link>
-          <Link
-            to={legsHref}
-            aria-current={legsActive ? "page" : undefined}
-            className={rowClass(legsActive, true)}
-          >
-            <Layers
-              className="size-[22px] shrink-0"
-              strokeWidth={2}
-              aria-hidden
-            />
-            Legs
-          </Link>
-          <Link
-            to={arbitrageHref}
-            aria-current={arbitrageActive ? "page" : undefined}
-            className={rowClass(arbitrageActive, true)}
-          >
-            <ArrowLeftRight
-              className="size-[22px] shrink-0"
-              strokeWidth={2}
-              aria-hidden
-            />
-            Arbitrage
-          </Link>
-          <Link
-            to={matchupsHref}
-            aria-current={matchupsActive ? "page" : undefined}
-            className={rowClass(matchupsActive, true)}
-          >
-            <Calendar
-              className="size-[22px] shrink-0"
-              strokeWidth={2}
-              aria-hidden
-            />
-            Games
-          </Link>
-        </div>
-      </nav>
+      <div className="nav-scroll">
+        <nav aria-label="Primary">
+          <div className="nav-panel">
+            <div className="nav-group">
+              <div className="nav-item">
+                <Link
+                  to={LANDING_HREF}
+                  aria-current={pathname === "/" ? "page" : undefined}
+                  className={rowClass(pathname === "/")}
+                >
+                  <IconHome />
+                  Home
+                </Link>
+                <button
+                  type="button"
+                  className="nav-toggle"
+                  aria-expanded={leaguesOpen}
+                  aria-controls={leaguesId}
+                  aria-label={leaguesOpen ? "Hide leagues" : "Show leagues"}
+                  onClick={() => setLeaguesOpen((open) => !open)}
+                >
+                  <IconChevron />
+                </button>
+              </div>
+              <div id={leaguesId} className="nav-sub" hidden={!leaguesOpen}>
+                {orderedNavLeagues().map((league) => (
+                  <Link
+                    key={league.id}
+                    to={league.href}
+                    aria-current={activeLeague === league.id ? "page" : undefined}
+                    className={rowClass(activeLeague === league.id)}
+                  >
+                    <img
+                      src={league.icon}
+                      alt=""
+                      aria-hidden
+                      className="nav-logo"
+                    />
+                    {league.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+            <Link
+              to={propsHref}
+              aria-current={propsActive ? "page" : undefined}
+              className={rowClass(propsActive)}
+              onPointerEnter={() => prefetchPropsBoard(queryClient, propsHref)}
+            >
+              <IconList />
+              Props
+            </Link>
+            <Link
+              to={legsHref}
+              aria-current={legsActive ? "page" : undefined}
+              className={rowClass(legsActive)}
+            >
+              <IconLayers />
+              Legs
+            </Link>
+            <Link
+              to={arbitrageHref}
+              aria-current={arbitrageActive ? "page" : undefined}
+              className={rowClass(arbitrageActive)}
+            >
+              <IconSwap />
+              Arbitrage
+            </Link>
+            <Link
+              to={matchupsHref}
+              aria-current={matchupsActive ? "page" : undefined}
+              className={rowClass(matchupsActive)}
+            >
+              <IconCalendar />
+              Games
+            </Link>
+          </div>
+        </nav>
 
-      <nav
-        aria-label="Site"
-        className={`space-y-[9px] ${SIDEBAR_PANEL}`}
-      >
-        <button type="button" className={rowClass(false, true)}>
-          <Info className="size-[22px] shrink-0" strokeWidth={2} aria-hidden />
-          About
-        </button>
-        <button type="button" className={rowClass(false, true)}>
-          <Newspaper
-            className="size-[22px] shrink-0"
-            strokeWidth={2}
-            aria-hidden
-          />
-          Blog
-        </button>
-        <button type="button" className={rowClass(false, true)}>
-          <Settings
-            className="size-[22px] shrink-0"
-            strokeWidth={2}
-            aria-hidden
-          />
-          Settings
-        </button>
-      </nav>
+        <nav aria-label="Site" className="nav-panel">
+          <button type="button" className={rowClass(false)}>
+            <IconInfo />
+            About
+          </button>
+          <button type="button" className={rowClass(false)}>
+            <IconList />
+            Blog
+          </button>
+          <button type="button" className={rowClass(false)}>
+            <IconGear />
+            Settings
+          </button>
+        </nav>
       </div>
     </div>
   );

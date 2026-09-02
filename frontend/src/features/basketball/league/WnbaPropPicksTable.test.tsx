@@ -48,6 +48,33 @@ describe("WnbaPropPicksTable", () => {
     expect(screen.queryByRole("button", { name: "DFS" })).not.toBeInTheDocument();
   });
 
+  it("paints L5 through H2H as green, yellow, and red hit-rate boxes", () => {
+    render(
+      <WnbaPropPicksTable
+        rows={[
+          fixtureRow({
+            hit_l5: 90,
+            hit_l10: 65,
+            hit_l15: 33,
+            hit_h2h: 50,
+          }),
+        ]}
+      />,
+    );
+    expect(screen.getByTestId("hit-l5-cell").className).toContain(
+      "bg-emerald-500/15",
+    );
+    expect(screen.getByTestId("hit-l10-cell").className).toContain(
+      "bg-amber-500/15",
+    );
+    expect(screen.getByTestId("hit-l15-cell").className).toContain(
+      "bg-rose-500/15",
+    );
+    expect(screen.getByTestId("hit-h2h-cell").className).toContain(
+      "bg-amber-500/15",
+    );
+  });
+
   it("renders em dash for null ip and hit rates", () => {
     render(
       <WnbaPropPicksTable

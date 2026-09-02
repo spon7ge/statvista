@@ -38,20 +38,20 @@ function PlayerDetailHeader({ player }: { player: WnbaPropPlayerCard }) {
         <img
           src={player.headshot_url!}
           alt={player.player_name}
-          className="size-16 rounded-full object-cover bg-white/10"
+          className="size-16 rounded-full object-cover bg-c2"
           onError={() => setImgFailed(true)}
         />
       ) : (
         <span
           data-testid="wnba-player-props-headshot-fallback"
-          className="flex size-16 items-center justify-center rounded-full bg-white/10 text-lg font-semibold text-white/50"
+          className="flex size-16 items-center justify-center rounded-full bg-c2 text-lg font-semibold text-c3"
         >
           {initial}
         </span>
       )}
       <div className="min-w-0">
-        {meta ? <p className="text-[14px] text-white/45">{meta}</p> : null}
-        <h1 className="truncate text-[28px] font-bold tracking-tight text-white">
+        {meta ? <p className="text-[14px] text-c3">{meta}</p> : null}
+        <h1 className="truncate text-[26px] font-bold tracking-tight text-c3">
           {player.player_name}
         </h1>
       </div>
@@ -89,17 +89,17 @@ export function WnbaPlayerPropsPage() {
         className={`max-w-6xl space-y-4 pb-16 sm:pb-20 ${CHROME_PAGE_X}`}
         aria-label="Loading WNBA player props"
       >
-        <div className="h-20 animate-pulse rounded-xl bg-[#1c1e22]" />
-        <div className="h-64 animate-pulse rounded-xl bg-[#1c1e22]" />
+        <div className="h-20 animate-pulse rounded bg-c2" />
+        <div className="h-64 animate-pulse rounded bg-c2" />
       </div>
     );
   } else if (showError) {
     body = (
       <div className={`max-w-6xl py-10 ${CHROME_PAGE_X}`}>
-        <p className="text-sm text-white/60">Prop lines unavailable</p>
+        <p className="text-sm text-c3">Prop lines unavailable</p>
         <Link
           to={boardHref}
-          className="mt-3 inline-block text-sm font-medium text-white hover:underline"
+          className="mt-3 inline-block text-sm font-medium text-c3 hover:underline"
         >
           Back to Prop Picks
         </Link>
@@ -108,10 +108,10 @@ export function WnbaPlayerPropsPage() {
   } else if (!player) {
     body = (
       <div className={`max-w-6xl py-10 ${CHROME_PAGE_X}`}>
-        <p className="text-sm text-white/60">Player not found</p>
+        <p className="text-sm text-c3">Player not found</p>
         <Link
           to={boardHref}
-          className="mt-3 inline-block text-sm font-medium text-white hover:underline"
+          className="mt-3 inline-block text-sm font-medium text-c3 hover:underline"
         >
           Back to Prop Picks
         </Link>
@@ -122,7 +122,7 @@ export function WnbaPlayerPropsPage() {
       <div className={`max-w-6xl space-y-6 pb-16 sm:pb-20 ${CHROME_PAGE_X}`}>
         <Link
           to={boardHref}
-          className="inline-block text-sm font-medium text-white/55 hover:text-white hover:underline"
+          className="inline-block text-sm font-medium text-c3 hover:text-c4 hover:underline"
         >
           Back to Prop Picks
         </Link>

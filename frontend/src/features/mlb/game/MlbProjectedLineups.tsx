@@ -47,7 +47,7 @@ function LogoToggleButton({
       aria-pressed={active}
       onClick={onClick}
       className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
-        active ? "bg-white/15 text-white" : "text-white/50 hover:text-white/80"
+        active ? "bg-c2 text-c3" : "text-c3 hover:text-c3"
       }`}
     >
       {team.logoUrl ? (
@@ -164,16 +164,16 @@ function PitcherCard({
   const handLetter = formatPitcherHand(pitcher.hand);
 
   return (
-    <div className="rounded-lg border border-white bg-[#45484d] p-3">
+    <div className="rounded border border-c4 bg-c2 p-3">
       <h3
         aria-label={formatPitcherTitle(pitcher.hand, pitcher.name)}
-        className="text-center font-semibold text-white"
+        className="text-center font-semibold text-c3"
       >
         <span>{pitcher.name ?? "TBD"}</span>
         {handLetter ? (
           <>
-            <span className="mx-1 font-normal text-white/35">-</span>
-            <span className="text-[14px] font-medium text-white/40">
+            <span className="mx-1 font-normal text-c3">-</span>
+            <span className="text-[14px] font-medium text-c3">
               {handLetter}
             </span>
           </>
@@ -182,8 +182,8 @@ function PitcherCard({
       <div className="mt-3 grid grid-cols-6 gap-1.5">
         {stats.map((stat) => (
           <div key={stat.label} className="min-w-0 text-center">
-            <p className="text-[14px] font-medium text-white/40">{stat.label}</p>
-            <p className="mt-0.5 truncate text-[18px] font-medium text-white">
+            <p className="text-[14px] font-medium text-c3">{stat.label}</p>
+            <p className="mt-0.5 truncate text-[16px] font-medium text-c3">
               {stat.value}
             </p>
           </div>
@@ -210,12 +210,12 @@ function LineupTable({
   return (
     <div className="mt-4">
       {batters.length === 0 ? (
-        <p className="text-[18px] text-white/50">No batters listed</p>
+        <p className="text-[16px] text-c3">No batters listed</p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[360px] table-fixed text-left text-[18px]">
+          <table className="w-full min-w-[360px] table-fixed text-left text-[16px]">
             <thead>
-              <tr className="border-b border-white/10 text-[14px] text-white/40">
+              <tr className="border-b border-line text-[14px] text-c3">
                 <th className="w-7 py-1.5 pr-1 font-medium">#</th>
                 <th className="py-1.5 pr-2 font-medium">Batter</th>
                 <th className="w-10 py-1.5 pr-1 font-medium">Pos</th>
@@ -229,27 +229,27 @@ function LineupTable({
               {batters.map((batter) => (
                 <tr
                   key={`${batter.order}-${batter.name ?? ""}`}
-                  className="border-b border-white/[0.06] last:border-b-0"
+                  className="border-b border-line last:border-b-0"
                 >
-                  <td className="py-2 pr-1 text-white/40">{batter.order}</td>
-                  <td className="py-2 pr-2 text-white">
+                  <td className="py-2 pr-1 text-c3">{batter.order}</td>
+                  <td className="py-2 pr-2 text-c3">
                     <span className="block truncate">
                       {batter.name ?? "TBD"}
                     </span>
                   </td>
-                  <td className="py-2 pr-1 text-white/50">
+                  <td className="py-2 pr-1 text-c3">
                     {batter.position ?? "–"}
                   </td>
-                  <td className="py-2 text-right text-white/65">
+                  <td className="py-2 text-right text-c3">
                     {formatStat(batter.vsPitcher?.ab)}
                   </td>
-                  <td className="py-2 text-right text-white/65">
+                  <td className="py-2 text-right text-c3">
                     {formatStat(batter.vsPitcher?.h)}
                   </td>
-                  <td className="py-2 text-right text-white/65">
+                  <td className="py-2 text-right text-c3">
                     {formatStat(batter.vsPitcher?.hr)}
                   </td>
-                  <td className="py-2 text-right text-white/65">
+                  <td className="py-2 text-right text-c3">
                     {formatStat(batter.vsPitcher?.avg)}
                   </td>
                 </tr>
@@ -303,7 +303,7 @@ export function MlbProjectedLineups({
             data-testid="mlb-projected-lineups"
           >
             <div className="mb-3 flex flex-col items-center gap-2">
-              <h2 className="text-center font-semibold leading-snug text-white">
+              <h2 className="text-center font-semibold leading-snug text-c3">
                 Projected Rotowire Lineups
               </h2>
               <div className="flex items-center justify-center gap-1">
@@ -322,9 +322,9 @@ export function MlbProjectedLineups({
               </div>
             </div>
             {isPending ? (
-              <p className="text-[18px] text-white/50">Loading lineups…</p>
+              <p className="text-[16px] text-c3">Loading lineups…</p>
             ) : !game ? (
-              <p className="text-[18px] text-white/50">Lineups unavailable</p>
+              <p className="text-[16px] text-c3">Lineups unavailable</p>
             ) : (
               <LineupSideView
                 slateSide={game[side]}

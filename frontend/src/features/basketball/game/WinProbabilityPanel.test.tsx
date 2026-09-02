@@ -139,7 +139,7 @@ describe("WinProbabilityPanel", () => {
     const muted = container.querySelectorAll("[data-wp-segment='muted']");
     expect(muted.length).toBeGreaterThanOrEqual(2);
     muted.forEach((el) => {
-      expect(el.getAttribute("opacity")).toBe("0.35");
+      expect(el.getAttribute("stroke")).toBe("var(--text-muted)");
     });
   });
 
@@ -229,46 +229,19 @@ describe("WinProbabilityPanel", () => {
     render(<WinProbabilityPanel detail={buildGameDetailFixture()} />);
     const heading = screen.getByRole("heading", { name: /game flow/i });
     expect(heading.closest("section")).toHaveClass(
-      "rounded-2xl",
-      "bg-[#1e1e1e]",
+      "rounded",
+      "bg-c2",
       "!p-3",
     );
-    expect(heading.closest("section")).toHaveClass("border-white/10");
+    expect(heading.closest("section")).toHaveClass("border-line");
   });
 
-  it("adds a neon halo on each team line when the game is live", () => {
+  it("does not draw neon glow on game-flow lines", () => {
     const { container } = render(
       <WinProbabilityPanel detail={buildGameDetailFixture({ status: "live" })} />,
     );
 
-    const neon = container.querySelectorAll("[data-wp-segment='neon']");
-    expect(neon).toHaveLength(2);
-    neon.forEach((el) => {
-      expect(el.getAttribute("filter")).toMatch(/wp-neon/);
-    });
-  });
-
-  it("adds a neon halo on each team line when the game is final", () => {
-    const { container } = render(
-      <WinProbabilityPanel
-        detail={buildGameDetailFixture({ status: "final", statusLabel: "Final" })}
-      />,
-    );
-
-    expect(container.querySelectorAll("[data-wp-segment='neon']")).toHaveLength(2);
-  });
-
-  it("adds a neon halo at halftime", () => {
-    const { container } = render(
-      <WinProbabilityPanel
-        detail={buildGameDetailFixture({
-          status: "halftime",
-          statusLabel: "Halftime",
-        })}
-      />,
-    );
-
-    expect(container.querySelectorAll("[data-wp-segment='neon']")).toHaveLength(2);
+    expect(container.querySelectorAll("[data-wp-segment='neon']")).toHaveLength(0);
   });
 
   it("does not neon the team lines when the game is scheduled", () => {

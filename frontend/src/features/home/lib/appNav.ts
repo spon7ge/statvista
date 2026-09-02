@@ -20,6 +20,16 @@ export const NAV_LEAGUES: readonly NavLeague[] = [
   { id: "mlb", label: "MLB", icon: MLB_LOGO, href: "/mlb/matchups" },
 ];
 
+/** MLB first, then the other leagues we support (pills + Home submenu). */
+export const LEAGUE_PILL_ORDER: readonly LeagueSlug[] = ["mlb", "wnba", "nba"];
+
+export function orderedNavLeagues(): NavLeague[] {
+  return LEAGUE_PILL_ORDER.flatMap((id) => {
+    const league = NAV_LEAGUES.find((item) => item.id === id);
+    return league ? [league] : [];
+  });
+}
+
 export function activeLeagueFromPath(pathname: string): LeagueSlug | null {
   if (pathname.startsWith("/nba")) return "nba";
   if (pathname.startsWith("/wnba") || pathname.startsWith("/games/")) {

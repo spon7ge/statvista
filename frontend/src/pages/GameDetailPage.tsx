@@ -15,24 +15,24 @@ function GameDetailSkeleton() {
     <div className={PAGE_SHELL} aria-hidden>
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <span className="h-4 w-16 animate-pulse rounded bg-white/10" />
-          <span className="h-3 w-20 animate-pulse rounded bg-white/10" />
+          <span className="h-4 w-16 animate-pulse rounded bg-c2" />
+          <span className="h-3 w-20 animate-pulse rounded bg-c2" />
         </div>
         <div className={GAME_SECTION_SURFACE}>
-          <span className="mb-3 block h-3 w-40 animate-pulse rounded bg-white/10" />
+          <span className="mb-3 block h-3 w-40 animate-pulse rounded bg-c2" />
           <div className="space-y-3">
             {[0, 1].map((row) => (
               <div key={row} className="flex items-center justify-between gap-3">
-                <span className="h-4 w-40 animate-pulse rounded bg-white/10" />
-                <span className="size-12 shrink-0 animate-pulse rounded-md bg-white/10" />
+                <span className="h-4 w-40 animate-pulse rounded bg-c2" />
+                <span className="size-12 shrink-0 animate-pulse rounded bg-c2" />
               </div>
             ))}
           </div>
         </div>
       </div>
       <div className="grid gap-4 lg:grid-cols-2">
-        <span className="h-80 animate-pulse rounded bg-white/5" />
-        <span className="h-80 animate-pulse rounded bg-white/5" />
+        <span className="h-80 animate-pulse rounded bg-c2" />
+        <span className="h-80 animate-pulse rounded bg-c2" />
       </div>
     </div>
   );
@@ -41,7 +41,7 @@ function GameDetailSkeleton() {
 function UnableToLoadGame() {
   return (
     <div className={PAGE_EMPTY}>
-      <p className="text-sm text-white/60">Unable to load game</p>
+      <p className="text-sm text-c3">Unable to load game</p>
       <BackLink />
     </div>
   );
@@ -51,7 +51,7 @@ function BackLink() {
   return (
     <Link
       to="/wnba/matchups"
-      className="inline-flex items-center gap-1 text-sm font-medium text-white/70 no-underline transition-colors hover:text-white"
+      className="inline-flex items-center gap-1 text-sm font-medium text-c3 no-underline transition-colors hover:text-c4"
     >
       ← Back
     </Link>

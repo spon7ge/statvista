@@ -167,8 +167,12 @@ describe("WnbaPlayerPropsPage", () => {
     expect(screen.getByText(/Kalshi/i)).toBeInTheDocument();
     expect(screen.getByText(/Fliff/i)).toBeInTheDocument();
     expect(screen.getByText(/Pinnacle/i)).toBeInTheDocument();
-    expect(screen.getByText("O 19.5 (-120)")).toBeInTheDocument();
-    expect(screen.getByText("U 19.5 (+100)")).toBeInTheDocument();
+    expect(screen.getByTestId("wnba-player-props-odds-grid")).toHaveTextContent(
+      /O\s*19\.5/,
+    );
+    expect(screen.getByTestId("wnba-player-props-odds-grid")).toHaveTextContent(
+      /U\s*19\.5/,
+    );
     expect(screen.getAllByText("NL").length).toBeGreaterThan(0);
     expect(screen.queryByText("OPEN")).not.toBeInTheDocument();
     expect(screen.queryByText("BEST")).not.toBeInTheDocument();

@@ -10,17 +10,17 @@ function StarterRow({ starter }: { starter: GameDetailStarter }) {
     <li className="flex items-baseline justify-between gap-3 text-sm">
       <span className="flex min-w-0 items-baseline gap-1.5 truncate">
         {starter.jersey ? (
-          <span className="shrink-0 text-white/45">#{starter.jersey}</span>
+          <span className="shrink-0 text-c3">#{starter.jersey}</span>
         ) : null}
-        <span className="truncate font-medium text-white">{starter.name}</span>
+        <span className="truncate font-medium text-c3">{starter.name}</span>
         {starter.gtd ? (
-          <span className="shrink-0 rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] font-semibold uppercase leading-none tracking-wide text-white">
+          <span className="shrink-0 rounded-full bg-red-600 px-1.5 py-0.5 text-[12px] font-semibold uppercase leading-none tracking-wide text-c3">
             GTD
           </span>
         ) : null}
       </span>
       {starter.position ? (
-        <span className="shrink-0 text-white/45">{starter.position}</span>
+        <span className="shrink-0 text-c3">{starter.position}</span>
       ) : null}
     </li>
   );
@@ -39,7 +39,7 @@ function StarterColumn({
         {team.logoUrl ? (
           <img src={team.logoUrl} alt="" className="size-6 shrink-0 object-contain" />
         ) : null}
-        <span className="truncate font-semibold text-white">{team.name}</span>
+        <span className="truncate font-semibold text-c3">{team.name}</span>
       </h3>
       <ul className="space-y-2">
         {starters.map((starter) => (
@@ -62,7 +62,7 @@ export function ProjectedStarters({ detail }: ProjectedStartersProps) {
 
   return (
     <GameSection>
-      <h2 className="text-center font-semibold text-white">
+      <h2 className="text-center font-semibold text-c3">
         Projected Starters
       </h2>
 

@@ -10,6 +10,10 @@ services:
 
   api:
     depends_on: !reset null
+    environment:
+      SUPABASE_DB_URL: ${SUPABASE_DB_URL}
 
   odds:
     depends_on: !reset null
+    environment:
+      SUPABASE_DB_URL: ${SUPABASE_DB_URL}

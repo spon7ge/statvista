@@ -51,7 +51,7 @@ export function LeagueMatchupsPage({ league }: LeagueMatchupsPageProps) {
 
   return (
     <MatchupsShell>
-      <p className="text-sm text-white/40">NBA games coming soon.</p>
+        <p className="text-sm">NBA games coming soon.</p>
     </MatchupsShell>
   );
 }

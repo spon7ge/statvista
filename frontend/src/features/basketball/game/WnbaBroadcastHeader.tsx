@@ -44,7 +44,7 @@ function ScoreSlab({
       data-winner={isWinner ? "true" : "false"}
       className={`relative flex min-h-[8.5rem] flex-col justify-center px-5 py-5 ${
         isAway ? "items-end text-right" : "items-start text-left"
-      } ${isWinner ? "ring-2 ring-inset ring-white/35" : ""}`}
+      } ${isWinner ? "ring-2 ring-inset ring-c4" : ""}`}
       style={{ backgroundColor: team.color }}
     >
       <div
@@ -69,12 +69,12 @@ function ScoreSlab({
           isAway ? "items-end" : "items-start"
         }`}
       >
-        <span className="text-sm font-bold tracking-wide text-white/90">
+        <span className="text-sm font-bold tracking-wide text-c3">
           {team.abbrev}
         </span>
         <span
-          className={`font-mono font-bold tabular-nums text-white ${
-            isWinner ? "text-6xl" : "text-5xl text-white/85"
+          className={`font-bold tabular-nums text-c3 ${
+            isWinner ? "text-6xl" : "text-5xl text-c3"
           }`}
         >
           {team.score ?? "–"}
@@ -105,12 +105,12 @@ export function WnbaBroadcastHeader({
       <div className="flex items-center justify-center px-1 text-[14px]">
         <span
           className={`flex items-center gap-2 ${
-            inProgress ? "font-medium text-red-400" : "font-medium text-white/80"
+            inProgress ? "font-medium text-c4" : "font-medium text-c3"
           }`}
         >
           {inProgress ? (
             <span
-              className="size-1.5 shrink-0 animate-pulse rounded-full bg-red-500"
+              className="size-1.5 shrink-0 animate-pulse rounded-full bg-c4"
               aria-hidden
             />
           ) : null}
@@ -118,7 +118,7 @@ export function WnbaBroadcastHeader({
         </span>
       </div>
 
-      <div className="grid grid-cols-2 overflow-hidden rounded-lg">
+      <div className="grid grid-cols-2 overflow-hidden rounded">
         <ScoreSlab
           team={detail.away}
           side="away"
@@ -135,7 +135,7 @@ export function WnbaBroadcastHeader({
         <div
           role="tablist"
           aria-label="Game details"
-          className="flex items-center justify-center gap-1 border-b border-white/10"
+          className="flex items-center justify-center gap-1 border-b border-line"
         >
           {(["summary", "box"] as const).map((tab) => (
             <button
@@ -147,8 +147,8 @@ export function WnbaBroadcastHeader({
               aria-controls={`wnba-${tab}-panel`}
               className={`border-b-2 px-5 py-2 text-sm font-medium capitalize transition-colors ${
                 activeTab === tab
-                  ? "border-white text-white"
-                  : "border-transparent text-white/50 hover:text-white/80"
+                  ? "border-c4 text-c3"
+                  : "border-transparent text-c3 hover:text-c3"
               }`}
               onClick={() => onTabChange(tab)}
             >

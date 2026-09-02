@@ -18,18 +18,18 @@ function TeamBoxScore({
   return (
     <GameSection data-testid={testId} className="!p-3">
       <div className="overflow-x-auto">
-        <div className="mb-2 flex items-center gap-2 text-[18px]">
+        <div className="mb-2 flex items-center gap-2 text-[16px]">
           {team.logoUrl ? (
             <img src={team.logoUrl} alt="" className="size-6 object-contain" />
           ) : null}
           <span className="font-semibold" style={{ color: team.color }}>
             {team.abbrev}
           </span>
-          <span className="font-medium text-white/90">{team.name}</span>
+          <span className="font-medium text-c3">{team.name}</span>
         </div>
 
         <div
-          className={`grid ${STAT_COLS} gap-x-1.5 border-b border-white/[0.08] pb-1.5 text-[14px] tracking-wide text-white/40`}
+          className={`grid ${STAT_COLS} gap-x-1.5 border-b border-line pb-1.5 text-[14px] tracking-wide text-c3`}
         >
           <span>Player</span>
           {columns.map((column) => (
@@ -43,21 +43,21 @@ function TeamBoxScore({
           {players.map((player) => (
             <li
               key={`${team.id}-${player.name}`}
-              className={`grid ${STAT_COLS} gap-x-1.5 border-b border-white/[0.06] py-1.5 text-[18px]`}
+              className={`grid ${STAT_COLS} gap-x-1.5 border-b border-line py-1.5 text-[16px]`}
             >
-              <span className="truncate text-white">{player.name}</span>
+              <span className="truncate text-c3">{player.name}</span>
               {player.didNotPlay ? (
                 <>
                   {columns.slice(0, -1).map((column) => (
-                    <span key={column} className="text-right text-white/30" />
+                    <span key={column} className="text-right text-c3" />
                   ))}
-                  <span className="text-right text-white/45">DNP</span>
+                  <span className="text-right text-c3">DNP</span>
                 </>
               ) : (
                 player.values.map((value, index) => (
                   <span
                     key={`${player.name}-${columns[index] ?? index}`}
-                    className="text-right tabular-nums text-white/85"
+                    className="text-right tabular-nums text-c3"
                   >
                     {value}
                   </span>

@@ -52,8 +52,8 @@ function OddsTile({ tile }: { tile: WnbaOddsBoardTile }) {
 
   if (tile.kind === "money") {
     return (
-      <div className="flex min-h-[3.25rem] min-w-0 items-center justify-center rounded-lg bg-white/10 px-2 py-1.5 text-center">
-        <p className="truncate text-sm font-semibold leading-tight text-white">
+      <div className="flex min-h-[3.25rem] min-w-0 items-center justify-center rounded bg-c2 px-2 py-1.5 text-center">
+        <p className="truncate text-sm font-semibold leading-tight text-c3">
           {price ?? "–"}
         </p>
       </div>
@@ -61,11 +61,11 @@ function OddsTile({ tile }: { tile: WnbaOddsBoardTile }) {
   }
 
   return (
-    <div className="flex min-h-[3.25rem] min-w-0 flex-col items-center justify-center rounded-lg bg-white/10 px-2 py-1.5 text-center">
-      <p className="truncate text-sm font-semibold leading-tight text-white">
+    <div className="flex min-h-[3.25rem] min-w-0 flex-col items-center justify-center rounded bg-c2 px-2 py-1.5 text-center">
+      <p className="truncate text-sm font-semibold leading-tight text-c3">
         {line ?? "–"}
       </p>
-      <p className="mt-0.5 truncate text-[11px] font-medium leading-tight text-white/45">
+      <p className="mt-0.5 truncate text-[12px] font-medium leading-tight text-c3">
         {price ?? "–"}
       </p>
     </div>
@@ -86,7 +86,7 @@ function OddsColumnHeaders() {
         {COLUMN_LABELS.map((label) => (
           <p
             key={label}
-            className="text-center text-[11px] font-medium uppercase tracking-wide text-white/45"
+            className="text-center text-[12px] font-medium uppercase tracking-wide text-c3"
           >
             {label}
           </p>
@@ -109,7 +109,7 @@ function TeamOddsRow({
         {team.logoUrl ? (
           <img src={team.logoUrl} alt="" className="size-5 shrink-0 object-contain" />
         ) : null}
-        <span className="truncate text-sm font-semibold text-white">
+        <span className="truncate text-sm font-semibold text-c3">
           {team.abbrev}
         </span>
       </div>
@@ -144,7 +144,7 @@ function BookOddsBlock({
           <div />
           <p
             data-testid={`wnba-odds-book-${board.sportsbook}`}
-            className="text-left text-[11px] text-white/35"
+            className="text-left text-[12px] text-c3"
           >
             {bookmaker}
           </p>
@@ -165,15 +165,15 @@ export function WnbaGameOddsBoard({ detail, boards, isPending }: Props) {
   return (
     <GameSection data-testid="wnba-game-odds-board">
       <div className="mb-3 flex items-baseline justify-between gap-3">
-        <h2 className="font-semibold text-white">Odds</h2>
+        <h2 className="font-semibold text-c3">Odds</h2>
         {asOf ? (
-          <p className="text-right text-xs text-white/50">{asOf}</p>
+          <p className="text-right text-xs text-c3">{asOf}</p>
         ) : null}
       </div>
       {isPending ? (
-        <p className="text-[18px] text-white/50">Loading odds…</p>
+        <p className="text-[16px] text-c3">Loading odds…</p>
       ) : completeBoards.length === 0 ? (
-        <p className="text-[18px] text-white/50">Odds unavailable</p>
+        <p className="text-[16px] text-c3">Odds unavailable</p>
       ) : (
         <div className="space-y-4">
           <OddsColumnHeaders />

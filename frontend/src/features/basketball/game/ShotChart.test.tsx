@@ -88,7 +88,7 @@ describe("ShotChart", () => {
     render(<ShotChart detail={withPeriods} />);
 
     expect(screen.getByRole("button", { name: "All" })).toHaveClass(
-      "bg-white",
+      "bg-c2",
       "text-black",
     );
     expect(screen.getByRole("button", { name: "1Q" })).toBeInTheDocument();
@@ -117,8 +117,8 @@ describe("ShotChart", () => {
   it("wraps content in the quiet GameSection surface", () => {
     render(<ShotChart detail={detail} />);
     expect(screen.getByTestId("wnba-shot-chart")).toHaveClass(
-      "rounded-2xl",
-      "bg-[#1e1e1e]",
+      "rounded",
+      "bg-c2",
       "!p-3",
     );
   });

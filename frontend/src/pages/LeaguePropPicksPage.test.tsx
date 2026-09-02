@@ -102,7 +102,7 @@ describe("LeaguePropPicksPage", () => {
     expect(screen.getByRole("heading", { name: "Props" })).toBeInTheDocument();
     expect(
       screen.getByRole("heading", { name: "Props" }).closest("section"),
-    ).toHaveClass("max-w-6xl", "sm:pl-2", "md:pr-[150px]");
+    ).toHaveClass("max-w-6xl", "sm:pl-2", "md:pr-32");
     expect(screen.queryByRole("tab", { name: "PrizePicks" })).not.toBeInTheDocument();
     expect(screen.queryByRole("tab", { name: "Underdog" })).not.toBeInTheDocument();
     expect(screen.getByText("Caitlin Clark")).toBeInTheDocument();

@@ -6,8 +6,8 @@ function EventBadge({ event }: { event: string | null }) {
   const isHr = event.toUpperCase() === "HR";
   return (
     <span
-      className={`shrink-0 rounded px-1 py-0.5 text-[10px] font-medium uppercase tracking-wide ${
-        isHr ? "bg-red-500/15 text-red-400" : "bg-white/10 text-white/50"
+      className={`shrink-0 rounded px-1 py-0.5 text-[12px] font-medium uppercase tracking-wide ${
+        isHr ? "bg-c2 text-c4" : "bg-c2 text-c3"
       }`}
     >
       {event}
@@ -23,7 +23,7 @@ export function MlbPlayList({
   empty: string;
 }) {
   if (plays.length === 0) {
-    return <p className="text-xs text-white/40">{empty}</p>;
+    return <p className="text-xs text-c3">{empty}</p>;
   }
 
   return (
@@ -31,14 +31,14 @@ export function MlbPlayList({
       {plays.map((play) => (
         <li
           key={play.id}
-          className={`flex items-start gap-1.5 rounded-md px-1.5 py-1 ${
-            play.scoring ? "bg-white/5" : ""
+          className={`flex items-start gap-1.5 rounded px-1.5 py-1 ${
+            play.scoring ? "bg-c2" : ""
           }`}
         >
           <EventBadge event={play.event} />
-          <span className="min-w-0 flex-1 text-white/80">{play.text}</span>
+          <span className="min-w-0 flex-1 text-c3">{play.text}</span>
           {play.scoring ? (
-            <span className="shrink-0 font-mono font-semibold text-white tabular-nums">
+            <span className="shrink-0 font-semibold text-c3 tabular-nums">
               {play.awayScore}-{play.homeScore}
             </span>
           ) : null}
@@ -51,7 +51,7 @@ export function MlbPlayList({
 export function MlbScoringPlays({ detail }: { detail: MlbGameDetailView }) {
   return (
     <GameSection className="!p-3" data-testid="mlb-scoring-plays">
-      <h2 className="mb-2 font-semibold text-white">Scoring plays</h2>
+      <h2 className="mb-2 font-semibold text-c3">Scoring plays</h2>
       <MlbPlayList
         plays={detail.scoringPlays}
         empty="No scoring plays yet"

@@ -241,7 +241,7 @@ export function ShotChart({ detail }: { detail: GameDetail }) {
 
       <div className="mb-3 flex justify-center">
         <div
-          className="flex rounded-full bg-white/10 p-1"
+          className="flex rounded-full bg-c2 p-1"
           role="group"
           aria-label="Period filter"
         >
@@ -253,8 +253,8 @@ export function ShotChart({ detail }: { detail: GameDetail }) {
               aria-pressed={periodFilter === f.value}
               className={`rounded-full px-3 py-1.5 text-[13px] font-semibold transition-colors ${
                 periodFilter === f.value
-                  ? "bg-white text-black"
-                  : "text-white/80 hover:text-white"
+                  ? "bg-c2 text-black"
+                  : "text-c3 hover:text-c4"
               }`}
             >
               {f.label}
@@ -294,7 +294,7 @@ export function ShotChart({ detail }: { detail: GameDetail }) {
         })}
       </svg>
 
-      <div className="mt-2 flex items-center justify-between text-[13px] font-medium tabular-nums text-white">
+      <div className="mt-2 flex items-center justify-between text-[13px] font-medium tabular-nums text-c3">
         <span>
           {detail.away.abbrev} {awayFgm}/{awayFga}
         </span>
