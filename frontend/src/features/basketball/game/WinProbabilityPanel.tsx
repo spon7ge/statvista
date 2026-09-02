@@ -1,10 +1,12 @@
-import { useEffect, useState, type MouseEvent } from "react";
+import { useEffect, useId, useState, type MouseEvent } from "react";
 import { GameSection } from "@/shared/ui/GameSection";
 import {
-  FLOW_AWAY,
-  FLOW_HOME,
-  FLOW_MUTED,
-  FLOW_RULE,
+  GameFlowNeonFilter,
+  NeonFilamentPath,
+  NeonHaloPath,
+  neonGlowColor,
+  neonMarkerStyle,
+  shouldNeonGameFlow,
 } from "@/shared/ui/GameFlowNeon";
 import type { GameDetail } from "../lib/types";
 import {
@@ -22,8 +24,16 @@ export function WinProbabilityPanel({ detail }: { detail: GameDetail }) {
   const [activeIndex, setActiveIndex] = useState(
     Math.max(points.length - 1, 0),
   );
-  const homeStroke = FLOW_HOME;
-  const awayStroke = FLOW_AWAY;
+  const reactId = useId();
+  const neonFilterId = `wp-neon-${reactId.replace(/:/g, "")}`;
+  const showNeon = shouldNeonGameFlow(detail.status);
+  const pulseNeon = showNeon && detail.status !== "final";
+  const homeStroke = showNeon
+    ? neonGlowColor(detail.home.color)
+    : detail.home.color;
+  const awayStroke = showNeon
+    ? neonGlowColor(detail.away.color)
+    : detail.away.color;
 
   useEffect(() => {
     setActiveIndex(Math.max((data?.timeline.length ?? 0) - 1, 0));
@@ -51,17 +61,18 @@ export function WinProbabilityPanel({ detail }: { detail: GameDetail }) {
 
   const vividProps = {
     fill: "none" as const,
-    strokeWidth: 1.5,
-    strokeLinejoin: "miter" as const,
-    strokeLinecap: "butt" as const,
+    strokeWidth: showNeon ? 2 : 1.5,
+    strokeLinejoin: "round" as const,
+    strokeLinecap: "round" as const,
     "data-wp-segment": "vivid",
   };
   const mutedProps = {
     fill: "none" as const,
     strokeWidth: 1.5,
-    strokeLinejoin: "miter" as const,
-    strokeLinecap: "butt" as const,
-    stroke: FLOW_MUTED,
+    strokeLinejoin: "round" as const,
+    strokeLinecap: "round" as const,
+    stroke: "rgba(255,255,255,0.28)",
+    opacity: 0.35,
     "data-wp-segment": "muted",
   };
 
@@ -104,15 +115,36 @@ export function WinProbabilityPanel({ detail }: { detail: GameDetail }) {
             className="w-full overflow-visible"
             onMouseMove={handleChartPointerMove}
           >
+            {showNeon ? (
+              <defs>
+                <GameFlowNeonFilter id={neonFilterId} />
+              </defs>
+            ) : null}
             <line
               x1={CHART_GEOMETRY.padLeft}
               x2={CHART_GEOMETRY.padLeft + CHART_GEOMETRY.plotWidth}
               y1={midY}
               y2={midY}
-              stroke={FLOW_RULE}
+              stroke="rgba(255,255,255,0.22)"
               strokeDasharray="4 4"
             />
 
+            {showNeon && paths.awayVivid ? (
+              <NeonHaloPath
+                d={paths.awayVivid}
+                stroke={awayStroke}
+                filterId={neonFilterId}
+                pulse={pulseNeon}
+              />
+            ) : null}
+            {showNeon && paths.homeVivid ? (
+              <NeonHaloPath
+                d={paths.homeVivid}
+                stroke={homeStroke}
+                filterId={neonFilterId}
+                pulse={pulseNeon}
+              />
+            ) : null}
             {paths.awayVivid ? (
               <path
                 d={paths.awayVivid}
@@ -127,7 +159,12 @@ export function WinProbabilityPanel({ detail }: { detail: GameDetail }) {
                 {...vividProps}
               />
             ) : null}
-
+            {showNeon && paths.awayVivid ? (
+              <NeonFilamentPath d={paths.awayVivid} />
+            ) : null}
+            {showNeon && paths.homeVivid ? (
+              <NeonFilamentPath d={paths.homeVivid} />
+            ) : null}
             {paths.awayMuted ? (
               <path d={paths.awayMuted} {...mutedProps} />
             ) : null}
@@ -143,7 +180,7 @@ export function WinProbabilityPanel({ detail }: { detail: GameDetail }) {
                     x2={scrubX}
                     y1={trackerTop}
                     y2={CHART_GEOMETRY.padTop + CHART_GEOMETRY.plotHeight}
-                    stroke={FLOW_RULE}
+                    stroke="rgba(255,255,255,0.45)"
                     strokeDasharray="3 3"
                     pointerEvents="none"
                   />
@@ -153,20 +190,20 @@ export function WinProbabilityPanel({ detail }: { detail: GameDetail }) {
                   cy={awayY}
                   r={4}
                   fill={awayStroke}
-                  stroke="var(--c1)"
+                  stroke="var(--white)"
                   strokeWidth={1.5}
                   pointerEvents="none"
-                  
+                  style={showNeon ? neonMarkerStyle(awayStroke) : undefined}
                 />
                 <circle
                   cx={scrubX}
                   cy={homeY}
                   r={4}
                   fill={homeStroke}
-                  stroke="var(--c1)"
+                  stroke="var(--white)"
                   strokeWidth={1.5}
                   pointerEvents="none"
-                  
+                  style={showNeon ? neonMarkerStyle(homeStroke) : undefined}
                 />
                 <text
                   x={labelX}

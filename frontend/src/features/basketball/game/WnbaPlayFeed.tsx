@@ -142,7 +142,7 @@ export function WnbaPlayFeed({ detail }: { detail: GameDetail }) {
             aria-pressed={filter === "scoring"}
             className={`rounded-full px-4 py-1.5 text-[14px] font-semibold transition-colors ${
               filter === "scoring"
-                ? "bg-c2 text-black"
+                ? "bg-[var(--white)] text-c1"
                 : "text-c3 hover:text-c4"
             }`}
           >
@@ -154,7 +154,7 @@ export function WnbaPlayFeed({ detail }: { detail: GameDetail }) {
             aria-pressed={filter === "all"}
             className={`rounded-full px-4 py-1.5 text-[14px] font-semibold transition-colors ${
               filter === "all"
-                ? "bg-c2 text-black"
+                ? "bg-[var(--white)] text-c1"
                 : "text-c3 hover:text-c4"
             }`}
           >

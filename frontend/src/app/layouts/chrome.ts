@@ -1,7 +1,7 @@
 /**
  * Top inset for the sidebar wordmark and page titles that should sit
  * on the same row (e.g. Props, Games). Keep these in lockstep.
- * Title row height is 1.5rem (`.chrome-title-row` / `.nav-brand`).
+ * Page title row is 1.5rem; the wordmark type is `--text-34`.
  */
 export const CHROME_TITLE_TOP = "pt-8";
 

@@ -13,6 +13,7 @@ describe("GameSection", () => {
       "section",
     );
     expect(section).toHaveClass(
+      "game-section",
       "rounded",
       "bg-c2",
       "px-3",
@@ -23,7 +24,7 @@ describe("GameSection", () => {
 
   it("exports GAME_SECTION_SURFACE matching the Game Info card treatment", () => {
     expect(GAME_SECTION_SURFACE).toBe(
-      "overflow-hidden rounded border border-line bg-c2 px-3 py-2",
+      "game-section overflow-hidden rounded border border-line bg-c2 px-3 py-2",
     );
   });
 

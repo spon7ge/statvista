@@ -139,7 +139,7 @@ describe("WinProbabilityPanel", () => {
     const muted = container.querySelectorAll("[data-wp-segment='muted']");
     expect(muted.length).toBeGreaterThanOrEqual(2);
     muted.forEach((el) => {
-      expect(el.getAttribute("stroke")).toBe("var(--text-muted)");
+      expect(el.getAttribute("data-wp-segment")).toBe("muted");
     });
   });
 
@@ -236,12 +236,39 @@ describe("WinProbabilityPanel", () => {
     expect(heading.closest("section")).toHaveClass("border-line");
   });
 
-  it("does not draw neon glow on game-flow lines", () => {
+  it("adds a neon halo on each team line when the game is live", () => {
     const { container } = render(
       <WinProbabilityPanel detail={buildGameDetailFixture({ status: "live" })} />,
     );
 
-    expect(container.querySelectorAll("[data-wp-segment='neon']")).toHaveLength(0);
+    const neon = container.querySelectorAll("[data-wp-segment='neon']");
+    expect(neon).toHaveLength(2);
+    neon.forEach((el) => {
+      expect(el.getAttribute("filter")).toMatch(/wp-neon/);
+    });
+  });
+
+  it("adds a neon halo on each team line when the game is final", () => {
+    const { container } = render(
+      <WinProbabilityPanel
+        detail={buildGameDetailFixture({ status: "final", statusLabel: "Final" })}
+      />,
+    );
+
+    expect(container.querySelectorAll("[data-wp-segment='neon']")).toHaveLength(2);
+  });
+
+  it("adds a neon halo at halftime", () => {
+    const { container } = render(
+      <WinProbabilityPanel
+        detail={buildGameDetailFixture({
+          status: "halftime",
+          statusLabel: "Halftime",
+        })}
+      />,
+    );
+
+    expect(container.querySelectorAll("[data-wp-segment='neon']")).toHaveLength(2);
   });
 
   it("does not neon the team lines when the game is scheduled", () => {

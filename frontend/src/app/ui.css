@@ -11,12 +11,22 @@
   text-align: left;
 }
 
-/* Section chrome (statvista, Games, Props, Legs, Arbitrage):
-   text-2xl leading-none font-semibold text-pretty, sans. */
-.chrome-title,
-.wordmark-type {
+/* Section titles (Games, Props, Legs, Arbitrage). */
+.chrome-title {
   font-family: var(--font-ui);
   font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0;
+  text-wrap: pretty;
+  color: var(--c3);
+  text-align: left;
+  margin: 0;
+}
+
+.wordmark-type {
+  font-family: var(--font-ui);
+  font-size: var(--text-34);
   font-weight: 600;
   line-height: 1;
   letter-spacing: 0;
@@ -40,6 +50,16 @@
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
   color: var(--c3);
+}
+
+/* Game-detail card titles: UI sans like Statmuse Pitching, not Fraunces. */
+.game-section h2,
+.game-section h3 {
+  font-family: var(--font-ui);
+  font-size: var(--text-16);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0;
 }
 
 .shell {
@@ -157,7 +177,7 @@
 .nav-brand {
   display: flex;
   align-items: center;
-  min-height: 1.5rem;
+  min-height: var(--text-34);
   margin-bottom: var(--space-16);
   color: var(--c3);
   text-decoration: none;
@@ -182,7 +202,7 @@
   padding: var(--space-8) var(--space-12);
   background: var(--c2);
   border: var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--space-12);
 }
 
 .nav-group {
@@ -283,8 +303,8 @@
 }
 
 .wordmark-mark {
-  width: 1.5rem;
-  height: 1.5rem;
+  width: var(--text-34);
+  height: var(--text-34);
   flex-shrink: 0;
 }
 
@@ -406,4 +426,25 @@
 
 .status-live {
   color: var(--c4);
+}
+
+@keyframes game-flow-neon-halo {
+  0%,
+  100% {
+    opacity: 0.78;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.game-flow-neon-halo {
+  animation: game-flow-neon-halo 2.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-flow-neon-halo {
+    animation: none;
+    opacity: 0.8;
+  }
 }

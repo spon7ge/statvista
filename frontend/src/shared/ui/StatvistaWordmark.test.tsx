@@ -7,6 +7,7 @@ describe("StatvistaWordmark", () => {
     render(<StatvistaWordmark />);
     const mark = screen.getByRole("img", { name: "statvista" });
     expect(screen.getByText("statvista")).toHaveClass("wordmark-type");
+    expect(screen.getByTestId("statvista-mark")).toHaveClass("wordmark-mark");
     expect(screen.getByTestId("statvista-mark")).toBeInTheDocument();
     expect(mark.querySelector('rect[fill="var(--c4)"]')).toBeTruthy();
     expect(mark.querySelector('rect[fill="var(--c3)"]')).toBeTruthy();

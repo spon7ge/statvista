@@ -106,7 +106,7 @@ function PlayRow({
           {event ? (
             <span
               data-testid="mlb-play-event-pill"
-              className="shrink-0 rounded-full bg-c2 px-2 py-1 text-[14px] font-semibold uppercase tracking-wide"
+              className="shrink-0 rounded-full bg-[var(--white)] px-2 py-1 text-[14px] font-semibold uppercase tracking-wide"
               style={{ color: teamColor }}
             >
               {event}
@@ -185,8 +185,8 @@ export function MlbFinalPlayFeed({
             aria-pressed={filter === "scoring"}
             className={`rounded-full px-2 py-1 text-[16px] font-medium transition-colors ${
               filter === "scoring"
-                ? "bg-c2 text-c3"
-                : "text-c3 hover:text-c3"
+                ? "bg-[var(--white)] text-c1"
+                : "text-c3 hover:text-c4"
             }`}
           >
             Scoring plays
@@ -197,8 +197,8 @@ export function MlbFinalPlayFeed({
             aria-pressed={filter === "all"}
             className={`rounded-full px-2 py-1 text-[16px] font-medium transition-colors ${
               filter === "all"
-                ? "bg-c2 text-c3"
-                : "text-c3 hover:text-c3"
+                ? "bg-[var(--white)] text-c1"
+                : "text-c3 hover:text-c4"
             }`}
           >
             All plays

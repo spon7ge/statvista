@@ -77,12 +77,38 @@ describe("MlbWinProbability", () => {
     );
   });
 
-  it("does not draw neon glow on game-flow lines", () => {
+  it("adds a neon halo on each team line when the game is live", () => {
     const { container } = render(
       <MlbWinProbability detail={mlbLiveDetail} />,
     );
 
-    expect(container.querySelectorAll("[data-wp-segment='neon']")).toHaveLength(0);
+    const neon = container.querySelectorAll("[data-wp-segment='neon']");
+    expect(neon).toHaveLength(2);
+    neon.forEach((el) => {
+      expect(el.getAttribute("filter")).toMatch(/wp-neon/);
+    });
+  });
+
+  it("adds a neon halo on each team line when the game is final", () => {
+    const { container } = render(
+      <MlbWinProbability detail={{ ...mlbLiveDetail, status: "final" }} />,
+    );
+
+    expect(container.querySelectorAll("[data-wp-segment='neon']")).toHaveLength(
+      2,
+    );
+  });
+
+  it("adds a neon halo at halftime", () => {
+    const { container } = render(
+      <MlbWinProbability
+        detail={{ ...mlbLiveDetail, status: "halftime" }}
+      />,
+    );
+
+    expect(container.querySelectorAll("[data-wp-segment='neon']")).toHaveLength(
+      2,
+    );
   });
 
   it("does not neon the team lines when the game is scheduled", () => {
