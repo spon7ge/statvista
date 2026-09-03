@@ -32,6 +32,44 @@ def test_normalize_live_status_and_linescore():
     assert detail.win_probability is None
 
 
+def test_normalize_in_game_weather_delay_stays_live():
+    """Stats uses Delayed while abstractGameState is still Live (rain delay)."""
+    payload = _payload()
+    payload["gameData"]["status"] = {
+        "abstractGameState": "Live",
+        "codedGameState": "I",
+        "detailedState": "Delayed: Inclement Weather",
+        "statusCode": "II",
+        "reason": "Inclement Weather",
+        "abstractGameCode": "L",
+    }
+    payload["liveData"]["linescore"]["inningState"] = "Top"
+    payload["liveData"]["linescore"]["currentInningOrdinal"] = "4th"
+    payload["liveData"]["linescore"]["currentInning"] = 4
+
+    detail = normalize_mlb_live_feed(
+        payload, game_pk="822686", fetched_at="2026-09-02T18:00:00+00:00"
+    )
+    assert detail.status == "live"
+    assert detail.status_label == "Top 4th"
+    assert detail.away.score is not None
+    assert detail.home.score is not None
+
+
+def test_normalize_pregame_delay_stays_scheduled():
+    payload = _payload()
+    payload["gameData"]["status"] = {
+        "abstractGameState": "Preview",
+        "detailedState": "Delayed: Inclement Weather",
+    }
+    payload["liveData"]["linescore"] = {}
+
+    detail = normalize_mlb_live_feed(
+        payload, game_pk="822686", fetched_at="2026-09-02T18:00:00+00:00"
+    )
+    assert detail.status == "scheduled"
+
+
 def test_normalize_situation_and_pitches():
     detail = normalize_mlb_live_feed(
         _payload(), game_pk="776543", fetched_at="2026-08-02T18:00:00+00:00"

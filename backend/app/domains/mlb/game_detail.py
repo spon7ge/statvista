@@ -171,9 +171,9 @@ def _game_date_label(game_data: dict, *, now: date | None = None) -> str | None:
     return f"{game_date.strftime('%b')} {game_date.day}"
 
 
+# Pregame rain delay / warmup stay scheduled via Preview abstract state.
+# In-game "Delayed: Inclement Weather" is still abstract Live — keep live center.
 _NON_LIVE_KEYWORDS = (
-    "warmup",
-    "delayed",
     "suspended",
     "postponed",
     "cancelled",
@@ -187,7 +187,7 @@ def _map_status(status: dict, linescore: dict | None) -> tuple[GameStatus, str]:
     detailed = str(status.get("detailedState") or "").strip()
     detailed_lower = detailed.lower()
 
-    # Thin page for non-started / interrupted states (never treat as live center).
+    # Thin page for terminal non-results (never treat as live/final center).
     if any(keyword in detailed_lower for keyword in _NON_LIVE_KEYWORDS):
         return "scheduled", detailed or "Scheduled"
 
