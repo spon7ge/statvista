@@ -289,6 +289,12 @@
   cursor: pointer;
 }
 
+.nav-link svg {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
 .nav-link:hover {
   color: var(--c4);
 }

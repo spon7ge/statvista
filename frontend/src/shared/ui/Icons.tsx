@@ -7,9 +7,15 @@ type IconProps = {
 function IconFrame({
   children,
   className,
+  strokeWidth = 1.5,
+  strokeLinecap = "butt",
+  strokeLinejoin = "miter",
 }: {
   children: ReactNode;
   className?: string;
+  strokeWidth?: number;
+  strokeLinecap?: "butt" | "round" | "square";
+  strokeLinejoin?: "miter" | "round" | "bevel";
 }) {
   return (
     <svg
@@ -19,13 +25,33 @@ function IconFrame({
       className={className}
       fill="none"
       stroke="currentColor"
-      strokeWidth={1.5}
-      strokeLinecap="butt"
-      strokeLinejoin="miter"
+      strokeWidth={strokeWidth}
+      strokeLinecap={strokeLinecap}
+      strokeLinejoin={strokeLinejoin}
       aria-hidden
     >
       {children}
     </svg>
+  );
+}
+
+/** Lucide stroke: round caps, weight 2 — used for the sidebar's restored shapes. */
+function LucideFrame({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <IconFrame
+      className={className}
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      {children}
+    </IconFrame>
   );
 }
 
@@ -51,51 +77,52 @@ export function IconMenu({ className }: IconProps) {
   );
 }
 
-/** Stacked rows — Props. */
+/** Layout list — Props (Lucide LayoutList). */
 export function IconList({ className }: IconProps) {
   return (
-    <IconFrame className={className}>
-      <path d="M8 6h12" />
-      <path d="M8 12h12" />
-      <path d="M8 18h12" />
-      <path d="M4 6h2" />
-      <path d="M4 12h2" />
-      <path d="M4 18h2" />
-    </IconFrame>
+    <LucideFrame className={className}>
+      <rect width="7" height="7" x="3" y="3" rx="1" />
+      <rect width="7" height="7" x="3" y="14" rx="1" />
+      <path d="M14 4h7" />
+      <path d="M14 9h7" />
+      <path d="M14 15h7" />
+      <path d="M14 20h7" />
+    </LucideFrame>
   );
 }
 
-/** Offset planes — Legs. */
+/** Stacked planes — Legs (Lucide Layers). */
 export function IconLayers({ className }: IconProps) {
   return (
-    <IconFrame className={className}>
-      <path d="M4 8h12v8H4z" />
-      <path d="M8 4h12v8" />
-    </IconFrame>
+    <LucideFrame className={className}>
+      <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" />
+      <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" />
+      <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" />
+    </LucideFrame>
   );
 }
 
-/** Opposing arrows — Arbitrage. */
+/** Opposing arrows — Arbitrage (Lucide ArrowLeftRight). */
 export function IconSwap({ className }: IconProps) {
   return (
-    <IconFrame className={className}>
-      <path d="M4 8h12" />
-      <path d="M12 4l4 4-4 4" />
-      <path d="M20 16H8" />
-      <path d="M12 12l-4 4 4 4" />
-    </IconFrame>
+    <LucideFrame className={className}>
+      <path d="M8 3 4 7l4 4" />
+      <path d="M4 7h16" />
+      <path d="m16 21 4-4-4-4" />
+      <path d="M20 17H4" />
+    </LucideFrame>
   );
 }
 
-/** Date grid — Games. */
+/** Date grid — Games (Lucide Calendar). */
 export function IconCalendar({ className }: IconProps) {
   return (
-    <IconFrame className={className}>
-      <path d="M4 6h16v14H4z" />
-      <path d="M4 10h16" />
-      <path d="M8 4v4" />
-      <path d="M16 4v4" />
-    </IconFrame>
+    <LucideFrame className={className}>
+      <path d="M8 2v4" />
+      <path d="M16 2v4" />
+      <rect width="18" height="18" x="3" y="4" rx="2" />
+      <path d="M3 10h18" />
+    </LucideFrame>
   );
 }
 
@@ -129,23 +156,35 @@ export function IconShare({ className }: IconProps) {
   );
 }
 
-/** Info mark. */
+/** Info mark (Lucide Info). */
 export function IconInfo({ className }: IconProps) {
   return (
-    <IconFrame className={className}>
-      <circle cx="12" cy="12" r="8" />
-      <path d="M12 11v6" />
-      <path d="M12 7v2" />
-    </IconFrame>
+    <LucideFrame className={className}>
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 16v-4" />
+      <path d="M12 8h.01" />
+    </LucideFrame>
   );
 }
 
-/** Settings cog, 8px-grid geometry. */
+/** Folded paper — Blog (Lucide Newspaper). */
+export function IconNewspaper({ className }: IconProps) {
+  return (
+    <LucideFrame className={className}>
+      <path d="M15 18h-5" />
+      <path d="M18 14h-8" />
+      <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-4 0v-9a2 2 0 0 1 2-2h2" />
+      <rect width="8" height="4" x="10" y="6" rx="1" />
+    </LucideFrame>
+  );
+}
+
+/** Settings cog (Lucide Settings). */
 export function IconGear({ className }: IconProps) {
   return (
-    <IconFrame className={className}>
-      <path d="M8 4h8v4h4v8h-4v4H8v-4H4V8h4z" />
-      <path d="M8 8h8v8H8z" />
-    </IconFrame>
+    <LucideFrame className={className}>
+      <path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" />
+      <circle cx="12" cy="12" r="3" />
+    </LucideFrame>
   );
 }

@@ -53,8 +53,8 @@ describe("HomeChromeLayout", () => {
     expect(
       screen.getByRole("navigation", { name: "Primary" }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Home" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Games" })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Home" })).not.toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: /^leagues$/i }),
     ).not.toBeInTheDocument();

@@ -11,6 +11,8 @@ export const ZONE_SCALE_Y = (48.5 * 3) / 2;
 const MARKER_R = 14;
 /** Just outside the unit square so ball markers clear the stroke. */
 const BALL_OUTSIDE = 1.08;
+export const MLB_BALL_FILL = "rgba(74, 222, 128, 0.9)";
+export const MLB_STRIKE_FILL = "rgba(248, 113, 113, 0.9)";
 
 function ensureBallOutsideZone(
   zoneX: number,
@@ -41,7 +43,7 @@ function plotPitch(pitch: MlbPitch): { cx: number; cy: number } | null {
 }
 
 function pitchFill(isStrike: boolean): string {
-  return isStrike ? "rgba(248, 113, 113, 0.9)" : "rgba(74, 222, 128, 0.9)";
+  return isStrike ? MLB_STRIKE_FILL : MLB_BALL_FILL;
 }
 
 function SpinLine({ pitch }: { pitch: MlbPitch }) {
@@ -56,9 +58,10 @@ function SpinLine({ pitch }: { pitch: MlbPitch }) {
 function PitchNumberDot({ pitch }: { pitch: MlbPitch }) {
   return (
     <span
-      className={`inline-flex size-6 shrink-0 items-center justify-center rounded-full text-[14px] font-bold text-black ${
-        pitch.isStrike ? "bg-c4" : "bg-c3"
-      }`}
+      className="inline-flex size-6 shrink-0 items-center justify-center rounded-full text-[14px] font-bold text-black"
+      style={{
+        backgroundColor: pitch.isStrike ? MLB_STRIKE_FILL : MLB_BALL_FILL,
+      }}
     >
       {pitch.number}
     </span>

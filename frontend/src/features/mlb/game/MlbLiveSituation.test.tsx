@@ -32,4 +32,30 @@ describe("MlbLiveSituation", () => {
     expect(screen.queryByText("CALL VALUE")).not.toBeInTheDocument();
     expect(screen.queryByText("AT BAT")).not.toBeInTheDocument();
   });
+
+  it("fills ball count dots green and strike count dots red to match pitch markers", () => {
+    render(<MlbLiveSituation detail={mlbLiveDetail} />);
+    const markers = screen.getAllByTestId("mlb-pitch-marker");
+    const ballFill = markers[0]?.getAttribute("fill");
+    const strikeFill = markers[1]?.getAttribute("fill");
+    expect(ballFill).toBe("rgba(74, 222, 128, 0.9)");
+    expect(strikeFill).toBe("rgba(248, 113, 113, 0.9)");
+
+    const filledBalls = filledCountDots("2 Balls");
+    expect(filledBalls).toHaveLength(2);
+    for (const dot of filledBalls) {
+      expect(dot).toHaveStyle({ backgroundColor: ballFill });
+    }
+
+    const filledStrikes = filledCountDots("1 Strk");
+    expect(filledStrikes).toHaveLength(1);
+    expect(filledStrikes[0]).toHaveStyle({ backgroundColor: strikeFill });
+  });
 });
+
+function filledCountDots(label: string): HTMLElement[] {
+  const group = screen.getByLabelText(label);
+  return [...group.querySelectorAll("span")].filter(
+    (el) => !el.classList.contains("border"),
+  );
+}

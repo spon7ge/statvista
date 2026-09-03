@@ -126,4 +126,18 @@ describe("MlbPitchZone", () => {
     expect(cx).toBeCloseTo(ZONE_CENTER_X + ZONE_SCALE_X, 0);
     expect(cy).toBeCloseTo(ZONE_CENTER_Y, 0);
   });
+
+  it("fills pitch number boxes green for balls and red for strikes to match markers", () => {
+    render(<MlbPitchZone situation={mlbLiveDetail.situation!} />);
+    const markers = screen.getAllByTestId("mlb-pitch-marker");
+    const ballFill = markers[0]?.getAttribute("fill");
+    const strikeFill = markers[1]?.getAttribute("fill");
+    expect(ballFill).toBe("rgba(74, 222, 128, 0.9)");
+    expect(strikeFill).toBe("rgba(248, 113, 113, 0.9)");
+
+    const ballDot = screen.getByText(/^Ball$/i).previousElementSibling;
+    const strikeDot = screen.getByText(/Called Strike/i).previousElementSibling;
+    expect(ballDot).toHaveStyle({ backgroundColor: ballFill });
+    expect(strikeDot).toHaveStyle({ backgroundColor: strikeFill });
+  });
 });

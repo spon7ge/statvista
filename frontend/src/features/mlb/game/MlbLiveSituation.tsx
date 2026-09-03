@@ -1,18 +1,22 @@
 import { GameSection } from "@/shared/ui/GameSection";
 import { MlbBaseDiamond } from "./MlbBaseDiamond";
-import { MlbPitchZone } from "./MlbPitchZone";
+import {
+  MLB_BALL_FILL,
+  MLB_STRIKE_FILL,
+  MlbPitchZone,
+} from "./MlbPitchZone";
 import type { MlbGameDetailView, MlbPlayerCard } from "../lib/types";
 
 function CountDots({
   label,
   filled,
   total,
-  filledClassName,
+  filledColor,
 }: {
   label: string;
   filled: number;
   total: number;
-  filledClassName: string;
+  filledColor: string;
 }) {
   const capped = Math.min(Math.max(filled, 0), total);
   return (
@@ -23,10 +27,11 @@ function CountDots({
           <span
             key={index}
             className={`size-2 rounded-full ${
-              index < capped
-                ? filledClassName
-                : "border border-line bg-transparent"
+              index < capped ? "" : "border border-line bg-transparent"
             }`}
+            style={
+              index < capped ? { backgroundColor: filledColor } : undefined
+            }
           />
         ))}
       </span>
@@ -149,19 +154,19 @@ function SituationPanel({ detail }: { detail: MlbGameDetailView }) {
             label="Balls"
             filled={situation.balls}
             total={3}
-            filledClassName="bg-c2"
+            filledColor={MLB_BALL_FILL}
           />
           <CountDots
             label="Strk"
             filled={situation.strikes}
             total={2}
-            filledClassName="bg-c2"
+            filledColor={MLB_STRIKE_FILL}
           />
           <CountDots
             label="Out"
             filled={situation.outs}
             total={2}
-            filledClassName="bg-c4"
+            filledColor="var(--c4)"
           />
         </div>
       </div>
