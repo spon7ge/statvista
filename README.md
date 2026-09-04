@@ -105,15 +105,15 @@ How each page is wired: **[md/system-design.md](md/system-design.md)**.
 
 ## Screenshots
 
-Games (landing after `/` → MLB):
+Games (landing after `/` → MLB slate):
 
-![statvista home landing](assets/screenshots/home.png)
+![MLB Games](assets/screenshots/mlb-games.png)
 
-WNBA game center:
+Props (DFS lines next to sportsbook odds):
 
-![WNBA game center](assets/screenshots/wnba-game-center.png)
+![MLB Props](assets/screenshots/mlb-props.png)
 
-MLB game center:
+MLB game center (live summary):
 
 ![MLB game center](assets/screenshots/mlb-game-center.png)
 
