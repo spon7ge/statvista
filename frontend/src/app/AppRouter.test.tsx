@@ -55,13 +55,16 @@ describe("AppRouter", () => {
     ).toHaveAttribute("aria-current", "page");
   });
 
-  it("renders not found at /about", () => {
+  it("renders About at /about", () => {
     renderWithProviders(["/about"]);
     expect(
-      screen.getByRole("heading", { name: /page not found/i }),
+      screen.getByRole("heading", { name: /^about$/i }),
     ).toBeInTheDocument();
     expect(
-      screen.queryByRole("heading", { name: /about statvista/i }),
+      screen.getByRole("heading", { name: /what you can do/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", { name: /page not found/i }),
     ).not.toBeInTheDocument();
   });
 

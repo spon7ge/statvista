@@ -7,6 +7,7 @@ import { MlbGameDetailPage } from "@/pages/MlbGameDetailPage";
 import { MlbPropPicksPage } from "@/pages/MlbPropPicksPage";
 import { LeagueLegsPage } from "@/pages/LeagueLegsPage";
 import { LeagueArbitragePage } from "@/pages/LeagueArbitragePage";
+import { AboutPage } from "@/pages/AboutPage";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 import { LANDING_HREF } from "@/features/home/lib/appNav";
 
@@ -44,6 +45,7 @@ export function AppRouter() {
           element={<Navigate to="/mlb/prop_picks" replace />}
         />
         <Route path="/mlb/games/:gamePk" element={<MlbGameDetailPage />} />
+        <Route path="/about" element={<AboutPage />} />
       </Route>
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
