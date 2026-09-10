@@ -88,10 +88,14 @@ export function AppSidebar() {
         </nav>
 
         <nav aria-label="Site" className="nav-panel">
-          <button type="button" className={rowClass(false)}>
+          <Link
+            to="/about"
+            aria-current={pathname === "/about" ? "page" : undefined}
+            className={rowClass(pathname === "/about")}
+          >
             <IconInfo />
             About
-          </button>
+          </Link>
           <button type="button" className={rowClass(false)}>
             <IconNewspaper />
             Blog

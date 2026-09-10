@@ -89,13 +89,22 @@ describe("AppSidebar", () => {
       screen.getByRole("navigation", { name: "Primary" }).nextElementSibling,
     ).toBe(siteNav);
     expect(siteNav).toHaveClass("nav-panel");
-    expect(within(siteNav).getByRole("button", { name: "About" })).toHaveClass(
-      "nav-link",
+    expect(within(siteNav).getByRole("link", { name: "About" })).toHaveAttribute(
+      "href",
+      "/about",
     );
     expect(within(siteNav).getByRole("button", { name: "Blog" })).toBeInTheDocument();
     expect(
       within(siteNav).getByRole("button", { name: "Settings" }),
     ).toBeInTheDocument();
+  });
+
+  it("marks About current on /about", () => {
+    renderSidebar("/about");
+    expect(screen.getByRole("link", { name: "About" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
   });
 
   it("uses the previous Lucide shapes for Props, Legs, Arbitrage, Games, Blog, and Settings", () => {
