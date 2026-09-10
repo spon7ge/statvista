@@ -80,6 +80,7 @@ main.tsx
       /mlb/arbitrage       LeagueArbitragePage
       /mlb/prop_picks/player/:playerSlug  replace-redirect → /mlb/prop_picks
       /mlb/games/:gamePk   MlbGameDetailPage
+      /about               AboutPage
     * → NotFoundPage
 ```
 

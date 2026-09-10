@@ -22,6 +22,7 @@ describe("AboutContent", () => {
     expect(espn).toHaveAttribute("href", "https://www.espn.com/");
     expect(espn).toHaveAttribute("target", "_blank");
     expect(espn).toHaveAttribute("rel", "noopener noreferrer");
+    expect(espn.className).toMatch(/text-c4/);
     expect(screen.getByRole("link", { name: /mlb stats api/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /rotowire/i })).toBeInTheDocument();
     expect(screen.getByText(/parlayapi \/ sharp/i)).toBeInTheDocument();

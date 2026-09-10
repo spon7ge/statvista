@@ -91,6 +91,7 @@ export function AboutContent() {
                 href={source.href}
                 target="_blank"
                 rel="noopener noreferrer"
+                className="font-medium text-c4 hover:underline"
               >
                 {source.name}
               </a>
