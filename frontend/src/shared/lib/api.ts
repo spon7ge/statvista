@@ -26,6 +26,7 @@ export type ApiGameDetailBoxScorePlayer = Schemas["GameDetailBoxScorePlayer"];
 export type ApiGameDetailBoxScore = Schemas["GameDetailBoxScore"];
 export type ApiWnbaGameDetail = Schemas["WnbaGameDetail"];
 export type WnbaScoreboardResponse = Schemas["WnbaScoreboardResponse"];
+export type NbaScoreboardResponse = Schemas["NbaScoreboardResponse"];
 
 export type ApiWnbaOddsGame = Schemas["WnbaOddsGame"];
 export type ApiWnbaOddsResponse = Schemas["WnbaOddsResponse"];
@@ -141,6 +142,30 @@ export async function fetchWnbaScoreboardByDate(
 ): Promise<WnbaScoreboardResponse> {
   const res = await fetch(
     `${API_BASE}/api/wnba/scoreboard?date=${encodeURIComponent(dateEt)}`,
+    { headers: { Accept: "application/json" }, cache: "no-store" },
+  );
+  if (!res.ok) {
+    throw new Error(`Scoreboard request failed: ${res.status}`);
+  }
+  return res.json();
+}
+
+export async function fetchNbaScoreboard(): Promise<NbaScoreboardResponse> {
+  const res = await fetch(`${API_BASE}/api/nba/scoreboard/today`, {
+    headers: { Accept: "application/json" },
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    throw new Error(`Scoreboard request failed: ${res.status}`);
+  }
+  return res.json();
+}
+
+export async function fetchNbaScoreboardByDate(
+  dateEt: string,
+): Promise<NbaScoreboardResponse> {
+  const res = await fetch(
+    `${API_BASE}/api/nba/scoreboard?date=${encodeURIComponent(dateEt)}`,
     { headers: { Accept: "application/json" }, cache: "no-store" },
   );
   if (!res.ok) {

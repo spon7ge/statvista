@@ -8,6 +8,54 @@ const okResponse = {
   json: async () => ({ date: "2026-07-29", games: [], fetched_at: "now" }),
 };
 
+describe("fetchNbaScoreboard", () => {
+  beforeEach(() => {
+    vi.resetModules();
+    fetchMock.mockReset();
+    vi.stubGlobal("fetch", fetchMock);
+  });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
+  });
+
+  it("uses a relative path when VITE_API_BASE_URL is unset", async () => {
+    vi.stubEnv("VITE_API_BASE_URL", undefined);
+    fetchMock.mockResolvedValue(okResponse);
+
+    const { fetchNbaScoreboard } = await import("./api");
+    await fetchNbaScoreboard();
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/nba/scoreboard/today",
+      expect.objectContaining({ cache: "no-store" }),
+    );
+  });
+
+  it("prefixes the configured API origin and strips a trailing slash", async () => {
+    vi.stubEnv("VITE_API_BASE_URL", "https://api.example.com/");
+    fetchMock.mockResolvedValue(okResponse);
+
+    const { fetchNbaScoreboard } = await import("./api");
+    await fetchNbaScoreboard();
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://api.example.com/api/nba/scoreboard/today",
+      expect.anything(),
+    );
+  });
+
+  it("throws when the response is not ok", async () => {
+    vi.stubEnv("VITE_API_BASE_URL", undefined);
+    fetchMock.mockResolvedValue({ ok: false, status: 502 });
+
+    const { fetchNbaScoreboard } = await import("./api");
+    await expect(fetchNbaScoreboard()).rejects.toThrow(
+      "Scoreboard request failed: 502",
+    );
+  });
+});
+
 describe("fetchWnbaScoreboard", () => {
   beforeEach(() => {
     vi.resetModules();
