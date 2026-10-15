@@ -23,6 +23,15 @@ vi.mock("@/features/mlb/hooks/useMlbScoreboard", () => ({
   }),
 }));
 
+vi.mock("@/features/basketball/hooks/useNbaScoreboard", () => ({
+  useNbaScoreboard: (dateEt?: string) => ({
+    games: [],
+    isLoading: false,
+    hasNeverLoaded: false,
+    data: { date: dateEt ?? "2026-08-01", games: [], fetched_at: "" },
+  }),
+}));
+
 const useWnbaOdds = vi.fn(() => ({ data: undefined }));
 vi.mock("@/features/basketball/hooks/useWnbaOdds", () => ({
   useWnbaOdds: (...args: unknown[]) => useWnbaOdds(...args),
@@ -88,6 +97,16 @@ describe("LeagueMatchupsPage date nav", () => {
     expect(screen.getByRole("button", { name: "Today" })).toBeInTheDocument();
   });
 
+  it("writes ?date on NBA matchups when moving off today", async () => {
+    const user = userEvent.setup();
+    renderAt("/nba/matchups");
+    expect(screen.getByRole("button", { name: "Today" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: /previous day/i }));
+    expect(screen.getByRole("button", { name: "Jul 31" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Jul 31" }));
+    expect(screen.getByRole("button", { name: "Today" })).toBeInTheDocument();
+  });
+
   it("does not fetch WNBA odds for matchups cards", () => {
     useWnbaOdds.mockClear();
     renderAt("/wnba/matchups");
@@ -115,7 +134,9 @@ describe("LeagueMatchupsPage date nav", () => {
         name: "NBA",
       }),
     );
-    expect(screen.getByText(/NBA games coming soon/i)).toBeInTheDocument();
+    expect(screen.queryByText(/NBA games coming soon/i)).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Today" })).toBeInTheDocument();
+    expect(screen.getByText(/no games on this slate/i)).toBeInTheDocument();
     expect(
       within(screen.getByTestId("matchups-header")).getByRole("link", {
         name: "NBA",

@@ -15,6 +15,7 @@ import {
 import type { LeagueSlug } from "@/features/basketball/league/types";
 import { mapToMatchupGames } from "@/shared/lib/mapScoreboard";
 import { useMlbScoreboard } from "@/features/mlb/hooks/useMlbScoreboard";
+import { useNbaScoreboard } from "@/features/basketball/hooks/useNbaScoreboard";
 import { useWnbaScoreboard } from "@/features/basketball/hooks/useWnbaScoreboard";
 
 type LeagueMatchupsPageProps = {
@@ -49,11 +50,7 @@ export function LeagueMatchupsPage({ league }: LeagueMatchupsPageProps) {
     return <MlbMatchupsPage />;
   }
 
-  return (
-    <MatchupsShell>
-        <p className="text-sm">NBA games coming soon.</p>
-    </MatchupsShell>
-  );
+  return <NbaMatchupsPage />;
 }
 
 function WnbaMatchupsPage() {
@@ -69,6 +66,47 @@ function WnbaMatchupsPage() {
   }, [raw, setSearchParams]);
 
   const { games, isLoading, hasNeverLoaded } = useWnbaScoreboard(selectedDate);
+  const matchupGames = mapToMatchupGames(games);
+
+  const setDate = (next: string) => {
+    if (next === today) setSearchParams({});
+    else setSearchParams({ date: next });
+  };
+
+  return (
+    <MatchupsShell
+      dateNav={
+        <MatchupsDateNav
+          selectedDate={selectedDate}
+          todayDate={today}
+          onPrevDay={() => setDate(shiftEtDate(selectedDate, -1))}
+          onNextDay={() => setDate(shiftEtDate(selectedDate, 1))}
+          onGoToday={() => setDate(today)}
+        />
+      }
+    >
+      <MatchupsPanel
+        games={matchupGames}
+        isLoading={isLoading}
+        isError={hasNeverLoaded}
+      />
+    </MatchupsShell>
+  );
+}
+
+function NbaMatchupsPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const today = slateEtDate();
+  const raw = searchParams.get("date");
+  const selectedDate = parseMatchupDateParam(raw, today);
+
+  useEffect(() => {
+    if (raw !== null && !isValidEtDate(raw)) {
+      setSearchParams({}, { replace: true });
+    }
+  }, [raw, setSearchParams]);
+
+  const { games, isLoading, hasNeverLoaded } = useNbaScoreboard(selectedDate);
   const matchupGames = mapToMatchupGames(games);
 
   const setDate = (next: string) => {

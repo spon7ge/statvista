@@ -180,12 +180,12 @@ describe("AppRouter", () => {
     );
   });
 
-  it("renders NBA coming-soon hub at /nba/matchups", async () => {
+  it("renders NBA matchups slate at /nba/matchups", async () => {
     renderWithProviders(["/nba/matchups"]);
     expect(
       await screen.findByRole("heading", { name: "Games" }),
     ).toBeInTheDocument();
-    expect(screen.getByText(/coming soon/i)).toBeInTheDocument();
+    expect(screen.queryByText(/coming soon/i)).not.toBeInTheDocument();
     expect(
       within(screen.getByTestId("matchups-header")).getByRole("link", {
         name: "NBA",
