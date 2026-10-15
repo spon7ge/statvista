@@ -244,6 +244,8 @@ Feature-level history lives under `docs/superpowers/specs/` and `docs/superpower
 | GET | `/api/wnba/games/{espn_event_id}/team-preview?side=` | `wnba.team_preview` (PPG/RPG/APG/BPG/SPG leaders + roster averages incl. SH-EFF, SC-EFF, PPEP, RTG, +/-) |
 | GET | `/api/mlb/scoreboard/today` | `mlb_scoreboard` (MLB Stats API) |
 | GET | `/api/mlb/scoreboard?date=` | `mlb_scoreboard` |
+| GET | `/api/nba/scoreboard/today` | `nba.scoreboard` (ESPN only; overnight live carryover; `no-store`, 502 on upstream failure) |
+| GET | `/api/nba/scoreboard?date=` | `nba.scoreboard` (ESPN only; 5 min per-date cache) |
 | GET | `/api/mlb/odds/today` | `mlb_odds` (Sharp `league=mlb`) |
 | GET | `/api/mlb/props/today` | `mlb.props` (+ `prop_fair`, `prop_formats`, `prop_stat_keys`, `books_main`; PP/UD from Supabase; Parlay books from `fetch_latest_parlay_api_odds("mlb")` / `odds.mlb_parlay_api_odds` only) |
 | GET | `/api/mlb/props/board` | `mlb.prop_board` (DFS-anchored rows; sportsbook mains attached on `books` even when the line differs; `dfs` vs `books`; IP / ranks / L5–L15; 200 even when enrichments fail) |

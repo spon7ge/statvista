@@ -6740,6 +6740,172 @@
         "title": "MlbWinProbabilityStakes",
         "type": "object"
       },
+      "NbaGame": {
+        "properties": {
+          "away": {
+            "$ref": "#/components/schemas/NbaTeam"
+          },
+          "espn_event_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Espn Event Id"
+          },
+          "home": {
+            "$ref": "#/components/schemas/NbaTeam"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "league": {
+            "const": "nba",
+            "default": "nba",
+            "title": "League",
+            "type": "string"
+          },
+          "start_time_et": {
+            "title": "Start Time Et",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "scheduled",
+              "live",
+              "halftime",
+              "final"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "status_label": {
+            "title": "Status Label",
+            "type": "string"
+          },
+          "venue": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Venue"
+          },
+          "venue_city": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Venue City"
+          }
+        },
+        "required": [
+          "id",
+          "espn_event_id",
+          "league",
+          "status",
+          "status_label",
+          "away",
+          "home",
+          "start_time_et",
+          "venue",
+          "venue_city"
+        ],
+        "title": "NbaGame",
+        "type": "object"
+      },
+      "NbaScoreboardResponse": {
+        "properties": {
+          "date": {
+            "description": "YYYY-MM-DD in America/New_York",
+            "title": "Date",
+            "type": "string"
+          },
+          "fetched_at": {
+            "title": "Fetched At",
+            "type": "string"
+          },
+          "games": {
+            "items": {
+              "$ref": "#/components/schemas/NbaGame"
+            },
+            "title": "Games",
+            "type": "array"
+          }
+        },
+        "required": [
+          "date",
+          "games",
+          "fetched_at"
+        ],
+        "title": "NbaScoreboardResponse",
+        "type": "object"
+      },
+      "NbaTeam": {
+        "properties": {
+          "abbrev": {
+            "title": "Abbrev",
+            "type": "string"
+          },
+          "logo_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Logo Url"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "record": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Record"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          }
+        },
+        "required": [
+          "abbrev",
+          "name",
+          "score",
+          "record",
+          "logo_url"
+        ],
+        "title": "NbaTeam",
+        "type": "object"
+      },
       "PlayerGame": {
         "description": "One row from gold_player_game_stats.",
         "properties": {
@@ -10985,7 +11151,7 @@
     }
   },
   "info": {
-    "description": "statvista basketball and baseball data backend. Database-backed endpoints read from Supabase (silver / gold schemas) and make no NBA or Odds API calls. The exceptions are /api/wnba/scoreboard/today, /api/mlb/scoreboard/today, /api/mlb/scoreboard, /api/mlb/odds/today, /api/wnba/leaders, /api/wnba/player/{player_id}, /api/wnba/standings, /api/wnba/futures, /api/wnba/odds/today, /api/wnba/props/today, WNBA game detail routes, /api/mlb/games/{game_pk}, /api/mlb/lineups, and /api/mlb/futures, which call ESPN, stats.wnba.com, MLB Stats API, RotoWire, or SharpAPI for live league data.",
+    "description": "statvista basketball and baseball data backend. Database-backed endpoints read from Supabase (silver / gold schemas) and make no NBA or Odds API calls. The exceptions are /api/wnba/scoreboard/today, /api/mlb/scoreboard/today, /api/mlb/scoreboard, /api/nba/scoreboard/today, /api/nba/scoreboard, /api/mlb/odds/today, /api/wnba/leaders, /api/wnba/player/{player_id}, /api/wnba/standings, /api/wnba/futures, /api/wnba/odds/today, /api/wnba/props/today, WNBA game detail routes, /api/mlb/games/{game_pk}, /api/mlb/lineups, and /api/mlb/futures, which call ESPN, stats.wnba.com, MLB Stats API, RotoWire, or SharpAPI for live league data.",
     "title": "statvista API",
     "version": "0.3.0"
   },
@@ -11942,6 +12108,70 @@
         "summary": "Mlb Standings",
         "tags": [
           "mlb"
+        ]
+      }
+    },
+    "/api/nba/scoreboard": {
+      "get": {
+        "operationId": "nba_scoreboard_by_date_api_nba_scoreboard_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "date",
+            "required": true,
+            "schema": {
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "title": "Date",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NbaScoreboardResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Nba Scoreboard By Date",
+        "tags": [
+          "nba"
+        ]
+      }
+    },
+    "/api/nba/scoreboard/today": {
+      "get": {
+        "operationId": "nba_scoreboard_today_api_nba_scoreboard_today_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NbaScoreboardResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Nba Scoreboard Today",
+        "tags": [
+          "nba"
         ]
       }
     },

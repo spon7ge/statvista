@@ -382,6 +382,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/nba/scoreboard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Nba Scoreboard By Date */
+        get: operations["nba_scoreboard_by_date_api_nba_scoreboard_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/nba/scoreboard/today": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Nba Scoreboard Today */
+        get: operations["nba_scoreboard_today_api_nba_scoreboard_today_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/player/{player_id}": {
         parameters: {
             query?: never;
@@ -2470,6 +2504,59 @@ export interface components {
             /** Label */
             label: string;
         };
+        /** NbaGame */
+        NbaGame: {
+            away: components["schemas"]["NbaTeam"];
+            /** Espn Event Id */
+            espn_event_id: string | null;
+            home: components["schemas"]["NbaTeam"];
+            /** Id */
+            id: string;
+            /**
+             * League
+             * @default nba
+             * @constant
+             */
+            league: "nba";
+            /** Start Time Et */
+            start_time_et: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "scheduled" | "live" | "halftime" | "final";
+            /** Status Label */
+            status_label: string;
+            /** Venue */
+            venue: string | null;
+            /** Venue City */
+            venue_city: string | null;
+        };
+        /** NbaScoreboardResponse */
+        NbaScoreboardResponse: {
+            /**
+             * Date
+             * @description YYYY-MM-DD in America/New_York
+             */
+            date: string;
+            /** Fetched At */
+            fetched_at: string;
+            /** Games */
+            games: components["schemas"]["NbaGame"][];
+        };
+        /** NbaTeam */
+        NbaTeam: {
+            /** Abbrev */
+            abbrev: string;
+            /** Logo Url */
+            logo_url: string | null;
+            /** Name */
+            name: string;
+            /** Record */
+            record: string | null;
+            /** Score */
+            score: number | null;
+        };
         /**
          * PlayerGame
          * @description One row from gold_player_game_stats.
@@ -4151,6 +4238,57 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MlbStandingsResponse"];
+                };
+            };
+        };
+    };
+    nba_scoreboard_by_date_api_nba_scoreboard_get: {
+        parameters: {
+            query: {
+                date: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NbaScoreboardResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    nba_scoreboard_today_api_nba_scoreboard_today_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NbaScoreboardResponse"];
                 };
             };
         };

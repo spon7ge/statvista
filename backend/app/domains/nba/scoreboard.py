@@ -1,13 +1,33 @@
 from __future__ import annotations
 
+import asyncio
+import logging
+import time
 from datetime import date, datetime, timedelta
 from zoneinfo import ZoneInfo
 
-from app.domains.nba.schemas_scoreboard import GameStatus, NbaGame, NbaTeam
+import httpx
 
+from app.domains.nba.schemas_scoreboard import (
+    GameStatus,
+    NbaGame,
+    NbaScoreboardResponse,
+    NbaTeam,
+)
+
+logger = logging.getLogger(__name__)
 ET = ZoneInfo("America/New_York")
 
 ESPN_URL = "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard"
+ESPN_TIMEOUT_SECONDS = 8.0
+
+_cache: dict = {}  # keys: response, expires_at, date
+
+DATED_CACHE_TTL_SECONDS = 300
+_date_cache: dict[str, dict] = {}
+
+_refresh_lock: asyncio.Lock | None = None
+_refresh_lock_loop: asyncio.AbstractEventLoop | None = None
 
 # States that look "post" to ESPN's generic state field but are not results.
 _ESPN_NON_RESULT_LABELS = {
@@ -184,3 +204,131 @@ def combine_with_overnight_carryover(
     return sorted(
         carryover + today_games, key=lambda g: g.start_time_et or g.id
     )
+
+
+def cache_ttl_seconds(games: list[NbaGame]) -> int:
+    if any(g.status in ("live", "halftime") for g in games):
+        return 30
+    return 60
+
+
+async def fetch_espn_scoreboard(date_et: str) -> dict:
+    dates = date_et.replace("-", "")
+    async with httpx.AsyncClient(timeout=ESPN_TIMEOUT_SECONDS) as client:
+        r = await client.get(ESPN_URL, params={"dates": dates})
+        r.raise_for_status()
+        return r.json()
+
+
+async def _games_for_date(date_et: str) -> tuple[list[NbaGame], bool]:
+    """Fetch + normalize one ET date. Returns (games, source_usable)."""
+    try:
+        payload = await fetch_espn_scoreboard(date_et)
+        games = normalize_espn_scoreboard(payload, date_et=date_et)
+        return games, True
+    except Exception as exc:
+        logger.warning("ESPN NBA scoreboard failed (%s): %s", date_et, exc)
+        return [], False
+
+
+def _cache_valid_for_today() -> NbaScoreboardResponse | None:
+    cached = _cache.get("response")
+    if cached is None:
+        return None
+    if _cache.get("date") != slate_et_date():
+        return None
+    return cached
+
+
+def _fresh_cached_response() -> NbaScoreboardResponse | None:
+    cached = _cache_valid_for_today()
+    if cached is None:
+        return None
+    if time.time() >= float(_cache.get("expires_at") or 0):
+        return None
+    return cached
+
+
+def _refresh_lock_for_loop() -> asyncio.Lock:
+    """Serializes upstream refreshes so concurrent cache misses share one fetch.
+
+    Created lazily because an ``asyncio.Lock`` binds to the loop that first
+    waits on it; re-created if called from a different loop (test clients spin
+    up a fresh loop per request).
+    """
+    global _refresh_lock, _refresh_lock_loop
+    loop = asyncio.get_running_loop()
+    if _refresh_lock is None or _refresh_lock_loop is not loop:
+        _refresh_lock = asyncio.Lock()
+        _refresh_lock_loop = loop
+    return _refresh_lock
+
+
+async def get_scoreboard_for_date(date_et: str) -> NbaScoreboardResponse:
+    """Scoreboard for one ET calendar day (no overnight live carryover)."""
+    cached = _date_cache.get(date_et)
+    if cached is not None and time.time() < float(cached.get("expires_at") or 0):
+        return cached["response"]
+
+    games, usable = await _games_for_date(date_et)
+    if not usable:
+        if cached is not None:
+            return cached["response"]  # stale-while-error
+        raise RuntimeError(f"No usable NBA scoreboard source for {date_et}")
+
+    response = NbaScoreboardResponse(
+        date=date_et,
+        games=games,
+        fetched_at=datetime.now(tz=ET).isoformat(),
+    )
+    _date_cache[date_et] = {
+        "response": response,
+        "expires_at": time.time() + DATED_CACHE_TTL_SECONDS,
+    }
+    return response
+
+
+async def get_today_scoreboard() -> NbaScoreboardResponse:
+    fresh = _fresh_cached_response()
+    if fresh is not None:
+        return fresh
+    # Single-flight: concurrent misses queue here and reuse the winner's refresh
+    # instead of each firing their own pair of upstream requests.
+    async with _refresh_lock_for_loop():
+        fresh = _fresh_cached_response()
+        if fresh is not None:
+            return fresh
+        return await _refresh_today_scoreboard()
+
+
+async def _refresh_today_scoreboard() -> NbaScoreboardResponse:
+    now = time.time()
+    date_et = slate_et_date()
+    yesterday = previous_et_date(date_et)
+    cached = _cache_valid_for_today()
+
+    today_result, yesterday_result = await asyncio.gather(
+        _games_for_date(date_et),
+        _games_for_date(yesterday),
+    )
+    today_games, today_usable = today_result
+    yesterday_games, yesterday_usable = yesterday_result
+
+    if not today_usable:
+        if cached is not None:
+            return cached  # stale-while-error (same ET date only)
+        raise RuntimeError("No usable NBA scoreboard source")
+
+    games = combine_with_overnight_carryover(
+        today_games,
+        yesterday_games if yesterday_usable else [],
+    )
+    response = NbaScoreboardResponse(
+        date=date_et,
+        games=games,
+        fetched_at=datetime.now(tz=ET).isoformat(),
+    )
+    _cache["response"] = response
+    _cache["expires_at"] = now + cache_ttl_seconds(games)
+    _cache["date"] = date_et
+    return response

@@ -43,7 +43,12 @@ REQUIRED_MLB_PATHS = (
     "/api/mlb/futures",
 )
 
-REQUIRED_FRONTEND_PATHS = REQUIRED_WNBA_PATHS + REQUIRED_MLB_PATHS
+REQUIRED_NBA_PATHS = (
+    "/api/nba/scoreboard/today",
+    "/api/nba/scoreboard",
+)
+
+REQUIRED_FRONTEND_PATHS = REQUIRED_WNBA_PATHS + REQUIRED_MLB_PATHS + REQUIRED_NBA_PATHS
 
 
 def export_openapi(path: Path | None = None) -> Path:

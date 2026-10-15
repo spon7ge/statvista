@@ -11,4 +11,5 @@ def test_api_router_assembles_health_and_domain_routes() -> None:
     assert "/api/health" in route_paths
     assert "/api/wnba/scoreboard/today" in route_paths
     assert "/api/mlb/scoreboard/today" in route_paths
+    assert "/api/nba/scoreboard/today" in route_paths
     assert "/api/games/today" in route_paths
