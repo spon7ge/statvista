@@ -1,0 +1,49 @@
+{
+  "events": [
+    {
+      "id": "401810001",
+      "date": "2026-10-15T23:00Z",
+      "competitions": [
+        {
+          "venue": {
+            "fullName": "Crypto.com Arena",
+            "address": { "city": "Los Angeles" }
+          },
+          "competitors": [
+            {
+              "homeAway": "home",
+              "score": "98",
+              "records": [{ "type": "total", "summary": "1-0" }],
+              "team": {
+                "abbreviation": "LAL",
+                "displayName": "Los Angeles Lakers",
+                "logo": "https://a.espncdn.com/i/teamlogos/nba/500/lal.png"
+              }
+            },
+            {
+              "homeAway": "away",
+              "score": "95",
+              "records": [{ "type": "total", "summary": "0-1" }],
+              "team": {
+                "abbreviation": "GSW",
+                "displayName": "Golden State Warriors",
+                "logo": "https://a.espncdn.com/i/teamlogos/nba/500/gs.png"
+              }
+            }
+          ]
+        }
+      ],
+      "status": {
+        "type": {
+          "state": "in",
+          "completed": false,
+          "name": "STATUS_IN_PROGRESS",
+          "shortDetail": "4:20 - 3rd",
+          "detail": "4:20 - 3rd Quarter"
+        },
+        "period": 3,
+        "displayClock": "4:20"
+      }
+    }
+  ]
+}
