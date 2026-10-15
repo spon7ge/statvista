@@ -42,6 +42,18 @@ describe("MatchupGameCard", () => {
     expect(
       screen.getByRole("link", { name: /golden state valkyries/i }),
     ).toHaveAttribute("href", "/games/401857098");
+    expect(screen.getByTestId("matchup-card-chevron")).toBeInTheDocument();
+  });
+
+  it("does not link or show chevron for NBA games with espnEventId", () => {
+    renderCard({
+      ...liveGame,
+      league: "nba",
+      espnEventId: "401810001",
+    });
+    expect(screen.queryByRole("link")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("matchup-card-chevron")).not.toBeInTheDocument();
+    expect(document.querySelector("article.card")).toBeTruthy();
   });
 
   it("links to MLB game stub when mlbGamePk is set", () => {

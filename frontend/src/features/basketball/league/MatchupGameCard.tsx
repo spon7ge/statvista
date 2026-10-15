@@ -84,6 +84,7 @@ function OddsBlock({
 }
 
 export function MatchupGameCard({ game }: { game: MatchupGame }) {
+  const href = gameDetailHref(game);
   const isLive = isInProgressStatus(game.status);
   const showScores = game.status !== "scheduled";
   const venueLabel = game.venue
@@ -141,11 +142,15 @@ export function MatchupGameCard({ game }: { game: MatchupGame }) {
           </div>
         )}
       </div>
-      <IconChevron className="icon-rotate-270 shrink-0" />
+      {href ? (
+        <IconChevron
+          data-testid="matchup-card-chevron"
+          className="icon-rotate-270 shrink-0"
+        />
+      ) : null}
     </div>
   );
 
-  const href = gameDetailHref(game);
   if (href) {
     return (
       <Link to={href} className="card">

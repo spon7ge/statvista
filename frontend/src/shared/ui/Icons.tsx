@@ -2,17 +2,20 @@ import type { ReactNode } from "react";
 
 type IconProps = {
   className?: string;
+  "data-testid"?: string;
 };
 
 function IconFrame({
   children,
   className,
+  "data-testid": dataTestId,
   strokeWidth = 1.5,
   strokeLinecap = "butt",
   strokeLinejoin = "miter",
 }: {
   children: ReactNode;
   className?: string;
+  "data-testid"?: string;
   strokeWidth?: number;
   strokeLinecap?: "butt" | "round" | "square";
   strokeLinejoin?: "miter" | "round" | "bevel";
@@ -29,6 +32,7 @@ function IconFrame({
       strokeLinecap={strokeLinecap}
       strokeLinejoin={strokeLinejoin}
       aria-hidden
+      data-testid={dataTestId}
     >
       {children}
     </svg>
@@ -127,9 +131,9 @@ export function IconCalendar({ className }: IconProps) {
 }
 
 /** Down chevron; rotate for left/right/up. */
-export function IconChevron({ className }: IconProps) {
+export function IconChevron({ className, "data-testid": dataTestId }: IconProps) {
   return (
-    <IconFrame className={className}>
+    <IconFrame className={className} data-testid={dataTestId}>
       <path d="M6 10l6 6 6-6" />
     </IconFrame>
   );

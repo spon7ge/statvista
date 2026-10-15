@@ -27,4 +27,14 @@ describe("gameDetailHref", () => {
       gameDetailHref({ league: "nba", espnEventId: null, mlbGamePk: null }),
     ).toBeNull();
   });
+
+  it("returns null for NBA even when espnEventId is set", () => {
+    expect(
+      gameDetailHref({
+        league: "nba",
+        espnEventId: "401810001",
+        mlbGamePk: null,
+      }),
+    ).toBeNull();
+  });
 });

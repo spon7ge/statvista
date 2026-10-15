@@ -5,6 +5,9 @@ export function gameDetailHref(game: {
   espnEventId?: string | null;
   mlbGamePk?: string | null;
 }): string | null {
+  if (game.league === "nba") {
+    return null;
+  }
   if (game.league === "mlb" && game.mlbGamePk) {
     return `/mlb/games/${game.mlbGamePk}`;
   }
