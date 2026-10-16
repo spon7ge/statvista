@@ -6,6 +6,7 @@ from typing import Literal
 from fastapi import APIRouter, HTTPException, Query, Response
 
 from app.domains.nba.game_detail import get_game_detail
+from app.domains.nba.odds import NbaOddsResponse, get_today_odds
 from app.domains.nba.schemas_game_detail import NbaGameDetail
 from app.domains.nba.schemas_scoreboard import NbaScoreboardResponse
 from app.domains.nba.schemas_team_preview import NbaTeamPreviewResponse
@@ -17,6 +18,12 @@ logger = logging.getLogger(__name__)
 router = APIRouter(tags=["nba"])
 
 _NO_STORE = {"Cache-Control": "no-store"}
+
+
+@router.get("/nba/odds/today", response_model=NbaOddsResponse)
+async def nba_odds_today(response: Response) -> NbaOddsResponse:
+    response.headers["Cache-Control"] = "no-store"
+    return await get_today_odds()
 
 
 @router.get("/nba/scoreboard", response_model=NbaScoreboardResponse)
