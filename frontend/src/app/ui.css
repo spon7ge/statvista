@@ -67,6 +67,23 @@
   letter-spacing: 0;
 }
 
+/* About copy matches sidebar .nav-link (Public Sans), not Fraunces headings. */
+.about-content {
+  font-family: var(--font-ui);
+  font-size: var(--text-16);
+  font-weight: var(--font-weight-body);
+  line-height: var(--lh-body);
+  color: var(--c3);
+}
+
+.about-content h2 {
+  font-family: var(--font-ui);
+  font-size: var(--text-16);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
 .shell {
   display: flex;
   min-height: 100vh;

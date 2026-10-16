@@ -253,6 +253,8 @@ def _pinnacle_props_table(league: str) -> str:
     lg = (league or "").strip().lower()
     if lg == "mlb":
         return "mlb_pinnacle"
+    if lg == "nfl":
+        return "nfl_pinnacle"
     return "wnba_pinnacle"
 
 
@@ -328,6 +330,8 @@ def _pinnacle_team_table(league: str) -> str:
     lg = (league or "").strip().lower()
     if lg == "mlb":
         return "mlb_pinnacle_team"
+    if lg == "nfl":
+        return "nfl_pinnacle_team"
     return "wnba_pinnacle_team"
 
 
@@ -383,6 +387,8 @@ def _prophetx_props_table(league: str) -> str:
     key = (league or "").strip().lower()
     if key == "wnba":
         return "wnba_prophetx"
+    if key == "nfl":
+        return "nfl_prophetx"
     return "mlb_prophetx"
 
 
@@ -421,6 +427,8 @@ def _prophetx_team_table(league: str) -> str:
     key = (league or "").strip().lower()
     if key == "wnba":
         return "wnba_prophetx_team"
+    if key == "nfl":
+        return "nfl_prophetx_team"
     return "mlb_prophetx_team"
 
 
@@ -479,6 +487,8 @@ def _novig_props_table(league: str) -> str:
     key = (league or "").strip().lower()
     if key == "wnba":
         return "wnba_novig"
+    if key == "nfl":
+        return "nfl_novig"
     return "mlb_novig"
 
 
@@ -486,6 +496,8 @@ def _novig_team_table(league: str) -> str:
     key = (league or "").strip().lower()
     if key == "wnba":
         return "wnba_novig_team"
+    if key == "nfl":
+        return "nfl_novig_team"
     return "mlb_novig_team"
 
 

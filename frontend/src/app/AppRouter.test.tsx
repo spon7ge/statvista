@@ -267,28 +267,6 @@ describe("AppRouter", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("renders MLB Legs at /mlb/legs", async () => {
-    renderWithProviders(["/mlb/legs"]);
-    expect(
-      await screen.findByRole("heading", { name: "Legs" }),
-    ).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Legs" })).toHaveAttribute(
-      "aria-current",
-      "page",
-    );
-  });
-
-  it("renders MLB Arbitrage at /mlb/arbitrage", async () => {
-    renderWithProviders(["/mlb/arbitrage"]);
-    expect(
-      await screen.findByRole("heading", { name: "Arbitrage" }),
-    ).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Arbitrage" })).toHaveAttribute(
-      "aria-current",
-      "page",
-    );
-  });
-
   it("renders MLB prop picks at /mlb/prop_picks", async () => {
     fetchMock.mockImplementation(async (input: RequestInfo) => {
       const url = String(input);

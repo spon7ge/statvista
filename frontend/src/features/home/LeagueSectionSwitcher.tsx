@@ -11,13 +11,13 @@ function pillClass(active: boolean): string {
   return active ? "pill is-active" : "pill";
 }
 
-export type LeagueSection = "Props" | "Games" | "Legs" | "Arbitrage";
+export type LeagueSection = "Props" | "Games";
 
 type LeagueSectionSwitcherProps = {
   section: LeagueSection;
 };
 
-/** Horizontal league pills under a section title (Props, Games, Legs, Arbitrage). */
+/** Horizontal league pills under a section title (Props, Games). */
 export function LeagueSectionSwitcher({ section }: LeagueSectionSwitcherProps) {
   const { pathname } = useLocation();
   const queryClient = useQueryClient();

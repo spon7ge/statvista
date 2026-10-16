@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useWnbaGameProps } from "@/features/basketball/hooks/useWnbaGameProps";
 import { useWnbaOdds } from "@/features/basketball/hooks/useWnbaOdds";
 import { useWnbaTeamPreview } from "@/features/basketball/hooks/useWnbaTeamPreview";
 import { collectWnbaOddsBookBoards } from "../lib/wnbaOddsBoard";
@@ -14,69 +13,13 @@ import {
 import { WnbaGameInfo } from "./WnbaGameInfo";
 import { WnbaGameLeaders } from "./WnbaGameLeaders";
 import { WnbaGameOddsBoard } from "./WnbaGameOddsBoard";
-import { WnbaGamePropsGrid } from "./WnbaGamePropsGrid";
 import { WnbaSeasonTeamStats } from "./WnbaSeasonTeamStats";
 import { WnbaTeamPreview } from "./WnbaTeamPreview";
-
-type PropsAppTab = "prizepicks" | "underdog";
-
-const PROPS_APP_TABS: { id: PropsAppTab; label: string }[] = [
-  { id: "prizepicks", label: "PrizePicks" },
-  { id: "underdog", label: "Underdog" },
-];
-
-function GamePropsAppTabs({
-  activeApp,
-  onAppChange,
-}: {
-  activeApp: PropsAppTab;
-  onAppChange: (app: PropsAppTab) => void;
-}) {
-  return (
-    <div
-      role="tablist"
-      aria-label="DFS app"
-      className="flex items-center justify-center gap-1 border-b border-line"
-    >
-      {PROPS_APP_TABS.map((tab) => (
-        <button
-          key={tab.id}
-          id={`wnba-game-props-${tab.id}-tab`}
-          type="button"
-          role="tab"
-          aria-selected={activeApp === tab.id}
-          aria-controls={`wnba-game-props-${tab.id}-panel`}
-          className={`border-b-2 px-5 py-2 text-[16px] font-medium transition-colors ${
-            activeApp === tab.id
-              ? "border-c4 text-c3"
-              : "border-transparent text-c3 hover:text-c3"
-          }`}
-          onClick={() => onAppChange(tab.id)}
-        >
-          {tab.label}
-        </button>
-      ))}
-    </div>
-  );
-}
 
 /** Scheduled game: pregame tabs + two-column Preview; Away/Home team preview. */
 export function WnbaPregameCenter({ detail }: { detail: GameDetail }) {
   const [activeTab, setActiveTab] = useState<PregameTab>("preview");
-  const [propsApp, setPropsApp] = useState<PropsAppTab>("prizepicks");
   const oddsQuery = useWnbaOdds();
-
-  const prizeQuery = useWnbaGameProps({
-    espnEventId: detail.espnEventId,
-    app: "prizepicks",
-    enabled: activeTab === "props" && propsApp === "prizepicks",
-  });
-  const underdogQuery = useWnbaGameProps({
-    espnEventId: detail.espnEventId,
-    app: "underdog",
-    enabled: activeTab === "props" && propsApp === "underdog",
-  });
-  const propsQuery = propsApp === "underdog" ? underdogQuery : prizeQuery;
 
   const oddsBoards = collectWnbaOddsBookBoards(
     oddsQuery.data,
@@ -143,25 +86,6 @@ export function WnbaPregameCenter({ detail }: { detail: GameDetail }) {
               teamPreviewQuery.isError ? "Failed to load team preview" : null
             }
           />
-        ) : activeTab === "props" ? (
-          <div className="space-y-4" data-testid="wnba-pregame-props-panel">
-            <GamePropsAppTabs activeApp={propsApp} onAppChange={setPropsApp} />
-            <div
-              id={`wnba-game-props-${propsApp}-panel`}
-              role="tabpanel"
-              aria-labelledby={`wnba-game-props-${propsApp}-tab`}
-            >
-              <WnbaGamePropsGrid
-                categories={propsQuery.data?.categories ?? []}
-                isPending={propsQuery.isPending}
-                error={
-                  propsQuery.isError
-                    ? "Failed to load props"
-                    : propsQuery.data?.error
-                }
-              />
-            </div>
-          </div>
         ) : null}
       </div>
     </div>

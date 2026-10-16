@@ -68,19 +68,15 @@ describe("MlbPregameBroadcastHeader", () => {
     expect(onTabChange).toHaveBeenCalledWith("home");
   });
 
-  it("calls onTabChange for Props tab", async () => {
-    const user = userEvent.setup();
-    const onTabChange = vi.fn();
+  it("does not offer a Props tab", () => {
     render(
       <MlbPregameBroadcastHeader
         detail={mlbScheduledDetail}
         activeTab="preview"
-        onTabChange={onTabChange}
+        onTabChange={vi.fn()}
       />,
     );
-
-    await user.click(screen.getByRole("tab", { name: "Props" }));
-    expect(onTabChange).toHaveBeenCalledWith("props");
+    expect(screen.queryByRole("tab", { name: "Props" })).not.toBeInTheDocument();
   });
 
   it("omits record and last-10 lines when null", () => {

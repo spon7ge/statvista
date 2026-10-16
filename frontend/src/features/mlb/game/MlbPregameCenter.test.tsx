@@ -401,7 +401,7 @@ describe("MlbPregameCenter", () => {
     expect(useMlbOdds).toHaveBeenLastCalledWith({ enabled: false });
   });
 
-  it("does not show or fetch player props on Preview", async () => {
+  it("does not offer a Props tab or fetch game props", async () => {
     fetchMlbLineups.mockResolvedValue({
       date: mlbScheduledDetail.gameDate,
       fetched_at: "2026-08-04T10:00:00-04:00",
@@ -413,91 +413,8 @@ describe("MlbPregameCenter", () => {
     renderWithClient(<MlbPregameCenter detail={mlbScheduledDetail} />);
 
     expect(screen.getByTestId("mlb-projected-lineups")).toBeInTheDocument();
+    expect(screen.queryByRole("tab", { name: "Props" })).not.toBeInTheDocument();
     expect(screen.queryByTestId("mlb-game-props-grid")).not.toBeInTheDocument();
     await waitFor(() => expect(fetchMlbGameProps).not.toHaveBeenCalled());
-  });
-
-  it("shows PrizePicks player props when Props tab is selected", async () => {
-    fetchMlbLineups.mockResolvedValue({
-      date: mlbScheduledDetail.gameDate,
-      fetched_at: "2026-08-04T10:00:00-04:00",
-      source: "rotowire",
-      games: [],
-    });
-    fetchMlbGameProps.mockResolvedValue(judgeGameProps);
-    const user = userEvent.setup();
-
-    renderWithClient(<MlbPregameCenter detail={mlbScheduledDetail} />);
-
-    await user.click(screen.getByRole("tab", { name: "Props" }));
-
-    expect(screen.getByRole("tab", { name: "Props" })).toHaveAttribute(
-      "aria-selected",
-      "true",
-    );
-    expect(screen.getByRole("tab", { name: "PrizePicks" })).toHaveAttribute(
-      "aria-selected",
-      "true",
-    );
-    expect(screen.getByTestId("mlb-pregame-props-panel")).toBeInTheDocument();
-    expect(await screen.findByTestId("mlb-game-props-grid")).toBeInTheDocument();
-    expect(await screen.findByText("A. Judge")).toBeInTheDocument();
-    expect(screen.queryByTestId("mlb-projected-lineups")).not.toBeInTheDocument();
-    expect(fetchMlbGameProps).toHaveBeenCalledWith({
-      gamePk: mlbScheduledDetail.mlbGamePk,
-      app: "prizepicks",
-    });
-  });
-
-  it("requests underdog props when Underdog sub-tab is selected under Props", async () => {
-    fetchMlbLineups.mockResolvedValue({
-      date: mlbScheduledDetail.gameDate,
-      fetched_at: "2026-08-04T10:00:00-04:00",
-      source: "rotowire",
-      games: [],
-    });
-    fetchMlbGameProps.mockImplementation(
-      async ({ app }: { gamePk: string; app: string }) => ({
-        ...emptyGameProps,
-        app,
-        categories:
-          app === "underdog"
-            ? [
-                {
-                  stat: "hits",
-                  label: "Hits",
-                  players: [
-                    {
-                      player_name: "J. Soto",
-                      team_abbrev: "NYY",
-                      headshot_url: null,
-                      line: 0.5,
-                      over: { american: -110, book: "draftkings" },
-                      under: null,
-                    },
-                  ],
-                },
-              ]
-            : [],
-      }),
-    );
-    const user = userEvent.setup();
-
-    renderWithClient(<MlbPregameCenter detail={mlbScheduledDetail} />);
-
-    await user.click(screen.getByRole("tab", { name: "Props" }));
-    await user.click(screen.getByRole("tab", { name: "Underdog" }));
-
-    await waitFor(() =>
-      expect(fetchMlbGameProps).toHaveBeenCalledWith({
-        gamePk: mlbScheduledDetail.mlbGamePk,
-        app: "underdog",
-      }),
-    );
-    expect(await screen.findByText("J. Soto")).toBeInTheDocument();
-    expect(screen.getByRole("tab", { name: "Underdog" })).toHaveAttribute(
-      "aria-selected",
-      "true",
-    );
   });
 });

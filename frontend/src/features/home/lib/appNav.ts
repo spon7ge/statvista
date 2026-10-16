@@ -42,22 +42,16 @@ export function activeLeagueFromPath(pathname: string): LeagueSlug | null {
 export function sectionHref(league: LeagueSlug, item: string): string | null {
   if (item === "Games") return `/${league}/matchups`;
   if (item === "Props" && league !== "nba") return `/${league}/prop_picks`;
-  if (item === "Legs" && league !== "nba") return `/${league}/legs`;
-  if (item === "Arbitrage" && league !== "nba") return `/${league}/arbitrage`;
   return null;
 }
 
 export function isActiveSection(pathname: string, item: string): boolean {
   if (item === "Games") return pathname.endsWith("/matchups");
   if (item === "Props") return pathname.includes("/prop_picks");
-  if (item === "Legs") return pathname.endsWith("/legs");
-  if (item === "Arbitrage") return pathname.endsWith("/arbitrage");
   return false;
 }
 
 const DEFAULT_PROPS_HREF = "/mlb/prop_picks";
-const DEFAULT_LEGS_HREF = "/mlb/legs";
-const DEFAULT_ARBITRAGE_HREF = "/mlb/arbitrage";
 const DEFAULT_MATCHUPS_HREF = LANDING_HREF;
 
 /** Sidebar Props shortcut: current league's board, else MLB. */
@@ -65,20 +59,6 @@ export function homePropsHref(pathname: string): string {
   const league = activeLeagueFromPath(pathname);
   if (!league) return DEFAULT_PROPS_HREF;
   return sectionHref(league, "Props") ?? DEFAULT_PROPS_HREF;
-}
-
-/** Sidebar Legs shortcut: current league's legs, else MLB. */
-export function homeLegsHref(pathname: string): string {
-  const league = activeLeagueFromPath(pathname);
-  if (!league) return DEFAULT_LEGS_HREF;
-  return sectionHref(league, "Legs") ?? DEFAULT_LEGS_HREF;
-}
-
-/** Sidebar Arbitrage shortcut: current league's arb, else MLB. */
-export function homeArbitrageHref(pathname: string): string {
-  const league = activeLeagueFromPath(pathname);
-  if (!league) return DEFAULT_ARBITRAGE_HREF;
-  return sectionHref(league, "Arbitrage") ?? DEFAULT_ARBITRAGE_HREF;
 }
 
 /** Sidebar Games shortcut: current league's slate, else MLB. */

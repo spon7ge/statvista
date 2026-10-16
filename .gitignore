@@ -1,51 +1,66 @@
-
-# virtual environment
-nba_model/
-statvista/
-.venv/
-venv/
-
-**/matchup_cache/
-
-# python cache
-__pycache__/
-**/__pycache__/
-.pytest_cache/
-**/.pytest_cache/
-
-# os files
-.DS_Store
-
-**/catboost_info/
-
+# --- Secrets & local env ---
 .env
+.env.*
+!.env.docker.example
+!.env*.example
 data/credentials/
-node_modules/
-frontend/dist/
-
-# dbt
-dbt/target/
-dbt/dbt_packages/
-dbt/logs/
-# Ignore all data in TRAIN_DATA (files are too large, can be redownloaded)
-DATA/CSV_FILES/TRAIN_DATA/
-data/processed/
-
-# large pbp files
-data/raw/season_stats/*_pbp.csv
-data/raw/pbp_season_stats/
-notebooks/pbp_checkpoint.csv
-
-# local gold / season pull caches and backend outbound / player-of-the-game disk cache
-data/cache/
-backend/data/cache/
-.worktrees/
-.superpowers/
-
-# PrizePicks browser session (auto-saved by scrapers; do not commit)
 **/.session_cookie.txt
 **/.playwright_storage.json
 **/.pw_profile/
 
-# scraper snapshot dumps (local only)
-data/props/
+# --- Local datasets, caches, scraper dumps (keep on disk; do not commit) ---
+/data/
+
+# --- Virtualenvs ---
+.venv/
+venv/
+nba_model/
+statvista/
+
+# --- Python ---
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+**/.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+**/catboost_info/
+**/matchup_cache/
+
+# --- Node / frontend ---
+node_modules/
+frontend/dist/
+frontend/node_modules/
+
+# --- dbt ---
+dbt/target/
+dbt/dbt_packages/
+dbt/logs/
+
+# --- Airflow local logs ---
+airflow/logs/
+
+# --- Model training artifacts (optional local binaries) ---
+models/saved_models/*.joblib
+src/models/saved_models/*.joblib
+
+# --- Notebooks / IDE / OS ---
+.ipynb_checkpoints/
+.DS_Store
+.idea/
+*.swp
+*~
+
+# --- Local worktrees & agent scratch ---
+.worktrees/
+.superpowers/
+notes.txt
+
+# --- Large / checkpoint leftovers (if recreated outside /data) ---
+notebooks/pbp_checkpoint.csv
+DATA/CSV_FILES/TRAIN_DATA/

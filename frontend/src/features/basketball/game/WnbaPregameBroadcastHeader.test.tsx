@@ -1,6 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
 import { render, screen, within } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { WnbaPregameBroadcastHeader } from "./WnbaPregameBroadcastHeader";
 import { buildScheduledDetail } from "../lib/testFixtures";
 
@@ -42,7 +41,7 @@ describe("WnbaPregameBroadcastHeader", () => {
     expect(screen.getByText(/4-6 in Last 10/)).toBeInTheDocument();
   });
 
-  it("centers Preview Away Home Props tabs", () => {
+  it("centers Preview Away Home tabs without Props", () => {
     render(
       <WnbaPregameBroadcastHeader
         detail={detail}
@@ -59,22 +58,7 @@ describe("WnbaPregameBroadcastHeader", () => {
     expect(
       screen.getByRole("tab", { name: "Toronto Tempo" }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("tab", { name: "Props" })).toBeInTheDocument();
-  });
-
-  it("calls onTabChange for Props tab", async () => {
-    const user = userEvent.setup();
-    const onTabChange = vi.fn();
-    render(
-      <WnbaPregameBroadcastHeader
-        detail={detail}
-        activeTab="preview"
-        onTabChange={onTabChange}
-      />,
-    );
-
-    await user.click(screen.getByRole("tab", { name: "Props" }));
-    expect(onTabChange).toHaveBeenCalledWith("props");
+    expect(screen.queryByRole("tab", { name: "Props" })).not.toBeInTheDocument();
   });
 
   it("omits record and last-10 lines when null", () => {

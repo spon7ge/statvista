@@ -661,6 +661,30 @@ def test_load_pinnacle_team_snapshot_calls_upsert(mock_upsert):
     ]
 
 
+def test_load_pinnacle_props_routes_nfl_not_mlb(mock_upsert):
+    count = load_snapshots.load_pinnacle_props_snapshot(
+        PINNACLE_GAMES, league="nfl", scraped_at=SCRAPED
+    )
+    assert count >= 1
+    mock_upsert.assert_called_once()
+    table, _df = mock_upsert.call_args[0]
+    assert table == "nfl_pinnacle"
+    assert table != "mlb_pinnacle"
+    assert table != "wnba_pinnacle"
+
+
+def test_load_pinnacle_team_routes_nfl_not_mlb(mock_upsert):
+    count = load_snapshots.load_pinnacle_team_snapshot(
+        PINNACLE_TEAM_GAMES, league="nfl", scraped_at=SCRAPED
+    )
+    assert count >= 1
+    mock_upsert.assert_called_once()
+    table, _df = mock_upsert.call_args[0]
+    assert table == "nfl_pinnacle_team"
+    assert table != "mlb_pinnacle_team"
+    assert table != "wnba_pinnacle_team"
+
+
 def test_load_pinnacle_props_snapshot_skip_db(monkeypatch, mock_upsert):
     monkeypatch.setenv("PINNACLE_SKIP_DB", "1")
     count = load_snapshots.load_pinnacle_props_snapshot(
@@ -765,6 +789,74 @@ def test_load_prophetx_props_routes_wnba_table(monkeypatch, mock_upsert):
     table, df = mock_upsert.call_args[0]
     assert table == "wnba_prophetx"
     assert mock_upsert.call_args[1]["schema"] == "odds"
+
+
+def test_load_prophetx_props_routes_nfl_not_mlb(monkeypatch, mock_upsert):
+    monkeypatch.delenv("PROPHETX_SKIP_DB", raising=False)
+    games = [
+        {
+            "event_id": 1,
+            "competitors": [
+                {"name": "Away", "seq": 1},
+                {"name": "Home", "seq": 0},
+            ],
+            "props": [
+                {
+                    "player": "Patrick Mahomes",
+                    "stat": "passing_yards",
+                    "line": 249.5,
+                    "over": {"american": -115, "stake": 10.0},
+                    "under": {"american": -105, "stake": 8.0},
+                    "market_id": 99,
+                    "sub_type": "player_pass_yds",
+                    "is_main": True,
+                }
+            ],
+        }
+    ]
+    count = load_snapshots.load_prophetx_props_snapshot(games, league="nfl")
+    assert count >= 1
+    mock_upsert.assert_called_once()
+    table, _df = mock_upsert.call_args[0]
+    assert table == "nfl_prophetx"
+    assert table != "mlb_prophetx"
+
+
+def test_load_prophetx_team_routes_nfl_not_mlb(monkeypatch, mock_upsert):
+    monkeypatch.delenv("PROPHETX_SKIP_DB", raising=False)
+    games = [
+        {
+            "event_id": 42,
+            "competitors": [
+                {"name": "Home", "seq": 0, "id": 1},
+                {"name": "Away", "seq": 1, "id": 2},
+            ],
+            "team_markets": {
+                "moneyline": [
+                    {
+                        "name": "Away",
+                        "american": 130,
+                        "line": None,
+                        "stake": None,
+                        "competitor_id": 2,
+                    },
+                    {
+                        "name": "Home",
+                        "american": -150,
+                        "line": None,
+                        "stake": None,
+                        "competitor_id": 1,
+                    },
+                ]
+            },
+        }
+    ]
+    count = load_snapshots.load_prophetx_team_snapshot(games, league="nfl")
+    assert count >= 1
+    mock_upsert.assert_called_once()
+    table, _df = mock_upsert.call_args[0]
+    assert table == "nfl_prophetx_team"
+    assert table != "mlb_prophetx_team"
 
 
 def test_load_novig_props_skip_db(monkeypatch, mock_upsert):
@@ -872,3 +964,59 @@ def test_load_novig_props_still_routes_mlb(monkeypatch, mock_upsert):
     assert count >= 1
     table, _df = mock_upsert.call_args[0]
     assert table == "mlb_novig"
+
+
+def test_load_novig_props_routes_nfl_not_mlb(monkeypatch, mock_upsert):
+    monkeypatch.delenv("NOVIG_SKIP_DB", raising=False)
+    games = [
+        {
+            "event_id": "uuid-1",
+            "competitors": [
+                {"name": "Home", "seq": 0},
+                {"name": "Away", "seq": 1},
+            ],
+            "props": [
+                {
+                    "player": "A",
+                    "stat": "passing_yards",
+                    "line": 249.5,
+                    "over": {"american": -110, "stake": None},
+                    "under": None,
+                    "market_id": "m1",
+                    "sub_type": "passing_yards",
+                    "is_main": True,
+                }
+            ],
+        }
+    ]
+    count = load_snapshots.load_novig_props_snapshot(games, league="nfl")
+    assert count >= 1
+    mock_upsert.assert_called_once()
+    table, _df = mock_upsert.call_args[0]
+    assert table == "nfl_novig"
+    assert table != "mlb_novig"
+
+
+def test_load_novig_team_routes_nfl_not_mlb(monkeypatch, mock_upsert):
+    monkeypatch.delenv("NOVIG_SKIP_DB", raising=False)
+    games = [
+        {
+            "event_id": "uuid-1",
+            "competitors": [
+                {"name": "Home", "seq": 0},
+                {"name": "Away", "seq": 1},
+            ],
+            "team_markets": {
+                "moneyline": [
+                    {"name": "Away", "american": 130, "line": None, "stake": None},
+                    {"name": "Home", "american": -150, "line": None, "stake": None},
+                ]
+            },
+        }
+    ]
+    count = load_snapshots.load_novig_team_snapshot(games, league="nfl")
+    assert count >= 1
+    mock_upsert.assert_called_once()
+    table, _df = mock_upsert.call_args[0]
+    assert table == "nfl_novig_team"
+    assert table != "mlb_novig_team"

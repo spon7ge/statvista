@@ -4,7 +4,7 @@ import { PropPicksLeagueSwitcher } from "@/features/home/PropPicksLeagueSwitcher
 
 export type WnbaPropAppTab = "prizepicks" | "underdog";
 
-/** Shared by game-detail Props tabs; the research board no longer reads `?app=`. */
+/** DFS app tab ids shared with prop helpers; research board no longer reads `?app=`. */
 export function appFromSearch(value: string | null): WnbaPropAppTab {
   return value === "underdog" ? "underdog" : "prizepicks";
 }

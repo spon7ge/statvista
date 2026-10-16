@@ -6,17 +6,18 @@ describe("AboutContent", () => {
   it("renders product intro, sections, and data source links", () => {
     render(<AboutContent />);
     expect(screen.getByText(/statvista/i)).toBeInTheDocument();
-    const whatSection = screen
-      .getByRole("heading", { name: /what you can do/i })
-      .closest("section")!;
+    const whatHeading = screen.getByRole("heading", { name: /what you can do/i });
+    expect(whatHeading.closest(".about-content")).toBeTruthy();
+    const whatSection = whatHeading.closest("section")!;
     expect(whatSection).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /tech stack/i })).toBeInTheDocument();
     expect(
       screen.getByRole("heading", { name: /data sources/i }),
     ).toBeInTheDocument();
     expect(within(whatSection).getByText(/^Props$/)).toBeInTheDocument();
-    expect(within(whatSection).getByText(/^Legs$/)).toBeInTheDocument();
     expect(within(whatSection).getByText(/^Games$/)).toBeInTheDocument();
+    expect(within(whatSection).queryByText(/^Legs$/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/arbitrage/i)).not.toBeInTheDocument();
     expect(screen.getByText(/react 19/i)).toBeInTheDocument();
     const espn = screen.getByRole("link", { name: /espn/i });
     expect(espn).toHaveAttribute("href", "https://www.espn.com/");

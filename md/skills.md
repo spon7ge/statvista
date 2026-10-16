@@ -18,8 +18,10 @@ changes are where secrets get committed and validation gets forgotten.
    task at hand.
 2. **State the plan** in one or two sentences before editing: which files, and
    which of the *Must* items in §17 apply.
-3. **Write the tests** in the same change as the code (§07). A bug fix without
-   a regression test is not finished. Do not defer tests to "a follow-up."
+3. **Write the tests first** (§07). Run them and confirm they fail for the
+   reason you expect, then write the implementation until they pass. For a bug
+   fix, the first step is a regression test that reproduces the bug. Tests and
+   implementation land in the same commit. Do not defer tests to "a follow-up."
 4. **Verify against §17 before reporting completion.** Walk the *Must* list
    explicitly. If an item does not apply, say why; do not silently drop it.
 5. **Report honestly.** If tests fail, show the output. If part of the task is
@@ -200,14 +202,18 @@ bureaucracy — it is what makes review, debugging, and reverting possible.
 Structuring a new email validator, for example:
 
 
-1. Add the validation function with a basic format check.
-2. Extend to full RFC 5322 handling.
-3. Add unit tests for the happy path and edge cases.
-4. Add error handling and user-facing messages.
-5. Wire into the registration flow with an integration test.
+1. Write unit tests for the basic format check, then add the validation
+   function that makes them pass.
+2. Add failing tests for the RFC 5322 edge cases, then extend the function to
+   handle them.
+3. Write tests for the error cases and user-facing messages, then implement
+   the error handling.
+4. Write an integration test for registration with an invalid email, then wire
+   the validator into the registration flow.
 
 
-Each step is independently reviewable and independently revertable.
+Each step pairs its tests with the code that satisfies them, so each is
+independently reviewable, independently revertable, and green on its own.
 
 
 ---
@@ -437,9 +443,34 @@ function validateEmail(email: string): void {
 ## 07 Testing Strategy
 
 
-Tests ship in the same commit as the code they cover. **A bug fix without a
-regression test is incomplete** — that test is the only thing stopping the bug
-from coming back.
+**Write the test before the code it covers.** A bug fix without a regression
+test is incomplete — that test is the only thing stopping the bug from coming
+back.
+
+
+### Test first, then implement
+
+
+Every change follows the same loop:
+
+
+1. **Write a test** that describes the behaviour you want, or reproduces the
+   bug you are fixing.
+2. **Run it and watch it fail.** Check that it fails for the reason you
+   expect — a missing function or a wrong result, not a typo or a broken
+   import. A test you have never seen fail may not be testing anything.
+3. **Write the least code that makes it pass.**
+4. **Refactor** with the test as a safety net, keeping it green.
+
+
+Tests and implementation are written in that order but **committed together**.
+A commit containing only failing tests turns CI red (§03) and breaks
+`git bisect` for everyone after you.
+
+
+Test-first is the default, not a ritual. Where the shape of the code is
+genuinely unknown — a spike, a prototype of a third-party integration — explore
+freely, then throw the spike away and rebuild it test-first before it merges.
 
 
 Three layers, each earning its cost.
@@ -1449,9 +1480,10 @@ Authentication failures, authorization denials, and rate-limit trips — with
 - [ ] **No string-concatenated SQL, HTML, or shell commands**
 - [ ] **Errors handled** — nothing silently swallowed, no internals leaked to
       users
-- [ ] **Tests written and passing** — unit tests for logic, integration tests
-      for the route, e2e if a critical journey changed
-- [ ] **Bug fixes include a regression test**
+- [ ] **Tests written first and passing** — unit tests for logic, integration
+      tests for the route, e2e if a critical journey changed
+- [ ] **Bug fixes include a regression test** that was seen to fail before the
+      fix
 - [ ] **CI green** — format, lint, typecheck, tests
 - [ ] **Keyboard accessible**, labelled, with visible focus (UI changes)
 - [ ] **README / `.env.example` updated** if setup or configuration changed
@@ -1478,30 +1510,16 @@ Authentication failures, authorization denials, and rate-limit trips — with
 ## 18 Worked Example: User Registration
 
 
-How the guide applies to one real feature, split into reviewable changes.
+How the guide applies to one real feature, split into reviewable changes. Each
+change starts with tests, watched failing, then adds the code that makes them
+pass. Tests and code land in the same commit (§07).
 
 
-### Change 1 — validation schema and its tests
+### Change 1 — validation schema
 
 
-```ts
-// src/users/user.validator.ts
-import { z } from 'zod';
-
-
-// Email capped at 254 characters per RFC 5321.
-export const registrationSchema = z.object({
-  email: z.string().trim().toLowerCase().email().max(254),
-  password: z
-    .string()
-    .min(8, 'Password must be at least 8 characters')
-    .regex(/[A-Z]/, 'Password must contain an uppercase letter')
-    .regex(/[0-9]/, 'Password must contain a number'),
-});
-
-
-export type RegistrationInput = z.infer<typeof registrationSchema>;
-```
+**Tests first.** Run them and they fail, because `registrationSchema` does not
+exist yet.
 
 
 ```ts
@@ -1553,7 +1571,72 @@ describe('registrationSchema', () => {
 ```
 
 
+**Then the implementation** that makes them pass:
+
+
+```ts
+// src/users/user.validator.ts
+import { z } from 'zod';
+
+
+// Email capped at 254 characters per RFC 5321.
+export const registrationSchema = z.object({
+  email: z.string().trim().toLowerCase().email().max(254),
+  password: z
+    .string()
+    .min(8, 'Password must be at least 8 characters')
+    .regex(/[A-Z]/, 'Password must contain an uppercase letter')
+    .regex(/[0-9]/, 'Password must contain a number'),
+});
+
+
+export type RegistrationInput = z.infer<typeof registrationSchema>;
+```
+
+
 ### Change 2 — repository layer
+
+
+**Tests first,** against the real test database. The duplicate-email test
+also proves the unique index on `users.email` exists; if the migration is
+missing, it fails here rather than in production.
+
+
+```ts
+// src/users/user.repository.test.ts
+describe('UserRepository', () => {
+  const repo = new UserRepository();
+
+
+  beforeEach(async () => await resetTestDatabase());
+
+
+  it('creates a user that can then be found by email', async () => {
+    const created = await repo.create('new@example.com', 'hashed-value');
+
+
+    const found = await repo.findByEmail('new@example.com');
+    expect(found?.id).toBe(created.id);
+  });
+
+
+  it('returns null for an unknown email', async () => {
+    expect(await repo.findByEmail('nobody@example.com')).toBeNull();
+  });
+
+
+  it('throws UserAlreadyExistsError on a duplicate email', async () => {
+    await repo.create('taken@example.com', 'hashed-value');
+
+
+    await expect(repo.create('taken@example.com', 'other-hash'))
+      .rejects.toBeInstanceOf(UserAlreadyExistsError);
+  });
+});
+```
+
+
+**Then the implementation:**
 
 
 ```ts
@@ -1588,6 +1671,59 @@ export class UserRepository {
 
 
 ### Change 3 — service layer
+
+
+**Tests first.** The repository and database are real. Only the logger is
+stubbed, because logging is not the behaviour under test.
+
+
+```ts
+// src/users/user.service.test.ts
+describe('UserService.register', () => {
+  const users = new UserRepository();
+  const service = new UserService(
+    users,
+    new PasswordService(),
+    { info: vi.fn(), warn: vi.fn(), error: vi.fn() } as unknown as Logger,
+  );
+
+
+  beforeEach(async () => await resetTestDatabase());
+
+
+  it('returns the new user on success', async () => {
+    const result = await service.register({
+      email: 'new@example.com',
+      password: 'SecurePass123',
+    });
+
+
+    expect(result.ok).toBe(true);
+  });
+
+
+  it('returns EMAIL_IN_USE for a duplicate email', async () => {
+    const input = { email: 'taken@example.com', password: 'SecurePass123' };
+    await service.register(input);
+
+
+    const result = await service.register(input);
+    expect(result).toEqual({ ok: false, error: 'EMAIL_IN_USE' });
+  });
+
+
+  it('never stores the password in plain text', async () => {
+    await service.register({ email: 'hash@example.com', password: 'SecurePass123' });
+
+
+    const user = await users.findByEmail('hash@example.com');
+    expect(user!.passwordHash).not.toContain('SecurePass123');
+  });
+});
+```
+
+
+**Then the implementation:**
 
 
 ```ts
@@ -1628,36 +1764,7 @@ export class UserService {
 ### Change 4 — HTTP route
 
 
-```ts
-// src/users/user.routes.ts
-router.post('/register', rateLimit({ max: 5, windowMs: 60_000 }), async (req, res) => {
-  const parsed = registrationSchema.safeParse(req.body);
-
-
-  if (!parsed.success) {
-    return res.status(400).json({ errors: parsed.error.flatten().fieldErrors });
-  }
-
-
-  const result = await userService.register(parsed.data);
-
-
-  if (!result.ok) {
-    // Deliberately vague, so the endpoint cannot be used to enumerate
-    // which email addresses have accounts.
-    return result.error === 'EMAIL_IN_USE'
-      ? res.status(409).json({ error: 'Could not create account with those details' })
-      : res.status(500).json({ error: 'Something went wrong. Please try again.' });
-  }
-
-
-  await createSession(res, result.value);
-  res.status(201).json({ id: result.value.id });
-});
-```
-
-
-### Change 5 — integration and e2e tests
+**Tests first:**
 
 
 ```ts
@@ -1692,17 +1799,55 @@ describe('POST /register', () => {
   });
 
 
-  it('never stores the password in plain text', async () => {
-    await request(app)
+  it('rejects a weak password without creating a user', async () => {
+    const res = await request(app)
       .post('/register')
-      .send({ email: 'hash@example.com', password: 'SecurePass123' });
+      .send({ email: 'weak@example.com', password: 'short' });
 
 
-    const user = await userRepository.findByEmail('hash@example.com');
-    expect(user!.passwordHash).not.toContain('SecurePass123');
+    expect(res.status).toBe(400);
+    expect(await userRepository.findByEmail('weak@example.com')).toBeNull();
   });
 });
 ```
+
+
+**Then the implementation:**
+
+
+```ts
+// src/users/user.routes.ts
+router.post('/register', rateLimit({ max: 5, windowMs: 60_000 }), async (req, res) => {
+  const parsed = registrationSchema.safeParse(req.body);
+
+
+  if (!parsed.success) {
+    return res.status(400).json({ errors: parsed.error.flatten().fieldErrors });
+  }
+
+
+  const result = await userService.register(parsed.data);
+
+
+  if (!result.ok) {
+    // Deliberately vague, so the endpoint cannot be used to enumerate
+    // which email addresses have accounts.
+    return result.error === 'EMAIL_IN_USE'
+      ? res.status(409).json({ error: 'Could not create account with those details' })
+      : res.status(500).json({ error: 'Something went wrong. Please try again.' });
+  }
+
+
+  await createSession(res, result.value);
+  res.status(201).json({ id: result.value.id });
+});
+```
+
+
+### Change 5 — signup page
+
+
+**E2E tests first.** They describe the journey before the page exists:
 
 
 ```ts
@@ -1730,6 +1875,12 @@ test('the signup form reports a weak password inline', async ({ page }) => {
 ```
 
 
+**Then build the form** until both pass. It is omitted here; follow §15 for
+labels, keyboard access, and inline error text. Because the tests select by
+label and role, a form that passes them is already most of the way to
+accessible.
+
+
 ---
 
 
@@ -1746,8 +1897,8 @@ Ordered by how much each protects the project:
 5. **Security baseline holds** — parameterized queries, server-side authorization,
    proper password hashing
 6. **Inputs validated at the boundary** — schema at the edge, trust inside
-7. **Tests match the risk** — many unit, some integration, few e2e, always a
-   regression test
+7. **Tests first, matched to risk** — written before the code, many unit, some
+   integration, few e2e, always a regression test
 8. **Code is clean and modular** — small functions, precise types, composition
    over inheritance
 9. **Invariants assert real bugs** — `invariant()`, never `console.assert`
@@ -1761,4 +1912,3 @@ Ordered by how much each protects the project:
 
 The point of all of it is that the next contributor — six months from now,
 possibly you, having forgotten everything — can make a change with confidence.
-

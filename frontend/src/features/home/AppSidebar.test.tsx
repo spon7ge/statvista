@@ -41,7 +41,7 @@ describe("AppSidebar", () => {
     prefetchPropsBoard.mockReset();
   });
 
-  it("lists Props, Legs, Arbitrage, and Games, then Site links", () => {
+  it("lists Props and Games, then Site links", () => {
     renderSidebar("/mlb/matchups");
     expect(
       screen.getByRole("navigation", { name: "Primary" }),
@@ -67,14 +67,10 @@ describe("AppSidebar", () => {
       "href",
       "/mlb/prop_picks",
     );
-    expect(screen.getByRole("link", { name: "Legs" })).toHaveAttribute(
-      "href",
-      "/mlb/legs",
-    );
-    expect(screen.getByRole("link", { name: "Arbitrage" })).toHaveAttribute(
-      "href",
-      "/mlb/arbitrage",
-    );
+    expect(screen.queryByRole("link", { name: "Legs" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("link", { name: "Arbitrage" }),
+    ).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Games" })).toHaveAttribute(
       "href",
       "/mlb/matchups",
@@ -107,11 +103,9 @@ describe("AppSidebar", () => {
     );
   });
 
-  it("uses the previous Lucide shapes for Props, Legs, Arbitrage, Games, Blog, and Settings", () => {
+  it("uses the previous Lucide shapes for Props, Games, Blog, and Settings", () => {
     renderSidebar("/mlb/matchups");
     expect(svgMarkup("Props")).toContain("M14 4h7");
-    expect(svgMarkup("Legs")).toContain("M12.83 2.18");
-    expect(svgMarkup("Arbitrage")).toContain("M8 3 4 7l4 4");
     expect(svgMarkup("Games")).toContain("M8 2v4");
     expect(svgMarkup("Blog", "button")).toContain("M15 18h-5");
     expect(svgMarkup("Settings", "button")).toContain("M9.671 4.136");
@@ -143,19 +137,11 @@ describe("AppSidebar", () => {
     expect(screen.queryByRole("link", { name: /^Game$/ })).not.toBeInTheDocument();
   });
 
-  it("points Props, Legs, Arbitrage, and Games at the current league", () => {
+  it("points Props and Games at the current league", () => {
     renderSidebar("/wnba/matchups");
     expect(screen.getByRole("link", { name: "Props" })).toHaveAttribute(
       "href",
       "/wnba/prop_picks",
-    );
-    expect(screen.getByRole("link", { name: "Legs" })).toHaveAttribute(
-      "href",
-      "/wnba/legs",
-    );
-    expect(screen.getByRole("link", { name: "Arbitrage" })).toHaveAttribute(
-      "href",
-      "/wnba/arbitrage",
     );
     expect(screen.getByRole("link", { name: "Games" })).toHaveAttribute(
       "href",
@@ -163,23 +149,16 @@ describe("AppSidebar", () => {
     );
   });
 
-  it("places Props, Legs, Arbitrage, then Games", () => {
+  it("places Props then Games", () => {
     renderSidebar("/mlb/matchups");
     const props = screen.getByRole("link", { name: "Props" });
-    const legs = screen.getByRole("link", { name: "Legs" });
-    const arbitrage = screen.getByRole("link", { name: "Arbitrage" });
     const matchups = screen.getByRole("link", { name: "Games" });
-    expect(props.compareDocumentPosition(legs) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(
-      legs.compareDocumentPosition(arbitrage) & Node.DOCUMENT_POSITION_FOLLOWING,
-    ).toBeTruthy();
-    expect(
-      arbitrage.compareDocumentPosition(matchups) &
-        Node.DOCUMENT_POSITION_FOLLOWING,
+      props.compareDocumentPosition(matchups) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
   });
 
-  it("falls NBA Props, Legs, and Arbitrage back to MLB", () => {
+  it("falls NBA Props back to MLB while Games stay on NBA", () => {
     renderSidebar("/nba/matchups");
     expect(screen.getByRole("link", { name: "Props" })).toHaveAttribute(
       "href",
@@ -192,14 +171,6 @@ describe("AppSidebar", () => {
     expect(screen.getByRole("link", { name: "Games" })).toHaveAttribute(
       "aria-current",
       "page",
-    );
-    expect(screen.getByRole("link", { name: "Legs" })).toHaveAttribute(
-      "href",
-      "/mlb/legs",
-    );
-    expect(screen.getByRole("link", { name: "Arbitrage" })).toHaveAttribute(
-      "href",
-      "/mlb/arbitrage",
     );
   });
 

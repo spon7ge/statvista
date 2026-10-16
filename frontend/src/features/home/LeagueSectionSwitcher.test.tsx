@@ -13,10 +13,7 @@ vi.mock("./lib/prefetchPropsBoard", () => ({
   prefetchPropsBoard,
 }));
 
-function renderSwitcher(
-  path: string,
-  section: "Props" | "Games" | "Legs" | "Arbitrage",
-) {
+function renderSwitcher(path: string, section: "Props" | "Games") {
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   });
@@ -66,34 +63,6 @@ describe("LeagueSectionSwitcher", () => {
     expect(
       within(leagues).queryByRole("button", { name: "NBA" }),
     ).not.toBeInTheDocument();
-  });
-
-  it("links MLB and WNBA on Legs and disables NBA", () => {
-    renderSwitcher("/mlb/legs", "Legs");
-    const leagues = screen.getByRole("navigation", { name: "Leagues" });
-    expect(within(leagues).getByRole("link", { name: "MLB" })).toHaveAttribute(
-      "href",
-      "/mlb/legs",
-    );
-    expect(within(leagues).getByRole("link", { name: "WNBA" })).toHaveAttribute(
-      "href",
-      "/wnba/legs",
-    );
-    expect(within(leagues).getByRole("button", { name: "NBA" })).toBeDisabled();
-  });
-
-  it("links MLB and WNBA on Arbitrage and disables NBA", () => {
-    renderSwitcher("/mlb/arbitrage", "Arbitrage");
-    const leagues = screen.getByRole("navigation", { name: "Leagues" });
-    expect(within(leagues).getByRole("link", { name: "MLB" })).toHaveAttribute(
-      "href",
-      "/mlb/arbitrage",
-    );
-    expect(within(leagues).getByRole("link", { name: "WNBA" })).toHaveAttribute(
-      "href",
-      "/wnba/arbitrage",
-    );
-    expect(within(leagues).getByRole("button", { name: "NBA" })).toBeDisabled();
   });
 
   it("prefetches the other league board when hovering a Props pill", async () => {

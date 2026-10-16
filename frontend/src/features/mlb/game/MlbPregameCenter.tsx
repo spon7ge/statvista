@@ -1,25 +1,17 @@
 import { useState } from "react";
-import { useMlbGameProps } from "@/features/mlb/hooks/useMlbGameProps";
 import { useMlbLineupMatchup } from "@/features/mlb/hooks/useMlbLineupMatchup";
 import { useMlbLineups } from "@/features/mlb/hooks/useMlbLineups";
 import { useMlbOdds } from "@/features/mlb/hooks/useMlbOdds";
 import { useMlbTeamPreview } from "@/features/mlb/hooks/useMlbTeamPreview";
-import type { MlbPropAppTab } from "@/features/mlb/league/MlbPropPicksHeader";
 import type { ApiMlbLineupGame, ApiMlbLineupSide } from "@/shared/lib/api";
 import {
   MlbPregameBroadcastHeader,
   type PregameTab,
 } from "./MlbPregameBroadcastHeader";
-import { MlbGamePropsGrid } from "./MlbGamePropsGrid";
 import { MlbProjectedLineups } from "./MlbProjectedLineups";
 import { MlbTeamPreview } from "./MlbTeamPreview";
 import { collectMlbOddsBookBoards } from "../lib/mlbOddsBoard";
 import type { MlbGameDetailView } from "../lib/types";
-
-const PROPS_APP_TABS: { id: MlbPropAppTab; label: string }[] = [
-  { id: "prizepicks", label: "PrizePicks" },
-  { id: "underdog", label: "Underdog" },
-];
 
 function sideComplete(side: ApiMlbLineupSide | undefined | null): boolean {
   return Boolean(side?.pitcher?.name) && side?.batters?.length === 9;
@@ -53,44 +45,8 @@ function findCompleteMatch(
   );
 }
 
-function GamePropsAppTabs({
-  activeApp,
-  onAppChange,
-}: {
-  activeApp: MlbPropAppTab;
-  onAppChange: (app: MlbPropAppTab) => void;
-}) {
-  return (
-    <div
-      role="tablist"
-      aria-label="DFS app"
-      className="flex items-center justify-center gap-1 border-b border-line"
-    >
-      {PROPS_APP_TABS.map((tab) => (
-        <button
-          key={tab.id}
-          id={`mlb-game-props-${tab.id}-tab`}
-          type="button"
-          role="tab"
-          aria-selected={activeApp === tab.id}
-          aria-controls={`mlb-game-props-${tab.id}-panel`}
-          className={`border-b-2 px-5 py-2 text-[16px] font-medium transition-colors ${
-            activeApp === tab.id
-              ? "border-c4 text-c3"
-              : "border-transparent text-c3 hover:text-c3"
-          }`}
-          onClick={() => onAppChange(tab.id)}
-        >
-          {tab.label}
-        </button>
-      ))}
-    </div>
-  );
-}
-
 export function MlbPregameCenter({ detail }: { detail: MlbGameDetailView }) {
   const [activeTab, setActiveTab] = useState<PregameTab>("preview");
-  const [propsApp, setPropsApp] = useState<MlbPropAppTab>("prizepicks");
 
   const { data, isPending } = useMlbLineups(
     activeTab === "preview" ? detail.gameDate : undefined,
@@ -113,19 +69,6 @@ export function MlbPregameCenter({ detail }: { detail: MlbGameDetailView }) {
     detail.home.abbrev,
     detail.gameDate ?? undefined,
   );
-
-  const prizeQuery = useMlbGameProps({
-    gamePk: detail.mlbGamePk,
-    app: "prizepicks",
-    enabled: activeTab === "props" && propsApp === "prizepicks",
-  });
-  const underdogQuery = useMlbGameProps({
-    gamePk: detail.mlbGamePk,
-    app: "underdog",
-    enabled: activeTab === "props" && propsApp === "underdog",
-  });
-
-  const propsQuery = propsApp === "underdog" ? underdogQuery : prizeQuery;
 
   const awayPreview = useMlbTeamPreview({
     gamePk: detail.mlbGamePk,
@@ -160,28 +103,6 @@ export function MlbPregameCenter({ detail }: { detail: MlbGameDetailView }) {
             oddsBoards={oddsBoards}
             oddsPending={oddsQuery.isPending}
           />
-        ) : activeTab === "props" ? (
-          <div className="space-y-4" data-testid="mlb-pregame-props-panel">
-            <GamePropsAppTabs
-              activeApp={propsApp}
-              onAppChange={setPropsApp}
-            />
-            <div
-              id={`mlb-game-props-${propsApp}-panel`}
-              role="tabpanel"
-              aria-labelledby={`mlb-game-props-${propsApp}-tab`}
-            >
-              <MlbGamePropsGrid
-                categories={propsQuery.data?.categories ?? []}
-                isPending={propsQuery.isPending}
-                error={
-                  propsQuery.isError
-                    ? "Failed to load props"
-                    : propsQuery.data?.error
-                }
-              />
-            </div>
-          </div>
         ) : activeTab === "away" || activeTab === "home" ? (
           <MlbTeamPreview
             data={teamPreviewQuery.data ?? null}

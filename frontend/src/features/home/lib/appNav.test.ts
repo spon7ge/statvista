@@ -3,8 +3,6 @@ import {
   LANDING_HREF,
   NAV_LEAGUES,
   activeLeagueFromPath,
-  homeArbitrageHref,
-  homeLegsHref,
   homeMatchupsHref,
   homePropsHref,
   isActiveSection,
@@ -55,24 +53,18 @@ describe("LANDING_HREF", () => {
 });
 
 describe("sectionHref", () => {
-  it("returns live hrefs for WNBA Props, Legs, Arbitrage, and Games", () => {
+  it("returns live hrefs for WNBA Props and Games", () => {
     expect(sectionHref("wnba", "Games")).toBe("/wnba/matchups");
     expect(sectionHref("wnba", "Props")).toBe("/wnba/prop_picks");
-    expect(sectionHref("wnba", "Legs")).toBe("/wnba/legs");
-    expect(sectionHref("wnba", "Arbitrage")).toBe("/wnba/arbitrage");
   });
 
-  it("returns MLB Props, Legs, and Arbitrage hrefs", () => {
+  it("returns MLB Props href", () => {
     expect(sectionHref("mlb", "Props")).toBe("/mlb/prop_picks");
-    expect(sectionHref("mlb", "Legs")).toBe("/mlb/legs");
-    expect(sectionHref("mlb", "Arbitrage")).toBe("/mlb/arbitrage");
   });
 
-  it("disables NBA props, legs, and arbitrage", () => {
+  it("disables NBA props", () => {
     expect(sectionHref("nba", "Games")).toBe("/nba/matchups");
     expect(sectionHref("nba", "Props")).toBeNull();
-    expect(sectionHref("nba", "Legs")).toBeNull();
-    expect(sectionHref("nba", "Arbitrage")).toBeNull();
   });
 });
 
@@ -82,24 +74,6 @@ describe("homePropsHref", () => {
     expect(homePropsHref("/mlb/matchups")).toBe("/mlb/prop_picks");
     expect(homePropsHref("/wnba/matchups")).toBe("/wnba/prop_picks");
     expect(homePropsHref("/nba/matchups")).toBe("/mlb/prop_picks");
-  });
-});
-
-describe("homeLegsHref", () => {
-  it("defaults to MLB and follows the current league when it has legs", () => {
-    expect(homeLegsHref("/")).toBe("/mlb/legs");
-    expect(homeLegsHref("/mlb/matchups")).toBe("/mlb/legs");
-    expect(homeLegsHref("/wnba/matchups")).toBe("/wnba/legs");
-    expect(homeLegsHref("/nba/matchups")).toBe("/mlb/legs");
-  });
-});
-
-describe("homeArbitrageHref", () => {
-  it("defaults to MLB and follows the current league when it has arbitrage", () => {
-    expect(homeArbitrageHref("/")).toBe("/mlb/arbitrage");
-    expect(homeArbitrageHref("/mlb/matchups")).toBe("/mlb/arbitrage");
-    expect(homeArbitrageHref("/wnba/matchups")).toBe("/wnba/arbitrage");
-    expect(homeArbitrageHref("/nba/matchups")).toBe("/mlb/arbitrage");
   });
 });
 
@@ -113,13 +87,9 @@ describe("homeMatchupsHref", () => {
 });
 
 describe("isActiveSection", () => {
-  it("marks the four product sections from the path", () => {
+  it("marks Props and Games from the path", () => {
     expect(isActiveSection("/wnba/matchups", "Games")).toBe(true);
     expect(isActiveSection("/wnba/prop_picks", "Props")).toBe(true);
-    expect(isActiveSection("/mlb/legs", "Legs")).toBe(true);
-    expect(isActiveSection("/mlb/arbitrage", "Arbitrage")).toBe(true);
-    expect(isActiveSection("/mlb/prop_picks", "Legs")).toBe(false);
-    expect(isActiveSection("/mlb/prop_picks", "Arbitrage")).toBe(false);
     expect(isActiveSection("/mlb/prop_picks/player/aaron-judge", "Props")).toBe(
       true,
     );

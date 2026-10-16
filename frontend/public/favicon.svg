@@ -1,6 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
-  <rect width="32" height="32" rx="6" fill="#000"/>
-  <rect fill="#003ca8" x="3" y="16" width="7" height="14" rx="1.5" />
-  <rect fill="#0086ff" x="12.5" y="8" width="7" height="22" rx="1.5" />
-  <rect fill="#00c1d8" x="22" y="2" width="7" height="28" rx="1.5" />
+  <!-- Same three-bar mark as StatvistaWordmark; hex because favicons cannot use CSS vars. -->
+  <rect width="32" height="32" rx="4" fill="#12100c" />
+  <rect fill="#f0b429" x="3" y="16" width="7" height="14" rx="1.5" />
+  <rect fill="#f3ebda" x="12.5" y="8" width="7" height="22" rx="1.5" />
+  <rect fill="#f0b429" x="22" y="2" width="7" height="28" rx="1.5" />
 </svg>

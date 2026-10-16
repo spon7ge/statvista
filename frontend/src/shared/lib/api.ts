@@ -89,26 +89,12 @@ export type ApiMlbPropBoardRow = Schemas["MlbPropBoardRow"];
 export type ApiMlbPropBoardResponse = Schemas["MlbPropBoardResponse"];
 export type ApiMlbGamePropsResponse = Schemas["MlbGamePropsResponse"];
 export type ApiMlbTeamPreviewResponse = Schemas["MlbTeamPreviewResponse"];
-export type ApiMlbLegsResponse = Schemas["MlbLegsResponse"];
-export type ApiLegsPlay = Schemas["LegsPlay"];
-export type ApiMlbLegsPlay = ApiLegsPlay;
-export type ApiWnbaLegsResponse = Schemas["WnbaLegsResponse"];
-export type ApiLegsResponse = ApiMlbLegsResponse | ApiWnbaLegsResponse;
 
 export type MlbPropsParams = {
   app: string;
   format: string;
   legs: number;
 };
-
-export type LegsParams = {
-  app: string;
-  format: string;
-  legs: number;
-};
-
-export type MlbLegsParams = LegsParams;
-export type WnbaLegsParams = LegsParams;
 
 export type MlbGamePropsParams = {
   gamePk: string;
@@ -361,46 +347,6 @@ export async function fetchMlbProps({
   });
   if (!res.ok) {
     throw new Error(`MLB props request failed: ${res.status}`);
-  }
-  return res.json();
-}
-
-export async function fetchMlbLegs({
-  app,
-  format,
-  legs,
-}: LegsParams): Promise<ApiMlbLegsResponse> {
-  const qs = new URLSearchParams({
-    app,
-    format,
-    legs: String(legs),
-  });
-  const res = await fetch(`${API_BASE}/api/mlb/legs?${qs}`, {
-    headers: { Accept: "application/json" },
-    cache: "no-store",
-  });
-  if (!res.ok) {
-    throw new Error(`MLB legs request failed: ${res.status}`);
-  }
-  return res.json();
-}
-
-export async function fetchWnbaLegs({
-  app,
-  format,
-  legs,
-}: LegsParams): Promise<ApiWnbaLegsResponse> {
-  const qs = new URLSearchParams({
-    app,
-    format,
-    legs: String(legs),
-  });
-  const res = await fetch(`${API_BASE}/api/wnba/legs?${qs}`, {
-    headers: { Accept: "application/json" },
-    cache: "no-store",
-  });
-  if (!res.ok) {
-    throw new Error(`WNBA legs request failed: ${res.status}`);
   }
   return res.json();
 }

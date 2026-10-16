@@ -331,111 +331,14 @@ describe("WnbaPregameCenter", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("does not show or fetch player props on Preview", async () => {
+  it("does not offer a Props tab or fetch game props", async () => {
     fetchWnbaGameProps.mockResolvedValue(collierGameProps);
 
     renderWithClient(<WnbaPregameCenter detail={scheduledWithPreview} />);
 
     expect(screen.getByTestId("wnba-preview-left-column")).toBeInTheDocument();
+    expect(screen.queryByRole("tab", { name: "Props" })).not.toBeInTheDocument();
     expect(screen.queryByTestId("wnba-game-props-grid")).not.toBeInTheDocument();
     await waitFor(() => expect(fetchWnbaGameProps).not.toHaveBeenCalled());
-  });
-
-  it("shows PrizePicks player props when Props tab is selected", async () => {
-    fetchWnbaGameProps.mockResolvedValue(collierGameProps);
-    const user = userEvent.setup();
-
-    renderWithClient(<WnbaPregameCenter detail={scheduledWithPreview} />);
-
-    await user.click(screen.getByRole("tab", { name: "Props" }));
-
-    expect(screen.getByRole("tab", { name: "Props" })).toHaveAttribute(
-      "aria-selected",
-      "true",
-    );
-    expect(screen.getByRole("tab", { name: "PrizePicks" })).toHaveAttribute(
-      "aria-selected",
-      "true",
-    );
-    expect(screen.getByTestId("wnba-pregame-props-panel")).toBeInTheDocument();
-    expect(await screen.findByTestId("wnba-game-props-grid")).toBeInTheDocument();
-    expect(await screen.findByText("N. Collier")).toBeInTheDocument();
-    expect(screen.queryByTestId("wnba-preview-left-column")).not.toBeInTheDocument();
-    expect(fetchWnbaGameProps).toHaveBeenCalledWith({
-      espnEventId: scheduledWithPreview.espnEventId,
-      app: "prizepicks",
-    });
-  });
-
-  it("requests underdog props when Underdog sub-tab is selected under Props", async () => {
-    fetchWnbaGameProps.mockImplementation(
-      async ({ app }: { espnEventId: string; app: string }) => ({
-        ...emptyGameProps,
-        app,
-        categories:
-          app === "underdog"
-            ? [
-                {
-                  stat: "assists",
-                  label: "Assists",
-                  players: [
-                    {
-                      player_name: "C. Williams",
-                      team_abbrev: "MIN",
-                      headshot_url: null,
-                      line: 5.5,
-                      over: { american: -110, book: "draftkings" },
-                      under: null,
-                    },
-                  ],
-                },
-              ]
-            : [],
-      }),
-    );
-    const user = userEvent.setup();
-
-    renderWithClient(<WnbaPregameCenter detail={scheduledWithPreview} />);
-
-    await user.click(screen.getByRole("tab", { name: "Props" }));
-    await user.click(screen.getByRole("tab", { name: "Underdog" }));
-
-    await waitFor(() =>
-      expect(fetchWnbaGameProps).toHaveBeenCalledWith({
-        espnEventId: scheduledWithPreview.espnEventId,
-        app: "underdog",
-      }),
-    );
-    expect(await screen.findByText("C. Williams")).toBeInTheDocument();
-    expect(screen.getByRole("tab", { name: "Underdog" })).toHaveAttribute(
-      "aria-selected",
-      "true",
-    );
-  });
-
-  it("shows empty copy via grid when Props has no categories", async () => {
-    fetchWnbaGameProps.mockResolvedValue(emptyGameProps);
-    const user = userEvent.setup();
-    renderWithClient(<WnbaPregameCenter detail={scheduledWithPreview} />);
-
-    await user.click(screen.getByRole("tab", { name: "Props" }));
-
-    expect(await screen.findByTestId("wnba-game-props-grid")).toBeInTheDocument();
-    expect(
-      screen.getByText("No props available for this matchup"),
-    ).toBeInTheDocument();
-  });
-
-  it("shows Failed to load props via grid when props query errors", async () => {
-    fetchWnbaGameProps.mockRejectedValue(new Error("boom"));
-    const user = userEvent.setup();
-    renderWithClient(<WnbaPregameCenter detail={scheduledWithPreview} />);
-
-    await user.click(screen.getByRole("tab", { name: "Props" }));
-
-    expect(await screen.findByText("Failed to load props")).toBeInTheDocument();
-    expect(
-      screen.queryByText("No props available for this matchup"),
-    ).not.toBeInTheDocument();
   });
 });

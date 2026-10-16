@@ -26,7 +26,7 @@ docker compose --profile local-db up -d --build
 | API docs | [http://localhost:8000/docs](http://localhost:8000/docs) |
 | Health | [http://localhost:8000/api/health](http://localhost:8000/api/health) |
 
-That starts **web** (React), **api** (FastAPI), **odds** (HTTP scrapers), and **postgres**. Games load from public APIs. **Props** and **Legs** need odds snapshots in the database — the `odds` worker fills those every five minutes.
+That starts **web** (React), **api** (FastAPI), **odds** (HTTP scrapers), and **postgres**. Games load from public APIs. **Props** need odds snapshots in the database — the `odds` worker fills those every five minutes.
 
 If **8000 is already in use** (another API, or `uvicorn --port 8000` on the host), set a free host port in `.env` and start again. The site on 8080 is unchanged; only the published API port moves.
 
@@ -72,7 +72,7 @@ pip install -r requirements.txt
 PYTHONPATH=..:. uvicorn app.main:app --reload --port 8000
 ```
 
-Optional: a repo-root `.env` with `SUPABASE_DB_URL` (and odds keys if you have them). Games still load from public APIs without it; **Props** and **Legs** need the snapshots in that database.
+Optional: a repo-root `.env` with `SUPABASE_DB_URL` (and odds keys if you have them). Games still load from public APIs without it; **Props** need the snapshots in that database.
 
 ### Site
 
@@ -88,14 +88,14 @@ Open [http://localhost:5173](http://localhost:5173). API docs: [http://localhost
 
 ## What it does
 
-Sidebar: **Props**, **Legs**, **Arbitrage**, **Games**. League pills switch MLB / WNBA (NBA is a placeholder).
+Sidebar: **Props**, **Games**, plus Site links (**About**, **Blog**, **Settings**). League pills switch MLB / WNBA (NBA is a placeholder).
 
 | Page | What you get |
 |------|----------------|
 | **Games** | Dated slates and game centers (lineups, odds, live/final detail) |
 | **Props** | DFS-anchored player lines next to sportsbook odds |
-| **Legs** | Complete PrizePicks / Underdog entries priced vs sharp books |
-| **Arbitrage** | Shell — not wired yet |
+| **About** | Product overview and data sources |
+| **Blog** / **Settings** | Placeholders for now |
 
 Research copy only — not a lock and not a betting ticket.
 

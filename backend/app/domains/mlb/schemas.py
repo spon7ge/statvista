@@ -94,14 +94,6 @@ from app.domains.mlb.schemas_leaders import (
     MlbLeaderRow,
     MlbLeadersResponse,
 )
-from app.domains.mlb.schemas_legs import (
-    MlbLegsBookExcluded,
-    MlbLegsBookUsed,
-    MlbLegsEntry,
-    MlbLegsPlay,
-    MlbLegsRejectedSummary,
-    MlbLegsResponse,
-)
 from app.domains.mlb.schemas_scoreboard import (
     MlbGame,
     MlbScoreboardResponse,
@@ -139,12 +131,6 @@ __all__ = [
     "MlbLeaderCategoryKey",
     "MlbLeaderRow",
     "MlbLeadersResponse",
-    "MlbLegsBookExcluded",
-    "MlbLegsBookUsed",
-    "MlbLegsEntry",
-    "MlbLegsPlay",
-    "MlbLegsRejectedSummary",
-    "MlbLegsResponse",
     "MlbLineupBatter",
     "MlbLineupGame",
     "MlbLineupMatchupBatter",

@@ -40,7 +40,8 @@ _CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config.json")
 
 _DEFAULT_CONFIG: dict[str, Any] = {
     "sport_allowlist": ["NBA", "WNBA"],
-    "ud_pickem_url": "https://api.underdogfantasy.com/beta/v5/over_under_lines",
+    # beta/v5 returns 426 upgrade_required; current public pick'em API is /v1.
+    "ud_pickem_url": "https://api.underdogfantasy.com/v1/over_under_lines",
     "headers": {
         "User-Agent": (
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "

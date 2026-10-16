@@ -6,8 +6,6 @@ import { LeaguePropPicksPage } from "@/pages/LeaguePropPicksPage";
 import { MlbGameDetailPage } from "@/pages/MlbGameDetailPage";
 import { MlbPropPicksPage } from "@/pages/MlbPropPicksPage";
 import { NbaGameDetailPage } from "@/pages/NbaGameDetailPage";
-import { LeagueLegsPage } from "@/pages/LeagueLegsPage";
-import { LeagueArbitragePage } from "@/pages/LeagueArbitragePage";
 import { AboutPage } from "@/pages/AboutPage";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 import { LANDING_HREF } from "@/features/home/lib/appNav";
@@ -23,8 +21,6 @@ export function AppRouter() {
           element={<LeagueMatchupsPage league="wnba" />}
         />
         <Route path="/wnba/prop_picks" element={<LeaguePropPicksPage />} />
-        <Route path="/wnba/legs" element={<LeagueLegsPage />} />
-        <Route path="/wnba/arbitrage" element={<LeagueArbitragePage />} />
         <Route
           path="/wnba/prop_picks/player/:playerSlug"
           element={<Navigate to="/wnba/prop_picks" replace />}
@@ -43,8 +39,6 @@ export function AppRouter() {
           element={<LeagueMatchupsPage league="mlb" />}
         />
         <Route path="/mlb/prop_picks" element={<MlbPropPicksPage />} />
-        <Route path="/mlb/legs" element={<LeagueLegsPage />} />
-        <Route path="/mlb/arbitrage" element={<LeagueArbitragePage />} />
         <Route
           path="/mlb/prop_picks/player/:playerSlug"
           element={<Navigate to="/mlb/prop_picks" replace />}

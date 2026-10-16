@@ -61,14 +61,6 @@ from app.domains.wnba.schemas_team_preview import (
     WnbaTeamPreviewTeam,
     WnbaTeamRosterRow,
 )
-from app.domains.wnba.schemas_legs import (
-    WnbaLegsBookExcluded,
-    WnbaLegsBookUsed,
-    WnbaLegsEntry,
-    WnbaLegsPlay,
-    WnbaLegsRejectedSummary,
-    WnbaLegsResponse,
-)
 from app.domains.wnba.schemas_prop_board import (
     WnbaPropBoardBookChip,
     WnbaPropBoardResponse,
@@ -116,12 +108,6 @@ __all__ = [
     "WnbaLeaderCategory",
     "WnbaLeaderRow",
     "WnbaLeadersResponse",
-    "WnbaLegsBookExcluded",
-    "WnbaLegsBookUsed",
-    "WnbaLegsEntry",
-    "WnbaLegsPlay",
-    "WnbaLegsRejectedSummary",
-    "WnbaLegsResponse",
     "WnbaPlayerAverages",
     "WnbaPlayerGame",
     "WnbaPlayerResponse",

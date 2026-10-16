@@ -7,15 +7,11 @@ import {
   IconCalendar,
   IconGear,
   IconInfo,
-  IconLayers,
   IconList,
   IconNewspaper,
-  IconSwap,
 } from "@/shared/ui/Icons";
 import {
   LANDING_HREF,
-  homeArbitrageHref,
-  homeLegsHref,
   homeMatchupsHref,
   homePropsHref,
   isActiveSection,
@@ -30,10 +26,6 @@ export function AppSidebar() {
   const { pathname } = useLocation();
   const propsHref = homePropsHref(pathname);
   const propsActive = isActiveSection(pathname, "Props");
-  const legsHref = homeLegsHref(pathname);
-  const legsActive = isActiveSection(pathname, "Legs");
-  const arbitrageHref = homeArbitrageHref(pathname);
-  const arbitrageActive = isActiveSection(pathname, "Arbitrage");
   const matchupsHref = homeMatchupsHref(pathname);
   const matchupsActive = isActiveSection(pathname, "Games");
   const queryClient = useQueryClient();
@@ -59,22 +51,6 @@ export function AppSidebar() {
             >
               <IconList />
               Props
-            </Link>
-            <Link
-              to={legsHref}
-              aria-current={legsActive ? "page" : undefined}
-              className={rowClass(legsActive)}
-            >
-              <IconLayers />
-              Legs
-            </Link>
-            <Link
-              to={arbitrageHref}
-              aria-current={arbitrageActive ? "page" : undefined}
-              className={rowClass(arbitrageActive)}
-            >
-              <IconSwap />
-              Arbitrage
             </Link>
             <Link
               to={matchupsHref}
