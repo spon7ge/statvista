@@ -12,7 +12,7 @@ client = TestClient(app)
 
 
 def test_wnba_props_board_route_returns_200(monkeypatch):
-    async def fake():
+    async def fake(book: str | None = None):
         from app.domains.wnba.schemas_prop_board import WnbaPropBoardResponse
 
         return WnbaPropBoardResponse(
@@ -23,6 +23,33 @@ def test_wnba_props_board_route_returns_200(monkeypatch):
     res = client.get("/api/wnba/props/board")
     assert res.status_code == 200
     assert res.json()["rows"] == []
+
+
+def test_wnba_props_board_route_passes_book(monkeypatch):
+    seen: dict[str, str | None] = {}
+
+    async def fake(book: str | None = None):
+        from app.domains.wnba.schemas_prop_board import WnbaPropBoardResponse
+
+        seen["book"] = book
+        return WnbaPropBoardResponse(as_of=datetime.now(timezone.utc), rows=[])
+
+    monkeypatch.setattr(routes, "get_wnba_prop_board", fake)
+    res = client.get("/api/wnba/props/board?book=draftkings")
+    assert res.status_code == 200
+    assert seen["book"] == "draftkings"
+
+
+def test_wnba_props_board_route_rejects_unknown_book(monkeypatch):
+    async def fake(book: str | None = None):
+        from app.domains.wnba.prop_board import UnknownBoardBookError
+
+        raise UnknownBoardBookError(book or "")
+
+    monkeypatch.setattr(routes, "get_wnba_prop_board", fake)
+    res = client.get("/api/wnba/props/board?book=not-a-book")
+    assert res.status_code == 422
+    assert res.headers["cache-control"] == "no-store"
 
 
 @pytest.mark.asyncio

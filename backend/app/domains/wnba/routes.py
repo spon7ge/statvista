@@ -10,7 +10,7 @@ from app.domains.wnba.game_detail import get_game_detail
 from app.domains.wnba.game_props import get_wnba_props_for_game
 from app.domains.wnba.leaders import get_wnba_leaders
 from app.domains.wnba.player import get_wnba_player
-from app.domains.wnba.prop_board import get_wnba_prop_board
+from app.domains.wnba.prop_board import UnknownBoardBookError, get_wnba_prop_board
 from app.domains.wnba.props import get_wnba_props_today
 from app.domains.wnba.schemas import (
     WnbaFuturesResponse,
@@ -190,9 +190,19 @@ async def wnba_team_preview(
 
 
 @router.get("/wnba/props/board", response_model=WnbaPropBoardResponse)
-async def wnba_props_board(response: Response) -> WnbaPropBoardResponse:
+async def wnba_props_board(
+    response: Response,
+    book: str | None = Query(default=None),
+) -> WnbaPropBoardResponse:
     response.headers["Cache-Control"] = "no-store"
-    return await get_wnba_prop_board()
+    try:
+        return await get_wnba_prop_board(book)
+    except UnknownBoardBookError as exc:
+        raise HTTPException(
+            status_code=422,
+            detail=f"unknown book: {exc}",
+            headers=_NO_STORE,
+        ) from exc
 
 
 @router.get("/wnba/props/today", response_model=WnbaPropPicksResponse)
