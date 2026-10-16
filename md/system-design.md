@@ -27,12 +27,12 @@ statvista’s public site is a React + Vite app talking to a FastAPI service ove
 ```text
 Browser
   → React (TanStack Query hooks → lib/api.ts)
-  → FastAPI (/api/wnba/*, /api/mlb/scoreboard/today for the live site)
+  → FastAPI (/api/wnba/*, /api/mlb/scoreboard/*, /api/nba/scoreboard/* for the live site)
   → Upstream adapters
       (ESPN, stats.wnba.com, MLB Stats API, ParlayAPI, Supabase odds snapshots, RotoWire)
 ```
 
-Two backend families exist. The **live website mainly uses the WNBA and MLB upstream routes**, not the older Postgres research-dashboard routes.
+Two backend families exist. The **live website mainly uses the WNBA, MLB, and NBA upstream routes** (NBA: matchups scoreboard only), not the older Postgres research-dashboard routes.
 
 | Family | Examples | Used by current React pages? |
 |--------|----------|------------------------------|

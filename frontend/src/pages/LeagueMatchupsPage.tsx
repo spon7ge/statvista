@@ -50,7 +50,11 @@ export function LeagueMatchupsPage({ league }: LeagueMatchupsPageProps) {
     return <MlbMatchupsPage />;
   }
 
-  return <NbaMatchupsPage />;
+  if (league === "nba") {
+    return <NbaMatchupsPage />;
+  }
+
+  return null;
 }
 
 function WnbaMatchupsPage() {
