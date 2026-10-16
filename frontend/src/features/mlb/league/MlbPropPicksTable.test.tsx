@@ -19,7 +19,15 @@ function fixtureRow(
     line: 1.5,
     game_pk: 1,
     game_start_at: "2026-08-23T23:10:00Z",
-    dfs: [{ book: "prizepicks", american: null, url: null }],
+    anchor: {
+      book: "prizepicks",
+      american: -137,
+      url: null,
+      line: 1.5,
+      devig_pct: null,
+      over_american: -137,
+      under_american: -137,
+    },
     books: [{ book: "prophetx", american: -115, url: null }],
     ip_pct: 53,
     opp_def_rank: 12,
@@ -36,11 +44,22 @@ function fixtureRow(
 
 describe("MlbPropPicksTable", () => {
   it("renders board columns and no dfs tabs", () => {
-    render(<MlbPropPicksTable rows={[fixtureRow()]} />);
+    render(
+      <MlbPropPicksTable
+        rows={[
+          fixtureRow({
+            books: [
+              { book: "prophetx", american: -115, url: null, line: 1.5 },
+              { book: "draftkings", american: -120, url: null, line: 2.5 },
+            ],
+          }),
+        ]}
+      />,
+    );
     expect(screen.queryByText(/Last updated/)).not.toBeInTheDocument();
     expect(screen.getByText("Proposition")).toBeInTheDocument();
     expect(screen.getByText("Line")).toBeInTheDocument();
-    expect(screen.getByText("DFS")).toBeInTheDocument();
+    expect(screen.queryByText("DFS")).not.toBeInTheDocument();
     expect(screen.getByText("Odds")).toBeInTheDocument();
     expect(screen.getByText("IP")).toBeInTheDocument();
     expect(screen.queryByText("Opp Def Rank")).not.toBeInTheDocument();
@@ -49,6 +68,12 @@ describe("MlbPropPicksTable", () => {
     expect(screen.getByText("H2H")).toBeInTheDocument();
     expect(screen.queryByRole("tab", { name: "PrizePicks" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "DFS" })).not.toBeInTheDocument();
+    const lineCell = screen.getByTestId("line-cell");
+    expect(lineCell).toHaveTextContent("1.5");
+    expect(lineCell).toHaveTextContent("-137");
+    const odds = screen.getByTestId("odds-cell");
+    expect(within(odds).getByText("1.5")).toBeInTheDocument();
+    expect(within(odds).queryByText("2.5")).not.toBeInTheDocument();
   });
 
   it("renders em dash for null ip", () => {
@@ -273,7 +298,6 @@ describe("MlbPropPicksTable", () => {
       <MlbPropPicksTable
         rows={[
           fixtureRow({
-            dfs: [{ book: "prizepicks", american: null, url: null }],
             books: [
               { book: "prophetx", american: -115, url: null },
               { book: "novig", american: -110, url: null },
@@ -292,7 +316,7 @@ describe("MlbPropPicksTable", () => {
     expect(within(odds).queryByText("-120")).not.toBeInTheDocument();
     expect(within(odds).getByText("+2")).toBeInTheDocument();
     expect(odds.querySelector('svg[aria-label="PrizePicks"]')).toBeNull();
-    expect(screen.getByTestId("dfs-cell").querySelector('svg[aria-label="PrizePicks"]')).toBeTruthy();
+    expect(screen.queryByTestId("dfs-cell")).not.toBeInTheDocument();
   });
 
   it("shows overflow books on hover of the +N down arrow", async () => {
@@ -368,18 +392,17 @@ describe("MlbPropPicksTable", () => {
           fixtureRow({
             player_name: "Mookie Betts",
             game_pk: 2,
-            dfs: [{ book: "underdog", american: -105, url: null }],
             books: [
               { book: "fliff", american: -102, url: null },
               { book: "betmgm", american: -112, url: null },
               { book: "caesars", american: -118, url: null },
+              { book: "underdog", american: -105, url: null },
             ],
           }),
         ]}
       />,
     );
     const cells = screen.getAllByTestId("odds-cell");
-    const dfsCells = screen.getAllByTestId("dfs-cell");
     expect(cells[0].querySelector('svg[aria-label="ProphetX"]')).toBeTruthy();
     expect(cells[0].querySelector('svg[aria-label="Novig"]')).toBeTruthy();
     expect(cells[0].querySelector('svg[aria-label="DraftKings"]')).toBeTruthy();
@@ -388,17 +411,16 @@ describe("MlbPropPicksTable", () => {
     expect(cells[1].querySelector('svg[aria-label="BetMGM"]')).toBeTruthy();
     expect(cells[1].querySelector('svg[aria-label="Caesars"]')).toBeTruthy();
     expect(cells[1].querySelector('svg[aria-label="Underdog"]')).toBeNull();
-    expect(dfsCells[1].querySelector('svg[aria-label="Underdog"]')).toBeTruthy();
+    expect(screen.queryByTestId("dfs-cell")).not.toBeInTheDocument();
     expect(cells[0].querySelector(".bg-c2\\/10")).toBeNull();
     expect(cells[0].querySelector(".rounded")).toBeNull();
   });
 
-  it("renders PrizePicks in DFS at -137 with no de-vig percent", () => {
+  it("puts the PrizePicks American in the line cell with no de-vig percent", () => {
     render(
       <MlbPropPicksTable
         rows={[
           fixtureRow({
-            dfs: [{ book: "prizepicks", american: null, url: null }],
             books: [
               {
                 book: "prophetx",
@@ -411,10 +433,10 @@ describe("MlbPropPicksTable", () => {
         ]}
       />,
     );
-    const dfs = screen.getByTestId("dfs-cell");
-    expect(dfs.querySelector('svg[aria-label="PrizePicks"]')).toBeTruthy();
-    expect(within(dfs).getByText("-137")).toBeInTheDocument();
-    expect(within(dfs).queryByText("(54%)")).not.toBeInTheDocument();
+    const lineCell = screen.getByTestId("line-cell");
+    expect(lineCell).toHaveTextContent("1.5");
+    expect(lineCell).toHaveTextContent("-137");
+    expect(lineCell).not.toHaveTextContent("(54%)");
     const odds = screen.getByTestId("odds-cell");
     expect(odds.querySelector('svg[aria-label="PrizePicks"]')).toBeNull();
     expect(odds).toHaveTextContent("-122");
@@ -429,7 +451,6 @@ describe("MlbPropPicksTable", () => {
             line: 3.5,
             stat: "total_bases",
             market_label: "Over 3.5 Total Bases",
-            dfs: [{ book: "prizepicks", american: null, url: null }],
             books: [
               {
                 book: "prophetx",
@@ -458,14 +479,13 @@ describe("MlbPropPicksTable", () => {
     expect(odds).toHaveTextContent("3.5");
     expect(odds).toHaveTextContent("+114");
     expect(odds).not.toHaveTextContent("(47%)");
-    expect(odds).toHaveTextContent("1.5");
-    expect(odds).toHaveTextContent("-128");
+    expect(odds).not.toHaveTextContent("1.5");
+    expect(odds).not.toHaveTextContent("-128");
     expect(odds).not.toHaveTextContent("(56%)");
     expect(odds).not.toHaveTextContent("-154");
     expect(odds).not.toHaveTextContent("-104");
     expect(odds).not.toHaveTextContent("O 3.5");
     expect(odds).not.toHaveTextContent("U 1.5");
-    expect(screen.getByTestId("dfs-cell")).toHaveTextContent("-137");
   });
 
   it("does not render the opposite side on an under row", () => {
@@ -498,56 +518,19 @@ describe("MlbPropPicksTable", () => {
     expect(odds).not.toHaveTextContent("+114");
   });
 
-  it("renders PrizePicks mark and -137 for every PrizePicks chip", () => {
+  it("renders Underdog mark and the dataset American price in Odds", () => {
     render(
       <MlbPropPicksTable
         rows={[
           fixtureRow({
-            dfs: [{ book: "prizepicks", american: null, url: null }],
-            books: [],
+            books: [{ book: "underdog", american: -105, url: null }],
           }),
         ]}
       />,
     );
-    const dfs = screen.getByTestId("dfs-cell");
-    expect(dfs.querySelector('svg[aria-label="PrizePicks"]')).toBeTruthy();
-    expect(within(dfs).getByText("-137")).toBeInTheDocument();
-  });
-
-  it("renders Underdog mark and the dataset American price", () => {
-    render(
-      <MlbPropPicksTable
-        rows={[
-          fixtureRow({
-            dfs: [{ book: "underdog", american: -105, url: null }],
-            books: [],
-          }),
-        ]}
-      />,
-    );
-    const dfs = screen.getByTestId("dfs-cell");
-    expect(dfs.querySelector('svg[aria-label="Underdog"]')).toBeTruthy();
-    expect(within(dfs).getByText("-105")).toBeInTheDocument();
-  });
-
-  it("stacks PrizePicks above Underdog when both are posted", () => {
-    render(
-      <MlbPropPicksTable
-        rows={[
-          fixtureRow({
-            dfs: [
-              { book: "underdog", american: -105, url: null },
-              { book: "prizepicks", american: null, url: null },
-            ],
-            books: [],
-          }),
-        ]}
-      />,
-    );
-    const dfs = screen.getByTestId("dfs-cell");
-    expect(dfs).toHaveClass("flex-col");
-    expect(dfs.querySelector('svg[aria-label="PrizePicks"]')).toBeTruthy();
-    expect(dfs.querySelector('svg[aria-label="Underdog"]')).toBeTruthy();
+    const odds = screen.getByTestId("odds-cell");
+    expect(odds.querySelector('svg[aria-label="Underdog"]')).toBeTruthy();
+    expect(within(odds).getByText("-105")).toBeInTheDocument();
   });
 
   it("hides book marks when that book has no posted American for the line", () => {
@@ -555,7 +538,6 @@ describe("MlbPropPicksTable", () => {
       <MlbPropPicksTable
         rows={[
           fixtureRow({
-            dfs: [{ book: "underdog", american: null, url: null }],
             books: [
               { book: "prophetx", american: -115, url: null },
               { book: "fanduel", american: null, url: null },
@@ -570,7 +552,22 @@ describe("MlbPropPicksTable", () => {
     expect(within(odds).getByText("-115")).toBeInTheDocument();
     expect(odds.querySelector('svg[aria-label="FanDuel"]')).toBeNull();
     expect(odds.querySelector('svg[aria-label="Novig"]')).toBeNull();
-    expect(screen.getByTestId("dfs-cell")).toHaveTextContent("—");
+    expect(screen.queryByTestId("dfs-cell")).not.toBeInTheDocument();
+  });
+
+  it("renders an em dash when no other books match the line", () => {
+    render(
+      <MlbPropPicksTable
+        rows={[
+          fixtureRow({
+            books: [
+              { book: "draftkings", american: -120, url: null, line: 2.5 },
+            ],
+          }),
+        ]}
+      />,
+    );
+    expect(screen.getByTestId("odds-cell")).toHaveTextContent("—");
   });
 
   it("paginates to 30 rows with next/previous", async () => {

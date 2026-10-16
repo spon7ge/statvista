@@ -21,7 +21,15 @@ function row(
     line: 1.5,
     game_pk: 1,
     game_start_at: "2026-08-23T23:10:00Z",
-    dfs: [{ book: "prizepicks", american: null, url: null }],
+    anchor: {
+      book: "prizepicks",
+      american: -137,
+      url: null,
+      line: 1.5,
+      devig_pct: null,
+      over_american: -137,
+      under_american: -137,
+    },
     books: [{ book: "prophetx", american: -115, url: null }],
     ip_pct: 53,
     opp_def_rank: 12,
@@ -82,6 +90,7 @@ function mockBoard(rows: ApiMlbPropBoardRow[]) {
 
 describe("MlbPropPicksPage", () => {
   beforeEach(() => {
+    mockUseMlbPropBoard.mockClear();
     window.matchMedia = vi.fn().mockImplementation((query: string) => ({
       matches: false,
       media: query,
@@ -97,7 +106,7 @@ describe("MlbPropPicksPage", () => {
     mockBoard([judge, betts]);
     renderPage();
 
-    expect(mockUseMlbPropBoard).toHaveBeenCalledWith();
+    expect(mockUseMlbPropBoard).toHaveBeenCalledWith("prizepicks");
     expect(screen.getByRole("heading", { name: "Props" })).toBeInTheDocument();
     expect(
       screen.getByRole("heading", { name: "Props" }).closest("section"),
@@ -112,29 +121,26 @@ describe("MlbPropPicksPage", () => {
     expect(screen.getByText("Line")).toBeInTheDocument();
     expect(screen.getByText("IP")).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: /View \d+ props?/ })).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Team" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Team" })).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Bookmaker (PrizePicks)" }),
+    ).toBeInTheDocument();
     const filters = screen.getByLabelText("MLB prop picks filters");
     expect(within(filters).getByRole("button", { name: "Game" })).toBeInTheDocument();
     expect(within(filters).getByRole("button", { name: "Proposition" })).toBeInTheDocument();
-    expect(within(filters).getByRole("button", { name: "Bookmaker" })).toBeInTheDocument();
+    expect(
+      within(filters).getByRole("button", { name: "Bookmaker (PrizePicks)" }),
+    ).toBeInTheDocument();
     expect(within(filters).getByRole("button", { name: "Over/Under" })).toBeInTheDocument();
     expect(within(filters).getByRole("button", { name: "Hit rate" })).toBeInTheDocument();
     expect(screen.getByRole("searchbox", { name: "Search player" })).toBeInTheDocument();
   });
 
-  it("filters the board by team via MlbPropPicksFilters", async () => {
-    const user = userEvent.setup();
-    mockBoard([judge, betts]);
-
-    renderPage();
-    expect(screen.getByText("Aaron Judge")).toBeInTheDocument();
-    expect(screen.getByText("Mookie Betts")).toBeInTheDocument();
-
-    await user.click(screen.getByRole("button", { name: "Team" }));
-    await user.click(screen.getByRole("option", { name: "NYY" }));
-
-    expect(screen.getByText("Aaron Judge")).toBeInTheDocument();
-    expect(screen.queryByText("Mookie Betts")).not.toBeInTheDocument();
+  it("requests the book from the page URL", () => {
+    mockBoard([judge]);
+    renderPage("/mlb/prop_picks?book=draftkings");
+    expect(mockUseMlbPropBoard).toHaveBeenCalledWith("draftkings");
+    expect(mockUseMlbPropBoard.mock.calls[0]).toEqual(["draftkings"]);
   });
 
   it("filters the board by game via MlbPropPicksFilters", async () => {
@@ -164,34 +170,21 @@ describe("MlbPropPicksPage", () => {
     expect(screen.queryByText("Mookie Betts")).not.toBeInTheDocument();
   });
 
-  it("filters the board by bookmaker and shows only that book's odds", async () => {
+  it("choosing DraftKings requests that book from the hook", async () => {
     const user = userEvent.setup();
-    mockBoard([
-      judge,
-      row({
-        player_name: "Mookie Betts",
-        team_abbrev: "LAD",
-        opponent_abbrev: "SF",
-        market_label: "Under 0.5 Hits",
-        side: "under",
-        line: 0.5,
-        books: [{ book: "draftkings", american: -120, url: null }],
-      }),
-    ]);
+    mockBoard([judge, betts]);
     renderPage();
-    const filters = screen.getByLabelText("MLB prop picks filters");
+    expect(mockUseMlbPropBoard).toHaveBeenCalledWith("prizepicks");
 
-    await user.click(within(filters).getByRole("button", { name: "Bookmaker" }));
+    const filters = screen.getByLabelText("MLB prop picks filters");
+    await user.click(
+      within(filters).getByRole("button", { name: "Bookmaker (PrizePicks)" }),
+    );
     await user.click(screen.getByRole("option", { name: "DraftKings" }));
 
-    expect(screen.queryByText("Aaron Judge")).not.toBeInTheDocument();
+    expect(mockUseMlbPropBoard).toHaveBeenCalledWith("draftkings");
+    expect(screen.getByText("Aaron Judge")).toBeInTheDocument();
     expect(screen.getByText("Mookie Betts")).toBeInTheDocument();
-    expect(
-      screen.getByTestId("odds-cell").querySelector('svg[aria-label="DraftKings"]'),
-    ).toBeTruthy();
-    expect(
-      screen.getByTestId("odds-cell").querySelector('svg[aria-label="ProphetX"]'),
-    ).toBeNull();
   });
 
   it("filters the board by proposition, over/under, and hit-rate sort", async () => {
@@ -234,7 +227,7 @@ describe("MlbPropPicksPage", () => {
   it("does not render Stat, Side, Tier, or Fresh filter controls", () => {
     mockBoard([judge, betts]);
     renderPage();
-    expect(screen.getByRole("button", { name: "Team" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Team" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Stat" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Side" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Tier" })).not.toBeInTheDocument();
@@ -293,6 +286,9 @@ describe("MlbPropPicksPage", () => {
       </QueryClientProvider>,
     );
     expect(screen.getByText("No board yet")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Bookmaker (PrizePicks)" }),
+    ).toBeInTheDocument();
   });
 
   it("keeps a cached board visible when a background refetch fails", () => {

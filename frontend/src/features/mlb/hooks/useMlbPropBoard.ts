@@ -4,22 +4,24 @@ import { fetchMlbPropBoard } from "@/shared/lib/api";
 /** Board lines move slowly; keep client cache aligned with the poll. */
 export const MLB_PROP_BOARD_STALE_MS = 15 * 60_000;
 
-export const MLB_PROP_BOARD_QUERY_KEY = ["mlb", "props", "board"] as const;
+export function mlbPropBoardQueryKey(book: string) {
+  return ["mlb", "props", "board", book] as const;
+}
 
-export function mlbPropBoardQueryOptions() {
+export function mlbPropBoardQueryOptions(book = "prizepicks") {
   return queryOptions({
-    queryKey: MLB_PROP_BOARD_QUERY_KEY,
-    queryFn: fetchMlbPropBoard,
+    queryKey: mlbPropBoardQueryKey(book),
+    queryFn: () => fetchMlbPropBoard(book),
     staleTime: MLB_PROP_BOARD_STALE_MS,
     refetchInterval: MLB_PROP_BOARD_STALE_MS,
     refetchOnWindowFocus: false,
   });
 }
 
-export function useMlbPropBoard() {
-  return useQuery(mlbPropBoardQueryOptions());
+export function useMlbPropBoard(book = "prizepicks") {
+  return useQuery(mlbPropBoardQueryOptions(book));
 }
 
 export function prefetchMlbPropBoard(client: QueryClient) {
-  return client.prefetchQuery(mlbPropBoardQueryOptions());
+  return client.prefetchQuery(mlbPropBoardQueryOptions("prizepicks"));
 }

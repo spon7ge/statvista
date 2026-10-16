@@ -1,42 +1,35 @@
 import { useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { CHROME_PAGE_RIGHT, CHROME_PAGE_X } from "@/app/layouts/chrome";
 import { useMlbPropBoard } from "@/features/mlb/hooks/useMlbPropBoard";
 import { MlbPropPicksFilters } from "@/features/mlb/league/MlbPropPicksFilters";
 import { MlbPropPicksHeader } from "@/features/mlb/league/MlbPropPicksHeader";
 import { MlbPropPicksTable } from "@/features/mlb/league/MlbPropPicksTable";
+import { bookDisplayName } from "@/features/mlb/lib/mlbBookLabels";
 import {
-  collectMlbBoardBookmakerOptions,
   collectMlbBoardGameOptions,
   collectMlbBoardPropositionOptions,
   filterMlbPropBoardRows,
   type MlbHitRateWindow,
   type MlbPropBoardSide,
 } from "@/features/mlb/league/filterMlbPropBoard";
-import type { ApiMlbPropBoardRow } from "@/shared/lib/api";
+import { BOOK_CHIP_ORDER } from "@/features/mlb/league/sortMlbPropBoard";
 
-function collectMlbBoardTeamOptions(rows: ApiMlbPropBoardRow[]): string[] {
-  return [
-    ...new Set(
-      rows
-        .map((row) => row.team_abbrev)
-        .filter((abbrev): abbrev is string => Boolean(abbrev)),
-    ),
-  ].sort((a, b) => a.localeCompare(b));
-}
+const BOOK_OPTIONS = BOOK_CHIP_ORDER.map((value) => ({
+  value,
+  label: bookDisplayName(value),
+}));
 
 export function MlbPropPicksPage() {
-  const { data, isLoading, isError } = useMlbPropBoard();
-  const [selectedTeams, setSelectedTeams] = useState<Set<string>>(
-    () => new Set(),
-  );
+  const [searchParams, setSearchParams] = useSearchParams();
+  const bookParam = searchParams.get("book");
+  const book = bookParam ?? "prizepicks";
+  const { data, isLoading, isError } = useMlbPropBoard(book);
   const [query, setQuery] = useState("");
   const [selectedMarkets, setSelectedMarkets] = useState<Set<string>>(
     () => new Set(),
   );
   const [selectedSides, setSelectedSides] = useState<Set<MlbPropBoardSide>>(
-    () => new Set(),
-  );
-  const [selectedBooks, setSelectedBooks] = useState<Set<string>>(
     () => new Set(),
   );
   const [selectedGames, setSelectedGames] = useState<Set<string>>(
@@ -46,43 +39,37 @@ export function MlbPropPicksPage() {
 
   const rows = data?.rows ?? [];
   const markets = useMemo(() => collectMlbBoardPropositionOptions(rows), [rows]);
-  const books = useMemo(() => collectMlbBoardBookmakerOptions(rows), [rows]);
   const games = useMemo(() => collectMlbBoardGameOptions(rows), [rows]);
   const filtered = useMemo(
     () =>
       filterMlbPropBoardRows(rows, {
-        teams: selectedTeams,
         query,
         markets: selectedMarkets,
         sides: selectedSides,
-        books: selectedBooks,
         games: selectedGames,
       }),
-    [
-      rows,
-      selectedTeams,
-      query,
-      selectedMarkets,
-      selectedSides,
-      selectedBooks,
-      selectedGames,
-    ],
+    [rows, query, selectedMarkets, selectedSides, selectedGames],
   );
 
+  function selectBook(next: Set<string>) {
+    const chosen = [...next][0];
+    const params = new URLSearchParams(searchParams);
+    if (!chosen || chosen === "prizepicks") params.delete("book");
+    else params.set("book", chosen);
+    setSearchParams(params, { replace: true });
+  }
+
   function clearFilters() {
-    setSelectedTeams(new Set());
     setQuery("");
     setSelectedMarkets(new Set());
     setSelectedSides(new Set());
-    setSelectedBooks(new Set());
     setSelectedGames(new Set());
     setHitRate(null);
+    selectBook(new Set());
   }
 
-  // React Query keeps `data` after a failed 15-minute refetch; only treat
-  // error as empty-state on the first load when nothing is cached.
   const showBoardError = isError && !data;
-  const showBoardFilters = !isLoading && !showBoardError && rows.length > 0;
+  const showBoardFilters = !isLoading && !showBoardError;
 
   return (
     <div className="space-y-0 pb-8">
@@ -93,10 +80,7 @@ export function MlbPropPicksPage() {
           {showBoardFilters ? (
             <MlbPropPicksFilters
               tone="pill"
-              teams={collectMlbBoardTeamOptions(rows)}
-              selectedTeams={selectedTeams}
               query={query}
-              onTeamsChange={setSelectedTeams}
               onQueryChange={setQuery}
               onClear={clearFilters}
               markets={markets}
@@ -113,9 +97,9 @@ export function MlbPropPicksPage() {
                   ),
                 )
               }
-              books={books}
-              selectedBooks={selectedBooks}
-              onBooksChange={setSelectedBooks}
+              books={BOOK_OPTIONS}
+              selectedBooks={new Set([book])}
+              onBooksChange={selectBook}
               games={games}
               selectedGames={selectedGames}
               onGamesChange={setSelectedGames}
