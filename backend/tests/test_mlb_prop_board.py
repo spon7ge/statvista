@@ -12,7 +12,7 @@ client = TestClient(app)
 
 
 def test_mlb_props_board_route_returns_200(monkeypatch):
-    async def fake():
+    async def fake(book: str | None = None):
         from app.domains.mlb.schemas_prop_board import MlbPropBoardResponse
 
         return MlbPropBoardResponse(as_of=datetime.now(timezone.utc), rows=[], warnings=[])
@@ -21,6 +21,33 @@ def test_mlb_props_board_route_returns_200(monkeypatch):
     res = client.get("/api/mlb/props/board")
     assert res.status_code == 200
     assert res.json()["rows"] == []
+
+
+def test_mlb_props_board_route_passes_book(monkeypatch):
+    seen: dict[str, str | None] = {}
+
+    async def fake(book: str | None = None):
+        from app.domains.mlb.schemas_prop_board import MlbPropBoardResponse
+
+        seen["book"] = book
+        return MlbPropBoardResponse(as_of=datetime.now(timezone.utc), rows=[])
+
+    monkeypatch.setattr(routes, "get_mlb_prop_board", fake)
+    res = client.get("/api/mlb/props/board?book=draftkings")
+    assert res.status_code == 200
+    assert seen["book"] == "draftkings"
+
+
+def test_mlb_props_board_route_rejects_unknown_book(monkeypatch):
+    async def fake(book: str | None = None):
+        from app.domains.mlb.prop_board import UnknownBoardBookError
+
+        raise UnknownBoardBookError(book or "")
+
+    monkeypatch.setattr(routes, "get_mlb_prop_board", fake)
+    res = client.get("/api/mlb/props/board?book=not-a-book")
+    assert res.status_code == 422
+    assert res.headers["cache-control"] == "no-store"
 
 
 def test_player_context_resolves_jr_when_dfs_omits_suffix():
