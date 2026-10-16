@@ -6825,6 +6825,339 @@
         "title": "NbaGame",
         "type": "object"
       },
+      "NbaGameDetail": {
+        "properties": {
+          "away": {
+            "$ref": "#/components/schemas/GameDetailTeam"
+          },
+          "box_score": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GameDetailBoxScore"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "broadcast": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Broadcast"
+          },
+          "espn_event_id": {
+            "title": "Espn Event Id",
+            "type": "string"
+          },
+          "fetched_at": {
+            "title": "Fetched At",
+            "type": "string"
+          },
+          "fg_attempted": {
+            "title": "Fg Attempted",
+            "type": "integer"
+          },
+          "fg_made": {
+            "title": "Fg Made",
+            "type": "integer"
+          },
+          "game_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Game Date"
+          },
+          "game_leaders": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/NbaGameLeaders"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "home": {
+            "$ref": "#/components/schemas/GameDetailTeam"
+          },
+          "injuries": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GameDetailInjuries"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "latest_play": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GameDetailLatestPlay"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "league": {
+            "const": "nba",
+            "default": "nba",
+            "title": "League",
+            "type": "string"
+          },
+          "matchup_prediction": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GameDetailMatchupPrediction"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "officials": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/GameDetailOfficial"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Officials"
+          },
+          "plays": {
+            "items": {
+              "$ref": "#/components/schemas/GameDetailPlay"
+            },
+            "title": "Plays",
+            "type": "array"
+          },
+          "projected_starters": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GameDetailProjectedStarters"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "season_leaders": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GameDetailSeasonLeaders"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "season_team_stats": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/NbaSeasonTeamStatsPair"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "shots": {
+            "items": {
+              "$ref": "#/components/schemas/GameDetailShot"
+            },
+            "title": "Shots",
+            "type": "array"
+          },
+          "status": {
+            "enum": [
+              "scheduled",
+              "live",
+              "halftime",
+              "final"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "status_label": {
+            "title": "Status Label",
+            "type": "string"
+          },
+          "venue": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Venue"
+          },
+          "venue_city": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Venue City"
+          },
+          "venue_state": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Venue State"
+          },
+          "win_probability": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GameDetailWinProbability"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "espn_event_id",
+          "status",
+          "status_label",
+          "venue",
+          "away",
+          "home",
+          "fg_made",
+          "fg_attempted",
+          "latest_play",
+          "shots",
+          "plays",
+          "win_probability",
+          "matchup_prediction",
+          "projected_starters",
+          "season_leaders",
+          "injuries",
+          "box_score",
+          "fetched_at"
+        ],
+        "title": "NbaGameDetail",
+        "type": "object"
+      },
+      "NbaGameLeaderCard": {
+        "properties": {
+          "headshot_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Headshot Url"
+          },
+          "key": {
+            "enum": [
+              "ppg",
+              "rpg",
+              "apg"
+            ],
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "last_name": {
+            "title": "Last Name",
+            "type": "string"
+          },
+          "player_id": {
+            "title": "Player Id",
+            "type": "string"
+          },
+          "rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rank"
+          },
+          "side": {
+            "enum": [
+              "away",
+              "home"
+            ],
+            "title": "Side",
+            "type": "string"
+          },
+          "team_abbrev": {
+            "title": "Team Abbrev",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "rank",
+          "value",
+          "player_id",
+          "last_name",
+          "team_abbrev",
+          "side",
+          "headshot_url"
+        ],
+        "title": "NbaGameLeaderCard",
+        "type": "object"
+      },
+      "NbaGameLeaders": {
+        "properties": {
+          "leaders": {
+            "items": {
+              "$ref": "#/components/schemas/NbaGameLeaderCard"
+            },
+            "title": "Leaders",
+            "type": "array"
+          }
+        },
+        "required": [
+          "leaders"
+        ],
+        "title": "NbaGameLeaders",
+        "type": "object"
+      },
       "NbaScoreboardResponse": {
         "properties": {
           "date": {
@@ -6850,6 +7183,246 @@
           "fetched_at"
         ],
         "title": "NbaScoreboardResponse",
+        "type": "object"
+      },
+      "NbaSeasonTeamStatLine": {
+        "properties": {
+          "ast": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ast"
+          },
+          "ast_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ast Rank"
+          },
+          "blk": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Blk"
+          },
+          "blk_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Blk Rank"
+          },
+          "fg3_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fg3 Pct"
+          },
+          "fg3_pct_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fg3 Pct Rank"
+          },
+          "fg_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fg Pct"
+          },
+          "fg_pct_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fg Pct Rank"
+          },
+          "ft_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ft Pct"
+          },
+          "ft_pct_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ft Pct Rank"
+          },
+          "pts": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pts"
+          },
+          "pts_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pts Rank"
+          },
+          "reb": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reb"
+          },
+          "reb_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reb Rank"
+          },
+          "stl": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stl"
+          },
+          "stl_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stl Rank"
+          },
+          "to": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "To"
+          },
+          "to_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "To Rank"
+          }
+        },
+        "required": [
+          "pts",
+          "fg_pct",
+          "fg3_pct",
+          "ft_pct",
+          "reb",
+          "ast",
+          "stl",
+          "blk",
+          "to",
+          "pts_rank",
+          "fg_pct_rank",
+          "fg3_pct_rank",
+          "ft_pct_rank",
+          "reb_rank",
+          "ast_rank",
+          "stl_rank",
+          "blk_rank",
+          "to_rank"
+        ],
+        "title": "NbaSeasonTeamStatLine",
+        "type": "object"
+      },
+      "NbaSeasonTeamStatsPair": {
+        "properties": {
+          "away": {
+            "$ref": "#/components/schemas/NbaSeasonTeamStatLine"
+          },
+          "home": {
+            "$ref": "#/components/schemas/NbaSeasonTeamStatLine"
+          }
+        },
+        "required": [
+          "away",
+          "home"
+        ],
+        "title": "NbaSeasonTeamStatsPair",
         "type": "object"
       },
       "NbaTeam": {
@@ -6904,6 +7477,388 @@
           "logo_url"
         ],
         "title": "NbaTeam",
+        "type": "object"
+      },
+      "NbaTeamLeaderCard": {
+        "properties": {
+          "headshot_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Headshot Url"
+          },
+          "key": {
+            "enum": [
+              "ppg",
+              "rpg",
+              "apg",
+              "bpg",
+              "spg"
+            ],
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "last_name": {
+            "title": "Last Name",
+            "type": "string"
+          },
+          "player_id": {
+            "title": "Player Id",
+            "type": "string"
+          },
+          "rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rank"
+          },
+          "value": {
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "rank",
+          "value",
+          "player_id",
+          "last_name",
+          "headshot_url"
+        ],
+        "title": "NbaTeamLeaderCard",
+        "type": "object"
+      },
+      "NbaTeamPreviewResponse": {
+        "properties": {
+          "leaders": {
+            "items": {
+              "$ref": "#/components/schemas/NbaTeamLeaderCard"
+            },
+            "title": "Leaders",
+            "type": "array"
+          },
+          "roster": {
+            "items": {
+              "$ref": "#/components/schemas/NbaTeamRosterRow"
+            },
+            "title": "Roster",
+            "type": "array"
+          },
+          "side": {
+            "enum": [
+              "away",
+              "home"
+            ],
+            "title": "Side",
+            "type": "string"
+          },
+          "team": {
+            "$ref": "#/components/schemas/NbaTeamPreviewTeam"
+          }
+        },
+        "required": [
+          "side",
+          "team",
+          "leaders",
+          "roster"
+        ],
+        "title": "NbaTeamPreviewResponse",
+        "type": "object"
+      },
+      "NbaTeamPreviewTeam": {
+        "properties": {
+          "abbrev": {
+            "title": "Abbrev",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "logo_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Logo Url"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "abbrev",
+          "name",
+          "logo_url"
+        ],
+        "title": "NbaTeamPreviewTeam",
+        "type": "object"
+      },
+      "NbaTeamRosterRow": {
+        "properties": {
+          "ast": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ast"
+          },
+          "blk": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Blk"
+          },
+          "fg3_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fg3 Pct"
+          },
+          "fg_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fg Pct"
+          },
+          "ft_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ft Pct"
+          },
+          "gp": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gp"
+          },
+          "headshot_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Headshot Url"
+          },
+          "jersey": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Jersey"
+          },
+          "min": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "player_id": {
+            "title": "Player Id",
+            "type": "string"
+          },
+          "plus_minus": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plus Minus"
+          },
+          "position": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Position"
+          },
+          "ppep": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ppep"
+          },
+          "pts": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pts"
+          },
+          "reb": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reb"
+          },
+          "rtg": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rtg"
+          },
+          "sc_eff": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sc Eff"
+          },
+          "sh_eff": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sh Eff"
+          },
+          "stl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stl"
+          },
+          "to": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "To"
+          }
+        },
+        "required": [
+          "player_id",
+          "name",
+          "jersey",
+          "position",
+          "gp",
+          "min",
+          "pts",
+          "reb",
+          "ast",
+          "stl",
+          "blk",
+          "to",
+          "fg_pct",
+          "fg3_pct",
+          "ft_pct",
+          "sh_eff",
+          "sc_eff",
+          "ppep",
+          "rtg",
+          "plus_minus",
+          "headshot_url"
+        ],
+        "title": "NbaTeamRosterRow",
         "type": "object"
       },
       "PlayerGame": {
@@ -11151,7 +12106,7 @@
     }
   },
   "info": {
-    "description": "statvista basketball and baseball data backend. Database-backed endpoints read from Supabase (silver / gold schemas) and make no NBA or Odds API calls. The exceptions are /api/wnba/scoreboard/today, /api/mlb/scoreboard/today, /api/mlb/scoreboard, /api/nba/scoreboard/today, /api/nba/scoreboard, /api/mlb/odds/today, /api/wnba/leaders, /api/wnba/player/{player_id}, /api/wnba/standings, /api/wnba/futures, /api/wnba/odds/today, /api/wnba/props/today, WNBA game detail routes, /api/mlb/games/{game_pk}, /api/mlb/lineups, and /api/mlb/futures, which call ESPN, stats.wnba.com, MLB Stats API, RotoWire, or SharpAPI for live league data.",
+    "description": "statvista basketball and baseball data backend. Database-backed endpoints read from Supabase (silver / gold schemas) and make no NBA or Odds API calls. The exceptions are /api/wnba/scoreboard/today, /api/mlb/scoreboard/today, /api/mlb/scoreboard, /api/nba/scoreboard/today, /api/nba/scoreboard, NBA game detail routes, /api/nba/odds/today, /api/mlb/odds/today, /api/wnba/leaders, /api/wnba/player/{player_id}, /api/wnba/standings, /api/wnba/futures, /api/wnba/odds/today, /api/wnba/props/today, WNBA game detail routes, /api/mlb/games/{game_pk}, /api/mlb/lineups, and /api/mlb/futures, which call ESPN, stats.wnba.com, MLB Stats API, RotoWire, or SharpAPI for live league data.",
     "title": "statvista API",
     "version": "0.3.0"
   },
@@ -12108,6 +13063,124 @@
         "summary": "Mlb Standings",
         "tags": [
           "mlb"
+        ]
+      }
+    },
+    "/api/nba/games/{espn_event_id}": {
+      "get": {
+        "operationId": "nba_game_detail_api_nba_games__espn_event_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "espn_event_id",
+            "required": true,
+            "schema": {
+              "title": "Espn Event Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NbaGameDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Nba Game Detail",
+        "tags": [
+          "nba"
+        ]
+      }
+    },
+    "/api/nba/games/{espn_event_id}/team-preview": {
+      "get": {
+        "operationId": "nba_team_preview_api_nba_games__espn_event_id__team_preview_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "espn_event_id",
+            "required": true,
+            "schema": {
+              "title": "Espn Event Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "side",
+            "required": true,
+            "schema": {
+              "enum": [
+                "away",
+                "home"
+              ],
+              "title": "Side",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NbaTeamPreviewResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Nba Team Preview",
+        "tags": [
+          "nba"
+        ]
+      }
+    },
+    "/api/nba/odds/today": {
+      "get": {
+        "operationId": "nba_odds_today_api_nba_odds_today_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WnbaOddsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Nba Odds Today",
+        "tags": [
+          "nba"
         ]
       }
     },

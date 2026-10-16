@@ -382,6 +382,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/nba/games/{espn_event_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Nba Game Detail */
+        get: operations["nba_game_detail_api_nba_games__espn_event_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/nba/games/{espn_event_id}/team-preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Nba Team Preview */
+        get: operations["nba_team_preview_api_nba_games__espn_event_id__team_preview_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/nba/odds/today": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Nba Odds Today */
+        get: operations["nba_odds_today_api_nba_odds_today_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/nba/scoreboard": {
         parameters: {
             query?: never;
@@ -2532,6 +2583,89 @@ export interface components {
             /** Venue City */
             venue_city: string | null;
         };
+        /** NbaGameDetail */
+        NbaGameDetail: {
+            away: components["schemas"]["GameDetailTeam"];
+            box_score: components["schemas"]["GameDetailBoxScore"] | null;
+            /** Broadcast */
+            broadcast?: string | null;
+            /** Espn Event Id */
+            espn_event_id: string;
+            /** Fetched At */
+            fetched_at: string;
+            /** Fg Attempted */
+            fg_attempted: number;
+            /** Fg Made */
+            fg_made: number;
+            /** Game Date */
+            game_date?: string | null;
+            game_leaders?: components["schemas"]["NbaGameLeaders"] | null;
+            home: components["schemas"]["GameDetailTeam"];
+            injuries: components["schemas"]["GameDetailInjuries"] | null;
+            latest_play: components["schemas"]["GameDetailLatestPlay"] | null;
+            /**
+             * League
+             * @default nba
+             * @constant
+             */
+            league: "nba";
+            matchup_prediction: components["schemas"]["GameDetailMatchupPrediction"] | null;
+            /** Officials */
+            officials?: components["schemas"]["GameDetailOfficial"][] | null;
+            /** Plays */
+            plays: components["schemas"]["GameDetailPlay"][];
+            projected_starters: components["schemas"]["GameDetailProjectedStarters"] | null;
+            season_leaders: components["schemas"]["GameDetailSeasonLeaders"] | null;
+            season_team_stats?: components["schemas"]["NbaSeasonTeamStatsPair"] | null;
+            /** Shots */
+            shots: components["schemas"]["GameDetailShot"][];
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "scheduled" | "live" | "halftime" | "final";
+            /** Status Label */
+            status_label: string;
+            /** Venue */
+            venue: string | null;
+            /** Venue City */
+            venue_city?: string | null;
+            /** Venue State */
+            venue_state?: string | null;
+            win_probability: components["schemas"]["GameDetailWinProbability"] | null;
+        };
+        /** NbaGameLeaderCard */
+        NbaGameLeaderCard: {
+            /** Headshot Url */
+            headshot_url: string | null;
+            /**
+             * Key
+             * @enum {string}
+             */
+            key: "ppg" | "rpg" | "apg";
+            /** Label */
+            label: string;
+            /** Last Name */
+            last_name: string;
+            /** Player Id */
+            player_id: string;
+            /** Rank */
+            rank: number | null;
+            /**
+             * Side
+             * @enum {string}
+             */
+            side: "away" | "home";
+            /** Team Abbrev */
+            team_abbrev: string;
+            /** Value */
+            value: string;
+        };
+        /** NbaGameLeaders */
+        NbaGameLeaders: {
+            /** Leaders */
+            leaders: components["schemas"]["NbaGameLeaderCard"][];
+        };
         /** NbaScoreboardResponse */
         NbaScoreboardResponse: {
             /**
@@ -2543,6 +2677,50 @@ export interface components {
             fetched_at: string;
             /** Games */
             games: components["schemas"]["NbaGame"][];
+        };
+        /** NbaSeasonTeamStatLine */
+        NbaSeasonTeamStatLine: {
+            /** Ast */
+            ast: number | null;
+            /** Ast Rank */
+            ast_rank: number | null;
+            /** Blk */
+            blk: number | null;
+            /** Blk Rank */
+            blk_rank: number | null;
+            /** Fg3 Pct */
+            fg3_pct: string | null;
+            /** Fg3 Pct Rank */
+            fg3_pct_rank: number | null;
+            /** Fg Pct */
+            fg_pct: string | null;
+            /** Fg Pct Rank */
+            fg_pct_rank: number | null;
+            /** Ft Pct */
+            ft_pct: string | null;
+            /** Ft Pct Rank */
+            ft_pct_rank: number | null;
+            /** Pts */
+            pts: number | null;
+            /** Pts Rank */
+            pts_rank: number | null;
+            /** Reb */
+            reb: number | null;
+            /** Reb Rank */
+            reb_rank: number | null;
+            /** Stl */
+            stl: number | null;
+            /** Stl Rank */
+            stl_rank: number | null;
+            /** To */
+            to: number | null;
+            /** To Rank */
+            to_rank: number | null;
+        };
+        /** NbaSeasonTeamStatsPair */
+        NbaSeasonTeamStatsPair: {
+            away: components["schemas"]["NbaSeasonTeamStatLine"];
+            home: components["schemas"]["NbaSeasonTeamStatLine"];
         };
         /** NbaTeam */
         NbaTeam: {
@@ -2556,6 +2734,95 @@ export interface components {
             record: string | null;
             /** Score */
             score: number | null;
+        };
+        /** NbaTeamLeaderCard */
+        NbaTeamLeaderCard: {
+            /** Headshot Url */
+            headshot_url: string | null;
+            /**
+             * Key
+             * @enum {string}
+             */
+            key: "ppg" | "rpg" | "apg" | "bpg" | "spg";
+            /** Label */
+            label: string;
+            /** Last Name */
+            last_name: string;
+            /** Player Id */
+            player_id: string;
+            /** Rank */
+            rank: number | null;
+            /** Value */
+            value: string;
+        };
+        /** NbaTeamPreviewResponse */
+        NbaTeamPreviewResponse: {
+            /** Leaders */
+            leaders: components["schemas"]["NbaTeamLeaderCard"][];
+            /** Roster */
+            roster: components["schemas"]["NbaTeamRosterRow"][];
+            /**
+             * Side
+             * @enum {string}
+             */
+            side: "away" | "home";
+            team: components["schemas"]["NbaTeamPreviewTeam"];
+        };
+        /** NbaTeamPreviewTeam */
+        NbaTeamPreviewTeam: {
+            /** Abbrev */
+            abbrev: string;
+            /** Id */
+            id: string;
+            /** Logo Url */
+            logo_url: string | null;
+            /** Name */
+            name: string;
+        };
+        /** NbaTeamRosterRow */
+        NbaTeamRosterRow: {
+            /** Ast */
+            ast: string | null;
+            /** Blk */
+            blk: string | null;
+            /** Fg3 Pct */
+            fg3_pct: string | null;
+            /** Fg Pct */
+            fg_pct: string | null;
+            /** Ft Pct */
+            ft_pct: string | null;
+            /** Gp */
+            gp: number | null;
+            /** Headshot Url */
+            headshot_url: string | null;
+            /** Jersey */
+            jersey: string | null;
+            /** Min */
+            min: string | null;
+            /** Name */
+            name: string;
+            /** Player Id */
+            player_id: string;
+            /** Plus Minus */
+            plus_minus: string | null;
+            /** Position */
+            position: string | null;
+            /** Ppep */
+            ppep: string | null;
+            /** Pts */
+            pts: string | null;
+            /** Reb */
+            reb: string | null;
+            /** Rtg */
+            rtg: string | null;
+            /** Sc Eff */
+            sc_eff: string | null;
+            /** Sh Eff */
+            sh_eff: string | null;
+            /** Stl */
+            stl: string | null;
+            /** To */
+            to: string | null;
         };
         /**
          * PlayerGame
@@ -4238,6 +4505,90 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MlbStandingsResponse"];
+                };
+            };
+        };
+    };
+    nba_game_detail_api_nba_games__espn_event_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                espn_event_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NbaGameDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    nba_team_preview_api_nba_games__espn_event_id__team_preview_get: {
+        parameters: {
+            query: {
+                side: "away" | "home";
+            };
+            header?: never;
+            path: {
+                espn_event_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NbaTeamPreviewResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    nba_odds_today_api_nba_odds_today_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WnbaOddsResponse"];
                 };
             };
         };

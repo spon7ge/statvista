@@ -46,6 +46,9 @@ REQUIRED_MLB_PATHS = (
 REQUIRED_NBA_PATHS = (
     "/api/nba/scoreboard/today",
     "/api/nba/scoreboard",
+    "/api/nba/games/{espn_event_id}",
+    "/api/nba/games/{espn_event_id}/team-preview",
+    "/api/nba/odds/today",
 )
 
 REQUIRED_FRONTEND_PATHS = REQUIRED_WNBA_PATHS + REQUIRED_MLB_PATHS + REQUIRED_NBA_PATHS
