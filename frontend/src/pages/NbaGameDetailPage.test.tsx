@@ -22,7 +22,7 @@ function renderGameDetail(espnEventId: string) {
   );
 }
 
-function nbaGameDetail(status: "scheduled" | "live" | "final") {
+function nbaGameDetail(status: "scheduled" | "live" | "halftime" | "final") {
   return {
     espn_event_id: "401810001",
     league: "nba",
@@ -96,6 +96,17 @@ describe("NbaGameDetailPage", () => {
     fetchMock.mockResolvedValue({
       ok: true,
       json: async () => nbaGameDetail("live"),
+    });
+
+    renderGameDetail("401810001");
+
+    expect(await screen.findByTestId("nba-live-center")).toBeInTheDocument();
+  });
+
+  it("routes halftime NBA games to NbaLiveCenter", async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      json: async () => nbaGameDetail("halftime"),
     });
 
     renderGameDetail("401810001");

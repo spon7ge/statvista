@@ -1,30 +1,124 @@
 import { GameSection } from "@/shared/ui/GameSection";
-import type { GameDetail } from "../lib/types";
+import type {
+  GameDetail,
+  GameDetailTeam,
+  GameDetailTeamStat,
+} from "../lib/types";
+
+type TeamSide = "away" | "home";
+
+function leader(awayValue: number, homeValue: number): TeamSide | null {
+  if (awayValue === homeValue) return null;
+  return awayValue > homeValue ? "away" : "home";
+}
+
+function TeamMark({
+  team,
+  align,
+}: {
+  team: GameDetailTeam;
+  align: "left" | "right";
+}) {
+  return (
+    <div
+      className={`flex items-center gap-1.5 ${
+        align === "right" ? "justify-end" : ""
+      }`}
+    >
+      <span className="text-[16px] font-semibold text-c3">{team.abbrev}</span>
+      {team.logoUrl ? (
+        <img
+          src={team.logoUrl}
+          alt=""
+          role="presentation"
+          className="size-6 object-contain"
+        />
+      ) : null}
+    </div>
+  );
+}
+
+function StatValue({
+  side,
+  value,
+  isLeader,
+  color,
+  label,
+}: {
+  side: TeamSide;
+  value: number;
+  isLeader: boolean;
+  color: string;
+  label: string;
+}) {
+  return (
+    <div
+      className={`flex items-center text-[16px] tabular-nums text-c3 ${
+        side === "home" ? "justify-end" : ""
+      }`}
+    >
+      {isLeader ? (
+        <span
+          aria-label={`${label} ${side} leader`}
+          className="rounded-full px-2.5 py-0.5 text-c3"
+          style={{ backgroundColor: color }}
+        >
+          {value}
+        </span>
+      ) : (
+        <span>{value}</span>
+      )}
+    </div>
+  );
+}
+
+function StatRow({
+  stat,
+  detail,
+}: {
+  stat: GameDetailTeamStat;
+  detail: GameDetail;
+}) {
+  const winningSide = leader(stat.awayValue, stat.homeValue);
+  return (
+    <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-x-3 border-b border-line py-2 last:border-b-0">
+      <StatValue
+        side="away"
+        value={stat.awayValue}
+        isLeader={winningSide === "away"}
+        color={detail.away.color}
+        label={stat.label}
+      />
+      <span className="min-w-[2.5rem] text-center text-[16px] font-medium tracking-wide text-c3">
+        {stat.label}
+      </span>
+      <StatValue
+        side="home"
+        value={stat.homeValue}
+        isLeader={winningSide === "home"}
+        color={detail.home.color}
+        label={stat.label}
+      />
+    </div>
+  );
+}
 
 export function NbaTeamStatsCard({ detail }: { detail: GameDetail }) {
-  const stats = detail.winProbability?.teamStats;
-  if (!stats?.length) return null;
+  const teamStats = detail.winProbability?.teamStats;
+  if (!teamStats?.length) return null;
+
   return (
     <GameSection data-testid="nba-team-stats-card" className="!p-3">
-      <div className="mb-3 grid grid-cols-[1fr_auto_1fr] gap-3">
-        <span className="font-semibold text-c3">{detail.away.abbrev}</span>
+      <div className="mb-3 grid grid-cols-[1fr_auto_1fr] items-center gap-x-3">
+        <TeamMark team={detail.away} align="left" />
         <h2 className="font-semibold text-c3">Team Stats</h2>
-        <span className="text-right font-semibold text-c3">
-          {detail.home.abbrev}
-        </span>
+        <TeamMark team={detail.home} align="right" />
       </div>
-      {stats.map((stat) => (
-        <div
-          key={stat.key}
-          className="grid grid-cols-[1fr_auto_1fr] gap-3 border-b border-line py-2 last:border-b-0"
-        >
-          <span className="tabular-nums text-c3">{stat.awayValue}</span>
-          <span className="text-center text-c3">{stat.label}</span>
-          <span className="text-right tabular-nums text-c3">
-            {stat.homeValue}
-          </span>
-        </div>
-      ))}
+      <div>
+        {teamStats.map((stat) => (
+          <StatRow key={stat.key} stat={stat} detail={detail} />
+        ))}
+      </div>
     </GameSection>
   );
 }

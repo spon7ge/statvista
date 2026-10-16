@@ -2,16 +2,19 @@ import { useState } from "react";
 import { GameSection } from "@/shared/ui/GameSection";
 import type { GameDetail, GameDetailGameLeaderCard } from "../lib/types";
 
-function Headshot({ card }: { card: GameDetailGameLeaderCard }) {
-  const [failed, setFailed] = useState(false);
-  if (card.headshotUrl && !failed) {
+function GameLeaderHeadshot({ card }: { card: GameDetailGameLeaderCard }) {
+  const [imgFailed, setImgFailed] = useState(false);
+  const showImg = Boolean(card.headshotUrl) && !imgFailed;
+  const initial = (card.lastName.trim()[0] ?? "?").toUpperCase();
+
+  if (showImg) {
     return (
       <img
-        src={card.headshotUrl}
+        src={card.headshotUrl!}
         alt=""
         data-testid={`nba-game-leader-headshot-${card.key}`}
         className="mt-2 size-14 rounded-full bg-c2 object-cover"
-        onError={() => setFailed(true)}
+        onError={() => setImgFailed(true)}
       />
     );
   }
@@ -20,19 +23,22 @@ function Headshot({ card }: { card: GameDetailGameLeaderCard }) {
       data-testid={`nba-game-leader-headshot-fallback-${card.key}`}
       className="mt-2 flex size-14 items-center justify-center rounded-full bg-c2 text-lg font-semibold text-c3"
     >
-      {(card.lastName.trim()[0] ?? "?").toUpperCase()}
+      {initial}
     </span>
   );
 }
 
 export function NbaGameLeaders({ detail }: { detail: GameDetail }) {
-  if (!detail.gameLeaders?.leaders.length) return null;
+  const payload = detail.gameLeaders;
+  if (!payload?.leaders.length) return null;
+
   return (
     <GameSection data-testid="nba-game-leaders" className="w-full !p-3">
       <h2 className="text-center font-semibold text-c3">Game Leaders</h2>
       <div className="mt-3 grid grid-cols-3 gap-2">
-        {detail.gameLeaders.leaders.map((card) => {
+        {payload.leaders.map((card) => {
           const team = card.side === "away" ? detail.away : detail.home;
+          const logo = team.logoUrl;
           return (
             <div
               key={card.key}
@@ -54,10 +60,15 @@ export function NbaGameLeaders({ detail }: { detail: GameDetail }) {
                   #{card.rank}
                 </span>
               ) : null}
-              <span className="mt-2 text-[14px] font-semibold uppercase text-c3">
-                {card.lastName}
-              </span>
-              <Headshot card={card} />
+              <div className="mt-2 flex items-center gap-1">
+                {logo ? (
+                  <img src={logo} alt="" className="size-4 object-contain" />
+                ) : null}
+                <span className="text-[14px] font-semibold uppercase text-c3">
+                  {card.lastName}
+                </span>
+              </div>
+              <GameLeaderHeadshot card={card} />
             </div>
           );
         })}
