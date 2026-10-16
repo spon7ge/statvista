@@ -170,7 +170,7 @@ export type GameDetailOfficial = {
 
 export type GameDetail = {
   espnEventId: string;
-  league: "wnba";
+  league: "wnba" | "nba";
   status: GameStatus;
   statusLabel: string;
   venue: string | null;

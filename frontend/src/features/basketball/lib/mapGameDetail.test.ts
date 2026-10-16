@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { ApiWnbaGameDetail } from "@/shared/lib/api";
+import type { ApiNbaGameDetail, ApiWnbaGameDetail } from "@/shared/lib/api";
 import { mapGameDetail } from "./mapGameDetail";
 
 function buildApiDetail(
@@ -318,6 +318,29 @@ describe("mapGameDetail", () => {
     );
     expect(mapped.away.color).toBe("#37004D");
     expect(mapped.home.color).toBe("#201747");
+  });
+
+  it("resolves NBA team colors with the NBA palette", () => {
+    const nbaDetail: ApiNbaGameDetail = {
+      ...buildApiDetail(),
+      league: "nba",
+      away: {
+        ...buildApiDetail().away,
+        abbrev: "LAL",
+        color: "#000000",
+      },
+      home: {
+        ...buildApiDetail().home,
+        abbrev: "GSW",
+        color: "#000000",
+      },
+    };
+
+    const mapped = mapGameDetail(nbaDetail);
+
+    expect(mapped.league).toBe("nba");
+    expect(mapped.away.color).toBe("#552583");
+    expect(mapped.home.color).toBe("#1D428A");
   });
 
   it("maps null logo_url to null logoUrl", () => {

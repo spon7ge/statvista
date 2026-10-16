@@ -130,6 +130,82 @@ describe("fetchGameDetail", () => {
   });
 });
 
+describe("NBA game APIs", () => {
+  beforeEach(() => {
+    vi.resetModules();
+    fetchMock.mockReset();
+    vi.stubGlobal("fetch", fetchMock);
+    vi.stubEnv("VITE_API_BASE_URL", undefined);
+  });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
+  });
+
+  it("hits /api/nba/games/:id", async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      json: async () => ({ espn_event_id: "401810001", league: "nba" }),
+    });
+
+    const { fetchNbaGameDetail } = await import("./api");
+    await fetchNbaGameDetail("401810001");
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/nba/games/401810001",
+      expect.objectContaining({ cache: "no-store" }),
+    );
+  });
+
+  it("hits /api/nba/odds/today", async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      json: async () => ({ as_of: "now", games: [], book_boards: [] }),
+    });
+
+    const { fetchNbaOdds } = await import("./api");
+    await fetchNbaOdds();
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/nba/odds/today",
+      expect.objectContaining({ cache: "no-store" }),
+    );
+  });
+
+  it("hits NBA team-preview with side", async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        side: "home",
+        team: { id: "9", abbrev: "GSW", name: "Warriors", logo_url: null },
+        leaders: [],
+        roster: [],
+      }),
+    });
+
+    const { fetchNbaTeamPreview } = await import("./api");
+    await fetchNbaTeamPreview({
+      espnEventId: "401810001",
+      side: "home",
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/nba/games/401810001/team-preview?side=home",
+      expect.objectContaining({ cache: "no-store" }),
+    );
+  });
+
+  it("surfaces NBA game detail errors", async () => {
+    fetchMock.mockResolvedValue({ ok: false, status: 502 });
+
+    const { fetchNbaGameDetail } = await import("./api");
+
+    await expect(fetchNbaGameDetail("401810001")).rejects.toThrow(
+      "NBA game detail request failed: 502",
+    );
+  });
+});
+
 describe("fetchWnbaOdds", () => {
   beforeEach(() => {
     vi.resetModules();

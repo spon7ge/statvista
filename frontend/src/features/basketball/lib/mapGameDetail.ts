@@ -1,4 +1,5 @@
-import type { ApiWnbaGameDetail } from "@/shared/lib/api";
+import type { ApiNbaGameDetail, ApiWnbaGameDetail } from "@/shared/lib/api";
+import { resolveNbaTeamColor } from "../league/nbaTeamColors";
 import { resolveWnbaTeamColor } from "../league/wnbaTeamColors";
 import type {
   GameDetail,
@@ -6,7 +7,17 @@ import type {
   GameDetailSeasonTeamStatLine,
 } from "./types";
 
-function mapTeam(team: ApiWnbaGameDetail["away"]) {
+type ApiBasketballGameDetail = ApiWnbaGameDetail | ApiNbaGameDetail;
+
+function mapTeam(
+  team: ApiBasketballGameDetail["away"],
+  league: ApiBasketballGameDetail["league"],
+) {
+  const color =
+    league === "nba"
+      ? resolveNbaTeamColor(team.abbrev, team.color)
+      : resolveWnbaTeamColor(team.abbrev, team.color);
+
   return {
     id: team.id,
     abbrev: team.abbrev,
@@ -14,13 +25,13 @@ function mapTeam(team: ApiWnbaGameDetail["away"]) {
     score: team.score,
     record: team.record ?? null,
     last10: team.last_10 ?? null,
-    color: resolveWnbaTeamColor(team.abbrev, team.color),
+    color,
     logoUrl: team.logo_url,
   };
 }
 
 function mapSeasonTeamStatLine(
-  line: NonNullable<ApiWnbaGameDetail["season_team_stats"]>["away"],
+  line: NonNullable<ApiBasketballGameDetail["season_team_stats"]>["away"],
 ): GameDetailSeasonTeamStatLine {
   return {
     pts: line.pts ?? null,
@@ -45,7 +56,7 @@ function mapSeasonTeamStatLine(
 }
 
 function mapGameLeaders(
-  leaders: ApiWnbaGameDetail["game_leaders"],
+  leaders: ApiBasketballGameDetail["game_leaders"],
 ): GameDetailGameLeaders | null {
   if (!leaders) return null;
   return {
@@ -63,7 +74,7 @@ function mapGameLeaders(
   };
 }
 
-export function mapGameDetail(detail: ApiWnbaGameDetail): GameDetail {
+export function mapGameDetail(detail: ApiBasketballGameDetail): GameDetail {
   return {
     espnEventId: detail.espn_event_id,
     league: detail.league,
@@ -77,8 +88,8 @@ export function mapGameDetail(detail: ApiWnbaGameDetail): GameDetail {
     officials: detail.officials
       ? detail.officials.map((o) => ({ name: o.name, order: o.order }))
       : null,
-    away: mapTeam(detail.away),
-    home: mapTeam(detail.home),
+    away: mapTeam(detail.away, detail.league),
+    home: mapTeam(detail.home, detail.league),
     fgMade: detail.fg_made,
     fgAttempted: detail.fg_attempted,
     latestPlay: detail.latest_play

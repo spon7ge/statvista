@@ -25,11 +25,14 @@ export type ApiGameDetailInjuries = Schemas["GameDetailInjuries"];
 export type ApiGameDetailBoxScorePlayer = Schemas["GameDetailBoxScorePlayer"];
 export type ApiGameDetailBoxScore = Schemas["GameDetailBoxScore"];
 export type ApiWnbaGameDetail = Schemas["WnbaGameDetail"];
+export type ApiNbaGameDetail = Schemas["NbaGameDetail"];
 export type WnbaScoreboardResponse = Schemas["WnbaScoreboardResponse"];
 export type NbaScoreboardResponse = Schemas["NbaScoreboardResponse"];
 
 export type ApiWnbaOddsGame = Schemas["WnbaOddsGame"];
 export type ApiWnbaOddsResponse = Schemas["WnbaOddsResponse"];
+export type ApiNbaOddsGame = ApiWnbaOddsGame;
+export type ApiNbaOddsResponse = ApiWnbaOddsResponse;
 
 export type ApiWnbaPropBookQuote = Schemas["WnbaPropBookQuote"];
 export type ApiWnbaPropBookMainQuote = Schemas["WnbaPropBookMainQuote"];
@@ -48,11 +51,14 @@ export type WnbaPropsParams = {
 };
 
 export type ApiWnbaTeamPreviewResponse = Schemas["WnbaTeamPreviewResponse"];
+export type ApiNbaTeamPreviewResponse = Schemas["NbaTeamPreviewResponse"];
 
 export type WnbaTeamPreviewParams = {
   espnEventId: string;
   side: "away" | "home";
 };
+
+export type NbaTeamPreviewParams = WnbaTeamPreviewParams;
 
 export type WnbaGamePropsParams = {
   espnEventId: string;
@@ -187,6 +193,19 @@ export async function fetchGameDetail(
   return res.json();
 }
 
+export async function fetchNbaGameDetail(
+  espnEventId: string,
+): Promise<ApiNbaGameDetail> {
+  const res = await fetch(`${API_BASE}/api/nba/games/${espnEventId}`, {
+    headers: { Accept: "application/json" },
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    throw new Error(`NBA game detail request failed: ${res.status}`);
+  }
+  return res.json();
+}
+
 export async function fetchWnbaOdds(): Promise<ApiWnbaOddsResponse> {
   const res = await fetch(`${API_BASE}/api/wnba/odds/today`, {
     headers: { Accept: "application/json" },
@@ -194,6 +213,17 @@ export async function fetchWnbaOdds(): Promise<ApiWnbaOddsResponse> {
   });
   if (!res.ok) {
     throw new Error(`Odds request failed: ${res.status}`);
+  }
+  return res.json();
+}
+
+export async function fetchNbaOdds(): Promise<ApiNbaOddsResponse> {
+  const res = await fetch(`${API_BASE}/api/nba/odds/today`, {
+    headers: { Accept: "application/json" },
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    throw new Error(`NBA odds request failed: ${res.status}`);
   }
   return res.json();
 }
@@ -258,6 +288,21 @@ export async function fetchWnbaTeamPreview({
   );
   if (!res.ok) {
     throw new Error(`WNBA team preview request failed: ${res.status}`);
+  }
+  return res.json();
+}
+
+export async function fetchNbaTeamPreview({
+  espnEventId,
+  side,
+}: NbaTeamPreviewParams): Promise<ApiNbaTeamPreviewResponse> {
+  const qs = new URLSearchParams({ side });
+  const res = await fetch(
+    `${API_BASE}/api/nba/games/${encodeURIComponent(espnEventId)}/team-preview?${qs}`,
+    { headers: { Accept: "application/json" }, cache: "no-store" },
+  );
+  if (!res.ok) {
+    throw new Error(`NBA team preview request failed: ${res.status}`);
   }
   return res.json();
 }
