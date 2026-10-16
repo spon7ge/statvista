@@ -20,25 +20,25 @@ Document how the live statvista website is structured today: routes, shared chro
 
 ## 1. Overview & boundaries
 
-statvista’s public site is a React + Vite app talking to a FastAPI service over `/api`. `/` replace-redirects to **MLB games**. The product surface is **Props, Legs, Arbitrage, and Games** (plus game detail). **WNBA** has a live games slate, a DFS-anchored prop-picks research table, game detail, and a **priced Legs** shortlist (`GET /api/wnba/legs`). **MLB** adds a live games hub (dated slate), game detail, a DFS-anchored prop-picks research table, and a **priced Legs** shortlist (`GET /api/mlb/legs`). **NBA** has a live games slate (`/nba/matchups`, ESPN scoreboard, no odds, cards not clickable); its other sections remain scaffolded.
+statvista’s public site is a React + Vite app talking to a FastAPI service over `/api`. `/` replace-redirects to **MLB games**. The product surface is **Props, Legs, Arbitrage, and Games** (plus game detail). **WNBA** has a live games slate, a DFS-anchored prop-picks research table, game detail, and a **priced Legs** shortlist (`GET /api/wnba/legs`). **MLB** adds a live games hub (dated slate), game detail, a DFS-anchored prop-picks research table, and a **priced Legs** shortlist (`GET /api/mlb/legs`). **NBA** has a live games slate (`/nba/matchups`, ESPN scoreboard, no odds on cards) and WNBA-parity game detail at `/nba/games/:espnEventId` (Preview / Away / Home; live/final Summary \| Box; no Props tab); Props, Legs, and Arbitrage remain scaffolded.
 
 ### Read-path model
 
 ```text
 Browser
   → React (TanStack Query hooks → lib/api.ts)
-  → FastAPI (/api/wnba/*, /api/mlb/scoreboard/*, /api/nba/scoreboard/* for the live site)
+  → FastAPI (/api/wnba/*, /api/mlb/scoreboard/*, /api/nba/* for the live site)
   → Upstream adapters
       (ESPN, stats.wnba.com, MLB Stats API, ParlayAPI, Supabase odds snapshots, RotoWire)
 ```
 
-Two backend families exist. The **live website mainly uses the WNBA, MLB, and NBA upstream routes** (NBA: matchups scoreboard only), not the older Postgres research-dashboard routes.
+Two backend families exist. The **live website mainly uses the WNBA, MLB, and NBA upstream routes** (NBA: scoreboard + game detail + team preview + odds/today), not the older Postgres research-dashboard routes.
 
 | Family | Examples | Used by current React pages? |
 |--------|----------|------------------------------|
 | WNBA upstream | `/api/wnba/scoreboard/*`, `props/today`, `props/board`, `games/{id}`, … | Yes |
 | MLB upstream | `/api/mlb/scoreboard/*`, `/api/mlb/odds/today`, `/api/mlb/props/board`, `/api/mlb/legs` | Yes (matchups, Preview odds, prop research table, Legs) |
-| NBA upstream | `/api/nba/scoreboard/*` (ESPN only) | Yes (matchups slate) |
+| NBA upstream | `/api/nba/scoreboard/*`, `games/{id}`, `games/{id}/team-preview`, `odds/today` | Yes (matchups slate + game detail) |
 | DB-backed (silver / gold) | `/api/games/{date}/slate`, `/api/props`, … | No |
 
 Shared chrome (`HomeChromeLayout`) wraps most routes with a left sidebar (mobile hamburger drawer) and footer. The sidebar wordmark sits beside the page title. Primary nav is a card: **Props, Legs, Arbitrage, and Games** (current league's board/legs/arb/slate, else MLB; NBA Props, Legs, and Arbitrage fall back to MLB). A Site card below that has **About** (routes to `/about`), **Blog**, and **Settings** (Blog and Settings remain placeholders). Page league pills still switch the open section. Wordmark lands on `/mlb/matchups`. Props links prefetch the destination board on hover; the sidebar also warms that board on mount. Client React Query keeps MLB `/props/board` and WNBA `/props/board` fresh for 15 minutes (`staleTime` matches the poll; no refetch on window focus). MLB Legs uses `GET /api/mlb/legs` with a **5-minute** in-process cache and matching client `staleTime` (freshness is the product).
@@ -75,6 +75,7 @@ main.tsx
       /wnba/arbitrage      LeagueArbitragePage
       /wnba/prop_picks/player/:playerSlug  replace-redirect → /wnba/prop_picks
       /nba/matchups        LeagueMatchupsPage (league="nba", live slate)
+      /nba/games/:espnEventId  NbaGameDetailPage
       /mlb/matchups        LeagueMatchupsPage (league="mlb", live slate)
       /mlb/prop_picks      MlbPropPicksPage
       /mlb/legs            LeagueLegsPage (MLB board via useMlbLegs)
@@ -91,7 +92,7 @@ main.tsx
 |-------|------|
 | `pages/` | Route composition |
 | `features/{home,basketball,mlb}/` | UI by domain |
-| `hooks/useWnba*.ts`, `useWnbaLegs.ts`, `useWnbaPropBoard.ts`, `useMlbScoreboard.ts`, `useMlbPropBoard.ts`, `useMlbLegs.ts`, `useGameDetail.ts` | TanStack Query wrappers |
+| `hooks/useWnba*.ts`, `useWnbaLegs.ts`, `useWnbaPropBoard.ts`, `useMlbScoreboard.ts`, `useMlbPropBoard.ts`, `useMlbLegs.ts`, `useGameDetail.ts`, `useNbaScoreboard.ts`, `useNbaGameDetail.ts`, `useNbaOdds.ts`, `useNbaTeamPreview.ts` | TanStack Query wrappers |
 | `lib/api.ts` | Typed `fetch` helpers + `VITE_API_BASE_URL` |
 
 **Chrome data:** The layout itself does not fetch scoreboards. Games pages load each league's scoreboard independently.
@@ -110,7 +111,8 @@ main.tsx
 | `/wnba/arbitrage` | **Coming soon** placeholder; league pills | — | none | “Arbitrage coming soon.”; no API yet |
 | `/wnba/prop_picks/player/:playerSlug` | Removed | — | — | Replace-redirect to `/wnba/prop_picks`. `WnbaPlayerPropsOddsGrid` remains for shared book-column patterns; game-detail Props still uses `GET /api/wnba/props/game/{espn_event_id}` |
 | `/games/:espnEventId` | Game detail: scheduled → MLB-parity pregame (broadcast header with record + last 10; centered Preview / Away / Home / **Props**); Preview two-column (left: Projected Starters → Game Info → Matchup Prediction → Game Leaders PPG/RPG/APG; right: multi-book Odds board → Team Stats + `#rank` → Injuries); Away/Home → team preview (PPG/RPG/APG/BPG/SPG leaders + roster averages incl. SH-EFF, SC-EFF, PPEP, RTG, +/-); **Props** tab has PrizePicks / Underdog sub-tabs and shows the matchup-scoped **Player Props** category-card grid (Line / Over / Under, book name under odds); live/halftime or final → broadcast header + Summary \| Box (Scoring plays \| All plays; Summary right rail: linescore, team stats, win probability, shot chart, Game Info; Box: stacked away/home box score) | `useGameDetail`, `useWnbaOdds`, `useWnbaGameProps(espnEventId, app)`, `useWnbaTeamPreview(espnEventId, side)` | `GET /api/wnba/games/{id}`, `GET /api/wnba/odds/today` (Preview `book_boards`), `GET /api/wnba/props/game/{id}?app=prizepicks\|underdog` (Props tab only), `GET /api/wnba/games/{id}/team-preview?side=` (Away/Home) | ESPN summary + standings/team stats/roster for enrichment (standings + roster JSON via `app.core.outbound_cache`); RotoWire starters; Preview odds prefer `book_boards` (ProphetX → Novig → Pinnacle) with soft-fail per book and fallback to legacy `games[]`; game-scoped props reuse today's props assembly filtered to away/home abbrevs; soft-fail empty sections; no Player of the Game or pitch zone |
-| `/nba/matchups?date=` | Daily slate (no odds pill); Games header with MLB/WNBA/NBA pills + **Today** date nav; cards not clickable (no NBA game detail yet) | `useNbaScoreboard(date)` | `GET /api/nba/scoreboard/today` or `?date=` | ESPN NBA scoreboard; `espn_event_id` present but `gameDetailHref` returns null for nba |
+| `/nba/matchups?date=` | Daily slate (no odds pill); Games header with MLB/WNBA/NBA pills + **Today** date nav | `useNbaScoreboard(date)` | `GET /api/nba/scoreboard/today` or `?date=` | ESPN NBA scoreboard; cards → `/nba/games/:espnEventId` via `gameDetailHref` when `espn_event_id` present |
+| `/nba/games/:espnEventId` | Game detail: scheduled → WNBA-parity pregame (broadcast header with record + last 10; centered Preview / Away / Home — no Props tab); Preview two-column (left: Projected Starters → Game Info → Matchup Prediction → Game Leaders PPG/RPG/APG; right: multi-book Odds board → Season Team Stats + `#rank` → Injuries); Away/Home → team preview (PPG/RPG/APG/BPG/SPG leaders + roster averages incl. SH-EFF, SC-EFF, PPEP, RTG, +/-); live/halftime or final → broadcast header + Summary \| Box (Scoring plays \| All plays; Summary right rail: linescore, team stats, win probability, shot chart, Game Info; Box: stacked away/home box score) | `useNbaGameDetail`, `useNbaOdds`, `useNbaTeamPreview(espnEventId, side)` | `GET /api/nba/games/{id}`, `GET /api/nba/odds/today` (Preview `book_boards`; may be empty until NBA book snapshots exist), `GET /api/nba/games/{id}/team-preview?side=` (Away/Home) | ESPN NBA summary + standings/team stats/roster for enrichment (outbound cache where WNBA does); RotoWire NBA starters when available; Preview odds prefer `book_boards` with soft-fail per book and fallback to legacy `games[]`; poll ~18s when live/halftime; soft-fail empty sections; Back → `/nba/matchups`. Spec: `docs/superpowers/specs/2026-10-15-nba-game-detail-design.md` |
 | `/mlb/matchups?date=` | Daily slate (no team-lines odds pill); Games header with MLB/WNBA/NBA league pills and **Today** date nav on that same row | `useMlbScoreboard(date)` | scoreboard (`/today` or `?date=`) | Stats API schedule; cards → `/mlb/games/:gamePk` (Preview odds board still uses `GET /api/mlb/odds/today`) |
 | `/mlb/prop_picks` | Sportsbook **research table**: one row per player + market + **PrizePicks/Underdog line** + side; composite cell (overlapping headshot + team logo; **name · matchup**; market below); columns **Proposition**, **Line**, **DFS** (PrizePicks/Underdog logo + American; PrizePicks -137; no implied %), **Odds** (sportsbooks only — this side: logo + that book’s line + American, even when the number differs from DFS); **IP** (average raw implied of Odds Americans), L5/L10/L15, H2H (this season + last season vs opponent, pooled; colored cells); **Game** (day's slate, away @ home) + Team + **Bookmaker** + **Proposition** (market) + **Over/Under** + **Hit rate** (L5/L10/L15 highest→lowest) + player name search; no PrizePicks/Underdog tabs | `useMlbPropBoard` | `GET /api/mlb/props/board` | Client `filterMlbPropBoardRows` (game + team + book + market + side + name; selected books trim `dfs` or `books` chips; drop rows with no PrizePicks/Underdog line); default sort game start / name / stat / Over then Under / line; hit-rate control sorts L5/L10/L15 desc; **30 rows per page** with Previous/Next; empty copy “No board yet” |
 | `/mlb/legs` | **Priced complete entries**: PrizePicks / Underdog tabs; Power 2–6 or Flex 6 (no Flex 3); UD Standard 2–6. Greedy packer emits zero or more **complete N-pick `entries`** (each card exactly `legs` priced rows); no public flat PLAY list. Empty `entries` is valid. Vertical PLAY cards (headshot, matchup, name, market line); click expands per-book audit. Chip-row **`breakeven: {base_break_even}`**. Flex 6 enforces max 2 legs per `game_id` on a card; `flex_same_game_warning` always false. | `useMlbLegs({ app, format, legs })` | `GET /api/mlb/legs?app=&format=&legs=` | Server `mlb.legs.get_mlb_legs()` + `betting.legs_pricer` / `legs_payouts` / `legs_pack` (not `prop_fair`). Exact-line two-way consensus (PX/Novig/Pinnacle alts + Parlay DK/FD/MGM/Caesars; ProphetX `stake` required, Novig stake optional; hold >12% excluded). ≥1 sharp/exchange + ≥2 weight≥2.0 books. PLAY pool sorted then packed; leftover in `unpacked_remainder`. PLAY `headshot_url` from ESPN roster. DFS seed >60 min → no PLAY priced (`dfs_snapshot_stale`, `lines_seeded` still set). Default `?app=prizepicks&format=power&legs=4`. Invalid query (e.g. flex/3, UD boosted) → 422. Specs: `docs/superpowers/specs/2026-08-29-mlb-legs-pricer-design.md`, `docs/superpowers/specs/2026-08-29-mlb-legs-recommended-entries-design.md`, `docs/superpowers/specs/2026-08-31-legs-board-vertical-cards-design.md` |
@@ -194,6 +196,7 @@ backend/app/
     mlb/            # live MLB endpoints
     research/       # DB-backed research endpoints
     wnba/           # live WNBA endpoints
+    nba/            # live NBA endpoints (scoreboard, game detail, team preview, odds/today)
   providers/        # upstream API clients and adapters
   schemas/          # shared Pydantic models used by multiple domains
   core/             # configuration, errors, and database helpers
@@ -247,6 +250,9 @@ Feature-level history lives under `docs/superpowers/specs/` and `docs/superpower
 | GET | `/api/mlb/scoreboard?date=` | `mlb_scoreboard` |
 | GET | `/api/nba/scoreboard/today` | `nba.scoreboard` (ESPN only; overnight live carryover; `no-store`, 502 on upstream failure) |
 | GET | `/api/nba/scoreboard?date=` | `nba.scoreboard` (ESPN only; 5 min per-date cache) |
+| GET | `/api/nba/games/{espn_event_id}` | `nba.game_detail` (+ scheduled record/last_10, season_team_stats ranks, game_leaders; stale-while-error cache) |
+| GET | `/api/nba/games/{espn_event_id}/team-preview?side=` | `nba.team_preview` (PPG/RPG/APG/BPG/SPG leaders + roster averages incl. SH-EFF, SC-EFF, PPEP, RTG, +/-) |
+| GET | `/api/nba/odds/today` | `nba.odds` (WNBA-shaped `games[]` + `book_boards`; boards may be empty until NBA team snapshots exist) |
 | GET | `/api/mlb/odds/today` | `mlb_odds` (Sharp `league=mlb`) |
 | GET | `/api/mlb/props/today` | `mlb.props` (+ `prop_fair`, `prop_formats`, `prop_stat_keys`, `books_main`; PP/UD from Supabase; Parlay books from `fetch_latest_parlay_api_odds("mlb")` / `odds.mlb_parlay_api_odds` only) |
 | GET | `/api/mlb/props/board` | `mlb.prop_board` (DFS-anchored rows; sportsbook mains attached on `books` even when the line differs; `dfs` vs `books`; IP / ranks / L5–L15; 200 even when enrichments fail) |

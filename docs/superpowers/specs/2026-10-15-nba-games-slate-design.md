@@ -1,5 +1,7 @@
 # NBA Games slate (matchups)
 
+> **Superseded (navigation):** Card linking is defined in `2026-10-15-nba-game-detail-design.md`. Slate data/API decisions below still apply.
+
 Date: 2026-10-15  
 Status: Approved for planning
 
