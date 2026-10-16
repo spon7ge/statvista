@@ -28,13 +28,13 @@ describe("gameDetailHref", () => {
     ).toBeNull();
   });
 
-  it("returns null for NBA even when espnEventId is set", () => {
+  it("returns /nba/games/:id for NBA when espnEventId is set", () => {
     expect(
       gameDetailHref({
         league: "nba",
         espnEventId: "401810001",
         mlbGamePk: null,
       }),
-    ).toBeNull();
+    ).toBe("/nba/games/401810001");
   });
 });
