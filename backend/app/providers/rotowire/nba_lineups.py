@@ -1,0 +1,90 @@
+from __future__ import annotations
+
+import asyncio
+import logging
+import sys
+import threading
+import time
+from datetime import datetime
+from pathlib import Path
+from zoneinfo import ZoneInfo
+
+logger = logging.getLogger(__name__)
+
+ET = ZoneInfo("America/New_York")
+ROTOWIRE_TTL_SECONDS = 180
+
+_ROOT = Path(__file__).resolve().parents[4]
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
+
+_cache: dict[str, object] = {"date_et": None, "expires_at": 0.0, "by_abbr": None}
+_scrape_lock = threading.Lock()
+
+
+def clear_rotowire_lineups_cache() -> None:
+    _cache.update({"date_et": None, "expires_at": 0.0, "by_abbr": None})
+
+
+def _scrape_starters_by_abbr() -> dict[str, list[dict[str, str | None]]]:
+    from src.scrapers.rotowire_starters_scraper import NBADailyLineups
+
+    return NBADailyLineups().expected_starters_by_abbr()
+
+
+def _cached_by_abbr() -> dict[str, list[dict[str, str | None]]] | None:
+    now = time.time()
+    date_et = datetime.now(ET).strftime("%Y-%m-%d")
+    if (
+        _cache["by_abbr"] is not None
+        and _cache["date_et"] == date_et
+        and float(_cache["expires_at"]) > now
+    ):
+        return _cache["by_abbr"]  # type: ignore[return-value]
+
+    with _scrape_lock:
+        now = time.time()
+        date_et = datetime.now(ET).strftime("%Y-%m-%d")
+        if (
+            _cache["by_abbr"] is not None
+            and _cache["date_et"] == date_et
+            and float(_cache["expires_at"]) > now
+        ):
+            return _cache["by_abbr"]  # type: ignore[return-value]
+        try:
+            by_abbr = _scrape_starters_by_abbr()
+        except Exception:
+            logger.warning("Rotowire starters scrape failed", exc_info=True)
+            return None
+        _cache["date_et"] = date_et
+        _cache["expires_at"] = now + ROTOWIRE_TTL_SECONDS
+        _cache["by_abbr"] = by_abbr
+        return by_abbr
+
+
+def _lookup_starters(
+    by_abbr: dict[str, list[dict[str, str | None]]], abbrev: str
+) -> list[dict[str, str | None]] | None:
+    """Resolve starters, mapping ESPN tricodes (e.g. WSH) to RotoWire (WAS)."""
+    raw = str(abbrev or "").strip().upper()
+    if not raw:
+        return None
+    canonical = {"PHO": "PHX", "WSH": "WAS"}.get(raw, raw)
+    for key in (canonical, raw):
+        rows = by_abbr.get(key)
+        if rows:
+            return rows
+    return None
+
+
+async def get_rotowire_starters_for_matchup(
+    *, away_abbr: str, home_abbr: str
+) -> dict[str, list[dict[str, str | None]]] | None:
+    by_abbr = await asyncio.to_thread(_cached_by_abbr)
+    if not by_abbr:
+        return None
+    away = _lookup_starters(by_abbr, away_abbr)
+    home = _lookup_starters(by_abbr, home_abbr)
+    if not away or not home or len(away) != 5 or len(home) != 5:
+        return None
+    return {"away": away, "home": home}

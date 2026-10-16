@@ -1,0 +1,44 @@
+{
+  "header": {
+    "id": "401810001",
+    "competitions": [
+      {
+        "date": "2026-10-20T23:30Z",
+        "status": {
+          "period": 0,
+          "displayClock": "0:00",
+          "type": {
+            "state": "pre",
+            "completed": false,
+            "name": "STATUS_SCHEDULED",
+            "shortDetail": "10/20 - 7:30 PM EDT",
+            "detail": "Tue, October 20th at 7:30 PM EDT"
+          }
+        },
+        "competitors": [
+          {
+            "homeAway": "home",
+            "score": "0",
+            "team": {
+              "id": "2",
+              "abbreviation": "BOS",
+              "displayName": "Boston Celtics",
+              "color": "007A33"
+            }
+          },
+          {
+            "homeAway": "away",
+            "score": "0",
+            "team": {
+              "id": "18",
+              "abbreviation": "NYK",
+              "displayName": "New York Knicks",
+              "color": "006BB6"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "plays": []
+}
