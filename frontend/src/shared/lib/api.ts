@@ -237,8 +237,11 @@ export async function fetchWnbaProps({
   return res.json();
 }
 
-export async function fetchWnbaPropBoard(): Promise<ApiWnbaPropBoardResponse> {
-  const res = await fetch(`${API_BASE}/api/wnba/props/board`, {
+export async function fetchWnbaPropBoard(
+  book = "prizepicks",
+): Promise<ApiWnbaPropBoardResponse> {
+  const qs = new URLSearchParams({ book });
+  const res = await fetch(`${API_BASE}/api/wnba/props/board?${qs}`, {
     headers: { Accept: "application/json" },
     cache: "no-store",
   });
@@ -351,8 +354,11 @@ export async function fetchMlbProps({
   return res.json();
 }
 
-export async function fetchMlbPropBoard(): Promise<ApiMlbPropBoardResponse> {
-  const res = await fetch(`${API_BASE}/api/mlb/props/board`, {
+export async function fetchMlbPropBoard(
+  book = "prizepicks",
+): Promise<ApiMlbPropBoardResponse> {
+  const qs = new URLSearchParams({ book });
+  const res = await fetch(`${API_BASE}/api/mlb/props/board?${qs}`, {
     headers: { Accept: "application/json" },
     cache: "no-store",
   });

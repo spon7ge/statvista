@@ -1878,10 +1878,9 @@ export interface components {
         };
         /** MlbPropBoardRow */
         MlbPropBoardRow: {
+            anchor: components["schemas"]["MlbPropBoardBookChip"];
             /** Books */
             books: components["schemas"]["MlbPropBoardBookChip"][];
-            /** Dfs */
-            dfs: components["schemas"]["MlbPropBoardBookChip"][];
             /** Game Pk */
             game_pk: number | null;
             /** Game Start At */
@@ -3308,10 +3307,9 @@ export interface components {
         };
         /** WnbaPropBoardRow */
         WnbaPropBoardRow: {
+            anchor: components["schemas"]["WnbaPropBoardBookChip"];
             /** Books */
             books: components["schemas"]["WnbaPropBoardBookChip"][];
-            /** Dfs */
-            dfs: components["schemas"]["WnbaPropBoardBookChip"][];
             /** Game Id */
             game_id: string | null;
             /** Game Start At */
@@ -4096,7 +4094,9 @@ export interface operations {
     };
     mlb_props_board_api_mlb_props_board_get: {
         parameters: {
-            query?: never;
+            query?: {
+                book?: string | null;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -4110,6 +4110,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MlbPropBoardResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -4689,7 +4698,9 @@ export interface operations {
     };
     wnba_props_board_api_wnba_props_board_get: {
         parameters: {
-            query?: never;
+            query?: {
+                book?: string | null;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -4703,6 +4714,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["WnbaPropBoardResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

@@ -4183,18 +4183,14 @@
       },
       "MlbPropBoardRow": {
         "properties": {
+          "anchor": {
+            "$ref": "#/components/schemas/MlbPropBoardBookChip"
+          },
           "books": {
             "items": {
               "$ref": "#/components/schemas/MlbPropBoardBookChip"
             },
             "title": "Books",
-            "type": "array"
-          },
-          "dfs": {
-            "items": {
-              "$ref": "#/components/schemas/MlbPropBoardBookChip"
-            },
-            "title": "Dfs",
             "type": "array"
           },
           "game_pk": {
@@ -4404,7 +4400,7 @@
           "line",
           "game_pk",
           "game_start_at",
-          "dfs",
+          "anchor",
           "books",
           "ip_pct",
           "opp_def_rank",
@@ -9904,18 +9900,14 @@
       },
       "WnbaPropBoardRow": {
         "properties": {
+          "anchor": {
+            "$ref": "#/components/schemas/WnbaPropBoardBookChip"
+          },
           "books": {
             "items": {
               "$ref": "#/components/schemas/WnbaPropBoardBookChip"
             },
             "title": "Books",
-            "type": "array"
-          },
-          "dfs": {
-            "items": {
-              "$ref": "#/components/schemas/WnbaPropBoardBookChip"
-            },
-            "title": "Dfs",
             "type": "array"
           },
           "game_id": {
@@ -10125,7 +10117,7 @@
           "line",
           "game_id",
           "game_start_at",
-          "dfs",
+          "anchor",
           "books",
           "ip_pct",
           "opp_def_rank",
@@ -12236,6 +12228,24 @@
     "/api/mlb/props/board": {
       "get": {
         "operationId": "mlb_props_board_api_mlb_props_board_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "book",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Book"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "content": {
@@ -12246,6 +12256,16 @@
               }
             },
             "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
           }
         },
         "summary": "Mlb Props Board",
@@ -13216,6 +13236,24 @@
     "/api/wnba/props/board": {
       "get": {
         "operationId": "wnba_props_board_api_wnba_props_board_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "book",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Book"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "content": {
@@ -13226,6 +13264,16 @@
               }
             },
             "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
           }
         },
         "summary": "Wnba Props Board",

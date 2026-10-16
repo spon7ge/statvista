@@ -314,11 +314,29 @@ describe("fetchWnbaPropBoard", () => {
     await fetchWnbaPropBoard();
 
     expect(fetchMock).toHaveBeenCalledWith(
-      "/api/wnba/props/board",
+      "/api/wnba/props/board?book=prizepicks",
       expect.objectContaining({
         headers: { Accept: "application/json" },
         cache: "no-store",
       }),
+    );
+  });
+
+  it("GETs /api/wnba/props/board for the selected book", async () => {
+    vi.stubEnv("VITE_API_BASE_URL", undefined);
+    fetchMock.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        as_of: "2026-08-31T00:00:00Z",
+        rows: [],
+        warnings: [],
+      }),
+    });
+    const { fetchWnbaPropBoard } = await import("./api");
+    await fetchWnbaPropBoard("draftkings");
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/wnba/props/board?book=draftkings",
+      expect.objectContaining({ cache: "no-store" }),
     );
   });
 
@@ -405,11 +423,29 @@ describe("fetchMlbPropBoard", () => {
     await fetchMlbPropBoard();
 
     expect(fetchMock).toHaveBeenCalledWith(
-      "/api/mlb/props/board",
+      "/api/mlb/props/board?book=prizepicks",
       expect.objectContaining({
         headers: { Accept: "application/json" },
         cache: "no-store",
       }),
+    );
+  });
+
+  it("GETs /api/mlb/props/board for the selected book", async () => {
+    vi.stubEnv("VITE_API_BASE_URL", undefined);
+    fetchMock.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        as_of: "2026-08-23T00:00:00Z",
+        rows: [],
+        warnings: [],
+      }),
+    });
+    const { fetchMlbPropBoard } = await import("./api");
+    await fetchMlbPropBoard("draftkings");
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/mlb/props/board?book=draftkings",
+      expect.objectContaining({ cache: "no-store" }),
     );
   });
 
