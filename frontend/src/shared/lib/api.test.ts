@@ -142,17 +142,17 @@ describe("NBA game APIs", () => {
     vi.unstubAllEnvs();
   });
 
-  it("hits /api/nba/games/:id", async () => {
+  it("encodes the id in /api/nba/games/:id", async () => {
     fetchMock.mockResolvedValue({
       ok: true,
       json: async () => ({ espn_event_id: "401810001", league: "nba" }),
     });
 
     const { fetchNbaGameDetail } = await import("./api");
-    await fetchNbaGameDetail("401810001");
+    await fetchNbaGameDetail("401810001/preview?source=test");
 
     expect(fetchMock).toHaveBeenCalledWith(
-      "/api/nba/games/401810001",
+      "/api/nba/games/401810001%2Fpreview%3Fsource%3Dtest",
       expect.objectContaining({ cache: "no-store" }),
     );
   });

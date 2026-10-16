@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime, timezone
 from unittest.mock import AsyncMock, patch
 
 import pytest
@@ -12,7 +13,7 @@ from app.domains.nba.schemas_team_preview import (
     NbaTeamPreviewResponse,
     NbaTeamPreviewTeam,
 )
-from app.domains.nba.team_preview import get_nba_team_preview
+from app.domains.nba.team_preview import _season_year, get_nba_team_preview
 from app.main import app
 from app.providers.espn.nba_team_player_stats import (
     build_team_leaders,
@@ -259,3 +260,50 @@ async def test_nba_espn_helpers_use_nba_urls_and_mozilla_user_agent(monkeypatch)
     assert all("/nba/" in str(request.url) for request in requests)
     assert all("/wnba/" not in str(request.url) for request in requests)
     assert all(request.headers["User-Agent"] == "Mozilla/5.0" for request in requests)
+
+
+@pytest.mark.asyncio
+async def test_fetch_league_player_stat_map_includes_players_from_all_pages(
+    monkeypatch,
+):
+    import httpx
+
+    requested_pages: list[str] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        page = request.url.params["page"]
+        requested_pages.append(page)
+        payload = _byathlete_payload()
+        payload["pageCount"] = 2
+        payload["items"] = [payload["items"][int(page) - 1]]
+        return httpx.Response(200, json=payload)
+
+    transport = httpx.MockTransport(handler)
+
+    class _Client(httpx.AsyncClient):
+        def __init__(self, *args, **kwargs):
+            kwargs["transport"] = transport
+            super().__init__(*args, **kwargs)
+
+    monkeypatch.setattr(httpx, "AsyncClient", _Client)
+
+    stats = await fetch_league_player_stat_map(2026)
+
+    assert requested_pages == ["1", "2"]
+    assert set(stats) == {"1", "2"}
+
+
+@pytest.mark.parametrize(
+    ("now", "expected"),
+    [
+        (datetime(2025, 9, 30, tzinfo=timezone.utc), 2025),
+        (datetime(2025, 10, 1, tzinfo=timezone.utc), 2026),
+        (datetime(2025, 12, 31, tzinfo=timezone.utc), 2026),
+        (datetime(2026, 1, 1, tzinfo=timezone.utc), 2026),
+    ],
+)
+def test_nba_season_year_uses_espn_season_label(
+    now: datetime,
+    expected: int,
+):
+    assert _season_year(now) == expected

@@ -26,7 +26,17 @@ def client():
 
 
 def test_nba_odds_today_200_shape(client):
-    res = client.get("/api/nba/odds/today")
+    sample = WnbaOddsResponse(
+        as_of="2026-10-15T12:00:00Z",
+        games=[],
+        book_boards=[],
+    )
+    with patch(
+        "app.domains.nba.routes.get_today_odds",
+        new=AsyncMock(return_value=sample),
+    ):
+        res = client.get("/api/nba/odds/today")
+
     assert res.status_code == 200
     body = res.json()
     assert "as_of" in body

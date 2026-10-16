@@ -341,10 +341,23 @@ async def fetch_league_player_stat_map(
 ) -> dict[str, PlayerSeasonStats]:
     url = ESPN_BYATHLETE_URL.format(season=season)
     async with httpx.AsyncClient(timeout=ESPN_TIMEOUT_SECONDS) as client:
-        response = await client.get(
-            url,
-            params={"lang": "en", "region": "us", "limit": 300},
-            headers=_ESPN_HEADERS,
-        )
-        response.raise_for_status()
-        return parse_byathlete_stat_map(response.json())
+        stats_by_id: dict[str, PlayerSeasonStats] = {}
+        page = 1
+        page_count = 1
+        while page <= page_count:
+            response = await client.get(
+                url,
+                params={
+                    "lang": "en",
+                    "region": "us",
+                    "limit": 300,
+                    "page": page,
+                },
+                headers=_ESPN_HEADERS,
+            )
+            response.raise_for_status()
+            payload = response.json()
+            stats_by_id.update(parse_byathlete_stat_map(payload))
+            page_count = max(1, _as_int(payload.get("pageCount")) or 1)
+            page += 1
+        return stats_by_id

@@ -196,10 +196,13 @@ export async function fetchGameDetail(
 export async function fetchNbaGameDetail(
   espnEventId: string,
 ): Promise<ApiNbaGameDetail> {
-  const res = await fetch(`${API_BASE}/api/nba/games/${espnEventId}`, {
-    headers: { Accept: "application/json" },
-    cache: "no-store",
-  });
+  const res = await fetch(
+    `${API_BASE}/api/nba/games/${encodeURIComponent(espnEventId)}`,
+    {
+      headers: { Accept: "application/json" },
+      cache: "no-store",
+    },
+  );
   if (!res.ok) {
     throw new Error(`NBA game detail request failed: ${res.status}`);
   }

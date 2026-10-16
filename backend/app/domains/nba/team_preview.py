@@ -33,8 +33,9 @@ def _preview_team(team: GameDetailTeam) -> NbaTeamPreviewTeam:
     )
 
 
-def _season_year() -> int:
-    return datetime.now(timezone.utc).year
+def _season_year(now: datetime | None = None) -> int:
+    current = now or datetime.now(timezone.utc)
+    return current.year + 1 if current.month >= 10 else current.year
 
 
 async def get_nba_team_preview(
