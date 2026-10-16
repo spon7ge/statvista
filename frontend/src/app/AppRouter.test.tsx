@@ -196,6 +196,59 @@ describe("AppRouter", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("renders NBA game detail at /nba/games/:espnEventId", async () => {
+    fetchMock.mockImplementation(async (url: string) => {
+      if (String(url).includes("/api/nba/games/")) {
+        return {
+          ok: true,
+          json: async () => ({
+            espn_event_id: "401810001",
+            league: "nba",
+            status: "scheduled",
+            status_label: "7:00 PM ET",
+            venue: "Crypto.com Arena",
+            away: {
+              id: "13",
+              abbrev: "LAL",
+              name: "Los Angeles Lakers",
+              score: null,
+              color: "#552583",
+              logo_url: null,
+            },
+            home: {
+              id: "9",
+              abbrev: "GSW",
+              name: "Golden State Warriors",
+              score: null,
+              color: "#1D428A",
+              logo_url: null,
+            },
+            fg_made: 0,
+            fg_attempted: 0,
+            latest_play: null,
+            shots: [],
+            plays: [],
+            win_probability: null,
+            matchup_prediction: null,
+            projected_starters: null,
+            season_leaders: null,
+            injuries: null,
+            box_score: null,
+            fetched_at: "",
+          }),
+        };
+      }
+      return {
+        ok: true,
+        json: async () => ({ date: "2026-07-29", fetched_at: "", games: [] }),
+      };
+    });
+
+    renderWithProviders(["/nba/games/401810001"]);
+
+    expect(await screen.findByTestId("nba-pregame-center")).toBeInTheDocument();
+  });
+
   it("renders MLB matchups hub at /mlb/matchups", async () => {
     renderWithProviders(["/mlb/matchups"]);
     expect(

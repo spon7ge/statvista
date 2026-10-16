@@ -5,6 +5,7 @@ import { LeagueMatchupsPage } from "@/pages/LeagueMatchupsPage";
 import { LeaguePropPicksPage } from "@/pages/LeaguePropPicksPage";
 import { MlbGameDetailPage } from "@/pages/MlbGameDetailPage";
 import { MlbPropPicksPage } from "@/pages/MlbPropPicksPage";
+import { NbaGameDetailPage } from "@/pages/NbaGameDetailPage";
 import { LeagueLegsPage } from "@/pages/LeagueLegsPage";
 import { LeagueArbitragePage } from "@/pages/LeagueArbitragePage";
 import { AboutPage } from "@/pages/AboutPage";
@@ -32,6 +33,10 @@ export function AppRouter() {
         <Route
           path="/nba/matchups"
           element={<LeagueMatchupsPage league="nba" />}
+        />
+        <Route
+          path="/nba/games/:espnEventId"
+          element={<NbaGameDetailPage />}
         />
         <Route
           path="/mlb/matchups"
