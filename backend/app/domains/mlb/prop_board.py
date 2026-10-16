@@ -22,8 +22,7 @@ from app.core.odds_snapshots import (
 from app.domains.betting.player_match_keys import match_player_key
 from app.domains.mlb.leaders import current_mlb_season_year
 from app.domains.mlb.prop_board_cluster import (
-    DFS_CHIP_ORDER,
-    SPORTSBOOK_CHIP_ORDER,
+    BOOK_CHIP_ORDER,
     BoardQuote,
     Cluster,
     cluster_quotes,
@@ -69,6 +68,12 @@ from app.providers.mlb_stats.people import (
 from app.providers.mlb_stats.team_season import fetch_league_group_splits
 
 logger = logging.getLogger(__name__)
+
+class UnknownBoardBookError(ValueError):
+    """`book` is not a board book id."""
+
+
+PRIZEPICKS_AMERICAN = -137
 
 _VALID_SIDES: tuple[str, ...] = ("over", "under")
 _PARLAY_BOOKS: tuple[str, ...] = (
@@ -230,12 +235,25 @@ async def load_enrichment(clusters: list[Cluster] | None = None) -> Enrichment:
     return player_ctx, ranks, warnings, missing_person
 
 
-async def get_mlb_prop_board() -> MlbPropBoardResponse:
+def resolve_board_book(book: str | None) -> str:
+    if book is None:
+        return "prizepicks"
+    if book not in BOOK_CHIP_ORDER:
+        raise UnknownBoardBookError(book)
+    return book
+
+
+async def get_mlb_prop_board(book: str | None = None) -> MlbPropBoardResponse:
+    anchor_book = resolve_board_book(book)
     warnings: list[str] = []
     quotes = collect_board_quotes()
     warnings.extend(getattr(collect_board_quotes, "warnings", []) or [])
 
-    clusters = cluster_quotes(quotes)
+    clusters = [
+        cluster
+        for cluster in cluster_quotes(quotes)
+        if any(quote.book == anchor_book for quote in cluster.quotes)
+    ]
     loaded = load_enrichment(clusters)
     if inspect.isawaitable(loaded):
         loaded = await loaded
@@ -243,11 +261,7 @@ async def get_mlb_prop_board() -> MlbPropBoardResponse:
     warnings.extend(extra_warnings)
 
     rows: list[MlbPropBoardRow] = []
-    sportsbook_mains = _sportsbook_mains(quotes)
     for cluster in clusters:
-        has_dfs = any(quote.book in DFS_CHIP_ORDER for quote in cluster.quotes)
-        if not has_dfs:
-            continue
         ctx = player_ctx.get(cluster.player_key) or {}
         opponent = ctx.get("opponent_abbrev")
         def_r, def_l, pace_r, pace_l = def_and_pace_ranks(
@@ -257,8 +271,7 @@ async def get_mlb_prop_board() -> MlbPropBoardResponse:
         splits = ctx.get(f"splits_{group}") or []
         splits_prev = ctx.get(f"splits_{group}_prev") or []
         skip_hits = cluster.player_key in missing_person
-        sides: tuple[Side, ...] = ("over", "under")
-        for side in sides:
+        for side in ("over", "under"):
             if skip_hits:
                 l5 = l10 = l15 = h2h = None
             else:
@@ -270,15 +283,8 @@ async def get_mlb_prop_board() -> MlbPropBoardResponse:
                     splits + splits_prev,
                     opponent,
                 )
-            dfs_chips, book_chips = _chips_for_side(
-                cluster,
-                side,
-                sportsbook_mains=sportsbook_mains.get(
-                    (cluster.player_key, cluster.stat), {}
-                ),
-                attach_player_mains=has_dfs,
-            )
-            if not dfs_chips:
+            anchor, book_chips = _anchor_and_matches(cluster, side, anchor_book)
+            if anchor is None:
                 continue
             rows.append(
                 MlbPropBoardRow(
@@ -293,10 +299,10 @@ async def get_mlb_prop_board() -> MlbPropBoardResponse:
                     line=cluster.line,
                     game_pk=ctx.get("game_pk"),
                     game_start_at=ctx.get("game_start_at"),
-                    dfs=dfs_chips,
+                    anchor=anchor,
                     books=book_chips,
                     ip_pct=consensus_ip_pct(
-                        [chip.american for chip in book_chips]
+                        [anchor.american, *[chip.american for chip in book_chips]]
                     ),
                     opp_def_rank=def_r,
                     opp_def_label=def_l,
@@ -435,71 +441,51 @@ def _parse_line(raw: Any) -> float | None:
         return None
 
 
-def _sportsbook_mains(
-    quotes: list[BoardQuote],
-) -> dict[tuple[str, str], dict[str, BoardQuote]]:
-    mains: dict[tuple[str, str], dict[str, BoardQuote]] = {}
-    for quote in quotes:
-        if quote.book not in SPORTSBOOK_CHIP_ORDER:
-            continue
-        mains.setdefault((quote.player_key, quote.stat), {})[quote.book] = quote
-    return mains
+def _side_american(quote: BoardQuote, side: Side) -> int | None:
+    raw = quote.over_american if side == "over" else quote.under_american
+    if raw is None and quote.book == "prizepicks":
+        return PRIZEPICKS_AMERICAN
+    return raw
 
 
-def _chip_for_quote(
-    quote: BoardQuote,
-    side: Side,
-    *,
-    allow_missing_american: bool,
-) -> MlbPropBoardBookChip | None:
-    american = quote.over_american if side == "over" else quote.under_american
-    if american is None and not allow_missing_american:
+def _chip_for_quote(quote: BoardQuote, side: Side) -> MlbPropBoardBookChip | None:
+    american = _side_american(quote, side)
+    if american is None:
         return None
     return MlbPropBoardBookChip(
         book=quote.book,
         american=american,
         url=quote.url,
         line=quote.line,
-        over_american=quote.over_american,
-        under_american=quote.under_american,
+        over_american=_side_american(quote, "over"),
+        under_american=_side_american(quote, "under"),
         devig_pct=None,
     )
 
 
-def _chips_for_side(
+def _anchor_and_matches(
     cluster: Cluster,
     side: Side,
-    *,
-    sportsbook_mains: dict[str, BoardQuote],
-    attach_player_mains: bool,
-) -> tuple[list[MlbPropBoardBookChip], list[MlbPropBoardBookChip]]:
+    anchor_book: str,
+) -> tuple[MlbPropBoardBookChip | None, list[MlbPropBoardBookChip]]:
     by_book = {quote.book: quote for quote in cluster.quotes}
-    dfs: list[MlbPropBoardBookChip] = []
+    anchor_quote = by_book.get(anchor_book)
+    if anchor_quote is None:
+        return None, []
+    anchor = _chip_for_quote(anchor_quote, side)
+    if anchor is None:
+        return None, []
     books: list[MlbPropBoardBookChip] = []
-    for book in DFS_CHIP_ORDER:
+    for book in BOOK_CHIP_ORDER:
+        if book == anchor_book:
+            continue
         quote = by_book.get(book)
         if quote is None:
             continue
-        chip = _chip_for_quote(
-            quote,
-            side,
-            allow_missing_american=book == "prizepicks",
-        )
-        if chip is not None:
-            dfs.append(chip)
-    book_quotes = sportsbook_mains if attach_player_mains else by_book
-    for book in SPORTSBOOK_CHIP_ORDER:
-        quote = book_quotes.get(book)
-        if quote is None:
-            continue
-        chip = _chip_for_quote(
-            quote,
-            side,
-            allow_missing_american=False,
-        )
+        chip = _chip_for_quote(quote, side)
         if chip is not None:
             books.append(chip)
-    return dfs, books
+    return anchor, books
 
 
 def _row_sort_key(row: MlbPropBoardRow) -> tuple:

@@ -5,7 +5,7 @@ from fastapi.testclient import TestClient
 
 from app.domains.mlb import routes
 from app.domains.mlb.prop_board import collect_board_quotes, get_mlb_prop_board
-from app.domains.mlb.prop_board_cluster import BoardQuote
+from app.domains.mlb.prop_board_cluster import BoardQuote, consensus_ip_pct
 from app.main import app
 
 client = TestClient(app)
@@ -80,14 +80,10 @@ async def test_assembler_splits_lines_and_null_ip_for_dfs_only(monkeypatch):
     body = await get_mlb_prop_board()
     lines = sorted({r.line for r in body.rows})
     assert lines == [2.0]
-    dfs = [r for r in body.rows if r.line == 2.0]
-    over = next(r for r in dfs if r.side == "over")
-    assert over.ip_pct == 52
-    assert all(any(c.book == "prizepicks" for c in r.dfs) for r in dfs)
-    assert [c.book for c in over.books] == ["prophetx"]
-    assert over.books[0].line == 1.5
-    assert over.books[0].over_american == -110
-    assert over.books[0].under_american == -110
+    over = next(r for r in body.rows if r.line == 2.0 and r.side == "over")
+    assert over.anchor.american == -137
+    assert over.books == []
+    assert over.ip_pct == consensus_ip_pct([-137])
     assert {r.side for r in body.rows} == {"over", "under"}
 
 
@@ -140,17 +136,12 @@ async def test_assembler_splits_dfs_and_sportsbook_lines(monkeypatch):
     lines = sorted({r.line for r in body.rows})
     assert lines == [19.5]
     over_195 = next(r for r in body.rows if r.line == 19.5 and r.side == "over")
-    assert [c.book for c in over_195.dfs] == ["prizepicks", "underdog"]
-    assert [c.american for c in over_195.dfs] == [None, -105]
-    assert all(c.devig_pct is None for c in over_195.dfs)
-    assert [c.book for c in over_195.books] == ["prophetx", "pinnacle"]
+    assert over_195.anchor.book == "prizepicks"
+    assert over_195.anchor.american == -137
+    assert [c.book for c in over_195.books] == ["prophetx", "underdog"]
     assert over_195.books[0].line == 19.5
     assert over_195.books[0].devig_pct is None
-    assert over_195.ip_pct == 52
-    pin = next(c for c in over_195.books if c.book == "pinnacle")
-    assert pin.line == 20.5
-    assert pin.over_american == -108
-    assert pin.under_american == -112
+    assert over_195.ip_pct == consensus_ip_pct([-137, -110, -105])
 
 
 @pytest.mark.asyncio
@@ -229,7 +220,7 @@ async def test_assembler_market_label_chips_and_sort(monkeypatch):
     assert betts_over.books[0].devig_pct is None
     assert betts_over.books[1].american == -115
     assert betts_over.books[1].devig_pct is None
-    assert betts_over.ip_pct == 53
+    assert betts_over.ip_pct == consensus_ip_pct([-137, -110, -115])
     names_in_order = [r.player_name for r in body.rows]
     assert names_in_order[:2] == ["Betts", "Betts"]
     assert names_in_order[2:] == ["Judge", "Judge"]
@@ -275,13 +266,14 @@ async def test_chips_skip_books_without_american_on_that_side(monkeypatch):
     body = await get_mlb_prop_board()
     over = next(r for r in body.rows if r.side == "over")
     under = next(r for r in body.rows if r.side == "under")
+    assert over.anchor.book == "prizepicks"
+    assert over.anchor.american == -137
     assert [c.book for c in over.books] == ["draftkings", "fanduel"]
     assert [c.american for c in over.books] == [-115, -108]
-    assert [c.book for c in over.dfs] == ["prizepicks"]
-    assert [c.american for c in over.dfs] == [None]
+    assert under.anchor.book == "prizepicks"
+    assert under.anchor.american == -137
     assert [c.book for c in under.books] == ["draftkings"]
     assert [c.american for c in under.books] == [-105]
-    assert [c.book for c in under.dfs] == ["prizepicks"]
 
 
 @pytest.mark.asyncio
@@ -303,6 +295,106 @@ async def test_assembler_omits_sportsbook_only_rows(monkeypatch):
         lambda *_: ({}, {}, [], set()),
     )
     body = await get_mlb_prop_board()
+    assert body.rows == []
+    fanduel_body = await get_mlb_prop_board("fanduel")
+    assert len(fanduel_body.rows) == 1
+    over = next(r for r in fanduel_body.rows if r.side == "over")
+    assert over.anchor.book == "fanduel"
+    assert over.anchor.american == -108
+    assert over.books == []
+    assert not any(r.side == "under" for r in fanduel_body.rows)
+
+
+@pytest.mark.asyncio
+async def test_anchor_book_keeps_only_identical_player_stat_and_line(monkeypatch):
+    quotes = [
+        BoardQuote(
+            player_name="Judge",
+            player_key="aaron judge",
+            stat="hits",
+            line=1.5,
+            book="prizepicks",
+            over_american=None,
+            under_american=None,
+        ),
+        BoardQuote(
+            player_name="Judge",
+            player_key="aaron judge",
+            stat="hits",
+            line=1.5,
+            book="draftkings",
+            over_american=-110,
+            under_american=-110,
+        ),
+        BoardQuote(
+            player_name="Judge",
+            player_key="aaron judge",
+            stat="hits",
+            line=2.5,
+            book="fanduel",
+            over_american=-108,
+            under_american=-112,
+        ),
+        BoardQuote(
+            player_name="Judge",
+            player_key="aaron judge",
+            stat="runs",
+            line=1.5,
+            book="draftkings",
+            over_american=-120,
+            under_american=-110,
+        ),
+    ]
+    monkeypatch.setattr("app.domains.mlb.prop_board.collect_board_quotes", lambda: quotes)
+    monkeypatch.setattr(
+        "app.domains.mlb.prop_board.load_enrichment",
+        lambda *_: ({}, {}, [], set()),
+    )
+
+    prizepicks = await get_mlb_prop_board()
+    assert {row.line for row in prizepicks.rows} == {1.5}
+    assert {row.stat for row in prizepicks.rows} == {"hits"}
+    over = next(row for row in prizepicks.rows if row.side == "over")
+    assert over.anchor.book == "prizepicks"
+    assert over.anchor.american == -137
+    assert [chip.book for chip in over.books] == ["draftkings"]
+    assert over.books[0].line == 1.5
+    assert over.ip_pct == consensus_ip_pct([-137, -110])
+
+    draftkings = await get_mlb_prop_board("draftkings")
+    assert {(row.stat, row.line) for row in draftkings.rows} == {
+        ("hits", 1.5),
+        ("runs", 1.5),
+    }
+    hits = next(
+        row
+        for row in draftkings.rows
+        if row.stat == "hits" and row.line == 1.5 and row.side == "over"
+    )
+    assert hits.anchor.book == "draftkings"
+    assert hits.anchor.american == -110
+    assert [chip.book for chip in hits.books] == ["prizepicks"]
+    assert hits.books[0].american == -137
+    assert hits.ip_pct == consensus_ip_pct([-110, -137])
+
+
+@pytest.mark.asyncio
+async def test_unknown_board_book_raises(monkeypatch):
+    from app.domains.mlb.prop_board import UnknownBoardBookError
+
+    monkeypatch.setattr("app.domains.mlb.prop_board.collect_board_quotes", lambda: [])
+    with pytest.raises(UnknownBoardBookError):
+        await get_mlb_prop_board("not-a-book")
+
+
+@pytest.mark.asyncio
+async def test_known_book_with_no_quotes_returns_empty_rows(monkeypatch):
+    monkeypatch.setattr("app.domains.mlb.prop_board.collect_board_quotes", lambda: [])
+    monkeypatch.setattr(
+        "app.domains.mlb.prop_board.load_enrichment",
+        lambda *_: ({}, {}, [], set()),
+    )
+    body = await get_mlb_prop_board("fanduel")
     assert body.rows == []
 
 

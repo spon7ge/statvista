@@ -114,18 +114,17 @@ def test_prizepicks_extra_line_has_null_ip(client):
         line_score=2.0,
         scraped_at=_T1,
     )
+    from app.domains.mlb.prop_board_cluster import consensus_ip_pct
+
     body = client.get("/api/mlb/props/board").json()
     lines = sorted({row["line"] for row in body["rows"]})
     assert lines == [2.0]
-    dfs = [row for row in body["rows"] if row["line"] == 2.0]
-    assert dfs
-    over = next(row for row in dfs if row["side"] == "over")
-    assert over["ip_pct"] == 52
-    assert all(
-        any(chip["book"] == "prizepicks" for chip in row["dfs"]) for row in dfs
-    )
-    px = next(chip for chip in over["books"] if chip["book"] == "prophetx")
-    assert px["line"] == 1.5
+    over = next(row for row in body["rows"] if row["side"] == "over")
+    assert over["anchor"]["book"] == "prizepicks"
+    assert over["anchor"]["american"] == -137
+    assert over["books"] == []
+    assert over["ip_pct"] == consensus_ip_pct([-137])
+    assert "dfs" not in over
 
 
 import pytest

@@ -27,6 +27,7 @@ def test_board_row_requires_side_and_line():
         line=1.5,
         game_pk=1,
         game_start_at=None,
+        anchor=MlbPropBoardBookChip(book="prizepicks", american=-137, line=1.5),
         books=[MlbPropBoardBookChip(book="prophetx", american=-115)],
         ip_pct=53,
         opp_def_rank=12,
@@ -39,10 +40,11 @@ def test_board_row_requires_side_and_line():
     )
     assert row.side == "over"
     assert row.books[0].book == "prophetx"
-    assert row.dfs == []
+    assert row.anchor.book == "prizepicks"
+    assert row.anchor.american == -137
     dumped = row.model_dump()
-    assert dumped["dfs"] == []
-    assert "dfs" in dumped
+    assert "dfs" not in dumped
+    assert dumped["anchor"]["book"] == "prizepicks"
     assert dumped["books"][0]["line"] is None
     assert dumped["books"][0]["over_american"] is None
     assert dumped["books"][0]["under_american"] is None

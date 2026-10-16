@@ -20,7 +20,7 @@ class MlbPropBoardBookChip(BaseModel):
     url: str | None = None
     # Unused on the board (Odds shows raw implied from `american`). Always null.
     devig_pct: int | None = None
-    # Sportsbook main for this player+stat; may differ from the row's DFS line.
+    # This book's main; on a board row it equals the row line.
     line: float | None = None
     over_american: int | None = None
     under_american: int | None = None
@@ -40,9 +40,9 @@ class MlbPropBoardRow(BaseModel):
     line: float
     game_pk: int | None = None
     game_start_at: datetime | None = None
-    dfs: list[MlbPropBoardBookChip] = Field(default_factory=list)
+    anchor: MlbPropBoardBookChip
     books: list[MlbPropBoardBookChip] = Field(default_factory=list)
-    # Average raw implied of Odds Americans (not de-vigged).
+    # Average raw implied of the anchor American and matching books on this side.
     ip_pct: int | None = None
     opp_def_rank: int | None = None
     opp_def_label: str | None = None
