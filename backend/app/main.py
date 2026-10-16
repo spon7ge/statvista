@@ -13,6 +13,7 @@ app = FastAPI(
         "from Supabase (silver / gold schemas) and make no NBA or Odds API calls. "
         "The exceptions are /api/wnba/scoreboard/today, /api/mlb/scoreboard/today, "
         "/api/mlb/scoreboard, /api/nba/scoreboard/today, /api/nba/scoreboard, "
+        "NBA game detail routes, "
         "/api/mlb/odds/today, /api/wnba/leaders, "
         "/api/wnba/player/{player_id}, /api/wnba/standings, /api/wnba/futures, "
         "/api/wnba/odds/today, /api/wnba/props/today, WNBA game detail routes, "
