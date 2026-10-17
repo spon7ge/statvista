@@ -11,7 +11,8 @@ _V1_PICKEM_URL = "https://api.underdogfantasy.com/v1/over_under_lines"
 
 
 def _load_scraper(name: str):
-    path = _SCRAPERS_DIR / f"{name}.py"
+    sport = name.split("_", 1)[0]
+    path = _SCRAPERS_DIR / sport / f"{name}.py"
     spec = importlib.util.spec_from_file_location(name, path)
     assert spec is not None and spec.loader is not None
     mod = importlib.util.module_from_spec(spec)

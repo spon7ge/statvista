@@ -6,7 +6,7 @@ order. Used to back the `/api/mlb/lineups` route (see
 `docs/superpowers/specs/2026-08-04-mlb-rotowire-projected-lineups-design.md`).
 
 Usage:
-    from src.scrapers.mlb_rotowire_lineups import scrape_mlb_lineups
+    from src.scrapers.mlb.mlb_rotowire_lineups import scrape_mlb_lineups
     games = scrape_mlb_lineups()              # today's slate
     games = scrape_mlb_lineups(date_token="tomorrow")
 """

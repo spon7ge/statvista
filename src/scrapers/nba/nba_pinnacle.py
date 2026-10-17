@@ -1,10 +1,10 @@
 """
-Pinnacle MLB player props scraper via Selenium (no Arcadia REST client).
-Baseball / MLB only.
+Pinnacle NBA player props scraper via Selenium (no Arcadia REST client).
+Basketball / NBA only.
 
 Flow:
-  1) Open https://www.pinnacle.com/en/baseball/mlb/matchups/#all
-  2) Collect each game URL like …/baseball/mlb/{slug}/{matchup_id}/#all
+  1) Open https://www.pinnacle.com/en/basketball/nba/matchups/#all
+  2) Collect each game URL like …/basketball/nba/{slug}/{matchup_id}/#all
   3) Visit each game page; Arcadia responses are decoded from Chrome DevTools
      (responses the site loaded in the browser after navigation).
 
@@ -18,10 +18,10 @@ PINNACLE_PAGE_WAIT — fallback sleep between retries if Arcadia poll fails (def
 PINNACLE_ODDS_FORMAT=both|decimal|american — Arcadia always sends American `price`; decimal
 is derived. The site odds-format switch does not change the API (no need to automate it).
 
-PINNACLE_LEAGUES — optional; must be "mlb" if set (default "mlb").
+PINNACLE_LEAGUES — optional; must be "nba" if set (default "nba").
 
-Output: data/props/pinnacle/mlb/pinnacle_mlb_{YYYY-MM-DD}_{HHMMSS}_props.json
-and pinnacle_mlb_{YYYY-MM-DD}_{HHMMSS}_team.json (America/Los_Angeles, PST/PDT). Override with:
+Output: data/props/pinnacle/nba/pinnacle_nba_{YYYY-MM-DD}_{HHMMSS}_props.json
+and pinnacle_nba_{YYYY-MM-DD}_{HHMMSS}_team.json (America/Los_Angeles, PST/PDT). Override with:
   PINNACLE_OUTPUT     — full path to a .json file. A directory is used as-is
                          (timestamped filename is appended inside it).
   PINNACLE_OUTPUT_DIR — directory; timestamped filename appended inside it.
@@ -61,7 +61,12 @@ from typing import Any
 from urllib.parse import urljoin, urlparse
 from zoneinfo import ZoneInfo
 
-_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+try:
+    from .paths import ensure_repo_on_path
+except ImportError:  # python nba_pinnacle.py from this directory
+    from paths import ensure_repo_on_path
+
+_ROOT = str(ensure_repo_on_path(__file__))
 
 try:
     from selenium.webdriver.common.by import By  # type: ignore[import-untyped]
@@ -84,36 +89,35 @@ _PINNACLE_OUTPUT_TZ = ZoneInfo("America/Los_Angeles")
 PINNACLE_ORIGIN = "https://www.pinnacle.com"
 
 LEAGUE_MATCHUPS_URL: dict[str, str] = {
-    "mlb": "https://www.pinnacle.com/en/baseball/mlb/matchups/#all",
+    "nba": "https://www.pinnacle.com/en/basketball/nba/matchups/#all",
 }
 LEAGUE_ARCADIA_IDS: dict[str, int] = {
-    "mlb": 246,
+    "nba": 487,
 }
 SUPPORTED_LEAGUES = tuple(LEAGUE_MATCHUPS_URL.keys())
 
 # Related-market `units` -> stable stat key in JSON output (same semantics as Arcadia payloads).
 PLAYER_PROP_UNITS = {
-    "Hits": "hits",
-    "Home Runs": "home_runs",
-    "Total Bases": "total_bases",
-    "RBIs": "rbis",
-    "Runs Batted In": "rbis",
-    "Runs": "runs",
-    "Stolen Bases": "stolen_bases",
-    "Strikeouts": "strikeouts",
-    "Hits Allowed": "hits_allowed",
-    "Walks": "walks",
-    "Earned Runs": "earned_runs",
-    "Outs Recorded": "outs_recorded",
-    "Pitcher Outs": "pitcher_outs",
+    "Points": "points",
+    "Rebounds": "rebounds",
+    "Assists": "assists",
+    "3 Point FG": "three_pointers",
+    "Steals": "steals",
+    "Blocks": "blocks",
+    "Blocked Shots": "blocks",
+    "Turnovers": "turnovers",
+    "Pts+Rebs+Asts": "points_rebounds_assists",
+    "Pts+Rebs": "points_rebounds",
+    "Pts+Asts": "points_assists",
+    "Rebs+Asts": "rebounds_assists",
 }
 
 # Team/game-level (non player-prop) market types pulled alongside props.
 TEAM_MARKET_TYPES = ("moneyline", "spread", "total")
 
-# Matches /en/baseball/mlb/{slug}/{matchup_id}/
+# Matches /en/basketball/nba/{slug}/{matchup_id}/
 _GAME_PATH_RE = re.compile(
-    r"/en/baseball/(?P<league>mlb)/(?P<slug>[\w.-]+)/(?P<mid>\d+)/?",
+    r"/en/basketball/(?P<league>nba)/(?P<slug>[\w.-]+)/(?P<mid>\d+)/?",
     re.IGNORECASE,
 )
 
@@ -266,7 +270,7 @@ def _normalize_game_url(abs_url: str, expected_league: str) -> str | None:
     lower = abs_url.lower()
     if "/matchups" in urlparse(lower).path:
         return None
-    return urljoin(PINNACLE_ORIGIN, f"/en/baseball/{league}/{slug}/{mid}/#all")
+    return urljoin(PINNACLE_ORIGIN, f"/en/basketball/{league}/{slug}/{mid}/#all")
 
 
 def collect_game_urls(
@@ -283,7 +287,7 @@ def collect_game_urls(
     cand: set[str] = set()
     for raw in hrefs:
         raw = (raw or "").strip()
-        if not raw or "baseball/" not in raw.lower():
+        if not raw or "basketball/" not in raw.lower():
             continue
         canon = _normalize_game_url(raw, expected_league)
         if canon:
@@ -349,7 +353,7 @@ def game_urls_from_league_matchups(
         if not slug:
             continue
         canon = _normalize_game_url(
-            urljoin(PINNACLE_ORIGIN, f"/en/baseball/{league}/{slug}/{mid}/"),
+            urljoin(PINNACLE_ORIGIN, f"/en/basketball/{league}/{slug}/{mid}/"),
             league,
         )
         if canon:
@@ -403,7 +407,7 @@ def _worker_scrape_game_batch(
 
 class PinnacleScraper:
     """
-    Selenium-first MLB player props scraper aligned with repo output layout.
+    Selenium-first NBA player props scraper aligned with repo output layout.
 
     Odds: each prop includes `american_over` / `american_under` (Arcadia native) and
     `decimal_*` (derived). No need to toggle the site — the API always sends American `price`.
@@ -1211,7 +1215,7 @@ class PinnacleScraper:
         payload_base: dict[str, Any] = {
             "fetched_at": dt.datetime.now(_PINNACLE_OUTPUT_TZ).isoformat(timespec="seconds"),
             "source": "pinnacle_selenium",
-            "sport": "baseball",
+            "sport": "basketball",
             "league": self.league,
             "list_page": self.matchups_url,
             "parallel_workers_configured": self.parallel_workers,
@@ -1249,7 +1253,7 @@ class PinnacleScraper:
                 scraped_at=scraped_at,
             )
             logger.info(
-                "Supabase odds.mlb_pinnacle upserted %s rows (%s)",
+                "Supabase odds.nba_pinnacle upserted %s rows (%s)",
                 n_props_db,
                 self.league,
             )
@@ -1259,13 +1263,13 @@ class PinnacleScraper:
                 scraped_at=scraped_at,
             )
             logger.info(
-                "Supabase odds.mlb_pinnacle_team upserted %s rows (%s)",
+                "Supabase odds.nba_pinnacle_team upserted %s rows (%s)",
                 n_team_db,
                 self.league,
             )
         except Exception as exc:
             db_ok = False
-            logger.warning("Supabase mlb pinnacle load failed (JSON kept): %s", exc)
+            logger.warning("Supabase nba pinnacle load failed (JSON kept): %s", exc)
 
         n_props = sum(len(g.get("props") or []) for g in games_out)
         print(
@@ -1278,7 +1282,7 @@ class PinnacleScraper:
 
 
 def _requested_leagues() -> list[str]:
-    raw = os.environ.get("PINNACLE_LEAGUES", "mlb")
+    raw = os.environ.get("PINNACLE_LEAGUES", "nba")
     leagues = [x.strip().lower() for x in raw.split(",") if x.strip()]
     unknown = [x for x in leagues if x not in SUPPORTED_LEAGUES]
     if unknown:
@@ -1292,16 +1296,16 @@ def _requested_leagues() -> list[str]:
         if lg not in seen:
             seen.add(lg)
             ordered.append(lg)
-    return ordered or ["mlb"]
+    return ordered or ["nba"]
 
 
 def run_all() -> tuple[dict[str, dict[str, Any]], bool]:
-    print("=== Starting Pinnacle MLB scraper (Selenium)... ===")
+    print("=== Starting Pinnacle NBA scraper (Selenium)... ===")
     try:
-        payload, db_ok = PinnacleScraper("mlb").run()
-        return {"mlb": payload}, db_ok
+        payload, db_ok = PinnacleScraper("nba").run()
+        return {"nba": payload}, db_ok
     except Exception as e:
-        print(f"✗ [mlb] Error: {e}")
+        print(f"✗ [nba] Error: {e}")
         import traceback
 
         traceback.print_exc()

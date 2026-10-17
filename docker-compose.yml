@@ -89,7 +89,7 @@ services:
     environment:
       SUPABASE_DB_URL: postgresql://${POSTGRES_USER:-hoopvista}:${POSTGRES_PASSWORD:-hoopvista}@postgres:5432/${POSTGRES_DB:-hoopvista}?sslmode=disable
       ODDS_LEAGUE: ${ODDS_LEAGUE:-all}
-      ODDS_EXCLUDE: ${ODDS_EXCLUDE:-wnba_prizepick,mlb_prizepick}
+      ODDS_EXCLUDE: ${ODDS_EXCLUDE:-wnba_prizepick,nba_prizepick,mlb_prizepick}
       ODDS_INTERVAL_SECONDS: ${ODDS_INTERVAL_SECONDS:-300}
     volumes:
       - ./data/props:/app/data/props

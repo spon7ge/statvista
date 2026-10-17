@@ -53,7 +53,7 @@ _UD_ALIASES: dict[str, str] = {
 }
 
 # ProphetX ``stat_name`` already emits bare canonical names (see
-# ``src/scrapers/mlb_prophetx.py::PROP_SUBTYPE_TO_STAT``). Pinnacle
+# ``src/scrapers/mlb/mlb_prophetx.py::PROP_SUBTYPE_TO_STAT``). Pinnacle
 # ``market_type`` and ParlayAPI ``market_key`` prefix the same bare names with
 # ``player_``/``batter_``/``pitcher_`` (mirrors the WNBA convention, e.g.
 # ``player_points``).

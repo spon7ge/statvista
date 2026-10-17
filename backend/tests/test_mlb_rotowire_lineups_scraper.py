@@ -1,7 +1,7 @@
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from src.scrapers.mlb_rotowire_lineups import (
+from src.scrapers.mlb.mlb_rotowire_lineups import (
     MLB_LINEUPS_URL,
     fetch_mlb_lineups_html,
     parse_mlb_lineups_html,
@@ -136,7 +136,7 @@ def test_parse_pitcher_highlights_by_dom_order_when_not_in_ul():
     assert g["home"]["pitcher"]["era"] == "5.12"
 
 
-@patch("src.scrapers.mlb_rotowire_lineups.requests.get")
+@patch("src.scrapers.mlb.mlb_rotowire_lineups.requests.get")
 def test_fetch_mlb_lineups_html_today_has_no_date_param(mock_get):
     mock_response = MagicMock()
     mock_response.text = "<html></html>"
@@ -151,7 +151,7 @@ def test_fetch_mlb_lineups_html_today_has_no_date_param(mock_get):
     assert call_kwargs["params"] is None
 
 
-@patch("src.scrapers.mlb_rotowire_lineups.requests.get")
+@patch("src.scrapers.mlb.mlb_rotowire_lineups.requests.get")
 def test_fetch_mlb_lineups_html_tomorrow_passes_date_param(mock_get):
     mock_response = MagicMock()
     mock_response.text = "<html></html>"

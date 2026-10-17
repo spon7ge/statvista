@@ -8,7 +8,7 @@ from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-_SCRAPER_PATH = Path(__file__).resolve().parents[2] / "mlb_pinnacle.py"
+_SCRAPER_PATH = Path(__file__).resolve().parents[2] / "mlb" / "mlb_pinnacle.py"
 
 
 def _load_scraper():

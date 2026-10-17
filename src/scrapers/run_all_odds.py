@@ -1,10 +1,10 @@
-"""Run all WNBA/MLB odds/props scrapers.
+"""Run all WNBA/NBA/MLB odds/props scrapers.
 
 Usage:
   python -m src.scrapers.run_all_odds
-  python -m src.scrapers.run_all_odds --league wnba
-  python -m src.scrapers.run_all_odds --only wnba_novig,mlb_underdog
-  python -m src.scrapers.run_all_odds --exclude wnba_prizepick,mlb_prizepick
+  python -m src.scrapers.run_all_odds --league nba
+  python -m src.scrapers.run_all_odds --only wnba_novig,nba_fanduel,mlb_underdog
+  python -m src.scrapers.run_all_odds --exclude wnba_prizepick,nba_prizepick,mlb_prizepick
   python -m src.scrapers.run_all_odds --fail-fast
 """
 
@@ -17,35 +17,47 @@ import sys
 from dataclasses import dataclass
 from typing import Literal
 
-League = Literal["wnba", "mlb", "all"]
+League = Literal["wnba", "nba", "mlb", "all"]
+Sport = Literal["wnba", "nba", "mlb"]
 
 
 @dataclass(frozen=True)
 class ScraperJob:
     name: str
-    league: Literal["wnba", "mlb"]
+    league: Sport
     module: str
     env: dict[str, str] | None = None
 
 
-# PrizePicks last per league so DataDome/browser fallback does not block
-# the HTTP scrapers if a captcha solve is needed.
+# HTTP books first. Pinnacle, then PrizePicks, stay last per league so a
+# browser/DataDome fallback does not block the HTTP scrapers.
 SCRAPER_JOBS: tuple[ScraperJob, ...] = (
-    ScraperJob("wnba_novig", "wnba", "src.scrapers.wnba_novig"),
-    ScraperJob("wnba_prophetx", "wnba", "src.scrapers.wnba_prophetx"),
-    ScraperJob("wnba_underdog", "wnba", "src.scrapers.wnba_underdog"),
+    ScraperJob("wnba_novig", "wnba", "src.scrapers.wnba.wnba_novig"),
+    ScraperJob("wnba_prophetx", "wnba", "src.scrapers.wnba.wnba_prophetx"),
+    ScraperJob("wnba_underdog", "wnba", "src.scrapers.wnba.wnba_underdog"),
+    ScraperJob("wnba_draftking", "wnba", "src.scrapers.wnba.wnba_draftking"),
+    ScraperJob("wnba_fanduel", "wnba", "src.scrapers.wnba.wnba_fanduel"),
     ScraperJob(
         "bball_pinnacle",
         "wnba",
-        "src.scrapers.bball_pinnacle",
+        "src.scrapers.wnba.wnba_pinnacle",
         env={"PINNACLE_LEAGUES": "wnba"},
     ),
-    ScraperJob("wnba_prizepick", "wnba", "src.scrapers.wnba_prizepick"),
-    ScraperJob("mlb_novig", "mlb", "src.scrapers.mlb_novig"),
-    ScraperJob("mlb_prophetx", "mlb", "src.scrapers.mlb_prophetx"),
-    ScraperJob("mlb_underdog", "mlb", "src.scrapers.mlb_underdog"),
-    ScraperJob("mlb_pinnacle", "mlb", "src.scrapers.mlb_pinnacle"),
-    ScraperJob("mlb_prizepick", "mlb", "src.scrapers.mlb_prizepick"),
+    ScraperJob("wnba_prizepick", "wnba", "src.scrapers.wnba.wnba_prizepick"),
+    ScraperJob("nba_novig", "nba", "src.scrapers.nba.nba_novig"),
+    ScraperJob("nba_prophetx", "nba", "src.scrapers.nba.nba_prophetx"),
+    ScraperJob("nba_underdog", "nba", "src.scrapers.nba.nba_underdog"),
+    ScraperJob("nba_draftking", "nba", "src.scrapers.nba.nba_draftking"),
+    ScraperJob("nba_fanduel", "nba", "src.scrapers.nba.nba_fanduel"),
+    ScraperJob("nba_pinnacle", "nba", "src.scrapers.nba.nba_pinnacle"),
+    ScraperJob("nba_prizepick", "nba", "src.scrapers.nba.nba_prizepick"),
+    ScraperJob("mlb_novig", "mlb", "src.scrapers.mlb.mlb_novig"),
+    ScraperJob("mlb_prophetx", "mlb", "src.scrapers.mlb.mlb_prophetx"),
+    ScraperJob("mlb_underdog", "mlb", "src.scrapers.mlb.mlb_underdog"),
+    ScraperJob("mlb_draftking", "mlb", "src.scrapers.mlb.mlb_draftking"),
+    ScraperJob("mlb_fanduel", "mlb", "src.scrapers.mlb.mlb_fanduel"),
+    ScraperJob("mlb_pinnacle", "mlb", "src.scrapers.mlb.mlb_pinnacle"),
+    ScraperJob("mlb_prizepick", "mlb", "src.scrapers.mlb.mlb_prizepick"),
 )
 
 KNOWN_NAMES = {job.name for job in SCRAPER_JOBS}
@@ -137,11 +149,11 @@ def _parse_only(raw: str | None) -> list[str] | None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Run WNBA/MLB odds/props scrapers.",
+        description="Run WNBA/NBA/MLB odds/props scrapers.",
     )
     parser.add_argument(
         "--league",
-        choices=("wnba", "mlb", "all"),
+        choices=("wnba", "nba", "mlb", "all"),
         default="all",
         help="Which league scrapers to run (default: all)",
     )

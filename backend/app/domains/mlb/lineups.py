@@ -22,7 +22,7 @@ from app.domains.mlb.schemas import (
     MlbLineupSide,
     MlbLineupsResponse,
 )
-from src.scrapers.mlb_rotowire_lineups import scrape_mlb_lineups
+from src.scrapers.mlb.mlb_rotowire_lineups import scrape_mlb_lineups
 
 logger = logging.getLogger(__name__)
 

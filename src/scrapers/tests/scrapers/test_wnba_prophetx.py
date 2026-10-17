@@ -10,7 +10,7 @@ from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-_SCRAPER_PATH = Path(__file__).resolve().parents[2] / "wnba_prophetx.py"
+_SCRAPER_PATH = Path(__file__).resolve().parents[2] / "wnba" / "wnba_prophetx.py"
 
 
 def _load_scraper():

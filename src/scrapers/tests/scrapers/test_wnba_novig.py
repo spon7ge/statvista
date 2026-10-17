@@ -12,7 +12,7 @@ from zoneinfo import ZoneInfo
 
 import pytest
 
-_SCRAPER_PATH = Path(__file__).resolve().parents[2] / "wnba_novig.py"
+_SCRAPER_PATH = Path(__file__).resolve().parents[2] / "wnba" / "wnba_novig.py"
 
 
 def _load_scraper():
@@ -247,88 +247,63 @@ def test_extract_props_skips_both_sides_empty() -> None:
     assert nv.extract_props(markets) == []
 
 
-def test_wnba_events_queries_filter_wnba_league() -> None:
+def _trading_page(*event_ids: str) -> dict[str, Any]:
+    return {
+        "sections": [
+            {
+                "content": {
+                    "components": [
+                        {
+                            "type": "game_event_card",
+                            "eventId": event_id,
+                            "league": "WNBA",
+                            "awayTeam": {"id": "a", "name": "NY"},
+                            "homeTeam": {"id": "h", "name": "LV"},
+                            "scoreboard": {
+                                "title": "NY @ LV",
+                                "status": "OPEN_PREGAME",
+                            },
+                        }
+                        for event_id in event_ids
+                    ]
+                }
+            }
+        ]
+    }
+
+
+def test_wnba_events_use_allowlisted_novig_query() -> None:
     nv = _load_scraper()
-    for query in (nv._GET_WNBA_EVENTS_QUERY, nv._GET_WNBA_EVENTS_INLINE_QUERY):
-        assert '_eq: "WNBA"' in query
-        assert '_eq: "MLB"' not in query
+    assert nv.TRADING_PAGE_URL.endswith("/trading/WNBA/page")
+    assert nv.EVENT_MARKETS_OPERATION == "EventMarkets_Query"
+    query = nv._EVENT_MARKETS_QUERY
+    assert "query EventMarkets_Query" in query
+    assert "$eventId: uuid" in query
+    assert "GetWnbaEvents" not in query
+    assert "orders" not in query
 
 
-def test_fetch_wnba_events_parses_data(monkeypatch) -> None:
+def test_fetch_wnba_events_parses_trading_page() -> None:
     nv = _load_scraper()
     session = MagicMock()
-    payload = {
-        "data": {
-            "event": [
-                {
-                    "id": "e1",
-                    "description": "NY @ LV",
-                    "status": "OPEN_PREGAME",
-                    "game": {"league": "WNBA"},
-                },
-            ]
-        }
-    }
-    monkeypatch.setattr(nv, "graphql", lambda *_a, **_k: payload)
+    response = MagicMock()
+    response.status_code = 200
+    response.json.return_value = _trading_page("e1")
+    session.get.return_value = response
     events = nv.fetch_wnba_events(session)
     assert len(events) == 1
     assert events[0]["id"] == "e1"
-
-
-def test_fetch_wnba_events_inline_limit_offset_fallback(monkeypatch) -> None:
-    nv = _load_scraper()
-    session = MagicMock()
-    inline_payload = {
-        "data": {
-            "event": [
-                {
-                    "id": "e1",
-                    "description": "NY @ LV",
-                    "status": "OPEN_PREGAME",
-                    "game": {"league": "WNBA"},
-                },
-            ]
-        }
-    }
-    calls: list[tuple[str, dict[str, Any] | None]] = []
-
-    def fake_graphql(_session, query, variables=None, **_k):
-        calls.append((query, variables))
-        if variables is not None:
-            raise RuntimeError("GraphQL errors: unknown variable limit")
-        return inline_payload
-
-    monkeypatch.setattr(nv, "graphql", fake_graphql)
-    events = nv.fetch_wnba_events(session)
-    assert len(events) == 1
-    assert events[0]["id"] == "e1"
-    assert len(calls) == 2
-    assert calls[0][1] is not None
-    assert calls[1][1] is None
+    assert events[0]["game"]["league"] == "WNBA"
+    assert session.get.call_args.args[0].endswith("/trading/WNBA/page")
 
 
 def test_fetch_wnba_events_honors_max_events(monkeypatch) -> None:
     nv = _load_scraper()
     session = MagicMock()
-    payload = {
-        "data": {
-            "event": [
-                {
-                    "id": "e1",
-                    "description": "NY @ LV",
-                    "status": "OPEN_PREGAME",
-                    "game": {"league": "WNBA"},
-                },
-                {
-                    "id": "e2",
-                    "description": "SEA @ MIN",
-                    "status": "OPEN_INGAME",
-                    "game": {"league": "WNBA"},
-                },
-            ]
-        }
-    }
-    monkeypatch.setattr(nv, "graphql", lambda *_a, **_k: payload)
+    response = MagicMock()
+    response.status_code = 200
+    response.json.return_value = _trading_page("e1", "e2")
+    session.get.return_value = response
     monkeypatch.setenv("NOVIG_MAX_EVENTS", "1")
     events = nv.fetch_wnba_events(session)
     assert len(events) == 1
@@ -337,10 +312,9 @@ def test_fetch_wnba_events_honors_max_events(monkeypatch) -> None:
 
 def test_event_markets_query_uses_uuid_variable() -> None:
     nv = _load_scraper()
-    query = nv._GET_EVENT_MARKETS_QUERY
-    assert "$id: uuid!" in query
+    query = nv._EVENT_MARKETS_QUERY
+    assert "$eventId: uuid" in query
     assert "$id: String!" not in query
-    # Nested orders exceed Novig's 4s GraphQL timeout; odds use `available`.
     assert "orders" not in query
 
 

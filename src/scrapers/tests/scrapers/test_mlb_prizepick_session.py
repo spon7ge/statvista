@@ -9,7 +9,7 @@ from pathlib import Path
 import pytest
 
 _SCRAPER_PATH = (
-    Path(__file__).resolve().parents[2] / "mlb_prizepick.py"
+    Path(__file__).resolve().parents[2] / "mlb" / "mlb_prizepick.py"
 )
 
 

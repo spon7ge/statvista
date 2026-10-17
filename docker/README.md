@@ -36,8 +36,8 @@ Health: http://localhost:8000/api/health
 Props and Legs stay empty until odds snapshots exist. The `odds` worker fills Novig / ProphetX / Pinnacle / Underdog. PrizePicks still runs on the host:
 
 ```bash
-python -m src.scrapers.mlb_prizepick
-python -m src.scrapers.wnba_prizepick
+python -m src.scrapers.mlb.mlb_prizepick
+python -m src.scrapers.wnba.wnba_prizepick
 ```
 
 ## External Supabase
@@ -56,19 +56,19 @@ Apply migrations once in the Supabase SQL Editor (`db/migrations/`) before the f
 Default command is a loop:
 
 ```text
-python -m src.scrapers.run_all_odds --league all --exclude wnba_prizepick,mlb_prizepick
+python -m src.scrapers.run_all_odds --league all --exclude wnba_prizepick,nba_prizepick,mlb_prizepick
 ```
 
 | Variable | Default | Meaning |
 |----------|---------|---------|
-| `ODDS_LEAGUE` | `all` | `wnba`, `mlb`, or `all` |
-| `ODDS_EXCLUDE` | `wnba_prizepick,mlb_prizepick` | Names skipped each cycle |
+| `ODDS_LEAGUE` | `all` | `wnba`, `nba`, `mlb`, or `all` |
+| `ODDS_EXCLUDE` | `wnba_prizepick,nba_prizepick,mlb_prizepick` | Names skipped each cycle |
 | `ODDS_INTERVAL_SECONDS` | `300` | Sleep between cycles |
 
 One-shot (no loop):
 
 ```bash
-docker compose run --rm --entrypoint python odds -m src.scrapers.run_all_odds --exclude wnba_prizepick,mlb_prizepick
+docker compose run --rm --entrypoint python odds -m src.scrapers.run_all_odds --exclude wnba_prizepick,nba_prizepick,mlb_prizepick
 ```
 
 ## Compose profiles

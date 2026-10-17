@@ -1,4 +1,5 @@
-# HTTP odds scrapers (Novig, ProphetX, Pinnacle, Underdog). PrizePicks stays on the host.
+# HTTP odds scrapers (Novig, ProphetX, Underdog, DraftKings, FanDuel, Pinnacle).
+# PrizePicks stays on the host.
 FROM python:3.12-slim
 
 WORKDIR /app
@@ -12,7 +13,7 @@ RUN chmod +x /usr/local/bin/odds-entrypoint.sh
 
 ENV PYTHONPATH=/app \
     ODDS_LEAGUE=all \
-    ODDS_EXCLUDE=wnba_prizepick,mlb_prizepick \
+    ODDS_EXCLUDE=wnba_prizepick,nba_prizepick,mlb_prizepick \
     ODDS_INTERVAL_SECONDS=300
 
 ENTRYPOINT ["odds-entrypoint.sh"]

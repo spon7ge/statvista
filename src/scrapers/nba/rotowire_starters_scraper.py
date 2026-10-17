@@ -7,7 +7,7 @@ Updates ``src/utils/team_info.py``:
 
 Examples::
 
-    from src.scrapers.scrap_starters import NBADailyLineups, WNBADailyLineups
+    from src.scrapers.nba.rotowire_starters_scraper import NBADailyLineups, WNBADailyLineups
 
     nba = NBADailyLineups()
     nba.getDict()
@@ -352,7 +352,7 @@ class DailyLineups:
             print("No data available. Run getDict() first.")
             return
 
-        project_root = Path(__file__).resolve().parents[2]
+        project_root = Path(__file__).resolve().parents[3]
         team_info_path = (
             project_root / "src" / "utils" / "team_info.py"
             if file_path is None

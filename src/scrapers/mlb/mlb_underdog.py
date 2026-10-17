@@ -31,10 +31,13 @@ import requests
 # Configuration
 # ============================================================================
 
-_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-if _ROOT not in sys.path:
-    sys.path.insert(0, _ROOT)
-_DEFAULT_OUTPUT_DIR = os.path.join(_ROOT, "data", "props", "underdogs")
+try:
+    from .paths import ensure_repo_on_path
+except ImportError:  # python mlb_underdog.py from this directory
+    from paths import ensure_repo_on_path
+
+_ROOT = str(ensure_repo_on_path(__file__))
+_DEFAULT_OUTPUT_DIR = os.path.join(_ROOT, "data", "props", "underdogs", "mlb")
 _OUTPUT_TZ = ZoneInfo("America/Los_Angeles")
 _CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config.json")
 
@@ -421,7 +424,7 @@ def resolve_output_path(sport: str) -> str:
 
     Checks:
     1. UNDERDOG_OUTPUT env var (if .json file) — used as-is for a single sport
-    2. Default: data/props/underdogs/underdog_{sport}_YYYY-MM-DD_HHMMSS.json
+    2. Default: data/props/underdogs/mlb/underdog_{sport}_YYYY-MM-DD_HHMMSS.json
 
     Returns:
         Absolute path to output file

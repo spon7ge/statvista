@@ -14,7 +14,7 @@ from zoneinfo import ZoneInfo
 import pytest
 import requests
 
-_SCRAPER_PATH = Path(__file__).resolve().parents[2] / "mlb_novig.py"
+_SCRAPER_PATH = Path(__file__).resolve().parents[2] / "mlb" / "mlb_novig.py"
 
 
 def _load_scraper():

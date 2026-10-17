@@ -17,7 +17,7 @@ if [ "$interval" -le 0 ]; then
 fi
 
 league="${ODDS_LEAGUE:-all}"
-exclude="${ODDS_EXCLUDE:-wnba_prizepick,mlb_prizepick}"
+exclude="${ODDS_EXCLUDE:-wnba_prizepick,nba_prizepick,mlb_prizepick}"
 
 echo "odds worker: league=${league} exclude=${exclude} interval=${interval}s"
 

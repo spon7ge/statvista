@@ -44,8 +44,8 @@ API docs then: [http://localhost:8001/docs](http://localhost:8001/docs)
 PrizePicks scrapers need a real browser, so they stay on the host (`.env` uses `localhost:5433` so they can reach Docker Postgres):
 
 ```bash
-python -m src.scrapers.mlb_prizepick
-python -m src.scrapers.wnba_prizepick
+python -m src.scrapers.mlb.mlb_prizepick
+python -m src.scrapers.wnba.wnba_prizepick
 ```
 
 ```bash

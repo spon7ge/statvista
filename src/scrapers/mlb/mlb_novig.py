@@ -1,6 +1,9 @@
-"""Novig WNBA scraper — public GraphQL (team markets + player props).
+"""Novig MLB scraper — public REST events + allowlisted GraphQL markets.
 
-After writing JSON snapshots, upserts to odds.wnba_novig / odds.wnba_novig_team
+Hasura rejects ad-hoc queries (`query is not allowed`). Event IDs come from
+`GET /nbx/v1/trading/MLB/page`; markets use the website's EventMarkets_Query.
+
+After writing JSON snapshots, upserts to odds.mlb_novig / odds.mlb_novig_team
 unless NOVIG_SKIP_DB is set.
 """
 
@@ -21,89 +24,479 @@ import requests
 logger = logging.getLogger(__name__)
 
 GRAPHQL_URL = "https://api.novig.us/v1/graphql"
+REST_BASE = "https://api.novig.us/nbx/v1"
+TRADING_PAGE_URL = f"{REST_BASE}/trading/MLB/page"
+EVENT_MARKETS_OPERATION = "EventMarkets_Query"
 DEFAULT_HEADERS = {
     "User-Agent": (
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.7778.280 "
+        "Safari/537.36"
     ),
     "Accept": "application/json",
     "Content-Type": "application/json",
+    "Origin": "https://novig.com",
+    "Referer": "https://novig.com/",
 }
 
-_GET_WNBA_EVENTS_QUERY = """
-query GetWnbaEvents($limit: Int!, $offset: Int!) {
-  event(
-    where: {
-      status: { _in: ["OPEN_PREGAME", "OPEN_INGAME"] }
-      game: { league: { _eq: "WNBA" } }
-    }
-    limit: $limit
-    offset: $offset
-  ) {
+# Exact document the novig.com app POSTs. Hasura allowlists this query;
+# custom GetMlbEvents / GetEventMarkets documents return "query is not allowed".
+_EVENT_MARKETS_QUERY = """query EventMarkets_Query($eventId: uuid, $marketVisibleWhere: market_bool_exp) @cached(ttl: 5) {
+  event(where: {id: {_eq: $eventId}}) {
+    ...MarketSelector_Frag
+    ...EventData_Frag
+    ...EventScoreboard_Frag
+    ...CustomEvent_Frag
     id
     description
+    type
+    league
+    scheduled_start
     status
-    game {
-      scheduled_start
-      league
-      homeTeam { id name }
-      awayTeam { id name }
-    }
-  }
-}
-"""
-
-_GET_WNBA_EVENTS_INLINE_QUERY = """
-query GetWnbaEvents {
-  event(
-    where: {
-      status: { _in: ["OPEN_PREGAME", "OPEN_INGAME"] }
-      game: { league: { _eq: "WNBA" } }
-    }
-    limit: 500
-  ) {
-    id
-    description
-    status
-    game {
-      scheduled_start
-      league
-      homeTeam { id name }
-      awayTeam { id name }
-    }
-  }
-}
-"""
-
-# Omit nested `orders` — Hasura's 4s project limit times out when joining open
-# CASH orders under every outcome. American odds come from `available`; stake
-# stays null without orders.
-_GET_EVENT_MARKETS_QUERY = """
-query GetEventMarkets($id: uuid!) {
-  event(where: { id: { _eq: $id } }) {
-    markets {
-      id
-      description
+    tournament_markets: markets {
       type
-      strike
-      player { id name }
-      outcomes {
-        id
-        description
-        available
-        last
-      }
+      __typename
     }
+    game {
+      id
+      awayTeam {
+        id
+        name
+        symbol
+        primary_color
+        secondary_color
+        swish_id
+        optic_odds_id
+        __typename
+      }
+      homeTeam {
+        id
+        name
+        symbol
+        primary_color
+        secondary_color
+        swish_id
+        optic_odds_id
+        __typename
+      }
+      end_date
+      away_score
+      home_score
+      time_remaining
+      sport
+      __typename
+    }
+    __typename
   }
+}
+
+fragment MarketData_Frag on market {
+  id
+  type
+  strike
+  status
+  re_settled_at
+  competitor {
+    id
+    name
+    country
+    __typename
+  }
+  market_locks(
+    order_by: {created_at: desc}
+    where: {deleted_at: {_is_null: true}}
+  ) {
+    id
+    market_id
+    created_at
+    minute_duration
+    __typename
+  }
+  player {
+    id
+    full_name
+    __typename
+  }
+  __typename
+}
+
+fragment Outcome_Frag on outcome {
+  id
+  available
+  altAvailable
+  index
+  description
+  competitor {
+    id
+    symbol
+    __typename
+  }
+  __typename
+}
+
+fragment StrikePriceSelector_Frag on market {
+  id
+  description
+  eventId
+  strike
+  ...MarketData_Frag
+  outcomes {
+    id
+    index
+    description
+    ...Outcome_Frag
+    __typename
+  }
+  __typename
+}
+
+fragment TennisScoreboard_Frag on game {
+  events {
+    id
+    status
+    __typename
+  }
+  home_set_1
+  home_set_2
+  home_set_3
+  home_set_4
+  home_set_5
+  away_set_1
+  away_set_2
+  away_set_3
+  away_set_4
+  away_set_5
+  possession
+  home_game_score
+  away_game_score
+  homeTeam {
+    id
+    name
+    __typename
+  }
+  awayTeam {
+    id
+    name
+    __typename
+  }
+  __typename
+}
+
+fragment BaseEvent_Frag on event {
+  id
+  status
+  type
+  description
+  league
+  scheduled_start
+  event_locks(order_by: {created_at: desc}, where: {deleted_at: {_is_null: true}}) {
+    id
+    event_id
+    minute_duration
+    created_at
+    __typename
+  }
+  __typename
+}
+
+fragment MarketSelector_Frag on event {
+  id
+  type
+  league
+  markets(where: $marketVisibleWhere) {
+    is_consensus
+    id
+    strike
+    type
+    description
+    status
+    volume
+    market_detail {
+      question
+      __typename
+    }
+    ...MarketData_Frag
+    ...StrikePriceSelector_Frag
+    outcomes {
+      id
+      index
+      description
+      available
+      ...Outcome_Frag
+      __typename
+    }
+    market_locks(
+      order_by: {created_at: desc}
+      where: {deleted_at: {_is_null: true}}
+    ) {
+      id
+      market_id
+      minute_duration
+      created_at
+      __typename
+    }
+    player {
+      id
+      full_name
+      logo
+      jersey_number
+      player_competitors {
+        competitor {
+          id
+          name
+          short_name
+          symbol
+          swish_id
+          optic_odds_id
+          primary_color
+          secondary_color
+          country
+          __typename
+        }
+        __typename
+      }
+      __typename
+    }
+    competitor {
+      id
+      name
+      short_name
+      symbol
+      swish_id
+      optic_odds_id
+      primary_color
+      secondary_color
+      country
+      __typename
+    }
+    __typename
+  }
+  event_locks(order_by: {created_at: desc}, where: {deleted_at: {_is_null: true}}) {
+    id
+    event_id
+    minute_duration
+    created_at
+    __typename
+  }
+  __typename
+}
+
+fragment EventData_Frag on event {
+  id
+  type
+  status
+  scheduled_start
+  league
+  game {
+    id
+    league
+    sport
+    scheduled_start
+    period
+    time_remaining
+    home_score
+    away_score
+    awayTeam {
+      id
+      name
+      symbol
+      short_name
+      mascot
+      primary_color
+      secondary_color
+      swish_id
+      optic_odds_id
+      wins
+      losses
+      draws
+      country
+      __typename
+    }
+    homeTeam {
+      id
+      name
+      symbol
+      short_name
+      mascot
+      primary_color
+      secondary_color
+      swish_id
+      optic_odds_id
+      wins
+      losses
+      draws
+      country
+      __typename
+    }
+    __typename
+  }
+  __typename
+}
+
+fragment EventScoreboard_Frag on event {
+  id
+  type
+  status
+  description
+  league
+  scheduled_start
+  game {
+    id
+    ...TennisScoreboard_Frag
+    status
+    home_score
+    away_score
+    period
+    time_remaining
+    down
+    distance
+    yardLine
+    yardline_territory
+    league
+    sport
+    homeTeam {
+      id
+      name
+      short_name
+      mascot
+      symbol
+      primary_color
+      secondary_color
+      wins
+      losses
+      draws
+      swish_id
+      optic_odds_id
+      ranking
+      country
+      __typename
+    }
+    awayTeam {
+      id
+      name
+      short_name
+      mascot
+      symbol
+      primary_color
+      secondary_color
+      wins
+      losses
+      draws
+      swish_id
+      optic_odds_id
+      ranking
+      country
+      __typename
+    }
+    __typename
+  }
+  parent_event {
+    id
+    description
+    __typename
+  }
+  scoreboard_markets: markets(where: {type: {_eq: "MONEY"}}, limit: 1) {
+    id
+    type
+    outcomes {
+      id
+      index
+      status
+      __typename
+    }
+    __typename
+  }
+  custom_markets: markets(where: {type: {_eq: "CUSTOM"}}, limit: 1) {
+    id
+    type
+    __typename
+  }
+  __typename
+}
+
+fragment CustomEvent_Frag on event {
+  ...BaseEvent_Frag
+  custom_event_markets_aggregate: markets_aggregate(
+    where: {type: {_eq: "CUSTOM"}, status: {_eq: "OPEN"}}
+  ) {
+    aggregate {
+      count
+      __typename
+    }
+    __typename
+  }
+  custom_event_volume_aggregate: markets_aggregate(
+    where: {type: {_eq: "CUSTOM"}, status: {_eq: "OPEN"}}
+  ) {
+    aggregate {
+      sum {
+        volume
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+  custom_event_markets: markets(
+    where: {type: {_eq: "CUSTOM"}, status: {_eq: "OPEN"}}
+    order_by: {volume: desc}
+  ) {
+    ...MarketData_Frag
+    description
+    volume
+    market_detail {
+      question
+      __typename
+    }
+    outcomes {
+      ...Outcome_Frag
+      __typename
+    }
+    __typename
+  }
+  __typename
 }
 """
 
-_EVENTS_PAGE_SIZE = 100
+_MARKET_VISIBLE_WHERE: dict[str, Any] = {
+    "_and": [
+        {"status": {"_eq": "OPEN"}},
+        {
+            "_or": [
+                {"is_consensus": {"_eq": True}},
+                {"outcomes": {"available": {"_is_null": False}}},
+            ]
+        },
+        {
+            "_and": [
+                {
+                    "_not": {
+                        "market_locks": {
+                            "_and": [{"deleted_at": {"_is_null": True}}]
+                        }
+                    }
+                },
+                {
+                    "event": {
+                        "_not": {
+                            "event_locks": {
+                                "_and": [{"deleted_at": {"_is_null": True}}]
+                            }
+                        }
+                    }
+                },
+            ]
+        },
+    ]
+}
 
-_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-if _ROOT not in sys.path:
-    sys.path.insert(0, _ROOT)
-_DEFAULT_OUTPUT_DIR = os.path.join(_ROOT, "data", "props", "novig", "wnba")
+try:
+    from .paths import ensure_repo_on_path
+except ImportError:  # python mlb_novig.py from this directory
+    from paths import ensure_repo_on_path
+
+_ROOT = str(ensure_repo_on_path(__file__))
+_DEFAULT_OUTPUT_DIR = os.path.join(_ROOT, "data", "props", "novig", "mlb")
 _OUTPUT_TZ = ZoneInfo("America/Los_Angeles")
 
 
@@ -125,7 +518,7 @@ def resolve_props_output_path(*, now: datetime | None = None) -> str:
     when = now or datetime.now(_OUTPUT_TZ)
     env_file = os.environ.get("NOVIG_OUTPUT", "").strip()
     env_dir = os.environ.get("NOVIG_OUTPUT_DIR", "").strip()
-    name = output_filename("wnba", when, kind="props")
+    name = output_filename("mlb", when, kind="props")
     if env_file:
         expanded = os.path.expanduser(env_file)
         if expanded.lower().endswith(".json") and not os.path.isdir(expanded):
@@ -187,6 +580,103 @@ def outcome_quote(
         if total > 0:
             stake = total
     return {"american": american, "stake": stake}
+
+
+PROP_TYPE_TO_STAT: dict[str, str] = {
+    "HITS": "hits",
+    "HOME_RUNS": "home_runs",
+    "RBIS": "rbis",
+    "RUNS": "runs",
+    "TOTAL_BASES": "total_bases",
+    "STOLEN_BASES": "stolen_bases",
+    "SINGLES": "singles",
+    "DOUBLES": "doubles",
+    "HITS_ALLOWED": "hits_allowed",
+    "PITCHER_STRIKEOUTS": "strikeouts",
+}
+
+
+def _outcome_side(description: str) -> str | None:
+    lower = str(description).strip().lower()
+    if lower.startswith("over"):
+        return "over"
+    if lower.startswith("under"):
+        return "under"
+    return None
+
+
+def _prop_evenness_score(
+    over_outcome: dict[str, Any] | None,
+    under_outcome: dict[str, Any] | None,
+) -> float:
+    over_avail = _outcome_available(over_outcome) if over_outcome else None
+    under_avail = _outcome_available(under_outcome) if under_outcome else None
+    if over_avail is None:
+        over_avail = 1.0
+    if under_avail is None:
+        under_avail = 1.0
+    return abs(over_avail - 0.5) + abs(under_avail - 0.5)
+
+
+def extract_props(markets: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    grouped: dict[tuple[Any, str], list[tuple[dict[str, Any], float]]] = {}
+
+    for market in markets:
+        if not isinstance(market, dict):
+            continue
+        player = market.get("player")
+        if not isinstance(player, dict):
+            continue
+        stat = PROP_TYPE_TO_STAT.get(str(market.get("type") or ""))
+        if stat is None:
+            continue
+        try:
+            line = float(market.get("strike"))
+        except (TypeError, ValueError):
+            continue
+
+        over_outcome: dict[str, Any] | None = None
+        under_outcome: dict[str, Any] | None = None
+        for outcome in _market_outcomes(market):
+            side = _outcome_side(str(outcome.get("description") or ""))
+            if side == "over":
+                over_outcome = outcome
+            elif side == "under":
+                under_outcome = outcome
+
+        over_quote = (
+            outcome_quote(over_outcome, under_outcome) if over_outcome else None
+        )
+        under_quote = (
+            outcome_quote(under_outcome, over_outcome) if under_outcome else None
+        )
+        if over_quote is None and under_quote is None:
+            continue
+
+        player_key = player.get("id") or player.get("name") or player.get("full_name")
+        row: dict[str, Any] = {
+            "player": str(player.get("name") or player.get("full_name") or ""),
+            "stat": stat,
+            "line": line,
+            "over": over_quote,
+            "under": under_quote,
+            "market_id": str(market.get("id") or ""),
+            "sub_type": str(market.get("type") or "").lower(),
+            "is_main": False,
+        }
+        rows.append(row)
+        score = _prop_evenness_score(over_outcome, under_outcome)
+        grouped.setdefault((player_key, stat), []).append((row, score))
+
+    for group in grouped.values():
+        if len(group) == 1:
+            group[0][0]["is_main"] = True
+            continue
+        best_row, _ = min(group, key=lambda item: item[1])
+        best_row["is_main"] = True
+
+    return rows
 
 
 _STATUS_MAP = {
@@ -266,7 +756,6 @@ def _evenness_score(market: dict[str, Any]) -> float:
 
 
 def pick_main_spread(markets: list[dict[str, Any]]) -> dict[str, Any] | None:
-    # WNBA: pick by evenness only — no MLB-style |strike| == 1.5 preference.
     candidates = [
         m
         for m in markets
@@ -274,6 +763,13 @@ def pick_main_spread(markets: list[dict[str, Any]]) -> dict[str, Any] | None:
     ]
     if not candidates:
         return None
+    for market in candidates:
+        try:
+            strike = abs(float(market.get("strike", 0)))
+        except (TypeError, ValueError):
+            continue
+        if abs(strike - 1.5) < 1e-9:
+            return market
     return min(candidates, key=_evenness_score)
 
 
@@ -400,7 +896,7 @@ def extract_team_markets(markets: list[dict[str, Any]]) -> dict[str, Any]:
     if spread:
         rows = _spread_rows(spread)
         if rows:
-            out["spread"] = rows
+            out["run_line"] = rows
 
     total = pick_main_total(markets)
     if total:
@@ -409,106 +905,6 @@ def extract_team_markets(markets: list[dict[str, Any]]) -> dict[str, Any]:
             out["total"] = rows
 
     return out
-
-
-PROP_TYPE_TO_STAT: dict[str, str] = {
-    "POINTS": "points",
-    "REBOUNDS": "rebounds",
-    "ASSISTS": "assists",
-    "POINTS_REBOUNDS_ASSISTS": "points_rebounds_assists",
-    "POINTS_REBOUNDS": "points_rebounds",
-    "POINTS_ASSISTS": "points_assists",
-    "REBOUNDS_ASSISTS": "rebounds_assists",
-    "THREES": "threes",
-    "THREE_POINTERS": "threes",
-    "STEALS": "steals",
-    "BLOCKS": "blocks",
-    "STEALS_BLOCKS": "steals_blocks",
-    "TURNOVERS": "turnovers",
-}
-
-
-def _outcome_side(description: str) -> str | None:
-    lower = str(description).strip().lower()
-    if lower.startswith("over"):
-        return "over"
-    if lower.startswith("under"):
-        return "under"
-    return None
-
-
-def _prop_evenness_score(
-    over_outcome: dict[str, Any] | None,
-    under_outcome: dict[str, Any] | None,
-) -> float:
-    over_avail = _outcome_available(over_outcome) if over_outcome else None
-    under_avail = _outcome_available(under_outcome) if under_outcome else None
-    if over_avail is None:
-        over_avail = 1.0
-    if under_avail is None:
-        under_avail = 1.0
-    return abs(over_avail - 0.5) + abs(under_avail - 0.5)
-
-
-def extract_props(markets: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    rows: list[dict[str, Any]] = []
-    grouped: dict[tuple[Any, str], list[tuple[dict[str, Any], float]]] = {}
-
-    for market in markets:
-        if not isinstance(market, dict):
-            continue
-        player = market.get("player")
-        if not isinstance(player, dict):
-            continue
-        stat = PROP_TYPE_TO_STAT.get(str(market.get("type") or ""))
-        if stat is None:
-            continue
-        try:
-            line = float(market.get("strike"))
-        except (TypeError, ValueError):
-            continue
-
-        over_outcome: dict[str, Any] | None = None
-        under_outcome: dict[str, Any] | None = None
-        for outcome in _market_outcomes(market):
-            side = _outcome_side(str(outcome.get("description") or ""))
-            if side == "over":
-                over_outcome = outcome
-            elif side == "under":
-                under_outcome = outcome
-
-        over_quote = (
-            outcome_quote(over_outcome, under_outcome) if over_outcome else None
-        )
-        under_quote = (
-            outcome_quote(under_outcome, over_outcome) if under_outcome else None
-        )
-        if over_quote is None and under_quote is None:
-            continue
-
-        player_key = player.get("id") or player.get("name")
-        row: dict[str, Any] = {
-            "player": str(player.get("name") or ""),
-            "stat": stat,
-            "line": line,
-            "over": over_quote,
-            "under": under_quote,
-            "market_id": str(market.get("id") or ""),
-            "sub_type": str(market.get("type") or "").lower(),
-            "is_main": False,
-        }
-        rows.append(row)
-        score = _prop_evenness_score(over_outcome, under_outcome)
-        grouped.setdefault((player_key, stat), []).append((row, score))
-
-    for group in grouped.values():
-        if len(group) == 1:
-            group[0][0]["is_main"] = True
-            continue
-        best_row, _ = min(group, key=lambda item: item[1])
-        best_row["is_main"] = True
-
-    return rows
 
 
 def _max_events_cap() -> int | None:
@@ -524,8 +920,11 @@ def _graphql_post(
     variables: dict[str, Any] | None = None,
     *,
     retries: int = 3,
+    operation_name: str | None = None,
 ) -> Any:
     payload: dict[str, Any] = {"query": query}
+    if operation_name:
+        payload["operationName"] = operation_name
     if variables is not None:
         payload["variables"] = variables
     last_err: Exception | None = None
@@ -557,8 +956,15 @@ def graphql(
     variables: dict[str, Any] | None = None,
     *,
     retries: int = 3,
+    operation_name: str | None = None,
 ) -> Any:
-    body = _graphql_post(session, query, variables, retries=retries)
+    body = _graphql_post(
+        session,
+        query,
+        variables,
+        retries=retries,
+        operation_name=operation_name,
+    )
     if body.get("errors"):
         messages = [
             str(err.get("message") or err)
@@ -589,55 +995,77 @@ def _events_from_graphql_payload(payload: Any) -> list[dict[str, Any]]:
     return [event for event in events if isinstance(event, dict)]
 
 
-def fetch_wnba_events(session: requests.Session) -> list[dict[str, Any]]:
-    cap = _max_events_cap()
+def _event_from_game_card(card: dict[str, Any]) -> dict[str, Any]:
+    home = card.get("homeTeam") if isinstance(card.get("homeTeam"), dict) else {}
+    away = card.get("awayTeam") if isinstance(card.get("awayTeam"), dict) else {}
+    scoreboard = (
+        card.get("scoreboard") if isinstance(card.get("scoreboard"), dict) else {}
+    )
+    is_live = bool(card.get("isLive"))
+    status = str(
+        scoreboard.get("status")
+        or ("OPEN_INGAME" if is_live else "OPEN_PREGAME")
+    )
+    title = str(scoreboard.get("title") or "").strip()
+    if not title:
+        away_name = str(away.get("name") or "").strip()
+        home_name = str(home.get("name") or "").strip()
+        if away_name and home_name:
+            title = f"{away_name} @ {home_name}"
+    return {
+        "id": card.get("eventId"),
+        "description": title,
+        "status": status,
+        "game": {
+            "scheduled_start": card.get("scheduledStart"),
+            "league": card.get("league") or "MLB",
+            "homeTeam": {"id": home.get("id"), "name": home.get("name")},
+            "awayTeam": {"id": away.get("id"), "name": away.get("name")},
+        },
+    }
+
+
+def events_from_trading_page(payload: Any) -> list[dict[str, Any]]:
+    if not isinstance(payload, dict):
+        return []
     events: list[dict[str, Any]] = []
-    offset = 0
-    use_inline_query = False
-
-    while True:
-        if use_inline_query:
-            payload = graphql(session, _GET_WNBA_EVENTS_INLINE_QUERY)
-            events.extend(_events_from_graphql_payload(payload))
-            break
-
-        limit = _EVENTS_PAGE_SIZE
-        if cap is not None:
-            remaining = cap - len(events)
-            if remaining <= 0:
-                break
-            limit = min(limit, remaining)
-
-        try:
-            payload = graphql(
-                session,
-                _GET_WNBA_EVENTS_QUERY,
-                {"limit": limit, "offset": offset},
-            )
-        except RuntimeError as exc:
-            if any(
-                token in str(exc).lower()
-                for token in ("limit", "offset", "variable")
-            ):
-                use_inline_query = True
-                events.clear()
-                continue
-            raise
-
-        chunk = _events_from_graphql_payload(payload)
-        if not chunk:
-            break
-        events.extend(chunk)
-        if cap is not None and len(events) >= cap:
-            events = events[:cap]
-            break
-        if len(chunk) < limit:
-            break
-        offset += len(chunk)
-
-    if cap is not None:
-        events = events[:cap]
+    for section in payload.get("sections") or []:
+        if not isinstance(section, dict):
+            continue
+        content = section.get("content")
+        if not isinstance(content, dict):
+            continue
+        for card in content.get("components") or []:
+            if isinstance(card, dict) and card.get("type") == "game_event_card":
+                events.append(_event_from_game_card(card))
     return events
+
+
+def fetch_mlb_events(session: requests.Session) -> list[dict[str, Any]]:
+    last_err: Exception | None = None
+    for attempt in range(3):
+        try:
+            resp = session.get(
+                TRADING_PAGE_URL,
+                headers=DEFAULT_HEADERS,
+                timeout=60,
+            )
+            if resp.status_code in (429, 500, 502, 503, 504) and attempt + 1 < 3:
+                time.sleep(0.5 * (attempt + 1))
+                continue
+            resp.raise_for_status()
+            events = events_from_trading_page(resp.json())
+            cap = _max_events_cap()
+            if cap is not None:
+                events = events[:cap]
+            return events
+        except (requests.RequestException, ValueError) as exc:
+            last_err = exc
+            if attempt + 1 >= 3:
+                break
+            time.sleep(0.5 * (attempt + 1))
+    assert last_err is not None
+    raise last_err
 
 
 def fetch_event_markets(
@@ -646,8 +1074,12 @@ def fetch_event_markets(
 ) -> list[dict[str, Any]]:
     payload = graphql(
         session,
-        _GET_EVENT_MARKETS_QUERY,
-        {"id": event_id},
+        _EVENT_MARKETS_QUERY,
+        {
+            "eventId": event_id,
+            "marketVisibleWhere": _MARKET_VISIBLE_WHERE,
+        },
+        operation_name=EVENT_MARKETS_OPERATION,
     )
     events = _events_from_graphql_payload(payload)
     if not events:
@@ -681,7 +1113,7 @@ def _payload_base(*, fetched_at: str) -> dict[str, Any]:
     return {
         "source": "novig",
         "fetched_at": fetched_at,
-        "league": "wnba",
+        "league": "mlb",
     }
 
 
@@ -724,7 +1156,8 @@ def selenium_fallback_enabled() -> bool:
 def fetch_via_selenium() -> tuple[list[dict[str, Any]], dict[str, list[dict[str, Any]]]]:
     raise RuntimeError(
         "Novig Selenium fallback is not implemented yet; "
-        "GraphQL at api.novig.us/v1/graphql should work without auth. "
+        "public REST /nbx/v1/trading/MLB/page plus allowlisted "
+        "EventMarkets_Query should work without auth. "
         "Set NOVIG_ALLOW_SELENIUM only after implementing CDP capture."
     )
 
@@ -732,7 +1165,7 @@ def fetch_via_selenium() -> tuple[list[dict[str, Any]], dict[str, list[dict[str,
 def _fetch_graphql_snapshots(
     session: requests.Session,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
-    events = fetch_wnba_events(session)
+    events = fetch_mlb_events(session)
     markets_by_event_id: dict[str, list[dict[str, Any]]] = {}
     for event in events:
         event_id = event.get("id")
@@ -773,7 +1206,7 @@ def run() -> None:
 
     if needs_fallback:
         if selenium_fallback_enabled():
-            logger.warning("Attempting Selenium fallback for Novig WNBA...")
+            logger.warning("Attempting Selenium fallback for Novig MLB...")
             try:
                 events, markets_by_event_id = fetch_via_selenium()
                 props_games, team_games = build_game_snapshots(
@@ -829,7 +1262,7 @@ def load_supabase_snapshots(
     props_path: str | None = None,
     team_path: str | None = None,
 ) -> None:
-    """Upsert snapshot games to odds.wnba_novig / odds.wnba_novig_team."""
+    """Upsert snapshot games to odds.mlb_novig / odds.mlb_novig_team."""
     try:
         from src.odds.load_snapshots import (
             load_novig_props_snapshot,
@@ -838,10 +1271,10 @@ def load_supabase_snapshots(
 
         when = scraped_at or datetime.now(timezone.utc)
         n_props = load_novig_props_snapshot(
-            props_games, league="wnba", scraped_at=when
+            props_games, league="mlb", scraped_at=when
         )
         n_team = load_novig_team_snapshot(
-            team_games, league="wnba", scraped_at=when
+            team_games, league="mlb", scraped_at=when
         )
         logger.info(
             "Supabase Novig upserted props=%s team=%s%s%s",
@@ -856,4 +1289,3 @@ def load_supabase_snapshots(
 
 if __name__ == "__main__":
     run()
-

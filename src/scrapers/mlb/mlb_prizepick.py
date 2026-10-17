@@ -77,9 +77,12 @@ import requests
 # Configuration
 # ============================================================================
 
-_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-if _ROOT not in sys.path:
-    sys.path.insert(0, _ROOT)
+try:
+    from .paths import ensure_repo_on_path
+except ImportError:  # python mlb_prizepick.py from this directory
+    from paths import ensure_repo_on_path
+
+_ROOT = str(ensure_repo_on_path(__file__))
 _DEFAULT_OUTPUT_DIR = os.path.join(_ROOT, "data", "props", "prizepicks")
 _OUTPUT_TZ = ZoneInfo("America/Los_Angeles")
 

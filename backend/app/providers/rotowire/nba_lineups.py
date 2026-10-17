@@ -27,7 +27,7 @@ def clear_rotowire_lineups_cache() -> None:
 
 
 def _scrape_starters_by_abbr() -> dict[str, list[dict[str, str | None]]]:
-    from src.scrapers.rotowire_starters_scraper import NBADailyLineups
+    from src.scrapers.nba.rotowire_starters_scraper import NBADailyLineups
 
     return NBADailyLineups().expected_starters_by_abbr()
 

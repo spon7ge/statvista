@@ -1,7 +1,7 @@
 """
-PrizePicks NBA + WNBA projections — refactored for debuggability.
+PrizePicks WNBA projections — refactored for debuggability.
 
-Fetches NBA and WNBA projections and exports clean JSON.
+Fetches WNBA projections and exports clean JSON.
 Handles DataDome (and legacy PerimeterX) via curl_cffi, requests, then Playwright.
 
 Install for better success rate:
@@ -69,7 +69,7 @@ import requests
 # Configuration
 # ============================================================================
 
-_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 if _ROOT not in sys.path:
     sys.path.insert(0, _ROOT)
 _DEFAULT_OUTPUT_DIR = os.path.join(_ROOT, "data", "props", "prizepicks")
@@ -80,8 +80,8 @@ _DEFAULT_STORAGE_STATE_FILE = os.path.join(
 _DEFAULT_PROFILE_DIR = os.path.join(_DEFAULT_OUTPUT_DIR, ".pw_profile")
 _OUTPUT_TZ = ZoneInfo("America/Los_Angeles")
 
-# PrizePicks league_id values (NBA=7, WNBA=3)
-DEFAULT_LEAGUES: tuple[tuple[str, int], ...] = (("NBA", 7), ("WNBA", 3))
+# PrizePicks league_id for WNBA. NBA is scraped by nba_prizepick.py.
+DEFAULT_LEAGUES: tuple[tuple[str, int], ...] = (("WNBA", 3),)
 API_BASE = "https://api.prizepicks.com/projections"
 
 
@@ -90,8 +90,7 @@ def projections_api_url(league_id: int) -> str:
     return f"{API_BASE}?league_id={league_id}&per_page=250&single_stat=true"
 
 
-# Back-compat alias (NBA)
-API_URL = projections_api_url(7)
+API_URL = projections_api_url(3)
 
 # Headers for requests library (no TLS impersonation)
 HEADERS_REQUESTS: dict[str, str] = {
@@ -171,7 +170,7 @@ class Projection:
     line_score: float | int | None
     odds_type: str
     updated_at: str
-    league: str = "NBA"
+    league: str = "WNBA"
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for JSON serialization."""
@@ -182,7 +181,7 @@ class Projection:
 class ExportData:
     """Complete export payload."""
     source: str = "PrizePicks"
-    league: str = "NBA+WNBA"
+    league: str = "WNBA"
     fetched_at: str = ""
     raw_snapshot: str | None = None
     count: int = 0
@@ -559,10 +558,10 @@ def build_fetch_failure_message() -> str:
         "   pip install playwright && playwright install chromium\n"
         "   Prefer CDP attach when Playwright-launched browsers stay blocked:\n"
         "     1) Start Brave with remote debugging (separate terminal):\n"
-        "        python -m src.scrapers.wnba_prizepick --print-brave-cdp-cmd\n"
+        "        python -m src.scrapers.wnba.wnba_prizepick --print-brave-cdp-cmd\n"
         "        # or run the printed Brave command yourself\n"
         "     2) Solve any captcha at app.prizepicks.com in that window\n"
-        "     3) PRIZEPICKS_CDP=1 python src/scrapers/wnba_prizepick.py\n"
+        "     3) PRIZEPICKS_CDP=1 python src/scrapers/wnba/wnba_prizepick.py\n"
         "   Otherwise: headed Brave/Chrome persistent profile (.pw_profile).\n"
         "   Use PRIZEPICKS_HEADLESS=1 only when no interactive captcha is expected.\n"
         "   If hard-restricted: wait 30–60m, rm .session_cookie.txt, retry.\n"
@@ -1103,7 +1102,7 @@ def fetch_projections_payloads(
     leagues: tuple[tuple[str, int], ...] = DEFAULT_LEAGUES,
 ) -> dict[str, dict[str, Any]]:
     """
-    Fetch NBA + WNBA projections from PrizePicks API.
+    Fetch WNBA projections from PrizePicks API.
 
     Strategy:
     1. Try curl_cffi with browser impersonation
@@ -1144,13 +1143,9 @@ def fetch_projections_payloads(
 
 
 def fetch_projections_payload() -> dict[str, Any]:
-    """
-    Back-compat: fetch NBA payload only (first configured league).
-
-    Prefer ``fetch_projections_payloads`` for NBA+WNBA.
-    """
-    payloads = fetch_projections_payloads((("NBA", 7),))
-    return payloads["NBA"]
+    """Fetch the WNBA projections payload."""
+    payloads = fetch_projections_payloads(DEFAULT_LEAGUES)
+    return payloads["WNBA"]
 
 
 # ============================================================================
@@ -1188,7 +1183,7 @@ def build_player_lookup(data: dict[str, Any]) -> dict[str, str]:
 def extract_projections(
     data: dict[str, Any],
     *,
-    league: str = "NBA",
+    league: str = "WNBA",
 ) -> list[Projection]:
     """
     Extract projections from API response.
@@ -1300,7 +1295,7 @@ def save_projections(
 
     if league_label is None:
         leagues = sorted({p.league for p in projections if p.league})
-        league_label = "+".join(leagues) if leagues else "NBA+WNBA"
+        league_label = "+".join(leagues) if leagues else "WNBA"
 
     proj_dicts = [p.to_dict() for p in projections]
     export = ExportData(
@@ -1345,9 +1340,9 @@ def load_projections_from_file(path: str) -> list[Projection]:
     if isinstance(projs, list) and projs and isinstance(projs[0], dict):
         if "player" in projs[0]:
             logger.debug("Recognized as flat export format")
-            default_league = obj.get("league") or "NBA"
+            default_league = obj.get("league") or "WNBA"
             if isinstance(default_league, str) and "+" in default_league:
-                default_league = "NBA"
+                default_league = "WNBA"
             projections = [
                 Projection(
                     player=p.get("player") or "",
@@ -1363,9 +1358,9 @@ def load_projections_from_file(path: str) -> list[Projection]:
             return projections
 
     logger.debug("Treating as legacy API JSON format")
-    league = obj.get("league") if isinstance(obj.get("league"), str) else "NBA"
+    league = obj.get("league") if isinstance(obj.get("league"), str) else "WNBA"
     if "+" in str(league):
-        league = "NBA"
+        league = "WNBA"
     projections = extract_projections(obj, league=league)
     logger.info(f"Loaded {len(projections)} projections from API format")
     return projections
@@ -1419,7 +1414,7 @@ class PrizePicks_Scraper:
         when = datetime.now(_OUTPUT_TZ)
         by_league: dict[str, list[Projection]] = {}
         for row in projections:
-            by_league.setdefault(row.league or "NBA", []).append(row)
+            by_league.setdefault(row.league or "WNBA", []).append(row)
 
         if not by_league:
             # No rows — still emit empty files for configured leagues
@@ -1452,7 +1447,7 @@ class PrizePicks_Scraper:
         return paths
 
     def run(self) -> None:
-        """Execute the full scrape pipeline for NBA + WNBA."""
+        """Execute the full scrape pipeline for WNBA."""
         try:
             logger.info("\n[Step 1/2] Fetching data...")
             payloads = fetch_projections_payloads()
@@ -1499,7 +1494,7 @@ class PrizePicks_Scraper:
 def main() -> None:
     """Command-line entry point."""
     parser = argparse.ArgumentParser(
-        description="PrizePicks NBA + WNBA projections scraper",
+        description="PrizePicks WNBA projections scraper",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:

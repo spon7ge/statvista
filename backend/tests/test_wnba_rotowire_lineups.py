@@ -2,7 +2,7 @@ import asyncio
 from pathlib import Path
 
 import app.providers.rotowire.wnba_lineups as rw
-from src.scrapers.rotowire_starters_scraper import WNBADailyLineups
+from src.scrapers.nba.rotowire_starters_scraper import WNBADailyLineups
 
 FIXTURES = Path(__file__).parent / "fixtures"
 
@@ -50,7 +50,7 @@ def test_get_rotowire_starters_for_matchup_sea_atl(monkeypatch):
 
     def fake_fetch():
         from bs4 import BeautifulSoup
-        from src.scrapers.rotowire_starters_scraper import WNBADailyLineups
+        from src.scrapers.nba.rotowire_starters_scraper import WNBADailyLineups
 
         class Fake(WNBADailyLineups):
             def _get_soup(self):

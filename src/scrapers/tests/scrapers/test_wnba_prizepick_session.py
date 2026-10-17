@@ -9,7 +9,7 @@ from pathlib import Path
 import pytest
 
 _SCRAPER_PATH = (
-    Path(__file__).resolve().parents[2] / "wnba_prizepick.py"
+    Path(__file__).resolve().parents[2] / "wnba" / "wnba_prizepick.py"
 )
 
 
@@ -242,6 +242,16 @@ class TestCdpUrlFromEnv:
         monkeypatch.delenv("PRIZEPICKS_CDP_URL", raising=False)
         monkeypatch.setenv("PRIZEPICKS_CDP", "1")
         assert pp.cdp_url_from_env() == "http://127.0.0.1:9222"
+
+
+class TestWnbaOnlyLeagues:
+    def test_default_leagues_are_wnba_only(self) -> None:
+        assert pp.DEFAULT_LEAGUES == (("WNBA", 3),)
+        assert all(name != "NBA" for name, _league_id in pp.DEFAULT_LEAGUES)
+
+    def test_default_api_url_is_wnba(self) -> None:
+        assert "league_id=3" in pp.API_URL
+        assert "league_id=7" not in pp.API_URL
 
 
 class TestBraveCdpLaunchCommand:

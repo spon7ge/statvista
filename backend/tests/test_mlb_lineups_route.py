@@ -11,7 +11,7 @@ from fastapi.testclient import TestClient
 from app.main import app
 from app.domains.mlb.lineup_matchup import clear_mlb_lineup_matchup_cache
 from app.domains.mlb.lineups import clear_mlb_lineups_cache
-from src.scrapers.mlb_rotowire_lineups import parse_mlb_lineups_html
+from src.scrapers.mlb.mlb_rotowire_lineups import parse_mlb_lineups_html
 
 ET = ZoneInfo("America/New_York")
 FIXTURE = (
