@@ -71,6 +71,9 @@ describe("MlbPropPicksTable", () => {
     const lineCell = screen.getByTestId("line-cell");
     expect(lineCell).toHaveTextContent("1.5");
     expect(lineCell).toHaveTextContent("-137");
+    expect(
+      lineCell.querySelector('svg[aria-label="PrizePicks"]'),
+    ).toBeTruthy();
     const odds = screen.getByTestId("odds-cell");
     expect(within(odds).getByText("1.5")).toBeInTheDocument();
     expect(within(odds).queryByText("2.5")).not.toBeInTheDocument();
@@ -416,6 +419,33 @@ describe("MlbPropPicksTable", () => {
     expect(cells[0].querySelector(".rounded")).toBeNull();
   });
 
+  it("stacks the anchor book mark and em dash when American is missing", () => {
+    render(
+      <MlbPropPicksTable
+        rows={[
+          fixtureRow({
+            anchor: {
+              book: "draftkings",
+              american: null,
+              url: null,
+              line: 1.5,
+              devig_pct: null,
+              over_american: null,
+              under_american: null,
+            },
+          }),
+        ]}
+      />,
+    );
+    const lineCell = screen.getByTestId("line-cell");
+    expect(lineCell).toHaveTextContent("1.5");
+    expect(lineCell).toHaveTextContent("—");
+    expect(
+      lineCell.querySelector('svg[aria-label="DraftKings"]'),
+    ).toBeTruthy();
+    expect(lineCell).not.toHaveTextContent("-137");
+  });
+
   it("puts the PrizePicks American in the line cell with no de-vig percent", () => {
     render(
       <MlbPropPicksTable
@@ -436,6 +466,9 @@ describe("MlbPropPicksTable", () => {
     const lineCell = screen.getByTestId("line-cell");
     expect(lineCell).toHaveTextContent("1.5");
     expect(lineCell).toHaveTextContent("-137");
+    expect(
+      lineCell.querySelector('svg[aria-label="PrizePicks"]'),
+    ).toBeTruthy();
     expect(lineCell).not.toHaveTextContent("(54%)");
     const odds = screen.getByTestId("odds-cell");
     expect(odds.querySelector('svg[aria-label="PrizePicks"]')).toBeNull();
