@@ -253,7 +253,7 @@ export function ShotChart({ detail }: { detail: GameDetail }) {
               aria-pressed={periodFilter === f.value}
               className={`rounded-full px-3 py-1.5 text-[13px] font-semibold transition-colors ${
                 periodFilter === f.value
-                  ? "bg-c2 text-black"
+                  ? "bg-[var(--white)] text-c1"
                   : "text-c3 hover:text-c4"
               }`}
             >
