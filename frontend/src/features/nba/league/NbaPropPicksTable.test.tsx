@@ -78,4 +78,16 @@ describe("NbaPropPicksTable", () => {
     ).toBeTruthy();
     expect(lineCell).not.toHaveTextContent("-137");
   });
+
+  it("does not show a matchup next to the player name", () => {
+    render(<NbaPropPicksTable rows={[fixtureRow()]} />);
+    expect(screen.getByTestId("board-row-name")).toHaveTextContent(
+      "Jayson Tatum",
+    );
+    expect(screen.getByTestId("board-row-market")).toHaveTextContent(
+      "Over 27.5 Points",
+    );
+    expect(screen.queryByTestId("board-row-matchup")).not.toBeInTheDocument();
+    expect(screen.queryByText("BOS @ NYK")).not.toBeInTheDocument();
+  });
 });
