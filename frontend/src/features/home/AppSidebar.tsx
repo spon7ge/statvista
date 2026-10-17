@@ -72,10 +72,20 @@ export function AppSidebar() {
             <IconInfo />
             About
           </Link>
-          <button type="button" className={rowClass(false)}>
+          <Link
+            to="/blog"
+            aria-current={
+              pathname === "/blog" || pathname.startsWith("/blog/")
+                ? "page"
+                : undefined
+            }
+            className={rowClass(
+              pathname === "/blog" || pathname.startsWith("/blog/"),
+            )}
+          >
             <IconNewspaper />
             Blog
-          </button>
+          </Link>
           <button type="button" className={rowClass(false)}>
             <IconGear />
             Settings

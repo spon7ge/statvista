@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import { cleanup, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -89,7 +89,10 @@ describe("AppSidebar", () => {
       "href",
       "/about",
     );
-    expect(within(siteNav).getByRole("button", { name: "Blog" })).toBeInTheDocument();
+    expect(within(siteNav).getByRole("link", { name: "Blog" })).toHaveAttribute(
+      "href",
+      "/blog",
+    );
     expect(
       within(siteNav).getByRole("button", { name: "Settings" }),
     ).toBeInTheDocument();
@@ -103,11 +106,25 @@ describe("AppSidebar", () => {
     );
   });
 
+  it("marks Blog current on /blog and /blog/read-a-prop-line", () => {
+    renderSidebar("/blog");
+    expect(screen.getByRole("link", { name: "Blog" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+    cleanup();
+    renderSidebar("/blog/read-a-prop-line");
+    expect(screen.getByRole("link", { name: "Blog" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+  });
+
   it("uses the previous Lucide shapes for Props, Games, Blog, and Settings", () => {
     renderSidebar("/mlb/matchups");
     expect(svgMarkup("Props")).toContain("M14 4h7");
     expect(svgMarkup("Games")).toContain("M8 2v4");
-    expect(svgMarkup("Blog", "button")).toContain("M15 18h-5");
+    expect(svgMarkup("Blog")).toContain("M15 18h-5");
     expect(svgMarkup("Settings", "button")).toContain("M9.671 4.136");
   });
 

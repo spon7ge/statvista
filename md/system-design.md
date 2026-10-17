@@ -41,7 +41,7 @@ Two backend families exist. The **live website mainly uses the WNBA, MLB, and NB
 | NBA upstream | `/api/nba/scoreboard/*`, `games/{id}`, `games/{id}/team-preview`, `odds/today`, `props/board` | Yes (matchups slate + game detail + prop research table) |
 | DB-backed (silver / gold) | `/api/games/{date}/slate`, `/api/props`, … | No |
 
-Shared chrome (`HomeChromeLayout`) wraps most routes with a left sidebar (mobile hamburger drawer) and footer. The sidebar wordmark sits beside the page title. Primary nav is a card: **Props and Games** (current league's board/slate, else MLB; NBA Props routes to `/nba/prop_picks`). A Site card below that has **About** (routes to `/about`), **Blog**, and **Settings** (Blog and Settings remain placeholders). Page league pills still switch the open section. Wordmark lands on `/mlb/matchups`. Props links prefetch the destination board on hover; the sidebar also warms that board on mount. Client React Query keeps MLB, WNBA, and NBA `/props/board` fresh for 15 minutes (`staleTime` matches the poll; no refetch on window focus).
+Shared chrome (`HomeChromeLayout`) wraps most routes with a left sidebar (mobile hamburger drawer) and footer. The sidebar wordmark sits beside the page title. Primary nav is a card: **Props and Games** (current league's board/slate, else MLB; NBA Props routes to `/nba/prop_picks`). A Site card below that has **About** (routes to `/about`), **Blog** (routes to `/blog`), and **Settings** (Settings remains a placeholder). Page league pills still switch the open section. Wordmark lands on `/mlb/matchups`. Props links prefetch the destination board on hover; the sidebar also warms that board on mount. Client React Query keeps MLB, WNBA, and NBA `/props/board` fresh for 15 minutes (`staleTime` matches the poll; no refetch on window focus).
 
 ---
 
@@ -81,6 +81,8 @@ main.tsx
       /mlb/prop_picks/player/:playerSlug  replace-redirect → /mlb/prop_picks
       /mlb/games/:gamePk   MlbGameDetailPage
       /about               AboutPage
+      /blog                BlogPage
+      /blog/:slug          BlogPostPage
     * → NotFoundPage
 ```
 
@@ -103,6 +105,8 @@ main.tsx
 |-------|----------|---------|-----|------------------|
 | `/` | Landing | — | — | Replace-redirect to `/mlb/matchups` |
 | `/about` | Static About (description, tech stack); sidebar Site link | — | none | `AboutPage` / `AboutContent`; no API |
+| `/blog` | Placeholder blog index (2 posts / row: title, accent block, read time); sidebar Site link | — | none | `BlogPage` / `BlogIndex`; static catalog |
+| `/blog/:slug` | Placeholder article; unknown slug → NotFound | — | none | `BlogPostPage` / `BlogPost`; `getPost` |
 | `/wnba/matchups?date=` | Daily slate (no team-lines odds pill); Games header with MLB/WNBA/NBA league pills and **Today** date nav on that same row | `useWnbaScoreboard(date)` | scoreboard (`/today` or `?date=`) | Cards → `/games/:espnEventId` (Preview odds board uses `GET /api/wnba/odds/today`) |
 | `/wnba/prop_picks` | Sportsbook research table. One row per player + prop type + anchor-book line + side. Default book PrizePicks (omit ?book=). Columns Proposition, Line (stacked: anchor number above selected book logo + American; PrizePicks -137), Odds (other books with the same player, prop type, and line; this side; logo + line + American), IP (average raw implied of the anchor and those matches; the anchor's own implied probability when the line is unique), L5/L10/L15, H2H. Filters: Game, Bookmaker (single select, fixed book list, stored in ?book=), Proposition, Over/Under, Hit rate, player search. No DFS column. No Team filter. | `useWnbaPropBoard(book)` | `GET /api/wnba/props/board?book=` | Client filterWnbaPropBoardRows (game + market + side + name). Bookmaker refetches. Default sort unchanged. 30 rows per page. Empty copy "No board yet". Empty book still shows Bookmaker. Rows whose listed tip has passed are hidden on the page (rechecked every 30s, without waiting for the 15-minute board refetch). |
 | `/wnba/prop_picks/player/:playerSlug` | Removed | — | — | Replace-redirect to `/wnba/prop_picks`. `WnbaPlayerPropsOddsGrid` remains for shared book-column patterns |

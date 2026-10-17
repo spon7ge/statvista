@@ -8,6 +8,8 @@ import { MlbPropPicksPage } from "@/pages/MlbPropPicksPage";
 import { NbaGameDetailPage } from "@/pages/NbaGameDetailPage";
 import { NbaPropPicksPage } from "@/pages/NbaPropPicksPage";
 import { AboutPage } from "@/pages/AboutPage";
+import { BlogPage } from "@/pages/BlogPage";
+import { BlogPostPage } from "@/pages/BlogPostPage";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 import { LANDING_HREF } from "@/features/home/lib/appNav";
 
@@ -51,6 +53,8 @@ export function AppRouter() {
         />
         <Route path="/mlb/games/:gamePk" element={<MlbGameDetailPage />} />
         <Route path="/about" element={<AboutPage />} />
+        <Route path="/blog" element={<BlogPage />} />
+        <Route path="/blog/:slug" element={<BlogPostPage />} />
       </Route>
       <Route path="*" element={<NotFoundPage />} />
     </Routes>

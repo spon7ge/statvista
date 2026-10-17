@@ -61,11 +61,44 @@ describe("AppRouter", () => {
       screen.getByRole("heading", { name: /^about$/i }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { name: /what you can do/i }),
+      screen.getByRole("heading", { name: /tech stack/i }),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/React 19, Vite, TanStack Query/i)).toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", { name: /page not found/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("renders Blog at /blog with heading Blog and both post titles", () => {
+    renderWithProviders(["/blog"]);
+    expect(
+      screen.getByRole("heading", { name: /^blog$/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: /how to read a prop line/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: /hit rate actually means/i }),
     ).toBeInTheDocument();
     expect(
       screen.queryByRole("heading", { name: /page not found/i }),
     ).not.toBeInTheDocument();
+  });
+
+  it("renders a blog post at /blog/:slug", () => {
+    renderWithProviders(["/blog/read-a-prop-line"]);
+    expect(
+      screen.getByRole("heading", {
+        name: /how to read a prop line before you bet/i,
+      }),
+    ).toBeInTheDocument();
+  });
+
+  it("renders not found for unknown blog slug", () => {
+    renderWithProviders(["/blog/does-not-exist"]);
+    expect(
+      screen.getByRole("heading", { name: /page not found/i }),
+    ).toBeInTheDocument();
   });
 
   it("renders not found for unknown paths", () => {
