@@ -17,6 +17,18 @@ def test_hit_rates_over_points_l5():
     assert (l5, l10, l15) == (100, 100, 100)
 
 
+def test_hit_rates_l5_sorts_month_name_dates_chronologically():
+    splits = [
+        {"GAME_DATE": f"Nov {day}, 2025", "MIN": 30, "PTS": 30}
+        for day in range(1, 6)
+    ]
+    splits.append({"GAME_DATE": "Oct 22, 2025", "MIN": 30, "PTS": 20})
+
+    l5, _, _ = hit_rates("points", "over", 25.5, splits)
+
+    assert l5 == 100
+
+
 def test_h2h_rate_matches_local_opponent_abbreviation():
     splits = [
         {"GAME_DATE": "2026-10-02", "MIN": 30, "PTS": 20, "MATCHUP": "BOS vs. NYK"},

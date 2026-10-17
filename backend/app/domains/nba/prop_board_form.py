@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+from datetime import datetime
 from typing import Any
 
 from app.domains.nba.schemas_prop_board import Side
@@ -99,7 +100,17 @@ def _window_pct(
 
 def _date_key(split: dict[str, Any]) -> str:
     raw = split.get("GAME_DATE") or split.get("date")
-    return raw if isinstance(raw, str) else ""
+    text = str(raw or "").strip()
+    if not text:
+        return ""
+    if len(text) == 10 and text[4] == "-" and text[7] == "-":
+        return text
+    for fmt in ("%b %d, %Y", "%B %d, %Y", "%Y-%m-%dT%H:%M:%S"):
+        try:
+            return datetime.strptime(text, fmt).strftime("%Y-%m-%d")
+        except ValueError:
+            continue
+    return text
 
 
 def hit_rates(
