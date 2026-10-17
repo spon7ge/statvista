@@ -85,13 +85,6 @@ const ROW_BOX_FIRST = `rounded-l-lg border-y border-l ${ROW_BOX_BG} ${ROW_BOX_BO
 const ROW_BOX_MIDDLE = `border-y ${ROW_BOX_BG} ${ROW_BOX_BORDER}`;
 const ROW_BOX_LAST = "rounded-r-lg border-r";
 
-function formatMatchup(row: ApiMlbPropBoardRow): string | null {
-  if (!row.team_abbrev || !row.opponent_abbrev) return null;
-  return row.home_away === "home"
-    ? `${row.opponent_abbrev} @ ${row.team_abbrev}`
-    : `${row.team_abbrev} @ ${row.opponent_abbrev}`;
-}
-
 function hitBoxClass(pct: number | null): string {
   if (pct == null) return `${ROW_BOX_BG} text-c3`;
   if (pct >= 67) return "bg-emerald-500/15 text-emerald-300";
@@ -308,7 +301,6 @@ function PlayerIcon({ row }: { row: ApiMlbPropBoardRow }) {
 }
 
 function CompositeCell({ row }: { row: ApiMlbPropBoardRow }) {
-  const matchup = formatMatchup(row);
   return (
     <div className="flex min-w-[14rem] items-center gap-2.5">
       <PlayerIcon row={row} />
@@ -323,20 +315,6 @@ function CompositeCell({ row }: { row: ApiMlbPropBoardRow }) {
           >
             {row.player_name}
           </span>
-          {matchup ? (
-            <>
-              <span
-                className="size-0.5 shrink-0 rounded-full bg-c2"
-                aria-hidden
-              />
-              <span
-                data-testid="board-row-matchup"
-                className="shrink-0 text-[12px] font-medium text-c3"
-              >
-                {matchup}
-              </span>
-            </>
-          ) : null}
         </div>
         <p
           data-testid="board-row-market"

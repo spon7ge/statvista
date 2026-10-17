@@ -93,7 +93,7 @@ describe("MlbPropPicksTable", () => {
     render(<MlbPropPicksTable rows={[fixtureRow()]} />);
     expect(screen.getByTestId("board-row-name")).toHaveTextContent("Aaron Judge");
     expect(screen.getByTestId("board-row-name")).toHaveClass("font-bold");
-    expect(screen.getByTestId("board-row-matchup")).toHaveTextContent("NYY @ BOS");
+    expect(screen.queryByTestId("board-row-matchup")).not.toBeInTheDocument();
     const market = screen.getByTestId("board-row-market");
     expect(market).toHaveTextContent("Over 1.5 Hits");
     expect(market).toHaveClass("truncate", "text-sm", "font-bold");
@@ -194,7 +194,7 @@ describe("MlbPropPicksTable", () => {
     expect(screen.queryByTestId("hit-l5-cell-indicator")).not.toBeInTheDocument();
   });
 
-  it("renders home matchups as opponent @ team", () => {
+  it("does not show a matchup next to the player name", () => {
     render(
       <MlbPropPicksTable
         rows={[
@@ -206,7 +206,10 @@ describe("MlbPropPicksTable", () => {
         ]}
       />,
     );
-    expect(screen.getByTestId("board-row-matchup")).toHaveTextContent("BOS @ NYY");
+    expect(screen.getByTestId("board-row-name")).toHaveTextContent("Aaron Judge");
+    expect(screen.queryByTestId("board-row-matchup")).not.toBeInTheDocument();
+    expect(screen.queryByText("BOS @ NYY")).not.toBeInTheDocument();
+    expect(screen.queryByText("NYY @ BOS")).not.toBeInTheDocument();
   });
 
   it("sorts by game start, name, stat, Over then Under, then line by default", () => {
