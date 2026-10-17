@@ -21,6 +21,7 @@ from src.odds.snapshot_rows import (
     selenium_pinnacle_props_to_rows,
     selenium_pinnacle_team_to_rows,
     sharp_props_to_book_rows,
+    sportsbook_picks_to_book_rows,
     underdog_picks_to_rows,
 )
 from src.odds.change_filter import apply_change_filter
@@ -206,6 +207,8 @@ def _prizepicks_table(league: str) -> str:
     lg = (league or "").strip().lower()
     if lg == "mlb":
         return "mlb_prizepicks"
+    if lg == "nba":
+        return "nba_prizepicks"
     return "wnba_prizepicks"
 
 
@@ -246,6 +249,8 @@ def _underdog_table(league: str) -> str:
     lg = (league or "").strip().lower()
     if lg == "mlb":
         return "mlb_underdogs"
+    if lg == "nba":
+        return "nba_underdogs"
     return "wnba_underdogs"
 
 
@@ -253,6 +258,8 @@ def _pinnacle_props_table(league: str) -> str:
     lg = (league or "").strip().lower()
     if lg == "mlb":
         return "mlb_pinnacle"
+    if lg == "nba":
+        return "nba_pinnacle"
     if lg == "nfl":
         return "nfl_pinnacle"
     return "wnba_pinnacle"
@@ -286,6 +293,90 @@ def load_underdog_snapshot(
         df,
         schema="odds",
         conflict_cols=_UNDERDOG_CONFLICT_COLS,
+        lineage_col="fetched_at",
+    )
+    return len(df)
+
+
+def _draftkings_table(league: str) -> str:
+    lg = (league or "").strip().lower()
+    if lg == "nba":
+        return "nba_draftkings"
+    if lg == "wnba":
+        return "wnba_draftkings"
+    raise ValueError(f"unsupported draftkings league: {league}")
+
+
+def _fanduel_table(league: str) -> str:
+    lg = (league or "").strip().lower()
+    if lg == "nba":
+        return "nba_fanduel"
+    if lg == "wnba":
+        return "wnba_fanduel"
+    raise ValueError(f"unsupported fanduel league: {league}")
+
+
+def load_draftkings_snapshot(
+    picks: list[dict],
+    *,
+    league: str,
+    scraped_at: datetime | None = None,
+) -> int:
+    if _skip_db("DRAFTKINGS_SKIP_DB") or _skip_db("SHARP_PROPS_SKIP_DB"):
+        return 0
+    scraped_at = scraped_at or datetime.now(timezone.utc)
+    rows = sportsbook_picks_to_book_rows(
+        picks, league=league, scraped_at=scraped_at
+    )
+    if not rows:
+        return 0
+    df = _coerce_float_columns(pd.DataFrame(rows), ["line_score"])
+    df = _dedupe_conflict_rows(df, _SHARP_BOOK_CONFLICT_COLS)
+    if df.empty:
+        return 0
+    table = _draftkings_table(league)
+    league_norm = (league or "").strip().lower()
+    df = apply_change_filter(table, df, league=league_norm)
+    if df.empty:
+        return 0
+    upsert_df(
+        table,
+        df,
+        schema="odds",
+        conflict_cols=_SHARP_BOOK_CONFLICT_COLS,
+        lineage_col="fetched_at",
+    )
+    return len(df)
+
+
+def load_fanduel_snapshot(
+    picks: list[dict],
+    *,
+    league: str,
+    scraped_at: datetime | None = None,
+) -> int:
+    if _skip_db("FANDUEL_SKIP_DB") or _skip_db("SHARP_PROPS_SKIP_DB"):
+        return 0
+    scraped_at = scraped_at or datetime.now(timezone.utc)
+    rows = sportsbook_picks_to_book_rows(
+        picks, league=league, scraped_at=scraped_at
+    )
+    if not rows:
+        return 0
+    df = _coerce_float_columns(pd.DataFrame(rows), ["line_score"])
+    df = _dedupe_conflict_rows(df, _SHARP_BOOK_CONFLICT_COLS)
+    if df.empty:
+        return 0
+    table = _fanduel_table(league)
+    league_norm = (league or "").strip().lower()
+    df = apply_change_filter(table, df, league=league_norm)
+    if df.empty:
+        return 0
+    upsert_df(
+        table,
+        df,
+        schema="odds",
+        conflict_cols=_SHARP_BOOK_CONFLICT_COLS,
         lineage_col="fetched_at",
     )
     return len(df)
@@ -330,6 +421,8 @@ def _pinnacle_team_table(league: str) -> str:
     lg = (league or "").strip().lower()
     if lg == "mlb":
         return "mlb_pinnacle_team"
+    if lg == "nba":
+        return "nba_pinnacle_team"
     if lg == "nfl":
         return "nfl_pinnacle_team"
     return "wnba_pinnacle_team"
@@ -387,6 +480,8 @@ def _prophetx_props_table(league: str) -> str:
     key = (league or "").strip().lower()
     if key == "wnba":
         return "wnba_prophetx"
+    if key == "nba":
+        return "nba_prophetx"
     if key == "nfl":
         return "nfl_prophetx"
     return "mlb_prophetx"
@@ -427,6 +522,8 @@ def _prophetx_team_table(league: str) -> str:
     key = (league or "").strip().lower()
     if key == "wnba":
         return "wnba_prophetx_team"
+    if key == "nba":
+        return "nba_prophetx_team"
     if key == "nfl":
         return "nfl_prophetx_team"
     return "mlb_prophetx_team"
@@ -487,6 +584,8 @@ def _novig_props_table(league: str) -> str:
     key = (league or "").strip().lower()
     if key == "wnba":
         return "wnba_novig"
+    if key == "nba":
+        return "nba_novig"
     if key == "nfl":
         return "nfl_novig"
     return "mlb_novig"
@@ -496,6 +595,8 @@ def _novig_team_table(league: str) -> str:
     key = (league or "").strip().lower()
     if key == "wnba":
         return "wnba_novig_team"
+    if key == "nba":
+        return "nba_novig_team"
     if key == "nfl":
         return "nfl_novig_team"
     return "mlb_novig_team"

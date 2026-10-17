@@ -25,34 +25,42 @@ logger = logging.getLogger(__name__)
 _PRIZEPICKS_TABLE = {
     "mlb": "mlb_prizepicks",
     "wnba": "wnba_prizepicks",
-    "nba": "wnba_prizepicks",
+    "nba": "nba_prizepicks",
 }
 _UNDERDOG_TABLE = {
     "mlb": "mlb_underdogs",
     "wnba": "wnba_underdogs",
-    "nba": "wnba_underdogs",
+    "nba": "nba_underdogs",
 }
 _PINNACLE_TABLE = {
     "mlb": "mlb_pinnacle",
     "wnba": "wnba_pinnacle",
-    "nba": "wnba_pinnacle",
+    "nba": "nba_pinnacle",
 }
-_PROPHETX_TABLE = {"mlb": "mlb_prophetx", "wnba": "wnba_prophetx"}
+_PROPHETX_TABLE = {
+    "mlb": "mlb_prophetx",
+    "wnba": "wnba_prophetx",
+    "nba": "nba_prophetx",
+}
 _PROPHETX_TEAM_TABLE = {
     "mlb": "mlb_prophetx_team",
     "wnba": "wnba_prophetx_team",
+    "nba": "nba_prophetx_team",
 }
-_NOVIG_TABLE = {"mlb": "mlb_novig", "wnba": "wnba_novig"}
+_NOVIG_TABLE = {"mlb": "mlb_novig", "wnba": "wnba_novig", "nba": "nba_novig"}
 _NOVIG_TEAM_TABLE = {
     "mlb": "mlb_novig_team",
     "wnba": "wnba_novig_team",
+    "nba": "nba_novig_team",
 }
 
 _PINNACLE_TEAM_TABLE = {
     "mlb": "mlb_pinnacle_team",
     "wnba": "wnba_pinnacle_team",
-    "nba": "wnba_pinnacle_team",
+    "nba": "nba_pinnacle_team",
 }
+_DRAFTKINGS_TABLE = {"nba": "nba_draftkings", "wnba": "wnba_draftkings"}
+_FANDUEL_TABLE = {"nba": "nba_fanduel", "wnba": "wnba_fanduel"}
 _PARLAY_API_ODDS_TABLE = {
     "mlb": "mlb_parlay_api_odds",
     "wnba": "wnba_parlay_api_odds",
@@ -149,6 +157,30 @@ def fetch_latest_pinnacle(league: str = "wnba") -> list[dict]:
     """Return rows from the latest Selenium Pinnacle player snapshot for *league*."""
     lg = _normalized_league(league, "wnba")
     table = _PINNACLE_TABLE.get(lg, "wnba_pinnacle")
+    sql = _latest_snapshot_sql(
+        table,
+        "player_name, market_type, side, line_score, american_price, scraped_at",
+    )
+    return _fetch_rows(sql, lg)
+
+
+def fetch_latest_draftkings(league: str = "nba") -> list[dict]:
+    lg = _normalized_league(league, "nba")
+    table = _DRAFTKINGS_TABLE.get(lg)
+    if not table:
+        return []
+    sql = _latest_snapshot_sql(
+        table,
+        "player_name, market_type, side, line_score, american_price, scraped_at",
+    )
+    return _fetch_rows(sql, lg)
+
+
+def fetch_latest_fanduel(league: str = "nba") -> list[dict]:
+    lg = _normalized_league(league, "nba")
+    table = _FANDUEL_TABLE.get(lg)
+    if not table:
+        return []
     sql = _latest_snapshot_sql(
         table,
         "player_name, market_type, side, line_score, american_price, scraped_at",

@@ -86,6 +86,15 @@ def test_load_prizepicks_snapshot_mlb_uses_mlb_table(mock_upsert):
     assert df.iloc[0]["league"] == "mlb"
 
 
+def test_load_prizepicks_nba_uses_nba_table(mock_upsert):
+    load_snapshots.load_prizepicks_snapshot(
+        [{"player": "A", "stat_type": "Points", "line_score": 20.5, "odds_type": "standard"}],
+        league="nba",
+        scraped_at=SCRAPED,
+    )
+    assert mock_upsert.call_args[0][0] == "nba_prizepicks"
+
+
 def test_load_prizepicks_snapshot_empty_returns_zero(mock_upsert):
     count = load_snapshots.load_prizepicks_snapshot([], league="wnba", scraped_at=SCRAPED)
     assert count == 0
@@ -174,6 +183,49 @@ def test_load_underdog_snapshot_mlb_uses_mlb_table(mock_upsert):
     table, df = mock_upsert.call_args[0]
     assert table == "mlb_underdogs"
     assert df.iloc[0]["league"] == "mlb"
+
+
+def test_load_underdog_nba_uses_nba_table(mock_upsert):
+    load_snapshots.load_underdog_snapshot(
+        UNDERDOG_PICKS, league="nba", scraped_at=SCRAPED
+    )
+    assert mock_upsert.call_args[0][0] == "nba_underdogs"
+
+
+def test_load_draftkings_snapshot_nba(mock_upsert):
+    picks = [
+        {
+            "full_name": "Jayson Tatum",
+            "stat_name": "Points",
+            "stat_value": 27.5,
+            "choice": "over",
+            "american_price": -110,
+        }
+    ]
+    n = load_snapshots.load_draftkings_snapshot(
+        picks, league="nba", scraped_at=SCRAPED
+    )
+    assert n == 1
+    table, df = mock_upsert.call_args[0]
+    assert table == "nba_draftkings"
+    assert df.iloc[0]["player_name"] == "Jayson Tatum"
+    assert df.iloc[0]["market_type"] == "Points"
+    assert df.iloc[0]["side"] == "over"
+    assert df.iloc[0]["american_price"] == -110
+
+
+def test_load_fanduel_snapshot_wnba_keeps_wnba_table(mock_upsert):
+    picks = [
+        {
+            "full_name": "A'ja Wilson",
+            "stat_name": "Points",
+            "stat_value": 22.5,
+            "choice": "under",
+            "american_price": -105,
+        }
+    ]
+    load_snapshots.load_fanduel_snapshot(picks, league="wnba", scraped_at=SCRAPED)
+    assert mock_upsert.call_args[0][0] == "wnba_fanduel"
 
 
 def test_load_underdog_snapshot_dedupes_conflict_keys(mock_upsert):
@@ -605,6 +657,13 @@ def test_load_pinnacle_props_snapshot_calls_upsert(mock_upsert):
     ]
 
 
+def test_load_pinnacle_props_nba_uses_nba_table(mock_upsert):
+    load_snapshots.load_pinnacle_props_snapshot(
+        PINNACLE_GAMES, league="nba", scraped_at=SCRAPED
+    )
+    assert mock_upsert.call_args[0][0] == "nba_pinnacle"
+
+
 def test_load_pinnacle_team_snapshot_mlb_uses_mlb_table(mock_upsert):
     count = load_snapshots.load_pinnacle_team_snapshot(
         PINNACLE_TEAM_GAMES, league="mlb", scraped_at=SCRAPED
@@ -791,6 +850,28 @@ def test_load_prophetx_props_routes_wnba_table(monkeypatch, mock_upsert):
     assert mock_upsert.call_args[1]["schema"] == "odds"
 
 
+def test_load_prophetx_props_routes_nba_table(monkeypatch, mock_upsert):
+    monkeypatch.delenv("PROPHETX_SKIP_DB", raising=False)
+    games = [
+        {
+            "event_id": 1,
+            "competitors": [],
+            "props": [
+                {
+                    "player": "A",
+                    "stat": "points",
+                    "line": 20.5,
+                    "over": {"american": -110},
+                }
+            ],
+        }
+    ]
+    load_snapshots.load_prophetx_props_snapshot(
+        games, league="nba", scraped_at=SCRAPED
+    )
+    assert mock_upsert.call_args[0][0] == "nba_prophetx"
+
+
 def test_load_prophetx_props_routes_nfl_not_mlb(monkeypatch, mock_upsert):
     monkeypatch.delenv("PROPHETX_SKIP_DB", raising=False)
     games = [
@@ -909,6 +990,28 @@ def test_load_novig_props_routes_wnba_table(monkeypatch, mock_upsert):
     assert table == "wnba_novig"
     assert mock_upsert.call_args[1]["schema"] == "odds"
     assert len(df) >= 1
+
+
+def test_load_novig_props_routes_nba_table(monkeypatch, mock_upsert):
+    monkeypatch.delenv("NOVIG_SKIP_DB", raising=False)
+    games = [
+        {
+            "event_id": "uuid-1",
+            "competitors": [],
+            "props": [
+                {
+                    "player": "A",
+                    "stat": "points",
+                    "line": 20.5,
+                    "over": {"american": -110},
+                }
+            ],
+        }
+    ]
+    load_snapshots.load_novig_props_snapshot(
+        games, league="nba", scraped_at=SCRAPED
+    )
+    assert mock_upsert.call_args[0][0] == "nba_novig"
 
 
 def test_load_novig_team_routes_wnba_table(monkeypatch, mock_upsert):

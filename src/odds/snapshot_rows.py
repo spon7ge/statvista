@@ -92,6 +92,43 @@ def underdog_picks_to_rows(
     return rows
 
 
+_VALID_BOOK_SIDES = frozenset({"over", "under"})
+
+
+def sportsbook_picks_to_book_rows(
+    picks: list[dict],
+    *,
+    league: str,
+    scraped_at: datetime,
+) -> list[dict]:
+    """Map DK/FD scraper pick dicts to odds.*_{draftkings|fanduel} rows."""
+    rows: list[dict] = []
+    league_key = league.lower()
+    for pick in picks:
+        player_name = pick.get("full_name")
+        market_type = pick.get("stat_name")
+        stat_value = pick.get("stat_value")
+        side = str(pick.get("choice") or "").strip().lower()
+        american = parse_american_price(pick.get("american_price"))
+        if not player_name or not market_type or stat_value is None:
+            continue
+        if side not in _VALID_BOOK_SIDES or american is None:
+            continue
+        rows.append(
+            {
+                "league": league_key,
+                "player_name": player_name,
+                "market_type": market_type,
+                "stat_category": None,
+                "side": side,
+                "line_score": stat_value,
+                "american_price": american,
+                "scraped_at": scraped_at,
+            }
+        )
+    return rows
+
+
 _VALID_SIDES = frozenset({"over", "under"})
 _SHARP_BOOKS = frozenset({"fanduel", "draftkings"})
 _PARLAY_BOOKS = frozenset(
