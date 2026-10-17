@@ -69,6 +69,17 @@ describe("AppRouter", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("renders Contact at /contact with heading Contact and Send disabled", () => {
+    renderWithProviders(["/contact"]);
+    expect(
+      screen.getByRole("heading", { name: /^contact$/i }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /^send$/i })).toBeDisabled();
+    expect(
+      screen.queryByRole("heading", { name: /page not found/i }),
+    ).not.toBeInTheDocument();
+  });
+
   it("renders Blog at /blog with heading Blog and both post titles", () => {
     renderWithProviders(["/blog"]);
     expect(

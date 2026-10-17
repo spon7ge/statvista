@@ -94,13 +94,21 @@ describe("AppSidebar", () => {
       "/blog",
     );
     expect(
-      within(siteNav).getByRole("button", { name: "Settings" }),
-    ).toBeInTheDocument();
+      within(siteNav).getByRole("link", { name: "Contact" }),
+    ).toHaveAttribute("href", "/contact");
   });
 
   it("marks About current on /about", () => {
     renderSidebar("/about");
     expect(screen.getByRole("link", { name: "About" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+  });
+
+  it("marks Contact current on /contact", () => {
+    renderSidebar("/contact");
+    expect(screen.getByRole("link", { name: "Contact" })).toHaveAttribute(
       "aria-current",
       "page",
     );
@@ -120,12 +128,12 @@ describe("AppSidebar", () => {
     );
   });
 
-  it("uses the previous Lucide shapes for Props, Games, Blog, and Settings", () => {
+  it("uses the previous Lucide shapes for Props, Games, Blog, and Contact", () => {
     renderSidebar("/mlb/matchups");
     expect(svgMarkup("Props")).toContain("M14 4h7");
     expect(svgMarkup("Games")).toContain("M8 2v4");
     expect(svgMarkup("Blog")).toContain("M15 18h-5");
-    expect(svgMarkup("Settings", "button")).toContain("M9.671 4.136");
+    expect(svgMarkup("Contact")).toContain("m22 7-8.991");
   });
 
   it("does not nest Leaders, Standings, Futures, or chatbots", () => {

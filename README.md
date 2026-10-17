@@ -88,14 +88,15 @@ Open [http://localhost:5173](http://localhost:5173). API docs: [http://localhost
 
 ## What it does
 
-Sidebar: **Props**, **Games**, plus Site links (**About**, **Blog**, **Settings**). League pills switch MLB / WNBA (NBA is a placeholder).
+Sidebar: **Props**, **Games**, plus Site links (**About**, **Blog**, **Contact**). League pills switch MLB / WNBA (NBA is a placeholder).
 
 | Page | What you get |
 |------|----------------|
 | **Games** | Dated slates and game centers (lineups, odds, live/final detail) |
 | **Props** | DFS-anchored player lines next to sportsbook odds |
 | **About** | Product overview and data sources |
-| **Blog** / **Settings** | Placeholders for now |
+| **Blog** | Placeholder posts |
+| **Contact** | Form UI stub (send not wired) |
 
 Research copy only — not a lock and not a betting ticket.
 

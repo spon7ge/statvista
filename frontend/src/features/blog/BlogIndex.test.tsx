@@ -16,11 +16,20 @@ describe("BlogIndex", () => {
     expect(
       screen.getByRole("link", { name: /hit rate actually means/i }),
     ).toHaveAttribute("href", "/blog/hit-rate-l5-l10-l15");
-    expect(screen.getByText("4 min read")).toBeInTheDocument();
-    expect(screen.getByText("6 min read")).toBeInTheDocument();
+    const readFour = screen.getByText("4 min read");
+    const readSix = screen.getByText("6 min read");
+    expect(readFour.className).toMatch(/rounded-full/);
+    expect(readFour.className).toMatch(/bg-\[var\(--white\)\]/);
+    expect(readSix.className).toMatch(/rounded-full/);
+    expect(readSix.className).toMatch(/bg-\[var\(--white\)\]/);
     expect(screen.getByText("LINES")).toBeInTheDocument();
     expect(screen.getByText("FORM")).toBeInTheDocument();
     const grid = screen.getByTestId("blog-index-grid");
     expect(grid.className).toMatch(/sm:grid-cols-2/);
+    expect(grid.className).toMatch(/blog-content/);
+    const card = screen.getByRole("link", { name: /how to read a prop line/i });
+    expect(card.className).toMatch(/border/);
+    expect(card.className).toMatch(/border-line/);
+    expect(card.className).toMatch(/rounded-lg/);
   });
 });

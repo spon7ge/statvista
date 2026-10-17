@@ -160,12 +160,12 @@ export function IconNewspaper({ className }: IconProps) {
   );
 }
 
-/** Settings cog (Lucide Settings). */
-export function IconGear({ className }: IconProps) {
+/** Envelope — Contact (Lucide Mail). */
+export function IconMail({ className }: IconProps) {
   return (
     <LucideFrame className={className}>
-      <path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" />
-      <circle cx="12" cy="12" r="3" />
+      <path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" />
+      <rect x="2" y="4" width="20" height="16" rx="2" />
     </LucideFrame>
   );
 }

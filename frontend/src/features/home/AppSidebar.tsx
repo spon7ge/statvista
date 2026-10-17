@@ -5,9 +5,9 @@ import { CHROME_TITLE_TOP } from "@/app/layouts/chrome";
 import { StatvistaWordmark } from "@/shared/ui/StatvistaWordmark";
 import {
   IconCalendar,
-  IconGear,
   IconInfo,
   IconList,
+  IconMail,
   IconNewspaper,
 } from "@/shared/ui/Icons";
 import {
@@ -86,10 +86,14 @@ export function AppSidebar() {
             <IconNewspaper />
             Blog
           </Link>
-          <button type="button" className={rowClass(false)}>
-            <IconGear />
-            Settings
-          </button>
+          <Link
+            to="/contact"
+            aria-current={pathname === "/contact" ? "page" : undefined}
+            className={rowClass(pathname === "/contact")}
+          >
+            <IconMail />
+            Contact
+          </Link>
         </nav>
       </div>
     </div>

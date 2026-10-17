@@ -84,6 +84,36 @@
   letter-spacing: 0;
 }
 
+/* Blog copy matches About / sidebar (Public Sans), not Fraunces headings. */
+.blog-content {
+  font-family: var(--font-ui);
+  font-size: var(--text-16);
+  font-weight: var(--font-weight-body);
+  line-height: var(--lh-body);
+  color: var(--c3);
+}
+
+.blog-content h1,
+.blog-content h2 {
+  font-family: var(--font-ui);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+.contact-content {
+  font-family: var(--font-ui);
+  font-size: var(--text-16);
+  font-weight: var(--font-weight-body);
+  line-height: var(--lh-body);
+  color: var(--c3);
+}
+
+.contact-content label {
+  font-family: var(--font-ui);
+  font-weight: 600;
+}
+
 .shell {
   display: flex;
   min-height: 100vh;
