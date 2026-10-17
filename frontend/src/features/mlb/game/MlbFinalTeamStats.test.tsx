@@ -14,20 +14,20 @@ describe("MlbFinalTeamStats", () => {
 
     const avgHome = screen.getByTestId("mlb-team-stat-avg-home");
     expect(avgHome).toHaveTextContent(".268");
-    expect(avgHome).toHaveClass("rounded");
+    expect(avgHome).toHaveClass("rounded-full");
     expect(avgHome).toHaveStyle({ backgroundColor: mlbFinalDetail.home.color });
 
     const kAway = screen.getByTestId("mlb-team-stat-k-away");
     expect(kAway).toHaveTextContent("10");
-    expect(kAway).toHaveClass("rounded");
+    expect(kAway).toHaveClass("rounded-full");
 
     const eraHome = screen.getByTestId("mlb-team-stat-era-home");
     expect(eraHome).toHaveTextContent("3.20");
-    expect(eraHome).toHaveClass("rounded");
+    expect(eraHome).toHaveClass("rounded-full");
 
     const bbHome = screen.getByTestId("mlb-team-stat-bb-home");
     expect(bbHome).toHaveTextContent("2");
-    expect(bbHome).toHaveClass("rounded");
+    expect(bbHome).toHaveClass("rounded-full");
   });
 
   it("shows white team abbrev and logo in the header", () => {

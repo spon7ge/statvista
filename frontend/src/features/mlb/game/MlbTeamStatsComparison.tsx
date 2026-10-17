@@ -127,7 +127,7 @@ function StatChip({
       data-testid={
         isLeader ? `${testIdPrefix}-${statKey}-${side}` : undefined
       }
-      className="rounded px-[9px] text-c3"
+      className={`px-[9px] text-c3 ${isLeader ? "rounded-full py-0.5" : ""}`}
       style={
         isLeader ? { backgroundColor: color, color: "#FFFFFF" } : undefined
       }
