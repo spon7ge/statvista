@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import {
-  collectWnbaBoardBookmakerOptions,
   collectWnbaBoardGameOptions,
   collectWnbaBoardPropositionOptions,
   filterWnbaPropBoardRows,
@@ -17,10 +16,10 @@ const row = (over: Partial<ApiWnbaPropBoardRow>): ApiWnbaPropBoardRow =>
     stat: "points",
     market_label: "Over 18.5 Points",
     side: "over",
-    line: 1.5,
-    game_id: 1,
+    line: 18.5,
+    game_id: "1",
     game_start_at: null,
-    dfs: [{ book: "prizepicks", american: null, url: null }],
+    anchor: { book: "prizepicks", american: -137, url: null, line: 18.5 },
     books: [{ book: "prophetx", american: -115, url: null }],
     ip_pct: 53,
     opp_def_rank: 2,
@@ -34,14 +33,21 @@ const row = (over: Partial<ApiWnbaPropBoardRow>): ApiWnbaPropBoardRow =>
     ...over,
   }) as ApiWnbaPropBoardRow;
 
+const emptyFilters = {
+  query: "",
+  markets: new Set<string>(),
+  sides: new Set<"over" | "under">(),
+  games: new Set<string>(),
+};
+
 describe("filterWnbaPropBoardRows", () => {
-  it("filters by team and player substring", () => {
+  it("filters by player substring", () => {
     const rows = [
       row({}),
       row({ player_name: "Rhyne Howard", team_abbrev: "ATL" }),
     ];
     const out = filterWnbaPropBoardRows(rows, {
-      teams: new Set(["IND"]),
+      ...emptyFilters,
       query: "clark",
     });
     expect(out).toHaveLength(1);
@@ -53,22 +59,13 @@ describe("filterWnbaPropBoardRows", () => {
       row({}),
       row({ player_name: "Rhyne Howard", team_abbrev: "ATL" }),
     ];
-    expect(filterWnbaPropBoardRows(rows, { teams: new Set(), query: "" })).toEqual(
-      rows,
-    );
-  });
-
-  it("excludes rows with a null team when a team filter is active", () => {
-    const noTeam = row({ player_name: "No Team", team_abbrev: null });
-    expect(
-      filterWnbaPropBoardRows([noTeam], { teams: new Set(["IND"]), query: "" }),
-    ).toEqual([]);
+    expect(filterWnbaPropBoardRows(rows, emptyFilters)).toEqual(rows);
   });
 
   it("trims the search query and matches case-insensitively", () => {
     const rows = [row({}), row({ player_name: "Rhyne Howard", team_abbrev: "ATL" })];
     expect(
-      filterWnbaPropBoardRows(rows, { teams: new Set(), query: "  cLaRk  " }),
+      filterWnbaPropBoardRows(rows, { ...emptyFilters, query: "  cLaRk  " }),
     ).toEqual([rows[0]]);
   });
 
@@ -79,201 +76,64 @@ describe("filterWnbaPropBoardRows", () => {
         player_name: "Caitlin Clark",
         stat: "points",
         side: "under",
-        market_label: "Under 1.5 Points",
+        market_label: "Under 18.5 Points",
       }),
       row({
-        player_name: "Shohei Ohtani",
-        stat: "assists",
+        player_name: "A'ja Wilson",
+        stat: "rebounds",
         side: "over",
-        market_label: "Over 6.5 Assists",
-        team_abbrev: "ATL",
+        market_label: "Over 10.5 Rebounds",
+        team_abbrev: "LV",
       }),
     ];
     expect(
       filterWnbaPropBoardRows(rows, {
-        teams: new Set(),
-        query: "",
+        ...emptyFilters,
         markets: new Set(["points"]),
       }).map((r) => `${r.player_name}:${r.side}`),
     ).toEqual(["Caitlin Clark:over", "Caitlin Clark:under"]);
     expect(
       filterWnbaPropBoardRows(rows, {
-        teams: new Set(),
-        query: "",
+        ...emptyFilters,
         sides: new Set(["over"]),
       }).map((r) => `${r.player_name}:${r.stat}`),
-    ).toEqual(["Caitlin Clark:points", "Shohei Ohtani:assists"]);
+    ).toEqual(["Caitlin Clark:points", "A'ja Wilson:rebounds"]);
   });
 
   it("collects unique proposition options from market labels", () => {
     const options = collectWnbaBoardPropositionOptions([
       row({ stat: "points", market_label: "Over 18.5 Points" }),
-      row({ stat: "points", market_label: "Under 4.5 Assists" }),
+      row({ stat: "points", market_label: "Under 18.5 Points" }),
       row({
-        stat: "assists",
-        market_label: "Over 6.5 Assists",
+        stat: "rebounds",
+        market_label: "Over 10.5 Rebounds",
       }),
     ]);
     expect(options).toEqual([
-      { value: "assists", label: "Assists" },
       { value: "points", label: "Points" },
+      { value: "rebounds", label: "Rebounds" },
     ]);
   });
 
-  it("filters by bookmaker and keeps only selected book chips", () => {
+  it("keeps rows the server already anchored and does not trim odds", () => {
     const rows = [
       row({
-        player_name: "Caitlin Clark",
         books: [
-          { book: "prophetx", american: -115, url: null },
-          { book: "draftkings", american: -120, url: null },
-        ],
-      }),
-      row({
-        player_name: "Rhyne Howard",
-        team_abbrev: "ATL",
-        books: [{ book: "fanduel", american: -108, url: null }],
-      }),
-    ];
-    const out = filterWnbaPropBoardRows(rows, {
-      teams: new Set(),
-      query: "",
-      books: new Set(["draftkings"]),
-    });
-    expect(out).toHaveLength(1);
-    expect(out[0].player_name).toBe("Caitlin Clark");
-    expect(out[0].books.map((chip) => chip.book)).toEqual(["draftkings"]);
-  });
-
-  it("drops rows with no posted American odds", () => {
-    const rows = [
-      row({ player_name: "Caitlin Clark", books: [], dfs: [] }),
-      row({
-        player_name: "Juan Soto",
-        books: [{ book: "fanduel", american: null, url: null }],
-        dfs: [],
-      }),
-      row({
-        player_name: "Rhyne Howard",
-        books: [],
-        dfs: [{ book: "prizepicks", american: null, url: null }],
-      }),
-      row({
-        player_name: "Freddie Freeman",
-        team_abbrev: "ATL",
-        books: [{ book: "draftkings", american: -120, url: null }],
-        dfs: [],
-      }),
-    ];
-    expect(
-      filterWnbaPropBoardRows(rows, { teams: new Set(), query: "" }).map(
-        (r) => r.player_name,
-      ),
-    ).toEqual(["Rhyne Howard"]);
-  });
-
-  it("omits sportsbook-only rows with no PrizePicks or Underdog line", () => {
-    const rows = [
-      row({
-        player_name: "Pinnacle Only",
-        dfs: [],
-        books: [{ book: "pinnacle", american: -108, url: null }],
-      }),
-      row({
-        player_name: "Has DFS",
-        dfs: [{ book: "underdog", american: -105, url: null }],
-        books: [{ book: "pinnacle", american: -108, url: null }],
-      }),
-    ];
-    expect(
-      filterWnbaPropBoardRows(rows, { teams: new Set(), query: "" }).map(
-        (r) => r.player_name,
-      ),
-    ).toEqual(["Has DFS"]);
-  });
-
-  it("keeps a sportsbook whose main line differs from the DFS line", () => {
-    const rows = [
-      row({
-        line: 3.5,
-        dfs: [{ book: "prizepicks", american: null, url: null }],
-        books: [
-          {
-            book: "pinnacle",
-            american: -128,
-            url: null,
-            line: 1.5,
-            over_american: -128,
-            under_american: -104,
-          },
+          { book: "draftkings", american: -110, url: null, line: 18.5 },
+          { book: "fanduel", american: -108, url: null, line: 18.5 },
         ],
       }),
     ];
-    expect(
-      filterWnbaPropBoardRows(rows, { teams: new Set(), query: "" }).map(
-        (r) => r.player_name,
-      ),
-    ).toEqual(["Caitlin Clark"]);
-  });
-
-  it("filters PrizePicks on dfs and clears Odds", () => {
-    const rows = [
-      row({
-        player_name: "Caitlin Clark",
-        dfs: [{ book: "prizepicks", american: null, url: null }],
-        books: [{ book: "prophetx", american: -115, url: null }],
-      }),
-      row({
-        player_name: "Rhyne Howard",
-        team_abbrev: "ATL",
-        dfs: [],
-        books: [{ book: "draftkings", american: -120, url: null }],
-      }),
-    ];
     const out = filterWnbaPropBoardRows(rows, {
-      teams: new Set(),
       query: "",
-      books: new Set(["prizepicks"]),
+      markets: new Set(),
+      sides: new Set(),
+      games: new Set(),
     });
     expect(out).toHaveLength(1);
-    expect(out[0].player_name).toBe("Caitlin Clark");
-    expect(out[0].dfs.map((chip) => chip.book)).toEqual(["prizepicks"]);
-    expect(out[0].books).toEqual([]);
-  });
-
-  it("filters DraftKings on books and clears DFS", () => {
-    const rows = [
-      row({
-        player_name: "Caitlin Clark",
-        dfs: [{ book: "prizepicks", american: null, url: null }],
-        books: [{ book: "draftkings", american: -120, url: null }],
-      }),
-    ];
-    const out = filterWnbaPropBoardRows(rows, {
-      teams: new Set(),
-      query: "",
-      books: new Set(["draftkings"]),
-    });
-    expect(out).toHaveLength(1);
-    expect(out[0].books.map((chip) => chip.book)).toEqual(["draftkings"]);
-    expect(out[0].dfs).toEqual([]);
-  });
-
-  it("collects unique bookmaker options in chip order", () => {
-    expect(
-      collectWnbaBoardBookmakerOptions([
-        row({
-          dfs: [{ book: "underdog", american: -105, url: null }],
-          books: [{ book: "draftkings", american: -120, url: null }],
-        }),
-        row({
-          books: [{ book: "draftkings", american: -110, url: null }],
-        }),
-      ]),
-    ).toEqual([
-      { value: "draftkings", label: "DraftKings" },
-      { value: "prizepicks", label: "PrizePicks" },
-      { value: "underdog", label: "Underdog" },
+    expect(out[0].books.map((chip) => chip.book)).toEqual([
+      "draftkings",
+      "fanduel",
     ]);
   });
 
@@ -285,7 +145,7 @@ describe("filterWnbaPropBoardRows", () => {
           team_abbrev: "ATL",
           opponent_abbrev: "CHI",
           home_away: "away",
-          game_id: 2,
+          game_id: "2",
           game_start_at: "2026-08-23T23:10:00Z",
         }),
         row({
@@ -293,34 +153,34 @@ describe("filterWnbaPropBoardRows", () => {
           team_abbrev: "IND",
           opponent_abbrev: "NYL",
           home_away: "away",
-          game_id: 1,
+          game_id: "1",
           game_start_at: "2026-08-23T20:10:00Z",
         }),
         row({
-          player_name: "Dansby Swanson",
-          team_abbrev: "CHC",
-          opponent_abbrev: "MIL",
+          player_name: "Kahleah Copper",
+          team_abbrev: "PHX",
+          opponent_abbrev: "LAS",
           home_away: "home",
-          game_id: 3,
+          game_id: "3",
           game_start_at: "2026-08-23T17:10:00Z",
         }),
         row({
-          player_name: "Juan Soto",
+          player_name: "Aliyah Boston",
           team_abbrev: "IND",
           opponent_abbrev: "NYL",
           home_away: "away",
-          game_id: 1,
+          game_id: "1",
           game_start_at: "2026-08-23T20:10:00Z",
         }),
         row({
           player_name: "No Game",
           game_id: null,
-          team_abbrev: "CHC",
-          opponent_abbrev: "MIL",
+          team_abbrev: "PHX",
+          opponent_abbrev: "LAS",
         }),
       ]),
     ).toEqual([
-      { value: "3", label: "MIL @ CHC" },
+      { value: "3", label: "LAS @ PHX" },
       { value: "1", label: "IND @ NYL" },
       { value: "2", label: "ATL @ CHI" },
     ]);
@@ -328,18 +188,17 @@ describe("filterWnbaPropBoardRows", () => {
 
   it("filters by selected games and omits rows with no game when a game filter is active", () => {
     const rows = [
-      row({ player_name: "Caitlin Clark", game_id: 1 }),
+      row({ player_name: "Caitlin Clark", game_id: "1" }),
       row({
         player_name: "Rhyne Howard",
         team_abbrev: "ATL",
-        game_id: 2,
+        game_id: "2",
       }),
       row({ player_name: "No Game", game_id: null }),
     ];
     expect(
       filterWnbaPropBoardRows(rows, {
-        teams: new Set(),
-        query: "",
+        ...emptyFilters,
         games: new Set(["1"]),
       }).map((r) => r.player_name),
     ).toEqual(["Caitlin Clark"]);

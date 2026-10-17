@@ -1,42 +1,35 @@
 import { useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { CHROME_PAGE_RIGHT, CHROME_PAGE_X } from "@/app/layouts/chrome";
 import { useWnbaPropBoard } from "@/features/basketball/hooks/useWnbaPropBoard";
 import { WnbaPropPicksFilters } from "@/features/basketball/league/WnbaPropPicksFilters";
 import { WnbaPropPicksHeader } from "@/features/basketball/league/WnbaPropPicksHeader";
 import { WnbaPropPicksTable } from "@/features/basketball/league/WnbaPropPicksTable";
+import { bookDisplayName } from "@/features/basketball/lib/wnbaBookLabels";
 import {
-  collectWnbaBoardBookmakerOptions,
   collectWnbaBoardGameOptions,
   collectWnbaBoardPropositionOptions,
   filterWnbaPropBoardRows,
   type WnbaHitRateWindow,
   type WnbaPropBoardSide,
 } from "@/features/basketball/league/filterWnbaPropBoard";
-import type { ApiWnbaPropBoardRow } from "@/shared/lib/api";
+import { BOOK_CHIP_ORDER } from "@/features/basketball/league/sortWnbaPropBoard";
 
-function collectWnbaBoardTeamOptions(rows: ApiWnbaPropBoardRow[]): string[] {
-  return [
-    ...new Set(
-      rows
-        .map((row) => row.team_abbrev)
-        .filter((abbrev): abbrev is string => Boolean(abbrev)),
-    ),
-  ].sort((a, b) => a.localeCompare(b));
-}
+const BOOK_OPTIONS = BOOK_CHIP_ORDER.map((value) => ({
+  value,
+  label: bookDisplayName(value),
+}));
 
 export function LeaguePropPicksPage() {
-  const { data, isLoading, isError } = useWnbaPropBoard();
-  const [selectedTeams, setSelectedTeams] = useState<Set<string>>(
-    () => new Set(),
-  );
+  const [searchParams, setSearchParams] = useSearchParams();
+  const bookParam = searchParams.get("book");
+  const book = bookParam ?? "prizepicks";
+  const { data, isLoading, isError } = useWnbaPropBoard(book);
   const [query, setQuery] = useState("");
   const [selectedMarkets, setSelectedMarkets] = useState<Set<string>>(
     () => new Set(),
   );
   const [selectedSides, setSelectedSides] = useState<Set<WnbaPropBoardSide>>(
-    () => new Set(),
-  );
-  const [selectedBooks, setSelectedBooks] = useState<Set<string>>(
     () => new Set(),
   );
   const [selectedGames, setSelectedGames] = useState<Set<string>>(
@@ -46,41 +39,37 @@ export function LeaguePropPicksPage() {
 
   const rows = data?.rows ?? [];
   const markets = useMemo(() => collectWnbaBoardPropositionOptions(rows), [rows]);
-  const books = useMemo(() => collectWnbaBoardBookmakerOptions(rows), [rows]);
   const games = useMemo(() => collectWnbaBoardGameOptions(rows), [rows]);
   const filtered = useMemo(
     () =>
       filterWnbaPropBoardRows(rows, {
-        teams: selectedTeams,
         query,
         markets: selectedMarkets,
         sides: selectedSides,
-        books: selectedBooks,
         games: selectedGames,
       }),
-    [
-      rows,
-      selectedTeams,
-      query,
-      selectedMarkets,
-      selectedSides,
-      selectedBooks,
-      selectedGames,
-    ],
+    [rows, query, selectedMarkets, selectedSides, selectedGames],
   );
 
+  function selectBook(next: Set<string>) {
+    const chosen = [...next][0];
+    const params = new URLSearchParams(searchParams);
+    if (!chosen || chosen === "prizepicks") params.delete("book");
+    else params.set("book", chosen);
+    setSearchParams(params, { replace: true });
+  }
+
   function clearFilters() {
-    setSelectedTeams(new Set());
     setQuery("");
     setSelectedMarkets(new Set());
     setSelectedSides(new Set());
-    setSelectedBooks(new Set());
     setSelectedGames(new Set());
     setHitRate(null);
+    selectBook(new Set());
   }
 
   const showBoardError = isError && !data;
-  const showBoardFilters = !isLoading && !showBoardError && rows.length > 0;
+  const showBoardFilters = !isLoading && !showBoardError;
 
   return (
     <div className="space-y-0 pb-8">
@@ -91,10 +80,7 @@ export function LeaguePropPicksPage() {
           {showBoardFilters ? (
             <WnbaPropPicksFilters
               tone="pill"
-              teams={collectWnbaBoardTeamOptions(rows)}
-              selectedTeams={selectedTeams}
               query={query}
-              onTeamsChange={setSelectedTeams}
               onQueryChange={setQuery}
               onClear={clearFilters}
               markets={markets}
@@ -111,9 +97,9 @@ export function LeaguePropPicksPage() {
                   ),
                 )
               }
-              books={books}
-              selectedBooks={selectedBooks}
-              onBooksChange={setSelectedBooks}
+              books={BOOK_OPTIONS}
+              selectedBooks={new Set([book])}
+              onBooksChange={selectBook}
               games={games}
               selectedGames={selectedGames}
               onGamesChange={setSelectedGames}

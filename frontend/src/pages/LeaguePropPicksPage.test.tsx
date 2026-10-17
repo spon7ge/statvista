@@ -21,7 +21,15 @@ function row(
     line: 18.5,
     game_id: "401810001",
     game_start_at: "2026-08-23T23:10:00Z",
-    dfs: [{ book: "prizepicks", american: null, url: null }],
+    anchor: {
+      book: "prizepicks",
+      american: -137,
+      url: null,
+      line: 18.5,
+      devig_pct: null,
+      over_american: -137,
+      under_american: -137,
+    },
     books: [{ book: "prophetx", american: -115, url: null }],
     ip_pct: 53,
     opp_def_rank: null,
@@ -83,6 +91,7 @@ function mockBoard(rows: ApiWnbaPropBoardRow[]) {
 
 describe("LeaguePropPicksPage", () => {
   beforeEach(() => {
+    mockUseWnbaPropBoard.mockClear();
     window.matchMedia = vi.fn().mockImplementation((query: string) => ({
       matches: false,
       media: query,
@@ -98,7 +107,7 @@ describe("LeaguePropPicksPage", () => {
     mockBoard([clark, howard]);
     renderPage();
 
-    expect(mockUseWnbaPropBoard).toHaveBeenCalledWith();
+    expect(mockUseWnbaPropBoard).toHaveBeenCalledWith("prizepicks");
     expect(screen.getByRole("heading", { name: "Props" })).toBeInTheDocument();
     expect(
       screen.getByRole("heading", { name: "Props" }).closest("section"),
@@ -110,29 +119,29 @@ describe("LeaguePropPicksPage", () => {
     expect(screen.getByText("Line")).toBeInTheDocument();
     expect(screen.getByText("IP")).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: /View \d+ props?/ })).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Team" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Team" })).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Bookmaker (PrizePicks)" }),
+    ).toBeInTheDocument();
     const filters = screen.getByLabelText("WNBA prop picks filters");
     expect(within(filters).getByRole("button", { name: "Game" })).toBeInTheDocument();
     expect(within(filters).getByRole("button", { name: "Proposition" })).toBeInTheDocument();
-    expect(within(filters).getByRole("button", { name: "Bookmaker" })).toBeInTheDocument();
+    expect(
+      within(filters).getByRole("button", { name: "Bookmaker (PrizePicks)" }),
+    ).toBeInTheDocument();
     expect(within(filters).getByRole("button", { name: "Over/Under" })).toBeInTheDocument();
     expect(within(filters).getByRole("button", { name: "Hit rate" })).toBeInTheDocument();
     expect(screen.getByRole("searchbox", { name: "Search player" })).toBeInTheDocument();
   });
 
-  it("filters the board by team", async () => {
-    const user = userEvent.setup();
-    mockBoard([clark, howard]);
-    renderPage();
-
-    await user.click(screen.getByRole("button", { name: "Team" }));
-    await user.click(screen.getByRole("option", { name: "IND" }));
-
-    expect(screen.getByText("Caitlin Clark")).toBeInTheDocument();
-    expect(screen.queryByText("Rhyne Howard")).not.toBeInTheDocument();
+  it("requests the book from the page URL", () => {
+    mockBoard([clark]);
+    renderPage("/wnba/prop_picks?book=draftkings");
+    expect(mockUseWnbaPropBoard).toHaveBeenCalledWith("draftkings");
+    expect(mockUseWnbaPropBoard.mock.calls[0]).toEqual(["draftkings"]);
   });
 
-  it("filters the board by game", async () => {
+  it("filters the board by game via WnbaPropPicksFilters", async () => {
     const user = userEvent.setup();
     mockBoard([clark, howard]);
     renderPage();
@@ -155,9 +164,142 @@ describe("LeaguePropPicksPage", () => {
     expect(screen.queryByText("Rhyne Howard")).not.toBeInTheDocument();
   });
 
-  it("shows No board yet when empty", () => {
-    mockBoard([]);
+  it("choosing DraftKings requests that book from the hook", async () => {
+    const user = userEvent.setup();
+    mockBoard([clark, howard]);
     renderPage();
+    expect(mockUseWnbaPropBoard).toHaveBeenCalledWith("prizepicks");
+
+    const filters = screen.getByLabelText("WNBA prop picks filters");
+    await user.click(
+      within(filters).getByRole("button", { name: "Bookmaker (PrizePicks)" }),
+    );
+    await user.click(screen.getByRole("option", { name: "DraftKings" }));
+
+    expect(mockUseWnbaPropBoard).toHaveBeenCalledWith("draftkings");
+    expect(screen.getByText("Caitlin Clark")).toBeInTheDocument();
+    expect(screen.getByText("Rhyne Howard")).toBeInTheDocument();
+  });
+
+  it("filters the board by proposition, over/under, and hit-rate sort", async () => {
+    const user = userEvent.setup();
+    const wilson = row({
+      player_name: "A'ja Wilson",
+      team_abbrev: "LV",
+      opponent_abbrev: "SEA",
+      stat: "rebounds",
+      market_label: "Over 10.5 Rebounds",
+      side: "over",
+      line: 10.5,
+      hit_l5: 90,
+    });
+    mockBoard([clark, howard, wilson]);
+    renderPage();
+    const filters = screen.getByLabelText("WNBA prop picks filters");
+
+    await user.click(within(filters).getByRole("button", { name: "Proposition" }));
+    await user.click(screen.getByRole("option", { name: "Points" }));
+    expect(screen.getByText("Caitlin Clark")).toBeInTheDocument();
+    expect(screen.queryByText("Rhyne Howard")).not.toBeInTheDocument();
+    expect(screen.queryByText("A'ja Wilson")).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Over/Under" }));
+    await user.click(screen.getByRole("option", { name: "Over" }));
+    expect(screen.getByText("Caitlin Clark")).toBeInTheDocument();
+    expect(screen.queryByText("Rhyne Howard")).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Clear filters" }));
+    await user.click(screen.getByRole("button", { name: "Hit rate" }));
+    await user.click(screen.getByRole("option", { name: "L5" }));
+    expect(screen.getAllByTestId("board-row-name").map((el) => el.textContent)).toEqual([
+      "A'ja Wilson",
+      "Caitlin Clark",
+      "Rhyne Howard",
+    ]);
+  });
+
+  it("does not render Stat, Side, Tier, or Fresh filter controls", () => {
+    mockBoard([clark, howard]);
+    renderPage();
+    expect(screen.queryByRole("button", { name: "Team" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Stat" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Side" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Tier" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /Fresh sharp vs stale DFS/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("shows loading, error, and empty states", () => {
+    mockUseWnbaPropBoard.mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      isError: false,
+      isFetched: false,
+      dataUpdatedAt: 0,
+    });
+    const { rerender } = renderPage();
+    expect(screen.getByLabelText("Loading WNBA prop picks")).toBeInTheDocument();
+
+    mockUseWnbaPropBoard.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: true,
+      isFetched: true,
+      dataUpdatedAt: 0,
+    });
+    rerender(
+      <QueryClientProvider
+        client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}
+      >
+        <MemoryRouter initialEntries={["/wnba/prop_picks"]}>
+          <LeaguePropPicksPage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+    expect(screen.getByText("Prop lines unavailable")).toBeInTheDocument();
+
+    mockUseWnbaPropBoard.mockReturnValue({
+      data: {
+        as_of: "now",
+        warnings: [],
+        rows: [],
+      },
+      isLoading: false,
+      isError: false,
+      isFetched: true,
+      dataUpdatedAt: 0,
+    });
+    rerender(
+      <QueryClientProvider
+        client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}
+      >
+        <MemoryRouter initialEntries={["/wnba/prop_picks"]}>
+          <LeaguePropPicksPage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
     expect(screen.getByText("No board yet")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Bookmaker (PrizePicks)" }),
+    ).toBeInTheDocument();
+  });
+
+  it("keeps a cached board visible when a background refetch fails", () => {
+    mockUseWnbaPropBoard.mockReturnValue({
+      data: {
+        as_of: "now",
+        warnings: [],
+        rows: [clark],
+      },
+      isLoading: false,
+      isError: true,
+      isFetched: true,
+      dataUpdatedAt: Date.UTC(2026, 7, 31, 20, 0),
+    });
+    renderPage();
+
+    expect(screen.getByText("Caitlin Clark")).toBeInTheDocument();
+    expect(screen.queryByText("Prop lines unavailable")).not.toBeInTheDocument();
   });
 });

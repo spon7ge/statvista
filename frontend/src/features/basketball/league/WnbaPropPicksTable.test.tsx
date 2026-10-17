@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import type { ApiWnbaPropBoardRow } from "@/shared/lib/api";
 import { WnbaPropPicksTable } from "./WnbaPropPicksTable";
@@ -18,7 +18,15 @@ function fixtureRow(
     line: 18.5,
     game_id: "401810001",
     game_start_at: "2026-08-23T23:10:00Z",
-    dfs: [{ book: "prizepicks", american: null, url: null }],
+    anchor: {
+      book: "prizepicks",
+      american: -137,
+      url: null,
+      line: 18.5,
+      devig_pct: null,
+      over_american: -137,
+      under_american: -137,
+    },
     books: [{ book: "prophetx", american: -115, url: null, line: 18.5 }],
     ip_pct: 53,
     opp_def_rank: null,
@@ -35,10 +43,21 @@ function fixtureRow(
 
 describe("WnbaPropPicksTable", () => {
   it("renders board columns and no dfs tabs", () => {
-    render(<WnbaPropPicksTable rows={[fixtureRow()]} />);
+    render(
+      <WnbaPropPicksTable
+        rows={[
+          fixtureRow({
+            books: [
+              { book: "prophetx", american: -115, url: null, line: 18.5 },
+              { book: "draftkings", american: -120, url: null, line: 20.5 },
+            ],
+          }),
+        ]}
+      />,
+    );
     expect(screen.getByText("Proposition")).toBeInTheDocument();
     expect(screen.getByText("Line")).toBeInTheDocument();
-    expect(screen.getByText("DFS")).toBeInTheDocument();
+    expect(screen.queryByText("DFS")).not.toBeInTheDocument();
     expect(screen.getByText("Odds")).toBeInTheDocument();
     expect(screen.getByText("IP")).toBeInTheDocument();
     expect(screen.queryByText("Opp Def Rank")).not.toBeInTheDocument();
@@ -46,6 +65,13 @@ describe("WnbaPropPicksTable", () => {
     expect(screen.getByText("H2H")).toBeInTheDocument();
     expect(screen.queryByRole("tab", { name: "PrizePicks" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "DFS" })).not.toBeInTheDocument();
+    const lineCell = screen.getByTestId("line-cell");
+    expect(lineCell).toHaveTextContent("18.5");
+    expect(lineCell).toHaveTextContent("-137");
+    const odds = screen.getByTestId("odds-cell");
+    expect(within(odds).getByText("18.5")).toBeInTheDocument();
+    expect(within(odds).queryByText("20.5")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("dfs-cell")).not.toBeInTheDocument();
   });
 
   it("paints L5 through H2H as green, yellow, and red hit-rate boxes", () => {
@@ -94,14 +120,54 @@ describe("WnbaPropPicksTable", () => {
     expect(screen.getByTestId("hit-h2h-cell")).toHaveTextContent("—");
   });
 
-  it("renders the composite cell and DFS PrizePicks juice", () => {
+  it("renders the composite cell and remaining column headers", () => {
     render(<WnbaPropPicksTable rows={[fixtureRow()]} />);
     expect(screen.getByTestId("board-row-name")).toHaveTextContent("Caitlin Clark");
     expect(screen.getByTestId("board-row-matchup")).toHaveTextContent("IND @ NYL");
     expect(screen.getByTestId("board-row-market")).toHaveTextContent("Over 18.5 Points");
     expect(screen.getByTestId("line-cell")).toHaveTextContent("18.5");
-    expect(screen.getByTestId("dfs-cell")).toHaveTextContent("-137");
+    expect(screen.getByTestId("line-cell")).toHaveTextContent("-137");
     expect(screen.getByTestId("ip-cell")).toHaveTextContent("53%");
+    expect(screen.queryByTestId("dfs-cell")).not.toBeInTheDocument();
+  });
+
+  it("puts the PrizePicks American in the line cell with no de-vig percent", () => {
+    render(
+      <WnbaPropPicksTable
+        rows={[
+          fixtureRow({
+            books: [
+              {
+                book: "prophetx",
+                american: -122,
+                url: null,
+                devig_pct: 54,
+              },
+            ],
+          }),
+        ]}
+      />,
+    );
+    const lineCell = screen.getByTestId("line-cell");
+    expect(lineCell).toHaveTextContent("18.5");
+    expect(lineCell).toHaveTextContent("-137");
+    expect(lineCell).not.toHaveTextContent("(54%)");
+    expect(screen.queryByTestId("dfs-cell")).not.toBeInTheDocument();
+  });
+
+  it("renders an em dash when no other books match the line", () => {
+    render(
+      <WnbaPropPicksTable
+        rows={[
+          fixtureRow({
+            books: [
+              { book: "draftkings", american: -120, url: null, line: 20.5 },
+            ],
+          }),
+        ]}
+      />,
+    );
+    expect(screen.getByTestId("odds-cell")).toHaveTextContent("—");
   });
 
   it("shows No board yet when there are no rows", () => {

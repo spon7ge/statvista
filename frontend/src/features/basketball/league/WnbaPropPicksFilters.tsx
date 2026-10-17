@@ -178,10 +178,7 @@ const HIT_RATE_OPTIONS: FilterOption[] = [
 ];
 
 export type WnbaPropPicksFiltersProps = {
-  teams: string[];
-  selectedTeams: Set<string>;
   query: string;
-  onTeamsChange: (next: Set<string>) => void;
   onQueryChange: (query: string) => void;
   onClear: () => void;
   markets?: WnbaPropositionOption[];
@@ -199,15 +196,12 @@ export type WnbaPropPicksFiltersProps = {
   onHitRateChange?: (next: WnbaHitRateWindow | null) => void;
   /** `banner` = white pills on green; `pill` = dark-page capsules; default = square. */
   tone?: FilterTone;
-  /** Team (+ clear) on the left, search on the right. */
+  /** Filters on the left, search on the right. */
   layout?: "inline" | "split";
 };
 
 export function WnbaPropPicksFilters({
-  teams,
-  selectedTeams,
   query,
-  onTeamsChange,
   onQueryChange,
   onClear,
   markets = [],
@@ -226,12 +220,15 @@ export function WnbaPropPicksFilters({
   tone = "default",
   layout = "inline",
 }: WnbaPropPicksFiltersProps) {
+  const selectedBook = [...selectedBooks][0];
+  const hasNonDefaultBook = Boolean(
+    selectedBook && selectedBook !== "prizepicks",
+  );
   const hasActive =
-    selectedTeams.size > 0 ||
     query.trim().length > 0 ||
     selectedMarkets.size > 0 ||
     selectedSides.size > 0 ||
-    selectedBooks.size > 0 ||
+    hasNonDefaultBook ||
     selectedGames.size > 0 ||
     hitRate != null;
   const onBanner = tone === "banner";
@@ -249,27 +246,16 @@ export function WnbaPropPicksFilters({
       />
     ) : null;
 
-  const teamControl =
-    teams.length > 0 ? (
-      <MultiSelectFilter
-        label="Team"
-        tone={tone}
-        options={teams.map((t) => ({ value: t, label: t }))}
-        selected={selectedTeams}
-        onChange={onTeamsChange}
-      />
-    ) : null;
-
-  const bookmakerControl =
-    books.length > 0 ? (
-      <MultiSelectFilter
-        label="Bookmaker"
-        tone={tone}
-        options={books}
-        selected={selectedBooks}
-        onChange={onBooksChange ?? (() => {})}
-      />
-    ) : null;
+  const bookmakerControl = (
+    <MultiSelectFilter
+      label="Bookmaker"
+      tone={tone}
+      single
+      options={books}
+      selected={selectedBooks}
+      onChange={onBooksChange ?? (() => {})}
+    />
+  );
 
   const propositionControl =
     markets.length > 0 ? (
@@ -358,7 +344,6 @@ export function WnbaPropPicksFilters({
       >
         <div className="flex min-w-0 flex-wrap items-center gap-2">
           {gameControl}
-          {teamControl}
           {extraFilters}
           {clearControl}
         </div>
@@ -373,7 +358,6 @@ export function WnbaPropPicksFilters({
       aria-label="WNBA prop picks filters"
     >
       {gameControl}
-      {teamControl}
       {extraFilters}
       {searchControl}
       {clearControl}

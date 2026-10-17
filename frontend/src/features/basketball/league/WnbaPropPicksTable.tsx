@@ -16,7 +16,6 @@ import { formatAmericanOdds } from "@/features/basketball/lib/wnbaOddsBoard";
 import { wnbaTeamLogoUrl } from "./wnbaTeamLogos";
 import {
   orderedWnbaBoardBooks,
-  orderedWnbaDfsBooks,
   sortWnbaPropBoardRows,
   type WnbaPropBoardSort,
   type WnbaPropBoardSortKey,
@@ -63,13 +62,12 @@ type WnbaPropPicksTableProps = {
 };
 
 const COLUMNS: {
-  key: WnbaPropBoardSortKey | "dfs";
+  key: WnbaPropBoardSortKey;
   label: string;
   sortable: boolean;
 }[] = [
   { key: "player", label: "Proposition", sortable: true },
   { key: "line", label: "Line", sortable: true },
-  { key: "dfs", label: "DFS", sortable: false },
   { key: "odds", label: "Odds", sortable: true },
   { key: "ip", label: "IP", sortable: true },
   { key: "l5", label: "L5", sortable: true },
@@ -242,42 +240,19 @@ function OddsOverflow({ chips }: { chips: ApiWnbaPropBoardRow["books"] }) {
   );
 }
 
-function DfsCell({ row }: { row: ApiWnbaPropBoardRow }) {
-  const chips = orderedWnbaDfsBooks(row.dfs ?? []).filter(
-    (chip) => postedAmerican(chip.book, chip.american) != null,
+function OddsCell({ row }: { row: ApiWnbaPropBoardRow }) {
+  const books = orderedWnbaBoardBooks(row.books).filter(
+    (chip) =>
+      postedAmerican(chip.book, chip.american) != null &&
+      (chip.line == null || chip.line === row.line),
   );
-  if (chips.length === 0) {
+  if (books.length === 0) {
     return (
-      <div data-testid="dfs-cell" className="text-sm text-c3">
+      <div data-testid="odds-cell" className="font-mono text-sm text-c3">
         —
       </div>
     );
   }
-  return (
-    <div
-      data-testid="dfs-cell"
-      className={
-        chips.length > 1
-          ? "flex flex-col items-start gap-1"
-          : "flex items-center gap-1"
-      }
-    >
-      {chips.map((chip) => (
-        <BookChip
-          key={chip.book}
-          book={chip.book}
-          american={chip.american}
-          url={chip.url}
-        />
-      ))}
-    </div>
-  );
-}
-
-function OddsCell({ row }: { row: ApiWnbaPropBoardRow }) {
-  const books = orderedWnbaBoardBooks(row.books).filter(
-    (chip) => postedAmerican(chip.book, chip.american) != null,
-  );
   const visible = books.slice(0, VISIBLE_ODDS_CHIPS);
   const overflow = books.slice(VISIBLE_ODDS_CHIPS);
   return (
@@ -516,13 +491,13 @@ export function WnbaPropPicksTable({
                     <CompositeCell row={row} />
                   </td>
                   <td
-                    className={`px-2 py-2 text-sm text-c3 ${ROW_BOX_MIDDLE}`}
+                    className={`px-2 py-2 font-mono text-sm text-c3 ${ROW_BOX_MIDDLE}`}
                     data-testid="line-cell"
                   >
-                    {row.line}
-                  </td>
-                  <td className={`px-2 py-2 ${ROW_BOX_MIDDLE}`}>
-                    <DfsCell row={row} />
+                    {row.line}{" "}
+                    {row.anchor.american == null
+                      ? "—"
+                      : formatAmericanOdds(row.anchor.american)}
                   </td>
                   <td className={`px-2 py-2 ${ROW_BOX_MIDDLE}`}>
                     <OddsCell row={row} />

@@ -4,22 +4,24 @@ import { fetchWnbaPropBoard } from "@/shared/lib/api";
 /** Board lines move slowly; keep client cache aligned with the poll. */
 export const WNBA_PROP_BOARD_STALE_MS = 15 * 60_000;
 
-export const WNBA_PROP_BOARD_QUERY_KEY = ["wnba", "props", "board"] as const;
+export function wnbaPropBoardQueryKey(book: string) {
+  return ["wnba", "props", "board", book] as const;
+}
 
-export function wnbaPropBoardQueryOptions() {
+export function wnbaPropBoardQueryOptions(book = "prizepicks") {
   return queryOptions({
-    queryKey: WNBA_PROP_BOARD_QUERY_KEY,
-    queryFn: fetchWnbaPropBoard,
+    queryKey: wnbaPropBoardQueryKey(book),
+    queryFn: () => fetchWnbaPropBoard(book),
     staleTime: WNBA_PROP_BOARD_STALE_MS,
     refetchInterval: WNBA_PROP_BOARD_STALE_MS,
     refetchOnWindowFocus: false,
   });
 }
 
-export function useWnbaPropBoard() {
-  return useQuery(wnbaPropBoardQueryOptions());
+export function useWnbaPropBoard(book = "prizepicks") {
+  return useQuery(wnbaPropBoardQueryOptions(book));
 }
 
 export function prefetchWnbaPropBoard(client: QueryClient) {
-  return client.prefetchQuery(wnbaPropBoardQueryOptions());
+  return client.prefetchQuery(wnbaPropBoardQueryOptions("prizepicks"));
 }
