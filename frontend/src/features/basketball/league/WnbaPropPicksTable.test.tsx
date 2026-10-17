@@ -68,6 +68,9 @@ describe("WnbaPropPicksTable", () => {
     const lineCell = screen.getByTestId("line-cell");
     expect(lineCell).toHaveTextContent("18.5");
     expect(lineCell).toHaveTextContent("-137");
+    expect(
+      lineCell.querySelector('svg[aria-label="PrizePicks"]'),
+    ).toBeTruthy();
     const odds = screen.getByTestId("odds-cell");
     expect(within(odds).getByText("18.5")).toBeInTheDocument();
     expect(within(odds).queryByText("20.5")).not.toBeInTheDocument();
@@ -125,8 +128,12 @@ describe("WnbaPropPicksTable", () => {
     expect(screen.getByTestId("board-row-name")).toHaveTextContent("Caitlin Clark");
     expect(screen.getByTestId("board-row-matchup")).toHaveTextContent("IND @ NYL");
     expect(screen.getByTestId("board-row-market")).toHaveTextContent("Over 18.5 Points");
-    expect(screen.getByTestId("line-cell")).toHaveTextContent("18.5");
-    expect(screen.getByTestId("line-cell")).toHaveTextContent("-137");
+    const lineCell = screen.getByTestId("line-cell");
+    expect(lineCell).toHaveTextContent("18.5");
+    expect(lineCell).toHaveTextContent("-137");
+    expect(
+      lineCell.querySelector('svg[aria-label="PrizePicks"]'),
+    ).toBeTruthy();
     expect(screen.getByTestId("ip-cell")).toHaveTextContent("53%");
     expect(screen.queryByTestId("dfs-cell")).not.toBeInTheDocument();
   });
@@ -151,8 +158,38 @@ describe("WnbaPropPicksTable", () => {
     const lineCell = screen.getByTestId("line-cell");
     expect(lineCell).toHaveTextContent("18.5");
     expect(lineCell).toHaveTextContent("-137");
+    expect(
+      lineCell.querySelector('svg[aria-label="PrizePicks"]'),
+    ).toBeTruthy();
     expect(lineCell).not.toHaveTextContent("(54%)");
     expect(screen.queryByTestId("dfs-cell")).not.toBeInTheDocument();
+  });
+
+  it("stacks the anchor book mark and em dash when American is missing", () => {
+    render(
+      <WnbaPropPicksTable
+        rows={[
+          fixtureRow({
+            anchor: {
+              book: "draftkings",
+              american: null,
+              url: null,
+              line: 18.5,
+              devig_pct: null,
+              over_american: null,
+              under_american: null,
+            },
+          }),
+        ]}
+      />,
+    );
+    const lineCell = screen.getByTestId("line-cell");
+    expect(lineCell).toHaveTextContent("18.5");
+    expect(lineCell).toHaveTextContent("—");
+    expect(
+      lineCell.querySelector('svg[aria-label="DraftKings"]'),
+    ).toBeTruthy();
+    expect(lineCell).not.toHaveTextContent("-137");
   });
 
   it("renders an em dash when no other books match the line", () => {
