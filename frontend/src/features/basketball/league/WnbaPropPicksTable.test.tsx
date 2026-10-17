@@ -126,7 +126,8 @@ describe("WnbaPropPicksTable", () => {
   it("renders the composite cell and remaining column headers", () => {
     render(<WnbaPropPicksTable rows={[fixtureRow()]} />);
     expect(screen.getByTestId("board-row-name")).toHaveTextContent("Caitlin Clark");
-    expect(screen.getByTestId("board-row-matchup")).toHaveTextContent("IND @ NYL");
+    expect(screen.queryByTestId("board-row-matchup")).not.toBeInTheDocument();
+    expect(screen.queryByText("IND @ NYL")).not.toBeInTheDocument();
     expect(screen.getByTestId("board-row-market")).toHaveTextContent("Over 18.5 Points");
     const lineCell = screen.getByTestId("line-cell");
     expect(lineCell).toHaveTextContent("18.5");
