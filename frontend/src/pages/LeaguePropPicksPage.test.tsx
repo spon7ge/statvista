@@ -20,7 +20,7 @@ function row(
     side: "over",
     line: 18.5,
     game_id: "401810001",
-    game_start_at: "2026-08-23T23:10:00Z",
+    game_start_at: "2099-08-23T23:10:00Z",
     anchor: {
       book: "prizepicks",
       american: -137,

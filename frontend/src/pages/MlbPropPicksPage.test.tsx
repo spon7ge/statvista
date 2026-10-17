@@ -20,7 +20,7 @@ function row(
     side: "over",
     line: 1.5,
     game_pk: 1,
-    game_start_at: "2026-08-23T23:10:00Z",
+    game_start_at: "2099-08-23T23:10:00Z",
     anchor: {
       book: "prizepicks",
       american: -137,
@@ -100,6 +100,19 @@ describe("MlbPropPicksPage", () => {
       removeListener: vi.fn(),
       dispatchEvent: vi.fn(),
     }));
+  });
+
+  it("hides props once the listed tip has passed", () => {
+    const started = row({
+      player_name: "Started Player",
+      game_start_at: "2020-01-01T00:00:00Z",
+      game_pk: 9,
+    });
+    mockBoard([judge, started]);
+    renderPage();
+
+    expect(screen.getByText("Aaron Judge")).toBeInTheDocument();
+    expect(screen.queryByText("Started Player")).not.toBeInTheDocument();
   });
 
   it("loads the research board without DFS tabs or View X props", () => {

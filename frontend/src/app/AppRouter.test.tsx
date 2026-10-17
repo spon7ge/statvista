@@ -112,7 +112,7 @@ describe("AppRouter", () => {
                 side: "over",
                 line: 3.5,
                 game_id: "401810001",
-                game_start_at: "2026-07-31T23:30:00Z",
+                game_start_at: "2099-07-31T23:30:00Z",
                 anchor: {
                   book: "prizepicks",
                   american: -137,

@@ -11,6 +11,44 @@ from app.main import app
 client = TestClient(app)
 
 
+@pytest.mark.asyncio
+async def test_board_omits_props_once_the_game_has_started(monkeypatch):
+    future = datetime(2099, 1, 1, tzinfo=timezone.utc)
+    past = datetime(2020, 1, 1, tzinfo=timezone.utc)
+    quotes = [
+        BoardQuote("Later", "later player", "hits", 1.5, "prizepicks", None, None),
+        BoardQuote("Started", "started player", "hits", 1.5, "prizepicks", None, None),
+        BoardQuote("Live", "live player", "hits", 1.5, "prizepicks", None, None),
+    ]
+    monkeypatch.setattr("app.domains.mlb.prop_board.collect_board_quotes", lambda: quotes)
+    monkeypatch.setattr(
+        "app.domains.mlb.prop_board.load_enrichment",
+        lambda *_: (
+            {
+                "later player": {
+                    "game_start_at": future,
+                    "game_status": "scheduled",
+                },
+                "started player": {
+                    "game_start_at": past,
+                    "game_status": "scheduled",
+                },
+                "live player": {
+                    "game_start_at": future,
+                    "game_status": "live",
+                },
+            },
+            {},
+            [],
+            set(),
+        ),
+    )
+
+    body = await get_mlb_prop_board()
+
+    assert {row.player_name for row in body.rows} == {"Later"}
+
+
 def test_mlb_props_board_route_returns_200(monkeypatch):
     async def fake(book: str | None = None):
         from app.domains.mlb.schemas_prop_board import MlbPropBoardResponse
@@ -173,7 +211,7 @@ async def test_assembler_splits_dfs_and_sportsbook_lines(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_assembler_market_label_chips_and_sort(monkeypatch):
-    start = datetime(2026, 8, 23, 20, 10, tzinfo=timezone.utc)
+    start = datetime(2099, 8, 23, 20, 10, tzinfo=timezone.utc)
     quotes = [
         BoardQuote(
             player_name="Betts",
@@ -623,6 +661,7 @@ def test_game_index_maps_team_to_opponent_and_side():
             SimpleNamespace(
                 mlb_game_pk="777",
                 start_time_et="2026-08-23T23:10:00Z",
+                status="live",
                 home=SimpleNamespace(abbrev="NYY"),
                 away=SimpleNamespace(abbrev="BOS"),
             )
@@ -633,6 +672,8 @@ def test_game_index_maps_team_to_opponent_and_side():
     assert index["BOS"]["home_away"] == "away"
     assert index["NYY"]["home_away"] == "home"
     assert index["NYY"]["game_pk"] == 777
+    assert index["NYY"]["game_status"] == "live"
+    assert index["BOS"]["game_status"] == "live"
 
 @pytest.mark.asyncio
 async def test_load_enrichment_soft_fails_ranks_and_missing_person(monkeypatch):

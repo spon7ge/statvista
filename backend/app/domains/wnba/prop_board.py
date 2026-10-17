@@ -19,6 +19,7 @@ from app.core.odds_snapshots import (
 )
 from app.core.wnba_abbrevs import canonical_abbrev
 from app.domains.betting.player_match_keys import match_player_key
+from app.domains.betting.pregame_props import prop_still_upcoming
 from app.domains.betting.prop_stat_keys import (
     canonical_stat_key_from_pp,
     canonical_stat_key_from_ud,
@@ -226,9 +227,16 @@ async def get_wnba_prop_board(book: str | None = None) -> WnbaPropBoardResponse:
     player_ctx, extra_warnings, missing_person = loaded
     warnings.extend(extra_warnings)
 
+    now = datetime.now(timezone.utc)
     rows: list[WnbaPropBoardRow] = []
     for cluster in clusters:
         ctx = player_ctx.get(cluster.player_key) or {}
+        if not prop_still_upcoming(
+            start=ctx.get("game_start_at"),
+            status=ctx.get("game_status"),
+            now=now,
+        ):
+            continue
         opponent = ctx.get("opponent_abbrev")
         splits = ctx.get("splits") or []
         splits_prev = ctx.get("splits_prev") or []
@@ -483,6 +491,7 @@ def _player_context(
             "home_away": None if game is None else game.get("home_away"),
             "game_id": None if game is None else game.get("game_id"),
             "game_start_at": None if game is None else game.get("game_start_at"),
+            "game_status": None if game is None else game.get("game_status"),
             "splits": [],
             "splits_prev": [],
         }
@@ -499,6 +508,7 @@ def _game_index_from_scoreboard(board: Any) -> dict[str, dict[str, Any]]:
             getattr(getattr(game, "away", None), "abbrev", None) or ""
         )
         start = _as_datetime(getattr(game, "start_time_et", None))
+        status = getattr(game, "status", None)
         game_id = str(
             getattr(game, "espn_event_id", None) or getattr(game, "id", None) or ""
         ).strip() or None
@@ -507,6 +517,7 @@ def _game_index_from_scoreboard(board: Any) -> dict[str, dict[str, Any]]:
                 "opponent_abbrev": away or None,
                 "game_id": game_id,
                 "game_start_at": start,
+                "game_status": status,
                 "home_away": "home",
             }
         if away:
@@ -514,6 +525,7 @@ def _game_index_from_scoreboard(board: Any) -> dict[str, dict[str, Any]]:
                 "opponent_abbrev": home or None,
                 "game_id": game_id,
                 "game_start_at": start,
+                "game_status": status,
                 "home_away": "away",
             }
     return out

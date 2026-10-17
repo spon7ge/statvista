@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { excludeStartedPropRows, usePregameNow } from "@/shared/lib/pregameProps";
 import { useSearchParams } from "react-router-dom";
 import { CHROME_PAGE_RIGHT, CHROME_PAGE_X } from "@/app/layouts/chrome";
 import { useNbaPropBoard } from "@/features/nba/hooks/useNbaPropBoard";
@@ -37,7 +38,11 @@ export function NbaPropPicksPage() {
   );
   const [hitRate, setHitRate] = useState<NbaHitRateWindow | null>(null);
 
-  const rows = data?.rows ?? [];
+  const now = usePregameNow();
+  const rows = useMemo(
+    () => excludeStartedPropRows(data?.rows ?? [], now),
+    [data?.rows, now],
+  );
   const markets = useMemo(() => collectNbaBoardPropositionOptions(rows), [rows]);
   const games = useMemo(() => collectNbaBoardGameOptions(rows), [rows]);
   const filtered = useMemo(

@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 import pytest
 
 from app.domains.nba.prop_board import (
@@ -38,6 +40,46 @@ async def test_anchor_book_keeps_only_identical_player_stat_and_line(monkeypatch
     assert row.anchor.book == "prizepicks"
     assert row.anchor.american == -137
     assert [book.book for book in row.books] == ["draftkings"]
+
+
+@pytest.mark.asyncio
+async def test_board_omits_props_once_the_game_has_started(monkeypatch):
+    future = datetime(2099, 1, 1, tzinfo=timezone.utc)
+    past = datetime(2020, 1, 1, tzinfo=timezone.utc)
+    quotes = [
+        BoardQuote("Later", "later player", "points", 20.5, "prizepicks", None, None),
+        BoardQuote("Started", "started player", "points", 20.5, "prizepicks", None, None),
+        BoardQuote("Live", "live player", "points", 20.5, "prizepicks", None, None),
+    ]
+    monkeypatch.setattr(
+        "app.domains.nba.prop_board.collect_board_quotes",
+        lambda: quotes,
+    )
+    monkeypatch.setattr(
+        "app.domains.nba.prop_board.load_enrichment",
+        lambda *_: (
+            {
+                "later player": {
+                    "game_start_at": future,
+                    "game_status": "scheduled",
+                },
+                "started player": {
+                    "game_start_at": past,
+                    "game_status": "scheduled",
+                },
+                "live player": {
+                    "game_start_at": future,
+                    "game_status": "live",
+                },
+            },
+            [],
+            set(),
+        ),
+    )
+
+    board = await get_nba_prop_board("prizepicks")
+
+    assert {row.player_name for row in board.rows} == {"Later"}
 
 
 def test_betmgm_is_unknown_book():

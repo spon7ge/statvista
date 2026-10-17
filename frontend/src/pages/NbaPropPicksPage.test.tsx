@@ -23,7 +23,7 @@ const tatum: ApiNbaPropBoardRow = {
   side: "over",
   line: 27.5,
   game_id: "401810001",
-  game_start_at: "2026-10-23T23:30:00Z",
+  game_start_at: "2099-10-23T23:30:00Z",
   anchor: {
     book: "prizepicks",
     american: -137,

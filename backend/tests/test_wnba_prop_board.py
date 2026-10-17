@@ -11,6 +11,45 @@ from app.main import app
 client = TestClient(app)
 
 
+@pytest.mark.asyncio
+async def test_board_omits_props_once_the_game_has_started(monkeypatch):
+    future = datetime(2099, 1, 1, tzinfo=timezone.utc)
+    past = datetime(2020, 1, 1, tzinfo=timezone.utc)
+    quotes = [
+        BoardQuote("Later", "later player", "points", 18.5, "prizepicks", None, None),
+        BoardQuote("Started", "started player", "points", 18.5, "prizepicks", None, None),
+        BoardQuote("Live", "live player", "points", 18.5, "prizepicks", None, None),
+    ]
+    monkeypatch.setattr(
+        "app.domains.wnba.prop_board.collect_board_quotes", lambda: quotes
+    )
+    monkeypatch.setattr(
+        "app.domains.wnba.prop_board.load_enrichment",
+        lambda *_: (
+            {
+                "later player": {
+                    "game_start_at": future,
+                    "game_status": "scheduled",
+                },
+                "started player": {
+                    "game_start_at": past,
+                    "game_status": "scheduled",
+                },
+                "live player": {
+                    "game_start_at": future,
+                    "game_status": "live",
+                },
+            },
+            [],
+            set(),
+        ),
+    )
+
+    body = await get_wnba_prop_board()
+
+    assert {row.player_name for row in body.rows} == {"Later"}
+
+
 def test_wnba_props_board_route_returns_200(monkeypatch):
     async def fake(book: str | None = None):
         from app.domains.wnba.schemas_prop_board import WnbaPropBoardResponse
@@ -153,7 +192,7 @@ async def test_assembler_splits_dfs_and_sportsbook_lines(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_assembler_market_label_chips_and_sort(monkeypatch):
-    start = datetime(2026, 8, 23, 20, 10, tzinfo=timezone.utc)
+    start = datetime(2099, 8, 23, 20, 10, tzinfo=timezone.utc)
     quotes = [
         BoardQuote(
             player_name="Howard",
@@ -560,6 +599,7 @@ def test_game_index_maps_team_to_opponent_and_side():
                 id="401810001",
                 espn_event_id="401810001",
                 start_time_et="2026-08-23T23:10:00Z",
+                status="final",
                 away=SimpleNamespace(abbrev="IND"),
                 home=SimpleNamespace(abbrev="NYL"),
             )
@@ -571,6 +611,8 @@ def test_game_index_maps_team_to_opponent_and_side():
     assert index["IND"]["game_id"] == "401810001"
     assert index["NYL"]["home_away"] == "home"
     assert index["NYL"]["opponent_abbrev"] == "IND"
+    assert index["IND"]["game_status"] == "final"
+    assert index["NYL"]["game_status"] == "final"
 
 
 def test_stats_player_id_index_matches_accented_alias_and_allplayers_shape():
