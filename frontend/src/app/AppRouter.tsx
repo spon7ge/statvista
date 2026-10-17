@@ -6,6 +6,7 @@ import { LeaguePropPicksPage } from "@/pages/LeaguePropPicksPage";
 import { MlbGameDetailPage } from "@/pages/MlbGameDetailPage";
 import { MlbPropPicksPage } from "@/pages/MlbPropPicksPage";
 import { NbaGameDetailPage } from "@/pages/NbaGameDetailPage";
+import { NbaPropPicksPage } from "@/pages/NbaPropPicksPage";
 import { AboutPage } from "@/pages/AboutPage";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 import { LANDING_HREF } from "@/features/home/lib/appNav";
@@ -33,6 +34,11 @@ export function AppRouter() {
         <Route
           path="/nba/games/:espnEventId"
           element={<NbaGameDetailPage />}
+        />
+        <Route path="/nba/prop_picks" element={<NbaPropPicksPage />} />
+        <Route
+          path="/nba/prop_picks/player/:playerSlug"
+          element={<Navigate to="/nba/prop_picks" replace />}
         />
         <Route
           path="/mlb/matchups"

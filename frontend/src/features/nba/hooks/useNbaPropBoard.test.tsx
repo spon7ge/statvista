@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   NBA_PROP_BOARD_STALE_MS,
   nbaPropBoardQueryKey,
+  prefetchNbaPropBoard,
   useNbaPropBoard,
 } from "./useNbaPropBoard";
 
@@ -73,5 +74,18 @@ describe("useNbaPropBoard", () => {
       warnings: [],
       rows: [],
     });
+  });
+
+  it("prefetches the default PrizePicks board", async () => {
+    const client = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
+
+    await prefetchNbaPropBoard(client);
+
+    expect(fetchNbaPropBoard).toHaveBeenCalledWith("prizepicks");
+    expect(
+      client.getQueryData(nbaPropBoardQueryKey("prizepicks")),
+    ).toBeDefined();
   });
 });

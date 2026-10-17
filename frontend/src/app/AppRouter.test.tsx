@@ -113,7 +113,15 @@ describe("AppRouter", () => {
                 line: 3.5,
                 game_id: "401810001",
                 game_start_at: "2026-07-31T23:30:00Z",
-                dfs: [{ book: "prizepicks", american: null, url: null }],
+                anchor: {
+                  book: "prizepicks",
+                  american: -137,
+                  url: null,
+                  line: 3.5,
+                  devig_pct: null,
+                  over_american: -137,
+                  under_american: -137,
+                },
                 books: [{ book: "prophetx", american: -115, url: null }],
                 ip_pct: 53,
                 opp_def_rank: null,
@@ -144,7 +152,7 @@ describe("AppRouter", () => {
       "page",
     );
     expect(fetchMock).toHaveBeenCalledWith(
-      "/api/wnba/props/board",
+      "/api/wnba/props/board?book=prizepicks",
       expect.objectContaining({ cache: "no-store" }),
     );
   });
@@ -175,7 +183,7 @@ describe("AppRouter", () => {
     expect(await screen.findByText("No board yet")).toBeInTheDocument();
     expect(screen.queryByTestId("wnba-player-props-odds-grid")).not.toBeInTheDocument();
     expect(fetchMock).toHaveBeenCalledWith(
-      "/api/wnba/props/board",
+      "/api/wnba/props/board?book=prizepicks",
       expect.objectContaining({ cache: "no-store" }),
     );
   });
@@ -194,6 +202,68 @@ describe("AppRouter", () => {
     expect(
       screen.queryByRole("heading", { name: /men.?s basketball/i }),
     ).not.toBeInTheDocument();
+  });
+
+  it("renders NBA prop picks at /nba/prop_picks", async () => {
+    fetchMock.mockImplementation(async (input: RequestInfo) => {
+      const url = String(input);
+      if (url.includes("/api/nba/props/board")) {
+        return {
+          ok: true,
+          json: async () => ({
+            as_of: "now",
+            warnings: [],
+            rows: [],
+          }),
+        };
+      }
+      return {
+        ok: true,
+        json: async () => ({ date: "2026-10-16", fetched_at: "", games: [] }),
+      };
+    });
+
+    renderWithProviders(["/nba/prop_picks"]);
+
+    expect(
+      await screen.findByRole("heading", { name: "Props" }),
+    ).toBeInTheDocument();
+    expect(await screen.findByText("No board yet")).toBeInTheDocument();
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/nba/props/board?book=prizepicks",
+      expect.objectContaining({ cache: "no-store" }),
+    );
+  });
+
+  it("redirects NBA player prop URLs to the research board", async () => {
+    fetchMock.mockImplementation(async (input: RequestInfo) => {
+      const url = String(input);
+      if (url.includes("/api/nba/props/board")) {
+        return {
+          ok: true,
+          json: async () => ({
+            as_of: "now",
+            warnings: [],
+            rows: [],
+          }),
+        };
+      }
+      return {
+        ok: true,
+        json: async () => ({ date: "2026-10-16", fetched_at: "", games: [] }),
+      };
+    });
+
+    renderWithProviders(["/nba/prop_picks/player/jayson-tatum?book=draftkings"]);
+
+    expect(
+      await screen.findByRole("heading", { name: "Props" }),
+    ).toBeInTheDocument();
+    expect(await screen.findByText("No board yet")).toBeInTheDocument();
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/nba/props/board?book=prizepicks",
+      expect.objectContaining({ cache: "no-store" }),
+    );
   });
 
   it("renders NBA game detail at /nba/games/:espnEventId", async () => {
@@ -298,7 +368,7 @@ describe("AppRouter", () => {
       "page",
     );
     expect(fetchMock).toHaveBeenCalledWith(
-      "/api/mlb/props/board",
+      "/api/mlb/props/board?book=prizepicks",
       expect.objectContaining({ cache: "no-store" }),
     );
   });
@@ -331,7 +401,7 @@ describe("AppRouter", () => {
     expect(screen.queryByText(/DraftKings/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/Strikeouts/i)).not.toBeInTheDocument();
     expect(fetchMock).toHaveBeenCalledWith(
-      "/api/mlb/props/board",
+      "/api/mlb/props/board?book=prizepicks",
       expect.objectContaining({ cache: "no-store" }),
     );
   });

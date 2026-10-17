@@ -1,4 +1,4 @@
-import { queryOptions, useQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery, type QueryClient } from "@tanstack/react-query";
 import { fetchNbaPropBoard } from "@/shared/lib/api";
 
 /** Board lines move slowly; keep client cache aligned with the poll. */
@@ -20,4 +20,8 @@ export function nbaPropBoardQueryOptions(book = "prizepicks") {
 
 export function useNbaPropBoard(book = "prizepicks") {
   return useQuery(nbaPropBoardQueryOptions(book));
+}
+
+export function prefetchNbaPropBoard(client: QueryClient) {
+  return client.prefetchQuery(nbaPropBoardQueryOptions("prizepicks"));
 }
