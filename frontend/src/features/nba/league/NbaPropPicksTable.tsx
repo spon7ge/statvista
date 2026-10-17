@@ -494,10 +494,30 @@ export function NbaPropPicksTable({
                     className={`px-2 py-2 font-mono text-sm text-c3 ${ROW_BOX_MIDDLE}`}
                     data-testid="line-cell"
                   >
-                    {row.line}{" "}
-                    {row.anchor.american == null
-                      ? "—"
-                      : formatAmericanOdds(row.anchor.american)}
+                    {(() => {
+                      const displayAmerican = postedAmerican(
+                        row.anchor.book,
+                        row.anchor.american,
+                      );
+                      const oddsText =
+                        displayAmerican == null
+                          ? "—"
+                          : formatAmericanOdds(displayAmerican);
+                      return (
+                        <div className="flex flex-col gap-0.5">
+                          <span>{row.line}</span>
+                          <span className="inline-flex items-center gap-1">
+                            <BookMark
+                              book={row.anchor.book}
+                              label={bookDisplayName(row.anchor.book)}
+                            />
+                            <span className="font-mono text-[12px] text-c3">
+                              {oddsText}
+                            </span>
+                          </span>
+                        </div>
+                      );
+                    })()}
                   </td>
                   <td className={`px-2 py-2 ${ROW_BOX_MIDDLE}`}>
                     <OddsCell row={row} />
