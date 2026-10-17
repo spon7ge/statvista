@@ -62,9 +62,9 @@ describe("sectionHref", () => {
     expect(sectionHref("mlb", "Props")).toBe("/mlb/prop_picks");
   });
 
-  it("disables NBA props", () => {
+  it("returns NBA Props href", () => {
     expect(sectionHref("nba", "Games")).toBe("/nba/matchups");
-    expect(sectionHref("nba", "Props")).toBeNull();
+    expect(sectionHref("nba", "Props")).toBe("/nba/prop_picks");
   });
 });
 
@@ -73,7 +73,7 @@ describe("homePropsHref", () => {
     expect(homePropsHref("/")).toBe("/mlb/prop_picks");
     expect(homePropsHref("/mlb/matchups")).toBe("/mlb/prop_picks");
     expect(homePropsHref("/wnba/matchups")).toBe("/wnba/prop_picks");
-    expect(homePropsHref("/nba/matchups")).toBe("/mlb/prop_picks");
+    expect(homePropsHref("/nba/matchups")).toBe("/nba/prop_picks");
   });
 });
 

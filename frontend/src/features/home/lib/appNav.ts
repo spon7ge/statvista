@@ -41,7 +41,7 @@ export function activeLeagueFromPath(pathname: string): LeagueSlug | null {
 
 export function sectionHref(league: LeagueSlug, item: string): string | null {
   if (item === "Games") return `/${league}/matchups`;
-  if (item === "Props" && league !== "nba") return `/${league}/prop_picks`;
+  if (item === "Props") return `/${league}/prop_picks`;
   return null;
 }
 

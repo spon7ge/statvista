@@ -158,11 +158,11 @@ describe("AppSidebar", () => {
     ).toBeTruthy();
   });
 
-  it("falls NBA Props back to MLB while Games stay on NBA", () => {
+  it("points NBA Props at the NBA board while Games stay on NBA", () => {
     renderSidebar("/nba/matchups");
     expect(screen.getByRole("link", { name: "Props" })).toHaveAttribute(
       "href",
-      "/mlb/prop_picks",
+      "/nba/prop_picks",
     );
     expect(screen.getByRole("link", { name: "Games" })).toHaveAttribute(
       "href",

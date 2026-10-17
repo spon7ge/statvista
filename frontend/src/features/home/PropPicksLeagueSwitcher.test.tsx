@@ -29,7 +29,10 @@ describe("PropPicksLeagueSwitcher", () => {
       "href",
       "/wnba/prop_picks",
     );
-    expect(within(leagues).getByRole("button", { name: "NBA" })).toBeDisabled();
+    expect(within(leagues).getByRole("link", { name: "NBA" })).toHaveAttribute(
+      "href",
+      "/nba/prop_picks",
+    );
   });
 
   it("marks WNBA current on the WNBA board", () => {
