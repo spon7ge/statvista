@@ -7,7 +7,12 @@ from fastapi import APIRouter, HTTPException, Query, Response
 
 from app.domains.nba.game_detail import get_game_detail
 from app.domains.nba.odds import NbaOddsResponse, get_today_odds
+from app.domains.nba.prop_board import (
+    UnknownBoardBookError,
+    get_nba_prop_board,
+)
 from app.domains.nba.schemas_game_detail import NbaGameDetail
+from app.domains.nba.schemas_prop_board import NbaPropBoardResponse
 from app.domains.nba.schemas_scoreboard import NbaScoreboardResponse
 from app.domains.nba.schemas_team_preview import NbaTeamPreviewResponse
 from app.domains.nba.scoreboard import get_scoreboard_for_date, get_today_scoreboard
@@ -24,6 +29,22 @@ _NO_STORE = {"Cache-Control": "no-store"}
 async def nba_odds_today(response: Response) -> NbaOddsResponse:
     response.headers["Cache-Control"] = "no-store"
     return await get_today_odds()
+
+
+@router.get("/nba/props/board", response_model=NbaPropBoardResponse)
+async def nba_props_board(
+    response: Response,
+    book: str | None = Query(default=None),
+) -> NbaPropBoardResponse:
+    response.headers["Cache-Control"] = "no-store"
+    try:
+        return await get_nba_prop_board(book)
+    except UnknownBoardBookError as exc:
+        raise HTTPException(
+            status_code=422,
+            detail=f"unknown book: {exc}",
+            headers=_NO_STORE,
+        ) from exc
 
 
 @router.get("/nba/scoreboard", response_model=NbaScoreboardResponse)
