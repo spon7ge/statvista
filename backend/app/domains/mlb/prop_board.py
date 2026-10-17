@@ -20,7 +20,12 @@ from app.core.odds_snapshots import (
     fetch_latest_underdog,
 )
 from app.domains.betting.player_match_keys import match_player_key
-from app.domains.betting.pregame_props import prop_still_upcoming
+from app.domains.betting.pregame_props import (
+    load_prop_slate,
+    player_on_slate,
+    prop_still_upcoming,
+    slate_loaded,
+)
 from app.domains.mlb.leaders import current_mlb_season_year
 from app.domains.mlb.prop_board_cluster import (
     BOOK_CHIP_ORDER,
@@ -56,7 +61,7 @@ from app.domains.mlb.schemas_prop_board import (
     MlbPropBoardRow,
     Side,
 )
-from app.domains.mlb.scoreboard import get_today_scoreboard
+from app.domains.mlb.scoreboard import get_scoreboard_for_date, get_today_scoreboard
 from app.domains.mlb.standings import fetch_team_abbrev_map
 from app.domains.mlb.team_names import canonical_mlb_abbrev
 from app.providers.espn.mlb_roster import get_mlb_player_index, lookup_roster_player
@@ -196,7 +201,9 @@ async def load_enrichment(clusters: list[Cluster] | None = None) -> Enrichment:
 
     game_by_team: dict[str, dict[str, Any]] = {}
     try:
-        game_by_team = _game_index_from_scoreboard(await get_today_scoreboard())
+        game_by_team = _game_index_from_scoreboard(
+            await load_prop_slate(get_today_scoreboard, get_scoreboard_for_date)
+        )
     except Exception as exc:
         logger.warning("MLB board scoreboard enrichment skipped: %s", exc)
 
@@ -262,6 +269,7 @@ async def get_mlb_prop_board(book: str | None = None) -> MlbPropBoardResponse:
     warnings.extend(extra_warnings)
 
     now = datetime.now(timezone.utc)
+    known_slate = slate_loaded(player_ctx.values())
     rows: list[MlbPropBoardRow] = []
     for cluster in clusters:
         ctx = player_ctx.get(cluster.player_key) or {}
@@ -269,6 +277,7 @@ async def get_mlb_prop_board(book: str | None = None) -> MlbPropBoardResponse:
             start=ctx.get("game_start_at"),
             status=ctx.get("game_status"),
             now=now,
+            on_slate=True if not known_slate else player_on_slate(ctx),
         ):
             continue
         opponent = ctx.get("opponent_abbrev")

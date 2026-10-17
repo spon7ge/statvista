@@ -19,6 +19,7 @@ async def test_board_omits_props_once_the_game_has_started(monkeypatch):
         BoardQuote("Later", "later player", "points", 18.5, "prizepicks", None, None),
         BoardQuote("Started", "started player", "points", 18.5, "prizepicks", None, None),
         BoardQuote("Live", "live player", "points", 18.5, "prizepicks", None, None),
+        BoardQuote("Wilson", "aja wilson", "points", 22.5, "prizepicks", None, None),
     ]
     monkeypatch.setattr(
         "app.domains.wnba.prop_board.collect_board_quotes", lambda: quotes
@@ -631,42 +632,30 @@ def test_stats_player_id_index_matches_accented_alias_and_allplayers_shape():
 
 
 @pytest.mark.asyncio
-async def test_attach_game_logs_uses_allplayers_when_dash_fails(monkeypatch):
+async def test_attach_game_logs_uses_the_daily_player_base_cache(monkeypatch):
     from app.domains.wnba.prop_board import _attach_game_logs
+    from app.domains.wnba.prop_board_form import hit_rates
 
-    async def boom_dash(_season: int):
-        raise RuntimeError("403")
-
-    async def allplayers(_season: int):
+    async def logs(_league: str):
         return {
-            "resultSets": [
+            "player_base": [
                 {
-                    "headers": ["PERSON_ID", "DISPLAY_FIRST_LAST"],
-                    "rowSet": [[1628932, "A'ja Wilson"]],
+                    "PLAYER_NAME": "A'ja Wilson",
+                    "GAME_DATE": "2026-10-10",
+                    "MATCHUP": "LVA vs. ATL",
+                    "MIN": 34,
+                    "PTS": 27,
+                    "REB": 10,
+                    "AST": 3,
+                    "FG3M": 1,
                 }
-            ]
+            ],
+            "player_adv": [],
+            "team_base": [],
+            "team_adv": [],
         }
 
-    async def gamelog(_player_id: str, _season: int):
-        return {
-            "resultSets": [
-                {
-                    "headers": ["GAME_DATE", "MATCHUP", "MIN", "PTS"],
-                    "rowSet": [["2026-08-28", "LVA vs. TOR", 30, 27]],
-                }
-            ]
-        }
-
-    monkeypatch.setattr(
-        "app.domains.wnba.prop_board.fetch_leaguedashplayerstats", boom_dash
-    )
-    monkeypatch.setattr(
-        "app.domains.wnba.prop_board.fetch_commonallplayers", allplayers
-    )
-    monkeypatch.setattr(
-        "app.domains.wnba.prop_board.fetch_playergamelog", gamelog
-    )
-
+    monkeypatch.setattr("app.domains.wnba.prop_board.load_season_logs", logs)
     player_ctx: dict = {}
     missing: set[str] = set()
     failed = await _attach_game_logs(
@@ -674,4 +663,6 @@ async def test_attach_game_logs_uses_allplayers_when_dash_fails(monkeypatch):
     )
     assert failed is False
     assert missing == set()
-    assert player_ctx["a'ja wilson"]["splits"][0]["PTS"] == 27
+    splits = player_ctx["a'ja wilson"]["splits"]
+    assert splits[0]["opponent_abbrev"] == "ATL"
+    assert hit_rates("points", "over", 20.5, splits) == (100, 100, 100)

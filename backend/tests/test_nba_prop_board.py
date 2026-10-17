@@ -50,6 +50,7 @@ async def test_board_omits_props_once_the_game_has_started(monkeypatch):
         BoardQuote("Later", "later player", "points", 20.5, "prizepicks", None, None),
         BoardQuote("Started", "started player", "points", 20.5, "prizepicks", None, None),
         BoardQuote("Live", "live player", "points", 20.5, "prizepicks", None, None),
+        BoardQuote("Wilson", "aja wilson", "points", 22.5, "prizepicks", None, None),
     ]
     monkeypatch.setattr(
         "app.domains.nba.prop_board.collect_board_quotes",

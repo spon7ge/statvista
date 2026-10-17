@@ -75,7 +75,8 @@ describe("MlbPropPicksTable", () => {
       lineCell.querySelector('svg[aria-label="PrizePicks"]'),
     ).toBeTruthy();
     const odds = screen.getByTestId("odds-cell");
-    expect(within(odds).getByText("1.5")).toBeInTheDocument();
+    expect(within(odds).queryByText("1.5")).not.toBeInTheDocument();
+    expect(within(odds).getByText("-115")).toBeInTheDocument();
     expect(within(odds).queryByText("2.5")).not.toBeInTheDocument();
   });
 
@@ -512,7 +513,7 @@ describe("MlbPropPicksTable", () => {
       />,
     );
     const odds = screen.getByTestId("odds-cell");
-    expect(odds).toHaveTextContent("3.5");
+    expect(odds).not.toHaveTextContent("3.5");
     expect(odds).toHaveTextContent("+114");
     expect(odds).not.toHaveTextContent("(47%)");
     expect(odds).not.toHaveTextContent("1.5");
@@ -548,7 +549,7 @@ describe("MlbPropPicksTable", () => {
       />,
     );
     const odds = screen.getByTestId("odds-cell");
-    expect(odds).toHaveTextContent("3.5");
+    expect(odds).not.toHaveTextContent("3.5");
     expect(odds).toHaveTextContent("-154");
     expect(odds).not.toHaveTextContent("(61%)");
     expect(odds).not.toHaveTextContent("+114");

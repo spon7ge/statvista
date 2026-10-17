@@ -30,9 +30,25 @@ _MATCHUP_OPP = re.compile(
 )
 
 
+# ESPN scoreboard tricodes that differ from stats.nba.com matchup tricodes.
+_ABBREV_ALIASES = {
+    "GS": "GSW",
+    "NO": "NOP",
+    "NY": "NYK",
+    "SA": "SAS",
+    "UTAH": "UTA",
+    "WSH": "WAS",
+    "PHO": "PHX",
+    "BRK": "BKN",
+    "CHO": "CHA",
+}
+
+
 def canonical_abbrev(abbrev: str) -> str | None:
     text = str(abbrev or "").strip().upper()
-    return text or None
+    if not text:
+        return None
+    return _ABBREV_ALIASES.get(text, text)
 
 
 def _stat_blob(split: dict[str, Any]) -> dict[str, Any]:

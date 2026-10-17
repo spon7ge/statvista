@@ -119,26 +119,20 @@ function BookChip({
   book,
   american,
   url,
-  line = null,
 }: {
   book: string;
   american: number | null;
   url: string | null;
-  line?: number | null;
 }) {
   const label = bookDisplayName(book);
   const displayAmerican = postedAmerican(book, american);
   if (displayAmerican == null) return null;
   const oddsText = formatAmericanOdds(displayAmerican);
-  const lineText = line != null ? String(line) : null;
-  const aria = [label, lineText, oddsText].filter(Boolean).join(" ");
+  const aria = `${label} ${oddsText}`;
   const inner = (
     <>
       <BookMark book={book} label={label} />
-      <span className="font-mono text-[12px] text-c3">
-        {lineText != null ? <span>{lineText} </span> : null}
-        {oddsText}
-      </span>
+      <span className="font-mono text-[12px] text-c3">{oddsText}</span>
     </>
   );
   const className = "inline-flex items-center gap-1";
@@ -222,7 +216,6 @@ function OddsOverflow({ chips }: { chips: ApiMlbPropBoardRow["books"] }) {
                   book={chip.book}
                   american={chip.american}
                   url={chip.url}
-                  line={chip.line}
                 />
               ))}
             </div>,
@@ -256,7 +249,6 @@ function OddsCell({ row }: { row: ApiMlbPropBoardRow }) {
           book={chip.book}
           american={chip.american}
           url={chip.url}
-          line={chip.line}
         />
       ))}
       <OddsOverflow chips={overflow} />

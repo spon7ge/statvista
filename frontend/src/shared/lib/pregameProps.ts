@@ -2,7 +2,15 @@ import { useEffect, useState } from "react";
 
 type PregamePropRow = {
   game_start_at?: string | null;
+  game_id?: string | null;
+  game_pk?: number | null;
 };
+
+function rowOnSlate(row: PregamePropRow): boolean {
+  if (row.game_start_at) return true;
+  if (row.game_id) return true;
+  return row.game_pk != null;
+}
 
 /**
  * Board responses stay cached for 15 minutes, so an open Props page has to
@@ -14,8 +22,10 @@ export function excludeStartedPropRows<T extends PregamePropRow>(
   rows: T[],
   now: Date,
 ): T[] {
+  const slateKnown = rows.some(rowOnSlate);
   const nowMs = now.getTime();
   return rows.filter((row) => {
+    if (slateKnown && !rowOnSlate(row)) return false;
     if (!row.game_start_at) return true;
     const start = Date.parse(row.game_start_at);
     if (Number.isNaN(start)) return true;

@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import type { ApiNbaPropBoardRow } from "@/shared/lib/api";
 import { NbaPropPicksTable } from "./NbaPropPicksTable";
@@ -50,6 +50,9 @@ describe("NbaPropPicksTable", () => {
     expect(
       lineCell.querySelector('svg[aria-label="PrizePicks"]'),
     ).toBeTruthy();
+    const odds = screen.getByTestId("odds-cell");
+    expect(within(odds).getByText("-110")).toBeInTheDocument();
+    expect(within(odds).queryByText("27.5")).not.toBeInTheDocument();
   });
 
   it("stacks the anchor book mark and em dash when American is missing", () => {

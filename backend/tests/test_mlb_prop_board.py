@@ -19,6 +19,7 @@ async def test_board_omits_props_once_the_game_has_started(monkeypatch):
         BoardQuote("Later", "later player", "hits", 1.5, "prizepicks", None, None),
         BoardQuote("Started", "started player", "hits", 1.5, "prizepicks", None, None),
         BoardQuote("Live", "live player", "hits", 1.5, "prizepicks", None, None),
+        BoardQuote("Offslate", "off slate", "hits", 1.5, "prizepicks", None, None),
     ]
     monkeypatch.setattr("app.domains.mlb.prop_board.collect_board_quotes", lambda: quotes)
     monkeypatch.setattr(

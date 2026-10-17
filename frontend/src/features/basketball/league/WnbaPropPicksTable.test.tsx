@@ -72,7 +72,8 @@ describe("WnbaPropPicksTable", () => {
       lineCell.querySelector('svg[aria-label="PrizePicks"]'),
     ).toBeTruthy();
     const odds = screen.getByTestId("odds-cell");
-    expect(within(odds).getByText("18.5")).toBeInTheDocument();
+    expect(within(odds).queryByText("18.5")).not.toBeInTheDocument();
+    expect(within(odds).getByText("-115")).toBeInTheDocument();
     expect(within(odds).queryByText("20.5")).not.toBeInTheDocument();
     expect(screen.queryByTestId("dfs-cell")).not.toBeInTheDocument();
   });

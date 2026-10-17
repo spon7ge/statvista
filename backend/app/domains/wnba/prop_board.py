@@ -2,10 +2,8 @@
 
 from __future__ import annotations
 
-import asyncio
 import inspect
 import logging
-import time
 from datetime import datetime, timezone
 from typing import Any
 
@@ -19,18 +17,21 @@ from app.core.odds_snapshots import (
 )
 from app.core.wnba_abbrevs import canonical_abbrev
 from app.domains.betting.player_match_keys import match_player_key
-from app.domains.betting.pregame_props import prop_still_upcoming
+from app.domains.betting.season_log_cache import (
+    h2h_splits,
+    load_season_logs,
+    player_base_splits,
+)
+from app.domains.betting.pregame_props import (
+    load_prop_slate,
+    player_on_slate,
+    prop_still_upcoming,
+    slate_loaded,
+)
 from app.domains.betting.prop_stat_keys import (
     canonical_stat_key_from_pp,
     canonical_stat_key_from_ud,
     display_stat_label,
-)
-from app.domains.wnba.leaders import current_wnba_season_year
-from app.domains.wnba.player import (
-    fetch_commonallplayers,
-    fetch_leaguedashplayerstats,
-    fetch_playergamelog,
-    rows_as_dicts,
 )
 from app.domains.wnba.prop_board_cluster import (
     BOOK_CHIP_ORDER,
@@ -55,7 +56,7 @@ from app.domains.wnba.schemas_prop_board import (
     WnbaPropBoardRow,
     Side,
 )
-from app.domains.wnba.scoreboard import get_today_scoreboard
+from app.domains.wnba.scoreboard import get_scoreboard_for_date, get_today_scoreboard
 from app.providers.espn.wnba_roster import get_wnba_player_index, norm_player_name
 
 logger = logging.getLogger(__name__)
@@ -77,14 +78,8 @@ _PARLAY_BOOKS: tuple[str, ...] = (
     "fliff",
     "bet365",
 )
-_PERSON_LOOKUP_CONCURRENCY = 8
-_LOG_TTL_SECONDS = 15 * 60
-
 PlayerCtx = dict[str, Any]
 Enrichment = tuple[dict[str, PlayerCtx], list[str], set[str]]
-
-# (player_id, season) -> (monotonic_ts, splits)
-_log_cache: dict[tuple[str, int], tuple[float, list[dict[str, Any]]]] = {}
 
 
 def collect_board_quotes() -> list[BoardQuote]:
@@ -160,9 +155,9 @@ collect_board_quotes.warnings = []  # type: ignore[attr-defined]
 
 
 async def load_enrichment(clusters: list[Cluster] | None = None) -> Enrichment:
-    """Roster, scoreboard, and game logs for clustered players.
+    """Roster, scoreboard, and the daily season-log cache for clustered players.
 
-    Soft-fails logs independently. Missing stats.wnba.com player_id is
+    Soft-fails logs independently. A player missing from that cache is
     recorded in the returned set so L# stay null for that player only.
     """
     clusters = clusters or []
@@ -182,7 +177,9 @@ async def load_enrichment(clusters: list[Cluster] | None = None) -> Enrichment:
 
     game_by_team: dict[str, dict[str, Any]] = {}
     try:
-        game_by_team = _game_index_from_scoreboard(await get_today_scoreboard())
+        game_by_team = _game_index_from_scoreboard(
+            await load_prop_slate(get_today_scoreboard, get_scoreboard_for_date)
+        )
     except Exception as exc:
         logger.warning("WNBA board scoreboard enrichment skipped: %s", exc)
 
@@ -228,6 +225,7 @@ async def get_wnba_prop_board(book: str | None = None) -> WnbaPropBoardResponse:
     warnings.extend(extra_warnings)
 
     now = datetime.now(timezone.utc)
+    known_slate = slate_loaded(player_ctx.values())
     rows: list[WnbaPropBoardRow] = []
     for cluster in clusters:
         ctx = player_ctx.get(cluster.player_key) or {}
@@ -235,6 +233,7 @@ async def get_wnba_prop_board(book: str | None = None) -> WnbaPropBoardResponse:
             start=ctx.get("game_start_at"),
             status=ctx.get("game_status"),
             now=now,
+            on_slate=True if not known_slate else player_on_slate(ctx),
         ):
             continue
         opponent = ctx.get("opponent_abbrev")
@@ -250,7 +249,7 @@ async def get_wnba_prop_board(book: str | None = None) -> WnbaPropBoardResponse:
                     cluster.stat,
                     side,
                     cluster.line,
-                    splits + splits_prev,
+                    _h2h_games(ctx, splits, splits_prev),
                     opponent,
                 )
             anchor, book_chips = _anchor_and_matches(cluster, side, anchor_book)
@@ -559,75 +558,38 @@ def stats_player_id_index(rows: list[dict[str, Any]]) -> dict[str, str]:
     return out
 
 
-async def _stats_name_to_id(season: int) -> dict[str, str]:
-    """Prefer commonallplayers; fall back to leaguedashplayerstats if empty/403."""
-    for fetcher in (fetch_commonallplayers, fetch_leaguedashplayerstats):
-        try:
-            payload = await fetcher(season)
-            index = stats_player_id_index(rows_as_dicts(payload))
-            if index:
-                return index
-        except Exception as exc:
-            logger.warning(
-                "WNBA board player-id source %s failed: %s",
-                fetcher.__name__,
-                exc,
-            )
-    return {}
-
-
 async def _attach_game_logs(
     player_ctx: dict[str, PlayerCtx],
     players: dict[str, str],
     missing_person: set[str],
 ) -> bool:
-    sem = asyncio.Semaphore(_PERSON_LOOKUP_CONCURRENCY)
-    logs_failed = False
-    season = current_wnba_season_year()
-    name_to_id = await _stats_name_to_id(season)
-    if not name_to_id:
+    """Fill splits from the daily season-log cache. True when that cache is empty."""
+    try:
+        logs = await load_season_logs("wnba")
+    except Exception as exc:
+        logger.warning("WNBA board season logs unavailable: %s", exc)
         return True
-
-    async def one(player_key: str, player_name: str) -> None:
-        nonlocal logs_failed
-        async with sem:
-            player_id = name_to_id.get(player_key) or name_to_id.get(
-                match_player_key(player_name)
-            )
-            if not player_id:
-                missing_person.add(player_key)
-                return
-            ctx = player_ctx.setdefault(player_key, {})
-            try:
-                ctx["splits"] = _stamp_opponent_abbrev(
-                    await _cached_game_log(player_id, season)
-                )
-            except Exception as exc:
-                logger.warning(
-                    "WNBA board gamelog failed %s season=%s: %s",
-                    player_id,
-                    season,
-                    exc,
-                )
-                logs_failed = True
-            try:
-                ctx["splits_prev"] = _stamp_opponent_abbrev(
-                    await _cached_game_log(player_id, season - 1)
-                )
-            except Exception:
-                ctx["splits_prev"] = []
-
-    await asyncio.gather(*(one(key, name) for key, name in players.items()))
-    return logs_failed
+    if not logs.get("player_base"):
+        return True
+    for player_key, player_name in players.items():
+        splits = player_base_splits(logs, player_name)
+        if not splits:
+            missing_person.add(player_key)
+            continue
+        ctx = player_ctx.setdefault(player_key, {})
+        ctx["splits"] = _stamp_opponent_abbrev(splits)
+        ctx["h2h_splits"] = _stamp_opponent_abbrev(h2h_splits(logs, player_name))
+        ctx["splits_prev"] = []
+    return False
 
 
-async def _cached_game_log(player_id: str, season: int) -> list[dict[str, Any]]:
-    cache_key = (player_id, season)
-    cached = _log_cache.get(cache_key)
-    now = time.monotonic()
-    if cached is not None and now - cached[0] < _LOG_TTL_SECONDS:
-        return cached[1]
-    payload = await fetch_playergamelog(player_id, season)
-    splits = rows_as_dicts(payload)
-    _log_cache[cache_key] = (now, splits)
-    return splits
+def _h2h_games(
+    ctx: PlayerCtx,
+    splits: list[dict[str, Any]],
+    splits_prev: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    if "h2h_splits" in ctx:
+        return list(ctx["h2h_splits"] or [])
+    return [
+        row for row in splits if row.get("SEASON_TYPE") != "Pre Season"
+    ] + splits_prev
