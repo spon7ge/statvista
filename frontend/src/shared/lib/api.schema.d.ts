@@ -416,6 +416,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/nba/props/board": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Nba Props Board */
+        get: operations["nba_props_board_api_nba_props_board_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/nba/scoreboard": {
         parameters: {
             query?: never;
@@ -2486,6 +2503,84 @@ export interface components {
             /** Leaders */
             leaders: components["schemas"]["NbaGameLeaderCard"][];
         };
+        /** NbaPropBoardBookChip */
+        NbaPropBoardBookChip: {
+            /** American */
+            american: number | null;
+            /** Book */
+            book: string;
+            /** Devig Pct */
+            devig_pct: number | null;
+            /** Line */
+            line: number | null;
+            /** Over American */
+            over_american: number | null;
+            /** Under American */
+            under_american: number | null;
+            /** Url */
+            url: string | null;
+        };
+        /** NbaPropBoardResponse */
+        NbaPropBoardResponse: {
+            /**
+             * As Of
+             * Format: date-time
+             */
+            as_of: string;
+            /** Rows */
+            rows: components["schemas"]["NbaPropBoardRow"][];
+            /** Warnings */
+            warnings: string[];
+        };
+        /** NbaPropBoardRow */
+        NbaPropBoardRow: {
+            anchor: components["schemas"]["NbaPropBoardBookChip"];
+            /** Books */
+            books: components["schemas"]["NbaPropBoardBookChip"][];
+            /** Game Id */
+            game_id: string | null;
+            /** Game Start At */
+            game_start_at: string | null;
+            /** Headshot Url */
+            headshot_url: string | null;
+            /** Hit H2H */
+            hit_h2h: number | null;
+            /** Hit L10 */
+            hit_l10: number | null;
+            /** Hit L15 */
+            hit_l15: number | null;
+            /** Hit L5 */
+            hit_l5: number | null;
+            /** Home Away */
+            home_away: ("away" | "home") | null;
+            /** Ip Pct */
+            ip_pct: number | null;
+            /** Line */
+            line: number;
+            /** Market Label */
+            market_label: string;
+            /** Opp Def Label */
+            opp_def_label: string | null;
+            /** Opp Def Rank */
+            opp_def_rank: number | null;
+            /** Opp Pace Label */
+            opp_pace_label: string | null;
+            /** Opp Pace Rank */
+            opp_pace_rank: number | null;
+            /** Opponent Abbrev */
+            opponent_abbrev: string | null;
+            /** Player Name */
+            player_name: string;
+            /**
+             * Side
+             * @enum {string}
+             */
+            side: "over" | "under";
+            /** Stat */
+            stat: string;
+            /** Team Abbrev */
+            team_abbrev: string | null;
+        };
         /** NbaScoreboardResponse */
         NbaScoreboardResponse: {
             /**
@@ -4340,6 +4435,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["WnbaOddsResponse"];
+                };
+            };
+        };
+    };
+    nba_props_board_api_nba_props_board_get: {
+        parameters: {
+            query?: {
+                book?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NbaPropBoardResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

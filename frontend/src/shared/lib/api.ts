@@ -43,6 +43,9 @@ export type ApiWnbaPropBoardBookChip = Schemas["WnbaPropBoardBookChip"];
 export type ApiWnbaPropBoardRow = Schemas["WnbaPropBoardRow"];
 export type ApiWnbaPropBoardResponse = Schemas["WnbaPropBoardResponse"];
 export type ApiWnbaGamePropsResponse = Schemas["WnbaGamePropsResponse"];
+export type ApiNbaPropBoardBookChip = Schemas["NbaPropBoardBookChip"];
+export type ApiNbaPropBoardRow = Schemas["NbaPropBoardRow"];
+export type ApiNbaPropBoardResponse = Schemas["NbaPropBoardResponse"];
 
 export type WnbaPropsParams = {
   app: string;
@@ -247,6 +250,20 @@ export async function fetchWnbaPropBoard(
   });
   if (!res.ok) {
     throw new Error(`WNBA prop board request failed: ${res.status}`);
+  }
+  return res.json();
+}
+
+export async function fetchNbaPropBoard(
+  book = "prizepicks",
+): Promise<ApiNbaPropBoardResponse> {
+  const qs = new URLSearchParams({ book });
+  const res = await fetch(`${API_BASE}/api/nba/props/board?${qs}`, {
+    headers: { Accept: "application/json" },
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    throw new Error(`NBA prop board request failed: ${res.status}`);
   }
   return res.json();
 }

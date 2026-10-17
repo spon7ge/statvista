@@ -351,6 +351,69 @@ describe("fetchWnbaPropBoard", () => {
   });
 });
 
+describe("fetchNbaPropBoard", () => {
+  beforeEach(() => {
+    vi.resetModules();
+    fetchMock.mockReset();
+    vi.stubGlobal("fetch", fetchMock);
+    vi.stubEnv("VITE_API_BASE_URL", undefined);
+  });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
+  });
+
+  it("GETs /api/nba/props/board with the default book", async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        as_of: "2026-10-16T00:00:00Z",
+        rows: [],
+        warnings: [],
+      }),
+    });
+
+    const { fetchNbaPropBoard } = await import("./api");
+    await fetchNbaPropBoard();
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/nba/props/board?book=prizepicks",
+      expect.objectContaining({
+        headers: { Accept: "application/json" },
+        cache: "no-store",
+      }),
+    );
+  });
+
+  it("GETs /api/nba/props/board for the selected book", async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        as_of: "2026-10-16T00:00:00Z",
+        rows: [],
+        warnings: [],
+      }),
+    });
+
+    const { fetchNbaPropBoard } = await import("./api");
+    await fetchNbaPropBoard("draftkings");
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/nba/props/board?book=draftkings",
+      expect.objectContaining({ cache: "no-store" }),
+    );
+  });
+
+  it("throws when the response is not ok", async () => {
+    fetchMock.mockResolvedValue({ ok: false, status: 502 });
+
+    const { fetchNbaPropBoard } = await import("./api");
+    await expect(fetchNbaPropBoard()).rejects.toThrow(
+      "NBA prop board request failed: 502",
+    );
+  });
+});
+
 describe("fetchMlbProps", () => {
   beforeEach(() => {
     vi.resetModules();
