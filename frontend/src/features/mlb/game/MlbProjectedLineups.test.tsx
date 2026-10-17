@@ -233,6 +233,28 @@ describe("MlbProjectedLineups", () => {
     );
   });
 
+  it("marks the selected lineup team with a white pill", () => {
+    render(<MlbProjectedLineups detail={mlbScheduledDetail} game={lineupGame} />);
+
+    expect(screen.getByTestId("mlb-lineup-toggle-away")).toHaveClass(
+      "bg-[var(--white)]",
+      "text-c1",
+    );
+    expect(screen.getByTestId("mlb-lineup-toggle-home")).not.toHaveClass(
+      "bg-[var(--white)]",
+    );
+
+    fireEvent.click(screen.getByTestId("mlb-lineup-toggle-home"));
+
+    expect(screen.getByTestId("mlb-lineup-toggle-home")).toHaveClass(
+      "bg-[var(--white)]",
+      "text-c1",
+    );
+    expect(screen.getByTestId("mlb-lineup-toggle-away")).not.toHaveClass(
+      "bg-[var(--white)]",
+    );
+  });
+
   it("defaults to the away side and renders the starter plus 9 batters", () => {
     render(<MlbProjectedLineups detail={mlbScheduledDetail} game={lineupGame} />);
 

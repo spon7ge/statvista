@@ -47,7 +47,7 @@ function LogoToggleButton({
       aria-pressed={active}
       onClick={onClick}
       className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
-        active ? "bg-c2 text-c3" : "text-c3 hover:text-c3"
+        active ? "bg-[var(--white)] text-c1" : "text-c3 hover:text-c4"
       }`}
     >
       {team.logoUrl ? (
