@@ -38,7 +38,6 @@ export type ApiWnbaPropBookQuote = Schemas["WnbaPropBookQuote"];
 export type ApiWnbaPropBookMainQuote = Schemas["WnbaPropBookMainQuote"];
 export type ApiWnbaPropDfs = Schemas["WnbaPropDfs"];
 export type ApiWnbaPropRow = Schemas["WnbaPropRow"];
-export type ApiWnbaPropPicksResponse = Schemas["WnbaPropPicksResponse"];
 export type ApiWnbaPropBoardBookChip = Schemas["WnbaPropBoardBookChip"];
 export type ApiWnbaPropBoardRow = Schemas["WnbaPropBoardRow"];
 export type ApiWnbaPropBoardResponse = Schemas["WnbaPropBoardResponse"];
@@ -46,12 +45,6 @@ export type ApiWnbaGamePropsResponse = Schemas["WnbaGamePropsResponse"];
 export type ApiNbaPropBoardBookChip = Schemas["NbaPropBoardBookChip"];
 export type ApiNbaPropBoardRow = Schemas["NbaPropBoardRow"];
 export type ApiNbaPropBoardResponse = Schemas["NbaPropBoardResponse"];
-
-export type WnbaPropsParams = {
-  app: string;
-  format: string;
-  legs: number;
-};
 
 export type ApiWnbaTeamPreviewResponse = Schemas["WnbaTeamPreviewResponse"];
 export type ApiNbaTeamPreviewResponse = Schemas["NbaTeamPreviewResponse"];
@@ -86,18 +79,11 @@ export type ApiMlbPropBookMainQuote = Schemas["MlbPropBookMainQuote"];
 export type ApiMlbPropBooksMain = Schemas["MlbPropBooksMain"];
 export type ApiMlbPropDfs = Schemas["MlbPropDfs"];
 export type ApiMlbPropRow = Schemas["MlbPropRow"];
-export type ApiMlbPropsResponse = Schemas["MlbPropsResponse"];
 export type ApiMlbPropBoardBookChip = Schemas["MlbPropBoardBookChip"];
 export type ApiMlbPropBoardRow = Schemas["MlbPropBoardRow"];
 export type ApiMlbPropBoardResponse = Schemas["MlbPropBoardResponse"];
 export type ApiMlbGamePropsResponse = Schemas["MlbGamePropsResponse"];
 export type ApiMlbTeamPreviewResponse = Schemas["MlbTeamPreviewResponse"];
-
-export type MlbPropsParams = {
-  app: string;
-  format: string;
-  legs: number;
-};
 
 export type MlbGamePropsParams = {
   gamePk: string;
@@ -220,26 +206,6 @@ export async function fetchNbaOdds(): Promise<ApiNbaOddsResponse> {
   return res.json();
 }
 
-export async function fetchWnbaProps({
-  app,
-  format,
-  legs,
-}: WnbaPropsParams): Promise<ApiWnbaPropPicksResponse> {
-  const qs = new URLSearchParams({
-    app,
-    format,
-    legs: String(legs),
-  });
-  const res = await fetch(`${API_BASE}/api/wnba/props/today?${qs}`, {
-    headers: { Accept: "application/json" },
-    cache: "no-store",
-  });
-  if (!res.ok) {
-    throw new Error(`Props request failed: ${res.status}`);
-  }
-  return res.json();
-}
-
 export async function fetchWnbaPropBoard(
   book = "prizepicks",
 ): Promise<ApiWnbaPropBoardResponse> {
@@ -347,26 +313,6 @@ export async function fetchMlbOdds(): Promise<ApiMlbOddsResponse> {
   });
   if (!res.ok) {
     throw new Error(`MLB odds request failed: ${res.status}`);
-  }
-  return res.json();
-}
-
-export async function fetchMlbProps({
-  app,
-  format,
-  legs,
-}: MlbPropsParams): Promise<ApiMlbPropsResponse> {
-  const qs = new URLSearchParams({
-    app,
-    format,
-    legs: String(legs),
-  });
-  const res = await fetch(`${API_BASE}/api/mlb/props/today?${qs}`, {
-    headers: { Accept: "application/json" },
-    cache: "no-store",
-  });
-  if (!res.ok) {
-    throw new Error(`MLB props request failed: ${res.status}`);
   }
   return res.json();
 }

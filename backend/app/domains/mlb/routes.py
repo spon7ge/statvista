@@ -6,10 +6,7 @@ from typing import Literal
 
 from fastapi import APIRouter, HTTPException, Query, Response
 
-from app.domains.mlb.futures import get_mlb_futures
 from app.domains.mlb.game_detail import get_mlb_game_detail
-from app.domains.mlb.leaders import get_mlb_leaders
-from app.domains.mlb.standings import get_mlb_standings
 from app.domains.mlb.lineup_matchup import get_mlb_lineup_matchup
 from app.domains.mlb.lineups import get_mlb_lineups
 from app.domains.mlb.odds import get_today_odds
@@ -17,7 +14,6 @@ from app.domains.mlb.game_props import get_mlb_props_for_game
 from app.domains.mlb.prop_board import UnknownBoardBookError, get_mlb_prop_board
 from app.domains.mlb.props import get_mlb_props_today
 from app.domains.mlb.schemas import (
-    MlbFuturesResponse,
     MlbGameDetail,
     MlbGamePropsResponse,
     MlbLineupMatchupResponse,
@@ -28,8 +24,6 @@ from app.domains.mlb.schemas import (
     MlbScoreboardResponse,
     MlbTeamPreviewResponse,
 )
-from app.domains.mlb.schemas_leaders import MlbLeadersResponse
-from app.domains.mlb.schemas_standings import MlbStandingsResponse
 from app.domains.mlb.scoreboard import get_scoreboard_for_date, get_today_scoreboard
 from app.domains.mlb.team_preview import get_mlb_team_preview
 
@@ -38,54 +32,6 @@ logger = logging.getLogger(__name__)
 router = APIRouter(tags=["mlb"])
 
 _NO_STORE = {"Cache-Control": "no-store"}
-
-
-@router.get("/mlb/futures", response_model=MlbFuturesResponse)
-async def mlb_futures(response: Response) -> MlbFuturesResponse:
-    response.headers["Cache-Control"] = "no-store"
-    try:
-        return await get_mlb_futures()
-    except HTTPException:
-        raise
-    except Exception as exc:
-        logger.warning("MLB futures unavailable: %s", exc)
-        raise HTTPException(
-            status_code=502,
-            detail="MLB futures are temporarily unavailable",
-            headers=_NO_STORE,
-        ) from exc
-
-
-@router.get("/mlb/standings", response_model=MlbStandingsResponse)
-async def mlb_standings(response: Response) -> MlbStandingsResponse:
-    response.headers["Cache-Control"] = "no-store"
-    try:
-        return await get_mlb_standings()
-    except HTTPException:
-        raise
-    except Exception as exc:
-        logger.warning("MLB standings unavailable: %s", exc)
-        raise HTTPException(
-            status_code=502,
-            detail="MLB standings are temporarily unavailable",
-            headers=_NO_STORE,
-        ) from exc
-
-
-@router.get("/mlb/leaders", response_model=MlbLeadersResponse)
-async def mlb_leaders(response: Response) -> MlbLeadersResponse:
-    response.headers["Cache-Control"] = "no-store"
-    try:
-        return await get_mlb_leaders()
-    except HTTPException:
-        raise
-    except Exception as exc:
-        logger.warning("MLB leaders unavailable: %s", exc)
-        raise HTTPException(
-            status_code=502,
-            detail="MLB leaders are temporarily unavailable",
-            headers=_NO_STORE,
-        ) from exc
 
 
 @router.get("/mlb/scoreboard", response_model=MlbScoreboardResponse)

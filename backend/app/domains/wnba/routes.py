@@ -5,27 +5,19 @@ from typing import Literal
 
 from fastapi import APIRouter, HTTPException, Query, Response
 
-from app.domains.wnba.futures import get_wnba_futures
 from app.domains.wnba.game_detail import get_game_detail
 from app.domains.wnba.game_props import get_wnba_props_for_game
-from app.domains.wnba.leaders import get_wnba_leaders
-from app.domains.wnba.player import get_wnba_player
 from app.domains.wnba.prop_board import UnknownBoardBookError, get_wnba_prop_board
 from app.domains.wnba.props import get_wnba_props_today
 from app.domains.wnba.schemas import (
-    WnbaFuturesResponse,
     WnbaGameDetail,
     WnbaGamePropsResponse,
-    WnbaLeadersResponse,
-    WnbaPlayerResponse,
     WnbaPropBoardResponse,
     WnbaScoreboardResponse,
-    WnbaStandingsResponse,
 )
 from app.domains.wnba.schemas_prop_picks import WnbaPropPicksResponse
 from app.domains.wnba.schemas_team_preview import WnbaTeamPreviewResponse
 from app.domains.wnba.scoreboard import get_scoreboard_for_date, get_today_scoreboard
-from app.domains.wnba.standings import get_wnba_standings
 from app.domains.wnba.team_preview import get_wnba_team_preview
 
 logger = logging.getLogger(__name__)
@@ -68,74 +60,6 @@ async def wnba_scoreboard_today(response: Response) -> WnbaScoreboardResponse:
         raise HTTPException(
             status_code=502,
             detail="WNBA scoreboard is temporarily unavailable",
-            headers=_NO_STORE,
-        ) from exc
-
-
-@router.get("/wnba/leaders", response_model=WnbaLeadersResponse)
-async def wnba_leaders(response: Response) -> WnbaLeadersResponse:
-    response.headers["Cache-Control"] = "no-store"
-    try:
-        return await get_wnba_leaders()
-    except HTTPException:
-        raise
-    except Exception as exc:
-        logger.warning("WNBA leaders unavailable: %s", exc)
-        raise HTTPException(
-            status_code=502,
-            detail="WNBA leaders are temporarily unavailable",
-            headers=_NO_STORE,
-        ) from exc
-
-
-@router.get("/wnba/player/{player_id}", response_model=WnbaPlayerResponse)
-async def wnba_player(player_id: str, response: Response) -> WnbaPlayerResponse:
-    response.headers["Cache-Control"] = "no-store"
-    try:
-        return await get_wnba_player(player_id)
-    except LookupError as exc:
-        raise HTTPException(
-            status_code=404,
-            detail="Player not found",
-            headers=_NO_STORE,
-        ) from exc
-    except Exception as exc:
-        logger.warning("WNBA player unavailable: %s", exc)
-        raise HTTPException(
-            status_code=502,
-            detail="WNBA player is temporarily unavailable",
-            headers=_NO_STORE,
-        ) from exc
-
-
-@router.get("/wnba/standings", response_model=WnbaStandingsResponse)
-async def wnba_standings(response: Response) -> WnbaStandingsResponse:
-    response.headers["Cache-Control"] = "no-store"
-    try:
-        return await get_wnba_standings()
-    except HTTPException:
-        raise
-    except Exception as exc:
-        logger.warning("WNBA standings unavailable: %s", exc)
-        raise HTTPException(
-            status_code=502,
-            detail="WNBA standings are temporarily unavailable",
-            headers=_NO_STORE,
-        ) from exc
-
-
-@router.get("/wnba/futures", response_model=WnbaFuturesResponse)
-async def wnba_futures(response: Response) -> WnbaFuturesResponse:
-    response.headers["Cache-Control"] = "no-store"
-    try:
-        return await get_wnba_futures()
-    except HTTPException:
-        raise
-    except Exception as exc:
-        logger.warning("WNBA futures unavailable: %s", exc)
-        raise HTTPException(
-            status_code=502,
-            detail="WNBA futures are temporarily unavailable",
             headers=_NO_STORE,
         ) from exc
 

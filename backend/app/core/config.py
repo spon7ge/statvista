@@ -40,18 +40,13 @@ def parse_cors_origins(raw: str | None) -> list[str]:
 
 CORS_ORIGINS = parse_cors_origins(os.environ.get("CORS_ORIGINS"))
 
-# SharpAPI — legacy; WNBA odds/props now use ParlayAPI
+# SharpAPI — MLB and NBA game odds (optional; empty → empty games)
 SHARP_API_KEY: str | None = os.environ.get("SHARP_API_KEY") or None
 # Strip accidental quotes from .env values like SHARP_API_KEY='sk_...'
 if SHARP_API_KEY:
     SHARP_API_KEY = SHARP_API_KEY.strip().strip("'").strip('"') or None
 
-# ParlayAPI — WNBA props + matchup odds (optional; empty → empty response)
+# ParlayAPI — props + matchup odds (optional; empty → empty response)
 PARLAY_API_KEY: str | None = os.environ.get("PARLAY_API_KEY") or None
 if PARLAY_API_KEY:
     PARLAY_API_KEY = PARLAY_API_KEY.strip().strip("'").strip('"') or None
-
-# The Odds API — MLB prop picks board + books (optional; empty → soft-fail)
-THE_ODDS_API_KEY: str | None = os.environ.get("THE_ODDS_API_KEY") or None
-if THE_ODDS_API_KEY:
-    THE_ODDS_API_KEY = THE_ODDS_API_KEY.strip().strip("'").strip('"') or None

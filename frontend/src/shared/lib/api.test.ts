@@ -243,51 +243,6 @@ describe("fetchWnbaOdds", () => {
   });
 });
 
-describe("fetchWnbaProps", () => {
-  beforeEach(() => {
-    vi.resetModules();
-    fetchMock.mockReset();
-    vi.stubGlobal("fetch", fetchMock);
-  });
-  afterEach(() => {
-    vi.unstubAllGlobals();
-    vi.unstubAllEnvs();
-  });
-
-  it("hits /api/wnba/props/today with app format legs", async () => {
-    vi.stubEnv("VITE_API_BASE_URL", undefined);
-    fetchMock.mockResolvedValue({
-      ok: true,
-      json: async () => ({
-        as_of: "now",
-        app: "prizepicks",
-        format: "power",
-        legs: 4,
-        breakeven_pct: 54.3,
-        props: [],
-        error: null,
-      }),
-    });
-    const { fetchWnbaProps } = await import("./api");
-    await fetchWnbaProps({ app: "prizepicks", format: "power", legs: 4 });
-    expect(global.fetch).toHaveBeenCalledWith(
-      expect.stringContaining(
-        "/api/wnba/props/today?app=prizepicks&format=power&legs=4",
-      ),
-      expect.anything(),
-    );
-  });
-
-  it("throws when the response is not ok", async () => {
-    vi.stubEnv("VITE_API_BASE_URL", undefined);
-    fetchMock.mockResolvedValue({ ok: false, status: 502 });
-    const { fetchWnbaProps } = await import("./api");
-    await expect(
-      fetchWnbaProps({ app: "prizepicks", format: "power", legs: 4 }),
-    ).rejects.toThrow("Props request failed: 502");
-  });
-});
-
 describe("fetchWnbaPropBoard", () => {
   beforeEach(() => {
     vi.resetModules();
@@ -411,52 +366,6 @@ describe("fetchNbaPropBoard", () => {
     await expect(fetchNbaPropBoard()).rejects.toThrow(
       "NBA prop board request failed: 502",
     );
-  });
-});
-
-describe("fetchMlbProps", () => {
-  beforeEach(() => {
-    vi.resetModules();
-    fetchMock.mockReset();
-    vi.stubGlobal("fetch", fetchMock);
-  });
-  afterEach(() => {
-    vi.unstubAllGlobals();
-    vi.unstubAllEnvs();
-  });
-
-  it("requests MLB props with the selected DFS format", async () => {
-    vi.stubEnv("VITE_API_BASE_URL", undefined);
-    fetchMock.mockResolvedValue({
-      ok: true,
-      json: async () => ({
-        as_of: "now",
-        app: "prizepicks",
-        format: "power",
-        legs: 4,
-        breakeven_pct: 54.3,
-        props: [],
-        error: null,
-      }),
-    });
-
-    const { fetchMlbProps } = await import("./api");
-    await fetchMlbProps({ app: "prizepicks", format: "power", legs: 4 });
-
-    expect(fetchMock).toHaveBeenCalledWith(
-      "/api/mlb/props/today?app=prizepicks&format=power&legs=4",
-      expect.objectContaining({ cache: "no-store" }),
-    );
-  });
-
-  it("throws when the response is not ok", async () => {
-    vi.stubEnv("VITE_API_BASE_URL", undefined);
-    fetchMock.mockResolvedValue({ ok: false, status: 502 });
-
-    const { fetchMlbProps } = await import("./api");
-    await expect(
-      fetchMlbProps({ app: "underdog", format: "flex", legs: 5 }),
-    ).rejects.toThrow("MLB props request failed: 502");
   });
 });
 

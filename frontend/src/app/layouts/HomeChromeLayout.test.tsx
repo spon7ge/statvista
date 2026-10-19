@@ -37,8 +37,11 @@ describe("HomeChromeLayout", () => {
     expect(screen.queryByText("No live games")).not.toBeInTheDocument();
     expect(screen.queryByText("Today")).not.toBeInTheDocument();
     expect(
-      screen.getByText(/informational and entertainment purposes only/i),
+      screen.getByText("© Copyright 2026 statvista. All Rights Reserved."),
     ).toBeInTheDocument();
+    expect(
+      screen.queryByText(/informational and entertainment purposes only/i),
+    ).not.toBeInTheDocument();
   });
 
   it("puts a primary sidebar beside the page, not HomeNav", () => {

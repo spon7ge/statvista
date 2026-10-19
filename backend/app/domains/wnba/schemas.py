@@ -6,11 +6,6 @@ from app.domains.wnba.schemas_game_props import (
     WnbaGamePropPlayer,
     WnbaGamePropsResponse,
 )
-from app.domains.wnba.schemas_futures import (
-    WnbaFuturesEntry,
-    WnbaFuturesMarket,
-    WnbaFuturesResponse,
-)
 from app.domains.wnba.schemas_game_detail import (
     GameDetailBoxScore,
     GameDetailBoxScorePlayer,
@@ -38,11 +33,6 @@ from app.domains.wnba.schemas_leaders import (
     WnbaLeaderCategory,
     WnbaLeaderRow,
     WnbaLeadersResponse,
-)
-from app.domains.wnba.schemas_player import (
-    WnbaPlayerAverages,
-    WnbaPlayerGame,
-    WnbaPlayerResponse,
 )
 from app.domains.wnba.schemas_scoreboard import (
     GameStatus,
@@ -94,9 +84,6 @@ __all__ = [
     "GameDetailWinProbability",
     "GameDetailWinProbabilityPoint",
     "GameStatus",
-    "WnbaFuturesEntry",
-    "WnbaFuturesMarket",
-    "WnbaFuturesResponse",
     "WnbaGame",
     "WnbaGameDetail",
     "WnbaGamePropBestQuote",
@@ -108,9 +95,6 @@ __all__ = [
     "WnbaLeaderCategory",
     "WnbaLeaderRow",
     "WnbaLeadersResponse",
-    "WnbaPlayerAverages",
-    "WnbaPlayerGame",
-    "WnbaPlayerResponse",
     "WnbaPropBoardBookChip",
     "WnbaPropBoardResponse",
     "WnbaPropBoardRow",

@@ -1,10 +1,5 @@
 """Public response schemas for the MLB domain."""
 
-from app.domains.mlb.schemas_futures import (
-    MlbFuturesEntry,
-    MlbFuturesMarket,
-    MlbFuturesResponse,
-)
 from app.domains.mlb.schemas_game_detail import (
     GameStatus,
     MlbBatterRow,
@@ -112,9 +107,6 @@ __all__ = [
     "MlbBoxNoteLine",
     "MlbBoxScore",
     "MlbDecisions",
-    "MlbFuturesEntry",
-    "MlbFuturesMarket",
-    "MlbFuturesResponse",
     "MlbGame",
     "MlbGamePropBestQuote",
     "MlbGamePropCategory",

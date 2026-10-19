@@ -4,106 +4,6 @@
  */
 
 export interface paths {
-    "/api/games/today": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Todays Games
-         * @description Shortcut — returns today's games without specifying a date.
-         */
-        get: operations["get_todays_games_api_games_today_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/games/{date}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Games
-         * @description Return all games on *date* (YYYY-MM-DD) from **silver.silver_games**.
-         */
-        get: operations["get_games_api_games__date__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/games/{date}/props": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Game Props
-         * @description All prop lines for a slate date from **gold.gold_prop_history**.
-         */
-        get: operations["get_game_props_api_games__date__props_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/games/{date}/slate": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Game Slate
-         * @description Combined games + props for a full slate view.
-         */
-        get: operations["get_game_slate_api_games__date__slate_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/games/{date}/with-props": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Games With Props
-         * @description Games on *date* with prop lines grouped per matchup.
-         */
-        get: operations["get_games_with_props_api_games__date__with_props_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/health": {
         parameters: {
             query?: never;
@@ -116,43 +16,6 @@ export interface paths {
          * @description Basic health check with a lightweight DB ping.
          */
         get: operations["health_api_health_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/matchups/{date}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List Matchups
-         * @description Return opponent/schedule context for every player-game on a date.
-         */
-        get: operations["list_matchups_api_matchups__date__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/mlb/futures": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Mlb Futures */
-        get: operations["mlb_futures_api_mlb_futures_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -187,23 +50,6 @@ export interface paths {
         };
         /** Mlb Team Preview */
         get: operations["mlb_team_preview_api_mlb_games__game_pk__team_preview_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/mlb/leaders": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Mlb Leaders */
-        get: operations["mlb_leaders_api_mlb_leaders_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -348,23 +194,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/mlb/standings": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Mlb Standings */
-        get: operations["mlb_standings_api_mlb_standings_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/nba/games/{espn_event_id}": {
         parameters: {
             query?: never;
@@ -467,103 +296,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/player/{player_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Player
-         * @description Player profile, recent games, and rolling context.
-         */
-        get: operations["get_player_api_player__player_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/players": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Search Players
-         * @description Search the player directory from **silver.silver_players**.
-         */
-        get: operations["search_players_api_players_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/props": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List Props
-         * @description Return prop lines enriched with rolling context from **gold.gold_prop_history**.
-         */
-        get: operations["list_props_api_props_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/slates/{book}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Slate
-         * @description Return the latest prop lines for a DFS book from **silver.silver_props**.
-         */
-        get: operations["get_slate_api_slates__book__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/wnba/futures": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Wnba Futures */
-        get: operations["wnba_futures_api_wnba_futures_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/wnba/games/{espn_event_id}": {
         parameters: {
             query?: never;
@@ -598,23 +330,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/wnba/leaders": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Wnba Leaders */
-        get: operations["wnba_leaders_api_wnba_leaders_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/wnba/odds/today": {
         parameters: {
             query?: never;
@@ -624,23 +339,6 @@ export interface paths {
         };
         /** Wnba Odds Today */
         get: operations["wnba_odds_today_api_wnba_odds_today_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/wnba/player/{player_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Wnba Player */
-        get: operations["wnba_player_api_wnba_player__player_id__get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -734,47 +432,10 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/wnba/standings": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Wnba Standings */
-        get: operations["wnba_standings_api_wnba_standings_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        /** Game */
-        Game: {
-            /** Away Team Abbrev */
-            away_team_abbrev: string;
-            /** Event Id */
-            event_id?: number | null;
-            /**
-             * Game Date
-             * Format: date
-             */
-            game_date: string;
-            /** Game Id */
-            game_id?: string | null;
-            /** Home Team Abbrev */
-            home_team_abbrev: string;
-            /** Season Year */
-            season_year?: string | null;
-            /** Source */
-            source?: string | null;
-        };
         /** GameDetailBoxScore */
         GameDetailBoxScore: {
             /** Away */
@@ -982,94 +643,10 @@ export interface components {
             /** Team Id */
             team_id: string | null;
         };
-        /** GameSlate */
-        GameSlate: {
-            /**
-             * Game Date
-             * Format: date
-             */
-            game_date: string;
-            /** Games */
-            games: components["schemas"]["Game"][];
-            /**
-             * Props
-             * @default []
-             */
-            props: components["schemas"]["PropLine"][];
-        };
-        /** GameWithProps */
-        GameWithProps: {
-            /** Away Team Abbrev */
-            away_team_abbrev: string;
-            /** Event Id */
-            event_id?: number | null;
-            /**
-             * Game Date
-             * Format: date
-             */
-            game_date: string;
-            /** Game Id */
-            game_id?: string | null;
-            /** Home Team Abbrev */
-            home_team_abbrev: string;
-            /**
-             * Props
-             * @default []
-             */
-            props: components["schemas"]["PropLine"][];
-            /** Season Year */
-            season_year?: string | null;
-            /** Source */
-            source?: string | null;
-        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
-        };
-        /** MatchupFeatures */
-        MatchupFeatures: {
-            /** Days Rest */
-            days_rest?: number | null;
-            /** Expected Pace */
-            expected_pace?: number | null;
-            /**
-             * Game Date
-             * Format: date
-             */
-            game_date: string;
-            /** Game Id */
-            game_id: string;
-            /** Game Number */
-            game_number?: number | null;
-            /** Game Total */
-            game_total?: number | null;
-            /** Is B2B */
-            is_b2b: number;
-            /** Is Home */
-            is_home: number;
-            /** Opp Def Rating Roll10 */
-            opp_def_rating_roll10?: number | null;
-            /** Opp Pace Roll10 */
-            opp_pace_roll10?: number | null;
-            /** Opp Team Abbreviation */
-            opp_team_abbreviation?: string | null;
-            /** Pace Differential */
-            pace_differential?: number | null;
-            /** Player Id */
-            player_id: number;
-            /** Player Name */
-            player_name: string;
-            /** Season Year */
-            season_year?: string | null;
-            /** Team Abbreviation */
-            team_abbreviation?: string | null;
-            /** Team Def Rating Roll10 */
-            team_def_rating_roll10?: number | null;
-            /** Team Pace Roll10 */
-            team_pace_roll10?: number | null;
-            /** Team Spread */
-            team_spread?: number | null;
         };
         /** MlbBatterRow */
         MlbBatterRow: {
@@ -1154,43 +731,6 @@ export interface components {
             save: string | null;
             /** Winner */
             winner: string | null;
-        };
-        /** MlbFuturesEntry */
-        MlbFuturesEntry: {
-            /** Abbrev */
-            abbrev: string;
-            /** Logo Url */
-            logo_url: string | null;
-            /** Name */
-            name: string;
-            /** Odds American */
-            odds_american: string;
-            /** Team Id */
-            team_id: string;
-        };
-        /** MlbFuturesMarket */
-        MlbFuturesMarket: {
-            /** Display Name */
-            display_name: string;
-            /** Entries */
-            entries: components["schemas"]["MlbFuturesEntry"][];
-            /** Id */
-            id: string;
-            /** Name */
-            name: string;
-            /** Provider */
-            provider: string;
-        };
-        /** MlbFuturesResponse */
-        MlbFuturesResponse: {
-            /** As Of */
-            as_of: string;
-            /** Error */
-            error?: string | null;
-            /** Markets */
-            markets: components["schemas"]["MlbFuturesMarket"][];
-            /** Season */
-            season: number;
         };
         /** MlbGame */
         MlbGame: {
@@ -1439,48 +979,6 @@ export interface components {
             position: string | null;
             /** Status */
             status: string;
-        };
-        /** MlbLeaderCategory */
-        MlbLeaderCategory: {
-            /**
-             * Key
-             * @enum {string}
-             */
-            key: "avg" | "hr" | "rbi" | "sb" | "ops" | "hits" | "era" | "whip" | "so" | "w" | "sv" | "ip";
-            /** Label */
-            label: string;
-            /** Leaders */
-            leaders: components["schemas"]["MlbLeaderRow"][];
-            /** Stat */
-            stat: string;
-        };
-        /** MlbLeaderRow */
-        MlbLeaderRow: {
-            /** Gp */
-            gp?: number | null;
-            /** Name */
-            name: string;
-            /** Player Id */
-            player_id: string;
-            /** Rank */
-            rank: number;
-            /** Team Abbrev */
-            team_abbrev: string;
-            /** Value */
-            value: string;
-        };
-        /** MlbLeadersResponse */
-        MlbLeadersResponse: {
-            /** Categories */
-            categories: components["schemas"]["MlbLeaderCategory"][];
-            /**
-             * Pace
-             * @default season
-             * @constant
-             */
-            pace: "season";
-            /** Season */
-            season: number;
         };
         /** MlbLinescore */
         MlbLinescore: {
@@ -2145,61 +1643,6 @@ export interface components {
             /** Strikes */
             strikes: number;
         };
-        /** MlbStandingsDivision */
-        MlbStandingsDivision: {
-            /** Key */
-            key: string;
-            /** Label */
-            label: string;
-            /** Teams */
-            teams: components["schemas"]["MlbStandingsRow"][];
-        };
-        /** MlbStandingsLeague */
-        MlbStandingsLeague: {
-            /** Divisions */
-            divisions: components["schemas"]["MlbStandingsDivision"][];
-            /**
-             * Key
-             * @enum {string}
-             */
-            key: "al" | "nl";
-            /** Label */
-            label: string;
-        };
-        /** MlbStandingsResponse */
-        MlbStandingsResponse: {
-            /** Leagues */
-            leagues: components["schemas"]["MlbStandingsLeague"][];
-            /** Season */
-            season: number;
-        };
-        /** MlbStandingsRow */
-        MlbStandingsRow: {
-            /** Abbrev */
-            abbrev: string;
-            /** Gb */
-            gb: string;
-            /** L10 */
-            l10: string;
-            /** Logo Url */
-            logo_url: string | null;
-            /** Losses */
-            losses: number;
-            /** Name */
-            name: string;
-            /** Pct */
-            pct: string;
-            /** Rank */
-            rank: number;
-            /** Streak */
-            streak: string;
-            /** Team Id */
-            team_id: string;
-            /** Wins */
-            wins: number;
-            /** Wl */
-            wl: string;
-        };
         /** MlbTeam */
         MlbTeam: {
             /** Abbrev */
@@ -2739,243 +2182,6 @@ export interface components {
             /** To */
             to: string | null;
         };
-        /**
-         * PlayerGame
-         * @description One row from gold_player_game_stats.
-         */
-        PlayerGame: {
-            /** Ast */
-            ast: number;
-            /** Ast Per Min */
-            ast_per_min?: number | null;
-            /** Blk */
-            blk: number;
-            /** Efg Pct */
-            efg_pct?: number | null;
-            /** Fg3A */
-            fg3a?: number | null;
-            /** Fga */
-            fga?: number | null;
-            /** Fgm */
-            fgm?: number | null;
-            /** Fta */
-            fta?: number | null;
-            /**
-             * Game Date
-             * Format: date
-             */
-            game_date: string;
-            /** Game Id */
-            game_id: string;
-            /** Is Home */
-            is_home: number;
-            /** Matchup */
-            matchup?: string | null;
-            /** Min */
-            min: number;
-            /** Net Rating */
-            net_rating?: number | null;
-            /** Opp Team Abbreviation */
-            opp_team_abbreviation?: string | null;
-            /** Plus Minus */
-            plus_minus?: number | null;
-            /** Pts */
-            pts: number;
-            /** Pts Per Min */
-            pts_per_min?: number | null;
-            /** Reb */
-            reb: number;
-            /** Reb Per Min */
-            reb_per_min?: number | null;
-            /** Season Type */
-            season_type?: string | null;
-            /** Season Year */
-            season_year?: string | null;
-            /** Starting */
-            starting: number;
-            /** Stl */
-            stl: number;
-            /** Tov */
-            tov: number;
-            /** Ts Pct */
-            ts_pct?: number | null;
-            /** Usg Pct */
-            usg_pct?: number | null;
-            /** Wl */
-            wl?: string | null;
-        };
-        /** PlayerListResponse */
-        PlayerListResponse: {
-            /** Count */
-            count: number;
-            /** Players */
-            players: components["schemas"]["PlayerSummary"][];
-        };
-        /**
-         * PlayerProfile
-         * @description Full player response — profile + recent games + rolling context.
-         */
-        PlayerProfile: {
-            /** Career Game Count */
-            career_game_count?: number | null;
-            /** Normalized Name */
-            normalized_name: string;
-            /** Player Id */
-            player_id: number;
-            /** Player Name */
-            player_name: string;
-            /**
-             * Recent Games
-             * @default []
-             */
-            recent_games: components["schemas"]["PlayerGame"][];
-            rolling_avg_10?: components["schemas"]["RollingAvg10"] | null;
-            rolling_avg_5?: components["schemas"]["RollingAvg5"] | null;
-            /** Team Abbreviation */
-            team_abbreviation?: string | null;
-            /** Team Name */
-            team_name?: string | null;
-        };
-        /** PlayerSummary */
-        PlayerSummary: {
-            /** Career Game Count */
-            career_game_count?: number | null;
-            /** Normalized Name */
-            normalized_name: string;
-            /** Player Id */
-            player_id: number;
-            /** Player Name */
-            player_name: string;
-            /** Team Abbreviation */
-            team_abbreviation?: string | null;
-            /** Team Name */
-            team_name?: string | null;
-        };
-        /**
-         * PropLine
-         * @description One prop quote from silver.silver_props or gold.gold_prop_history.
-         */
-        PropLine: {
-            /** Ast Per Min Roll5 */
-            ast_per_min_roll5?: number | null;
-            /** Away Team Abbrev */
-            away_team_abbrev?: string | null;
-            /** Bookmaker */
-            bookmaker: string;
-            /** Expected Pace */
-            expected_pace?: number | null;
-            /**
-             * Game Date
-             * Format: date
-             */
-            game_date: string;
-            /** Game Season Year */
-            game_season_year?: string | null;
-            /** Game Total */
-            game_total?: number | null;
-            /** Home Team Abbrev */
-            home_team_abbrev?: string | null;
-            /** Last Update At */
-            last_update_at?: string | null;
-            /** Line */
-            line: number;
-            /** Market Category */
-            market_category: string;
-            /** Min Roll10 */
-            min_roll10?: number | null;
-            /** Min Roll5 */
-            min_roll5?: number | null;
-            /** Normalized Name */
-            normalized_name?: string | null;
-            /** Odds */
-            odds?: number | null;
-            /** Opp Def Rating Roll10 */
-            opp_def_rating_roll10?: number | null;
-            /** Player Id */
-            player_id?: number | null;
-            /** Player Name */
-            player_name: string;
-            /** Player Name Raw */
-            player_name_raw?: string | null;
-            /** Player Team Abbrev */
-            player_team_abbrev?: string | null;
-            /** Prop Source */
-            prop_source?: string | null;
-            /** Pts Per Min Roll10 */
-            pts_per_min_roll10?: number | null;
-            /** Pts Per Min Roll5 */
-            pts_per_min_roll5?: number | null;
-            /** Reb Per Min Roll5 */
-            reb_per_min_roll5?: number | null;
-            /** Side */
-            side: string;
-            /** Team Min Rank L10 */
-            team_min_rank_l10?: number | null;
-            /** Team Spread */
-            team_spread?: number | null;
-            /** Team Usg Rank L10 */
-            team_usg_rank_l10?: number | null;
-        };
-        /**
-         * RollingAvg10
-         * @description L10 rolling averages + model features for a player.
-         */
-        RollingAvg10: {
-            /** Ast Roll10 */
-            ast_roll10?: number | null;
-            /** Consec Starts */
-            consec_starts?: number | null;
-            /** Min Rate Of Change */
-            min_rate_of_change?: number | null;
-            /** Min Roll10 */
-            min_roll10?: number | null;
-            /** Min Season Mean */
-            min_season_mean?: number | null;
-            /** Plus Minus Roll10 */
-            plus_minus_roll10?: number | null;
-            /** Pts Per Min Roll10 */
-            pts_per_min_roll10?: number | null;
-            /** Pts Roll10 */
-            pts_roll10?: number | null;
-            /** Reb Roll10 */
-            reb_roll10?: number | null;
-            /** Starter Roll10 Pct */
-            starter_roll10_pct?: number | null;
-            /** Team Min Rank L10 */
-            team_min_rank_l10?: number | null;
-            /** Team Usg Rank L10 */
-            team_usg_rank_l10?: number | null;
-            /** Tov Roll10 */
-            tov_roll10?: number | null;
-            /** Usg Pct Roll10 */
-            usg_pct_roll10?: number | null;
-        };
-        /**
-         * RollingAvg5
-         * @description L5 rolling averages for a player.
-         */
-        RollingAvg5: {
-            /** Ast Per Min Roll5 */
-            ast_per_min_roll5?: number | null;
-            /** Ast Roll5 */
-            ast_roll5?: number | null;
-            /** Min Roll5 */
-            min_roll5?: number | null;
-            /** Plus Minus Roll5 */
-            plus_minus_roll5?: number | null;
-            /** Pts Per Min Roll5 */
-            pts_per_min_roll5?: number | null;
-            /** Pts Roll5 */
-            pts_roll5?: number | null;
-            /** Reb Per Min Roll5 */
-            reb_per_min_roll5?: number | null;
-            /** Reb Roll5 */
-            reb_roll5?: number | null;
-            /** Tov Roll5 */
-            tov_roll5?: number | null;
-            /** Usg Pct Roll5 */
-            usg_pct_roll5?: number | null;
-        };
         /** ValidationError */
         ValidationError: {
             /** Context */
@@ -2988,43 +2194,6 @@ export interface components {
             msg: string;
             /** Error Type */
             type: string;
-        };
-        /** WnbaFuturesEntry */
-        WnbaFuturesEntry: {
-            /** Abbrev */
-            abbrev: string;
-            /** Logo Url */
-            logo_url: string | null;
-            /** Name */
-            name: string;
-            /** Odds American */
-            odds_american: string;
-            /** Team Id */
-            team_id: string;
-        };
-        /** WnbaFuturesMarket */
-        WnbaFuturesMarket: {
-            /** Display Name */
-            display_name: string;
-            /** Entries */
-            entries: components["schemas"]["WnbaFuturesEntry"][];
-            /** Id */
-            id: string;
-            /** Name */
-            name: string;
-            /** Provider */
-            provider: string;
-        };
-        /** WnbaFuturesResponse */
-        WnbaFuturesResponse: {
-            /** As Of */
-            as_of: string;
-            /** Error */
-            error?: string | null;
-            /** Markets */
-            markets: components["schemas"]["WnbaFuturesMarket"][];
-            /** Season */
-            season: number;
         };
         /** WnbaGame */
         WnbaGame: {
@@ -3183,48 +2352,6 @@ export interface components {
             /** Home Abbrev */
             home_abbrev: string;
         };
-        /** WnbaLeaderCategory */
-        WnbaLeaderCategory: {
-            /**
-             * Key
-             * @enum {string}
-             */
-            key: "points" | "rebounds" | "assists" | "steals" | "blocks" | "three_pointers";
-            /** Label */
-            label: string;
-            /** Leaders */
-            leaders: components["schemas"]["WnbaLeaderRow"][];
-            /** Stat */
-            stat: string;
-        };
-        /** WnbaLeaderRow */
-        WnbaLeaderRow: {
-            /** Gp */
-            gp: number;
-            /** Name */
-            name: string;
-            /** Player Id */
-            player_id: string;
-            /** Rank */
-            rank: number;
-            /** Team Abbrev */
-            team_abbrev: string;
-            /** Value */
-            value: string;
-        };
-        /** WnbaLeadersResponse */
-        WnbaLeadersResponse: {
-            /** Categories */
-            categories: components["schemas"]["WnbaLeaderCategory"][];
-            /**
-             * Pace
-             * @default per_game
-             * @constant
-             */
-            pace: "per_game";
-            /** Season */
-            season: number;
-        };
         /** WnbaOddsBoard */
         WnbaOddsBoard: {
             away: components["schemas"]["WnbaOddsBoardSide"];
@@ -3293,83 +2420,6 @@ export interface components {
              * @default draftkings
              */
             sportsbook: string;
-        };
-        /** WnbaPlayerAverages */
-        WnbaPlayerAverages: {
-            /** Ast */
-            ast: string;
-            /** Fg3 Pct */
-            fg3_pct: string;
-            /** Fg Pct */
-            fg_pct: string;
-            /** Pts */
-            pts: string;
-            /** Reb */
-            reb: string;
-        };
-        /** WnbaPlayerGame */
-        WnbaPlayerGame: {
-            /** Ast */
-            ast: string;
-            /** Blk */
-            blk: string;
-            /** Fg */
-            fg: string;
-            /** Ft */
-            ft: string;
-            /** Game Date */
-            game_date: string;
-            /** Game Id */
-            game_id: string;
-            /** Matchup */
-            matchup: string;
-            /** Min */
-            min: string;
-            /** Pts */
-            pts: string;
-            /** Reb */
-            reb: string;
-            /** Stl */
-            stl: string;
-            /** Three Pt */
-            three_pt: string;
-            /** To */
-            to: string;
-        };
-        /** WnbaPlayerResponse */
-        WnbaPlayerResponse: {
-            averages: components["schemas"]["WnbaPlayerAverages"];
-            /** Birthdate */
-            birthdate?: string | null;
-            /** College */
-            college?: string | null;
-            /** Draft Info */
-            draft_info?: string | null;
-            /** Games */
-            games: components["schemas"]["WnbaPlayerGame"][];
-            /** Headshot Url */
-            headshot_url: string | null;
-            /** Height */
-            height?: string | null;
-            /** Jersey */
-            jersey?: string | null;
-            /** Name */
-            name: string;
-            /** Player Id */
-            player_id: string;
-            /** Position */
-            position: string | null;
-            /** Season */
-            season: number;
-            /**
-             * Source Label
-             * @default stats.wnba.com
-             */
-            source_label: string;
-            /** Team Abbrev */
-            team_abbrev: string;
-            /** Team Name */
-            team_name: string;
         };
         /** WnbaPropBoardBookChip */
         WnbaPropBoardBookChip: {
@@ -3628,58 +2678,6 @@ export interface components {
             away: components["schemas"]["WnbaSeasonTeamStatLine"];
             home: components["schemas"]["WnbaSeasonTeamStatLine"];
         };
-        /** WnbaStandingsConference */
-        WnbaStandingsConference: {
-            /**
-             * Key
-             * @enum {string}
-             */
-            key: "east" | "west";
-            /** Label */
-            label: string;
-            /** Teams */
-            teams: components["schemas"]["WnbaStandingsRow"][];
-        };
-        /** WnbaStandingsResponse */
-        WnbaStandingsResponse: {
-            /** Conferences */
-            conferences: components["schemas"]["WnbaStandingsConference"][];
-            /** Season */
-            season: number;
-        };
-        /** WnbaStandingsRow */
-        WnbaStandingsRow: {
-            /** Abbrev */
-            abbrev: string;
-            /** Away */
-            away: string;
-            /** Diff */
-            diff: string;
-            /** Gb */
-            gb: string;
-            /** Home */
-            home: string;
-            /** L10 */
-            l10: string;
-            /** Logo Url */
-            logo_url: string | null;
-            /** Losses */
-            losses: number;
-            /** Name */
-            name: string;
-            /** Pct */
-            pct: string;
-            /** Rank */
-            rank: number;
-            /** Streak */
-            streak: string;
-            /** Team Id */
-            team_id: string;
-            /** Wins */
-            wins: number;
-            /** Wl */
-            wl: string;
-        };
         /** WnbaTeam */
         WnbaTeam: {
             /** Abbrev */
@@ -3791,156 +2789,6 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    get_todays_games_api_games_today_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Game"][];
-                };
-            };
-        };
-    };
-    get_games_api_games__date__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                date: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Game"][];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    get_game_props_api_games__date__props_get: {
-        parameters: {
-            query?: {
-                bookmaker?: string | null;
-                market?: string | null;
-            };
-            header?: never;
-            path: {
-                date: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PropLine"][];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    get_game_slate_api_games__date__slate_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                date: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GameSlate"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    get_games_with_props_api_games__date__with_props_get: {
-        parameters: {
-            query?: {
-                bookmaker?: string | null;
-                market?: string | null;
-            };
-            header?: never;
-            path: {
-                date: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GameWithProps"][];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
     health_api_health_get: {
         parameters: {
             query?: never;
@@ -3959,62 +2807,6 @@ export interface operations {
                     "application/json": {
                         [key: string]: string;
                     };
-                };
-            };
-        };
-    };
-    list_matchups_api_matchups__date__get: {
-        parameters: {
-            query?: {
-                player_id?: number | null;
-                /** @description Team tricode filter. */
-                team?: string | null;
-                limit?: number;
-            };
-            header?: never;
-            path: {
-                date: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MatchupFeatures"][];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    mlb_futures_api_mlb_futures_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MlbFuturesResponse"];
                 };
             };
         };
@@ -4079,26 +2871,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    mlb_leaders_api_mlb_leaders_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MlbLeadersResponse"];
                 };
             };
         };
@@ -4335,26 +3107,6 @@ export interface operations {
             };
         };
     };
-    mlb_standings_api_mlb_standings_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MlbStandingsResponse"];
-                };
-            };
-        };
-    };
     nba_game_detail_api_nba_games__espn_event_id__get: {
         parameters: {
             query?: never;
@@ -4521,172 +3273,6 @@ export interface operations {
             };
         };
     };
-    get_player_api_player__player_id__get: {
-        parameters: {
-            query?: {
-                recent_n?: number;
-            };
-            header?: never;
-            path: {
-                player_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PlayerProfile"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    search_players_api_players_get: {
-        parameters: {
-            query?: {
-                /** @description Name search (case-insensitive). */
-                q?: string | null;
-                /** @description Team tricode, e.g. LAL */
-                team?: string | null;
-                limit?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PlayerListResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    list_props_api_props_get: {
-        parameters: {
-            query?: {
-                /** @description Slate date YYYY-MM-DD. Defaults to today. */
-                date?: string | null;
-                bookmaker?: string | null;
-                /** @description e.g. player_points */
-                market?: string | null;
-                /** @description dfs or us */
-                source?: string | null;
-                /** @description over or under */
-                side?: string | null;
-                player_id?: number | null;
-                limit?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PropLine"][];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    get_slate_api_slates__book__get: {
-        parameters: {
-            query?: {
-                /** @description Slate date. Defaults to today. */
-                date?: string | null;
-                limit?: number;
-            };
-            header?: never;
-            path: {
-                book: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        [key: string]: unknown;
-                    };
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    wnba_futures_api_wnba_futures_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["WnbaFuturesResponse"];
-                };
-            };
-        };
-    };
     wnba_game_detail_api_wnba_games__espn_event_id__get: {
         parameters: {
             query?: never;
@@ -4751,26 +3337,6 @@ export interface operations {
             };
         };
     };
-    wnba_leaders_api_wnba_leaders_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["WnbaLeadersResponse"];
-                };
-            };
-        };
-    };
     wnba_odds_today_api_wnba_odds_today_get: {
         parameters: {
             query?: never;
@@ -4787,37 +3353,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["WnbaOddsResponse"];
-                };
-            };
-        };
-    };
-    wnba_player_api_wnba_player__player_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                player_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["WnbaPlayerResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -4966,26 +3501,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["WnbaScoreboardResponse"];
-                };
-            };
-        };
-    };
-    wnba_standings_api_wnba_standings_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["WnbaStandingsResponse"];
                 };
             };
         };

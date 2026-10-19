@@ -15,14 +15,10 @@ REQUIRED_WNBA_PATHS = (
     "/api/wnba/scoreboard/today",
     "/api/wnba/games/{espn_event_id}",
     "/api/wnba/games/{espn_event_id}/team-preview",
-    "/api/wnba/leaders",
-    "/api/wnba/standings",
     "/api/wnba/odds/today",
     "/api/wnba/props/today",
     "/api/wnba/props/board",
     "/api/wnba/props/game/{espn_event_id}",
-    "/api/wnba/futures",
-    "/api/wnba/player/{player_id}",
 )
 
 REQUIRED_MLB_PATHS = (
@@ -36,9 +32,6 @@ REQUIRED_MLB_PATHS = (
     "/api/mlb/props/board",
     "/api/mlb/props/game/{game_pk}",
     "/api/mlb/games/{game_pk}/team-preview",
-    "/api/mlb/leaders",
-    "/api/mlb/standings",
-    "/api/mlb/futures",
 )
 
 REQUIRED_NBA_PATHS = (

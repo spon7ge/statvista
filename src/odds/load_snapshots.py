@@ -20,7 +20,6 @@ from src.odds.snapshot_rows import (
     prophetx_team_to_rows,
     selenium_pinnacle_props_to_rows,
     selenium_pinnacle_team_to_rows,
-    sharp_props_to_book_rows,
     sportsbook_picks_to_book_rows,
     underdog_picks_to_rows,
 )
@@ -118,11 +117,6 @@ _NOVIG_TEAM_CONFLICT_COLS = [
     "points",
     "scraped_at",
 ]
-
-_SHARP_BOOK_TABLES = {
-    "fanduel": "wnba_fanduel",
-    "draftkings": "wnba_draftkings",
-}
 
 # Books persisted from Parlay into the WNBA unified table (no Pinnacle).
 PARLAY_PROP_SPORTSBOOKS = (
@@ -725,44 +719,9 @@ def _latest_scraped_at(table: str, league: str) -> datetime | None:
     return None
 
 
-def latest_sharp_props_scraped_at(league: str = "wnba") -> datetime | None:
-    """Return the newest scraped_at across FanDuel and DraftKings tables."""
-    times = [
-        _latest_scraped_at("wnba_fanduel", league),
-        _latest_scraped_at("wnba_draftkings", league),
-    ]
-    present = [t for t in times if t is not None]
-    if not present:
-        return None
-    return max(present)
-
-
 def latest_parlay_props_scraped_at(league: str = "wnba") -> datetime | None:
     """Return the newest scraped_at on the league's unified Parlay API odds table."""
     return _latest_scraped_at(parlay_api_odds_table(league), league)
-
-
-def should_persist_sharp_props(
-    *,
-    league: str = "wnba",
-    now: datetime | None = None,
-    interval_minutes: int | None = None,
-) -> bool:
-    """True when no recent joint FD/DK snapshot exists within the throttle window."""
-    minutes = (
-        snapshot_interval_minutes()
-        if interval_minutes is None
-        else max(interval_minutes, 0)
-    )
-    if minutes == 0:
-        return True
-
-    latest = latest_sharp_props_scraped_at(league)
-    if latest is None:
-        return True
-
-    now = now or datetime.now(timezone.utc)
-    return now - latest >= timedelta(minutes=minutes)
 
 
 def should_persist_parlay_props(
@@ -786,43 +745,6 @@ def should_persist_parlay_props(
 
     now = now or datetime.now(timezone.utc)
     return now - latest >= timedelta(minutes=minutes)
-
-
-def load_sharp_book_snapshot(
-    sharp_rows: list[dict],
-    *,
-    sportsbook: str,
-    league: str,
-    scraped_at: datetime | None = None,
-) -> int:
-    if _skip_db("SHARP_PROPS_SKIP_DB"):
-        return 0
-
-    book = sportsbook.lower().strip()
-    table = _SHARP_BOOK_TABLES.get(book)
-    if not table:
-        raise ValueError(f"unsupported sportsbook: {sportsbook}")
-
-    scraped_at = scraped_at or datetime.now(timezone.utc)
-    rows = sharp_props_to_book_rows(
-        sharp_rows, sportsbook=book, league=league, scraped_at=scraped_at
-    )
-    if not rows:
-        return 0
-
-    df = _coerce_float_columns(pd.DataFrame(rows), ["line_score"])
-    league_norm = (league or "").strip().lower()
-    df = apply_change_filter(table, df, league=league_norm)
-    if df.empty:
-        return 0
-    upsert_df(
-        table,
-        df,
-        schema="odds",
-        conflict_cols=_SHARP_BOOK_CONFLICT_COLS,
-        lineage_col="fetched_at",
-    )
-    return len(df)
 
 
 def load_parlay_api_odds_snapshot(
@@ -866,57 +788,6 @@ def load_parlay_api_odds_snapshot(
         key = str(book)
         if key in counts:
             counts[key] = int(n)
-    return counts
-
-
-def maybe_persist_sharp_props(
-    sharp_rows: list[dict[str, Any]],
-    *,
-    league: str = "wnba",
-    scraped_at: datetime | None = None,
-) -> dict[str, int]:
-    """
-    Persist FanDuel + DraftKings Sharp props when the throttle allows.
-
-    Best-effort: never raises. Returns counts written per book (0 if skipped).
-    """
-    empty = {"fanduel": 0, "draftkings": 0}
-    if _skip_db("SHARP_PROPS_SKIP_DB"):
-        return empty
-    if not sharp_rows:
-        return empty
-
-    try:
-        if not should_persist_sharp_props(league=league):
-            return empty
-    except Exception as exc:
-        logger.warning("Sharp props snapshot throttle check failed: %s", exc)
-        return empty
-
-    scraped_at = scraped_at or datetime.now(timezone.utc)
-    counts = dict(empty)
-    try:
-        counts["fanduel"] = load_sharp_book_snapshot(
-            sharp_rows, sportsbook="fanduel", league=league, scraped_at=scraped_at
-        )
-        counts["draftkings"] = load_sharp_book_snapshot(
-            sharp_rows,
-            sportsbook="draftkings",
-            league=league,
-            scraped_at=scraped_at,
-        )
-        if counts["fanduel"] or counts["draftkings"]:
-            logger.info(
-                "Sharp props snapshot written league=%s scraped_at=%s fd=%s dk=%s",
-                league,
-                scraped_at.isoformat(),
-                counts["fanduel"],
-                counts["draftkings"],
-            )
-    except Exception as exc:
-        logger.warning("Sharp props snapshot write failed: %s", exc)
-        return empty
-
     return counts
 
 

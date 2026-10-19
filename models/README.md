@@ -1,8 +1,8 @@
 # Prop models — methodology
 
-Quantile ML for NBA / WNBA player props (MIN, PTS via PPM, REB via RPM, AST via APM).
-This folder is the **research + training** surface. Live inference stays in
-`src/live_pipeline/` and loads versioned artifacts from `models/saved_models/`.
+Quantile ML notes for NBA / WNBA player props (MIN, PTS via PPM, REB via RPM, AST via APM).
+The training notebooks and `src/live_pipeline/` inference path were removed.
+`shared/` helpers and the docs in this folder remain.
 
 > **Rule:** document the hypothesis and freeze the naive baseline **before**
 > treating a holdout number as a decision. Training math changes belong in
@@ -27,20 +27,11 @@ models/
 │   ├── train.py              # fit / CV / holdout orchestration
 │   ├── analysis.py           # ablation + correlation
 │   └── artifacts.py          # save / load / predict
-├── nba/                      # league notebooks (prop config in notebook)
-├── wnba/
 ├── saved_models/             # joblib bundles + metrics sidecars
 └── reports/                  # holdout tables / plots for the log
 ```
 
-| Prop | Target | Notebooks |
-|------|--------|-----------|
-| MIN | `minutes` | `nba/min_nba_model.ipynb`, `wnba/min_wnba_model.ipynb` |
-| PPM | `pts_per_min` | `nba/points/model.ipynb`, `wnba/ppm_*` |
-| PPM research | `pts_per_min` | `nba/points/researcher.ipynb` |
-| APM | `ast_per_min` | `nba/apm_*`, `wnba/apm_*` |
-| RPM | `reb_per_min` | `nba/rpm_*`, `wnba/rpm_*` |
-| Discovery | scoring drivers (`pts`, `pts_per_min`, `minutes`) | `nba/pts_scoring_discovery.ipynb` |
+Training notebooks for MIN, PPM, APM, and RPM were removed with the live inference pipeline.
 
 ---
 
@@ -77,8 +68,7 @@ are reported; they do not redefine H0.
 
 - Entire `game_date` on one side of every fold (no intra-game leakage).
 - Holdout never used for early stopping, feature selection, or hyperparams.
-- Feature builder for research should match the live path
-  (`src/pipeline/features/` → `src/live_pipeline/`).
+- Feature builders lived in `src/pipeline/features/` before that package was removed.
 
 Details: [docs/leakage_and_splits.md](docs/leakage_and_splits.md).
 
@@ -110,10 +100,8 @@ Log the rejection as an experiment row; do not delete the failed run.
 |------|--------|
 | Folder + docs scaffold | ✅ |
 | `shared/` helpers | ✅ |
-| WNBA MIN notebook uses `shared/` + local config | ✅ |
-| NBA MIN / other props migrated to `shared/` | ⬜ |
-| PPM / APM / RPM naive H0 | ⬜ |
-| Live parity audit | ⬜ |
+| Training notebooks | removed |
+| Live inference pipeline | removed |
 
 ---
 

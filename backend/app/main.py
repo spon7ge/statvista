@@ -9,16 +9,10 @@ app = FastAPI(
     title="statvista API",
     version="0.3.0",
     description=(
-        "statvista basketball and baseball data backend. Database-backed endpoints read "
-        "from Supabase (silver / gold schemas) and make no NBA or Odds API calls. "
-        "The exceptions are /api/wnba/scoreboard/today, /api/mlb/scoreboard/today, "
-        "/api/mlb/scoreboard, /api/nba/scoreboard/today, /api/nba/scoreboard, "
-        "NBA game detail routes, /api/nba/odds/today, "
-        "/api/mlb/odds/today, /api/wnba/leaders, "
-        "/api/wnba/player/{player_id}, /api/wnba/standings, /api/wnba/futures, "
-        "/api/wnba/odds/today, /api/wnba/props/today, WNBA game detail routes, "
-        "/api/mlb/games/{game_pk}, /api/mlb/lineups, and /api/mlb/futures, which call ESPN, "
-        "stats.wnba.com, MLB Stats API, RotoWire, or SharpAPI for live league data."
+        "statvista basketball and baseball data backend. Live pages read ESPN, "
+        "stats.wnba.com, the MLB Stats API, RotoWire, ParlayAPI, SharpAPI game odds, "
+        "and Supabase odds snapshots. Scoreboard, game detail, odds, and prop-board "
+        "routes are the public surface."
     ),
 )
 

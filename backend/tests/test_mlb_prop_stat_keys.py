@@ -1,5 +1,4 @@
 from app.domains.mlb.prop_stat_keys import (
-    canonical_stat_key_from_odds_api_mlb,
     canonical_stat_key_from_pp_mlb,
     canonical_stat_key_from_sharp_mlb,
     canonical_stat_key_from_ud_mlb,
@@ -66,18 +65,6 @@ def test_sharp_alternate_and_main_share_canonical_key():
     main = canonical_stat_key_from_sharp_mlb("player_total_bases")
     alt = canonical_stat_key_from_sharp_mlb("player_total_bases_alternate")
     assert main == alt == "total_bases"
-
-
-def test_odds_api_batter_hits():
-    assert canonical_stat_key_from_odds_api_mlb("batter_hits") == "hits"
-
-
-def test_odds_api_pitcher_strikeouts():
-    assert canonical_stat_key_from_odds_api_mlb("pitcher_strikeouts") == "pitcher_strikeouts"
-
-
-def test_odds_api_unknown_returns_none():
-    assert canonical_stat_key_from_odds_api_mlb("h2h") is None
 
 
 def test_game_prop_category_order_includes_core_hitting():

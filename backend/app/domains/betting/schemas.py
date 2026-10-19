@@ -7,11 +7,9 @@ from app.domains.betting.schemas_props import (
     WnbaPropsResponse,
 )
 from app.schemas.odds import WnbaOddsGame, WnbaOddsResponse
-from app.schemas.prop import PropLine
 
 __all__ = [
     "PROP_SPORTSBOOKS",
-    "PropLine",
     "WnbaOddsGame",
     "WnbaOddsResponse",
     "WnbaPropBookQuote",

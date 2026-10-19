@@ -459,15 +459,10 @@
 }
 
 .site-footer p {
-  margin: 0 0 var(--space-16);
-  font-size: var(--text-14);
+  margin: 0;
+  font-size: var(--text-12);
   line-height: var(--lh-body);
   color: var(--c3);
-}
-
-.site-footer p:last-child {
-  margin-bottom: 0;
-  font-size: var(--text-12);
 }
 
 .icon-rotate-90 {
