@@ -1,4 +1,5 @@
 import type { ApiMlbPropBoardRow } from "@/shared/lib/api";
+import { rowMatchesBookCounts } from "@/features/props/boardBookCount";
 
 export type MlbPropBoardSide = "over" | "under";
 export type MlbHitRateWindow = "l5" | "l10" | "l15";
@@ -8,6 +9,8 @@ export type MlbPropBoardFilterSelection = {
   markets?: Set<string>;
   sides?: Set<MlbPropBoardSide>;
   games?: Set<string>;
+  /** Exact book counts ("1", "2", …). Empty means every count. */
+  bookCounts?: Set<string>;
 };
 
 export type MlbPropositionOption = { value: string; label: string };
@@ -70,9 +73,10 @@ export function collectMlbBoardGameOptions(
 }
 
 /**
- * Filters research-board rows by game, player name, market, and side.
- * Does not reorder (hit-rate highest→lowest is a sort on the table).
- * The server already anchored the book and matching odds chips.
+ * Filters research-board rows by game, player name, market, side, and
+ * how many books post the line. Does not reorder (hit-rate highest→lowest
+ * is a sort on the table). The server already anchored the book and
+ * matching odds chips.
  */
 export function filterMlbPropBoardRows(
   rows: ApiMlbPropBoardRow[],
@@ -81,6 +85,7 @@ export function filterMlbPropBoardRows(
     markets,
     sides,
     games,
+    bookCounts,
   }: MlbPropBoardFilterSelection,
 ): ApiMlbPropBoardRow[] {
   const q = query.trim().toLowerCase();
@@ -96,6 +101,7 @@ export function filterMlbPropBoardRows(
     if (q && !row.player_name.toLowerCase().includes(q)) return false;
     if (marketFilter.size > 0 && !marketFilter.has(row.stat)) return false;
     if (sideFilter.size > 0 && !sideFilter.has(row.side)) return false;
+    if (!rowMatchesBookCounts(row, bookCounts)) return false;
     return true;
   });
 }

@@ -186,6 +186,25 @@ describe("filterWnbaPropBoardRows", () => {
     ]);
   });
 
+  it("keeps rows whose book count is one of the selected counts", () => {
+    const rows = [
+      row({
+        player_name: "Caitlin Clark",
+        books: [{ book: "prophetx", american: -115, url: null, line: 18.5 }],
+      }),
+      row({
+        player_name: "A'ja Wilson",
+        books: [],
+      }),
+    ];
+    expect(
+      filterWnbaPropBoardRows(rows, {
+        ...emptyFilters,
+        bookCounts: new Set(["1"]),
+      }).map((r) => r.player_name),
+    ).toEqual(["A'ja Wilson"]);
+  });
+
   it("filters by selected games and omits rows with no game when a game filter is active", () => {
     const rows = [
       row({ player_name: "Caitlin Clark", game_id: "1" }),

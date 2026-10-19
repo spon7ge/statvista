@@ -186,6 +186,34 @@ describe("filterMlbPropBoardRows", () => {
     ]);
   });
 
+  it("keeps rows whose book count is one of the selected counts", () => {
+    const rows = [
+      row({
+        player_name: "Aaron Judge",
+        books: [{ book: "prophetx", american: -115, url: null, line: 1.5 }],
+      }),
+      row({
+        player_name: "Mookie Betts",
+        books: [
+          { book: "draftkings", american: -110, url: null, line: 1.5 },
+          { book: "fanduel", american: -108, url: null, line: 1.5 },
+        ],
+      }),
+    ];
+    expect(
+      filterMlbPropBoardRows(rows, {
+        ...emptyFilters,
+        bookCounts: new Set(["2"]),
+      }).map((r) => r.player_name),
+    ).toEqual(["Aaron Judge"]);
+    expect(
+      filterMlbPropBoardRows(rows, {
+        ...emptyFilters,
+        bookCounts: new Set(["2", "3"]),
+      }).map((r) => r.player_name),
+    ).toEqual(["Aaron Judge", "Mookie Betts"]);
+  });
+
   it("filters by selected games and omits rows with no game when a game filter is active", () => {
     const rows = [
       row({ player_name: "Aaron Judge", game_pk: 1 }),

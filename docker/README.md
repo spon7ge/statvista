@@ -36,8 +36,10 @@ Health: http://localhost:8000/api/health
 Props and Legs stay empty until odds snapshots exist. The `odds` worker fills Novig / ProphetX / Pinnacle / Underdog. PrizePicks still runs on the host:
 
 ```bash
+python -m src.scrapers.nba.nba_prizepick
 python -m src.scrapers.mlb.mlb_prizepick
 python -m src.scrapers.wnba.wnba_prizepick
+python -m src.scrapers.nfl.nfl_prizepick
 ```
 
 ## External Supabase

@@ -172,6 +172,27 @@ describe("MlbPropPicksPage", () => {
     expect(screen.queryByText("Mookie Betts")).not.toBeInTheDocument();
   });
 
+  it("filters the board to props posted by a chosen number of books", async () => {
+    const user = userEvent.setup();
+    const solo = row({ player_name: "Juan Soto", books: [] });
+    mockBoard([judge, solo]);
+
+    renderPage();
+    expect(screen.getByText("Aaron Judge")).toBeInTheDocument();
+    expect(screen.getByText("Juan Soto")).toBeInTheDocument();
+
+    const filters = screen.getByLabelText("MLB prop picks filters");
+    await user.click(within(filters).getByRole("button", { name: "Books" }));
+    await user.click(screen.getByRole("option", { name: "1 book" }));
+
+    expect(screen.getByText("Juan Soto")).toBeInTheDocument();
+    expect(screen.queryByText("Aaron Judge")).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Clear filters" }));
+    expect(screen.getByText("Aaron Judge")).toBeInTheDocument();
+    expect(screen.getByText("Juan Soto")).toBeInTheDocument();
+  });
+
   it("filters the board by player name search", async () => {
     const user = userEvent.setup();
     mockBoard([judge, betts]);

@@ -139,6 +139,45 @@ describe("MlbPropPicksFilters", () => {
     expect(onClear).toHaveBeenCalled();
   });
 
+  it("filters by exact book count", async () => {
+    const user = userEvent.setup();
+    const onBookCountsChange = vi.fn();
+    const { rerender } = render(
+      <MlbPropPicksFilters
+        query=""
+        onQueryChange={vi.fn()}
+        onClear={vi.fn()}
+        bookCounts={[
+          { value: "1", label: "1 book" },
+          { value: "2", label: "2 books" },
+        ]}
+        selectedBookCounts={new Set()}
+        onBookCountsChange={onBookCountsChange}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Books" }));
+    await user.click(screen.getByRole("option", { name: "2 books" }));
+    expect(onBookCountsChange).toHaveBeenCalledWith(new Set(["2"]));
+
+    rerender(
+      <MlbPropPicksFilters
+        query=""
+        onQueryChange={vi.fn()}
+        onClear={vi.fn()}
+        bookCounts={[
+          { value: "1", label: "1 book" },
+          { value: "2", label: "2 books" },
+        ]}
+        selectedBookCounts={new Set(["2"])}
+        onBookCountsChange={onBookCountsChange}
+      />,
+    );
+    expect(
+      screen.getByRole("button", { name: "Books (2 books)" }),
+    ).toBeInTheDocument();
+  });
+
   it("does not render a Team filter", () => {
     render(
       <MlbPropPicksFilters

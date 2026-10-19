@@ -13,6 +13,8 @@ type MultiSelectFilterProps = {
   tone?: FilterTone;
   /** One value at a time; click again to clear. */
   single?: boolean;
+  /** With one value chosen, show that option's label instead of "(1)". */
+  describeSelection?: boolean;
 };
 
 function MultiSelectFilter({
@@ -22,13 +24,18 @@ function MultiSelectFilter({
   onChange,
   tone = "default",
   single = false,
+  describeSelection = false,
 }: MultiSelectFilterProps) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const listId = useId();
+  const loneSelection =
+    describeSelection && selected.size === 1
+      ? options.find((opt) => selected.has(opt.value))
+      : undefined;
   const selectedOption = single
     ? options.find((opt) => selected.has(opt.value))
-    : undefined;
+    : loneSelection;
   const triggerLabel = selectedOption
     ? `${label} (${selectedOption.label})`
     : selected.size > 0
@@ -192,6 +199,9 @@ export type NbaPropPicksFiltersProps = {
   games?: NbaPropositionOption[];
   selectedGames?: Set<string>;
   onGamesChange?: (next: Set<string>) => void;
+  bookCounts?: NbaPropositionOption[];
+  selectedBookCounts?: Set<string>;
+  onBookCountsChange?: (next: Set<string>) => void;
   hitRate?: NbaHitRateWindow | null;
   onHitRateChange?: (next: NbaHitRateWindow | null) => void;
   /** `banner` = white pills on green; `pill` = dark-page capsules; default = square. */
@@ -215,6 +225,9 @@ export function NbaPropPicksFilters({
   games = [],
   selectedGames = new Set(),
   onGamesChange,
+  bookCounts = [],
+  selectedBookCounts = new Set(),
+  onBookCountsChange,
   hitRate = null,
   onHitRateChange,
   tone = "default",
@@ -230,6 +243,7 @@ export function NbaPropPicksFilters({
     selectedSides.size > 0 ||
     hasNonDefaultBook ||
     selectedGames.size > 0 ||
+    selectedBookCounts.size > 0 ||
     hitRate != null;
   const onBanner = tone === "banner";
   const onPill = tone === "pill";
@@ -256,6 +270,18 @@ export function NbaPropPicksFilters({
       onChange={onBooksChange ?? (() => {})}
     />
   );
+
+  const bookCountControl =
+    bookCounts.length > 0 ? (
+      <MultiSelectFilter
+        label="Books"
+        tone={tone}
+        describeSelection
+        options={bookCounts}
+        selected={selectedBookCounts}
+        onChange={onBookCountsChange ?? (() => {})}
+      />
+    ) : null;
 
   const propositionControl =
     markets.length > 0 ? (
@@ -297,6 +323,7 @@ export function NbaPropPicksFilters({
   const extraFilters = (
     <>
       {bookmakerControl}
+      {bookCountControl}
       {propositionControl}
       {sideControl}
       {hitRateControl}

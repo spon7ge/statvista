@@ -74,7 +74,9 @@ QUOTE_SPECS: dict[str, QuoteSpec] = {
     "nfl_novig": _EXCHANGE_PROPS,
     "nfl_novig_team": _EXCHANGE_TEAM,
     "nba_prizepicks": _PRIZEPICKS,
+    "nfl_prizepicks": _PRIZEPICKS,
     "nba_underdogs": _UNDERDOG,
+    "nfl_underdogs": _UNDERDOG,
     "nba_pinnacle": _BOOK_PROPS,
     "nba_pinnacle_team": _PINNACLE_TEAM,
     "nba_prophetx": _EXCHANGE_PROPS,
@@ -82,7 +84,9 @@ QUOTE_SPECS: dict[str, QuoteSpec] = {
     "nba_novig": _EXCHANGE_PROPS,
     "nba_novig_team": _EXCHANGE_TEAM,
     "nba_draftkings": _BOOK_PROPS,
+    "nfl_draftkings": _BOOK_PROPS,
     "nba_fanduel": _BOOK_PROPS,
+    "nfl_fanduel": _BOOK_PROPS,
 }
 
 

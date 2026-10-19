@@ -209,6 +209,8 @@ def _prizepicks_table(league: str) -> str:
         return "mlb_prizepicks"
     if lg == "nba":
         return "nba_prizepicks"
+    if lg == "nfl":
+        return "nfl_prizepicks"
     return "wnba_prizepicks"
 
 
@@ -251,6 +253,8 @@ def _underdog_table(league: str) -> str:
         return "mlb_underdogs"
     if lg == "nba":
         return "nba_underdogs"
+    if lg == "nfl":
+        return "nfl_underdogs"
     return "wnba_underdogs"
 
 
@@ -304,6 +308,8 @@ def _draftkings_table(league: str) -> str:
         return "nba_draftkings"
     if lg == "wnba":
         return "wnba_draftkings"
+    if lg == "nfl":
+        return "nfl_draftkings"
     raise ValueError(f"unsupported draftkings league: {league}")
 
 
@@ -313,6 +319,8 @@ def _fanduel_table(league: str) -> str:
         return "nba_fanduel"
     if lg == "wnba":
         return "wnba_fanduel"
+    if lg == "nfl":
+        return "nfl_fanduel"
     raise ValueError(f"unsupported fanduel league: {league}")
 
 

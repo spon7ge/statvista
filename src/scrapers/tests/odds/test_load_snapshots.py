@@ -95,6 +95,18 @@ def test_load_prizepicks_nba_uses_nba_table(mock_upsert):
     assert mock_upsert.call_args[0][0] == "nba_prizepicks"
 
 
+def test_load_prizepicks_nfl_uses_nfl_table(mock_upsert):
+    count = load_snapshots.load_prizepicks_snapshot(
+        [{"player": "A", "stat_type": "Pass Yards", "line_score": 250.5, "odds_type": "standard"}],
+        league="nfl",
+        scraped_at=SCRAPED,
+    )
+    assert count == 1
+    table, df = mock_upsert.call_args[0]
+    assert table == "nfl_prizepicks"
+    assert df.iloc[0]["league"] == "nfl"
+
+
 def test_load_prizepicks_snapshot_empty_returns_zero(mock_upsert):
     count = load_snapshots.load_prizepicks_snapshot([], league="wnba", scraped_at=SCRAPED)
     assert count == 0
@@ -192,6 +204,16 @@ def test_load_underdog_nba_uses_nba_table(mock_upsert):
     assert mock_upsert.call_args[0][0] == "nba_underdogs"
 
 
+def test_load_underdog_nfl_uses_nfl_table(mock_upsert):
+    count = load_snapshots.load_underdog_snapshot(
+        UNDERDOG_PICKS, league="nfl", scraped_at=SCRAPED
+    )
+    assert count == 1
+    table, df = mock_upsert.call_args[0]
+    assert table == "nfl_underdogs"
+    assert df.iloc[0]["league"] == "nfl"
+
+
 def test_load_draftkings_snapshot_nba(mock_upsert):
     picks = [
         {
@@ -214,6 +236,26 @@ def test_load_draftkings_snapshot_nba(mock_upsert):
     assert df.iloc[0]["american_price"] == -110
 
 
+def test_load_draftkings_nfl_uses_nfl_table(mock_upsert):
+    picks = [
+        {
+            "full_name": "Patrick Mahomes",
+            "stat_name": "passing_yards",
+            "stat_value": 275.5,
+            "choice": "over",
+            "american_price": -115,
+        }
+    ]
+    count = load_snapshots.load_draftkings_snapshot(
+        picks, league="nfl", scraped_at=SCRAPED
+    )
+    assert count == 1
+    table, df = mock_upsert.call_args[0]
+    assert table == "nfl_draftkings"
+    assert df.iloc[0]["league"] == "nfl"
+    assert df.iloc[0]["market_type"] == "passing_yards"
+
+
 def test_load_fanduel_snapshot_wnba_keeps_wnba_table(mock_upsert):
     picks = [
         {
@@ -226,6 +268,24 @@ def test_load_fanduel_snapshot_wnba_keeps_wnba_table(mock_upsert):
     ]
     load_snapshots.load_fanduel_snapshot(picks, league="wnba", scraped_at=SCRAPED)
     assert mock_upsert.call_args[0][0] == "wnba_fanduel"
+
+
+def test_load_fanduel_nfl_uses_nfl_table(mock_upsert):
+    picks = [
+        {
+            "full_name": "Patrick Mahomes",
+            "stat_name": "passing_yards",
+            "stat_value": 275.5,
+            "choice": "over",
+            "american_price": -115,
+        }
+    ]
+    count = load_snapshots.load_fanduel_snapshot(picks, league="nfl", scraped_at=SCRAPED)
+    assert count == 1
+    table, df = mock_upsert.call_args[0]
+    assert table == "nfl_fanduel"
+    assert df.iloc[0]["league"] == "nfl"
+    assert df.iloc[0]["market_type"] == "passing_yards"
 
 
 def test_load_underdog_snapshot_dedupes_conflict_keys(mock_upsert):

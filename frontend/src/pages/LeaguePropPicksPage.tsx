@@ -15,6 +15,7 @@ import {
   type WnbaPropBoardSide,
 } from "@/features/basketball/league/filterWnbaPropBoard";
 import { BOOK_CHIP_ORDER } from "@/features/basketball/league/sortWnbaPropBoard";
+import { collectBoardBookCountOptions } from "@/features/props/boardBookCount";
 
 const BOOK_OPTIONS = BOOK_CHIP_ORDER.map((value) => ({
   value,
@@ -36,6 +37,9 @@ export function LeaguePropPicksPage() {
   const [selectedGames, setSelectedGames] = useState<Set<string>>(
     () => new Set(),
   );
+  const [selectedBookCounts, setSelectedBookCounts] = useState<Set<string>>(
+    () => new Set(),
+  );
   const [hitRate, setHitRate] = useState<WnbaHitRateWindow | null>(null);
 
   const now = usePregameNow();
@@ -45,6 +49,7 @@ export function LeaguePropPicksPage() {
   );
   const markets = useMemo(() => collectWnbaBoardPropositionOptions(rows), [rows]);
   const games = useMemo(() => collectWnbaBoardGameOptions(rows), [rows]);
+  const bookCounts = useMemo(() => collectBoardBookCountOptions(rows), [rows]);
   const filtered = useMemo(
     () =>
       filterWnbaPropBoardRows(rows, {
@@ -52,8 +57,16 @@ export function LeaguePropPicksPage() {
         markets: selectedMarkets,
         sides: selectedSides,
         games: selectedGames,
+        bookCounts: selectedBookCounts,
       }),
-    [rows, query, selectedMarkets, selectedSides, selectedGames],
+    [
+      rows,
+      query,
+      selectedMarkets,
+      selectedSides,
+      selectedGames,
+      selectedBookCounts,
+    ],
   );
 
   function selectBook(next: Set<string>) {
@@ -69,6 +82,7 @@ export function LeaguePropPicksPage() {
     setSelectedMarkets(new Set());
     setSelectedSides(new Set());
     setSelectedGames(new Set());
+    setSelectedBookCounts(new Set());
     setHitRate(null);
     selectBook(new Set());
   }
@@ -108,6 +122,9 @@ export function LeaguePropPicksPage() {
               games={games}
               selectedGames={selectedGames}
               onGamesChange={setSelectedGames}
+              bookCounts={bookCounts}
+              selectedBookCounts={selectedBookCounts}
+              onBookCountsChange={setSelectedBookCounts}
               hitRate={hitRate}
               onHitRateChange={setHitRate}
             />
