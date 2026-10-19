@@ -6,18 +6,20 @@ describe("AboutContent", () => {
   it("renders description and tech stack only", () => {
     render(<AboutContent />);
 
+    expect(screen.getByText(/Alex Gonzalez/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Saint Mary.s College of California/),
+    ).toBeInTheDocument();
     expect(screen.getByText(/statvista/i)).toBeInTheDocument();
-    expect(
-      screen.getByText(/make pre-bet research easier/i),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/players, lines, and upcoming games/i),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/research site/i)).toBeInTheDocument();
+    expect(screen.getByText(/not gambling advice/i)).toBeInTheDocument();
 
     expect(
       screen.getByRole("heading", { name: /tech stack/i }),
     ).toBeInTheDocument();
-    expect(screen.getByText(/react 19/i)).toBeInTheDocument();
+    expect(screen.getByText("Frontend: React, Tailwind")).toBeInTheDocument();
+    expect(screen.getByText("Backend: FastAPI, Supabase")).toBeInTheDocument();
+    expect(screen.queryByText(/vite/i)).not.toBeInTheDocument();
 
     expect(
       screen.queryByRole("heading", { name: /what you can do/i }),

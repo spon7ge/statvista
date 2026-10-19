@@ -4,32 +4,42 @@ import { render, screen } from "@testing-library/react";
 import { BlogIndex } from "./BlogIndex";
 
 describe("BlogIndex", () => {
-  it("renders two post cards with title, read time, and links", () => {
+  it("lists the Knicks post as text with no image block", () => {
     render(
       <MemoryRouter>
         <BlogIndex />
       </MemoryRouter>,
     );
+    const card = screen.getByRole("link", {
+      name: /when analytics lie/i,
+    });
+    expect(card).toHaveAttribute(
+      "href",
+      "/blog/when-analytics-lie-2026-knicks",
+    );
+    expect(screen.getByText("Playoff Analytics")).toBeInTheDocument();
     expect(
-      screen.getByRole("link", { name: /how to read a prop line/i }),
-    ).toHaveAttribute("href", "/blog/read-a-prop-line");
+      screen.getByRole("heading", {
+        name: "When Analytics Lie: How the 2026 Knicks Won It All",
+      }),
+    ).toBeInTheDocument();
+    const excerpt = screen.getByText(/\?$/);
+    expect(excerpt.textContent?.trim().endsWith("?")).toBe(true);
     expect(
-      screen.getByRole("link", { name: /hit rate actually means/i }),
-    ).toHaveAttribute("href", "/blog/hit-rate-l5-l10-l15");
-    const readFour = screen.getByText("4 min read");
-    const readSix = screen.getByText("6 min read");
-    expect(readFour.className).toMatch(/rounded-full/);
-    expect(readFour.className).toMatch(/bg-\[var\(--white\)\]/);
-    expect(readSix.className).toMatch(/rounded-full/);
-    expect(readSix.className).toMatch(/bg-\[var\(--white\)\]/);
-    expect(screen.getByText("LINES")).toBeInTheDocument();
-    expect(screen.getByText("FORM")).toBeInTheDocument();
-    const grid = screen.getByTestId("blog-index-grid");
-    expect(grid.className).toMatch(/sm:grid-cols-2/);
-    expect(grid.className).toMatch(/blog-content/);
-    const card = screen.getByRole("link", { name: /how to read a prop line/i });
-    expect(card.className).toMatch(/border/);
-    expect(card.className).toMatch(/border-line/);
-    expect(card.className).toMatch(/rounded-lg/);
+      screen.getByText(
+        "Quarter splits, clutch time, comebacks, and efficiency",
+      ),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Jun 18, 2026")).toBeInTheDocument();
+    const readTime = screen.getByText("8 min read");
+    expect(readTime.className).toMatch(/rounded-full/);
+    expect(readTime.className).toMatch(/bg-\[var\(--white\)\]/);
+    expect(screen.queryByText("LINES")).not.toBeInTheDocument();
+    expect(screen.queryByText("FORM")).not.toBeInTheDocument();
+    const list = screen.getByTestId("blog-index-grid");
+    expect(list.className).toMatch(/blog-content/);
+    expect(list.className).toMatch(/grid-cols-1/);
+    expect(list.className).toMatch(/sm:grid-cols-2/);
+    expect(card.querySelector("[aria-hidden]")).toBeNull();
   });
 });

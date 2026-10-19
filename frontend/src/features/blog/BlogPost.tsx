@@ -1,21 +1,22 @@
 import { Link } from "react-router-dom";
-import type { BlogPost as BlogPostModel } from "./posts";
+import { formatBlogDate, type BlogPost as BlogPostModel } from "./posts";
 
 export function BlogPost({ post }: { post: BlogPostModel }) {
   return (
     <article className="blog-content mx-auto max-w-3xl space-y-6">
-      <div
-        className={`flex aspect-[16/10] max-w-xl items-center justify-center rounded-md text-sm font-semibold tracking-wide ${post.accentClassName}`}
-        aria-hidden="true"
-      >
-        {post.accentLabel}
-      </div>
       <header className="space-y-2">
-        <h1 className="text-2xl font-medium">{post.title}</h1>
-        <span className="inline-flex w-fit rounded-full bg-[var(--white)] px-2.5 py-0.5 text-[14px] font-medium text-c1">
-          {post.readMinutes} min read
-        </span>
-
+        <p className="text-sm font-medium text-c4">{post.category}</p>
+        <h1 className="text-2xl font-semibold">{post.title}</h1>
+        <p>{post.excerpt}</p>
+        <p className="text-sm">{post.topics}</p>
+        <div className="flex flex-wrap items-center gap-3 text-sm">
+          <time dateTime={post.publishedOn}>
+            {formatBlogDate(post.publishedOn)}
+          </time>
+          <span className="inline-flex w-fit rounded-full bg-[var(--white)] px-2.5 py-0.5 text-[14px] font-medium text-c1">
+            {post.readMinutes} min read
+          </span>
+        </div>
       </header>
       <div className="space-y-4">
         {post.body.map((paragraph) => (

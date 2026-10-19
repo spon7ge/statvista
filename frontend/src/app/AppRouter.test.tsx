@@ -63,7 +63,8 @@ describe("AppRouter", () => {
     expect(
       screen.getByRole("heading", { name: /tech stack/i }),
     ).toBeInTheDocument();
-    expect(screen.getByText(/React 19, Vite, TanStack Query/i)).toBeInTheDocument();
+    expect(screen.getByText("Frontend: React, Tailwind")).toBeInTheDocument();
+    expect(screen.getByText("Backend: FastAPI, Supabase")).toBeInTheDocument();
     expect(
       screen.queryByRole("heading", { name: /page not found/i }),
     ).not.toBeInTheDocument();
@@ -80,16 +81,13 @@ describe("AppRouter", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("renders Blog at /blog with heading Blog and both post titles", () => {
+  it("renders Blog at /blog with heading Blog and the listed post", () => {
     renderWithProviders(["/blog"]);
     expect(
       screen.getByRole("heading", { name: /^blog$/i }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("link", { name: /how to read a prop line/i }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("link", { name: /hit rate actually means/i }),
+      screen.getByRole("link", { name: /when analytics lie/i }),
     ).toBeInTheDocument();
     expect(
       screen.queryByRole("heading", { name: /page not found/i }),
@@ -97,10 +95,10 @@ describe("AppRouter", () => {
   });
 
   it("renders a blog post at /blog/:slug", () => {
-    renderWithProviders(["/blog/read-a-prop-line"]);
+    renderWithProviders(["/blog/when-analytics-lie-2026-knicks"]);
     expect(
       screen.getByRole("heading", {
-        name: /how to read a prop line before you bet/i,
+        name: /when analytics lie: how the 2026 knicks won it all/i,
       }),
     ).toBeInTheDocument();
   });

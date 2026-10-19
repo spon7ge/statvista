@@ -114,14 +114,14 @@ describe("AppSidebar", () => {
     );
   });
 
-  it("marks Blog current on /blog and /blog/read-a-prop-line", () => {
+  it("marks Blog current on /blog and a post", () => {
     renderSidebar("/blog");
     expect(screen.getByRole("link", { name: "Blog" })).toHaveAttribute(
       "aria-current",
       "page",
     );
     cleanup();
-    renderSidebar("/blog/read-a-prop-line");
+    renderSidebar("/blog/when-analytics-lie-2026-knicks");
     expect(screen.getByRole("link", { name: "Blog" })).toHaveAttribute(
       "aria-current",
       "page",
