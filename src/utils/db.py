@@ -235,6 +235,7 @@ def upsert_df(
     batch_size: int = 2000,
     *,
     lineage_col: str | None = "fetched_at",
+    postgres_only: bool = False,
 ) -> None:
     """Upsert a DataFrame into a Postgres/Supabase table.
 
@@ -243,6 +244,8 @@ def upsert_df(
     - NaN / NaT become NULL.
     - Rows are sent in batches of ``batch_size`` via ``execute_values`` (Postgres)
       or PostgREST upserts (supabase-py fallback).
+    - ``postgres_only=True`` requires the direct Postgres path and re-raises
+      on failure, including a missing ``SUPABASE_DB_URL``.
 
     The table must already exist (run scripts/migrations/001_raw_gamelogs.sql).
     Unknown DataFrame columns that have no matching table column are silently
@@ -292,7 +295,7 @@ def upsert_df(
         cols, rows = _df_to_tuples(aligned)
         _upsert_df_postgres(table, rows, schema, conflict_cols, cols, batch_size)
     except Exception as exc:
-        if not os.environ.get("SUPABASE_URL"):
+        if postgres_only or not os.environ.get("SUPABASE_URL"):
             raise
         if exc.__class__.__name__ in ("UndefinedColumn", "UndefinedTable", "DataError"):
             raise
