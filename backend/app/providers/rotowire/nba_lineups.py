@@ -14,6 +14,17 @@ logger = logging.getLogger(__name__)
 ET = ZoneInfo("America/New_York")
 ROTOWIRE_TTL_SECONDS = 180
 
+# ESPN scoreboard tricodes that differ from RotoWire ``lineup__abbr``.
+_ESPN_TO_ROTOWIRE = {
+    "GS": "GSW",
+    "NO": "NOP",
+    "NY": "NYK",
+    "PHO": "PHX",
+    "SA": "SAS",
+    "UTAH": "UTA",
+    "WSH": "WAS",
+}
+
 _ROOT = Path(__file__).resolve().parents[4]
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
@@ -65,11 +76,11 @@ def _cached_by_abbr() -> dict[str, list[dict[str, str | None]]] | None:
 def _lookup_starters(
     by_abbr: dict[str, list[dict[str, str | None]]], abbrev: str
 ) -> list[dict[str, str | None]] | None:
-    """Resolve starters, mapping ESPN tricodes (e.g. WSH) to RotoWire (WAS)."""
+    """Resolve starters, mapping ESPN tricodes (e.g. UTAH, GS) to RotoWire."""
     raw = str(abbrev or "").strip().upper()
     if not raw:
         return None
-    canonical = {"PHO": "PHX", "WSH": "WAS"}.get(raw, raw)
+    canonical = _ESPN_TO_ROTOWIRE.get(raw, raw)
     for key in (canonical, raw):
         rows = by_abbr.get(key)
         if rows:
