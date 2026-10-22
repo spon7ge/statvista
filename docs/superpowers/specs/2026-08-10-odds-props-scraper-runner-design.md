@@ -2,12 +2,11 @@
 
 ## Goal
 
-One CLI that runs all WNBA/NBA/MLB **odds/props** scrapers sequentially, including PrizePicks.
+One CLI that runs WNBA/NBA/MLB **odds/props** scrapers. HTTP books run together. Pinnacle and PrizePicks run after that wave, one at a time.
 
 ## Non-goals
 
 - RotoWire / lineup scrapers
-- Parallel scraper execution
 - Changing individual scraper behavior
 
 ## Design
@@ -15,12 +14,13 @@ One CLI that runs all WNBA/NBA/MLB **odds/props** scrapers sequentially, includi
 - **File:** `src/scrapers/run_all_odds.py`
 - **Entry:** `python -m src.scrapers.run_all_odds`
 - **Mechanism:** subprocess per module (`python -m src.scrapers.<league>.<name>`) so Selenium/env state does not bleed
+- **Waves:** every selected HTTP book starts together. After that wave finishes, Pinnacle and PrizePicks run one at a time, in catalog order, so browser/DataDome work does not start while the HTTP scrapers are still running
 - **Continue on failure** by default; print pass/fail summary; exit `1` if any failed
-- **Flags:** `--league wnba|nba|mlb|all` (default `all`), `--only name,…`, `--fail-fast` (stop on first failure)
+- **Flags:** `--league wnba|nba|mlb|all` (default `all`), `--only name,…`, `--exclude name,…`, `--fail-fast` (after the HTTP wave, skip Pinnacle and PrizePicks if any HTTP book failed; during the browser wave, stop before the next browser scraper)
 
 ### Included (order)
 
-HTTP books run before Pinnacle and PrizePicks. PrizePicks is last per league so a DataDome/browser fallback does not block the HTTP scrapers.
+HTTP books share the first wave. Pinnacle and PrizePicks are the second wave.
 
 | League | Module | Notes |
 |--------|--------|--------|

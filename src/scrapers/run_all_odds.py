@@ -14,6 +14,9 @@ import argparse
 import os
 import subprocess
 import sys
+import threading
+from collections.abc import Callable
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from typing import Literal
 
@@ -29,8 +32,9 @@ class ScraperJob:
     env: dict[str, str] | None = None
 
 
-# HTTP books first. Pinnacle, then PrizePicks, stay last per league so a
-# browser/DataDome fallback does not block the HTTP scrapers.
+# HTTP books run together. Pinnacle and PrizePicks stay after that wave so a
+# browser/DataDome fallback does not start until the HTTP scrapers have finished.
+_PRINT_LOCK = threading.Lock()
 SCRAPER_JOBS: tuple[ScraperJob, ...] = (
     ScraperJob("wnba_novig", "wnba", "src.scrapers.wnba.wnba_novig"),
     ScraperJob("wnba_prophetx", "wnba", "src.scrapers.wnba.wnba_prophetx"),
@@ -96,15 +100,40 @@ def resolve_jobs(
     return jobs
 
 
+def _is_late_job(job: ScraperJob) -> bool:
+    """Pinnacle and PrizePicks drive a browser, so they start after the HTTP books."""
+    return "pinnacle" in job.name or "prizepick" in job.name
+
+
+def partition_jobs(jobs: list[ScraperJob]) -> tuple[list[ScraperJob], list[ScraperJob]]:
+    """HTTP books first, then Pinnacle and PrizePicks in catalog order."""
+    http_jobs = [job for job in jobs if not _is_late_job(job)]
+    late_jobs = [job for job in jobs if _is_late_job(job)]
+    return http_jobs, late_jobs
+
+
 def run_job(job: ScraperJob, *, python: str | None = None) -> int:
     """Run one scraper module as a subprocess; return its exit code."""
     cmd = [python or sys.executable, "-m", job.module]
     env = os.environ.copy()
     if job.env:
         env.update(job.env)
-    print(f"\n=== {job.name} ({job.module}) ===", flush=True)
+    with _PRINT_LOCK:
+        print(f"\n=== {job.name} ({job.module}) ===", flush=True)
     completed = subprocess.run(cmd, env=env, check=False)
     return int(completed.returncode)
+
+
+def _print_summary(results: list[tuple[str, int]]) -> int:
+    print("\n=== Summary ===", flush=True)
+    failed = 0
+    for name, code in results:
+        status = "ok" if code == 0 else f"FAIL ({code})"
+        print(f"  {name}: {status}", flush=True)
+        if code != 0:
+            failed += 1
+    print(f"{len(results) - failed}/{len(results)} succeeded", flush=True)
+    return failed
 
 
 def run_all(
@@ -114,29 +143,45 @@ def run_all(
     exclude: list[str] | None = None,
     fail_fast: bool = False,
     python: str | None = None,
+    run_job_fn: Callable[..., int] | None = None,
 ) -> int:
-    """Run selected scrapers sequentially. Returns 0 iff all succeeded."""
+    """Run HTTP books together, then Pinnacle and PrizePicks. Returns 0 iff all succeeded."""
+    execute = run_job_fn or run_job
     jobs = resolve_jobs(league=league, only=only, exclude=exclude)
     if not jobs:
         print("No scrapers selected.", flush=True)
         return 1
 
-    results: list[tuple[str, int]] = []
-    for job in jobs:
-        code = run_job(job, python=python)
-        results.append((job.name, code))
+    http_jobs, late_jobs = partition_jobs(jobs)
+    results: dict[str, int] = {}
+
+    if http_jobs:
+        with ThreadPoolExecutor(max_workers=len(http_jobs)) as pool:
+            futures = {
+                pool.submit(execute, job, python=python): job for job in http_jobs
+            }
+            for future in as_completed(futures):
+                job = futures[future]
+                results[job.name] = int(future.result())
+        if fail_fast and any(code != 0 for code in results.values()):
+            failed_name = next(name for name, code in results.items() if code != 0)
+            print(
+                f"Stopping after failure: {failed_name} exited {results[failed_name]}",
+                flush=True,
+            )
+            completed = [(job.name, results[job.name]) for job in http_jobs]
+            _print_summary(completed)
+            return 1
+
+    for job in late_jobs:
+        code = int(execute(job, python=python))
+        results[job.name] = code
         if code != 0 and fail_fast:
             print(f"Stopping after failure: {job.name} exited {code}", flush=True)
             break
 
-    print("\n=== Summary ===", flush=True)
-    failed = 0
-    for name, code in results:
-        status = "ok" if code == 0 else f"FAIL ({code})"
-        print(f"  {name}: {status}", flush=True)
-        if code != 0:
-            failed += 1
-    print(f"{len(results) - failed}/{len(results)} succeeded", flush=True)
+    ordered = [(job.name, results[job.name]) for job in jobs if job.name in results]
+    failed = _print_summary(ordered)
     return 0 if failed == 0 else 1
 
 

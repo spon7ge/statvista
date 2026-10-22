@@ -1,10 +1,12 @@
-"""Tests for odds/props scraper runner job selection."""
+"""Tests for odds/props scraper runner job selection and execution waves."""
 
 from __future__ import annotations
 
+import threading
+
 import pytest
 
-from src.scrapers.run_all_odds import KNOWN_NAMES, resolve_jobs
+from src.scrapers.run_all_odds import KNOWN_NAMES, resolve_jobs, run_all
 
 
 def test_resolve_jobs_default_includes_prizepicks():
@@ -155,3 +157,70 @@ def test_resolve_jobs_exclude_unknown_raises():
 def test_resolve_jobs_exclude_after_only():
     jobs = resolve_jobs(only=["wnba_novig", "wnba_prizepick"], exclude=["wnba_prizepick"])
     assert [j.name for j in jobs] == ["wnba_novig"]
+
+
+def test_http_books_run_together_and_browser_books_start_after():
+    """Novig, Underdog, and FanDuel overlap. Pinnacle and PrizePicks wait, in that order."""
+    lock = threading.Lock()
+    http_running = 0
+    peak_http = 0
+    late_started_during_http = False
+    events: list[tuple[str, str]] = []
+    http_names = {"nba_novig", "nba_underdog", "wnba_fanduel"}
+    started_together = threading.Barrier(len(http_names))
+
+    def fake_run(job, *, python=None):
+        del python
+        nonlocal http_running, peak_http, late_started_during_http
+        late = "pinnacle" in job.name or "prizepick" in job.name
+        with lock:
+            events.append(("start", job.name))
+            if late and http_running > 0:
+                late_started_during_http = True
+            if not late:
+                http_running += 1
+                peak_http = max(peak_http, http_running)
+        if not late:
+            started_together.wait(timeout=2)
+            with lock:
+                http_running -= 1
+                events.append(("end", job.name))
+            return 0
+        with lock:
+            events.append(("end", job.name))
+        return 0
+
+    code = run_all(
+        only=["nba_novig", "nba_underdog", "nba_pinnacle", "nba_prizepick", "wnba_fanduel"],
+        run_job_fn=fake_run,
+    )
+
+    assert code == 0
+    assert peak_http == 3
+    assert late_started_during_http is False
+    http_end = max(i for i, (kind, name) in enumerate(events) if kind == "end" and name in http_names)
+    pinnacle_start = next(i for i, (kind, name) in enumerate(events) if kind == "start" and name == "nba_pinnacle")
+    prizepick_start = next(i for i, (kind, name) in enumerate(events) if kind == "start" and name == "nba_prizepick")
+    pinnacle_end = next(i for i, (kind, name) in enumerate(events) if kind == "end" and name == "nba_pinnacle")
+    assert pinnacle_start > http_end
+    assert prizepick_start > pinnacle_end
+
+
+def test_fail_fast_skips_browser_books_after_an_http_failure():
+    started: list[str] = []
+
+    def fake_run(job, *, python=None):
+        del python
+        started.append(job.name)
+        return 1 if job.name == "nba_novig" else 0
+
+    code = run_all(
+        only=["nba_novig", "nba_underdog", "nba_pinnacle", "nba_prizepick"],
+        fail_fast=True,
+        run_job_fn=fake_run,
+    )
+
+    assert code == 1
+    assert "nba_underdog" in started
+    assert "nba_pinnacle" not in started
+    assert "nba_prizepick" not in started
