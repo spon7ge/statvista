@@ -60,6 +60,19 @@ class NbaSeasonTeamStatLine(BaseModel):
     stl: float | None = None
     blk: float | None = None
     to: float | None = None
+    efg_pct: str | None = None
+    ts_pct: str | None = None
+    ast_pct: str | None = None
+    ast_to: str | None = None
+    oreb_pct: str | None = None
+    dreb_pct: str | None = None
+    reb_pct: str | None = None
+    tov_pct: str | None = None
+    off_rtg: str | None = None
+    def_rtg: str | None = None
+    net_rtg: str | None = None
+    pace: str | None = None
+    pie: str | None = None
     pts_rank: int | None = None
     fg_pct_rank: int | None = None
     fg3_pct_rank: int | None = None
@@ -69,6 +82,19 @@ class NbaSeasonTeamStatLine(BaseModel):
     stl_rank: int | None = None
     blk_rank: int | None = None
     to_rank: int | None = None
+    efg_pct_rank: int | None = None
+    ts_pct_rank: int | None = None
+    ast_pct_rank: int | None = None
+    ast_to_rank: int | None = None
+    oreb_pct_rank: int | None = None
+    dreb_pct_rank: int | None = None
+    reb_pct_rank: int | None = None
+    tov_pct_rank: int | None = None
+    off_rtg_rank: int | None = None
+    def_rtg_rank: int | None = None
+    net_rtg_rank: int | None = None
+    pace_rank: int | None = None
+    pie_rank: int | None = None
 
 
 class NbaSeasonTeamStatsPair(BaseModel):

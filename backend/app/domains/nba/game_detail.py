@@ -9,6 +9,10 @@ from zoneinfo import ZoneInfo
 
 import httpx
 
+from app.domains.betting.basketball_advanced_stats import (
+    canonical_nba_abbrev,
+    load_team_advanced,
+)
 from app.domains.nba.game_leaders import build_game_leaders_from_summary
 from app.domains.nba.schemas_game_detail import (
     GameDetailBoxScore,
@@ -30,6 +34,7 @@ from app.domains.nba.schemas_game_detail import (
     GameDetailWinProbabilityPoint,
     NbaGameDetail,
     NbaGameLeaders,
+    NbaSeasonTeamStatLine,
     NbaSeasonTeamStatsPair,
 )
 from app.domains.nba.schemas_scoreboard import GameStatus
@@ -260,11 +265,37 @@ def attach_season_team_stats(
     return detail.model_copy(update={"season_team_stats": pair})
 
 
+def _with_cached_team_advanced(
+    pair: NbaSeasonTeamStatsPair | None,
+    detail: NbaGameDetail,
+) -> NbaSeasonTeamStatsPair | None:
+    index = load_team_advanced("nba", canonicalize=canonical_nba_abbrev)
+    away = dict(index.get(canonical_nba_abbrev(detail.away.abbrev), {}))
+    home = dict(index.get(canonical_nba_abbrev(detail.home.abbrev), {}))
+    if not away and not home:
+        return pair
+    if pair is None:
+        return NbaSeasonTeamStatsPair(
+            away=NbaSeasonTeamStatLine(**away),
+            home=NbaSeasonTeamStatLine(**home),
+        )
+    return pair.model_copy(
+        update={
+            "away": pair.away.model_copy(update=away),
+            "home": pair.home.model_copy(update=home),
+        }
+    )
+
+
 async def _attach_season_team_stats(detail: NbaGameDetail) -> NbaGameDetail:
     """Soft-fetch league team season stats for scheduled games only."""
     if detail.status != "scheduled":
         return detail
     pair = await fetch_season_team_stats_pair(detail.away.id, detail.home.id)
+    try:
+        pair = _with_cached_team_advanced(pair, detail)
+    except Exception as exc:
+        logger.warning("NBA cached team advanced stats failed: %s", exc)
     return attach_season_team_stats(detail, pair)
 
 

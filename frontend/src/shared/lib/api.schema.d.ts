@@ -2040,12 +2040,32 @@ export interface components {
         NbaSeasonTeamStatLine: {
             /** Ast */
             ast: number | null;
+            /** Ast Pct */
+            ast_pct: string | null;
+            /** Ast Pct Rank */
+            ast_pct_rank: number | null;
             /** Ast Rank */
             ast_rank: number | null;
+            /** Ast To */
+            ast_to: string | null;
+            /** Ast To Rank */
+            ast_to_rank: number | null;
             /** Blk */
             blk: number | null;
             /** Blk Rank */
             blk_rank: number | null;
+            /** Def Rtg */
+            def_rtg: string | null;
+            /** Def Rtg Rank */
+            def_rtg_rank: number | null;
+            /** Dreb Pct */
+            dreb_pct: string | null;
+            /** Dreb Pct Rank */
+            dreb_pct_rank: number | null;
+            /** Efg Pct */
+            efg_pct: string | null;
+            /** Efg Pct Rank */
+            efg_pct_rank: number | null;
             /** Fg3 Pct */
             fg3_pct: string | null;
             /** Fg3 Pct Rank */
@@ -2058,12 +2078,36 @@ export interface components {
             ft_pct: string | null;
             /** Ft Pct Rank */
             ft_pct_rank: number | null;
+            /** Net Rtg */
+            net_rtg: string | null;
+            /** Net Rtg Rank */
+            net_rtg_rank: number | null;
+            /** Off Rtg */
+            off_rtg: string | null;
+            /** Off Rtg Rank */
+            off_rtg_rank: number | null;
+            /** Oreb Pct */
+            oreb_pct: string | null;
+            /** Oreb Pct Rank */
+            oreb_pct_rank: number | null;
+            /** Pace */
+            pace: string | null;
+            /** Pace Rank */
+            pace_rank: number | null;
+            /** Pie */
+            pie: string | null;
+            /** Pie Rank */
+            pie_rank: number | null;
             /** Pts */
             pts: number | null;
             /** Pts Rank */
             pts_rank: number | null;
             /** Reb */
             reb: number | null;
+            /** Reb Pct */
+            reb_pct: string | null;
+            /** Reb Pct Rank */
+            reb_pct_rank: number | null;
             /** Reb Rank */
             reb_rank: number | null;
             /** Stl */
@@ -2074,6 +2118,14 @@ export interface components {
             to: number | null;
             /** To Rank */
             to_rank: number | null;
+            /** Tov Pct */
+            tov_pct: string | null;
+            /** Tov Pct Rank */
+            tov_pct_rank: number | null;
+            /** Ts Pct */
+            ts_pct: string | null;
+            /** Ts Pct Rank */
+            ts_pct_rank: number | null;
         };
         /** NbaSeasonTeamStatsPair */
         NbaSeasonTeamStatsPair: {
@@ -2141,8 +2193,18 @@ export interface components {
         NbaTeamRosterRow: {
             /** Ast */
             ast: string | null;
+            /** Ast Pct */
+            ast_pct: string | null;
+            /** Ast To */
+            ast_to: string | null;
             /** Blk */
             blk: string | null;
+            /** Def Rtg */
+            def_rtg: string | null;
+            /** Dreb Pct */
+            dreb_pct: string | null;
+            /** Efg Pct */
+            efg_pct: string | null;
             /** Fg3 Pct */
             fg3_pct: string | null;
             /** Fg Pct */
@@ -2159,6 +2221,14 @@ export interface components {
             min: string | null;
             /** Name */
             name: string;
+            /** Net Rtg */
+            net_rtg: string | null;
+            /** Off Rtg */
+            off_rtg: string | null;
+            /** Oreb Pct */
+            oreb_pct: string | null;
+            /** Pie */
+            pie: string | null;
             /** Player Id */
             player_id: string;
             /** Plus Minus */
@@ -2171,6 +2241,8 @@ export interface components {
             pts: string | null;
             /** Reb */
             reb: string | null;
+            /** Reb Pct */
+            reb_pct: string | null;
             /** Rtg */
             rtg: string | null;
             /** Sc Eff */
@@ -2181,6 +2253,12 @@ export interface components {
             stl: string | null;
             /** To */
             to: string | null;
+            /** Tov Pct */
+            tov_pct: string | null;
+            /** Ts Pct */
+            ts_pct: string | null;
+            /** Usg Pct */
+            usg_pct: string | null;
         };
         /** ValidationError */
         ValidationError: {
@@ -2638,12 +2716,32 @@ export interface components {
         WnbaSeasonTeamStatLine: {
             /** Ast */
             ast: number | null;
+            /** Ast Pct */
+            ast_pct: string | null;
+            /** Ast Pct Rank */
+            ast_pct_rank: number | null;
             /** Ast Rank */
             ast_rank: number | null;
+            /** Ast To */
+            ast_to: string | null;
+            /** Ast To Rank */
+            ast_to_rank: number | null;
             /** Blk */
             blk: number | null;
             /** Blk Rank */
             blk_rank: number | null;
+            /** Def Rtg */
+            def_rtg: string | null;
+            /** Def Rtg Rank */
+            def_rtg_rank: number | null;
+            /** Dreb Pct */
+            dreb_pct: string | null;
+            /** Dreb Pct Rank */
+            dreb_pct_rank: number | null;
+            /** Efg Pct */
+            efg_pct: string | null;
+            /** Efg Pct Rank */
+            efg_pct_rank: number | null;
             /** Fg3 Pct */
             fg3_pct: string | null;
             /** Fg3 Pct Rank */
@@ -2656,12 +2754,36 @@ export interface components {
             ft_pct: string | null;
             /** Ft Pct Rank */
             ft_pct_rank: number | null;
+            /** Net Rtg */
+            net_rtg: string | null;
+            /** Net Rtg Rank */
+            net_rtg_rank: number | null;
+            /** Off Rtg */
+            off_rtg: string | null;
+            /** Off Rtg Rank */
+            off_rtg_rank: number | null;
+            /** Oreb Pct */
+            oreb_pct: string | null;
+            /** Oreb Pct Rank */
+            oreb_pct_rank: number | null;
+            /** Pace */
+            pace: string | null;
+            /** Pace Rank */
+            pace_rank: number | null;
+            /** Pie */
+            pie: string | null;
+            /** Pie Rank */
+            pie_rank: number | null;
             /** Pts */
             pts: number | null;
             /** Pts Rank */
             pts_rank: number | null;
             /** Reb */
             reb: number | null;
+            /** Reb Pct */
+            reb_pct: string | null;
+            /** Reb Pct Rank */
+            reb_pct_rank: number | null;
             /** Reb Rank */
             reb_rank: number | null;
             /** Stl */
@@ -2672,6 +2794,14 @@ export interface components {
             to: number | null;
             /** To Rank */
             to_rank: number | null;
+            /** Tov Pct */
+            tov_pct: string | null;
+            /** Tov Pct Rank */
+            tov_pct_rank: number | null;
+            /** Ts Pct */
+            ts_pct: string | null;
+            /** Ts Pct Rank */
+            ts_pct_rank: number | null;
         };
         /** WnbaSeasonTeamStatsPair */
         WnbaSeasonTeamStatsPair: {
@@ -2739,8 +2869,18 @@ export interface components {
         WnbaTeamRosterRow: {
             /** Ast */
             ast: string | null;
+            /** Ast Pct */
+            ast_pct: string | null;
+            /** Ast To */
+            ast_to: string | null;
             /** Blk */
             blk: string | null;
+            /** Def Rtg */
+            def_rtg: string | null;
+            /** Dreb Pct */
+            dreb_pct: string | null;
+            /** Efg Pct */
+            efg_pct: string | null;
             /** Fg3 Pct */
             fg3_pct: string | null;
             /** Fg Pct */
@@ -2757,6 +2897,14 @@ export interface components {
             min: string | null;
             /** Name */
             name: string;
+            /** Net Rtg */
+            net_rtg: string | null;
+            /** Off Rtg */
+            off_rtg: string | null;
+            /** Oreb Pct */
+            oreb_pct: string | null;
+            /** Pie */
+            pie: string | null;
             /** Player Id */
             player_id: string;
             /** Plus Minus */
@@ -2769,6 +2917,8 @@ export interface components {
             pts: string | null;
             /** Reb */
             reb: string | null;
+            /** Reb Pct */
+            reb_pct: string | null;
             /** Rtg */
             rtg: string | null;
             /** Sc Eff */
@@ -2779,6 +2929,12 @@ export interface components {
             stl: string | null;
             /** To */
             to: string | null;
+            /** Tov Pct */
+            tov_pct: string | null;
+            /** Ts Pct */
+            ts_pct: string | null;
+            /** Usg Pct */
+            usg_pct: string | null;
         };
     };
     responses: never;

@@ -307,3 +307,43 @@ def test_nba_season_year_uses_espn_season_label(
     expected: int,
 ):
     assert _season_year(now) == expected
+
+
+@pytest.mark.asyncio
+async def test_team_preview_adds_cached_advanced_stats_after_traditional_line():
+    athletes = parse_roster_athletes(_roster_payload())
+    with (
+        patch(
+            "app.domains.nba.team_preview.get_game_detail",
+            new=AsyncMock(return_value=_scheduled_detail()),
+        ),
+        patch(
+            "app.domains.nba.team_preview.fetch_team_roster_athletes",
+            new=AsyncMock(return_value=athletes),
+        ),
+        patch(
+            "app.domains.nba.team_preview.fetch_league_player_stat_map",
+            new=AsyncMock(return_value={}),
+        ),
+        patch(
+            "app.domains.nba.team_preview.load_player_advanced",
+            return_value={
+                "alpha guard": {
+                    "usg_pct": "26.0",
+                    "efg_pct": "44.0",
+                    "ts_pct": "54.0",
+                    "ast_pct": "16.0",
+                    "pie": "18.0",
+                }
+            },
+        ),
+    ):
+        result = await get_nba_team_preview("401810001", "away")
+
+    guard = next(row for row in result.roster if row.name == "Alpha Guard")
+    assert guard.usg_pct == "26.0"
+    assert guard.efg_pct == "44.0"
+    assert guard.ts_pct == "54.0"
+    assert guard.ast_pct == "16.0"
+    assert guard.pie == "18.0"
+    assert guard.pts is None

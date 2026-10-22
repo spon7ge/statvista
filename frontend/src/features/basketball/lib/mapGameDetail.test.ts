@@ -2,6 +2,35 @@ import { describe, expect, it } from "vitest";
 import type { ApiNbaGameDetail, ApiWnbaGameDetail } from "@/shared/lib/api";
 import { mapGameDetail } from "./mapGameDetail";
 
+const emptyAdvanced = {
+  efg_pct: null,
+  efg_pct_rank: null,
+  ts_pct: null,
+  ts_pct_rank: null,
+  ast_pct: null,
+  ast_pct_rank: null,
+  ast_to: null,
+  ast_to_rank: null,
+  oreb_pct: null,
+  oreb_pct_rank: null,
+  dreb_pct: null,
+  dreb_pct_rank: null,
+  reb_pct: null,
+  reb_pct_rank: null,
+  tov_pct: null,
+  tov_pct_rank: null,
+  off_rtg: null,
+  off_rtg_rank: null,
+  def_rtg: null,
+  def_rtg_rank: null,
+  net_rtg: null,
+  net_rtg_rank: null,
+  pace: null,
+  pace_rank: null,
+  pie: null,
+  pie_rank: null,
+};
+
 function buildApiDetail(
   overrides: Partial<ApiWnbaGameDetail> = {},
 ): ApiWnbaGameDetail {
@@ -386,6 +415,9 @@ describe("mapGameDetail", () => {
         },
         season_team_stats: {
           away: {
+            ...emptyAdvanced,
+            efg_pct: "54.0",
+            efg_pct_rank: 8,
             pts: 92,
             pts_rank: 3,
             fg_pct: ".460",
@@ -406,6 +438,7 @@ describe("mapGameDetail", () => {
             to_rank: 10,
           },
           home: {
+            ...emptyAdvanced,
             pts: 88,
             pts_rank: 5,
             fg_pct: ".440",
@@ -447,6 +480,9 @@ describe("mapGameDetail", () => {
     expect(view.away.record).toBe("22-8");
     expect(view.away.last10).toBe("7-3");
     expect(view.seasonTeamStats?.away.pts).toBe(92);
+    expect(view.seasonTeamStats?.away.efgPct).toBe("54.0");
+    expect(view.seasonTeamStats?.away.efgPctRank).toBe(8);
+    expect(view.seasonTeamStats?.home.efgPct).toBeNull();
     expect(view.gameLeaders?.leaders[0].key).toBe("ppg");
   });
 

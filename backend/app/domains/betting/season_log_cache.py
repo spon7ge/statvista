@@ -189,6 +189,21 @@ def _empty() -> dict[str, list[dict[str, Any]]]:
     return logs
 
 
+def read_cached_logs(league: str) -> dict[str, list[dict[str, Any]]]:
+    """Return the on-disk season logs without starting a refresh.
+
+    Game preview reads this file in place. A stats.nba.com pull belongs to the
+    daily prop-board refresh, not to a page view. A missing file is empty.
+    """
+    cached = _read(league)
+    if cached is None or cached.get("version") != CACHE_VERSION:
+        return _empty()
+    logs = cached.get("logs")
+    if not isinstance(logs, dict):
+        return _empty()
+    return logs
+
+
 def _memory_key(league: str) -> str:
     return f"{CACHE_DIR}:{league}"
 

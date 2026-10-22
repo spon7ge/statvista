@@ -4,6 +4,10 @@ import type {
   GameDetailSeasonTeamStatLine,
   GameDetailTeam,
 } from "../lib/types";
+import {
+  TEAM_ADVANCED_STATS,
+  type TeamAdvancedStatKey,
+} from "./advancedStatColumns";
 
 type TeamSide = "away" | "home";
 type StatValueKey =
@@ -15,7 +19,8 @@ type StatValueKey =
   | "ast"
   | "stl"
   | "blk"
-  | "to";
+  | "to"
+  | TeamAdvancedStatKey;
 
 type StatDefinition = {
   key: StatValueKey;
@@ -28,6 +33,19 @@ const RANK_KEY: Record<StatValueKey, keyof GameDetailSeasonTeamStatLine> = {
   fgPct: "fgPctRank",
   fg3Pct: "fg3PctRank",
   ftPct: "ftPctRank",
+  efgPct: "efgPctRank",
+  tsPct: "tsPctRank",
+  astPct: "astPctRank",
+  astTo: "astToRank",
+  orebPct: "orebPctRank",
+  drebPct: "drebPctRank",
+  rebPct: "rebPctRank",
+  tovPct: "tovPctRank",
+  offRtg: "offRtgRank",
+  defRtg: "defRtgRank",
+  netRtg: "netRtgRank",
+  pace: "paceRank",
+  pie: "pieRank",
   reb: "rebRank",
   ast: "astRank",
   stl: "stlRank",
@@ -40,6 +58,7 @@ const STAT_DEFINITIONS: StatDefinition[] = [
   { key: "fgPct", label: "FG%" },
   { key: "fg3Pct", label: "3P%" },
   { key: "ftPct", label: "FT%" },
+  ...TEAM_ADVANCED_STATS,
   { key: "reb", label: "REB" },
   { key: "ast", label: "AST" },
   { key: "stl", label: "STL" },
@@ -96,8 +115,12 @@ function TeamMark({
   );
 }
 
-function formatStatDisplay(value: string | number | null): string {
-  if (value === null || value === "") return "–";
+function rankOrNull(rank: unknown): number | null {
+  return typeof rank === "number" ? rank : null;
+}
+
+function formatStatDisplay(value: string | number | null | undefined): string {
+  if (value == null || value === "") return "–";
   if (typeof value === "number") {
     if (!Number.isFinite(value)) return "–";
     return Number.isInteger(value) ? String(value) : value.toFixed(1);
@@ -163,8 +186,8 @@ export function NbaSeasonTeamStats({ detail }: { detail: GameDetail }) {
       </div>
       <div>
         {STAT_DEFINITIONS.map((stat) => {
-          const awayValue = seasonTeamStats.away[stat.key];
-          const homeValue = seasonTeamStats.home[stat.key];
+          const awayValue = seasonTeamStats.away[stat.key] ?? null;
+          const homeValue = seasonTeamStats.home[stat.key] ?? null;
           const winningSide = leader(
             awayValue,
             homeValue,
@@ -179,18 +202,18 @@ export function NbaSeasonTeamStats({ detail }: { detail: GameDetail }) {
                 side="away"
                 statKey={stat.key}
                 value={awayValue}
-                rank={seasonTeamStats.away[RANK_KEY[stat.key]] as number | null}
+                rank={rankOrNull(seasonTeamStats.away[RANK_KEY[stat.key]])}
                 isLeader={winningSide === "away"}
                 color={detail.away.color}
               />
-              <span className="min-w-[2.5rem] text-center text-[16px] font-medium tracking-wide text-c3">
+              <span className="min-w-[4.5rem] text-center text-[16px] font-medium tracking-wide text-c3">
                 {stat.label}
               </span>
               <StatValue
                 side="home"
                 statKey={stat.key}
                 value={homeValue}
-                rank={seasonTeamStats.home[RANK_KEY[stat.key]] as number | null}
+                rank={rankOrNull(seasonTeamStats.home[RANK_KEY[stat.key]])}
                 isLeader={winningSide === "home"}
                 color={detail.home.color}
               />

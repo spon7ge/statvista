@@ -6409,6 +6409,28 @@
             ],
             "title": "Ast"
           },
+          "ast_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ast Pct"
+          },
+          "ast_pct_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ast Pct Rank"
+          },
           "ast_rank": {
             "anyOf": [
               {
@@ -6419,6 +6441,28 @@
               }
             ],
             "title": "Ast Rank"
+          },
+          "ast_to": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ast To"
+          },
+          "ast_to_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ast To Rank"
           },
           "blk": {
             "anyOf": [
@@ -6441,6 +6485,72 @@
               }
             ],
             "title": "Blk Rank"
+          },
+          "def_rtg": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Def Rtg"
+          },
+          "def_rtg_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Def Rtg Rank"
+          },
+          "dreb_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dreb Pct"
+          },
+          "dreb_pct_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dreb Pct Rank"
+          },
+          "efg_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Efg Pct"
+          },
+          "efg_pct_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Efg Pct Rank"
           },
           "fg3_pct": {
             "anyOf": [
@@ -6508,6 +6618,116 @@
             ],
             "title": "Ft Pct Rank"
           },
+          "net_rtg": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Net Rtg"
+          },
+          "net_rtg_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Net Rtg Rank"
+          },
+          "off_rtg": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Off Rtg"
+          },
+          "off_rtg_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Off Rtg Rank"
+          },
+          "oreb_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Oreb Pct"
+          },
+          "oreb_pct_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Oreb Pct Rank"
+          },
+          "pace": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pace"
+          },
+          "pace_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pace Rank"
+          },
+          "pie": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pie"
+          },
+          "pie_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pie Rank"
+          },
           "pts": {
             "anyOf": [
               {
@@ -6540,6 +6760,28 @@
               }
             ],
             "title": "Reb"
+          },
+          "reb_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reb Pct"
+          },
+          "reb_pct_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reb Pct Rank"
           },
           "reb_rank": {
             "anyOf": [
@@ -6595,6 +6837,50 @@
               }
             ],
             "title": "To Rank"
+          },
+          "tov_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tov Pct"
+          },
+          "tov_pct_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tov Pct Rank"
+          },
+          "ts_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ts Pct"
+          },
+          "ts_pct_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ts Pct Rank"
           }
         },
         "required": [
@@ -6607,6 +6893,19 @@
           "stl",
           "blk",
           "to",
+          "efg_pct",
+          "ts_pct",
+          "ast_pct",
+          "ast_to",
+          "oreb_pct",
+          "dreb_pct",
+          "reb_pct",
+          "tov_pct",
+          "off_rtg",
+          "def_rtg",
+          "net_rtg",
+          "pace",
+          "pie",
           "pts_rank",
           "fg_pct_rank",
           "fg3_pct_rank",
@@ -6615,7 +6914,20 @@
           "ast_rank",
           "stl_rank",
           "blk_rank",
-          "to_rank"
+          "to_rank",
+          "efg_pct_rank",
+          "ts_pct_rank",
+          "ast_pct_rank",
+          "ast_to_rank",
+          "oreb_pct_rank",
+          "dreb_pct_rank",
+          "reb_pct_rank",
+          "tov_pct_rank",
+          "off_rtg_rank",
+          "def_rtg_rank",
+          "net_rtg_rank",
+          "pace_rank",
+          "pie_rank"
         ],
         "title": "NbaSeasonTeamStatLine",
         "type": "object"
@@ -6839,6 +7151,28 @@
             ],
             "title": "Ast"
           },
+          "ast_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ast Pct"
+          },
+          "ast_to": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ast To"
+          },
           "blk": {
             "anyOf": [
               {
@@ -6849,6 +7183,39 @@
               }
             ],
             "title": "Blk"
+          },
+          "def_rtg": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Def Rtg"
+          },
+          "dreb_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dreb Pct"
+          },
+          "efg_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Efg Pct"
           },
           "fg3_pct": {
             "anyOf": [
@@ -6931,6 +7298,50 @@
             "title": "Name",
             "type": "string"
           },
+          "net_rtg": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Net Rtg"
+          },
+          "off_rtg": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Off Rtg"
+          },
+          "oreb_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Oreb Pct"
+          },
+          "pie": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pie"
+          },
           "player_id": {
             "title": "Player Id",
             "type": "string"
@@ -6990,6 +7401,17 @@
             ],
             "title": "Reb"
           },
+          "reb_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reb Pct"
+          },
           "rtg": {
             "anyOf": [
               {
@@ -7044,6 +7466,39 @@
               }
             ],
             "title": "To"
+          },
+          "tov_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tov Pct"
+          },
+          "ts_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ts Pct"
+          },
+          "usg_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Usg Pct"
           }
         },
         "required": [
@@ -7062,6 +7517,19 @@
           "fg_pct",
           "fg3_pct",
           "ft_pct",
+          "usg_pct",
+          "efg_pct",
+          "ts_pct",
+          "ast_pct",
+          "ast_to",
+          "oreb_pct",
+          "dreb_pct",
+          "reb_pct",
+          "tov_pct",
+          "off_rtg",
+          "def_rtg",
+          "net_rtg",
+          "pie",
           "sh_eff",
           "sc_eff",
           "ppep",
@@ -8938,6 +9406,28 @@
             ],
             "title": "Ast"
           },
+          "ast_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ast Pct"
+          },
+          "ast_pct_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ast Pct Rank"
+          },
           "ast_rank": {
             "anyOf": [
               {
@@ -8948,6 +9438,28 @@
               }
             ],
             "title": "Ast Rank"
+          },
+          "ast_to": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ast To"
+          },
+          "ast_to_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ast To Rank"
           },
           "blk": {
             "anyOf": [
@@ -8970,6 +9482,72 @@
               }
             ],
             "title": "Blk Rank"
+          },
+          "def_rtg": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Def Rtg"
+          },
+          "def_rtg_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Def Rtg Rank"
+          },
+          "dreb_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dreb Pct"
+          },
+          "dreb_pct_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dreb Pct Rank"
+          },
+          "efg_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Efg Pct"
+          },
+          "efg_pct_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Efg Pct Rank"
           },
           "fg3_pct": {
             "anyOf": [
@@ -9037,6 +9615,116 @@
             ],
             "title": "Ft Pct Rank"
           },
+          "net_rtg": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Net Rtg"
+          },
+          "net_rtg_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Net Rtg Rank"
+          },
+          "off_rtg": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Off Rtg"
+          },
+          "off_rtg_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Off Rtg Rank"
+          },
+          "oreb_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Oreb Pct"
+          },
+          "oreb_pct_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Oreb Pct Rank"
+          },
+          "pace": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pace"
+          },
+          "pace_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pace Rank"
+          },
+          "pie": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pie"
+          },
+          "pie_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pie Rank"
+          },
           "pts": {
             "anyOf": [
               {
@@ -9069,6 +9757,28 @@
               }
             ],
             "title": "Reb"
+          },
+          "reb_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reb Pct"
+          },
+          "reb_pct_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reb Pct Rank"
           },
           "reb_rank": {
             "anyOf": [
@@ -9124,6 +9834,50 @@
               }
             ],
             "title": "To Rank"
+          },
+          "tov_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tov Pct"
+          },
+          "tov_pct_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tov Pct Rank"
+          },
+          "ts_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ts Pct"
+          },
+          "ts_pct_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ts Pct Rank"
           }
         },
         "required": [
@@ -9136,6 +9890,19 @@
           "stl",
           "blk",
           "to",
+          "efg_pct",
+          "ts_pct",
+          "ast_pct",
+          "ast_to",
+          "oreb_pct",
+          "dreb_pct",
+          "reb_pct",
+          "tov_pct",
+          "off_rtg",
+          "def_rtg",
+          "net_rtg",
+          "pace",
+          "pie",
           "pts_rank",
           "fg_pct_rank",
           "fg3_pct_rank",
@@ -9144,7 +9911,20 @@
           "ast_rank",
           "stl_rank",
           "blk_rank",
-          "to_rank"
+          "to_rank",
+          "efg_pct_rank",
+          "ts_pct_rank",
+          "ast_pct_rank",
+          "ast_to_rank",
+          "oreb_pct_rank",
+          "dreb_pct_rank",
+          "reb_pct_rank",
+          "tov_pct_rank",
+          "off_rtg_rank",
+          "def_rtg_rank",
+          "net_rtg_rank",
+          "pace_rank",
+          "pie_rank"
         ],
         "title": "WnbaSeasonTeamStatLine",
         "type": "object"
@@ -9368,6 +10148,28 @@
             ],
             "title": "Ast"
           },
+          "ast_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ast Pct"
+          },
+          "ast_to": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ast To"
+          },
           "blk": {
             "anyOf": [
               {
@@ -9378,6 +10180,39 @@
               }
             ],
             "title": "Blk"
+          },
+          "def_rtg": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Def Rtg"
+          },
+          "dreb_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dreb Pct"
+          },
+          "efg_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Efg Pct"
           },
           "fg3_pct": {
             "anyOf": [
@@ -9460,6 +10295,50 @@
             "title": "Name",
             "type": "string"
           },
+          "net_rtg": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Net Rtg"
+          },
+          "off_rtg": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Off Rtg"
+          },
+          "oreb_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Oreb Pct"
+          },
+          "pie": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pie"
+          },
           "player_id": {
             "title": "Player Id",
             "type": "string"
@@ -9519,6 +10398,17 @@
             ],
             "title": "Reb"
           },
+          "reb_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reb Pct"
+          },
           "rtg": {
             "anyOf": [
               {
@@ -9573,6 +10463,39 @@
               }
             ],
             "title": "To"
+          },
+          "tov_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tov Pct"
+          },
+          "ts_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ts Pct"
+          },
+          "usg_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Usg Pct"
           }
         },
         "required": [
@@ -9591,6 +10514,19 @@
           "fg_pct",
           "fg3_pct",
           "ft_pct",
+          "usg_pct",
+          "efg_pct",
+          "ts_pct",
+          "ast_pct",
+          "ast_to",
+          "oreb_pct",
+          "dreb_pct",
+          "reb_pct",
+          "tov_pct",
+          "off_rtg",
+          "def_rtg",
+          "net_rtg",
+          "pie",
           "sh_eff",
           "sc_eff",
           "ppep",

@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { ApiNbaTeamPreviewResponse } from "@/shared/lib/api";
 import { GameSection } from "@/shared/ui/GameSection";
 import { resolveNbaTeamColor } from "../league/nbaTeamColors";
+import { ROSTER_ADVANCED_COLUMNS } from "./advancedStatColumns";
 
 type TeamLeaderCard = {
   key: "ppg" | "rpg" | "apg" | "bpg" | "spg";
@@ -29,9 +30,19 @@ type RosterSeasonRow = {
   fgPct: string | null;
   fg3Pct: string | null;
   ftPct: string | null;
-  shEff: string | null;
-  scEff: string | null;
-  ppep: string | null;
+  usgPct: string | null;
+  efgPct: string | null;
+  tsPct: string | null;
+  astPct: string | null;
+  astTo: string | null;
+  orebPct: string | null;
+  drebPct: string | null;
+  rebPct: string | null;
+  tovPct: string | null;
+  offRtg: string | null;
+  defRtg: string | null;
+  netRtg: string | null;
+  pie: string | null;
   rtg: string | null;
   plusMinus: string | null;
 };
@@ -54,9 +65,7 @@ const ROSTER_COLS = [
   "FG%",
   "3P%",
   "FT%",
-  "SH-EFF",
-  "SC-EFF",
-  "PPEP",
+  ...ROSTER_ADVANCED_COLUMNS.map((column) => column.label),
   "RTG",
   "+/-",
 ] as const;
@@ -94,9 +103,19 @@ function mapNbaTeamPreview(data: ApiNbaTeamPreviewResponse): TeamPreviewView {
       fgPct: row.fg_pct,
       fg3Pct: row.fg3_pct,
       ftPct: row.ft_pct,
-      shEff: row.sh_eff,
-      scEff: row.sc_eff,
-      ppep: row.ppep,
+      usgPct: row.usg_pct,
+      efgPct: row.efg_pct,
+      tsPct: row.ts_pct,
+      astPct: row.ast_pct,
+      astTo: row.ast_to,
+      orebPct: row.oreb_pct,
+      drebPct: row.dreb_pct,
+      rebPct: row.reb_pct,
+      tovPct: row.tov_pct,
+      offRtg: row.off_rtg,
+      defRtg: row.def_rtg,
+      netRtg: row.net_rtg,
+      pie: row.pie,
       rtg: row.rtg,
       plusMinus: row.plus_minus,
     })),
@@ -121,16 +140,17 @@ function rosterValues(row: RosterSeasonRow): Array<string | number> {
     cell(row.fgPct),
     cell(row.fg3Pct),
     cell(row.ftPct),
-    cell(row.shEff),
-    cell(row.scEff),
-    cell(row.ppep),
+    ...ROSTER_ADVANCED_COLUMNS.map((column) => cell(row[column.key])),
     cell(row.rtg),
     cell(row.plusMinus),
   ];
 }
 
 function colWidth(col: string): string {
-  if (col === "SH-EFF" || col === "SC-EFF" || col === "PPEP" || col === "RTG") {
+  if (
+    col === "RTG" ||
+    ROSTER_ADVANCED_COLUMNS.some((column) => column.label === col)
+  ) {
     return "w-16 shrink-0";
   }
   if (

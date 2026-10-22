@@ -52,12 +52,26 @@ const detailWithSeasonStats = {
 describe("WnbaSeasonTeamStats", () => {
   it("renders basketball team stat labels", () => {
     render(<WnbaSeasonTeamStats detail={detailWithSeasonStats} />);
-    expect(screen.getByTestId("wnba-season-team-stats")).toBeInTheDocument();
+    const section = screen.getByTestId("wnba-season-team-stats");
+    expect(section).toBeInTheDocument();
+    const text = section.textContent ?? "";
+    const ft = text.indexOf("FT%");
+    const efg = text.indexOf("EFG%");
+    const ts = text.indexOf("TS%");
+    const rebPct = text.indexOf("REB%");
+    const countingReb = text.indexOf("REB", rebPct + "REB%".length);
+    expect(ft).toBeLessThan(efg);
+    expect(efg).toBeLessThan(ts);
+    expect(ts).toBeLessThan(rebPct);
+    expect(rebPct).toBeLessThan(countingReb);
+    expect(text).not.toContain("USG%");
     for (const label of [
       "PTS",
       "FG%",
       "3P%",
       "FT%",
+      "EFG%",
+      "TS%",
       "REB",
       "AST",
       "STL",

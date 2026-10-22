@@ -310,3 +310,32 @@ async def test_fetch_league_player_stat_map_sends_mozilla_user_agent(monkeypatch
     stats = await fetch_league_player_stat_map(2026)
     assert stats
     assert seen["ua"] == "Mozilla/5.0"
+
+
+@pytest.mark.asyncio
+async def test_team_preview_adds_cached_advanced_stats():
+    athletes = parse_roster_athletes(_roster_fixture())
+    with (
+        patch(
+            "app.domains.wnba.team_preview.get_game_detail",
+            new=AsyncMock(return_value=_scheduled_detail()),
+        ),
+        patch(
+            "app.domains.wnba.team_preview.fetch_team_roster_athletes",
+            new=AsyncMock(return_value=athletes),
+        ),
+        patch(
+            "app.domains.wnba.team_preview.fetch_league_player_stat_map",
+            new=AsyncMock(return_value={}),
+        ),
+        patch(
+            "app.domains.wnba.team_preview.load_player_advanced",
+            return_value={"allisha gray": {"usg_pct": "24.1", "efg_pct": "52.0", "ts_pct": "56.4"}},
+        ),
+    ):
+        result = await get_wnba_team_preview("401734891", "away")
+
+    gray = next(row for row in result.roster if row.name == "Allisha Gray")
+    assert gray.usg_pct == "24.1"
+    assert gray.efg_pct == "52.0"
+    assert gray.ts_pct == "56.4"

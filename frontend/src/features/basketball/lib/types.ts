@@ -30,6 +30,32 @@ export type GameDetailSeasonTeamStatLine = {
   blkRank: number | null;
   to: number | null;
   toRank: number | null;
+  efgPct?: string | null;
+  efgPctRank?: number | null;
+  tsPct?: string | null;
+  tsPctRank?: number | null;
+  astPct?: string | null;
+  astPctRank?: number | null;
+  astTo?: string | null;
+  astToRank?: number | null;
+  orebPct?: string | null;
+  orebPctRank?: number | null;
+  drebPct?: string | null;
+  drebPctRank?: number | null;
+  rebPct?: string | null;
+  rebPctRank?: number | null;
+  tovPct?: string | null;
+  tovPctRank?: number | null;
+  offRtg?: string | null;
+  offRtgRank?: number | null;
+  defRtg?: string | null;
+  defRtgRank?: number | null;
+  netRtg?: string | null;
+  netRtgRank?: number | null;
+  pace?: string | null;
+  paceRank?: number | null;
+  pie?: string | null;
+  pieRank?: number | null;
 };
 
 export type GameDetailSeasonTeamStats = {

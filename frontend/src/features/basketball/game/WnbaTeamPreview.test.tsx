@@ -77,6 +77,19 @@ const fixture: ApiWnbaTeamPreviewResponse = {
       fg_pct: ".512",
       fg3_pct: ".380",
       ft_pct: ".850",
+      usg_pct: "26.0",
+      efg_pct: "54.2",
+      ts_pct: "58.1",
+      ast_pct: "18.4",
+      ast_to: "1.6",
+      oreb_pct: "3.2",
+      dreb_pct: "15.1",
+      reb_pct: "9.4",
+      tov_pct: "11.0",
+      off_rtg: "116.0",
+      def_rtg: "104.2",
+      net_rtg: "11.8",
+      pie: "16.4",
       sh_eff: "1.12",
       sc_eff: "1.24",
       ppep: "1.08",
@@ -103,9 +116,9 @@ describe("WnbaTeamPreview", () => {
     expect(screen.getByTestId("wnba-team-leader-card-bpg")).toBeInTheDocument();
     expect(screen.getByTestId("wnba-team-leader-card-spg")).toBeInTheDocument();
     expect(screen.queryByTestId("wnba-team-leader-card-fg_pct")).not.toBeInTheDocument();
-    expect(screen.getByText("SH-EFF")).toBeInTheDocument();
-    expect(screen.getByText("SC-EFF")).toBeInTheDocument();
-    expect(screen.getByText("PPEP")).toBeInTheDocument();
+    expect(screen.queryByText("SH-EFF")).not.toBeInTheDocument();
+    expect(screen.queryByText("SC-EFF")).not.toBeInTheDocument();
+    expect(screen.queryByText("PPEP")).not.toBeInTheDocument();
     expect(screen.getByText("RTG")).toBeInTheDocument();
     expect(screen.getByText("+/-")).toBeInTheDocument();
     const leadersGrid = screen.getByTestId("wnba-team-leader-card-ppg").parentElement;
@@ -126,9 +139,19 @@ describe("WnbaTeamPreview", () => {
       "FG%",
       "3P%",
       "FT%",
-      "SH-EFF",
-      "SC-EFF",
-      "PPEP",
+      "USG%",
+      "EFG%",
+      "TS%",
+      "AST%",
+      "AST/TO",
+      "OREB%",
+      "DREB%",
+      "REB%",
+      "TOV%",
+      "OFF",
+      "DEF",
+      "NET",
+      "PIE",
       "RTG",
       "+/-",
     ]) {

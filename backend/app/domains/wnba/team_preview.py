@@ -6,6 +6,8 @@ import logging
 from datetime import datetime, timezone
 from typing import Literal
 
+from app.domains.betting.basketball_advanced_stats import load_player_advanced
+from app.domains.betting.player_match_keys import match_player_key
 from app.domains.wnba.game_detail import get_game_detail, is_valid_espn_event_id
 from app.domains.wnba.schemas_game_detail import GameDetailTeam
 from app.domains.wnba.schemas_team_preview import (
@@ -31,6 +33,17 @@ def _preview_team(team: GameDetailTeam) -> WnbaTeamPreviewTeam:
         name=team.name,
         logo_url=team.logo_url,
     )
+
+
+def _with_cached_advanced(roster: list[WnbaTeamRosterRow]) -> list[WnbaTeamRosterRow]:
+    index = load_player_advanced("wnba")
+    if not index:
+        return roster
+    attached: list[WnbaTeamRosterRow] = []
+    for row in roster:
+        stats = index.get(match_player_key(row.name))
+        attached.append(row.model_copy(update=dict(stats)) if stats else row)
+    return attached
 
 
 def _season_year() -> int:
@@ -65,6 +78,7 @@ async def get_wnba_team_preview(
 
     if athletes:
         roster = merge_roster_rows(athletes, stats_by_id)
+        roster = _with_cached_advanced(roster)
         if stats_by_id:
             try:
                 leaders = build_team_leaders(roster, stats_by_id)
