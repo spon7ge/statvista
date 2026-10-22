@@ -190,6 +190,7 @@ def _upsert_df_postgres(
     conn = engine.raw_connection()
     try:
         cur = conn.cursor()
+        cur.execute(f"SET statement_timeout = {_UPSERT_STATEMENT_TIMEOUT_MS}")
         total = len(rows)
         for i in range(0, total, batch_size):
             batch = rows[i : i + batch_size]
@@ -220,6 +221,12 @@ def _upsert_df_supabase(
         done = min(i + batch_size, total)
         if done == total or done % (batch_size * 5) == 0:
             print(f"    … {done:,}/{total:,} rows", flush=True)
+
+
+# Role default on the hosted database is 2 minutes. A 2,000-row conflict
+# update is ~20s when the server is quiet and ran past that cap after the
+# other game-log upserts, which aborted the whole load.
+_UPSERT_STATEMENT_TIMEOUT_MS = 600_000
 
 
 # Conflict columns that may be NULL in snapshot unique indexes (NULLS NOT DISTINCT).

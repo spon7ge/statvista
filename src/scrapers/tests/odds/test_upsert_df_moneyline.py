@@ -75,3 +75,46 @@ def test_upsert_df_keeps_moneyline_rows_with_null_points(monkeypatch):
     assert len(out) == 3
     assert set(out["market_type"]) == {"moneyline", "run_line"}
     assert out[out["market_type"] == "moneyline"]["points"].isna().all()
+
+
+def test_postgres_upsert_raises_statement_timeout(monkeypatch):
+    executed: list[str] = []
+
+    class FakeCursor:
+        def execute(self, sql):
+            executed.append(str(sql))
+
+        def close(self):
+            pass
+
+    class FakeConn:
+        def cursor(self):
+            return FakeCursor()
+
+        def commit(self):
+            pass
+
+        def rollback(self):
+            pass
+
+        def close(self):
+            pass
+
+    class FakeEngine:
+        def raw_connection(self):
+            return FakeConn()
+
+    monkeypatch.setattr(db_mod, "get_engine", lambda: FakeEngine())
+    monkeypatch.setattr(db_mod, "execute_values", lambda *args, **kwargs: None)
+
+    db_mod._upsert_df_postgres(
+        "start_positions",
+        [("0022500001", 1)],
+        "nba_api",
+        ["game_id", "player_id"],
+        ["game_id", "player_id"],
+        2000,
+    )
+
+    assert executed
+    assert f"statement_timeout = {db_mod._UPSERT_STATEMENT_TIMEOUT_MS}" in executed[0]
