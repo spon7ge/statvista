@@ -1,0 +1,55 @@
+# Local Postgres. Containers must use the postgres hostname, not the
+# localhost URL in .env (that URL is for scrapers running on the host).
+#
+# A password containing @, /, or # has to be percent-encoded. Compose copies
+# POSTGRES_PASSWORD into the URL as written.
+#
+#   docker compose -f docker-compose.yml -f docker-compose.local-db.yml --profile local-db up -d --build
+
+services:
+  postgres:
+    image: postgres:15.19-alpine
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    mem_limit: 512m
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB in .env}
+    # Loopback only. Other compose services use the postgres hostname, not this port.
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/migrations:/docker-migrations:ro
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:?set POSTGRES_USER in .env} -d ${POSTGRES_DB:?set POSTGRES_DB in .env}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    restart: unless-stopped
+    profiles: ["local-db"]
+
+  api:
+    environment:
+      SUPABASE_DB_URL: postgresql://${POSTGRES_USER:?set POSTGRES_USER in .env}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@postgres:5432/${POSTGRES_DB:?set POSTGRES_DB in .env}?sslmode=disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+        required: false
+
+  odds:
+    environment:
+      SUPABASE_DB_URL: postgresql://${POSTGRES_USER:?set POSTGRES_USER in .env}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@postgres:5432/${POSTGRES_DB:?set POSTGRES_DB in .env}?sslmode=disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+        required: false
+
+volumes:
+  pgdata:

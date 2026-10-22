@@ -11,9 +11,11 @@ services:
   api:
     depends_on: !reset null
     environment:
-      SUPABASE_DB_URL: ${SUPABASE_DB_URL}
+      # Replaces the local postgres URL. Compose interpolates this from .env,
+      # and this key wins over the base file's environment entry.
+      SUPABASE_DB_URL: ${SUPABASE_DB_URL:?set SUPABASE_DB_URL in .env}
 
   odds:
     depends_on: !reset null
     environment:
-      SUPABASE_DB_URL: ${SUPABASE_DB_URL}
+      SUPABASE_DB_URL: ${SUPABASE_DB_URL:?set SUPABASE_DB_URL in .env}

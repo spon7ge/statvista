@@ -8,25 +8,27 @@ PrizePicks scrapers are **not** in Docker — they need a real browser (Brave CD
 
 ```
 Browser
-  → web :8080  (nginx: static React, /api → api:8000)
-  → api :8000  (FastAPI: ESPN / MLB Stats / RotoWire + odds.* reads)
-  → odds       (loop: Novig, ProphetX, Pinnacle, Underdog → Postgres)
-  → postgres   (local-db profile)  or  hosted Supabase
+  → 127.0.0.1:8080  (nginx: static React, /api → api:8000)
+  → 127.0.0.1:8000  (FastAPI docs and health; the site does not use this port)
+  → odds            (loop: Novig, ProphetX, Pinnacle, Underdog → Postgres)
+  → postgres        (local-db profile)  or  hosted Supabase
 ```
+
+Published ports bind to `127.0.0.1` only. Put a TLS proxy on the host (Caddy, or the platform) in front of `127.0.0.1:8080` before the site is reachable from another machine. The API does not need a public port: nginx already proxies `/api`.
 
 | Service | Image | Port | Purpose |
 |---------|-------|------|---------|
-| `web` | `docker/Dockerfile.web` | 8080 (host) | React SPA; proxies `/api` to `api` |
-| `api` | `docker/Dockerfile.api` | 8000 | Live FastAPI (`/api/mlb/*`, `/api/wnba/*`, health) |
+| `web` | `docker/Dockerfile.web` | 127.0.0.1:8080 | React SPA; proxies `/api` to `api` |
+| `api` | `docker/Dockerfile.api` | 127.0.0.1:8000 | Live FastAPI (`/api/mlb/*`, `/api/wnba/*`, health, `/docs`) |
 | `odds` | `docker/Dockerfile.odds` | — | HTTP odds scrapers every `ODDS_INTERVAL_SECONDS` |
-| `postgres` | `postgres:15-alpine` | 5433 (host) | Local DB; auto-runs `db/migrations/*.sql` |
+| `postgres` | `postgres:15.19-alpine` | 127.0.0.1:5433 | Local DB; auto-runs `db/migrations/*.sql` |
 
 ## Quick start (local Postgres)
 
 ```bash
 # Only if you do not already have a .env (this overwrites):
 test -f .env || cp .env.docker.example .env
-docker compose --profile local-db up -d --build
+docker compose -f docker-compose.yml -f docker-compose.local-db.yml --profile local-db up -d --build
 ```
 
 Site: http://localhost:8080  
@@ -77,8 +79,8 @@ docker compose run --rm --entrypoint python odds -m src.scrapers.run_all_odds --
 
 | Profile | Extra services | Use case |
 |---------|----------------|----------|
-| *(default)* | `web`, `api`, `odds` | Needs `SUPABASE_DB_URL` or combine with `local-db` |
-| `local-db` | `postgres` | Local Postgres on host port 5433 |
+| *(default)* | `web`, `api`, `odds` | Uses `SUPABASE_DB_URL` from `.env` |
+| `local-db` | `postgres` | Add `-f docker-compose.local-db.yml`. Postgres on 127.0.0.1:5433 |
 
 ## Volumes
 
@@ -89,17 +91,52 @@ docker compose run --rm --entrypoint python odds -m src.scrapers.run_all_odds --
 | `./data/cache` | api | ESPN / outbound HTTP cache |
 | `./data/props` | odds | Scraper JSON output |
 
+`api` and `odds` run as uid 1000. Those two directories have to be writable by that user. If a container exits saying the mount is not writable:
+
+```bash
+mkdir -p data/cache data/props
+chmod a+rwx data/cache data/props
+```
+
+## Local Postgres backup
+
+Supabase stores its own backups. For the `local-db` volume, dump from the running container and restore into a second database so the check does not touch the live one:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.local-db.yml --profile local-db exec -T postgres \
+  pg_dump -U "$POSTGRES_USER" -d "$POSTGRES_DB" > pgdata.sql
+
+docker compose -f docker-compose.yml -f docker-compose.local-db.yml --profile local-db exec -T postgres \
+  psql -U "$POSTGRES_USER" -d postgres -c "CREATE DATABASE statvista_restore"
+docker compose -f docker-compose.yml -f docker-compose.local-db.yml --profile local-db exec -T postgres \
+  psql -U "$POSTGRES_USER" -d statvista_restore < pgdata.sql
+docker compose -f docker-compose.yml -f docker-compose.local-db.yml --profile local-db exec -T postgres \
+  psql -U "$POSTGRES_USER" -d postgres -c "DROP DATABASE statvista_restore"
+```
+
+`pgdata.sql` contains the database. Keep it out of git.
+
 ## Frontend without Docker
 
 `cd frontend && npm run dev` still proxies `/api` → `localhost:8000`. You can run only `api` (+ `postgres` or Supabase) and keep Vite on the host.
+
+## Image security
+
+`api`, `web`, and `odds` run as an unprivileged user (`app` or `nginx`). The official Postgres image starts as root so it can fix the data volume, then drops to the `postgres` user. Postgres is published on `127.0.0.1` only; the API and odds worker reach it on the compose network.
+
+Secrets stay out of the image. `.dockerignore` excludes `.git`, `.env`, and `node_modules`. Put keys in `.env` and let compose inject them at runtime.
+
+Base images are patch-pinned slim or alpine tags. After a rebuild, scan with `docker scout cves <image>`, `trivy image <image>`, or `grype <image>`, and review layers with `docker history <image>`.
 
 ## Troubleshooting
 
 | Issue | Fix |
 |-------|-----|
-| Bind for 0.0.0.0:8000 failed: port is already allocated | Another process or container owns 8000. Set `API_PORT=8001` in `.env` and `docker compose --profile local-db up -d`. The site on 8080 still talks to the API inside Docker. |
+| Bind for 127.0.0.1:8000 failed: port is already allocated | Another process or container owns 8000. Set `API_PORT=8001` in `.env` and start again with `-f docker-compose.local-db.yml --profile local-db`. The site on 8080 still talks to the API inside Docker. |
+| `set POSTGRES_PASSWORD in .env` | Copy `.env.docker.example` to `.env` and set `POSTGRES_USER`, `POSTGRES_PASSWORD`, and `POSTGRES_DB`. |
+| `data/cache is not writable` | `mkdir -p data/cache data/props && chmod a+rwx data/cache data/props` |
 | `could not translate host name "host.docker.internal"` | Host scrapers must use `localhost:5433` in `.env` (see `.env.docker.example`). Recreate api/odds after changing compose so containers use the `postgres` hostname. |
-| API `503` / DB host not found | Start with `--profile local-db`, or set `SUPABASE_DB_URL` |
+| API `503` / DB host not found | Start with `-f docker-compose.local-db.yml --profile local-db`, or set `SUPABASE_DB_URL` and use `docker-compose.supabase.yml` |
 | SSL error locally | Use `?sslmode=disable` in the local URL |
 | Props/Legs empty | Wait for an `odds` cycle; run PrizePicks on the host |
 | PrizePicks in the odds container | Leave `ODDS_EXCLUDE` as-is; run those modules locally |

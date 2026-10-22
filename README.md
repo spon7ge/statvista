@@ -1,6 +1,6 @@
 # statvista
 
-statvista is a research site for **MLB** and **WNBA**. It shows today’s games, sportsbook vs DFS player props, and recommended PrizePicks / Underdog legs — so you can compare lines in one place.
+statvista is a research site for **MLB**, **WNBA**, and **NBA**. It shows today’s games and a prop board that lines one book’s number up against the other books, with recent hit rates.
 
 **Status:** Not publicly deployed. Run it locally.
 
@@ -17,18 +17,20 @@ git clone https://github.com/spon7ge/statvista.git
 cd statvista
 # Only if you do not already have a .env (this overwrites):
 test -f .env || cp .env.docker.example .env
-docker compose --profile local-db up -d --build
+docker compose -f docker-compose.yml -f docker-compose.local-db.yml --profile local-db up -d --build
 ```
 
 | What | URL |
 |------|-----|
-| Site | [http://localhost:8080](http://localhost:8080) — `/` lands on the MLB slate |
-| API docs | [http://localhost:8000/docs](http://localhost:8000/docs) |
-| Health | [http://localhost:8000/api/health](http://localhost:8000/api/health) |
+| Site | [http://127.0.0.1:8080](http://127.0.0.1:8080) — `/` lands on the MLB slate |
+| API docs | [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) |
+| Health | [http://127.0.0.1:8000/api/health](http://127.0.0.1:8000/api/health) |
+
+The site, API, and Postgres ports listen on `127.0.0.1` only. A TLS proxy on this machine is what other machines should connect to.
 
 That starts **web** (React), **api** (FastAPI), **odds** (HTTP scrapers), and **postgres**. Games load from public APIs. **Props** need odds snapshots in the database — the `odds` worker fills those every five minutes.
 
-If **8000 is already in use** (another API, or `uvicorn --port 8000` on the host), set a free host port in `.env` and start again. The site on 8080 is unchanged; only the published API port moves.
+If **8000 is already in use** (another API, or `uvicorn --port 8000` on the host), set a free host port in `.env` and start again. The site on 8080 is unchanged; only the published API port moves. Both stay on `127.0.0.1`.
 
 ```bash
 # .env
@@ -36,12 +38,12 @@ API_PORT=8001
 ```
 
 ```bash
-docker compose --profile local-db up -d
+docker compose -f docker-compose.yml -f docker-compose.local-db.yml --profile local-db up -d
 ```
 
 API docs then: [http://localhost:8001/docs](http://localhost:8001/docs)
 
-PrizePicks scrapers need a real browser, so they stay on the host (`.env` uses `localhost:5433` so they can reach Docker Postgres):
+PrizePicks scrapers need a real browser, so they stay on the host. Docker publishes Postgres on `127.0.0.1:5433` only, which is the address those host scrapers use:
 
 ```bash
 python -m src.scrapers.nba.nba_prizepick
@@ -51,9 +53,9 @@ python -m src.scrapers.nfl.nfl_prizepick
 ```
 
 ```bash
-docker compose --profile local-db ps       # status
-docker compose --profile local-db logs -f  # logs
-docker compose --profile local-db down     # stop (keeps the DB volume)
+docker compose -f docker-compose.yml -f docker-compose.local-db.yml --profile local-db ps
+docker compose -f docker-compose.yml -f docker-compose.local-db.yml --profile local-db logs -f
+docker compose -f docker-compose.yml -f docker-compose.local-db.yml --profile local-db down
 ```
 
 Hosted Supabase instead of local Postgres: set `SUPABASE_DB_URL` in `.env`, then `docker compose -f docker-compose.yml -f docker-compose.supabase.yml up -d --build`.
@@ -74,7 +76,7 @@ pip install -r requirements.txt
 PYTHONPATH=..:. uvicorn app.main:app --reload --port 8000
 ```
 
-Optional: a repo-root `.env` with `SUPABASE_DB_URL` (and odds keys if you have them). Games still load from public APIs without it; **Props** need the snapshots in that database.
+Optional: a repo-root `.env` with `SUPABASE_DB_URL`, `SHARP_API_KEY` (MLB and NBA game odds), and `PARLAY_API_KEY` (props). Games still load from public APIs without it; **Props** need the snapshots in that database.
 
 ### Site
 
@@ -90,12 +92,12 @@ Open [http://localhost:5173](http://localhost:5173). API docs: [http://localhost
 
 ## What it does
 
-Sidebar: **Props**, **Games**, plus Site links (**About**, **Blog**, **Contact**). League pills switch MLB / WNBA (NBA is a placeholder).
+Sidebar: **Props**, **Games**, plus Site links (**About**, **Blog**, **Contact**). League pills switch MLB, WNBA, and NBA.
 
 | Page | What you get |
 |------|----------------|
 | **Games** | Dated slates and game centers (lineups, odds, live/final detail) |
-| **Props** | DFS-anchored player lines next to sportsbook odds |
+| **Props** | Research table: one row per player, prop, line, and side. Default book is PrizePicks. Other books that posted that same line sit beside it, with implied probability and L5/L10/L15 hit rates |
 | **About** | Product overview and data sources |
 | **Blog** | Placeholder posts |
 | **Contact** | Form UI stub (send not wired) |
@@ -112,7 +114,7 @@ Games (landing after `/` → MLB slate):
 
 ![MLB Games](assets/screenshots/mlb-games.png)
 
-Props (DFS lines next to sportsbook odds):
+Props (one book’s line next to the other books on that number):
 
 ![MLB Props](assets/screenshots/mlb-props.png)
 
@@ -126,11 +128,12 @@ MLB game center (live summary):
 
 | Source | Used for |
 |--------|----------|
-| [ESPN](https://www.espn.com/) | WNBA scoreboard, standings, game summary / win probability; MLB win-probability bridge |
-| [stats.wnba.com](https://stats.wnba.com/) | Season leaders, player bio / averages / gamelog |
-| [MLB Stats API](https://statsapi.mlb.com/) | MLB scoreboard and live/final game feeds |
-| ParlayAPI / Sharp | Sportsbook odds (spreads, totals, player props) |
-| Supabase (Postgres) | PrizePicks / Underdog snapshots and other odds tables |
+| [ESPN](https://www.espn.com/) | WNBA and NBA scoreboards and game detail; WNBA standings for record and last-10; MLB win probability |
+| [stats.wnba.com](https://stats.wnba.com/) | WNBA scoreboard cross-check and player gamelogs for prop hit rates |
+| [MLB Stats API](https://statsapi.mlb.com/) | MLB scoreboard, lineups, and live/final game feeds |
+| [ParlayAPI](https://parlay-api.com/) | Player props, and WNBA game odds |
+| SharpAPI | MLB and NBA game odds (moneylines, spreads, totals) |
+| Supabase (Postgres) | Odds snapshots the prop boards and game pages read |
 | [RotoWire](https://www.rotowire.com/) | Projected starters / lineups |
 
 ---
@@ -139,7 +142,7 @@ MLB game center (live summary):
 
 React 19, Vite, TanStack Query, Tailwind · FastAPI + Pydantic · Postgres (Supabase or local)
 
-More setup: [frontend/README.md](frontend/README.md) · [backend/README.md](backend/README.md) · [docker/README.md](docker/README.md) · [models/README.md](models/README.md)
+More setup: [frontend/README.md](frontend/README.md) · [backend/README.md](backend/README.md) · [docker/README.md](docker/README.md)
 
 ---
 

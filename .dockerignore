@@ -1,5 +1,6 @@
 # Git & local artifacts
 .git
+**/.git
 .gitignore
 **/__pycache__
 **/*.pyc
@@ -7,14 +8,17 @@
 **/.pytest_cache
 **/.mypy_cache
 **/.ruff_cache
+.venv
+**/.venv
 
 # Large / generated data (mount at runtime instead)
 data/backtest/
 data/raw/
 data/props/
 
-# Frontend build artifacts (image rebuilds from source)
-frontend/node_modules
+# Dependencies and build output (images install or compile their own)
+node_modules
+**/node_modules
 frontend/dist
 
 # dbt build output
@@ -22,12 +26,17 @@ dbt/target
 dbt/dbt_packages
 dbt/logs
 
-# Env & secrets (inject via compose)
+# Env and secrets. Pass these at runtime; never copy them into an image.
 .env
+**/.env
 .env.*
-!.env.docker.example
+**/.env.*
+*.pem
+*.key
+credentials.json
 
 # IDE & OS
+.cursor
 .vscode
 .idea
 .DS_Store

@@ -1,61 +1,57 @@
 # statvista — live site Docker stack
 #
 # Services:
-#   postgres  Local Postgres (optional — use Supabase by overriding SUPABASE_DB_URL)
-#   api       FastAPI (WNBA/MLB adapters + odds.* reads)
-#   web       nginx: static React app, /api proxied to api
+#   api       FastAPI. Published on 127.0.0.1 for /docs; the site calls it
+#             through nginx on the compose network.
+#   web       nginx static site, loopback only. Put Caddy or another TLS
+#             proxy on the host in front of 127.0.0.1:8080.
 #   odds      HTTP scrapers on a loop (PrizePicks stays on the host)
 #
-# Quick start:
+# Containers use SUPABASE_DB_URL from .env. That value is the host URL
+# (localhost for local Postgres, the Supabase host otherwise).
+#
+# Local Postgres also needs docker-compose.local-db.yml, which points
+# containers at the postgres hostname and refuses to start without a password:
 #   cp .env.docker.example .env
-#   docker compose --profile local-db up -d --build
+#   docker compose -f docker-compose.yml -f docker-compose.local-db.yml --profile local-db up -d --build
+#
+# Supabase:
+#   docker compose -f docker-compose.yml -f docker-compose.supabase.yml up -d --build
 #
 # See docker/README.md for full docs.
 
 name: statvista
 
-services:
-  postgres:
-    image: postgres:15-alpine
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-hoopvista}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-hoopvista}
-      POSTGRES_DB: ${POSTGRES_DB:-hoopvista}
-    ports:
-      - "${POSTGRES_PORT:-5433}:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-      - ./db/migrations:/docker-migrations:ro
-      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-hoopvista} -d ${POSTGRES_DB:-hoopvista}"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-      start_period: 10s
-    restart: unless-stopped
-    profiles: ["local-db"]
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
 
+services:
   api:
     build:
       context: .
       dockerfile: docker/Dockerfile.api
+    logging: *logging
+    mem_limit: 512m
+    # Loopback only, so /docs stays available on the host and the port is
+    # not reachable from other machines. The site uses nginx, not this port.
     ports:
-      - "${API_PORT:-8000}:8000"
+      - "127.0.0.1:${API_PORT:-8000}:8000"
     env_file:
       - path: .env
         required: false
     environment:
-      SUPABASE_DB_URL: postgresql://${POSTGRES_USER:-hoopvista}:${POSTGRES_PASSWORD:-hoopvista}@postgres:5432/${POSTGRES_DB:-hoopvista}?sslmode=disable
-      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173,http://localhost:8080,http://127.0.0.1:8080}
+      SUPABASE_DB_URL: ${SUPABASE_DB_URL:?set SUPABASE_DB_URL in .env}
+      # nginx on the same origin does not need CORS. The default is Vite on
+      # the host. Set CORS_ORIGINS in .env to the public site origin when a
+      # browser on another host calls the API directly.
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173}
     volumes:
       - ./data/cache:/app/data/cache
-    depends_on:
-      postgres:
-        condition: service_healthy
-        required: false
     healthcheck:
-      test: ["CMD", "curl", "-fsS", "http://localhost:8000/api/health"]
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8000/api/health"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -66,13 +62,17 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile.web
+    logging: *logging
+    mem_limit: 512m
+    # Loopback only. A TLS proxy on the host (Caddy, or the platform) is the
+    # public listener.
     ports:
-      - "${WEB_PORT:-8080}:80"
+      - "127.0.0.1:${WEB_PORT:-8080}:8080"
     depends_on:
       api:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/"]
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -83,21 +83,16 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile.odds
+    logging: *logging
+    mem_limit: 512m
     env_file:
       - path: .env
         required: false
     environment:
-      SUPABASE_DB_URL: postgresql://${POSTGRES_USER:-hoopvista}:${POSTGRES_PASSWORD:-hoopvista}@postgres:5432/${POSTGRES_DB:-hoopvista}?sslmode=disable
+      SUPABASE_DB_URL: ${SUPABASE_DB_URL:?set SUPABASE_DB_URL in .env}
       ODDS_LEAGUE: ${ODDS_LEAGUE:-all}
       ODDS_EXCLUDE: ${ODDS_EXCLUDE:-wnba_prizepick,nba_prizepick,mlb_prizepick}
       ODDS_INTERVAL_SECONDS: ${ODDS_INTERVAL_SECONDS:-300}
     volumes:
       - ./data/props:/app/data/props
-    depends_on:
-      postgres:
-        condition: service_healthy
-        required: false
     restart: unless-stopped
-
-volumes:
-  pgdata:

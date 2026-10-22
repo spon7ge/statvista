@@ -19,6 +19,13 @@ fi
 league="${ODDS_LEAGUE:-all}"
 exclude="${ODDS_EXCLUDE:-wnba_prizepick,nba_prizepick,mlb_prizepick}"
 
+props=/app/data/props
+if [ ! -d "$props" ] || [ ! -w "$props" ]; then
+  echo "odds worker: ${props} is not writable by uid $(id -u)." >&2
+  echo "On the host run: mkdir -p data/cache data/props && chmod a+rwx data/cache data/props" >&2
+  exit 1
+fi
+
 echo "odds worker: league=${league} exclude=${exclude} interval=${interval}s"
 
 while true; do
@@ -27,6 +34,10 @@ while true; do
   python -m src.scrapers.run_all_odds --league "$league" --exclude "$exclude"
   code=$?
   set -e
-  echo "odds scrape exited ${code}; sleeping ${interval}s"
+  if [ "$code" -ne 0 ]; then
+    echo "odds scrape failed with exit ${code}; sleeping ${interval}s" >&2
+  else
+    echo "odds scrape exited ${code}; sleeping ${interval}s"
+  fi
   sleep "$interval"
 done
