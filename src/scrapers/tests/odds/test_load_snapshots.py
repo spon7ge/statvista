@@ -236,6 +236,26 @@ def test_load_draftkings_snapshot_nba(mock_upsert):
     assert df.iloc[0]["american_price"] == -110
 
 
+def test_load_draftkings_mlb_uses_mlb_table(mock_upsert):
+    picks = [
+        {
+            "full_name": "William Contreras",
+            "stat_name": "Hits",
+            "stat_value": 0.5,
+            "choice": "over",
+            "american_price": -125,
+        }
+    ]
+    count = load_snapshots.load_draftkings_snapshot(
+        picks, league="mlb", scraped_at=SCRAPED
+    )
+    assert count == 1
+    table, df = mock_upsert.call_args[0]
+    assert table == "mlb_draftkings"
+    assert df.iloc[0]["league"] == "mlb"
+    assert df.iloc[0]["market_type"] == "Hits"
+
+
 def test_load_draftkings_nfl_uses_nfl_table(mock_upsert):
     picks = [
         {
@@ -268,6 +288,26 @@ def test_load_fanduel_snapshot_wnba_keeps_wnba_table(mock_upsert):
     ]
     load_snapshots.load_fanduel_snapshot(picks, league="wnba", scraped_at=SCRAPED)
     assert mock_upsert.call_args[0][0] == "wnba_fanduel"
+
+
+def test_load_fanduel_mlb_uses_mlb_table(mock_upsert):
+    picks = [
+        {
+            "full_name": "William Contreras",
+            "stat_name": "Hits",
+            "stat_value": 0.5,
+            "choice": "over",
+            "american_price": -125,
+        }
+    ]
+    count = load_snapshots.load_fanduel_snapshot(
+        picks, league="mlb", scraped_at=SCRAPED
+    )
+    assert count == 1
+    table, df = mock_upsert.call_args[0]
+    assert table == "mlb_fanduel"
+    assert df.iloc[0]["league"] == "mlb"
+    assert df.iloc[0]["market_type"] == "Hits"
 
 
 def test_load_fanduel_nfl_uses_nfl_table(mock_upsert):

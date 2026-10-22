@@ -25,6 +25,7 @@ def test_mlb_prop_fetchers_route_to_league_table(fetcher, table):
     assert f"FROM odds.{table}" in sql
     assert "DISTINCT ON" in sql
     assert "scraped_at DESC" in sql
+    assert "scraped_at >= :since" in sql
     assert f"SELECT MAX(scraped_at) FROM odds.{table}" not in sql
     assert league == "mlb"
 
@@ -40,6 +41,7 @@ def test_fetch_latest_prophetx_reads_latest_mlb_snapshot():
     )
     assert "FROM odds.mlb_prophetx" in sql
     assert "DISTINCT ON" in sql
+    assert "scraped_at >= :since" in sql
     assert "scraped_at DESC" in sql
     assert "AND is_main = true" not in sql
     assert "SELECT MAX(scraped_at) FROM odds.mlb_prophetx" not in sql
@@ -77,6 +79,7 @@ def test_fetch_latest_px_novig_mains_only_filters_is_main(fetcher, table):
     sql, league = fetch_rows.call_args.args
     assert f"FROM odds.{table}" in sql
     assert "AND is_main = true" in sql
+    assert "scraped_at >= :since" in sql
     assert "DISTINCT ON" in sql
     assert league == "mlb"
 

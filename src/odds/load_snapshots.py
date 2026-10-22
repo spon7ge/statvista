@@ -298,6 +298,8 @@ def load_underdog_snapshot(
 
 def _draftkings_table(league: str) -> str:
     lg = (league or "").strip().lower()
+    if lg == "mlb":
+        return "mlb_draftkings"
     if lg == "nba":
         return "nba_draftkings"
     if lg == "wnba":
@@ -309,6 +311,8 @@ def _draftkings_table(league: str) -> str:
 
 def _fanduel_table(league: str) -> str:
     lg = (league or "").strip().lower()
+    if lg == "mlb":
+        return "mlb_fanduel"
     if lg == "nba":
         return "nba_fanduel"
     if lg == "wnba":

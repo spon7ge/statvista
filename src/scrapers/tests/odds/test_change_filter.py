@@ -1,8 +1,12 @@
+from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
+
 import pandas as pd
 
 from src.odds import change_filter
 from src.odds.change_filter import (
     apply_change_filter,
+    et_day_start_utc,
     fetch_latest_quotes,
     filter_unchanged_quotes,
     values_equal,
@@ -252,6 +256,45 @@ def test_keeps_identical_underdog_line_on_new_day():
     )
     assert len(kept) == 1
     assert skipped == 0
+
+
+def test_et_day_start_utc_is_eastern_midnight():
+    summer = datetime(2026, 10, 20, 15, 0, tzinfo=timezone.utc)
+    winter = datetime(2026, 1, 15, 6, 0, tzinfo=timezone.utc)
+    assert et_day_start_utc(summer) == datetime(2026, 10, 20, 4, 0, tzinfo=timezone.utc)
+    assert et_day_start_utc(winter) == datetime(2026, 1, 15, 5, 0, tzinfo=timezone.utc)
+
+
+def test_fetch_latest_quotes_bounds_lookup_to_current_et_day(monkeypatch):
+    captured: dict = {}
+
+    def fake_read_sql(sql, conn, params=None):
+        captured["sql"] = str(sql)
+        captured["params"] = params
+        return pd.DataFrame()
+
+    class FakeConn:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            pass
+
+    class FakeEngine:
+        def connect(self):
+            return FakeConn()
+
+    monkeypatch.setattr("src.utils.db.get_engine", lambda: FakeEngine())
+    monkeypatch.setattr(change_filter.pd, "read_sql", fake_read_sql)
+
+    spec = get_quote_spec("mlb_novig")
+    fetch_latest_quotes("mlb_novig", league="mlb", spec=spec)
+
+    assert '"scraped_at" >=' in captured["sql"]
+    since = captured["params"]["since"]
+    et = since.astimezone(ZoneInfo("America/New_York"))
+    assert (et.hour, et.minute, et.second, et.microsecond) == (0, 0, 0, 0)
+    assert et.date() == datetime.now(ZoneInfo("America/New_York")).date()
 
 
 def test_fetch_latest_quotes_selects_scraped_at(monkeypatch):

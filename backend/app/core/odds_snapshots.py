@@ -18,6 +18,7 @@ from typing import Any
 
 from sqlalchemy import text
 
+from src.odds.change_filter import et_day_start_utc
 from src.odds.quote_specs import get_quote_spec
 
 logger = logging.getLogger(__name__)
@@ -74,6 +75,9 @@ def _latest_snapshot_sql(
     identity_cols: tuple[str, ...] | None = None,
     extra_where: str = "",
 ) -> str:
+    # Same Eastern calendar day as the change-filter write path. Full-history
+    # DISTINCT ON times out on large MLB tables; yesterday's quotes cannot be
+    # today's board once scrapes have run.
     identity = identity_cols or get_quote_spec(table).identity_cols
     identity_sql = ", ".join(identity)
     order_sql = f"{identity_sql}, scraped_at DESC"
@@ -81,7 +85,8 @@ def _latest_snapshot_sql(
     return f"""
 SELECT DISTINCT ON ({identity_sql}) {columns}
 FROM odds.{table}
-WHERE league = :league{where_extra}
+WHERE league = :league
+  AND scraped_at >= :since{where_extra}
 ORDER BY {order_sql}
 """
 
@@ -118,7 +123,10 @@ def _fetch_rows(sql: str, league: str, *, reraise: bool = False) -> list[dict[st
 
     try:
         with engine.connect() as conn:
-            result = conn.execute(text(sql), {"league": league})
+            result = conn.execute(
+                text(sql),
+                {"league": league, "since": et_day_start_utc()},
+            )
             return [dict(row._mapping) for row in result]
     except Exception as exc:
         if reraise:

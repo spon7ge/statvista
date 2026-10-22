@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import math
 import os
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from typing import Any
 from zoneinfo import ZoneInfo
 
@@ -96,6 +96,22 @@ def filter_unchanged_quotes(
     return df.loc[keep_idx].copy(), skipped
 
 
+def et_day_start_utc(now: datetime | None = None) -> datetime:
+    """UTC instant of midnight America/New_York for the scrape's calendar day.
+
+    The skip key includes that date, so a row from an earlier day cannot
+    suppress today's insert. The latest-quote lookup only needs this day;
+    sorting the full history exceeds the database statement timeout.
+    """
+    current = now or datetime.now(timezone.utc)
+    if current.tzinfo is None:
+        current = current.replace(tzinfo=timezone.utc)
+    et_midnight = current.astimezone(_SCRAPE_DATE_TZ).replace(
+        hour=0, minute=0, second=0, microsecond=0
+    )
+    return et_midnight.astimezone(timezone.utc)
+
+
 def _skip_change_filter() -> bool:
     return os.environ.get("ODDS_SKIP_CHANGE_FILTER", "").strip().lower() in {
         "1",
@@ -119,12 +135,17 @@ def fetch_latest_quotes(table: str, *, league: str, spec: QuoteSpec) -> pd.DataF
 SELECT DISTINCT ON ({identity_sql}) {col_sql}
 FROM odds.{table}
 WHERE league = :league
+  AND "scraped_at" >= :since
 ORDER BY {order_sql}
 """
     )
     engine = get_engine()
     with engine.connect() as conn:
-        return pd.read_sql(sql, conn, params={"league": league})
+        return pd.read_sql(
+            sql,
+            conn,
+            params={"league": league, "since": et_day_start_utc()},
+        )
 
 
 def apply_change_filter(table: str, df: pd.DataFrame, *, league: str) -> pd.DataFrame:
